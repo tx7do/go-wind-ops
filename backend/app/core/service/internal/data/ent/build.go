@@ -43,6 +43,8 @@ type Build struct {
 	ArtifactPath string `json:"artifact_path,omitempty"`
 	// 构建超时(秒,默认 600,上限 3600)
 	TimeoutSeconds *uint32 `json:"timeout_seconds,omitempty"`
+	// 产物保留策略:仅保留最近 N 个成功构建的产物,0=不限(定时清理)
+	ArtifactRetention *uint32 `json:"artifact_retention,omitempty"`
 	// 最新构建号(触发时自增)
 	BuildNo uint32 `json:"build_no,omitempty"`
 	// 定时构建 cron 表达式(5 段标准语法,空为手动触发)
@@ -63,7 +65,7 @@ func (*Build) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case build.FieldLabels:
 			values[i] = new([]byte)
-		case build.FieldID, build.FieldCreatedBy, build.FieldUpdatedBy, build.FieldDeletedBy, build.FieldRepositoryID, build.FieldTimeoutSeconds, build.FieldBuildNo:
+		case build.FieldID, build.FieldCreatedBy, build.FieldUpdatedBy, build.FieldDeletedBy, build.FieldRepositoryID, build.FieldTimeoutSeconds, build.FieldArtifactRetention, build.FieldBuildNo:
 			values[i] = new(sql.NullInt64)
 		case build.FieldName, build.FieldBranch, build.FieldBuildCommand, build.FieldArtifactPath, build.FieldCron, build.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -169,6 +171,13 @@ func (_m *Build) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TimeoutSeconds = new(uint32)
 				*_m.TimeoutSeconds = uint32(value.Int64)
+			}
+		case build.FieldArtifactRetention:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field artifact_retention", values[i])
+			} else if value.Valid {
+				_m.ArtifactRetention = new(uint32)
+				*_m.ArtifactRetention = uint32(value.Int64)
 			}
 		case build.FieldBuildNo:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -290,6 +299,11 @@ func (_m *Build) String() string {
 	builder.WriteString(", ")
 	if v := _m.TimeoutSeconds; v != nil {
 		builder.WriteString("timeout_seconds=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ArtifactRetention; v != nil {
+		builder.WriteString("artifact_retention=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

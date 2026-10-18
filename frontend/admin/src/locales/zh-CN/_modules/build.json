@@ -26,5 +26,7 @@
   "trigger": "触发",
   "triggerSent": "构建已触发（构建号 #{{no}}），进度见历史",
   "triggerFailed": "触发失败",
-  "history": "历史"
+  "history": "历史",
+  "artifactRetention": "产物保留数量",
+  "artifactRetentionHint": "仅保留最近 N 个成功构建的产物,超出的每小时定时清理;0=不限\\nDocker 镜像部署不受此策略影响"
 }

@@ -149,7 +149,8 @@ func (r *BuildRepo) Create(ctx context.Context, req *opsV1.CreateBuildRequest, o
 		builder.SetBranch(req.Data.GetBranch())
 	}
 	if req.Data.TimeoutSeconds != nil {
-		builder.SetTimeoutSeconds(req.Data.GetTimeoutSeconds())
+		builder.SetTimeoutSeconds(req.Data.GetTimeoutSeconds()).
+			SetNillableArtifactRetention(req.Data.ArtifactRetention)
 	}
 	if operatorID > 0 {
 		builder.SetCreatedBy(operatorID)
@@ -180,6 +181,7 @@ func (r *BuildRepo) Update(ctx context.Context, req *opsV1.UpdateBuildRequest) e
 				SetNillableBuildCommand(req.Data.BuildCommand).
 				SetNillableArtifactPath(req.Data.ArtifactPath).
 				SetNillableTimeoutSeconds(req.Data.TimeoutSeconds).
+				SetNillableArtifactRetention(req.Data.ArtifactRetention).
 				SetNillableDescription(req.Data.Description)
 
 			if req.Data.RepositoryId != nil && req.Data.GetRepositoryId() > 0 {

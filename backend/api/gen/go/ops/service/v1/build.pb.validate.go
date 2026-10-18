@@ -125,6 +125,10 @@ func (m *Build) validate(all bool) error {
 
 	}
 
+	if m.ArtifactRetention != nil {
+		// no validation rules for ArtifactRetention
+	}
+
 	if m.Description != nil {
 		// no validation rules for Description
 	}

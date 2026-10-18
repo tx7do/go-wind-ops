@@ -8778,37 +8778,39 @@ func (m *ApprovalMutation) ResetEdge(name string) error {
 // BuildMutation represents an operation that mutates the Build nodes in the graph.
 type BuildMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *uint32
-	created_at         *time.Time
-	updated_at         *time.Time
-	deleted_at         *time.Time
-	created_by         *uint32
-	addcreated_by      *int32
-	updated_by         *uint32
-	addupdated_by      *int32
-	deleted_by         *uint32
-	adddeleted_by      *int32
-	name               *string
-	repository_id      *uint32
-	addrepository_id   *int32
-	branch             *string
-	build_command      *string
-	artifact_path      *string
-	timeout_seconds    *uint32
-	addtimeout_seconds *int32
-	build_no           *uint32
-	addbuild_no        *int32
-	cron               *string
-	last_cron_at       *time.Time
-	description        *string
-	labels             *[]string
-	appendlabels       []string
-	clearedFields      map[string]struct{}
-	done               bool
-	oldValue           func(context.Context) (*Build, error)
-	predicates         []predicate.Build
+	op                    Op
+	typ                   string
+	id                    *uint32
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	created_by            *uint32
+	addcreated_by         *int32
+	updated_by            *uint32
+	addupdated_by         *int32
+	deleted_by            *uint32
+	adddeleted_by         *int32
+	name                  *string
+	repository_id         *uint32
+	addrepository_id      *int32
+	branch                *string
+	build_command         *string
+	artifact_path         *string
+	timeout_seconds       *uint32
+	addtimeout_seconds    *int32
+	artifact_retention    *uint32
+	addartifact_retention *int32
+	build_no              *uint32
+	addbuild_no           *int32
+	cron                  *string
+	last_cron_at          *time.Time
+	description           *string
+	labels                *[]string
+	appendlabels          []string
+	clearedFields         map[string]struct{}
+	done                  bool
+	oldValue              func(context.Context) (*Build, error)
+	predicates            []predicate.Build
 }
 
 var _ ent.Mutation = (*BuildMutation)(nil)
@@ -9555,6 +9557,76 @@ func (m *BuildMutation) ResetTimeoutSeconds() {
 	delete(m.clearedFields, build.FieldTimeoutSeconds)
 }
 
+// SetArtifactRetention sets the "artifact_retention" field.
+func (m *BuildMutation) SetArtifactRetention(u uint32) {
+	m.artifact_retention = &u
+	m.addartifact_retention = nil
+}
+
+// ArtifactRetention returns the value of the "artifact_retention" field in the mutation.
+func (m *BuildMutation) ArtifactRetention() (r uint32, exists bool) {
+	v := m.artifact_retention
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldArtifactRetention returns the old "artifact_retention" field's value of the Build entity.
+// If the Build object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildMutation) OldArtifactRetention(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldArtifactRetention is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldArtifactRetention requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldArtifactRetention: %w", err)
+	}
+	return oldValue.ArtifactRetention, nil
+}
+
+// AddArtifactRetention adds u to the "artifact_retention" field.
+func (m *BuildMutation) AddArtifactRetention(u int32) {
+	if m.addartifact_retention != nil {
+		*m.addartifact_retention += u
+	} else {
+		m.addartifact_retention = &u
+	}
+}
+
+// AddedArtifactRetention returns the value that was added to the "artifact_retention" field in this mutation.
+func (m *BuildMutation) AddedArtifactRetention() (r int32, exists bool) {
+	v := m.addartifact_retention
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (m *BuildMutation) ClearArtifactRetention() {
+	m.artifact_retention = nil
+	m.addartifact_retention = nil
+	m.clearedFields[build.FieldArtifactRetention] = struct{}{}
+}
+
+// ArtifactRetentionCleared returns if the "artifact_retention" field was cleared in this mutation.
+func (m *BuildMutation) ArtifactRetentionCleared() bool {
+	_, ok := m.clearedFields[build.FieldArtifactRetention]
+	return ok
+}
+
+// ResetArtifactRetention resets all changes to the "artifact_retention" field.
+func (m *BuildMutation) ResetArtifactRetention() {
+	m.artifact_retention = nil
+	m.addartifact_retention = nil
+	delete(m.clearedFields, build.FieldArtifactRetention)
+}
+
 // SetBuildNo sets the "build_no" field.
 func (m *BuildMutation) SetBuildNo(u uint32) {
 	m.build_no = &u
@@ -9857,7 +9929,7 @@ func (m *BuildMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BuildMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, build.FieldCreatedAt)
 	}
@@ -9893,6 +9965,9 @@ func (m *BuildMutation) Fields() []string {
 	}
 	if m.timeout_seconds != nil {
 		fields = append(fields, build.FieldTimeoutSeconds)
+	}
+	if m.artifact_retention != nil {
+		fields = append(fields, build.FieldArtifactRetention)
 	}
 	if m.build_no != nil {
 		fields = append(fields, build.FieldBuildNo)
@@ -9941,6 +10016,8 @@ func (m *BuildMutation) Field(name string) (ent.Value, bool) {
 		return m.ArtifactPath()
 	case build.FieldTimeoutSeconds:
 		return m.TimeoutSeconds()
+	case build.FieldArtifactRetention:
+		return m.ArtifactRetention()
 	case build.FieldBuildNo:
 		return m.BuildNo()
 	case build.FieldCron:
@@ -9984,6 +10061,8 @@ func (m *BuildMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldArtifactPath(ctx)
 	case build.FieldTimeoutSeconds:
 		return m.OldTimeoutSeconds(ctx)
+	case build.FieldArtifactRetention:
+		return m.OldArtifactRetention(ctx)
 	case build.FieldBuildNo:
 		return m.OldBuildNo(ctx)
 	case build.FieldCron:
@@ -10087,6 +10166,13 @@ func (m *BuildMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTimeoutSeconds(v)
 		return nil
+	case build.FieldArtifactRetention:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetArtifactRetention(v)
+		return nil
 	case build.FieldBuildNo:
 		v, ok := value.(uint32)
 		if !ok {
@@ -10145,6 +10231,9 @@ func (m *BuildMutation) AddedFields() []string {
 	if m.addtimeout_seconds != nil {
 		fields = append(fields, build.FieldTimeoutSeconds)
 	}
+	if m.addartifact_retention != nil {
+		fields = append(fields, build.FieldArtifactRetention)
+	}
 	if m.addbuild_no != nil {
 		fields = append(fields, build.FieldBuildNo)
 	}
@@ -10166,6 +10255,8 @@ func (m *BuildMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedRepositoryID()
 	case build.FieldTimeoutSeconds:
 		return m.AddedTimeoutSeconds()
+	case build.FieldArtifactRetention:
+		return m.AddedArtifactRetention()
 	case build.FieldBuildNo:
 		return m.AddedBuildNo()
 	}
@@ -10212,6 +10303,13 @@ func (m *BuildMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddTimeoutSeconds(v)
 		return nil
+	case build.FieldArtifactRetention:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddArtifactRetention(v)
+		return nil
 	case build.FieldBuildNo:
 		v, ok := value.(int32)
 		if !ok {
@@ -10250,6 +10348,9 @@ func (m *BuildMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(build.FieldTimeoutSeconds) {
 		fields = append(fields, build.FieldTimeoutSeconds)
+	}
+	if m.FieldCleared(build.FieldArtifactRetention) {
+		fields = append(fields, build.FieldArtifactRetention)
 	}
 	if m.FieldCleared(build.FieldCron) {
 		fields = append(fields, build.FieldCron)
@@ -10300,6 +10401,9 @@ func (m *BuildMutation) ClearField(name string) error {
 		return nil
 	case build.FieldTimeoutSeconds:
 		m.ClearTimeoutSeconds()
+		return nil
+	case build.FieldArtifactRetention:
+		m.ClearArtifactRetention()
 		return nil
 	case build.FieldCron:
 		m.ClearCron()
@@ -10356,6 +10460,9 @@ func (m *BuildMutation) ResetField(name string) error {
 		return nil
 	case build.FieldTimeoutSeconds:
 		m.ResetTimeoutSeconds()
+		return nil
+	case build.FieldArtifactRetention:
+		m.ResetArtifactRetention()
 		return nil
 	case build.FieldBuildNo:
 		m.ResetBuildNo()

@@ -122,6 +122,36 @@ func (r *BuildHistoryRepo) Get(ctx context.Context, req *opsV1.GetBuildHistoryRe
 	return dto, nil
 }
 
+// ListArtifactHoldersByBuild 返回某构建配置下,保留数量之外仍持有产物
+// 对象键的成功历史(按构建号倒序,跳过最新 keep 条)。保留策略清扫用。
+func (r *BuildHistoryRepo) ListArtifactHoldersByBuild(ctx context.Context, buildID uint32, keep uint32) ([]*ent.BuildHistory, error) {
+	rows, err := r.entClient.Client().BuildHistory.Query().
+		Where(
+			buildhistory.BuildIDEQ(buildID),
+			buildhistory.StatusEQ(buildhistory.StatusSuccess),
+			buildhistory.ArtifactObjectKeyNEQ(""),
+			buildhistory.ArtifactObjectKeyNotNil(),
+		).
+		Order(ent.Desc(buildhistory.FieldBuildNo)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if int(keep) >= len(rows) {
+		return nil, nil
+	}
+	return rows[keep:], nil
+}
+
+// ClearArtifact 清空历史记录的产物指针(对象已从对象存储删除)。
+func (r *BuildHistoryRepo) ClearArtifact(ctx context.Context, id uint32) error {
+	_, err := r.entClient.Client().BuildHistory.UpdateOneID(id).
+		ClearArtifactObjectKey().
+		ClearArtifactSize().
+		Save(ctx)
+	return err
+}
+
 // GetEntity 取原始实体(构建执行器用)。
 func (r *BuildHistoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.BuildHistory, error) {
 	entity, err := r.entClient.Client().BuildHistory.

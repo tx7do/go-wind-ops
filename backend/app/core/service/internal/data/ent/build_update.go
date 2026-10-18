@@ -261,6 +261,33 @@ func (_u *BuildUpdate) ClearTimeoutSeconds() *BuildUpdate {
 	return _u
 }
 
+// SetArtifactRetention sets the "artifact_retention" field.
+func (_u *BuildUpdate) SetArtifactRetention(v uint32) *BuildUpdate {
+	_u.mutation.ResetArtifactRetention()
+	_u.mutation.SetArtifactRetention(v)
+	return _u
+}
+
+// SetNillableArtifactRetention sets the "artifact_retention" field if the given value is not nil.
+func (_u *BuildUpdate) SetNillableArtifactRetention(v *uint32) *BuildUpdate {
+	if v != nil {
+		_u.SetArtifactRetention(*v)
+	}
+	return _u
+}
+
+// AddArtifactRetention adds value to the "artifact_retention" field.
+func (_u *BuildUpdate) AddArtifactRetention(v int32) *BuildUpdate {
+	_u.mutation.AddArtifactRetention(v)
+	return _u
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (_u *BuildUpdate) ClearArtifactRetention() *BuildUpdate {
+	_u.mutation.ClearArtifactRetention()
+	return _u
+}
+
 // SetBuildNo sets the "build_no" field.
 func (_u *BuildUpdate) SetBuildNo(v uint32) *BuildUpdate {
 	_u.mutation.ResetBuildNo()
@@ -506,6 +533,15 @@ func (_u *BuildUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TimeoutSecondsCleared() {
 		_spec.ClearField(build.FieldTimeoutSeconds, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ArtifactRetention(); ok {
+		_spec.SetField(build.FieldArtifactRetention, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedArtifactRetention(); ok {
+		_spec.AddField(build.FieldArtifactRetention, field.TypeUint32, value)
+	}
+	if _u.mutation.ArtifactRetentionCleared() {
+		_spec.ClearField(build.FieldArtifactRetention, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.BuildNo(); ok {
 		_spec.SetField(build.FieldBuildNo, field.TypeUint32, value)
@@ -795,6 +831,33 @@ func (_u *BuildUpdateOne) ClearTimeoutSeconds() *BuildUpdateOne {
 	return _u
 }
 
+// SetArtifactRetention sets the "artifact_retention" field.
+func (_u *BuildUpdateOne) SetArtifactRetention(v uint32) *BuildUpdateOne {
+	_u.mutation.ResetArtifactRetention()
+	_u.mutation.SetArtifactRetention(v)
+	return _u
+}
+
+// SetNillableArtifactRetention sets the "artifact_retention" field if the given value is not nil.
+func (_u *BuildUpdateOne) SetNillableArtifactRetention(v *uint32) *BuildUpdateOne {
+	if v != nil {
+		_u.SetArtifactRetention(*v)
+	}
+	return _u
+}
+
+// AddArtifactRetention adds value to the "artifact_retention" field.
+func (_u *BuildUpdateOne) AddArtifactRetention(v int32) *BuildUpdateOne {
+	_u.mutation.AddArtifactRetention(v)
+	return _u
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (_u *BuildUpdateOne) ClearArtifactRetention() *BuildUpdateOne {
+	_u.mutation.ClearArtifactRetention()
+	return _u
+}
+
 // SetBuildNo sets the "build_no" field.
 func (_u *BuildUpdateOne) SetBuildNo(v uint32) *BuildUpdateOne {
 	_u.mutation.ResetBuildNo()
@@ -1070,6 +1133,15 @@ func (_u *BuildUpdateOne) sqlSave(ctx context.Context) (_node *Build, err error)
 	}
 	if _u.mutation.TimeoutSecondsCleared() {
 		_spec.ClearField(build.FieldTimeoutSeconds, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ArtifactRetention(); ok {
+		_spec.SetField(build.FieldArtifactRetention, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedArtifactRetention(); ok {
+		_spec.AddField(build.FieldArtifactRetention, field.TypeUint32, value)
+	}
+	if _u.mutation.ArtifactRetentionCleared() {
+		_spec.ClearField(build.FieldArtifactRetention, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.BuildNo(); ok {
 		_spec.SetField(build.FieldBuildNo, field.TypeUint32, value)

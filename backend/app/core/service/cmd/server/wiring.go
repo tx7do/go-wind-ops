@@ -200,7 +200,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	fileService := service.NewFileService(ctx, agentService, agentNodeRepo)
 
 	// 定时调度(构建/脚本 cron + 监控检查)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildService, scriptService, agentService)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, agentService)
 	cronScheduler.Start(ctx.Context())
 
 	// EMQX broker 认证 webhook(最小 HTTP listener, :9500)

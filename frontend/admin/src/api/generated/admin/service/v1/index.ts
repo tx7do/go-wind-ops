@@ -2142,6 +2142,7 @@ export type opsservicev1_Build = {
   //
   // Behaviors: REQUIRED
   artifactPath?: string;
+  artifactRetention?: number;
   branch?: string;
   //
   // Behaviors: REQUIRED

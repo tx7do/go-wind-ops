@@ -26,5 +26,7 @@
   "trigger": "Trigger",
   "triggerSent": "Build triggered (#{{no}}), see history for progress",
   "triggerFailed": "Trigger failed",
-  "history": "History"
+  "history": "History",
+  "artifactRetention": "Artifact Retention",
+  "artifactRetentionHint": "Keep only the most recent N successful build artifacts; older ones are cleaned hourly. 0 = unlimited\\nDocker image deploys are not affected"
 }

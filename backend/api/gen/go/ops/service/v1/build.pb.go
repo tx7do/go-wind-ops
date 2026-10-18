@@ -29,23 +29,24 @@ const (
 
 // 构建配置
 type Build struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                               // 构建配置ID
-	Name           *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                            // 构建名
-	RepositoryId   *uint32                `protobuf:"varint,3,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`       // 源仓库
-	Branch         *string                `protobuf:"bytes,4,opt,name=branch,proto3,oneof" json:"branch,omitempty"`                                        // 构建分支
-	BuildCommand   *string                `protobuf:"bytes,5,opt,name=build_command,json=buildCommand,proto3,oneof" json:"build_command,omitempty"`        // 构建命令
-	ArtifactPath   *string                `protobuf:"bytes,6,opt,name=artifact_path,json=artifactPath,proto3,oneof" json:"artifact_path,omitempty"`        // 产物路径
-	TimeoutSeconds *uint32                `protobuf:"varint,7,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"` // 构建超时
-	BuildNo        *uint32                `protobuf:"varint,8,opt,name=build_no,json=buildNo,proto3,oneof" json:"build_no,omitempty"`                      // 最新构建号
-	Cron           *string                `protobuf:"bytes,12,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                           // 定时构建
-	LastCronAt     *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=last_cron_at,json=lastCronAt,proto3,oneof" json:"last_cron_at,omitempty"`           // 上次调度锚点
-	Description    *string                `protobuf:"bytes,9,opt,name=description,proto3,oneof" json:"description,omitempty"`                              // 描述
-	Labels         []string               `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`                                             // 标签
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                // 创建时间
-	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                // 更新时间
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 构建配置ID
+	Name              *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                      // 构建名
+	RepositoryId      *uint32                `protobuf:"varint,3,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`                 // 源仓库
+	Branch            *string                `protobuf:"bytes,4,opt,name=branch,proto3,oneof" json:"branch,omitempty"`                                                  // 构建分支
+	BuildCommand      *string                `protobuf:"bytes,5,opt,name=build_command,json=buildCommand,proto3,oneof" json:"build_command,omitempty"`                  // 构建命令
+	ArtifactPath      *string                `protobuf:"bytes,6,opt,name=artifact_path,json=artifactPath,proto3,oneof" json:"artifact_path,omitempty"`                  // 产物路径
+	TimeoutSeconds    *uint32                `protobuf:"varint,7,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"`           // 构建超时
+	BuildNo           *uint32                `protobuf:"varint,8,opt,name=build_no,json=buildNo,proto3,oneof" json:"build_no,omitempty"`                                // 最新构建号
+	Cron              *string                `protobuf:"bytes,12,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                                     // 定时构建
+	LastCronAt        *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=last_cron_at,json=lastCronAt,proto3,oneof" json:"last_cron_at,omitempty"`                     // 上次调度锚点
+	ArtifactRetention *uint32                `protobuf:"varint,14,opt,name=artifact_retention,json=artifactRetention,proto3,oneof" json:"artifact_retention,omitempty"` // 产物保留数量
+	Description       *string                `protobuf:"bytes,9,opt,name=description,proto3,oneof" json:"description,omitempty"`                                        // 描述
+	Labels            []string               `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`                                                       // 标签
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                          // 创建时间
+	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                          // 更新时间
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Build) Reset() {
@@ -146,6 +147,13 @@ func (x *Build) GetLastCronAt() *timestamppb.Timestamp {
 		return x.LastCronAt
 	}
 	return nil
+}
+
+func (x *Build) GetArtifactRetention() uint32 {
+	if x != nil && x.ArtifactRetention != nil {
+		return *x.ArtifactRetention
+	}
+	return 0
 }
 
 func (x *Build) GetDescription() string {
@@ -520,7 +528,8 @@ var File_ops_service_v1_build_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\n" +
-	"\x1aops/service/v1/build.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8b\t\n" +
+	"\x1aops/service/v1/build.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa5\n" +
+	"\n" +
 	"\x05Build\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17构建名(全局唯一)H\x01R\x04name\x88\x01\x01\x12>\n" +
@@ -532,15 +541,16 @@ const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\bbuild_no\x18\b \x01(\rB\x03\xe0A\x03H\aR\abuildNo\x88\x01\x01\x12`\n" +
 	"\x04cron\x18\f \x01(\tBG\xbaGD\x92\x02A定时构建 cron 表达式(5 段标准语法,空为手动触发)H\bR\x04cron\x88\x01\x01\x12F\n" +
 	"\flast_cron_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\n" +
-	"lastCronAt\x88\x01\x01\x123\n" +
-	"\vdescription\x18\t \x01(\tB\f\xbaG\t\x92\x02\x06描述H\n" +
-	"R\vdescription\x88\x01\x01\x12\x16\n" +
+	"lastCronAt\x88\x01\x01\x12\x80\x01\n" +
+	"\x12artifact_retention\x18\x0e \x01(\rBL\xbaGI\x92\x02F产物保留策略:仅保留最近 N 个成功构建的产物,0=不限H\n" +
+	"R\x11artifactRetention\x88\x01\x01\x123\n" +
+	"\vdescription\x18\t \x01(\tB\f\xbaG\t\x92\x02\x06描述H\vR\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06labels\x18\n" +
 	" \x03(\tR\x06labels\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\rR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x10\n" +
 	"\x0e_repository_idB\t\n" +
@@ -550,7 +560,8 @@ const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\x10_timeout_secondsB\v\n" +
 	"\t_build_noB\a\n" +
 	"\x05_cronB\x0f\n" +
-	"\r_last_cron_atB\x0e\n" +
+	"\r_last_cron_atB\x15\n" +
+	"\x13_artifact_retentionB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"V\n" +

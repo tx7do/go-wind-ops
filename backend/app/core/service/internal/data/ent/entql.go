@@ -231,23 +231,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Build",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			build.FieldCreatedAt:      {Type: field.TypeTime, Column: build.FieldCreatedAt},
-			build.FieldUpdatedAt:      {Type: field.TypeTime, Column: build.FieldUpdatedAt},
-			build.FieldDeletedAt:      {Type: field.TypeTime, Column: build.FieldDeletedAt},
-			build.FieldCreatedBy:      {Type: field.TypeUint32, Column: build.FieldCreatedBy},
-			build.FieldUpdatedBy:      {Type: field.TypeUint32, Column: build.FieldUpdatedBy},
-			build.FieldDeletedBy:      {Type: field.TypeUint32, Column: build.FieldDeletedBy},
-			build.FieldName:           {Type: field.TypeString, Column: build.FieldName},
-			build.FieldRepositoryID:   {Type: field.TypeUint32, Column: build.FieldRepositoryID},
-			build.FieldBranch:         {Type: field.TypeString, Column: build.FieldBranch},
-			build.FieldBuildCommand:   {Type: field.TypeString, Column: build.FieldBuildCommand},
-			build.FieldArtifactPath:   {Type: field.TypeString, Column: build.FieldArtifactPath},
-			build.FieldTimeoutSeconds: {Type: field.TypeUint32, Column: build.FieldTimeoutSeconds},
-			build.FieldBuildNo:        {Type: field.TypeUint32, Column: build.FieldBuildNo},
-			build.FieldCron:           {Type: field.TypeString, Column: build.FieldCron},
-			build.FieldLastCronAt:     {Type: field.TypeTime, Column: build.FieldLastCronAt},
-			build.FieldDescription:    {Type: field.TypeString, Column: build.FieldDescription},
-			build.FieldLabels:         {Type: field.TypeJSON, Column: build.FieldLabels},
+			build.FieldCreatedAt:         {Type: field.TypeTime, Column: build.FieldCreatedAt},
+			build.FieldUpdatedAt:         {Type: field.TypeTime, Column: build.FieldUpdatedAt},
+			build.FieldDeletedAt:         {Type: field.TypeTime, Column: build.FieldDeletedAt},
+			build.FieldCreatedBy:         {Type: field.TypeUint32, Column: build.FieldCreatedBy},
+			build.FieldUpdatedBy:         {Type: field.TypeUint32, Column: build.FieldUpdatedBy},
+			build.FieldDeletedBy:         {Type: field.TypeUint32, Column: build.FieldDeletedBy},
+			build.FieldName:              {Type: field.TypeString, Column: build.FieldName},
+			build.FieldRepositoryID:      {Type: field.TypeUint32, Column: build.FieldRepositoryID},
+			build.FieldBranch:            {Type: field.TypeString, Column: build.FieldBranch},
+			build.FieldBuildCommand:      {Type: field.TypeString, Column: build.FieldBuildCommand},
+			build.FieldArtifactPath:      {Type: field.TypeString, Column: build.FieldArtifactPath},
+			build.FieldTimeoutSeconds:    {Type: field.TypeUint32, Column: build.FieldTimeoutSeconds},
+			build.FieldArtifactRetention: {Type: field.TypeUint32, Column: build.FieldArtifactRetention},
+			build.FieldBuildNo:           {Type: field.TypeUint32, Column: build.FieldBuildNo},
+			build.FieldCron:              {Type: field.TypeString, Column: build.FieldCron},
+			build.FieldLastCronAt:        {Type: field.TypeTime, Column: build.FieldLastCronAt},
+			build.FieldDescription:       {Type: field.TypeString, Column: build.FieldDescription},
+			build.FieldLabels:            {Type: field.TypeJSON, Column: build.FieldLabels},
 		},
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
@@ -2372,6 +2373,11 @@ func (f *BuildFilter) WhereArtifactPath(p entql.StringP) {
 // WhereTimeoutSeconds applies the entql uint32 predicate on the timeout_seconds field.
 func (f *BuildFilter) WhereTimeoutSeconds(p entql.Uint32P) {
 	f.Where(p.Field(build.FieldTimeoutSeconds))
+}
+
+// WhereArtifactRetention applies the entql uint32 predicate on the artifact_retention field.
+func (f *BuildFilter) WhereArtifactRetention(p entql.Uint32P) {
+	f.Where(p.Field(build.FieldArtifactRetention))
 }
 
 // WhereBuildNo applies the entql uint32 predicate on the build_no field.

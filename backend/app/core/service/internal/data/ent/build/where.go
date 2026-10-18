@@ -114,6 +114,11 @@ func TimeoutSeconds(v uint32) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldTimeoutSeconds, v))
 }
 
+// ArtifactRetention applies equality check predicate on the "artifact_retention" field. It's identical to ArtifactRetentionEQ.
+func ArtifactRetention(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldArtifactRetention, v))
+}
+
 // BuildNo applies equality check predicate on the "build_no" field. It's identical to BuildNoEQ.
 func BuildNo(v uint32) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldBuildNo, v))
@@ -792,6 +797,56 @@ func TimeoutSecondsIsNil() predicate.Build {
 // TimeoutSecondsNotNil applies the NotNil predicate on the "timeout_seconds" field.
 func TimeoutSecondsNotNil() predicate.Build {
 	return predicate.Build(sql.FieldNotNull(FieldTimeoutSeconds))
+}
+
+// ArtifactRetentionEQ applies the EQ predicate on the "artifact_retention" field.
+func ArtifactRetentionEQ(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionNEQ applies the NEQ predicate on the "artifact_retention" field.
+func ArtifactRetentionNEQ(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldNEQ(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionIn applies the In predicate on the "artifact_retention" field.
+func ArtifactRetentionIn(vs ...uint32) predicate.Build {
+	return predicate.Build(sql.FieldIn(FieldArtifactRetention, vs...))
+}
+
+// ArtifactRetentionNotIn applies the NotIn predicate on the "artifact_retention" field.
+func ArtifactRetentionNotIn(vs ...uint32) predicate.Build {
+	return predicate.Build(sql.FieldNotIn(FieldArtifactRetention, vs...))
+}
+
+// ArtifactRetentionGT applies the GT predicate on the "artifact_retention" field.
+func ArtifactRetentionGT(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldGT(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionGTE applies the GTE predicate on the "artifact_retention" field.
+func ArtifactRetentionGTE(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldGTE(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionLT applies the LT predicate on the "artifact_retention" field.
+func ArtifactRetentionLT(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldLT(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionLTE applies the LTE predicate on the "artifact_retention" field.
+func ArtifactRetentionLTE(v uint32) predicate.Build {
+	return predicate.Build(sql.FieldLTE(FieldArtifactRetention, v))
+}
+
+// ArtifactRetentionIsNil applies the IsNil predicate on the "artifact_retention" field.
+func ArtifactRetentionIsNil() predicate.Build {
+	return predicate.Build(sql.FieldIsNull(FieldArtifactRetention))
+}
+
+// ArtifactRetentionNotNil applies the NotNil predicate on the "artifact_retention" field.
+func ArtifactRetentionNotNil() predicate.Build {
+	return predicate.Build(sql.FieldNotNull(FieldArtifactRetention))
 }
 
 // BuildNoEQ applies the EQ predicate on the "build_no" field.

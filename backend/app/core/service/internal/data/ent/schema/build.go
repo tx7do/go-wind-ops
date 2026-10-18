@@ -60,6 +60,12 @@ func (Build) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Uint32("artifact_retention").
+			Comment("产物保留策略:仅保留最近 N 个成功构建的产物,0=不限(定时清理)").
+			Default(0).
+			Optional().
+			Nillable(),
+
 		field.Uint32("build_no").
 			Comment("最新构建号(触发时自增)").
 			Default(0),

@@ -35,6 +35,8 @@ const (
 	FieldArtifactPath = "artifact_path"
 	// FieldTimeoutSeconds holds the string denoting the timeout_seconds field in the database.
 	FieldTimeoutSeconds = "timeout_seconds"
+	// FieldArtifactRetention holds the string denoting the artifact_retention field in the database.
+	FieldArtifactRetention = "artifact_retention"
 	// FieldBuildNo holds the string denoting the build_no field in the database.
 	FieldBuildNo = "build_no"
 	// FieldCron holds the string denoting the cron field in the database.
@@ -64,6 +66,7 @@ var Columns = []string{
 	FieldBuildCommand,
 	FieldArtifactPath,
 	FieldTimeoutSeconds,
+	FieldArtifactRetention,
 	FieldBuildNo,
 	FieldCron,
 	FieldLastCronAt,
@@ -92,6 +95,8 @@ var (
 	ArtifactPathValidator func(string) error
 	// DefaultTimeoutSeconds holds the default value on creation for the "timeout_seconds" field.
 	DefaultTimeoutSeconds uint32
+	// DefaultArtifactRetention holds the default value on creation for the "artifact_retention" field.
+	DefaultArtifactRetention uint32
 	// DefaultBuildNo holds the default value on creation for the "build_no" field.
 	DefaultBuildNo uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -164,6 +169,11 @@ func ByArtifactPath(opts ...sql.OrderTermOption) OrderOption {
 // ByTimeoutSeconds orders the results by the timeout_seconds field.
 func ByTimeoutSeconds(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimeoutSeconds, opts...).ToFunc()
+}
+
+// ByArtifactRetention orders the results by the artifact_retention field.
+func ByArtifactRetention(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldArtifactRetention, opts...).ToFunc()
 }
 
 // ByBuildNo orders the results by the build_no field.

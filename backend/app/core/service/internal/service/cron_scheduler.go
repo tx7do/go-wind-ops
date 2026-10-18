@@ -5,12 +5,14 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/minio/minio-go/v7"
 	"github.com/robfig/cron/v3"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/oss"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
 
@@ -34,10 +36,14 @@ type CronScheduler struct {
 	scriptService *ScriptService
 	agentService  *AgentService
 	notifChannelRepo *data.NotificationChannelRepo
-	log           *log.Helper
+	historyRepo      *data.BuildHistoryRepo
+	ossClient        *oss.MinIOClient
+
+	lastRetentionSweep time.Time
+	log                *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, notifChannelRepo *data.NotificationChannelRepo, buildService *BuildService, scriptService *ScriptService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, notifChannelRepo *data.NotificationChannelRepo, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
 		ctx:              ctx,
 		buildRepo:        buildRepo,
@@ -47,8 +53,10 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		projectRepo:      projectRepo,
 		nodeRepo:         nodeRepo,
 		notifChannelRepo: notifChannelRepo,
+		historyRepo:      historyRepo,
+		ossClient:        ossClient,
 		buildService:     buildService,
-		scriptService:     scriptService,
+		scriptService:    scriptService,
 		agentService:     agentService,
 		log:              ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
 	}
@@ -67,6 +75,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.tickBuilds(ctx)
 				s.tickScripts(ctx)
 				s.tickMonitors(ctx)
+				s.tickRetention(ctx)
 			}
 		}
 	}()
@@ -175,5 +184,60 @@ func cronHitMinute(schedule cron.Schedule, now time.Time) bool {
 func allPaging() *paginationV1.PagingRequest {
 	return &paginationV1.PagingRequest{
 		NoPaging: trans.Ptr(true),
+	}
+}
+
+// retentionSweepInterval 产物保留策略清扫周期(低频重活,每小时一次)。
+const retentionSweepInterval = time.Hour
+
+// tickRetention 产物保留策略清扫:对配置了 artifactRetention 的构建,
+// 删除保留数量之外的历史产物对象(MinIO)并清空记录指针。
+func (s *CronScheduler) tickRetention(ctx context.Context) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil || s.historyRepo == nil {
+		return
+	}
+	if time.Since(s.lastRetentionSweep) < retentionSweepInterval {
+		return
+	}
+	s.lastRetentionSweep = time.Now()
+
+	resp, err := s.buildRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: boolPtr(true)})
+	if err != nil {
+		s.log.Warnf("retention sweep list builds: %s", err.Error())
+		return
+	}
+
+	var removed int
+	for _, b := range resp.GetItems() {
+		keep := b.GetArtifactRetention()
+		if keep == 0 {
+			continue
+		}
+		excess, err := s.historyRepo.ListArtifactHoldersByBuild(ctx, b.GetId(), keep)
+		if err != nil {
+			s.log.Warnf("retention sweep list histories (build=%d): %s", b.GetId(), err.Error())
+			continue
+		}
+		for _, h := range excess {
+			if h.ArtifactObjectKey == nil || *h.ArtifactObjectKey == "" {
+				continue
+			}
+			bucket := ""
+			if h.ArtifactBucket != nil {
+				bucket = *h.ArtifactBucket
+			}
+			if err = s.ossClient.GetClient().RemoveObject(ctx, bucket, *h.ArtifactObjectKey, minio.RemoveObjectOptions{}); err != nil {
+				s.log.Warnf("retention sweep remove object (history=%d): %s", h.ID, err.Error())
+				continue
+			}
+			if err = s.historyRepo.ClearArtifact(ctx, h.ID); err != nil {
+				s.log.Warnf("retention sweep clear record (history=%d): %s", h.ID, err.Error())
+				continue
+			}
+			removed++
+		}
+	}
+	if removed > 0 {
+		s.log.Infof("retention sweep done: removed %d artifacts", removed)
 	}
 }

@@ -158,6 +158,20 @@ func (_c *BuildCreate) SetNillableTimeoutSeconds(v *uint32) *BuildCreate {
 	return _c
 }
 
+// SetArtifactRetention sets the "artifact_retention" field.
+func (_c *BuildCreate) SetArtifactRetention(v uint32) *BuildCreate {
+	_c.mutation.SetArtifactRetention(v)
+	return _c
+}
+
+// SetNillableArtifactRetention sets the "artifact_retention" field if the given value is not nil.
+func (_c *BuildCreate) SetNillableArtifactRetention(v *uint32) *BuildCreate {
+	if v != nil {
+		_c.SetArtifactRetention(*v)
+	}
+	return _c
+}
+
 // SetBuildNo sets the "build_no" field.
 func (_c *BuildCreate) SetBuildNo(v uint32) *BuildCreate {
 	_c.mutation.SetBuildNo(v)
@@ -264,6 +278,10 @@ func (_c *BuildCreate) defaults() {
 	if _, ok := _c.mutation.TimeoutSeconds(); !ok {
 		v := build.DefaultTimeoutSeconds
 		_c.mutation.SetTimeoutSeconds(v)
+	}
+	if _, ok := _c.mutation.ArtifactRetention(); !ok {
+		v := build.DefaultArtifactRetention
+		_c.mutation.SetArtifactRetention(v)
 	}
 	if _, ok := _c.mutation.BuildNo(); !ok {
 		v := build.DefaultBuildNo
@@ -393,6 +411,10 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.TimeoutSeconds(); ok {
 		_spec.SetField(build.FieldTimeoutSeconds, field.TypeUint32, value)
 		_node.TimeoutSeconds = &value
+	}
+	if value, ok := _c.mutation.ArtifactRetention(); ok {
+		_spec.SetField(build.FieldArtifactRetention, field.TypeUint32, value)
+		_node.ArtifactRetention = &value
 	}
 	if value, ok := _c.mutation.BuildNo(); ok {
 		_spec.SetField(build.FieldBuildNo, field.TypeUint32, value)
@@ -667,6 +689,30 @@ func (u *BuildUpsert) AddTimeoutSeconds(v uint32) *BuildUpsert {
 // ClearTimeoutSeconds clears the value of the "timeout_seconds" field.
 func (u *BuildUpsert) ClearTimeoutSeconds() *BuildUpsert {
 	u.SetNull(build.FieldTimeoutSeconds)
+	return u
+}
+
+// SetArtifactRetention sets the "artifact_retention" field.
+func (u *BuildUpsert) SetArtifactRetention(v uint32) *BuildUpsert {
+	u.Set(build.FieldArtifactRetention, v)
+	return u
+}
+
+// UpdateArtifactRetention sets the "artifact_retention" field to the value that was provided on create.
+func (u *BuildUpsert) UpdateArtifactRetention() *BuildUpsert {
+	u.SetExcluded(build.FieldArtifactRetention)
+	return u
+}
+
+// AddArtifactRetention adds v to the "artifact_retention" field.
+func (u *BuildUpsert) AddArtifactRetention(v uint32) *BuildUpsert {
+	u.Add(build.FieldArtifactRetention, v)
+	return u
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (u *BuildUpsert) ClearArtifactRetention() *BuildUpsert {
+	u.SetNull(build.FieldArtifactRetention)
 	return u
 }
 
@@ -1046,6 +1092,34 @@ func (u *BuildUpsertOne) UpdateTimeoutSeconds() *BuildUpsertOne {
 func (u *BuildUpsertOne) ClearTimeoutSeconds() *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.ClearTimeoutSeconds()
+	})
+}
+
+// SetArtifactRetention sets the "artifact_retention" field.
+func (u *BuildUpsertOne) SetArtifactRetention(v uint32) *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetArtifactRetention(v)
+	})
+}
+
+// AddArtifactRetention adds v to the "artifact_retention" field.
+func (u *BuildUpsertOne) AddArtifactRetention(v uint32) *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.AddArtifactRetention(v)
+	})
+}
+
+// UpdateArtifactRetention sets the "artifact_retention" field to the value that was provided on create.
+func (u *BuildUpsertOne) UpdateArtifactRetention() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateArtifactRetention()
+	})
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (u *BuildUpsertOne) ClearArtifactRetention() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearArtifactRetention()
 	})
 }
 
@@ -1606,6 +1680,34 @@ func (u *BuildUpsertBulk) UpdateTimeoutSeconds() *BuildUpsertBulk {
 func (u *BuildUpsertBulk) ClearTimeoutSeconds() *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.ClearTimeoutSeconds()
+	})
+}
+
+// SetArtifactRetention sets the "artifact_retention" field.
+func (u *BuildUpsertBulk) SetArtifactRetention(v uint32) *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetArtifactRetention(v)
+	})
+}
+
+// AddArtifactRetention adds v to the "artifact_retention" field.
+func (u *BuildUpsertBulk) AddArtifactRetention(v uint32) *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.AddArtifactRetention(v)
+	})
+}
+
+// UpdateArtifactRetention sets the "artifact_retention" field to the value that was provided on create.
+func (u *BuildUpsertBulk) UpdateArtifactRetention() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateArtifactRetention()
+	})
+}
+
+// ClearArtifactRetention clears the value of the "artifact_retention" field.
+func (u *BuildUpsertBulk) ClearArtifactRetention() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearArtifactRetention()
 	})
 }
 

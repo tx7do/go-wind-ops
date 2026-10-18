@@ -218,8 +218,12 @@ func init() {
 	buildDescTimeoutSeconds := buildFields[5].Descriptor()
 	// build.DefaultTimeoutSeconds holds the default value on creation for the timeout_seconds field.
 	build.DefaultTimeoutSeconds = buildDescTimeoutSeconds.Default.(uint32)
+	// buildDescArtifactRetention is the schema descriptor for artifact_retention field.
+	buildDescArtifactRetention := buildFields[6].Descriptor()
+	// build.DefaultArtifactRetention holds the default value on creation for the artifact_retention field.
+	build.DefaultArtifactRetention = buildDescArtifactRetention.Default.(uint32)
 	// buildDescBuildNo is the schema descriptor for build_no field.
-	buildDescBuildNo := buildFields[6].Descriptor()
+	buildDescBuildNo := buildFields[7].Descriptor()
 	// build.DefaultBuildNo holds the default value on creation for the build_no field.
 	build.DefaultBuildNo = buildDescBuildNo.Default.(uint32)
 	// buildDescID is the schema descriptor for id field.

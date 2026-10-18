@@ -137,7 +137,15 @@ const BuildDrawer: React.FC<BuildDrawerProps> = ({
             min={1}
             max={3600}
             fieldProps={{ precision: 0 }}
-            initialValue={600}
+            initialValue={data?.timeoutSeconds ?? 600}
+          />
+          <ProFormDigit
+            name="artifactRetention"
+            label={t('artifactRetention')}
+            min={0}
+            fieldProps={{ precision: 0 }}
+            initialValue={data?.artifactRetention ?? 0}
+            extra={t('artifactRetentionHint')}
           />
           <ProFormText
             name="cron"

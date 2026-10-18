@@ -106,6 +106,13 @@ message Build {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 上次调度锚点
 
+  optional uint32 artifact_retention = 14 [
+    json_name = "artifactRetention",
+    (gnostic.openapi.v3.property) = {
+      description: "产物保留策略:仅保留最近 N 个成功构建的产物,0=不限"
+    }
+  ]; // 产物保留数量
+
   optional string description = 9 [
     json_name = "description",
     (gnostic.openapi.v3.property) = {

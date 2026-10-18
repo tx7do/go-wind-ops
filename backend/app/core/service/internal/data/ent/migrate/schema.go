@@ -291,6 +291,7 @@ var (
 		{Name: "build_command", Type: field.TypeString, Comment: "构建命令(在仓库工作目录内以 shell 执行)"},
 		{Name: "artifact_path", Type: field.TypeString, Comment: "产物路径(相对仓库目录,支持 glob;多个匹配打包 zip)"},
 		{Name: "timeout_seconds", Type: field.TypeUint32, Nullable: true, Comment: "构建超时(秒,默认 600,上限 3600)", Default: 600},
+		{Name: "artifact_retention", Type: field.TypeUint32, Nullable: true, Comment: "产物保留策略:仅保留最近 N 个成功构建的产物,0=不限(定时清理)", Default: 0},
 		{Name: "build_no", Type: field.TypeUint32, Comment: "最新构建号(触发时自增)", Default: 0},
 		{Name: "cron", Type: field.TypeString, Nullable: true, Comment: "定时构建 cron 表达式(5 段标准语法,空为手动触发)"},
 		{Name: "last_cron_at", Type: field.TypeTime, Nullable: true, Comment: "上次定时调度锚点(调度器去重用)"},
