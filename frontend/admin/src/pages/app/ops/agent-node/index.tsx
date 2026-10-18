@@ -1,8 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Popconfirm, Progress, Tag, Tooltip, App } from 'antd';
-import { DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
+import { DeleteOutlined, GlobalOutlined, LineChartOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentNode as AgentNode } from '@/api/generated/admin/service/v1';
@@ -11,6 +11,7 @@ import { TABLE } from '@/config/constants';
 import { fetchListAgentNodes, useDeleteAgentNode, useSendAgentCommand } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+import MetricsTrendDrawer from './components/MetricsTrendDrawer';
 
 /**
  * Agent 节点管理页面
@@ -44,6 +45,8 @@ const AgentNodeManagement = () => {
       message.error(error.message || t('pingFailed'));
     },
   });
+
+  const [trendNode, setTrendNode] = useState<AgentNode | undefined>();
 
   const renderPercent = (value: number | undefined) => {
     const percent = Math.round(value ?? 0);
@@ -149,6 +152,11 @@ const AgentNodeManagement = () => {
       width: 110,
       fixed: 'right',
       render: (_, record) => [
+        <Tooltip key="trend" title={t('trendTooltip')}>
+          <a onClick={() => setTrendNode(record)}>
+            <LineChartOutlined />
+          </a>
+        </Tooltip>,
         <Tooltip key="ping" title={t('pingTooltip')}>
           <a
             onClick={() =>
@@ -176,7 +184,8 @@ const AgentNodeManagement = () => {
   ];
 
   return (
-    <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
+    <>
+      <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
       <div ref={containerRef} className="page-container-content">
         <ListTable<AgentNode>
           actionRef={actionRef}
@@ -235,6 +244,9 @@ const AgentNodeManagement = () => {
         />
       </div>
     </ContentContainer>
+
+      <MetricsTrendDrawer data={trendNode} onClose={() => setTrendNode(undefined)} />
+    </>
   );
 };
 
