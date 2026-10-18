@@ -137,7 +137,7 @@ func (s *AlertService) ResolveAlert(ctx context.Context, req *opsV1.ResolveAlert
 // CheckMonitor 对单个监控规则执行一次状态检查:
 // 同步指令探测项目状态 → 异常则去重落告警 → 可选自动重启 → 可选 webhook 外呼。
 // 由 CronScheduler 在规则 cron 命中时调用。
-func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, monitor *ent.Monitor) {
 	projectID := monitor.ProjectID
 
 	project, err := projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID})
@@ -171,9 +171,10 @@ func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRep
 		Status string `json:"status"`
 	}
 	_ = json.Unmarshal(res.Data, &status)
-	if status.Status != "RUNNING" {
-		return // 正常运行
+	if status.Status == "RUNNING" {
+		return // 项目正常运行,无需告警;同时恢复已有的未恢复告警
 	}
+	_, _ = alertRepo.ResolveAllByMonitor(ctx, monitor.ID)
 
 	// ── 异常:状态不是 RUNNING ──
 	already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
@@ -192,6 +193,7 @@ func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRep
 			})
 			_ = alertRepo.MarkNotified(ctx, a.ID)
 		}
+		SendAlertToWebhooks(ctx, notifChannelRepo, "告警: "+monitor.Name, msg)
 		log.Warnf("ALERT: %s", msg)
 	}
 

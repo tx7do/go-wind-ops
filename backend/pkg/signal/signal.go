@@ -281,3 +281,11 @@ type FileTransferComplete struct {
 	SizeBytes int64  `json:"size_bytes,omitempty"`
 	SHA256    string `json:"sha256,omitempty"`
 }
+
+// 文件管理操作
+const (
+	CommandActionFileList   CommandAction = "file_list"
+	CommandActionFileRead   CommandAction = "file_read"
+	CommandActionFileWrite  CommandAction = "file_write"
+	CommandActionFileDelete CommandAction = "file_delete"
+)

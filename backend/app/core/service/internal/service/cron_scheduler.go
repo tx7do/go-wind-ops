@@ -33,22 +33,24 @@ type CronScheduler struct {
 	buildService  *BuildService
 	scriptService *ScriptService
 	agentService  *AgentService
+	notifChannelRepo *data.NotificationChannelRepo
 	log           *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, buildService *BuildService, scriptService *ScriptService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, notifChannelRepo *data.NotificationChannelRepo, buildService *BuildService, scriptService *ScriptService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
-		ctx:           ctx,
-		buildRepo:     buildRepo,
-		scriptRepo:    scriptRepo,
-		monitorRepo:   monitorRepo,
-		alertRepo:     alertRepo,
-		projectRepo:   projectRepo,
-		nodeRepo:      nodeRepo,
-		buildService:  buildService,
-		scriptService: scriptService,
-		agentService:  agentService,
-		log:           ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
+		ctx:              ctx,
+		buildRepo:        buildRepo,
+		scriptRepo:       scriptRepo,
+		monitorRepo:      monitorRepo,
+		alertRepo:        alertRepo,
+		projectRepo:      projectRepo,
+		nodeRepo:         nodeRepo,
+		notifChannelRepo: notifChannelRepo,
+		buildService:     buildService,
+		scriptService:     scriptService,
+		agentService:     agentService,
+		log:              ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
 	}
 }
 
@@ -160,7 +162,7 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 		if !cronHitMinute(schedule, now) {
 			continue
 		}
-		CheckMonitor(ctx, s.log, s.alertRepo, s.projectRepo, s.nodeRepo, s.agentService, m)
+		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.projectRepo, s.nodeRepo, s.agentService, m)
 	}
 }
 

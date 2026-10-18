@@ -83,6 +83,7 @@ func NewService(ctx *bootstrap.Context) *Service {
 
 	s.RegisterHandler(signal.CommandActionPing, s.handlePing)
 	s.registerProjectHandlers()
+	s.registerFileHandlers()
 	s.RegisterHandler(signal.CommandActionScriptExec, s.handleScriptExec)
 	s.RegisterHandler(signal.CommandActionDistApply, s.handleDistApply)
 
