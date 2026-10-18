@@ -1,0 +1,204 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// ProjectService 运行在受管机器上的应用项目管理。
+// 生命周期操作(start/stop/restart/status)经 MQTT 指令下发到节点上的
+// agent 执行,返回 request_id;执行台账见 CommandRecordService。
+service ProjectService {
+  // 查询项目列表
+  rpc ListProjects (pagination.PagingRequest) returns (ListProjectResponse) {}
+
+  // 查询项目详情
+  rpc GetProject (GetProjectRequest) returns (Project) {}
+
+  // 创建项目
+  rpc CreateProject (CreateProjectRequest) returns (Project) {}
+
+  // 更新项目
+  rpc UpdateProject (UpdateProjectRequest) returns (google.protobuf.Empty) {}
+
+  // 删除项目
+  rpc DeleteProject (DeleteProjectRequest) returns (google.protobuf.Empty) {}
+
+  // 项目生命周期操作:下发指令到节点 agent,返回幂等 request_id;
+  // 执行结果按 request_id 回写指令台账。
+  rpc OperateProject (OperateProjectRequest) returns (OperateProjectResponse) {}
+}
+
+// 项目运行状态(由 agent 状态操作回填)
+enum ProjectStatus {
+  PROJECT_STATUS_UNSPECIFIED = 0; // 未知
+
+  RUNNING = 1; // 运行中
+  STOPPED = 2; // 已停止
+}
+
+// 项目生命周期操作
+enum ProjectOperation {
+  PROJECT_OPERATION_UNSPECIFIED = 0; // 未知
+
+  START = 1;    // 启动
+  STOP = 2;     // 停止
+  RESTART = 3;  // 重启(停止后启动)
+  STATUS = 4;   // 查询运行状态
+}
+
+// 受管机器上的应用项目
+message Project {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 项目ID
+
+  optional uint32 node_id = 2 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "所属节点ID"
+    }
+  ]; // 所属节点
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "项目名(节点内唯一)"
+    }
+  ]; // 项目名
+
+  optional string description = 4 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "项目描述"
+    }
+  ]; // 项目描述
+
+  optional string project_dir = 5 [
+    json_name = "projectDir",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "项目目录(受管机器绝对路径,须在 agent 授权目录内)"
+    }
+  ]; // 项目目录
+
+  optional string start_command = 6 [
+    json_name = "startCommand",
+    (gnostic.openapi.v3.property) = {
+      description: "启动命令(在项目目录内以 shell 执行)"
+    }
+  ]; // 启动命令
+
+  optional string stop_command = 7 [
+    json_name = "stopCommand",
+    (gnostic.openapi.v3.property) = {
+      description: "停止命令(优先于 pid 终止执行)"
+    }
+  ]; // 停止命令
+
+  optional string status_command = 8 [
+    json_name = "statusCommand",
+    (gnostic.openapi.v3.property) = {
+      description: "状态命令(缺省按 pid 存活判断)"
+    }
+  ]; // 状态命令
+
+  repeated string labels = 9 [json_name = "labels"]; // 标签
+
+  optional uint64 last_pid = 10 [
+    json_name = "lastPid",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 最近一次启动的进程 pid
+
+  optional ProjectStatus last_status = 11 [
+    json_name = "lastStatus",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 最近上报的运行状态
+
+  optional google.protobuf.Timestamp last_status_at = 12 [
+    json_name = "lastStatusAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 状态最近更新时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListProjectResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Project items = 2 [json_name = "items"]; // 项目列表
+}
+
+message GetProjectRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+}
+
+message CreateProjectRequest {
+  Project data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目数据
+}
+
+message UpdateProjectRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+
+  Project data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteProjectRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+}
+
+message OperateProjectRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+
+  ProjectOperation operation = 2 [
+    json_name = "operation",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 生命周期操作
+}
+
+message OperateProjectResponse {
+  string request_id = 1 [json_name = "requestId"]; // 幂等键,结果见指令台账
+}

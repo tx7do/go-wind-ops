@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// CommandRecordService agent 指令台账:所有经 MQTT 下发的指令的审计与
+// 结果回执记录。按 request_id 幂等,终态由 agent 回执或超时扫描定案。
+service CommandRecordService {
+  // 查询指令台账
+  rpc ListCommandRecords (pagination.PagingRequest) returns (ListCommandRecordResponse) {}
+
+  // 查询指令详情
+  rpc GetCommandRecord (GetCommandRecordRequest) returns (CommandRecord) {}
+}
+
+// 指令执行状态
+enum CommandStatus {
+  COMMAND_STATUS_UNSPECIFIED = 0; // 未知
+
+  PENDING = 1; // 已下发待回执
+  SUCCESS = 2; // 执行成功
+  FAILED = 3;  // 执行失败(含超时未回执定案)
+}
+
+// 指令台账记录
+message CommandRecord {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional string request_id = 2 [
+    json_name = "requestId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 幂等键(UUID)
+
+  optional uint32 node_id = 3 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 目标节点ID
+
+  optional string agent_id = 4 [
+    json_name = "agentId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 目标机器唯一标识
+
+  optional string action = 5 [
+    json_name = "action",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 指令动作
+
+  optional string payload = 6 [
+    json_name = "payload",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 指令载荷(JSON)
+
+  optional CommandStatus status = 7 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行状态
+
+  optional string result = 8 [
+    json_name = "result",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行结果数据(JSON)
+
+  optional string error = 9 [
+    json_name = "error",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 失败原因
+
+  optional uint32 operator_id = 10 [
+    json_name = "operatorId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发指令的用户
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 下发时间
+
+  optional google.protobuf.Timestamp finished_at = 31 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 回执时间
+}
+
+message ListCommandRecordResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated CommandRecord items = 2 [json_name = "items"]; // 记录列表
+}
+
+message GetCommandRecordRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 记录ID
+}

@@ -62,6 +62,8 @@ func NewGrpcServer(
 	dataAccessAuditLogService *service.DataAccessAuditLogService,
 
 	agentNodeService *service.AgentNodeService,
+	projectService *service.ProjectService,
+	commandRecordService *service.CommandRecordService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -106,6 +108,8 @@ func NewGrpcServer(
 	auditV1.RegisterPermissionAuditLogServiceServer(srv, permissionAuditLogService)
 
 	opsV1.RegisterAgentNodeServiceServer(srv, agentNodeService)
+	opsV1.RegisterProjectServiceServer(srv, projectService)
+	opsV1.RegisterCommandRecordServiceServer(srv, commandRecordService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

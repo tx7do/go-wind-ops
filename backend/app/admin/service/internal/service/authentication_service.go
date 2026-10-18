@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -28,9 +29,9 @@ const (
 	headerCaptchaValue = "X-Captcha-Value"
 )
 
-// CaptchaEnabled 控制登录是否强制校验验证码。
-// 开发/无 Redis 等环境可改为 false 跳过验证码校验，避免登录被 400 invalid or missing captcha 阻断。
-const CaptchaEnabled = true
+// CaptchaEnabled 控制登录是否强制校验验证码。默认开启;
+// 开发/无 Redis 环境可设环境变量 ADMIN_CAPTCHA_DISABLED=true 跳过校验。
+var CaptchaEnabled = os.Getenv("ADMIN_CAPTCHA_DISABLED") != "true"
 
 // refresh token cookie 相关常量（对齐 go-wind-admin 上游方案）。
 // refresh token 以 HttpOnly Cookie 传输，Path 收窄到刷新端点，SameSite=Lax 阻断跨站 POST。

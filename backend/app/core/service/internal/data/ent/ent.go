@@ -9,6 +9,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
@@ -31,6 +32,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
+	"go-wind-ops/app/core/service/internal/data/ent/project"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
@@ -110,6 +112,7 @@ func checkColumn(t, c string) error {
 			agentnode.Table:           agentnode.ValidColumn,
 			api.Table:                 api.ValidColumn,
 			apiauditlog.Table:         apiauditlog.ValidColumn,
+			commandrecord.Table:       commandrecord.ValidColumn,
 			dataaccessauditlog.Table:  dataaccessauditlog.ValidColumn,
 			dictentry.Table:           dictentry.ValidColumn,
 			dictentryi18n.Table:       dictentryi18n.ValidColumn,
@@ -132,6 +135,7 @@ func checkColumn(t, c string) error {
 			permissionpolicy.Table:    permissionpolicy.ValidColumn,
 			policyevaluationlog.Table: policyevaluationlog.ValidColumn,
 			position.Table:            position.ValidColumn,
+			project.Table:             project.ValidColumn,
 			role.Table:                role.ValidColumn,
 			rolemetadata.Table:        rolemetadata.ValidColumn,
 			rolepermission.Table:      rolepermission.ValidColumn,

@@ -76,12 +76,14 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 	}
 
 	agentId := req.GetAgentId()
+	nodeID := uint32(0)
 	if req.GetId() != 0 {
 		node, err := s.repo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: req.Id})
 		if err != nil {
 			return nil, err
 		}
 		agentId = node.GetAgentId()
+		nodeID = node.GetId()
 	}
 
 	var payload json.RawMessage
@@ -92,7 +94,7 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 		payload = json.RawMessage(raw)
 	}
 
-	requestId, err := s.agentService.PublishCommand(ctx, agentId, signal.CommandAction(req.GetAction()), payload, s.operatorID(ctx))
+	requestId, err := s.agentService.PublishCommand(ctx, nodeID, agentId, signal.CommandAction(req.GetAction()), payload, s.operatorID(ctx))
 	if err != nil {
 		s.log.Errorf("dispatch command failed (agent=%s action=%s): %s", agentId, req.GetAction(), err.Error())
 		return nil, opsV1.ErrorServiceUnavailable("dispatch command failed: mqtt channel unavailable")

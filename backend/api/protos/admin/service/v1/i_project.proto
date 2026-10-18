@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/project.proto";
+
+// ProjectService 受管机器应用项目管理
+service ProjectService {
+  // 查询项目列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListProjectResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/projects"
+    };
+  }
+
+  // 查询项目详情
+  rpc Get (ops.service.v1.GetProjectRequest) returns (ops.service.v1.Project) {
+    option (google.api.http) = {
+      get: "/admin/v1/projects/{id}"
+    };
+  }
+
+  // 创建项目
+  rpc Create (ops.service.v1.CreateProjectRequest) returns (ops.service.v1.Project) {
+    option (google.api.http) = {
+      post: "/admin/v1/projects"
+      body: "*"
+    };
+  }
+
+  // 更新项目
+  rpc Update (ops.service.v1.UpdateProjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/projects/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除项目
+  rpc Delete (ops.service.v1.DeleteProjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/projects/{id}"
+    };
+  }
+
+  // 项目生命周期操作(启动/停止/重启/状态),下发指令到节点 agent
+  rpc Operate (ops.service.v1.OperateProjectRequest) returns (ops.service.v1.OperateProjectResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/projects/{id}/operations:send"
+      body: "*"
+    };
+  }
+}

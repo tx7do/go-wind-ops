@@ -8,6 +8,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
@@ -30,6 +31,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
+	"go-wind-ops/app/core/service/internal/data/ent/project"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
@@ -117,6 +119,35 @@ func init() {
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint32) error)
+	commandrecordMixin := schema.CommandRecord{}.Mixin()
+	commandrecordMixinFields0 := commandrecordMixin[0].Fields()
+	_ = commandrecordMixinFields0
+	commandrecordFields := schema.CommandRecord{}.Fields()
+	_ = commandrecordFields
+	// commandrecordDescRequestID is the schema descriptor for request_id field.
+	commandrecordDescRequestID := commandrecordFields[0].Descriptor()
+	// commandrecord.RequestIDValidator is a validator for the "request_id" field. It is called by the builders before save.
+	commandrecord.RequestIDValidator = commandrecordDescRequestID.Validators[0].(func(string) error)
+	// commandrecordDescNodeID is the schema descriptor for node_id field.
+	commandrecordDescNodeID := commandrecordFields[1].Descriptor()
+	// commandrecord.DefaultNodeID holds the default value on creation for the node_id field.
+	commandrecord.DefaultNodeID = commandrecordDescNodeID.Default.(uint32)
+	// commandrecordDescAgentID is the schema descriptor for agent_id field.
+	commandrecordDescAgentID := commandrecordFields[2].Descriptor()
+	// commandrecord.AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
+	commandrecord.AgentIDValidator = commandrecordDescAgentID.Validators[0].(func(string) error)
+	// commandrecordDescAction is the schema descriptor for action field.
+	commandrecordDescAction := commandrecordFields[3].Descriptor()
+	// commandrecord.ActionValidator is a validator for the "action" field. It is called by the builders before save.
+	commandrecord.ActionValidator = commandrecordDescAction.Validators[0].(func(string) error)
+	// commandrecordDescOperatorID is the schema descriptor for operator_id field.
+	commandrecordDescOperatorID := commandrecordFields[8].Descriptor()
+	// commandrecord.DefaultOperatorID holds the default value on creation for the operator_id field.
+	commandrecord.DefaultOperatorID = commandrecordDescOperatorID.Default.(uint32)
+	// commandrecordDescID is the schema descriptor for id field.
+	commandrecordDescID := commandrecordMixinFields0[0].Descriptor()
+	// commandrecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	commandrecord.IDValidator = commandrecordDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -822,6 +853,31 @@ func init() {
 	positionDescID := positionMixinFields0[0].Descriptor()
 	// position.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	position.IDValidator = positionDescID.Validators[0].(func(uint32) error)
+	projectMixin := schema.Project{}.Mixin()
+	projectMixinFields0 := projectMixin[0].Fields()
+	_ = projectMixinFields0
+	projectFields := schema.Project{}.Fields()
+	_ = projectFields
+	// projectDescNodeID is the schema descriptor for node_id field.
+	projectDescNodeID := projectFields[0].Descriptor()
+	// project.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	project.NodeIDValidator = projectDescNodeID.Validators[0].(func(uint32) error)
+	// projectDescName is the schema descriptor for name field.
+	projectDescName := projectFields[1].Descriptor()
+	// project.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	project.NameValidator = projectDescName.Validators[0].(func(string) error)
+	// projectDescProjectDir is the schema descriptor for project_dir field.
+	projectDescProjectDir := projectFields[3].Descriptor()
+	// project.ProjectDirValidator is a validator for the "project_dir" field. It is called by the builders before save.
+	project.ProjectDirValidator = projectDescProjectDir.Validators[0].(func(string) error)
+	// projectDescLastPid is the schema descriptor for last_pid field.
+	projectDescLastPid := projectFields[8].Descriptor()
+	// project.DefaultLastPid holds the default value on creation for the last_pid field.
+	project.DefaultLastPid = projectDescLastPid.Default.(uint64)
+	// projectDescID is the schema descriptor for id field.
+	projectDescID := projectMixinFields0[0].Descriptor()
+	// project.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	project.IDValidator = projectDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

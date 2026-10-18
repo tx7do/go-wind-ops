@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/command_record.proto";
+
+// CommandRecordService agent 指令台账查询
+service CommandRecordService {
+  // 查询指令台账
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListCommandRecordResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/command-records"
+    };
+  }
+
+  // 查询指令详情
+  rpc Get (ops.service.v1.GetCommandRecordRequest) returns (ops.service.v1.CommandRecord) {
+    option (google.api.http) = {
+      get: "/admin/v1/command-records/{id}"
+    };
+  }
+}

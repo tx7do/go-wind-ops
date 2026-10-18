@@ -110,6 +110,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Agent 节点
 	agentNodeServiceClient := data.NewAgentNodeServiceClient(ctx, discovery)
 
+	// 项目 / 指令台账
+	projectServiceClient := data.NewProjectServiceClient(ctx, discovery)
+	commandRecordServiceClient := data.NewCommandRecordServiceClient(ctx, discovery)
+
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -139,6 +143,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Agent 节点
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeServiceClient)
 
+	// 项目 / 指令台账
+	projectService := service.NewProjectService(ctx, projectServiceClient)
+	commandRecordService := service.NewCommandRecordService(ctx, commandRecordServiceClient)
+
 	// 字典与多语言
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
 	dictEntryService := service.NewDictEntryService(ctx, dictEntryServiceClient)
@@ -163,6 +171,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		menuService, apiService, permissionGroupService, permissionService,
 		adminPortalService, taskService,
 		agentNodeService,
+		projectService, commandRecordService,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,

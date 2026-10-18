@@ -79,6 +79,12 @@ type CommandAction string
 
 const (
 	CommandActionPing CommandAction = "ping" // 连通性/时延探测,闭环验证用
+
+	// 项目生命周期操作:载荷为 ProjectOperationPayload,结果为 ProjectOperationResult。
+	CommandActionProjectStart   CommandAction = "project_start"
+	CommandActionProjectStop    CommandAction = "project_stop"
+	CommandActionProjectRestart CommandAction = "project_restart"
+	CommandActionProjectStatus  CommandAction = "project_status"
 )
 
 // CommandEnvelope core 下发给 agent 的统一指令信封。
@@ -112,6 +118,33 @@ type PingResult struct {
 	SentAt     time.Time `json:"sent_at"`
 	ReceivedAt time.Time `json:"received_at"`
 	AgentTime  time.Time `json:"agent_time"`
+}
+
+// ============================================================================
+// 项目生命周期操作
+// ============================================================================
+
+// ProjectOperationPayload 项目操作的载荷:core 从项目记录组装,agent 在
+// Dir 内执行对应命令。Dir 必须落在 agent 授权目录内,agent 执行前二次校验。
+type ProjectOperationPayload struct {
+	ProjectId     uint32 `json:"project_id"`
+	Name          string `json:"name"`
+	Dir           string `json:"dir"`
+	StartCommand  string `json:"start_command,omitempty"`
+	StopCommand   string `json:"stop_command,omitempty"`
+	StatusCommand string `json:"status_command,omitempty"`
+}
+
+// ProjectOperationResult 项目操作的回执数据。Status 为 agent 判定的
+// RUNNING/STOPPED,core 直接回填项目表;Output 截断到 64KB。
+type ProjectOperationResult struct {
+	ProjectId uint32 `json:"project_id"`
+	Operation string `json:"operation"`
+	Pid       uint64 `json:"pid,omitempty"`
+	Alive     bool   `json:"alive,omitempty"`
+	ExitCode  int    `json:"exit_code,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Output    string `json:"output,omitempty"`
 }
 
 // ============================================================================

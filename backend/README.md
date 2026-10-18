@@ -28,7 +28,18 @@ GET    /admin/v1/agent-nodes/{id}         # 节点详情
 PUT    /admin/v1/agent-nodes/{id}         # 改名/打标签
 DELETE /admin/v1/agent-nodes/{id}         # 删除(在线 agent 重连后按 TOFU 重注册)
 POST   /admin/v1/agent-nodes/{id}/commands:send   # 下发指令(ping),返回 request_id
+
+GET    /admin/v1/projects                 # 项目列表
+POST   /admin/v1/projects                 # 创建项目(节点/目录/启动停止命令)
+PUT    /admin/v1/projects/{id}            # 更新项目
+DELETE /admin/v1/projects/{id}            # 删除项目
+POST   /admin/v1/projects/{id}/operations:send    # 生命周期操作(START/STOP/RESTART/STATUS)
+
+GET    /admin/v1/command-records          # 指令台账(审计+执行结果)
+GET    /admin/v1/command-records/{id}     # 指令详情
 ```
+
+agent 需配置授权目录（环境变量 `AGENT_ALLOWED_DIRS`，平台路径列表分隔符分隔），项目目录必须在授权目录内，否则 agent 拒绝执行。
 
 详见 [backend/AGENTS.md](backend/AGENTS.md)。
 
@@ -36,10 +47,11 @@ POST   /admin/v1/agent-nodes/{id}/commands:send   # 下发指令(ping),返回 re
 
 - [x] 基座落地：服务四分（core/front/admin/agent）、CMS 业务域精简、MQTT 信令与 MinIO 传输基础设施
 - [x] 节点管理：proto 化 REST 接口（列表/详情/改名打标签/删除/下发指令 ping）、准入重试机制、指令结果对账
-- [ ] 业务模块：项目/脚本管理、构建与分发（参考 jpom：Repository→Build→BuildHistory、OutGiving、Monitor）
+- [x] 项目管理 + 指令台账：项目 CRUD 与生命周期操作（启动/停止/重启/状态，agent 侧授权目录校验 + pid 文件管理），指令审计落库与超时定案
+- [ ] 业务模块：脚本管理、构建与分发（参考 jpom：Repository→Build→BuildHistory、OutGiving、Monitor）
 - [ ] 准入加固：EMQX webhook 认证/ACL、STS 短令牌轮换
-- [ ] 管理前端：节点列表/指令操作页面
-- [ ] 指令审计落库与结果查询接口
+- [ ] 管理前端：节点/项目/台账操作页面
+- [ ] 运行日志采集：项目进程输出落盘与 tail 查看（对齐 jpom 控制台日志）
 
 ## License
 

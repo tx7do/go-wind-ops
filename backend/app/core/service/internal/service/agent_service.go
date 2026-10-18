@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"sync"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -28,36 +28,31 @@ const (
 	offlineAfter = 90 * time.Second
 	// offlineSweepInterval 离线扫描周期。
 	offlineSweepInterval = 30 * time.Second
+	// commandTimeout 指令回执超时:超时未回执的 PENDING 台账由扫描定案 FAILED。
+	commandTimeout = 10 * time.Minute
 )
 
-// pendingCommand 已下发未回执的指令(本轮内存态;业务轮落库审计)。
-type pendingCommand struct {
-	Action    signal.CommandAction
-	Operator  uint32
-	IssuedAt  time.Time
-}
-
 // AgentService core 侧 agent 信令处理服务:准入认证、心跳落库、指令下发
-// 与结果回执。经 MQTT 与 agent 通讯,只依赖 AgentNodeRepo 与 MinIO 客户端。
+// 与结果回执。指令台账落库(ops_command_records),按 request_id 幂等。
 type AgentService struct {
-	ctx       *bootstrap.Context
-	repo      *data.AgentNodeRepo
-	ossClient *oss.MinIOClient
-	log       *log.Helper
+	ctx        *bootstrap.Context
+	repo       *data.AgentNodeRepo
+	recordRepo *data.CommandRecordRepo
+	projectRepo *data.ProjectRepo
+	ossClient  *oss.MinIOClient
+	log        *log.Helper
 
 	mqttBroker atomic.Value // broker.Broker
-
-	mu       sync.Mutex
-	pending  map[string]*pendingCommand // request_id -> pending
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
-		ctx:       ctx,
-		repo:      repo,
-		ossClient: ossClient,
-		log:       ctx.NewLoggerHelper("agent/service/core-service"),
-		pending:   make(map[string]*pendingCommand),
+		ctx:         ctx,
+		repo:        repo,
+		recordRepo:  recordRepo,
+		projectRepo: projectRepo,
+		ossClient:   ossClient,
+		log:         ctx.NewLoggerHelper("agent/service/core-service"),
 	}
 }
 
@@ -66,7 +61,8 @@ func (s *AgentService) RegisterMqttBroker(b broker.Broker) {
 	s.mqttBroker.Store(b)
 }
 
-// Start 启动离线扫描循环(mqtt_server 装配时调用;多副本并发执行幂等)。
+// Start 启动后台扫描循环:节点离线判定 + 指令回执超时定案。
+// (mqtt_server 装配时调用;多副本并发执行幂等。)
 func (s *AgentService) Start(ctx context.Context) {
 	go func() {
 		ticker := time.NewTicker(offlineSweepInterval)
@@ -76,13 +72,16 @@ func (s *AgentService) Start(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				n, err := s.repo.MarkStaleOffline(ctx, time.Now().Add(-offlineAfter))
-				if err != nil {
+				if n, err := s.repo.MarkStaleOffline(ctx, time.Now().Add(-offlineAfter)); err != nil {
 					s.log.Warnf("offline sweep: %s", err.Error())
 				} else if n > 0 {
 					s.log.Infof("offline sweep: marked %d agent(s) offline", n)
 				}
-				s.prunePending()
+				if n, err := s.recordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
+					s.log.Warnf("command timeout sweep: %s", err.Error())
+				} else if n > 0 {
+					s.log.Infof("command timeout sweep: finalized %d stale command(s)", n)
+				}
 			}
 		}
 	}()
@@ -154,23 +153,20 @@ func (s *AgentService) HandleHeartbeat(ctx context.Context, topicStr string, _ b
 	return nil
 }
 
-// HandleCommandResult 处理指令执行回执,与 pending 对账(本轮记日志)。
+// HandleCommandResult 处理指令执行回执:按 request_id 回写指令台账终态;
+// 项目类指令同时把 agent 判定的运行状态回填项目表。
 func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string, _ broker.Headers, res *signal.CommandResult) error {
 	if res == nil || res.RequestId == "" {
 		return nil
 	}
 
-	s.mu.Lock()
-	pending, ok := s.pending[res.RequestId]
-	if ok {
-		delete(s.pending, res.RequestId)
+	if err := s.recordRepo.FinalizeByRequestID(ctx, res.RequestId,
+		toRecordStatus(res.Success), strings.TrimSpace(res.Error), string(res.Data)); err != nil {
+		s.log.Warnf("finalize command record [%s]: %s", res.RequestId, err.Error())
 	}
-	s.mu.Unlock()
 
-	if !ok {
-		s.log.Warnf("command result without pending record (request_id=%s agent=%s action=%s)",
-			res.RequestId, res.AgentId, res.Action)
-		return nil
+	if res.Success && strings.HasPrefix(string(res.Action), "project_") {
+		s.applyProjectOperationResult(ctx, res)
 	}
 
 	if res.Success {
@@ -180,16 +176,40 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 		s.log.Errorf("command result FAILED (request_id=%s agent=%s action=%s error=%s)",
 			res.RequestId, res.AgentId, res.Action, res.Error)
 	}
-	_ = pending
 	return nil
 }
 
+// applyProjectOperationResult 把项目操作回执回填到项目表(last_pid/last_status)。
+// 失败仅记日志,不影响台账回写。
+func (s *AgentService) applyProjectOperationResult(ctx context.Context, res *signal.CommandResult) {
+	var out signal.ProjectOperationResult
+	if len(res.Data) == 0 || json.Unmarshal(res.Data, &out) != nil {
+		return
+	}
+	if out.ProjectId == 0 {
+		return
+	}
+	status := ""
+	switch strings.ToUpper(out.Status) {
+	case "RUNNING":
+		status = "RUNNING"
+	case "STOPPED":
+		status = "STOPPED"
+	default:
+		return
+	}
+	if err := s.projectRepo.UpdateRuntime(ctx, out.ProjectId, out.Pid, status); err != nil {
+		s.log.Warnf("apply project runtime (project=%d): %s", out.ProjectId, err.Error())
+	}
+}
+
 // ============================================================================
-// 指令下发(供 admin/front BFF 经 gRPC 调用;业务轮 proto 化后暴露 REST)
+// 指令下发(供 ProjectService/AgentNodeService 等 gRPC 服务调用)
 // ============================================================================
 
-// PublishCommand 向指定 agent 下发指令,返回幂等 request_id。
-func (s *AgentService) PublishCommand(ctx context.Context, agentId string, action signal.CommandAction, payload any, operatorId uint32) (string, error) {
+// PublishCommand 向指定 agent 下发指令:创建 PENDING 台账行 → MQTT 发布;
+// 发布失败即时定案 FAILED 并返回错误。返回幂等 request_id。
+func (s *AgentService) PublishCommand(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32) (string, error) {
 	b, ok := s.mqttBroker.Load().(broker.Broker)
 	if !ok || b == nil {
 		return "", fmt.Errorf("mqtt broker not ready")
@@ -203,26 +223,22 @@ func (s *AgentService) PublishCommand(ctx context.Context, agentId string, actio
 		IssuedAt:   time.Now(),
 		OperatorId: operatorId,
 	}
+	var payloadJSON string
 	if payload != nil {
 		encoded, err := json.Marshal(payload)
 		if err != nil {
 			return "", fmt.Errorf("marshal command payload: %w", err)
 		}
 		env.Payload = encoded
+		payloadJSON = string(encoded)
 	}
 
-	s.mu.Lock()
-	s.pending[requestId] = &pendingCommand{
-		Action:   action,
-		Operator: operatorId,
-		IssuedAt: env.IssuedAt,
+	if _, err := s.recordRepo.Create(ctx, requestId, nodeID, agentId, string(action), payloadJSON, operatorId); err != nil {
+		return "", fmt.Errorf("create command record: %w", err)
 	}
-	s.mu.Unlock()
 
 	if err := b.Publish(ctx, topic.MakeMqttTopicCommand(agentId), broker.NewMessage(env)); err != nil {
-		s.mu.Lock()
-		delete(s.pending, requestId)
-		s.mu.Unlock()
+		_ = s.recordRepo.FinalizeByRequestID(ctx, requestId, "FAILED", "publish failed: "+err.Error(), "")
 		return "", err
 	}
 
@@ -263,17 +279,11 @@ func (s *AgentService) replyAuth(agentId string, resp *signal.AgentAuthResponse)
 	return b.Publish(context.Background(), topic.MakeMqttTopicAuth(agentId, false), broker.NewMessage(resp))
 }
 
-// prunePending 清理超时未回执的指令(10 分钟兜底,防 map 无界增长)。
-func (s *AgentService) prunePending() {
-	deadline := time.Now().Add(-10 * time.Minute)
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for requestId, p := range s.pending {
-		if p.IssuedAt.Before(deadline) {
-			s.log.Warnf("command timed out without result (request_id=%s action=%s)", requestId, p.Action)
-			delete(s.pending, requestId)
-		}
+func toRecordStatus(success bool) string {
+	if success {
+		return "SUCCESS"
 	}
+	return "FAILED"
 }
 
 func hashToken(token string) string {

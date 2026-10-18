@@ -293,3 +293,21 @@ func NewAgentNodeServiceClient(ctx *bootstrap.Context, r registry.Discovery) ops
 
 	return opsV1.NewAgentNodeServiceClient(cli)
 }
+
+func NewProjectServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ProjectServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewProjectServiceClient(cli)
+}
+
+func NewCommandRecordServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.CommandRecordServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewCommandRecordServiceClient(cli)
+}

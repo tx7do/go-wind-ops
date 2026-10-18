@@ -72,11 +72,19 @@
 - admin 门面：`app/admin/service/internal/service/agent_node_service.go`，REST 前缀 `/admin/v1/agent-nodes`
 - 节点记录由 agent 准入自动创建，运维侧仅可改 name/labels（gRPC 层强制剥离其余字段）
 
+## 项目管理域（ops）与指令台账
+
+- 契约：`api/protos/ops/service/v1/project.proto`（ProjectService：CRUD + OperateProject）与 `command_record.proto`（只读台账查询）；admin 包装 `i_project.proto`/`i_command_record.proto`
+- REST：`/admin/v1/projects`（CRUD + `POST {id}/operations:send` 生命周期操作）、`/admin/v1/command-records`（审计台账）
+- core：`project_service.go`（Operate 组装 `signal.ProjectOperationPayload` 下发）、`agent_service.go`（PublishCommand 创建 PENDING 台账行 → MQTT 发布；HandleCommandResult 按 request_id 回写终态，project_* 指令同时回填项目 last_pid/last_status）；扫描任务每 30s 顺带把超时(10min)未回执的台账定案 FAILED
+- agent：`internal/agent/project_handlers.go`——项目目录必须在 `AGENT_ALLOWED_DIRS`（平台路径列表分隔符分隔）内，否则拒绝；start 分离进程+pid 文件(`<dir>/.ops-project.pid`)、stop 优先停止命令否则杀 pid 树、status 优先状态命令否则按 pid 存活
+- 指令动作：`ping`/`project_start`/`project_stop`/`project_restart`/`project_status`（`pkg/signal` 常量）；新增动作在 agent 侧 `RegisterHandler` 注册
+
 ## 开发调试工具
 
 - `go run ./tools/mqtt-pub -topic ops/agent/<agentId>/command -payload '{"request_id":"t1","action":"ping"}'`：手动注入 MQTT 指令
 - `go run ./tools/pass-enc admin`：按前端约定（AES-GCM + DefaultAESKey + base64）加密密码——登录接口的 `password` 字段传的是密文，不是明文
-- 登录：`POST /admin/v1/login {"grant_type":"password","username":"admin","password":"<pass-enc 输出>"}`；验证码开关在 admin 门面 `CaptchaEnabled` 常量
+- 登录：`POST /admin/v1/login {"grant_type":"password","username":"admin","password":"<pass-enc 输出>"}`；验证码默认开启，开发可设 `ADMIN_CAPTCHA_DISABLED=true` 跳过
 
 ## 分层与装配约定
 
@@ -112,7 +120,7 @@ docker compose -f docker-compose.libs.yaml up -d   # 仅中间件
 
 - 本地依赖：PostgreSQL(5432, postgres/*Abcd123456, 库名 gwc)、Redis(6379, *Abcd123456)、MinIO(9000/9001, root/*Abcd123456)、etcd(2379)、EMQX(1883/18083, admin/public)、Jaeger(16686)
 - MQTT 凭据：core/agent 的 server.yaml 默认 `core/core-pass`、`agent/agent-pass`——**EMQX 未开认证时可任意连接；生产须启用 EMQX 认证并同步改配置**
-- 冒烟顺序：起 libs → 起 core → 起 agent（日志出现 enrolled/authenticated + 心跳）→ 起 admin，`pass-enc` 加密密码登录 → `GET /admin/v1/agent-nodes` 应见节点 → `POST .../commands:send {"action":"ping"}` 后 core 日志出现 `command result SUCCESS`（含 pending 对账）
+- 冒烟顺序：起 libs → 起 core → 起 agent（配置 `AGENT_ALLOWED_DIRS`，日志出现 enrolled/authenticated）→ 起 admin（可设 `ADMIN_CAPTCHA_DISABLED=true`）→ `pass-enc` 加密密码登录 → `GET /admin/v1/agent-nodes` 应见节点 → 建项目 → `operations:send` START/STATUS/STOP，项目 lastStatus 随之变化，进程被真实拉起/终止 → `GET /admin/v1/command-records` 台账含每条指令的终态与结果；目录越权的操作在台账中为 FAILED
 
 ## 代码风格
 

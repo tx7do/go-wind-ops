@@ -206,6 +206,47 @@ var (
 			},
 		},
 	}
+	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
+	OpsCommandRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "request_id", Type: field.TypeString, Unique: true, Comment: "幂等键(UUID),与 CommandEnvelope/CommandResult 对应"},
+		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "目标节点(ops_agent_nodes.id);离线注入等无记录场景为 0", Default: 0},
+		{Name: "agent_id", Type: field.TypeString, Comment: "目标机器唯一标识"},
+		{Name: "action", Type: field.TypeString, Comment: "指令动作(ping/project_start/project_stop/project_status/...)"},
+		{Name: "payload", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "指令载荷(JSON)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "执行状态", Enums: []string{"PENDING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON)"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发指令的用户", Default: 0},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结果回执时间"},
+	}
+	// OpsCommandRecordsTable holds the schema information for the "ops_command_records" table.
+	OpsCommandRecordsTable = &schema.Table{
+		Name:       "ops_command_records",
+		Comment:    "Agent 指令台账表",
+		Columns:    OpsCommandRecordsColumns,
+		PrimaryKey: []*schema.Column{OpsCommandRecordsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_cmd_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCommandRecordsColumns[5]},
+			},
+			{
+				Name:    "idx_ops_cmd_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCommandRecordsColumns[9]},
+			},
+			{
+				Name:    "idx_ops_cmd_agent_action",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCommandRecordsColumns[6], OpsCommandRecordsColumns[7]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1860,6 +1901,46 @@ var (
 			},
 		},
 	}
+	// OpsProjectsColumns holds the columns for the "ops_projects" table.
+	OpsProjectsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "所属节点(ops_agent_nodes.id)"},
+		{Name: "name", Type: field.TypeString, Comment: "项目名(节点内唯一)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "项目描述"},
+		{Name: "project_dir", Type: field.TypeString, Comment: "项目目录(受管机器绝对路径,须在 agent 授权目录内)"},
+		{Name: "start_command", Type: field.TypeString, Nullable: true, Comment: "启动命令(在项目目录内以 shell 执行,长驻进程由 agent 记 pid)"},
+		{Name: "stop_command", Type: field.TypeString, Nullable: true, Comment: "停止命令(优先于 pid 终止执行)"},
+		{Name: "status_command", Type: field.TypeString, Nullable: true, Comment: "状态命令(输出作为状态判定依据;缺省按 pid 存活判断)"},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
+		{Name: "last_pid", Type: field.TypeUint64, Nullable: true, Comment: "最近一次启动记录的进程 pid(agent 回填)", Default: 0},
+		{Name: "last_status", Type: field.TypeEnum, Nullable: true, Comment: "最近上报的运行状态", Enums: []string{"UNKNOWN", "RUNNING", "STOPPED"}, Default: "UNKNOWN"},
+		{Name: "last_status_at", Type: field.TypeTime, Nullable: true, Comment: "状态最近更新时间"},
+	}
+	// OpsProjectsTable holds the schema information for the "ops_projects" table.
+	OpsProjectsTable = &schema.Table{
+		Name:       "ops_projects",
+		Comment:    "受管机器应用项目表",
+		Columns:    OpsProjectsColumns,
+		PrimaryKey: []*schema.Column{OpsProjectsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_project_node_name",
+				Unique:  true,
+				Columns: []*schema.Column{OpsProjectsColumns[7], OpsProjectsColumns[8]},
+			},
+			{
+				Name:    "idx_ops_project_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsProjectsColumns[7]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2623,6 +2704,7 @@ var (
 		OpsAgentNodesTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
@@ -2645,6 +2727,7 @@ var (
 		SysPermissionPoliciesTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
+		OpsProjectsTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
@@ -2671,6 +2754,11 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsCommandRecordsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_command_records",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -2786,6 +2874,11 @@ func init() {
 	}
 	SysPositionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_positions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsProjectsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_projects",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
