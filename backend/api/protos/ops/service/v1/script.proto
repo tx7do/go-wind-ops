@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// ScriptService 运维脚本管理:脚本内容集中存储在 core,执行时经 MQTT
+// 下发到目标节点 agent(落地临时文件后以平台 shell 执行),输出/退出码
+// 记入指令台账(CommandRecordService)。
+service ScriptService {
+  // 查询脚本列表
+  rpc ListScripts (pagination.PagingRequest) returns (ListScriptResponse) {}
+
+  // 查询脚本详情
+  rpc GetScript (GetScriptRequest) returns (Script) {}
+
+  // 创建脚本
+  rpc CreateScript (CreateScriptRequest) returns (Script) {}
+
+  // 更新脚本
+  rpc UpdateScript (UpdateScriptRequest) returns (google.protobuf.Empty) {}
+
+  // 删除脚本
+  rpc DeleteScript (DeleteScriptRequest) returns (google.protobuf.Empty) {}
+
+  // 在目标节点执行脚本,返回幂等 request_id;输出与退出码见指令台账
+  rpc ExecuteScript (ExecuteScriptRequest) returns (ExecuteScriptResponse) {}
+}
+
+// 运维脚本
+message Script {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 脚本ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "脚本名(全局唯一)"
+    }
+  ]; // 脚本名
+
+  optional string description = 3 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "脚本描述"
+    }
+  ]; // 脚本描述
+
+  optional string content = 4 [
+    json_name = "content",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "脚本内容(按目标节点平台 shell 语法编写)"
+    }
+  ]; // 脚本内容
+
+  optional uint32 timeout_seconds = 5 [
+    json_name = "timeoutSeconds",
+    (gnostic.openapi.v3.property) = {
+      description: "执行超时(秒,默认 60,上限 600)"
+    }
+  ]; // 执行超时
+
+  repeated string labels = 6 [json_name = "labels"]; // 标签
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListScriptResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Script items = 2 [json_name = "items"]; // 脚本列表
+}
+
+message GetScriptRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+}
+
+message CreateScriptRequest {
+  Script data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本数据
+}
+
+message UpdateScriptRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+
+  Script data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteScriptRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+}
+
+message ExecuteScriptRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+
+  // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
+  optional uint32 node_id = 2 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // 目标节点ID
+
+  optional string agent_id = 3 [
+    json_name = "agentId",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // 目标机器唯一标识
+}
+
+message ExecuteScriptResponse {
+  string request_id = 1 [json_name = "requestId"]; // 幂等键,结果见指令台账
+}

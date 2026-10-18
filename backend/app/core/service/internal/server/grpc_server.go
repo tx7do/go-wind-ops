@@ -64,6 +64,7 @@ func NewGrpcServer(
 	agentNodeService *service.AgentNodeService,
 	projectService *service.ProjectService,
 	commandRecordService *service.CommandRecordService,
+	scriptService *service.ScriptService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -110,6 +111,7 @@ func NewGrpcServer(
 	opsV1.RegisterAgentNodeServiceServer(srv, agentNodeService)
 	opsV1.RegisterProjectServiceServer(srv, projectService)
 	opsV1.RegisterCommandRecordServiceServer(srv, commandRecordService)
+	opsV1.RegisterScriptServiceServer(srv, scriptService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

@@ -269,20 +269,59 @@ func startDetached(ctx context.Context, dir, command string) (int, bool, string,
 	}
 }
 
-// runShellAwait 同步执行 shell 命令,返回退出码、合并输出(截断)与错误。
+// runShellAwait 同步执行 shell 命令(默认超时)。
 func runShellAwait(ctx context.Context, dir, command string) (int, string, error) {
-	runCtx, cancel := context.WithTimeout(ctx, shellWaitTimeout)
-	defer cancel()
+	exitCode, output, _, err := runShell(ctx, dir, command, shellWaitTimeout)
+	return exitCode, output, err
+}
 
-	cmd := shellCommand(runCtx, command)
+// runShell 同步执行 shell 命令并限时,返回退出码、合并输出(截断)、是否超时
+// 与错误。超时用 killTree 杀整棵进程树:Windows 上 exec.CommandContext 只杀
+// cmd.exe 外壳,孙进程(如 ping)会继承管道继续运行,导致输出管道永远等不到
+// EOF。
+func runShell(ctx context.Context, dir, command string, timeout time.Duration) (exitCode int, output string, timedOut bool, err error) {
+	cmd := shellCommand(context.WithoutCancel(ctx), command)
 	cmd.Dir = dir
 
-	output, err := cmd.CombinedOutput()
-	exitCode := 0
+	var buf bytes.Buffer
+	cmd.Stdout = &buf
+	cmd.Stderr = &buf
+
+	if err = cmd.Start(); err != nil {
+		return 0, buf.String(), false, err
+	}
+
+	done := make(chan error, 1)
+	go func() { done <- cmd.Wait() }()
+
+	timedOutCh := make(chan struct{}, 1)
+	timer := time.AfterFunc(timeout, func() {
+		_ = killTree(cmd.Process.Pid)
+		select {
+		case timedOutCh <- struct{}{}:
+		default:
+		}
+	})
+	defer timer.Stop()
+
+	select {
+	case err = <-done:
+	case <-ctx.Done():
+		_ = killTree(cmd.Process.Pid)
+		<-done
+		return cmd.ProcessState.ExitCode(), buf.String(), false, ctx.Err()
+	}
+
+	exitCode = 0
 	if cmd.ProcessState != nil {
 		exitCode = cmd.ProcessState.ExitCode()
 	}
-	return exitCode, string(output), err
+	select {
+	case <-timedOutCh:
+		timedOut = true
+	default:
+	}
+	return exitCode, buf.String(), timedOut, err
 }
 
 func readPidFile(dir string) int {

@@ -119,6 +119,7 @@ func NewRestServer(
 	agentNodeService *service.AgentNodeService,
 	projectService *service.ProjectService,
 	commandRecordService *service.CommandRecordService,
+	scriptService *service.ScriptService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -164,6 +165,7 @@ func NewRestServer(
 	adminV1.RegisterAgentNodeServiceHTTPServer(srv, agentNodeService)
 	adminV1.RegisterProjectServiceHTTPServer(srv, projectService)
 	adminV1.RegisterCommandRecordServiceHTTPServer(srv, commandRecordService)
+	adminV1.RegisterScriptServiceHTTPServer(srv, scriptService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

@@ -83,6 +83,7 @@ func NewService(ctx *bootstrap.Context) *Service {
 
 	s.RegisterHandler(signal.CommandActionPing, s.handlePing)
 	s.registerProjectHandlers()
+	s.RegisterHandler(signal.CommandActionScriptExec, s.handleScriptExec)
 
 	ctx.NewLoggerHelper("agent/service").Infof("agent initialized (agentId=%s version=%s tokenFile=%s)", s.agentID, s.version, tokenPath)
 	return s

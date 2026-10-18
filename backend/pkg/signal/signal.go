@@ -85,6 +85,9 @@ const (
 	CommandActionProjectStop    CommandAction = "project_stop"
 	CommandActionProjectRestart CommandAction = "project_restart"
 	CommandActionProjectStatus  CommandAction = "project_status"
+
+	// 脚本远程执行:载荷为 ScriptExecPayload,结果为 ScriptExecResult。
+	CommandActionScriptExec CommandAction = "script_exec"
 )
 
 // CommandEnvelope core 下发给 agent 的统一指令信封。
@@ -145,6 +148,35 @@ type ProjectOperationResult struct {
 	ExitCode  int    `json:"exit_code,omitempty"`
 	Status    string `json:"status,omitempty"`
 	Output    string `json:"output,omitempty"`
+}
+
+// ============================================================================
+// 脚本远程执行
+// ============================================================================
+
+const (
+	// ScriptContentLimit 脚本内容上限(经 MQTT 指令载荷下发,过大应走 MinIO)。
+	ScriptContentLimit = 256 << 10
+	// ScriptExecTimeoutMax 执行超时上限(秒)。
+	ScriptExecTimeoutMax = 600
+	// ScriptExecTimeoutDefault 执行超时默认(秒)。
+	ScriptExecTimeoutDefault = 60
+)
+
+// ScriptExecPayload 脚本执行载荷:core 从脚本记录组装。
+type ScriptExecPayload struct {
+	ScriptId   uint32 `json:"script_id"`
+	Name       string `json:"name"`
+	Content    string `json:"content"`
+	TimeoutSec uint32 `json:"timeout_sec,omitempty"`
+}
+
+// ScriptExecResult 脚本执行回执。
+type ScriptExecResult struct {
+	ScriptId uint32 `json:"script_id"`
+	ExitCode int    `json:"exit_code"`
+	Output   string `json:"output"`
+	Duration string `json:"duration,omitempty"`
 }
 
 // ============================================================================

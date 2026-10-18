@@ -78,7 +78,14 @@
 - REST：`/admin/v1/projects`（CRUD + `POST {id}/operations:send` 生命周期操作）、`/admin/v1/command-records`（审计台账）
 - core：`project_service.go`（Operate 组装 `signal.ProjectOperationPayload` 下发）、`agent_service.go`（PublishCommand 创建 PENDING 台账行 → MQTT 发布；HandleCommandResult 按 request_id 回写终态，project_* 指令同时回填项目 last_pid/last_status）；扫描任务每 30s 顺带把超时(10min)未回执的台账定案 FAILED
 - agent：`internal/agent/project_handlers.go`——项目目录必须在 `AGENT_ALLOWED_DIRS`（平台路径列表分隔符分隔）内，否则拒绝；start 分离进程+pid 文件(`<dir>/.ops-project.pid`)、stop 优先停止命令否则杀 pid 树、status 优先状态命令否则按 pid 存活
-- 指令动作：`ping`/`project_start`/`project_stop`/`project_restart`/`project_status`（`pkg/signal` 常量）；新增动作在 agent 侧 `RegisterHandler` 注册
+- 指令动作：`ping`/`project_start`/`project_stop`/`project_restart`/`project_status`/`script_exec`（`pkg/signal` 常量）；新增动作在 agent 侧 `RegisterHandler` 注册
+
+## 脚本管理域（ops）
+
+- 契约：`api/protos/ops/service/v1/script.proto`（ScriptService：CRUD + ExecuteScript）；admin 包装 `i_script.proto`，REST `/admin/v1/scripts`（+ `POST {id}/executions:send`）
+- core：`script_service.go`——内容 ≤256KB（超出应走 MinIO，见 ScriptContentLimit）、超时默认 60s 上限 600s；脚本内容组装进 `signal.ScriptExecPayload` 经 MQTT 下发
+- agent：`script_handlers.go`——内容落地临时文件（.cmd/.sh）以平台 shell 执行；**超时必须走 runShell（killTree 杀进程树）**：Windows 上 exec.CommandContext 只杀 cmd.exe 外壳，孙进程继承输出管道会导致管道 EOF 永不到来、handler 卡死
+- 执行结果（输出截断 64KB/退出码/时长）记入指令台账；台账 SUCCESS/FAILED 表示"回执是否成功"，脚本业务成败看 result 里的 exit_code
 
 ## 开发调试工具
 

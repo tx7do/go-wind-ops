@@ -37,6 +37,12 @@ POST   /admin/v1/projects/{id}/operations:send    # 生命周期操作(START/STO
 
 GET    /admin/v1/command-records          # 指令台账(审计+执行结果)
 GET    /admin/v1/command-records/{id}     # 指令详情
+
+GET    /admin/v1/scripts                  # 脚本列表
+POST   /admin/v1/scripts                  # 创建脚本(内容 ≤256KB)
+PUT    /admin/v1/scripts/{id}             # 更新脚本
+DELETE /admin/v1/scripts/{id}             # 删除脚本
+POST   /admin/v1/scripts/{id}/executions:send     # 在目标节点执行,输出/退出码见台账
 ```
 
 agent 需配置授权目录（环境变量 `AGENT_ALLOWED_DIRS`，平台路径列表分隔符分隔），项目目录必须在授权目录内，否则 agent 拒绝执行。
@@ -48,10 +54,12 @@ agent 需配置授权目录（环境变量 `AGENT_ALLOWED_DIRS`，平台路径�
 - [x] 基座落地：服务四分（core/front/admin/agent）、CMS 业务域精简、MQTT 信令与 MinIO 传输基础设施
 - [x] 节点管理：proto 化 REST 接口（列表/详情/改名打标签/删除/下发指令 ping）、准入重试机制、指令结果对账
 - [x] 项目管理 + 指令台账：项目 CRUD 与生命周期操作（启动/停止/重启/状态，agent 侧授权目录校验 + pid 文件管理），指令审计落库与超时定案
-- [ ] 业务模块：脚本管理、构建与分发（参考 jpom：Repository→Build→BuildHistory、OutGiving、Monitor）
+- [x] 脚本管理：脚本 CRUD + 远程执行（内容经 MQTT 下发、临时文件执行、输出/退出码/时长落台账、超时杀进程树）
+- [ ] 业务模块：构建与分发（参考 jpom：Repository→Build→BuildHistory、OutGiving、Monitor）
 - [ ] 准入加固：EMQX webhook 认证/ACL、STS 短令牌轮换
-- [ ] 管理前端：节点/项目/台账操作页面
+- [ ] 管理前端：节点/项目/脚本/台账操作页面
 - [ ] 运行日志采集：项目进程输出落盘与 tail 查看（对齐 jpom 控制台日志）
+- [ ] 脚本增强：定时执行（asynq cron）、脚本维度执行历史检索
 
 ## License
 

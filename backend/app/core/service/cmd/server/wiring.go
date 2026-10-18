@@ -129,10 +129,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dictTypeRepo := data.NewDictTypeRepo(ctx, entClient, dictEntryRepo)
 	languageRepo := data.NewLanguageRepo(ctx, entClient)
 
-	// Agent 节点(受管机器资产)与项目/指令台账
+	// Agent 节点(受管机器资产)与项目/指令台账/脚本
 	agentNodeRepo := data.NewAgentNodeRepo(ctx, entClient)
 	projectRepo := data.NewProjectRepo(ctx, entClient)
 	commandRecordRepo := data.NewCommandRecordRepo(ctx, entClient)
+	scriptRepo := data.NewScriptRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
@@ -177,6 +178,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
+	scriptService := service.NewScriptService(ctx, scriptRepo, agentNodeRepo, agentService)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -193,6 +195,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService,
 		agentNodeService,
 		projectService, commandRecordService,
+		scriptService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

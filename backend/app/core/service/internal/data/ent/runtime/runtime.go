@@ -36,6 +36,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/schema"
+	"go-wind-ops/app/core/service/internal/data/ent/script"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
@@ -988,6 +989,23 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	scriptMixin := schema.Script{}.Mixin()
+	scriptMixinFields0 := scriptMixin[0].Fields()
+	_ = scriptMixinFields0
+	scriptFields := schema.Script{}.Fields()
+	_ = scriptFields
+	// scriptDescName is the schema descriptor for name field.
+	scriptDescName := scriptFields[0].Descriptor()
+	// script.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	script.NameValidator = scriptDescName.Validators[0].(func(string) error)
+	// scriptDescTimeoutSeconds is the schema descriptor for timeout_seconds field.
+	scriptDescTimeoutSeconds := scriptFields[3].Descriptor()
+	// script.DefaultTimeoutSeconds holds the default value on creation for the timeout_seconds field.
+	script.DefaultTimeoutSeconds = scriptDescTimeoutSeconds.Default.(uint32)
+	// scriptDescID is the schema descriptor for id field.
+	scriptDescID := scriptMixinFields0[0].Descriptor()
+	// script.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	script.IDValidator = scriptDescID.Validators[0].(func(uint32) error)
 	taskMixin := schema.Task{}.Mixin()
 	task.Policy = privacy.NewPolicies(taskMixin[4], schema.Task{})
 	task.Hooks[0] = func(next ent.Mutator) ent.Mutator {
