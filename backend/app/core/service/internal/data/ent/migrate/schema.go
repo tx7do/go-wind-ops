@@ -206,6 +206,77 @@ var (
 			},
 		},
 	}
+	// OpsBuildsColumns holds the columns for the "ops_builds" table.
+	OpsBuildsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "构建名(全局唯一)"},
+		{Name: "repository_id", Type: field.TypeUint32, Comment: "源仓库(ops_repositories.id)"},
+		{Name: "branch", Type: field.TypeString, Nullable: true, Comment: "构建分支(缺省用仓库默认分支)"},
+		{Name: "build_command", Type: field.TypeString, Comment: "构建命令(在仓库工作目录内以 shell 执行)"},
+		{Name: "artifact_path", Type: field.TypeString, Comment: "产物路径(相对仓库目录,支持 glob;多个匹配打包 zip)"},
+		{Name: "timeout_seconds", Type: field.TypeUint32, Nullable: true, Comment: "构建超时(秒,默认 600,上限 3600)", Default: 600},
+		{Name: "build_no", Type: field.TypeUint32, Comment: "最新构建号(触发时自增)", Default: 0},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
+	}
+	// OpsBuildsTable holds the schema information for the "ops_builds" table.
+	OpsBuildsTable = &schema.Table{
+		Name:       "ops_builds",
+		Comment:    "构建配置表",
+		Columns:    OpsBuildsColumns,
+		PrimaryKey: []*schema.Column{OpsBuildsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_build_repo",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBuildsColumns[8]},
+			},
+		},
+	}
+	// OpsBuildHistoriesColumns holds the columns for the "ops_build_histories" table.
+	OpsBuildHistoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "build_id", Type: field.TypeUint32, Comment: "构建配置(ops_builds.id)"},
+		{Name: "build_no", Type: field.TypeUint32, Comment: "构建号(配置内自增)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "构建状态", Enums: []string{"PENDING", "RUNNING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "branch", Type: field.TypeString, Nullable: true, Comment: "实际构建分支"},
+		{Name: "log", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "构建日志(克隆+构建输出,截断)"},
+		{Name: "artifact_bucket", Type: field.TypeString, Nullable: true, Comment: "产物桶"},
+		{Name: "artifact_object_key", Type: field.TypeString, Nullable: true, Comment: "产物对象键(MinIO)"},
+		{Name: "artifact_size", Type: field.TypeUint64, Nullable: true, Comment: "产物大小(字节)", Default: 0},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "开始执行时间"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
+	}
+	// OpsBuildHistoriesTable holds the schema information for the "ops_build_histories" table.
+	OpsBuildHistoriesTable = &schema.Table{
+		Name:       "ops_build_histories",
+		Comment:    "构建历史表",
+		Columns:    OpsBuildHistoriesColumns,
+		PrimaryKey: []*schema.Column{OpsBuildHistoriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_build_history_build_no",
+				Unique:  true,
+				Columns: []*schema.Column{OpsBuildHistoriesColumns[4], OpsBuildHistoriesColumns[5]},
+			},
+			{
+				Name:    "idx_ops_build_history_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBuildHistoriesColumns[6]},
+			},
+		},
+	}
 	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
 	OpsCommandRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1941,6 +2012,37 @@ var (
 			},
 		},
 	}
+	// OpsRepositoriesColumns holds the columns for the "ops_repositories" table.
+	OpsRepositoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "仓库名(全局唯一)"},
+		{Name: "git_url", Type: field.TypeString, Comment: "Git 仓库地址(v1 仅 HTTPS;本地路径用于开发/测试)"},
+		{Name: "branch", Type: field.TypeString, Nullable: true, Comment: "默认分支", Default: "main"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "仓库用户名(可空)"},
+		{Name: "password", Type: field.TypeString, Nullable: true, Comment: "仓库密码/令牌(AES-256-GCM 加密落库,查询脱敏)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
+	}
+	// OpsRepositoriesTable holds the schema information for the "ops_repositories" table.
+	OpsRepositoriesTable = &schema.Table{
+		Name:       "ops_repositories",
+		Comment:    "构建源仓库表",
+		Columns:    OpsRepositoriesColumns,
+		PrimaryKey: []*schema.Column{OpsRepositoriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_repository_name",
+				Unique:  false,
+				Columns: []*schema.Column{OpsRepositoriesColumns[7]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2733,6 +2835,8 @@ var (
 		OpsAgentNodesTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		OpsBuildsTable,
+		OpsBuildHistoriesTable,
 		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
@@ -2757,6 +2861,7 @@ var (
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
 		OpsProjectsTable,
+		OpsRepositoriesTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
@@ -2784,6 +2889,16 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsBuildsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_builds",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsBuildHistoriesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_build_histories",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -2909,6 +3024,11 @@ func init() {
 	}
 	OpsProjectsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_projects",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsRepositoriesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_repositories",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

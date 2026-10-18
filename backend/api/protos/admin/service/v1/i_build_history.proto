@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/build_history.proto";
+
+// BuildHistoryService 构建历史查询与产物下载
+service BuildHistoryService {
+  // 查询构建历史
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListBuildHistoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/build-histories"
+    };
+  }
+
+  // 查询构建历史详情
+  rpc Get (ops.service.v1.GetBuildHistoryRequest) returns (ops.service.v1.BuildHistory) {
+    option (google.api.http) = {
+      get: "/admin/v1/build-histories/{id}"
+    };
+  }
+
+  // 获取产物下载预签名 URL
+  rpc GetArtifactUrl (ops.service.v1.GetArtifactDownloadUrlRequest) returns (ops.service.v1.GetArtifactDownloadUrlResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/build-histories/{id}/artifact-url"
+    };
+  }
+}

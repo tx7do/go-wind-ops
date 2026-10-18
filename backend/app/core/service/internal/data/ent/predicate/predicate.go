@@ -15,6 +15,12 @@ type Api func(*sql.Selector)
 // ApiAuditLog is the predicate function for apiauditlog builders.
 type ApiAuditLog func(*sql.Selector)
 
+// Build is the predicate function for build builders.
+type Build func(*sql.Selector)
+
+// BuildHistory is the predicate function for buildhistory builders.
+type BuildHistory func(*sql.Selector)
+
 // CommandRecord is the predicate function for commandrecord builders.
 type CommandRecord func(*sql.Selector)
 
@@ -86,6 +92,9 @@ type Position func(*sql.Selector)
 
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
+
+// Repository is the predicate function for repository builders.
+type Repository func(*sql.Selector)
 
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)

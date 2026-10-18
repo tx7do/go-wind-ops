@@ -46,15 +46,15 @@ type ProjectServiceHTTPServer interface {
 
 func RegisterProjectServiceHTTPServer(s *http.Server, srv ProjectServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/projects", _ProjectService_List18_HTTP_Handler(srv))
-	r.GET("/admin/v1/projects/{id}", _ProjectService_Get18_HTTP_Handler(srv))
-	r.POST("/admin/v1/projects", _ProjectService_Create10_HTTP_Handler(srv))
-	r.PUT("/admin/v1/projects/{id}", _ProjectService_Update11_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/projects/{id}", _ProjectService_Delete11_HTTP_Handler(srv))
+	r.GET("/admin/v1/projects", _ProjectService_List20_HTTP_Handler(srv))
+	r.GET("/admin/v1/projects/{id}", _ProjectService_Get20_HTTP_Handler(srv))
+	r.POST("/admin/v1/projects", _ProjectService_Create11_HTTP_Handler(srv))
+	r.PUT("/admin/v1/projects/{id}", _ProjectService_Update12_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/projects/{id}", _ProjectService_Delete12_HTTP_Handler(srv))
 	r.POST("/admin/v1/projects/{id}/operations:send", _ProjectService_Operate0_HTTP_Handler(srv))
 }
 
-func _ProjectService_List18_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_List20_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _ProjectService_List18_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ProjectService_Get18_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_Get20_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProjectRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _ProjectService_Get18_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ProjectService_Create10_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_Create11_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateProjectRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _ProjectService_Create10_HTTP_Handler(srv ProjectServiceHTTPServer) func(ct
 	}
 }
 
-func _ProjectService_Update11_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_Update12_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateProjectRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _ProjectService_Update11_HTTP_Handler(srv ProjectServiceHTTPServer) func(ct
 	}
 }
 
-func _ProjectService_Delete11_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_Delete12_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteProjectRequest
 		if err := ctx.BindQuery(&in); err != nil {

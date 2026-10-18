@@ -44,6 +44,30 @@ func (f ApiAuditLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiAuditLogMutation", m)
 }
 
+// The BuildFunc type is an adapter to allow the use of ordinary
+// function as Build mutator.
+type BuildFunc func(context.Context, *ent.BuildMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BuildFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BuildMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BuildMutation", m)
+}
+
+// The BuildHistoryFunc type is an adapter to allow the use of ordinary
+// function as BuildHistory mutator.
+type BuildHistoryFunc func(context.Context, *ent.BuildHistoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BuildHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BuildHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BuildHistoryMutation", m)
+}
+
 // The CommandRecordFunc type is an adapter to allow the use of ordinary
 // function as CommandRecord mutator.
 type CommandRecordFunc func(context.Context, *ent.CommandRecordMutation) (ent.Value, error)
@@ -330,6 +354,18 @@ func (f ProjectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectMutation", m)
+}
+
+// The RepositoryFunc type is an adapter to allow the use of ordinary
+// function as Repository mutator.
+type RepositoryFunc func(context.Context, *ent.RepositoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RepositoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RepositoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RepositoryMutation", m)
 }
 
 // The RoleFunc type is an adapter to allow the use of ordinary

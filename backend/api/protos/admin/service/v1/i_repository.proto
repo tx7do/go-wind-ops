@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/repository.proto";
+
+// RepositoryService 构建源仓库管理
+service RepositoryService {
+  // 查询仓库列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListRepositoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/repositories"
+    };
+  }
+
+  // 查询仓库详情
+  rpc Get (ops.service.v1.GetRepositoryRequest) returns (ops.service.v1.Repository) {
+    option (google.api.http) = {
+      get: "/admin/v1/repositories/{id}"
+    };
+  }
+
+  // 创建仓库
+  rpc Create (ops.service.v1.CreateRepositoryRequest) returns (ops.service.v1.Repository) {
+    option (google.api.http) = {
+      post: "/admin/v1/repositories"
+      body: "*"
+    };
+  }
+
+  // 更新仓库
+  rpc Update (ops.service.v1.UpdateRepositoryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/repositories/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除仓库
+  rpc Delete (ops.service.v1.DeleteRepositoryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/repositories/{id}"
+    };
+  }
+}

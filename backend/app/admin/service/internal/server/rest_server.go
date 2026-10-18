@@ -120,6 +120,9 @@ func NewRestServer(
 	projectService *service.ProjectService,
 	commandRecordService *service.CommandRecordService,
 	scriptService *service.ScriptService,
+	repositoryService *service.RepositoryService,
+	buildService *service.BuildService,
+	buildHistoryService *service.BuildHistoryService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -166,6 +169,9 @@ func NewRestServer(
 	adminV1.RegisterProjectServiceHTTPServer(srv, projectService)
 	adminV1.RegisterCommandRecordServiceHTTPServer(srv, commandRecordService)
 	adminV1.RegisterScriptServiceHTTPServer(srv, scriptService)
+	adminV1.RegisterRepositoryServiceHTTPServer(srv, repositoryService)
+	adminV1.RegisterBuildServiceHTTPServer(srv, buildService)
+	adminV1.RegisterBuildHistoryServiceHTTPServer(srv, buildHistoryService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

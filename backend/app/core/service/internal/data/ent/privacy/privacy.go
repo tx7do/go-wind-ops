@@ -183,6 +183,54 @@ func (f ApiAuditLogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApiAuditLogMutation", m)
 }
 
+// The BuildQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BuildQueryRuleFunc func(context.Context, *ent.BuildQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BuildQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BuildQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BuildQuery", q)
+}
+
+// The BuildMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BuildMutationRuleFunc func(context.Context, *ent.BuildMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BuildMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BuildMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BuildMutation", m)
+}
+
+// The BuildHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BuildHistoryQueryRuleFunc func(context.Context, *ent.BuildHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BuildHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BuildHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BuildHistoryQuery", q)
+}
+
+// The BuildHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BuildHistoryMutationRuleFunc func(context.Context, *ent.BuildHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BuildHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BuildHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BuildHistoryMutation", m)
+}
+
 // The CommandRecordQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommandRecordQueryRuleFunc func(context.Context, *ent.CommandRecordQuery) error
@@ -759,6 +807,30 @@ func (f ProjectMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProjectMutation", m)
 }
 
+// The RepositoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RepositoryQueryRuleFunc func(context.Context, *ent.RepositoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RepositoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RepositoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RepositoryQuery", q)
+}
+
+// The RepositoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RepositoryMutationRuleFunc func(context.Context, *ent.RepositoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RepositoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RepositoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RepositoryMutation", m)
+}
+
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleQueryRuleFunc func(context.Context, *ent.RoleQuery) error
@@ -1064,6 +1136,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ApiAuditLogQuery:
 		return q.Filter(), nil
+	case *ent.BuildQuery:
+		return q.Filter(), nil
+	case *ent.BuildHistoryQuery:
+		return q.Filter(), nil
 	case *ent.CommandRecordQuery:
 		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
@@ -1112,6 +1188,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ProjectQuery:
 		return q.Filter(), nil
+	case *ent.RepositoryQuery:
+		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
 	case *ent.RoleMetadataQuery:
@@ -1146,6 +1224,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.APIMutation:
 		return m.Filter(), nil
 	case *ent.ApiAuditLogMutation:
+		return m.Filter(), nil
+	case *ent.BuildMutation:
+		return m.Filter(), nil
+	case *ent.BuildHistoryMutation:
 		return m.Filter(), nil
 	case *ent.CommandRecordMutation:
 		return m.Filter(), nil
@@ -1194,6 +1276,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PositionMutation:
 		return m.Filter(), nil
 	case *ent.ProjectMutation:
+		return m.Filter(), nil
+	case *ent.RepositoryMutation:
 		return m.Filter(), nil
 	case *ent.RoleMutation:
 		return m.Filter(), nil

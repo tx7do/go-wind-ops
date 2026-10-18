@@ -18,6 +18,10 @@ type Tx struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// Build is the client for interacting with the Build builders.
+	Build *BuildClient
+	// BuildHistory is the client for interacting with the BuildHistory builders.
+	BuildHistory *BuildHistoryClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -66,6 +70,8 @@ type Tx struct {
 	Position *PositionClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// Repository is the client for interacting with the Repository builders.
+	Repository *RepositoryClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -222,6 +228,8 @@ func (tx *Tx) init() {
 	tx.AgentNode = NewAgentNodeClient(tx.config)
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
+	tx.Build = NewBuildClient(tx.config)
+	tx.BuildHistory = NewBuildHistoryClient(tx.config)
 	tx.CommandRecord = NewCommandRecordClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
@@ -246,6 +254,7 @@ func (tx *Tx) init() {
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
+	tx.Repository = NewRepositoryClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)

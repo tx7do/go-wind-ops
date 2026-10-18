@@ -110,10 +110,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Agent 节点
 	agentNodeServiceClient := data.NewAgentNodeServiceClient(ctx, discovery)
 
-	// 项目 / 指令台账 / 脚本
+	// 项目 / 指令台账 / 脚本 / 构建域
 	projectServiceClient := data.NewProjectServiceClient(ctx, discovery)
 	commandRecordServiceClient := data.NewCommandRecordServiceClient(ctx, discovery)
 	scriptServiceClient := data.NewScriptServiceClient(ctx, discovery)
+	repositoryServiceClient := data.NewRepositoryServiceClient(ctx, discovery)
+	buildServiceClient := data.NewBuildServiceClient(ctx, discovery)
+	buildHistoryServiceClient := data.NewBuildHistoryServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
@@ -144,10 +147,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Agent 节点
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeServiceClient)
 
-	// 项目 / 指令台账 / 脚本
+	// 项目 / 指令台账 / 脚本 / 构建域
 	projectService := service.NewProjectService(ctx, projectServiceClient)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordServiceClient)
 	scriptService := service.NewScriptService(ctx, scriptServiceClient)
+	repositoryService := service.NewRepositoryService(ctx, repositoryServiceClient)
+	buildService := service.NewBuildService(ctx, buildServiceClient)
+	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryServiceClient)
 
 	// 字典与多语言
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
@@ -175,6 +181,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		agentNodeService,
 		projectService, commandRecordService,
 		scriptService,
+		repositoryService, buildService, buildHistoryService,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,

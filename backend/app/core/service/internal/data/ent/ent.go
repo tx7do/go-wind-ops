@@ -9,6 +9,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/build"
+	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -33,6 +35,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
+	"go-wind-ops/app/core/service/internal/data/ent/repository"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
@@ -113,6 +116,8 @@ func checkColumn(t, c string) error {
 			agentnode.Table:           agentnode.ValidColumn,
 			api.Table:                 api.ValidColumn,
 			apiauditlog.Table:         apiauditlog.ValidColumn,
+			build.Table:               build.ValidColumn,
+			buildhistory.Table:        buildhistory.ValidColumn,
 			commandrecord.Table:       commandrecord.ValidColumn,
 			dataaccessauditlog.Table:  dataaccessauditlog.ValidColumn,
 			dictentry.Table:           dictentry.ValidColumn,
@@ -137,6 +142,7 @@ func checkColumn(t, c string) error {
 			policyevaluationlog.Table: policyevaluationlog.ValidColumn,
 			position.Table:            position.ValidColumn,
 			project.Table:             project.ValidColumn,
+			repository.Table:          repository.ValidColumn,
 			role.Table:                role.ValidColumn,
 			rolemetadata.Table:        rolemetadata.ValidColumn,
 			rolepermission.Table:      rolepermission.ValidColumn,

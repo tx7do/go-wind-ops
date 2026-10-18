@@ -8,6 +8,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/build"
+	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -32,6 +34,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
+	"go-wind-ops/app/core/service/internal/data/ent/repository"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
@@ -120,6 +123,64 @@ func init() {
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint32) error)
+	buildMixin := schema.Build{}.Mixin()
+	buildMixinFields0 := buildMixin[0].Fields()
+	_ = buildMixinFields0
+	buildFields := schema.Build{}.Fields()
+	_ = buildFields
+	// buildDescName is the schema descriptor for name field.
+	buildDescName := buildFields[0].Descriptor()
+	// build.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	build.NameValidator = buildDescName.Validators[0].(func(string) error)
+	// buildDescRepositoryID is the schema descriptor for repository_id field.
+	buildDescRepositoryID := buildFields[1].Descriptor()
+	// build.RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
+	build.RepositoryIDValidator = buildDescRepositoryID.Validators[0].(func(uint32) error)
+	// buildDescBuildCommand is the schema descriptor for build_command field.
+	buildDescBuildCommand := buildFields[3].Descriptor()
+	// build.BuildCommandValidator is a validator for the "build_command" field. It is called by the builders before save.
+	build.BuildCommandValidator = buildDescBuildCommand.Validators[0].(func(string) error)
+	// buildDescArtifactPath is the schema descriptor for artifact_path field.
+	buildDescArtifactPath := buildFields[4].Descriptor()
+	// build.ArtifactPathValidator is a validator for the "artifact_path" field. It is called by the builders before save.
+	build.ArtifactPathValidator = buildDescArtifactPath.Validators[0].(func(string) error)
+	// buildDescTimeoutSeconds is the schema descriptor for timeout_seconds field.
+	buildDescTimeoutSeconds := buildFields[5].Descriptor()
+	// build.DefaultTimeoutSeconds holds the default value on creation for the timeout_seconds field.
+	build.DefaultTimeoutSeconds = buildDescTimeoutSeconds.Default.(uint32)
+	// buildDescBuildNo is the schema descriptor for build_no field.
+	buildDescBuildNo := buildFields[6].Descriptor()
+	// build.DefaultBuildNo holds the default value on creation for the build_no field.
+	build.DefaultBuildNo = buildDescBuildNo.Default.(uint32)
+	// buildDescID is the schema descriptor for id field.
+	buildDescID := buildMixinFields0[0].Descriptor()
+	// build.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	build.IDValidator = buildDescID.Validators[0].(func(uint32) error)
+	buildhistoryMixin := schema.BuildHistory{}.Mixin()
+	buildhistoryMixinFields0 := buildhistoryMixin[0].Fields()
+	_ = buildhistoryMixinFields0
+	buildhistoryFields := schema.BuildHistory{}.Fields()
+	_ = buildhistoryFields
+	// buildhistoryDescBuildID is the schema descriptor for build_id field.
+	buildhistoryDescBuildID := buildhistoryFields[0].Descriptor()
+	// buildhistory.BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
+	buildhistory.BuildIDValidator = buildhistoryDescBuildID.Validators[0].(func(uint32) error)
+	// buildhistoryDescBuildNo is the schema descriptor for build_no field.
+	buildhistoryDescBuildNo := buildhistoryFields[1].Descriptor()
+	// buildhistory.BuildNoValidator is a validator for the "build_no" field. It is called by the builders before save.
+	buildhistory.BuildNoValidator = buildhistoryDescBuildNo.Validators[0].(func(uint32) error)
+	// buildhistoryDescArtifactSize is the schema descriptor for artifact_size field.
+	buildhistoryDescArtifactSize := buildhistoryFields[7].Descriptor()
+	// buildhistory.DefaultArtifactSize holds the default value on creation for the artifact_size field.
+	buildhistory.DefaultArtifactSize = buildhistoryDescArtifactSize.Default.(uint64)
+	// buildhistoryDescOperatorID is the schema descriptor for operator_id field.
+	buildhistoryDescOperatorID := buildhistoryFields[11].Descriptor()
+	// buildhistory.DefaultOperatorID holds the default value on creation for the operator_id field.
+	buildhistory.DefaultOperatorID = buildhistoryDescOperatorID.Default.(uint32)
+	// buildhistoryDescID is the schema descriptor for id field.
+	buildhistoryDescID := buildhistoryMixinFields0[0].Descriptor()
+	// buildhistory.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	buildhistory.IDValidator = buildhistoryDescID.Validators[0].(func(uint32) error)
 	commandrecordMixin := schema.CommandRecord{}.Mixin()
 	commandrecordMixinFields0 := commandrecordMixin[0].Fields()
 	_ = commandrecordMixinFields0
@@ -879,6 +940,27 @@ func init() {
 	projectDescID := projectMixinFields0[0].Descriptor()
 	// project.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	project.IDValidator = projectDescID.Validators[0].(func(uint32) error)
+	repositoryMixin := schema.Repository{}.Mixin()
+	repositoryMixinFields0 := repositoryMixin[0].Fields()
+	_ = repositoryMixinFields0
+	repositoryFields := schema.Repository{}.Fields()
+	_ = repositoryFields
+	// repositoryDescName is the schema descriptor for name field.
+	repositoryDescName := repositoryFields[0].Descriptor()
+	// repository.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	repository.NameValidator = repositoryDescName.Validators[0].(func(string) error)
+	// repositoryDescGitURL is the schema descriptor for git_url field.
+	repositoryDescGitURL := repositoryFields[1].Descriptor()
+	// repository.GitURLValidator is a validator for the "git_url" field. It is called by the builders before save.
+	repository.GitURLValidator = repositoryDescGitURL.Validators[0].(func(string) error)
+	// repositoryDescBranch is the schema descriptor for branch field.
+	repositoryDescBranch := repositoryFields[2].Descriptor()
+	// repository.DefaultBranch holds the default value on creation for the branch field.
+	repository.DefaultBranch = repositoryDescBranch.Default.(string)
+	// repositoryDescID is the schema descriptor for id field.
+	repositoryDescID := repositoryMixinFields0[0].Descriptor()
+	// repository.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	repository.IDValidator = repositoryDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

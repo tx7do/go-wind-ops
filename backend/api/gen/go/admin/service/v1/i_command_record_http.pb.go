@@ -33,11 +33,11 @@ type CommandRecordServiceHTTPServer interface {
 
 func RegisterCommandRecordServiceHTTPServer(s *http.Server, srv CommandRecordServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/command-records", _CommandRecordService_List3_HTTP_Handler(srv))
-	r.GET("/admin/v1/command-records/{id}", _CommandRecordService_Get3_HTTP_Handler(srv))
+	r.GET("/admin/v1/command-records", _CommandRecordService_List5_HTTP_Handler(srv))
+	r.GET("/admin/v1/command-records/{id}", _CommandRecordService_Get5_HTTP_Handler(srv))
 }
 
-func _CommandRecordService_List3_HTTP_Handler(srv CommandRecordServiceHTTPServer) func(ctx http.Context) error {
+func _CommandRecordService_List5_HTTP_Handler(srv CommandRecordServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _CommandRecordService_List3_HTTP_Handler(srv CommandRecordServiceHTTPServer
 	}
 }
 
-func _CommandRecordService_Get3_HTTP_Handler(srv CommandRecordServiceHTTPServer) func(ctx http.Context) error {
+func _CommandRecordService_Get5_HTTP_Handler(srv CommandRecordServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCommandRecordRequest
 		if err := ctx.BindQuery(&in); err != nil {

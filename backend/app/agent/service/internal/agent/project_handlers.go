@@ -16,7 +16,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -25,6 +24,7 @@ import (
 
 	"github.com/shirou/gopsutil/v4/process"
 
+	"go-wind-ops/pkg/shellexec"
 	"go-wind-ops/pkg/signal"
 )
 
@@ -227,21 +227,13 @@ func (s *Service) handleProjectStatus(ctx context.Context, env *signal.CommandEn
 }
 
 // ============================================================================
-// 进程/Shell 工具
+// 进程/Shell 工具(实现收敛到 pkg/shellexec;此处保留薄别名)
 // ============================================================================
-
-// shellCommand 平台 shell 包装(带超时上下文)。
-func shellCommand(ctx context.Context, command string) *exec.Cmd {
-	if runtime.GOOS == "windows" {
-		return exec.CommandContext(ctx, "cmd", "/c", command)
-	}
-	return exec.CommandContext(ctx, "sh", "-c", command)
-}
 
 // startDetached 以分离进程执行启动命令:存活超过宽限期视为成功。
 // 返回 pid、是否存活、宽限期内捕获的输出。
 func startDetached(ctx context.Context, dir, command string) (int, bool, string, error) {
-	cmd := shellCommand(context.WithoutCancel(ctx), command)
+	cmd := shellexec.Command(command)
 	cmd.Dir = dir
 
 	var buf bytes.Buffer
@@ -269,61 +261,6 @@ func startDetached(ctx context.Context, dir, command string) (int, bool, string,
 	}
 }
 
-// runShellAwait 同步执行 shell 命令(默认超时)。
-func runShellAwait(ctx context.Context, dir, command string) (int, string, error) {
-	exitCode, output, _, err := runShell(ctx, dir, command, shellWaitTimeout)
-	return exitCode, output, err
-}
-
-// runShell 同步执行 shell 命令并限时,返回退出码、合并输出(截断)、是否超时
-// 与错误。超时用 killTree 杀整棵进程树:Windows 上 exec.CommandContext 只杀
-// cmd.exe 外壳,孙进程(如 ping)会继承管道继续运行,导致输出管道永远等不到
-// EOF。
-func runShell(ctx context.Context, dir, command string, timeout time.Duration) (exitCode int, output string, timedOut bool, err error) {
-	cmd := shellCommand(context.WithoutCancel(ctx), command)
-	cmd.Dir = dir
-
-	var buf bytes.Buffer
-	cmd.Stdout = &buf
-	cmd.Stderr = &buf
-
-	if err = cmd.Start(); err != nil {
-		return 0, buf.String(), false, err
-	}
-
-	done := make(chan error, 1)
-	go func() { done <- cmd.Wait() }()
-
-	timedOutCh := make(chan struct{}, 1)
-	timer := time.AfterFunc(timeout, func() {
-		_ = killTree(cmd.Process.Pid)
-		select {
-		case timedOutCh <- struct{}{}:
-		default:
-		}
-	})
-	defer timer.Stop()
-
-	select {
-	case err = <-done:
-	case <-ctx.Done():
-		_ = killTree(cmd.Process.Pid)
-		<-done
-		return cmd.ProcessState.ExitCode(), buf.String(), false, ctx.Err()
-	}
-
-	exitCode = 0
-	if cmd.ProcessState != nil {
-		exitCode = cmd.ProcessState.ExitCode()
-	}
-	select {
-	case <-timedOutCh:
-		timedOut = true
-	default:
-	}
-	return exitCode, buf.String(), timedOut, err
-}
-
 func readPidFile(dir string) int {
 	data, err := os.ReadFile(filepath.Join(dir, pidFileName))
 	if err != nil {
@@ -336,20 +273,21 @@ func readPidFile(dir string) int {
 	return pid
 }
 
-// killTree 杀进程树(Windows 用 taskkill /T;Unix 直接杀)。
+// runShell 同步执行 shell 命令并限时(killTree 杀整棵进程树)。
+func runShell(ctx context.Context, dir, command string, timeout time.Duration) (exitCode int, output string, timedOut bool, err error) {
+	return shellexec.Run(ctx, dir, command, timeout)
+}
+
+// runShellAwait 同步执行 shell 命令(默认超时)。
+func runShellAwait(ctx context.Context, dir, command string) (int, string, error) {
+	exitCode, output, _, err := shellexec.Run(ctx, dir, command, shellWaitTimeout)
+	return exitCode, output, err
+}
+
 func killTree(pid int) error {
-	if runtime.GOOS == "windows" {
-		return exec.Command("taskkill", "/F", "/T", "/PID", strconv.Itoa(pid)).Run()
-	}
-	if p, err := os.FindProcess(pid); err == nil {
-		return p.Kill()
-	}
-	return nil
+	return shellexec.KillTree(pid)
 }
 
 func truncateOutput(s string) string {
-	if len(s) <= outputLimit {
-		return s
-	}
-	return s[:outputLimit]
+	return shellexec.Truncate(s)
 }

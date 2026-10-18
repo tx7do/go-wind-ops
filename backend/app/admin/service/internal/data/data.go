@@ -320,3 +320,30 @@ func NewScriptServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.
 
 	return opsV1.NewScriptServiceClient(cli)
 }
+
+func NewRepositoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.RepositoryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewRepositoryServiceClient(cli)
+}
+
+func NewBuildServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.BuildServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewBuildServiceClient(cli)
+}
+
+func NewBuildHistoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.BuildHistoryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewBuildHistoryServiceClient(cli)
+}

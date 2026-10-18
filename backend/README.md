@@ -43,7 +43,17 @@ POST   /admin/v1/scripts                  # 创建脚本(内容 ≤256KB)
 PUT    /admin/v1/scripts/{id}             # 更新脚本
 DELETE /admin/v1/scripts/{id}             # 删除脚本
 POST   /admin/v1/scripts/{id}/executions:send     # 在目标节点执行,输出/退出码见台账
+
+GET    /admin/v1/repositories             # 构建源仓库列表(密码加密落库/回显掩码)
+POST   /admin/v1/repositories             # 创建仓库(HTTPS Git / 本地路径)
+GET    /admin/v1/builds                   # 构建配置列表
+POST   /admin/v1/builds                   # 创建构建配置(仓库/分支/构建命令/产物路径)
+POST   /admin/v1/builds/{id}/builds:trigger       # 触发构建(异步),返回历史ID与构建号
+GET    /admin/v1/build-histories          # 构建历史(状态/日志/产物)
+GET    /admin/v1/build-histories/{id}/artifact-url  # 产物下载预签名 URL
 ```
+
+构建在 core 所在机器执行(git clone → 构建命令 → 产物 glob 收集打包 → MinIO `artifacts` 桶);工作空间目录由 `OPS_BUILD_WORKSPACE` 配置(默认 ./data/builds)。
 
 agent 需配置授权目录（环境变量 `AGENT_ALLOWED_DIRS`，平台路径列表分隔符分隔），项目目录必须在授权目录内，否则 agent 拒绝执行。
 
@@ -55,11 +65,12 @@ agent 需配置授权目录（环境变量 `AGENT_ALLOWED_DIRS`，平台路径�
 - [x] 节点管理：proto 化 REST 接口（列表/详情/改名打标签/删除/下发指令 ping）、准入重试机制、指令结果对账
 - [x] 项目管理 + 指令台账：项目 CRUD 与生命周期操作（启动/停止/重启/状态，agent 侧授权目录校验 + pid 文件管理），指令审计落库与超时定案
 - [x] 脚本管理：脚本 CRUD + 远程执行（内容经 MQTT 下发、临时文件执行、输出/退出码/时长落台账、超时杀进程树）
-- [ ] 业务模块：构建与分发（参考 jpom：Repository→Build→BuildHistory、OutGiving、Monitor）
+- [x] 构建模块 v1：源仓库管理（凭据加密）、构建配置与触发（构建号自增/并发去重/重启中断定案）、构建历史与产物入 MinIO、预签名下载
+- [ ] 业务模块：构建分发（产物下发到节点项目,对齐 jpom OutGiving）、监控告警（Monitor）
 - [ ] 准入加固：EMQX webhook 认证/ACL、STS 短令牌轮换
-- [ ] 管理前端：节点/项目/脚本/台账操作页面
+- [ ] 管理前端：节点/项目/脚本/构建/台账操作页面
+- [ ] 构建增强：定时构建（cron）、构建日志实时 tail、产物分发后自动重启项目
 - [ ] 运行日志采集：项目进程输出落盘与 tail 查看（对齐 jpom 控制台日志）
-- [ ] 脚本增强：定时执行（asynq cron）、脚本维度执行历史检索
 
 ## License
 

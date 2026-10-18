@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// RepositoryService 构建源仓库管理(v1 仅 HTTPS Git;本地路径用于开发/测试)。
+service RepositoryService {
+  // 查询仓库列表
+  rpc ListRepositories (pagination.PagingRequest) returns (ListRepositoryResponse) {}
+
+  // 查询仓库详情
+  rpc GetRepository (GetRepositoryRequest) returns (Repository) {}
+
+  // 创建仓库
+  rpc CreateRepository (CreateRepositoryRequest) returns (Repository) {}
+
+  // 更新仓库
+  rpc UpdateRepository (UpdateRepositoryRequest) returns (google.protobuf.Empty) {}
+
+  // 删除仓库
+  rpc DeleteRepository (DeleteRepositoryRequest) returns (google.protobuf.Empty) {}
+}
+
+// 构建源仓库
+message Repository {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 仓库ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库名(全局唯一)"
+    }
+  ]; // 仓库名
+
+  optional string git_url = 3 [
+    json_name = "gitUrl",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Git 仓库地址(HTTPS;本地路径用于开发/测试)"
+    }
+  ]; // Git 仓库地址
+
+  optional string branch = 4 [
+    json_name = "branch",
+    (gnostic.openapi.v3.property) = {
+      description: "默认分支"
+    }
+  ]; // 默认分支
+
+  optional string username = 5 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = {
+      description: "仓库用户名(可空)"
+    }
+  ]; // 仓库用户名
+
+  optional string password = 6 [
+    json_name = "password",
+    (google.api.field_behavior) = INPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库密码/令牌(写入必填;查询恒返回掩码)"
+    }
+  ]; // 仓库密码/令牌(仅写入)
+
+  optional string description = 7 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  repeated string labels = 8 [json_name = "labels"]; // 标签
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListRepositoryResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Repository items = 2 [json_name = "items"]; // 仓库列表
+}
+
+message GetRepositoryRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 仓库ID
+}
+
+message CreateRepositoryRequest {
+  Repository data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 仓库数据
+}
+
+message UpdateRepositoryRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 仓库ID
+
+  Repository data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteRepositoryRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 仓库ID
+}

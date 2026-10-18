@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// BuildService 构建配置管理。v1 在 core 所在机器上构建(经典模式):
+// git clone → 构建命令 → 产物打包上传 MinIO;每次触发生成一条构建历史。
+service BuildService {
+  // 查询构建配置列表
+  rpc ListBuilds (pagination.PagingRequest) returns (ListBuildResponse) {}
+
+  // 查询构建配置详情
+  rpc GetBuild (GetBuildRequest) returns (Build) {}
+
+  // 创建构建配置
+  rpc CreateBuild (CreateBuildRequest) returns (Build) {}
+
+  // 更新构建配置
+  rpc UpdateBuild (UpdateBuildRequest) returns (google.protobuf.Empty) {}
+
+  // 删除构建配置
+  rpc DeleteBuild (DeleteBuildRequest) returns (google.protobuf.Empty) {}
+
+  // 触发构建(异步执行),返回构建历史与构建号;进度查 BuildHistoryService
+  rpc TriggerBuild (TriggerBuildRequest) returns (TriggerBuildResponse) {}
+}
+
+// 构建配置
+message Build {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建配置ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "构建名(全局唯一)"
+    }
+  ]; // 构建名
+
+  optional uint32 repository_id = 3 [
+    json_name = "repositoryId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "源仓库ID"
+    }
+  ]; // 源仓库
+
+  optional string branch = 4 [
+    json_name = "branch",
+    (gnostic.openapi.v3.property) = {
+      description: "构建分支(缺省用仓库默认分支)"
+    }
+  ]; // 构建分支
+
+  optional string build_command = 5 [
+    json_name = "buildCommand",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "构建命令(在仓库工作目录内以 shell 执行)"
+    }
+  ]; // 构建命令
+
+  optional string artifact_path = 6 [
+    json_name = "artifactPath",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "产物路径(相对仓库目录,支持 glob;多个匹配打包 zip)"
+    }
+  ]; // 产物路径
+
+  optional uint32 timeout_seconds = 7 [
+    json_name = "timeoutSeconds",
+    (gnostic.openapi.v3.property) = {
+      description: "构建超时(秒,默认 600,上限 3600)"
+    }
+  ]; // 构建超时
+
+  optional uint32 build_no = 8 [
+    json_name = "buildNo",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 最新构建号
+
+  optional string description = 9 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  repeated string labels = 10 [json_name = "labels"]; // 标签
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListBuildResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Build items = 2 [json_name = "items"]; // 构建配置列表
+}
+
+message GetBuildRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 构建配置ID
+}
+
+message CreateBuildRequest {
+  Build data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 构建配置数据
+}
+
+message UpdateBuildRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 构建配置ID
+
+  Build data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteBuildRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 构建配置ID
+}
+
+message TriggerBuildRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 构建配置ID
+}
+
+message TriggerBuildResponse {
+  uint32 history_id = 1 [json_name = "historyId"]; // 构建历史ID
+  uint32 build_no = 2 [json_name = "buildNo"]; // 本次构建号
+}

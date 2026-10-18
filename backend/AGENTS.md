@@ -87,6 +87,14 @@
 - agent：`script_handlers.go`——内容落地临时文件（.cmd/.sh）以平台 shell 执行；**超时必须走 runShell（killTree 杀进程树）**：Windows 上 exec.CommandContext 只杀 cmd.exe 外壳，孙进程继承输出管道会导致管道 EOF 永不到来、handler 卡死
 - 执行结果（输出截断 64KB/退出码/时长）记入指令台账；台账 SUCCESS/FAILED 表示"回执是否成功"，脚本业务成败看 result 里的 exit_code
 
+## 构建域（ops,v1 在 core 机器构建）
+
+- 契约：`api/protos/ops/service/v1/{repository,build,build_history}.proto`；admin REST `/admin/v1/repositories`、`/admin/v1/builds`（`POST {id}/builds:trigger`）、`/admin/v1/build-histories`（`{id}/artifact-url` 产物预签名下载）
+- 执行器：`build_service.go` runBuild(goroutine)——git clone(argv 直传,本地盘符路径自动转 file:/// URL;`D:/...` 直写会被 git 当 scp 主机名)→ 构建命令(shellexec.Run,超时杀树)→ 产物 glob 收集(多文件打包 zip)→ MinIO `artifacts` 桶
+- 状态机：PENDING→RUNNING→SUCCESS/FAILED;同配置存在未终态历史时触发返回 409;core 启动清扫把遗留 RUNNING/PENDING 定案 FAILED
+- 工作空间:`OPS_BUILD_WORKSPACE`(默认 ./data/builds),构建结束即删除;日志截断 512KB 落库
+- **坑**:ent 枚举与 proto 枚举按"值名"映射(EnumTypeConverter),两端正名必须一致——同包顶层枚举值冲突时把枚举嵌进 message(如 BuildHistory.Status)而不是加前缀
+
 ## 开发调试工具
 
 - `go run ./tools/mqtt-pub -topic ops/agent/<agentId>/command -payload '{"request_id":"t1","action":"ping"}'`：手动注入 MQTT 指令

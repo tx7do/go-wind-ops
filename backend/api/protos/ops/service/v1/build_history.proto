@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// BuildHistoryService 构建历史查询与产物下载(只读;写入走构建触发)。
+service BuildHistoryService {
+  // 查询构建历史
+  rpc ListBuildHistories (pagination.PagingRequest) returns (ListBuildHistoryResponse) {}
+
+  // 查询构建历史详情
+  rpc GetBuildHistory (GetBuildHistoryRequest) returns (BuildHistory) {}
+
+  // 获取产物下载预签名 URL(仅 SUCCESS 且有产物时可用)
+  rpc GetArtifactDownloadUrl (GetArtifactDownloadUrlRequest) returns (GetArtifactDownloadUrlResponse) {}
+}
+
+// 构建历史
+message BuildHistory {
+  // 构建状态(嵌套定义:同包顶层枚举值共享命名空间,与 CommandStatus 冲突;
+  // 嵌套后 Go 类型为 BuildHistory_Status,值名与 ent 枚举一致便于映射)
+  enum Status {
+    UNSPECIFIED = 0; // 未知
+
+    PENDING = 1; // 待执行
+    RUNNING = 2; // 执行中
+    SUCCESS = 3; // 成功
+    FAILED = 4;  // 失败
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 历史ID
+
+  optional uint32 build_id = 2 [
+    json_name = "buildId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建配置ID
+
+  optional uint32 build_no = 3 [
+    json_name = "buildNo",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建号
+
+  optional Status status = 4 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建状态
+
+  optional string branch = 5 [
+    json_name = "branch",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 实际构建分支
+
+  optional string log = 6 [
+    json_name = "log",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建日志(克隆+构建输出)
+
+  optional string artifact_bucket = 7 [
+    json_name = "artifactBucket",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 产物桶
+
+  optional string artifact_object_key = 8 [
+    json_name = "artifactObjectKey",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 产物对象键
+
+  optional uint64 artifact_size = 9 [
+    json_name = "artifactSize",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 产物大小(字节)
+
+  optional string error = 10 [
+    json_name = "error",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 失败原因
+
+  optional uint32 operator_id = 11 [
+    json_name = "operatorId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发人
+
+  optional google.protobuf.Timestamp started_at = 30 [
+    json_name = "startedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 开始时间
+
+  optional google.protobuf.Timestamp finished_at = 31 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 结束时间
+
+  optional google.protobuf.Timestamp created_at = 32 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发时间
+}
+
+message ListBuildHistoryResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated BuildHistory items = 2 [json_name = "items"]; // 历史列表
+}
+
+message GetBuildHistoryRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 历史ID
+}
+
+message GetArtifactDownloadUrlRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 历史ID
+}
+
+message GetArtifactDownloadUrlResponse {
+  string url = 1 [json_name = "url"]; // 预签名下载 URL
+  string object_key = 2 [json_name = "objectKey"]; // 产物对象键
+  uint64 size = 3 [json_name = "size"]; // 产物大小(字节)
+}
