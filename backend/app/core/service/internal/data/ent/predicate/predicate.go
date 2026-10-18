@@ -72,6 +72,9 @@ type Menu func(*sql.Selector)
 // Monitor is the predicate function for monitor builders.
 type Monitor func(*sql.Selector)
 
+// NodeMetric is the predicate function for nodemetric builders.
+type NodeMetric func(*sql.Selector)
+
 // OperationAuditLog is the predicate function for operationauditlog builders.
 type OperationAuditLog func(*sql.Selector)
 

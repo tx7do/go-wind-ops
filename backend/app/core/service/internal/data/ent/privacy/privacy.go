@@ -639,6 +639,30 @@ func (f MonitorMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.MonitorMutation", m)
 }
 
+// The NodeMetricQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NodeMetricQueryRuleFunc func(context.Context, *ent.NodeMetricQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NodeMetricQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NodeMetricQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NodeMetricQuery", q)
+}
+
+// The NodeMetricMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NodeMetricMutationRuleFunc func(context.Context, *ent.NodeMetricMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NodeMetricMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NodeMetricMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NodeMetricMutation", m)
+}
+
 // The OperationAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OperationAuditLogQueryRuleFunc func(context.Context, *ent.OperationAuditLogQuery) error
@@ -1270,6 +1294,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.MonitorQuery:
 		return q.Filter(), nil
+	case *ent.NodeMetricQuery:
+		return q.Filter(), nil
 	case *ent.OperationAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.OrgUnitQuery:
@@ -1366,6 +1392,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.MenuMutation:
 		return m.Filter(), nil
 	case *ent.MonitorMutation:
+		return m.Filter(), nil
+	case *ent.NodeMetricMutation:
 		return m.Filter(), nil
 	case *ent.OperationAuditLogMutation:
 		return m.Filter(), nil

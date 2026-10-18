@@ -1396,6 +1396,33 @@ var (
 			},
 		},
 	}
+	// OpsNodeMetricsColumns holds the columns for the "ops_node_metrics" table.
+	OpsNodeMetricsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "节点(ops_agent_nodes.id)"},
+		{Name: "cpu_percent", Type: field.TypeFloat64, Nullable: true, Comment: "CPU 占用百分比"},
+		{Name: "memory_used_percent", Type: field.TypeFloat64, Nullable: true, Comment: "内存占用百分比"},
+		{Name: "disk_used_percent", Type: field.TypeFloat64, Nullable: true, Comment: "磁盘占用百分比"},
+		{Name: "mem_total_bytes", Type: field.TypeUint64, Nullable: true, Comment: "物理内存总量", Default: 0},
+		{Name: "uptime_seconds", Type: field.TypeUint64, Nullable: true, Comment: "系统运行时长(秒)", Default: 0},
+	}
+	// OpsNodeMetricsTable holds the schema information for the "ops_node_metrics" table.
+	OpsNodeMetricsTable = &schema.Table{
+		Name:       "ops_node_metrics",
+		Comment:    "节点心跳指标时间序列",
+		Columns:    OpsNodeMetricsColumns,
+		PrimaryKey: []*schema.Column{OpsNodeMetricsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_node_metric_node_time",
+				Unique:  false,
+				Columns: []*schema.Column{OpsNodeMetricsColumns[4], OpsNodeMetricsColumns[1]},
+			},
+		},
+	}
 	// SysOperationAuditLogsColumns holds the columns for the "sys_operation_audit_logs" table.
 	SysOperationAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3010,6 +3037,7 @@ var (
 		SysMembershipRolesTable,
 		SysMenusTable,
 		OpsMonitorsTable,
+		OpsNodeMetricsTable,
 		SysOperationAuditLogsTable,
 		SysOrgUnitsTable,
 		SysPermissionsTable,
@@ -3147,6 +3175,11 @@ func init() {
 	}
 	OpsMonitorsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_monitors",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsNodeMetricsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_node_metrics",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

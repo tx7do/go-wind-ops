@@ -27,6 +27,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
+	"go-wind-ops/app/core/service/internal/data/ent/nodemetric"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -703,6 +704,27 @@ func init() {
 	monitorDescID := monitorMixinFields0[0].Descriptor()
 	// monitor.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	monitor.IDValidator = monitorDescID.Validators[0].(func(uint32) error)
+	nodemetricMixin := schema.NodeMetric{}.Mixin()
+	nodemetricMixinFields0 := nodemetricMixin[0].Fields()
+	_ = nodemetricMixinFields0
+	nodemetricFields := schema.NodeMetric{}.Fields()
+	_ = nodemetricFields
+	// nodemetricDescNodeID is the schema descriptor for node_id field.
+	nodemetricDescNodeID := nodemetricFields[0].Descriptor()
+	// nodemetric.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	nodemetric.NodeIDValidator = nodemetricDescNodeID.Validators[0].(func(uint32) error)
+	// nodemetricDescMemTotalBytes is the schema descriptor for mem_total_bytes field.
+	nodemetricDescMemTotalBytes := nodemetricFields[4].Descriptor()
+	// nodemetric.DefaultMemTotalBytes holds the default value on creation for the mem_total_bytes field.
+	nodemetric.DefaultMemTotalBytes = nodemetricDescMemTotalBytes.Default.(uint64)
+	// nodemetricDescUptimeSeconds is the schema descriptor for uptime_seconds field.
+	nodemetricDescUptimeSeconds := nodemetricFields[5].Descriptor()
+	// nodemetric.DefaultUptimeSeconds holds the default value on creation for the uptime_seconds field.
+	nodemetric.DefaultUptimeSeconds = nodemetricDescUptimeSeconds.Default.(uint64)
+	// nodemetricDescID is the schema descriptor for id field.
+	nodemetricDescID := nodemetricMixinFields0[0].Descriptor()
+	// nodemetric.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	nodemetric.IDValidator = nodemetricDescID.Validators[0].(func(uint32) error)
 	operationauditlogMixin := schema.OperationAuditLog{}.Mixin()
 	operationauditlog.Policy = privacy.NewPolicies(operationauditlogMixin[2], schema.OperationAuditLog{})
 	operationauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {

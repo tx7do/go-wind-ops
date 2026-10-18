@@ -181,7 +181,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
-	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, minIOClient)
+	metricRepo := data.NewNodeMetricRepo(ctx, entClient)
+	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, metricRepo, minIOClient)
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)

@@ -272,6 +272,18 @@ func (f MonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorMutation", m)
 }
 
+// The NodeMetricFunc type is an adapter to allow the use of ordinary
+// function as NodeMetric mutator.
+type NodeMetricFunc func(context.Context, *ent.NodeMetricMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NodeMetricFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NodeMetricMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NodeMetricMutation", m)
+}
+
 // The OperationAuditLogFunc type is an adapter to allow the use of ordinary
 // function as OperationAuditLog mutator.
 type OperationAuditLogFunc func(context.Context, *ent.OperationAuditLogMutation) (ent.Value, error)

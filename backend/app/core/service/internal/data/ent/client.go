@@ -33,6 +33,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
+	"go-wind-ops/app/core/service/internal/data/ent/nodemetric"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -112,6 +113,8 @@ type Client struct {
 	Menu *MenuClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
+	// NodeMetric is the client for interacting with the NodeMetric builders.
+	NodeMetric *NodeMetricClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -191,6 +194,7 @@ func (c *Client) init() {
 	c.MembershipRole = NewMembershipRoleClient(c.config)
 	c.Menu = NewMenuClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
+	c.NodeMetric = NewNodeMetricClient(c.config)
 	c.OperationAuditLog = NewOperationAuditLogClient(c.config)
 	c.OrgUnit = NewOrgUnitClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
@@ -328,6 +332,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MembershipRole:      NewMembershipRoleClient(cfg),
 		Menu:                NewMenuClient(cfg),
 		Monitor:             NewMonitorClient(cfg),
+		NodeMetric:          NewNodeMetricClient(cfg),
 		OperationAuditLog:   NewOperationAuditLogClient(cfg),
 		OrgUnit:             NewOrgUnitClient(cfg),
 		Permission:          NewPermissionClient(cfg),
@@ -392,6 +397,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MembershipRole:      NewMembershipRoleClient(cfg),
 		Menu:                NewMenuClient(cfg),
 		Monitor:             NewMonitorClient(cfg),
+		NodeMetric:          NewNodeMetricClient(cfg),
 		OperationAuditLog:   NewOperationAuditLogClient(cfg),
 		OrgUnit:             NewOrgUnitClient(cfg),
 		Permission:          NewPermissionClient(cfg),
@@ -448,12 +454,12 @@ func (c *Client) Use(hooks ...Hook) {
 		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
 		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.OperationAuditLog,
+		c.OrgUnit, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -467,12 +473,12 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
 		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.OperationAuditLog,
+		c.OrgUnit, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -525,6 +531,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Menu.mutate(ctx, m)
 	case *MonitorMutation:
 		return c.Monitor.mutate(ctx, m)
+	case *NodeMetricMutation:
+		return c.NodeMetric.mutate(ctx, m)
 	case *OperationAuditLogMutation:
 		return c.OperationAuditLog.mutate(ctx, m)
 	case *OrgUnitMutation:
@@ -3608,6 +3616,139 @@ func (c *MonitorClient) mutate(ctx context.Context, m *MonitorMutation) (Value, 
 		return (&MonitorDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Monitor mutation op: %q", m.Op())
+	}
+}
+
+// NodeMetricClient is a client for the NodeMetric schema.
+type NodeMetricClient struct {
+	config
+}
+
+// NewNodeMetricClient returns a client for the NodeMetric from the given config.
+func NewNodeMetricClient(c config) *NodeMetricClient {
+	return &NodeMetricClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `nodemetric.Hooks(f(g(h())))`.
+func (c *NodeMetricClient) Use(hooks ...Hook) {
+	c.hooks.NodeMetric = append(c.hooks.NodeMetric, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `nodemetric.Intercept(f(g(h())))`.
+func (c *NodeMetricClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NodeMetric = append(c.inters.NodeMetric, interceptors...)
+}
+
+// Create returns a builder for creating a NodeMetric entity.
+func (c *NodeMetricClient) Create() *NodeMetricCreate {
+	mutation := newNodeMetricMutation(c.config, OpCreate)
+	return &NodeMetricCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NodeMetric entities.
+func (c *NodeMetricClient) CreateBulk(builders ...*NodeMetricCreate) *NodeMetricCreateBulk {
+	return &NodeMetricCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NodeMetricClient) MapCreateBulk(slice any, setFunc func(*NodeMetricCreate, int)) *NodeMetricCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NodeMetricCreateBulk{err: fmt.Errorf("calling to NodeMetricClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NodeMetricCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NodeMetricCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NodeMetric.
+func (c *NodeMetricClient) Update() *NodeMetricUpdate {
+	mutation := newNodeMetricMutation(c.config, OpUpdate)
+	return &NodeMetricUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NodeMetricClient) UpdateOne(_m *NodeMetric) *NodeMetricUpdateOne {
+	mutation := newNodeMetricMutation(c.config, OpUpdateOne, withNodeMetric(_m))
+	return &NodeMetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NodeMetricClient) UpdateOneID(id uint32) *NodeMetricUpdateOne {
+	mutation := newNodeMetricMutation(c.config, OpUpdateOne, withNodeMetricID(id))
+	return &NodeMetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NodeMetric.
+func (c *NodeMetricClient) Delete() *NodeMetricDelete {
+	mutation := newNodeMetricMutation(c.config, OpDelete)
+	return &NodeMetricDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NodeMetricClient) DeleteOne(_m *NodeMetric) *NodeMetricDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NodeMetricClient) DeleteOneID(id uint32) *NodeMetricDeleteOne {
+	builder := c.Delete().Where(nodemetric.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NodeMetricDeleteOne{builder}
+}
+
+// Query returns a query builder for NodeMetric.
+func (c *NodeMetricClient) Query() *NodeMetricQuery {
+	return &NodeMetricQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNodeMetric},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NodeMetric entity by its id.
+func (c *NodeMetricClient) Get(ctx context.Context, id uint32) (*NodeMetric, error) {
+	return c.Query().Where(nodemetric.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NodeMetricClient) GetX(ctx context.Context, id uint32) *NodeMetric {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NodeMetricClient) Hooks() []Hook {
+	return c.hooks.NodeMetric
+}
+
+// Interceptors returns the client interceptors.
+func (c *NodeMetricClient) Interceptors() []Interceptor {
+	return c.inters.NodeMetric
+}
+
+func (c *NodeMetricClient) mutate(ctx context.Context, m *NodeMetricMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NodeMetricCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NodeMetricUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NodeMetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NodeMetricDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NodeMetric mutation op: %q", m.Op())
 	}
 }
 
@@ -6760,21 +6901,21 @@ type (
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
 		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		NodeMetric, OperationAuditLog, OrgUnit, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
 		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		NodeMetric, OperationAuditLog, OrgUnit, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Interceptor
 	}
 )

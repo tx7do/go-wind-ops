@@ -31,6 +31,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
+	"go-wind-ops/app/core/service/internal/data/ent/nodemetric"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -93,6 +94,7 @@ const (
 	TypeMembershipRole      = "MembershipRole"
 	TypeMenu                = "Menu"
 	TypeMonitor             = "Monitor"
+	TypeNodeMetric          = "NodeMetric"
 	TypeOperationAuditLog   = "OperationAuditLog"
 	TypeOrgUnit             = "OrgUnit"
 	TypePermission          = "Permission"
@@ -35382,6 +35384,1131 @@ func (m *MonitorMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *MonitorMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Monitor edge %s", name)
+}
+
+// NodeMetricMutation represents an operation that mutates the NodeMetric nodes in the graph.
+type NodeMetricMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *uint32
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	node_id                *uint32
+	addnode_id             *int32
+	cpu_percent            *float64
+	addcpu_percent         *float64
+	memory_used_percent    *float64
+	addmemory_used_percent *float64
+	disk_used_percent      *float64
+	adddisk_used_percent   *float64
+	mem_total_bytes        *uint64
+	addmem_total_bytes     *int64
+	uptime_seconds         *uint64
+	adduptime_seconds      *int64
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*NodeMetric, error)
+	predicates             []predicate.NodeMetric
+}
+
+var _ ent.Mutation = (*NodeMetricMutation)(nil)
+
+// nodemetricOption allows management of the mutation configuration using functional options.
+type nodemetricOption func(*NodeMetricMutation)
+
+// newNodeMetricMutation creates new mutation for the NodeMetric entity.
+func newNodeMetricMutation(c config, op Op, opts ...nodemetricOption) *NodeMetricMutation {
+	m := &NodeMetricMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNodeMetric,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNodeMetricID sets the ID field of the mutation.
+func withNodeMetricID(id uint32) nodemetricOption {
+	return func(m *NodeMetricMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NodeMetric
+		)
+		m.oldValue = func(ctx context.Context) (*NodeMetric, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NodeMetric.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNodeMetric sets the old NodeMetric of the mutation.
+func withNodeMetric(node *NodeMetric) nodemetricOption {
+	return func(m *NodeMetricMutation) {
+		m.oldValue = func(context.Context) (*NodeMetric, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NodeMetricMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NodeMetricMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of NodeMetric entities.
+func (m *NodeMetricMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NodeMetricMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NodeMetricMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NodeMetric.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *NodeMetricMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *NodeMetricMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *NodeMetricMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[nodemetric.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *NodeMetricMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *NodeMetricMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, nodemetric.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *NodeMetricMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *NodeMetricMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *NodeMetricMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[nodemetric.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *NodeMetricMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *NodeMetricMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, nodemetric.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *NodeMetricMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *NodeMetricMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *NodeMetricMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[nodemetric.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *NodeMetricMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *NodeMetricMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, nodemetric.FieldDeletedAt)
+}
+
+// SetNodeID sets the "node_id" field.
+func (m *NodeMetricMutation) SetNodeID(u uint32) {
+	m.node_id = &u
+	m.addnode_id = nil
+}
+
+// NodeID returns the value of the "node_id" field in the mutation.
+func (m *NodeMetricMutation) NodeID() (r uint32, exists bool) {
+	v := m.node_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNodeID returns the old "node_id" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldNodeID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNodeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNodeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNodeID: %w", err)
+	}
+	return oldValue.NodeID, nil
+}
+
+// AddNodeID adds u to the "node_id" field.
+func (m *NodeMetricMutation) AddNodeID(u int32) {
+	if m.addnode_id != nil {
+		*m.addnode_id += u
+	} else {
+		m.addnode_id = &u
+	}
+}
+
+// AddedNodeID returns the value that was added to the "node_id" field in this mutation.
+func (m *NodeMetricMutation) AddedNodeID() (r int32, exists bool) {
+	v := m.addnode_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetNodeID resets all changes to the "node_id" field.
+func (m *NodeMetricMutation) ResetNodeID() {
+	m.node_id = nil
+	m.addnode_id = nil
+}
+
+// SetCPUPercent sets the "cpu_percent" field.
+func (m *NodeMetricMutation) SetCPUPercent(f float64) {
+	m.cpu_percent = &f
+	m.addcpu_percent = nil
+}
+
+// CPUPercent returns the value of the "cpu_percent" field in the mutation.
+func (m *NodeMetricMutation) CPUPercent() (r float64, exists bool) {
+	v := m.cpu_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCPUPercent returns the old "cpu_percent" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldCPUPercent(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCPUPercent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCPUPercent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCPUPercent: %w", err)
+	}
+	return oldValue.CPUPercent, nil
+}
+
+// AddCPUPercent adds f to the "cpu_percent" field.
+func (m *NodeMetricMutation) AddCPUPercent(f float64) {
+	if m.addcpu_percent != nil {
+		*m.addcpu_percent += f
+	} else {
+		m.addcpu_percent = &f
+	}
+}
+
+// AddedCPUPercent returns the value that was added to the "cpu_percent" field in this mutation.
+func (m *NodeMetricMutation) AddedCPUPercent() (r float64, exists bool) {
+	v := m.addcpu_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCPUPercent clears the value of the "cpu_percent" field.
+func (m *NodeMetricMutation) ClearCPUPercent() {
+	m.cpu_percent = nil
+	m.addcpu_percent = nil
+	m.clearedFields[nodemetric.FieldCPUPercent] = struct{}{}
+}
+
+// CPUPercentCleared returns if the "cpu_percent" field was cleared in this mutation.
+func (m *NodeMetricMutation) CPUPercentCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldCPUPercent]
+	return ok
+}
+
+// ResetCPUPercent resets all changes to the "cpu_percent" field.
+func (m *NodeMetricMutation) ResetCPUPercent() {
+	m.cpu_percent = nil
+	m.addcpu_percent = nil
+	delete(m.clearedFields, nodemetric.FieldCPUPercent)
+}
+
+// SetMemoryUsedPercent sets the "memory_used_percent" field.
+func (m *NodeMetricMutation) SetMemoryUsedPercent(f float64) {
+	m.memory_used_percent = &f
+	m.addmemory_used_percent = nil
+}
+
+// MemoryUsedPercent returns the value of the "memory_used_percent" field in the mutation.
+func (m *NodeMetricMutation) MemoryUsedPercent() (r float64, exists bool) {
+	v := m.memory_used_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMemoryUsedPercent returns the old "memory_used_percent" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldMemoryUsedPercent(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMemoryUsedPercent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMemoryUsedPercent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMemoryUsedPercent: %w", err)
+	}
+	return oldValue.MemoryUsedPercent, nil
+}
+
+// AddMemoryUsedPercent adds f to the "memory_used_percent" field.
+func (m *NodeMetricMutation) AddMemoryUsedPercent(f float64) {
+	if m.addmemory_used_percent != nil {
+		*m.addmemory_used_percent += f
+	} else {
+		m.addmemory_used_percent = &f
+	}
+}
+
+// AddedMemoryUsedPercent returns the value that was added to the "memory_used_percent" field in this mutation.
+func (m *NodeMetricMutation) AddedMemoryUsedPercent() (r float64, exists bool) {
+	v := m.addmemory_used_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMemoryUsedPercent clears the value of the "memory_used_percent" field.
+func (m *NodeMetricMutation) ClearMemoryUsedPercent() {
+	m.memory_used_percent = nil
+	m.addmemory_used_percent = nil
+	m.clearedFields[nodemetric.FieldMemoryUsedPercent] = struct{}{}
+}
+
+// MemoryUsedPercentCleared returns if the "memory_used_percent" field was cleared in this mutation.
+func (m *NodeMetricMutation) MemoryUsedPercentCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldMemoryUsedPercent]
+	return ok
+}
+
+// ResetMemoryUsedPercent resets all changes to the "memory_used_percent" field.
+func (m *NodeMetricMutation) ResetMemoryUsedPercent() {
+	m.memory_used_percent = nil
+	m.addmemory_used_percent = nil
+	delete(m.clearedFields, nodemetric.FieldMemoryUsedPercent)
+}
+
+// SetDiskUsedPercent sets the "disk_used_percent" field.
+func (m *NodeMetricMutation) SetDiskUsedPercent(f float64) {
+	m.disk_used_percent = &f
+	m.adddisk_used_percent = nil
+}
+
+// DiskUsedPercent returns the value of the "disk_used_percent" field in the mutation.
+func (m *NodeMetricMutation) DiskUsedPercent() (r float64, exists bool) {
+	v := m.disk_used_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDiskUsedPercent returns the old "disk_used_percent" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldDiskUsedPercent(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDiskUsedPercent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDiskUsedPercent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDiskUsedPercent: %w", err)
+	}
+	return oldValue.DiskUsedPercent, nil
+}
+
+// AddDiskUsedPercent adds f to the "disk_used_percent" field.
+func (m *NodeMetricMutation) AddDiskUsedPercent(f float64) {
+	if m.adddisk_used_percent != nil {
+		*m.adddisk_used_percent += f
+	} else {
+		m.adddisk_used_percent = &f
+	}
+}
+
+// AddedDiskUsedPercent returns the value that was added to the "disk_used_percent" field in this mutation.
+func (m *NodeMetricMutation) AddedDiskUsedPercent() (r float64, exists bool) {
+	v := m.adddisk_used_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDiskUsedPercent clears the value of the "disk_used_percent" field.
+func (m *NodeMetricMutation) ClearDiskUsedPercent() {
+	m.disk_used_percent = nil
+	m.adddisk_used_percent = nil
+	m.clearedFields[nodemetric.FieldDiskUsedPercent] = struct{}{}
+}
+
+// DiskUsedPercentCleared returns if the "disk_used_percent" field was cleared in this mutation.
+func (m *NodeMetricMutation) DiskUsedPercentCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldDiskUsedPercent]
+	return ok
+}
+
+// ResetDiskUsedPercent resets all changes to the "disk_used_percent" field.
+func (m *NodeMetricMutation) ResetDiskUsedPercent() {
+	m.disk_used_percent = nil
+	m.adddisk_used_percent = nil
+	delete(m.clearedFields, nodemetric.FieldDiskUsedPercent)
+}
+
+// SetMemTotalBytes sets the "mem_total_bytes" field.
+func (m *NodeMetricMutation) SetMemTotalBytes(u uint64) {
+	m.mem_total_bytes = &u
+	m.addmem_total_bytes = nil
+}
+
+// MemTotalBytes returns the value of the "mem_total_bytes" field in the mutation.
+func (m *NodeMetricMutation) MemTotalBytes() (r uint64, exists bool) {
+	v := m.mem_total_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMemTotalBytes returns the old "mem_total_bytes" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldMemTotalBytes(ctx context.Context) (v *uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMemTotalBytes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMemTotalBytes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMemTotalBytes: %w", err)
+	}
+	return oldValue.MemTotalBytes, nil
+}
+
+// AddMemTotalBytes adds u to the "mem_total_bytes" field.
+func (m *NodeMetricMutation) AddMemTotalBytes(u int64) {
+	if m.addmem_total_bytes != nil {
+		*m.addmem_total_bytes += u
+	} else {
+		m.addmem_total_bytes = &u
+	}
+}
+
+// AddedMemTotalBytes returns the value that was added to the "mem_total_bytes" field in this mutation.
+func (m *NodeMetricMutation) AddedMemTotalBytes() (r int64, exists bool) {
+	v := m.addmem_total_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMemTotalBytes clears the value of the "mem_total_bytes" field.
+func (m *NodeMetricMutation) ClearMemTotalBytes() {
+	m.mem_total_bytes = nil
+	m.addmem_total_bytes = nil
+	m.clearedFields[nodemetric.FieldMemTotalBytes] = struct{}{}
+}
+
+// MemTotalBytesCleared returns if the "mem_total_bytes" field was cleared in this mutation.
+func (m *NodeMetricMutation) MemTotalBytesCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldMemTotalBytes]
+	return ok
+}
+
+// ResetMemTotalBytes resets all changes to the "mem_total_bytes" field.
+func (m *NodeMetricMutation) ResetMemTotalBytes() {
+	m.mem_total_bytes = nil
+	m.addmem_total_bytes = nil
+	delete(m.clearedFields, nodemetric.FieldMemTotalBytes)
+}
+
+// SetUptimeSeconds sets the "uptime_seconds" field.
+func (m *NodeMetricMutation) SetUptimeSeconds(u uint64) {
+	m.uptime_seconds = &u
+	m.adduptime_seconds = nil
+}
+
+// UptimeSeconds returns the value of the "uptime_seconds" field in the mutation.
+func (m *NodeMetricMutation) UptimeSeconds() (r uint64, exists bool) {
+	v := m.uptime_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUptimeSeconds returns the old "uptime_seconds" field's value of the NodeMetric entity.
+// If the NodeMetric object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NodeMetricMutation) OldUptimeSeconds(ctx context.Context) (v *uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUptimeSeconds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUptimeSeconds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUptimeSeconds: %w", err)
+	}
+	return oldValue.UptimeSeconds, nil
+}
+
+// AddUptimeSeconds adds u to the "uptime_seconds" field.
+func (m *NodeMetricMutation) AddUptimeSeconds(u int64) {
+	if m.adduptime_seconds != nil {
+		*m.adduptime_seconds += u
+	} else {
+		m.adduptime_seconds = &u
+	}
+}
+
+// AddedUptimeSeconds returns the value that was added to the "uptime_seconds" field in this mutation.
+func (m *NodeMetricMutation) AddedUptimeSeconds() (r int64, exists bool) {
+	v := m.adduptime_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUptimeSeconds clears the value of the "uptime_seconds" field.
+func (m *NodeMetricMutation) ClearUptimeSeconds() {
+	m.uptime_seconds = nil
+	m.adduptime_seconds = nil
+	m.clearedFields[nodemetric.FieldUptimeSeconds] = struct{}{}
+}
+
+// UptimeSecondsCleared returns if the "uptime_seconds" field was cleared in this mutation.
+func (m *NodeMetricMutation) UptimeSecondsCleared() bool {
+	_, ok := m.clearedFields[nodemetric.FieldUptimeSeconds]
+	return ok
+}
+
+// ResetUptimeSeconds resets all changes to the "uptime_seconds" field.
+func (m *NodeMetricMutation) ResetUptimeSeconds() {
+	m.uptime_seconds = nil
+	m.adduptime_seconds = nil
+	delete(m.clearedFields, nodemetric.FieldUptimeSeconds)
+}
+
+// Where appends a list predicates to the NodeMetricMutation builder.
+func (m *NodeMetricMutation) Where(ps ...predicate.NodeMetric) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NodeMetricMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NodeMetricMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NodeMetric, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NodeMetricMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NodeMetricMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NodeMetric).
+func (m *NodeMetricMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NodeMetricMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, nodemetric.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, nodemetric.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, nodemetric.FieldDeletedAt)
+	}
+	if m.node_id != nil {
+		fields = append(fields, nodemetric.FieldNodeID)
+	}
+	if m.cpu_percent != nil {
+		fields = append(fields, nodemetric.FieldCPUPercent)
+	}
+	if m.memory_used_percent != nil {
+		fields = append(fields, nodemetric.FieldMemoryUsedPercent)
+	}
+	if m.disk_used_percent != nil {
+		fields = append(fields, nodemetric.FieldDiskUsedPercent)
+	}
+	if m.mem_total_bytes != nil {
+		fields = append(fields, nodemetric.FieldMemTotalBytes)
+	}
+	if m.uptime_seconds != nil {
+		fields = append(fields, nodemetric.FieldUptimeSeconds)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NodeMetricMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case nodemetric.FieldCreatedAt:
+		return m.CreatedAt()
+	case nodemetric.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case nodemetric.FieldDeletedAt:
+		return m.DeletedAt()
+	case nodemetric.FieldNodeID:
+		return m.NodeID()
+	case nodemetric.FieldCPUPercent:
+		return m.CPUPercent()
+	case nodemetric.FieldMemoryUsedPercent:
+		return m.MemoryUsedPercent()
+	case nodemetric.FieldDiskUsedPercent:
+		return m.DiskUsedPercent()
+	case nodemetric.FieldMemTotalBytes:
+		return m.MemTotalBytes()
+	case nodemetric.FieldUptimeSeconds:
+		return m.UptimeSeconds()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NodeMetricMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case nodemetric.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case nodemetric.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case nodemetric.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case nodemetric.FieldNodeID:
+		return m.OldNodeID(ctx)
+	case nodemetric.FieldCPUPercent:
+		return m.OldCPUPercent(ctx)
+	case nodemetric.FieldMemoryUsedPercent:
+		return m.OldMemoryUsedPercent(ctx)
+	case nodemetric.FieldDiskUsedPercent:
+		return m.OldDiskUsedPercent(ctx)
+	case nodemetric.FieldMemTotalBytes:
+		return m.OldMemTotalBytes(ctx)
+	case nodemetric.FieldUptimeSeconds:
+		return m.OldUptimeSeconds(ctx)
+	}
+	return nil, fmt.Errorf("unknown NodeMetric field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NodeMetricMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case nodemetric.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case nodemetric.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case nodemetric.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case nodemetric.FieldNodeID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNodeID(v)
+		return nil
+	case nodemetric.FieldCPUPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCPUPercent(v)
+		return nil
+	case nodemetric.FieldMemoryUsedPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMemoryUsedPercent(v)
+		return nil
+	case nodemetric.FieldDiskUsedPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDiskUsedPercent(v)
+		return nil
+	case nodemetric.FieldMemTotalBytes:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMemTotalBytes(v)
+		return nil
+	case nodemetric.FieldUptimeSeconds:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUptimeSeconds(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NodeMetric field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NodeMetricMutation) AddedFields() []string {
+	var fields []string
+	if m.addnode_id != nil {
+		fields = append(fields, nodemetric.FieldNodeID)
+	}
+	if m.addcpu_percent != nil {
+		fields = append(fields, nodemetric.FieldCPUPercent)
+	}
+	if m.addmemory_used_percent != nil {
+		fields = append(fields, nodemetric.FieldMemoryUsedPercent)
+	}
+	if m.adddisk_used_percent != nil {
+		fields = append(fields, nodemetric.FieldDiskUsedPercent)
+	}
+	if m.addmem_total_bytes != nil {
+		fields = append(fields, nodemetric.FieldMemTotalBytes)
+	}
+	if m.adduptime_seconds != nil {
+		fields = append(fields, nodemetric.FieldUptimeSeconds)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NodeMetricMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case nodemetric.FieldNodeID:
+		return m.AddedNodeID()
+	case nodemetric.FieldCPUPercent:
+		return m.AddedCPUPercent()
+	case nodemetric.FieldMemoryUsedPercent:
+		return m.AddedMemoryUsedPercent()
+	case nodemetric.FieldDiskUsedPercent:
+		return m.AddedDiskUsedPercent()
+	case nodemetric.FieldMemTotalBytes:
+		return m.AddedMemTotalBytes()
+	case nodemetric.FieldUptimeSeconds:
+		return m.AddedUptimeSeconds()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NodeMetricMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case nodemetric.FieldNodeID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNodeID(v)
+		return nil
+	case nodemetric.FieldCPUPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCPUPercent(v)
+		return nil
+	case nodemetric.FieldMemoryUsedPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMemoryUsedPercent(v)
+		return nil
+	case nodemetric.FieldDiskUsedPercent:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDiskUsedPercent(v)
+		return nil
+	case nodemetric.FieldMemTotalBytes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMemTotalBytes(v)
+		return nil
+	case nodemetric.FieldUptimeSeconds:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUptimeSeconds(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NodeMetric numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NodeMetricMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(nodemetric.FieldCreatedAt) {
+		fields = append(fields, nodemetric.FieldCreatedAt)
+	}
+	if m.FieldCleared(nodemetric.FieldUpdatedAt) {
+		fields = append(fields, nodemetric.FieldUpdatedAt)
+	}
+	if m.FieldCleared(nodemetric.FieldDeletedAt) {
+		fields = append(fields, nodemetric.FieldDeletedAt)
+	}
+	if m.FieldCleared(nodemetric.FieldCPUPercent) {
+		fields = append(fields, nodemetric.FieldCPUPercent)
+	}
+	if m.FieldCleared(nodemetric.FieldMemoryUsedPercent) {
+		fields = append(fields, nodemetric.FieldMemoryUsedPercent)
+	}
+	if m.FieldCleared(nodemetric.FieldDiskUsedPercent) {
+		fields = append(fields, nodemetric.FieldDiskUsedPercent)
+	}
+	if m.FieldCleared(nodemetric.FieldMemTotalBytes) {
+		fields = append(fields, nodemetric.FieldMemTotalBytes)
+	}
+	if m.FieldCleared(nodemetric.FieldUptimeSeconds) {
+		fields = append(fields, nodemetric.FieldUptimeSeconds)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NodeMetricMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NodeMetricMutation) ClearField(name string) error {
+	switch name {
+	case nodemetric.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case nodemetric.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case nodemetric.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case nodemetric.FieldCPUPercent:
+		m.ClearCPUPercent()
+		return nil
+	case nodemetric.FieldMemoryUsedPercent:
+		m.ClearMemoryUsedPercent()
+		return nil
+	case nodemetric.FieldDiskUsedPercent:
+		m.ClearDiskUsedPercent()
+		return nil
+	case nodemetric.FieldMemTotalBytes:
+		m.ClearMemTotalBytes()
+		return nil
+	case nodemetric.FieldUptimeSeconds:
+		m.ClearUptimeSeconds()
+		return nil
+	}
+	return fmt.Errorf("unknown NodeMetric nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NodeMetricMutation) ResetField(name string) error {
+	switch name {
+	case nodemetric.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case nodemetric.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case nodemetric.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case nodemetric.FieldNodeID:
+		m.ResetNodeID()
+		return nil
+	case nodemetric.FieldCPUPercent:
+		m.ResetCPUPercent()
+		return nil
+	case nodemetric.FieldMemoryUsedPercent:
+		m.ResetMemoryUsedPercent()
+		return nil
+	case nodemetric.FieldDiskUsedPercent:
+		m.ResetDiskUsedPercent()
+		return nil
+	case nodemetric.FieldMemTotalBytes:
+		m.ResetMemTotalBytes()
+		return nil
+	case nodemetric.FieldUptimeSeconds:
+		m.ResetUptimeSeconds()
+		return nil
+	}
+	return fmt.Errorf("unknown NodeMetric field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NodeMetricMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NodeMetricMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NodeMetricMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NodeMetricMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NodeMetricMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NodeMetricMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NodeMetricMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown NodeMetric unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NodeMetricMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown NodeMetric edge %s", name)
 }
 
 // OperationAuditLogMutation represents an operation that mutates the OperationAuditLog nodes in the graph.

@@ -41,6 +41,7 @@ type AgentService struct {
 	recordRepo     *data.CommandRecordRepo
 	projectRepo    *data.ProjectRepo
 	distRecordRepo *data.DistributionRecordRepo
+	metricRepo     *data.NodeMetricRepo
 	ossClient      *oss.MinIOClient
 	log            *log.Helper
 
@@ -50,13 +51,14 @@ type AgentService struct {
 	waiters sync.Map
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
 		ctx:            ctx,
 		repo:           repo,
 		recordRepo:     recordRepo,
 		projectRepo:    projectRepo,
 		distRecordRepo: distRecordRepo,
+		metricRepo:     metricRepo,
 		ossClient:      ossClient,
 		log:            ctx.NewLoggerHelper("agent/service/core-service"),
 	}
@@ -92,6 +94,14 @@ func (s *AgentService) Start(ctx context.Context) {
 					s.log.Warnf("distribution timeout sweep: %s", err.Error())
 				} else if n > 0 {
 					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", n)
+				}
+				// 节点指标保留 7 天
+				if s.metricRepo != nil {
+					if n, err := s.metricRepo.CleanupOlderThan(ctx, time.Now().Add(-7*24*time.Hour)); err != nil {
+						s.log.Warnf("node metric cleanup: %s", err.Error())
+					} else if n > 0 {
+						s.log.Infof("node metric cleanup: removed %d old record(s)", n)
+					}
 				}
 			}
 		}
@@ -159,9 +169,36 @@ func (s *AgentService) HandleHeartbeat(ctx context.Context, topicStr string, _ b
 	if err := s.repo.TouchHeartbeat(ctx, hb.AgentId, &hb.Metrics); err != nil {
 		return err
 	}
+
+	// 指标历史入库(异步,不阻塞心跳处理)
+	if s.metricRepo != nil && nodeIDFromHeartbeat(s, hb.AgentId) > 0 {
+		go func() {
+			bgCtx := context.Background()
+			m := hb.Metrics
+			_ = s.metricRepo.Create(bgCtx, nodeIDFromHeartbeat(s, hb.AgentId),
+				m.CPUPercent, m.MemoryUsedPercent, m.DiskUsedPercent,
+				m.MemTotalBytes, m.UptimeSeconds)
+		}()
+	}
+
 	s.log.Debugf("heartbeat from [%s] cpu=%.1f%% mem=%.1f%% disk=%.1f%%",
 		hb.AgentId, hb.Metrics.CPUPercent, hb.Metrics.MemoryUsedPercent, hb.Metrics.DiskUsedPercent)
 	return nil
+}
+
+// nodeIDFromHeartbeat 从缓存查节点 ID(避免每次心跳都查 DB)。
+var nodeIDCache sync.Map // agentId -> nodeID
+
+func nodeIDFromHeartbeat(s *AgentService, agentID string) uint32 {
+	if v, ok := nodeIDCache.Load(agentID); ok {
+		return v.(uint32)
+	}
+	node, err := s.repo.GetByAgentID(context.Background(), agentID)
+	if err != nil || node == nil {
+		return 0
+	}
+	nodeIDCache.Store(agentID, node.ID)
+	return node.ID
 }
 
 // HandleCommandResult 处理指令执行回执:按 request_id 回写指令台账终态;

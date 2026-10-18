@@ -56,6 +56,8 @@ type Tx struct {
 	Menu *MenuClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
+	// NodeMetric is the client for interacting with the NodeMetric builders.
+	NodeMetric *NodeMetricClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -255,6 +257,7 @@ func (tx *Tx) init() {
 	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
+	tx.NodeMetric = NewNodeMetricClient(tx.config)
 	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)
