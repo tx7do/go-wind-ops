@@ -54,3 +54,5 @@ export * from './build-history';
 export * from './distribution';
 export * from './monitor';
 export * from './alert';
+export * from './notification-channel';
+export * from './approval';

@@ -1532,6 +1532,249 @@ export type auditservicev1_GetApiAuditLogRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// ApprovalService 操作审批
+export interface ApprovalService {
+  // 查询审批单列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListApprovalResponse>;
+  // 查询审批单详情
+  Get(
+    request: opsservicev1_GetApprovalRequest,
+  ): Promise<opsservicev1_Approval>;
+  // 审批通过
+  Approve(
+    request: opsservicev1_ApproveApprovalRequest,
+  ): Promise<opsservicev1_op_approval_result>;
+  // 审批驳回
+  Reject(
+    request: opsservicev1_RejectApprovalRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createApprovalServiceClient(
+  transport: ClientTransport,
+): ApprovalService {
+  return {
+    List(request) {
+      const path = `admin/v1/approvals`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ApprovalService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListApprovalResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/approvals/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ApprovalService',
+        method: 'Get',
+      }) as Promise<opsservicev1_Approval>;
+    },
+    Approve(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/approvals/${request.id}:approve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ApprovalService',
+        method: 'Approve',
+      }) as Promise<opsservicev1_op_approval_result>;
+    },
+    Reject(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/approvals/${request.id}:reject`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ApprovalService',
+        method: 'Reject',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListApprovalResponse = {
+  items: opsservicev1_Approval[] | undefined;
+  total: number | undefined;
+};
+
+// 审批单
+export type opsservicev1_Approval = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  approverId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  operationName?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  operationRefId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  operationType?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  payload?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  rejectReason?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  requesterId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  resolvedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  result?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  status?: string;
+};
+
+export type opsservicev1_GetApprovalRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_ApproveApprovalRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+// op_approval_result 审批通过后的执行结果
+export type opsservicev1_op_approval_result = {
+  requestId: string | undefined;
+};
+
+export type opsservicev1_RejectApprovalRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  reason?: string;
+};
+
 // 用户后台登录认证服务
 export interface AuthenticationService {
   // 登录
@@ -4896,6 +5139,255 @@ export type opsservicev1_UpdateMonitorRequest = {
 };
 
 export type opsservicev1_DeleteMonitorRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export interface NotificationChannelService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListNotificationChannelResponse>;
+  Get(
+    request: opsservicev1_GetNotificationChannelRequest,
+  ): Promise<opsservicev1_NotificationChannel>;
+  Create(
+    request: opsservicev1_CreateNotificationChannelRequest,
+  ): Promise<opsservicev1_NotificationChannel>;
+  Update(
+    request: opsservicev1_UpdateNotificationChannelRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: opsservicev1_DeleteNotificationChannelRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createNotificationChannelServiceClient(
+  transport: ClientTransport,
+): NotificationChannelService {
+  return {
+    List(request) {
+      const path = `admin/v1/notification-channels`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'NotificationChannelService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListNotificationChannelResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/notification-channels/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'NotificationChannelService',
+        method: 'Get',
+      }) as Promise<opsservicev1_NotificationChannel>;
+    },
+    Create(request) {
+      const path = `admin/v1/notification-channels`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'NotificationChannelService',
+        method: 'Create',
+      }) as Promise<opsservicev1_NotificationChannel>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/notification-channels/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'NotificationChannelService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/notification-channels/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'NotificationChannelService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListNotificationChannelResponse = {
+  items: opsservicev1_NotificationChannel[] | undefined;
+  total: number | undefined;
+};
+
+// 告警通知渠道配置
+export type opsservicev1_NotificationChannel = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  smtpFrom?: string;
+  smtpHost?: string;
+  //
+  // Behaviors: INPUT_ONLY
+  smtpPassword?: string;
+  smtpPort?: number;
+  smtpUsername?: string;
+  //
+  // Behaviors: REQUIRED
+  type?: opsservicev1_NotificationChannelType;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+  webhookSecret?: string;
+  webhookSignStyle?: string;
+  webhookUrl?: string;
+};
+
+// 通知渠道类型
+export type opsservicev1_NotificationChannelType =
+  | 'EMAIL'
+  | 'NOTIFICATION_CHANNEL_TYPE_UNSPECIFIED'
+  | 'WEBHOOK';
+export type opsservicev1_GetNotificationChannelRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateNotificationChannelRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_NotificationChannel | undefined;
+};
+
+export type opsservicev1_UpdateNotificationChannelRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_NotificationChannel | undefined;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteNotificationChannelRequest = {
   //
   // Behaviors: REQUIRED
   id?: number;
@@ -9051,6 +9543,7 @@ export class ApiClient {
   private _alertService?: AlertService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
+  private _approvalService?: ApprovalService;
   private _authenticationService?: AuthenticationService;
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
@@ -9064,6 +9557,7 @@ export class ApiClient {
   private _loginPolicyService?: LoginPolicyService;
   private _menuService?: MenuService;
   private _monitorService?: MonitorService;
+  private _notificationChannelService?: NotificationChannelService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orgUnitService?: OrgUnitService;
   private _permissionAuditLogService?: PermissionAuditLogService;
@@ -9103,6 +9597,10 @@ export class ApiClient {
 
   get apiService(): ApiService {
     return this._apiService ??= createApiServiceClient(this._transport);
+  }
+
+  get approvalService(): ApprovalService {
+    return this._approvalService ??= createApprovalServiceClient(this._transport);
   }
 
   get authenticationService(): AuthenticationService {
@@ -9155,6 +9653,10 @@ export class ApiClient {
 
   get monitorService(): MonitorService {
     return this._monitorService ??= createMonitorServiceClient(this._transport);
+  }
+
+  get notificationChannelService(): NotificationChannelService {
+    return this._notificationChannelService ??= createNotificationChannelServiceClient(this._transport);
   }
 
   get operationAuditLogService(): OperationAuditLogService {
