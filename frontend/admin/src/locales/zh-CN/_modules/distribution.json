@@ -41,5 +41,20 @@
   "noRecords": "暂无分发记录",
   "detail": "详情",
   "detailTitle": "分发记录详情 #{{id}}",
-  "noResult": "无结果数据"
+  "noResult": "无结果数据",
+  "deployType": "部署类型",
+  "deployFile": "文件分发",
+  "deployDocker": "镜像部署",
+  "deployTypeHint": "DOCKER 部署需目标机器已安装 docker,直接拉取镜像运行,不经产物投递",
+  "image": "镜像 tag",
+  "imageHint": "支持 {buildNo} 占位符,触发时替换为实际构建号",
+  "imageRequired": "DOCKER 部署必须填写镜像 tag",
+  "containerName": "容器名",
+  "containerNameHint": "部署时先强制删除同名容器再启动新容器",
+  "containerNameRequired": "DOCKER 部署必须填写容器名",
+  "dockerPorts": "端口映射",
+  "dockerEnvs": "环境变量",
+  "dockerVolumes": "卷挂载",
+  "dockerRestart": "重启策略",
+  "dockerNetwork": "网络"
 }

@@ -426,19 +426,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Distribution",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			distribution.FieldCreatedAt:   {Type: field.TypeTime, Column: distribution.FieldCreatedAt},
-			distribution.FieldUpdatedAt:   {Type: field.TypeTime, Column: distribution.FieldUpdatedAt},
-			distribution.FieldDeletedAt:   {Type: field.TypeTime, Column: distribution.FieldDeletedAt},
-			distribution.FieldCreatedBy:   {Type: field.TypeUint32, Column: distribution.FieldCreatedBy},
-			distribution.FieldUpdatedBy:   {Type: field.TypeUint32, Column: distribution.FieldUpdatedBy},
-			distribution.FieldDeletedBy:   {Type: field.TypeUint32, Column: distribution.FieldDeletedBy},
-			distribution.FieldName:        {Type: field.TypeString, Column: distribution.FieldName},
-			distribution.FieldBuildID:     {Type: field.TypeUint32, Column: distribution.FieldBuildID},
-			distribution.FieldProjectIds:  {Type: field.TypeJSON, Column: distribution.FieldProjectIds},
-			distribution.FieldClearOld:    {Type: field.TypeBool, Column: distribution.FieldClearOld},
-			distribution.FieldAfterOpt:    {Type: field.TypeEnum, Column: distribution.FieldAfterOpt},
-			distribution.FieldDescription: {Type: field.TypeString, Column: distribution.FieldDescription},
-			distribution.FieldLabels:      {Type: field.TypeJSON, Column: distribution.FieldLabels},
+			distribution.FieldCreatedAt:     {Type: field.TypeTime, Column: distribution.FieldCreatedAt},
+			distribution.FieldUpdatedAt:     {Type: field.TypeTime, Column: distribution.FieldUpdatedAt},
+			distribution.FieldDeletedAt:     {Type: field.TypeTime, Column: distribution.FieldDeletedAt},
+			distribution.FieldCreatedBy:     {Type: field.TypeUint32, Column: distribution.FieldCreatedBy},
+			distribution.FieldUpdatedBy:     {Type: field.TypeUint32, Column: distribution.FieldUpdatedBy},
+			distribution.FieldDeletedBy:     {Type: field.TypeUint32, Column: distribution.FieldDeletedBy},
+			distribution.FieldName:          {Type: field.TypeString, Column: distribution.FieldName},
+			distribution.FieldBuildID:       {Type: field.TypeUint32, Column: distribution.FieldBuildID},
+			distribution.FieldProjectIds:    {Type: field.TypeJSON, Column: distribution.FieldProjectIds},
+			distribution.FieldClearOld:      {Type: field.TypeBool, Column: distribution.FieldClearOld},
+			distribution.FieldDeployType:    {Type: field.TypeEnum, Column: distribution.FieldDeployType},
+			distribution.FieldImage:         {Type: field.TypeString, Column: distribution.FieldImage},
+			distribution.FieldContainerName: {Type: field.TypeString, Column: distribution.FieldContainerName},
+			distribution.FieldDockerPorts:   {Type: field.TypeJSON, Column: distribution.FieldDockerPorts},
+			distribution.FieldDockerEnvs:    {Type: field.TypeJSON, Column: distribution.FieldDockerEnvs},
+			distribution.FieldDockerVolumes: {Type: field.TypeJSON, Column: distribution.FieldDockerVolumes},
+			distribution.FieldDockerRestart: {Type: field.TypeString, Column: distribution.FieldDockerRestart},
+			distribution.FieldDockerNetwork: {Type: field.TypeString, Column: distribution.FieldDockerNetwork},
+			distribution.FieldAfterOpt:      {Type: field.TypeEnum, Column: distribution.FieldAfterOpt},
+			distribution.FieldDescription:   {Type: field.TypeString, Column: distribution.FieldDescription},
+			distribution.FieldLabels:        {Type: field.TypeJSON, Column: distribution.FieldLabels},
 		},
 	}
 	graph.Nodes[13] = &sqlgraph.Node{
@@ -3210,6 +3218,46 @@ func (f *DistributionFilter) WhereProjectIds(p entql.BytesP) {
 // WhereClearOld applies the entql bool predicate on the clear_old field.
 func (f *DistributionFilter) WhereClearOld(p entql.BoolP) {
 	f.Where(p.Field(distribution.FieldClearOld))
+}
+
+// WhereDeployType applies the entql string predicate on the deploy_type field.
+func (f *DistributionFilter) WhereDeployType(p entql.StringP) {
+	f.Where(p.Field(distribution.FieldDeployType))
+}
+
+// WhereImage applies the entql string predicate on the image field.
+func (f *DistributionFilter) WhereImage(p entql.StringP) {
+	f.Where(p.Field(distribution.FieldImage))
+}
+
+// WhereContainerName applies the entql string predicate on the container_name field.
+func (f *DistributionFilter) WhereContainerName(p entql.StringP) {
+	f.Where(p.Field(distribution.FieldContainerName))
+}
+
+// WhereDockerPorts applies the entql json.RawMessage predicate on the docker_ports field.
+func (f *DistributionFilter) WhereDockerPorts(p entql.BytesP) {
+	f.Where(p.Field(distribution.FieldDockerPorts))
+}
+
+// WhereDockerEnvs applies the entql json.RawMessage predicate on the docker_envs field.
+func (f *DistributionFilter) WhereDockerEnvs(p entql.BytesP) {
+	f.Where(p.Field(distribution.FieldDockerEnvs))
+}
+
+// WhereDockerVolumes applies the entql json.RawMessage predicate on the docker_volumes field.
+func (f *DistributionFilter) WhereDockerVolumes(p entql.BytesP) {
+	f.Where(p.Field(distribution.FieldDockerVolumes))
+}
+
+// WhereDockerRestart applies the entql string predicate on the docker_restart field.
+func (f *DistributionFilter) WhereDockerRestart(p entql.StringP) {
+	f.Where(p.Field(distribution.FieldDockerRestart))
+}
+
+// WhereDockerNetwork applies the entql string predicate on the docker_network field.
+func (f *DistributionFilter) WhereDockerNetwork(p entql.StringP) {
+	f.Where(p.Field(distribution.FieldDockerNetwork))
 }
 
 // WhereAfterOpt applies the entql string predicate on the after_opt field.

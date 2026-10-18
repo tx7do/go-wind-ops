@@ -92,6 +92,18 @@ const DistributionManagement = () => {
       hideInSearch: true,
     },
     {
+      title: t('deployType'),
+      dataIndex: 'deployType',
+      width: 100,
+      hideInSearch: true,
+      render: (_, record) =>
+        record.deployType === 'DOCKER' ? (
+          <Tag color="blue">{t('deployDocker')}</Tag>
+        ) : (
+          <Tag>{t('deployFile')}</Tag>
+        ),
+    },
+    {
       title: t('clearOld'),
       dataIndex: 'clearOld',
       width: 100,

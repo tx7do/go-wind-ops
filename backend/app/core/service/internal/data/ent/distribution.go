@@ -39,6 +39,22 @@ type Distribution struct {
 	ProjectIds []uint32 `json:"project_ids,omitempty"`
 	// 分发前清空项目目录旧内容(危险操作,谨慎开启)
 	ClearOld bool `json:"clear_old,omitempty"`
+	// 部署类型:FILE=产物文件分发,DOCKER=镜像部署(目标机需有 docker)
+	DeployType *distribution.DeployType `json:"deploy_type,omitempty"`
+	// 镜像 tag(DOCKER 用,支持 {buildNo} 占位符)
+	Image *string `json:"image,omitempty"`
+	// 容器名(DOCKER 用;部署时先强制删除同名容器再 run)
+	ContainerName *string `json:"container_name,omitempty"`
+	// 端口映射(DOCKER 用,host:container)
+	DockerPorts []string `json:"docker_ports,omitempty"`
+	// 环境变量(DOCKER 用,K=V)
+	DockerEnvs []string `json:"docker_envs,omitempty"`
+	// 卷挂载(DOCKER 用,host:container)
+	DockerVolumes []string `json:"docker_volumes,omitempty"`
+	// 容器重启策略(DOCKER 用)
+	DockerRestart *string `json:"docker_restart,omitempty"`
+	// 容器网络(DOCKER 用)
+	DockerNetwork *string `json:"docker_network,omitempty"`
 	// 分发后动作
 	AfterOpt *distribution.AfterOpt `json:"after_opt,omitempty"`
 	// 描述
@@ -53,13 +69,13 @@ func (*Distribution) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case distribution.FieldProjectIds, distribution.FieldLabels:
+		case distribution.FieldProjectIds, distribution.FieldDockerPorts, distribution.FieldDockerEnvs, distribution.FieldDockerVolumes, distribution.FieldLabels:
 			values[i] = new([]byte)
 		case distribution.FieldClearOld:
 			values[i] = new(sql.NullBool)
 		case distribution.FieldID, distribution.FieldCreatedBy, distribution.FieldUpdatedBy, distribution.FieldDeletedBy, distribution.FieldBuildID:
 			values[i] = new(sql.NullInt64)
-		case distribution.FieldName, distribution.FieldAfterOpt, distribution.FieldDescription:
+		case distribution.FieldName, distribution.FieldDeployType, distribution.FieldImage, distribution.FieldContainerName, distribution.FieldDockerRestart, distribution.FieldDockerNetwork, distribution.FieldAfterOpt, distribution.FieldDescription:
 			values[i] = new(sql.NullString)
 		case distribution.FieldCreatedAt, distribution.FieldUpdatedAt, distribution.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -151,6 +167,65 @@ func (_m *Distribution) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field clear_old", values[i])
 			} else if value.Valid {
 				_m.ClearOld = value.Bool
+			}
+		case distribution.FieldDeployType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deploy_type", values[i])
+			} else if value.Valid {
+				_m.DeployType = new(distribution.DeployType)
+				*_m.DeployType = distribution.DeployType(value.String)
+			}
+		case distribution.FieldImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image", values[i])
+			} else if value.Valid {
+				_m.Image = new(string)
+				*_m.Image = value.String
+			}
+		case distribution.FieldContainerName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field container_name", values[i])
+			} else if value.Valid {
+				_m.ContainerName = new(string)
+				*_m.ContainerName = value.String
+			}
+		case distribution.FieldDockerPorts:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field docker_ports", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.DockerPorts); err != nil {
+					return fmt.Errorf("unmarshal field docker_ports: %w", err)
+				}
+			}
+		case distribution.FieldDockerEnvs:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field docker_envs", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.DockerEnvs); err != nil {
+					return fmt.Errorf("unmarshal field docker_envs: %w", err)
+				}
+			}
+		case distribution.FieldDockerVolumes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field docker_volumes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.DockerVolumes); err != nil {
+					return fmt.Errorf("unmarshal field docker_volumes: %w", err)
+				}
+			}
+		case distribution.FieldDockerRestart:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field docker_restart", values[i])
+			} else if value.Valid {
+				_m.DockerRestart = new(string)
+				*_m.DockerRestart = value.String
+			}
+		case distribution.FieldDockerNetwork:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field docker_network", values[i])
+			} else if value.Valid {
+				_m.DockerNetwork = new(string)
+				*_m.DockerNetwork = value.String
 			}
 		case distribution.FieldAfterOpt:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -251,6 +326,40 @@ func (_m *Distribution) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("clear_old=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ClearOld))
+	builder.WriteString(", ")
+	if v := _m.DeployType; v != nil {
+		builder.WriteString("deploy_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Image; v != nil {
+		builder.WriteString("image=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.ContainerName; v != nil {
+		builder.WriteString("container_name=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("docker_ports=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DockerPorts))
+	builder.WriteString(", ")
+	builder.WriteString("docker_envs=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DockerEnvs))
+	builder.WriteString(", ")
+	builder.WriteString("docker_volumes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DockerVolumes))
+	builder.WriteString(", ")
+	if v := _m.DockerRestart; v != nil {
+		builder.WriteString("docker_restart=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.DockerNetwork; v != nil {
+		builder.WriteString("docker_network=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := _m.AfterOpt; v != nil {
 		builder.WriteString("after_opt=")

@@ -3795,13 +3795,21 @@ export type opsservicev1_Distribution = {
   // Behaviors: REQUIRED
   buildId?: number;
   clearOld?: boolean;
+  containerName?: string;
   //
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
+  deployType?: opsservicev1_Distribution_DeployType;
   description?: string;
+  dockerEnvs: string[] | undefined;
+  dockerNetwork?: string;
+  dockerPorts: string[] | undefined;
+  dockerRestart?: string;
+  dockerVolumes: string[] | undefined;
   //
   // Behaviors: OUTPUT_ONLY
   id?: number;
+  image?: string;
   labels: string[] | undefined;
   //
   // Behaviors: REQUIRED
@@ -3820,6 +3828,11 @@ export type opsservicev1_Distribution_AfterOpt =
   | 'RESTART'
   | 'START'
   | 'UNSPECIFIED';
+// 部署类型(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_Distribution_DeployType =
+  | 'DEPLOY_TYPE_UNSPECIFIED'
+  | 'DOCKER'
+  | 'FILE';
 export type opsservicev1_GetDistributionRequest = {
   //
   // Behaviors: REQUIRED

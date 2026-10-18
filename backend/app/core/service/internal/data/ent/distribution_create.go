@@ -138,6 +138,94 @@ func (_c *DistributionCreate) SetNillableClearOld(v *bool) *DistributionCreate {
 	return _c
 }
 
+// SetDeployType sets the "deploy_type" field.
+func (_c *DistributionCreate) SetDeployType(v distribution.DeployType) *DistributionCreate {
+	_c.mutation.SetDeployType(v)
+	return _c
+}
+
+// SetNillableDeployType sets the "deploy_type" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableDeployType(v *distribution.DeployType) *DistributionCreate {
+	if v != nil {
+		_c.SetDeployType(*v)
+	}
+	return _c
+}
+
+// SetImage sets the "image" field.
+func (_c *DistributionCreate) SetImage(v string) *DistributionCreate {
+	_c.mutation.SetImage(v)
+	return _c
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableImage(v *string) *DistributionCreate {
+	if v != nil {
+		_c.SetImage(*v)
+	}
+	return _c
+}
+
+// SetContainerName sets the "container_name" field.
+func (_c *DistributionCreate) SetContainerName(v string) *DistributionCreate {
+	_c.mutation.SetContainerName(v)
+	return _c
+}
+
+// SetNillableContainerName sets the "container_name" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableContainerName(v *string) *DistributionCreate {
+	if v != nil {
+		_c.SetContainerName(*v)
+	}
+	return _c
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (_c *DistributionCreate) SetDockerPorts(v []string) *DistributionCreate {
+	_c.mutation.SetDockerPorts(v)
+	return _c
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (_c *DistributionCreate) SetDockerEnvs(v []string) *DistributionCreate {
+	_c.mutation.SetDockerEnvs(v)
+	return _c
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (_c *DistributionCreate) SetDockerVolumes(v []string) *DistributionCreate {
+	_c.mutation.SetDockerVolumes(v)
+	return _c
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (_c *DistributionCreate) SetDockerRestart(v string) *DistributionCreate {
+	_c.mutation.SetDockerRestart(v)
+	return _c
+}
+
+// SetNillableDockerRestart sets the "docker_restart" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableDockerRestart(v *string) *DistributionCreate {
+	if v != nil {
+		_c.SetDockerRestart(*v)
+	}
+	return _c
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (_c *DistributionCreate) SetDockerNetwork(v string) *DistributionCreate {
+	_c.mutation.SetDockerNetwork(v)
+	return _c
+}
+
+// SetNillableDockerNetwork sets the "docker_network" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableDockerNetwork(v *string) *DistributionCreate {
+	if v != nil {
+		_c.SetDockerNetwork(*v)
+	}
+	return _c
+}
+
 // SetAfterOpt sets the "after_opt" field.
 func (_c *DistributionCreate) SetAfterOpt(v distribution.AfterOpt) *DistributionCreate {
 	_c.mutation.SetAfterOpt(v)
@@ -217,6 +305,14 @@ func (_c *DistributionCreate) defaults() {
 		v := distribution.DefaultClearOld
 		_c.mutation.SetClearOld(v)
 	}
+	if _, ok := _c.mutation.DeployType(); !ok {
+		v := distribution.DefaultDeployType
+		_c.mutation.SetDeployType(v)
+	}
+	if _, ok := _c.mutation.DockerRestart(); !ok {
+		v := distribution.DefaultDockerRestart
+		_c.mutation.SetDockerRestart(v)
+	}
 	if _, ok := _c.mutation.AfterOpt(); !ok {
 		v := distribution.DefaultAfterOpt
 		_c.mutation.SetAfterOpt(v)
@@ -243,6 +339,11 @@ func (_c *DistributionCreate) check() error {
 	}
 	if _, ok := _c.mutation.ClearOld(); !ok {
 		return &ValidationError{Name: "clear_old", err: errors.New(`ent: missing required field "Distribution.clear_old"`)}
+	}
+	if v, ok := _c.mutation.DeployType(); ok {
+		if err := distribution.DeployTypeValidator(v); err != nil {
+			return &ValidationError{Name: "deploy_type", err: fmt.Errorf(`ent: validator failed for field "Distribution.deploy_type": %w`, err)}
+		}
 	}
 	if v, ok := _c.mutation.AfterOpt(); ok {
 		if err := distribution.AfterOptValidator(v); err != nil {
@@ -326,6 +427,38 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)
 		_node.ClearOld = value
+	}
+	if value, ok := _c.mutation.DeployType(); ok {
+		_spec.SetField(distribution.FieldDeployType, field.TypeEnum, value)
+		_node.DeployType = &value
+	}
+	if value, ok := _c.mutation.Image(); ok {
+		_spec.SetField(distribution.FieldImage, field.TypeString, value)
+		_node.Image = &value
+	}
+	if value, ok := _c.mutation.ContainerName(); ok {
+		_spec.SetField(distribution.FieldContainerName, field.TypeString, value)
+		_node.ContainerName = &value
+	}
+	if value, ok := _c.mutation.DockerPorts(); ok {
+		_spec.SetField(distribution.FieldDockerPorts, field.TypeJSON, value)
+		_node.DockerPorts = value
+	}
+	if value, ok := _c.mutation.DockerEnvs(); ok {
+		_spec.SetField(distribution.FieldDockerEnvs, field.TypeJSON, value)
+		_node.DockerEnvs = value
+	}
+	if value, ok := _c.mutation.DockerVolumes(); ok {
+		_spec.SetField(distribution.FieldDockerVolumes, field.TypeJSON, value)
+		_node.DockerVolumes = value
+	}
+	if value, ok := _c.mutation.DockerRestart(); ok {
+		_spec.SetField(distribution.FieldDockerRestart, field.TypeString, value)
+		_node.DockerRestart = &value
+	}
+	if value, ok := _c.mutation.DockerNetwork(); ok {
+		_spec.SetField(distribution.FieldDockerNetwork, field.TypeString, value)
+		_node.DockerNetwork = &value
 	}
 	if value, ok := _c.mutation.AfterOpt(); ok {
 		_spec.SetField(distribution.FieldAfterOpt, field.TypeEnum, value)
@@ -556,6 +689,150 @@ func (u *DistributionUpsert) SetClearOld(v bool) *DistributionUpsert {
 // UpdateClearOld sets the "clear_old" field to the value that was provided on create.
 func (u *DistributionUpsert) UpdateClearOld() *DistributionUpsert {
 	u.SetExcluded(distribution.FieldClearOld)
+	return u
+}
+
+// SetDeployType sets the "deploy_type" field.
+func (u *DistributionUpsert) SetDeployType(v distribution.DeployType) *DistributionUpsert {
+	u.Set(distribution.FieldDeployType, v)
+	return u
+}
+
+// UpdateDeployType sets the "deploy_type" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDeployType() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDeployType)
+	return u
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (u *DistributionUpsert) ClearDeployType() *DistributionUpsert {
+	u.SetNull(distribution.FieldDeployType)
+	return u
+}
+
+// SetImage sets the "image" field.
+func (u *DistributionUpsert) SetImage(v string) *DistributionUpsert {
+	u.Set(distribution.FieldImage, v)
+	return u
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateImage() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldImage)
+	return u
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *DistributionUpsert) ClearImage() *DistributionUpsert {
+	u.SetNull(distribution.FieldImage)
+	return u
+}
+
+// SetContainerName sets the "container_name" field.
+func (u *DistributionUpsert) SetContainerName(v string) *DistributionUpsert {
+	u.Set(distribution.FieldContainerName, v)
+	return u
+}
+
+// UpdateContainerName sets the "container_name" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateContainerName() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldContainerName)
+	return u
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (u *DistributionUpsert) ClearContainerName() *DistributionUpsert {
+	u.SetNull(distribution.FieldContainerName)
+	return u
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (u *DistributionUpsert) SetDockerPorts(v []string) *DistributionUpsert {
+	u.Set(distribution.FieldDockerPorts, v)
+	return u
+}
+
+// UpdateDockerPorts sets the "docker_ports" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDockerPorts() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDockerPorts)
+	return u
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (u *DistributionUpsert) ClearDockerPorts() *DistributionUpsert {
+	u.SetNull(distribution.FieldDockerPorts)
+	return u
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (u *DistributionUpsert) SetDockerEnvs(v []string) *DistributionUpsert {
+	u.Set(distribution.FieldDockerEnvs, v)
+	return u
+}
+
+// UpdateDockerEnvs sets the "docker_envs" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDockerEnvs() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDockerEnvs)
+	return u
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (u *DistributionUpsert) ClearDockerEnvs() *DistributionUpsert {
+	u.SetNull(distribution.FieldDockerEnvs)
+	return u
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (u *DistributionUpsert) SetDockerVolumes(v []string) *DistributionUpsert {
+	u.Set(distribution.FieldDockerVolumes, v)
+	return u
+}
+
+// UpdateDockerVolumes sets the "docker_volumes" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDockerVolumes() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDockerVolumes)
+	return u
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (u *DistributionUpsert) ClearDockerVolumes() *DistributionUpsert {
+	u.SetNull(distribution.FieldDockerVolumes)
+	return u
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (u *DistributionUpsert) SetDockerRestart(v string) *DistributionUpsert {
+	u.Set(distribution.FieldDockerRestart, v)
+	return u
+}
+
+// UpdateDockerRestart sets the "docker_restart" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDockerRestart() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDockerRestart)
+	return u
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (u *DistributionUpsert) ClearDockerRestart() *DistributionUpsert {
+	u.SetNull(distribution.FieldDockerRestart)
+	return u
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (u *DistributionUpsert) SetDockerNetwork(v string) *DistributionUpsert {
+	u.Set(distribution.FieldDockerNetwork, v)
+	return u
+}
+
+// UpdateDockerNetwork sets the "docker_network" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateDockerNetwork() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldDockerNetwork)
+	return u
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (u *DistributionUpsert) ClearDockerNetwork() *DistributionUpsert {
+	u.SetNull(distribution.FieldDockerNetwork)
 	return u
 }
 
@@ -857,6 +1134,174 @@ func (u *DistributionUpsertOne) SetClearOld(v bool) *DistributionUpsertOne {
 func (u *DistributionUpsertOne) UpdateClearOld() *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.UpdateClearOld()
+	})
+}
+
+// SetDeployType sets the "deploy_type" field.
+func (u *DistributionUpsertOne) SetDeployType(v distribution.DeployType) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDeployType(v)
+	})
+}
+
+// UpdateDeployType sets the "deploy_type" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDeployType() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDeployType()
+	})
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (u *DistributionUpsertOne) ClearDeployType() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDeployType()
+	})
+}
+
+// SetImage sets the "image" field.
+func (u *DistributionUpsertOne) SetImage(v string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetImage(v)
+	})
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateImage() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateImage()
+	})
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *DistributionUpsertOne) ClearImage() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearImage()
+	})
+}
+
+// SetContainerName sets the "container_name" field.
+func (u *DistributionUpsertOne) SetContainerName(v string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetContainerName(v)
+	})
+}
+
+// UpdateContainerName sets the "container_name" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateContainerName() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateContainerName()
+	})
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (u *DistributionUpsertOne) ClearContainerName() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearContainerName()
+	})
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (u *DistributionUpsertOne) SetDockerPorts(v []string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerPorts(v)
+	})
+}
+
+// UpdateDockerPorts sets the "docker_ports" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDockerPorts() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerPorts()
+	})
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (u *DistributionUpsertOne) ClearDockerPorts() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerPorts()
+	})
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (u *DistributionUpsertOne) SetDockerEnvs(v []string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerEnvs(v)
+	})
+}
+
+// UpdateDockerEnvs sets the "docker_envs" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDockerEnvs() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerEnvs()
+	})
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (u *DistributionUpsertOne) ClearDockerEnvs() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerEnvs()
+	})
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (u *DistributionUpsertOne) SetDockerVolumes(v []string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerVolumes(v)
+	})
+}
+
+// UpdateDockerVolumes sets the "docker_volumes" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDockerVolumes() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerVolumes()
+	})
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (u *DistributionUpsertOne) ClearDockerVolumes() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerVolumes()
+	})
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (u *DistributionUpsertOne) SetDockerRestart(v string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerRestart(v)
+	})
+}
+
+// UpdateDockerRestart sets the "docker_restart" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDockerRestart() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerRestart()
+	})
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (u *DistributionUpsertOne) ClearDockerRestart() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerRestart()
+	})
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (u *DistributionUpsertOne) SetDockerNetwork(v string) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerNetwork(v)
+	})
+}
+
+// UpdateDockerNetwork sets the "docker_network" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateDockerNetwork() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerNetwork()
+	})
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (u *DistributionUpsertOne) ClearDockerNetwork() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerNetwork()
 	})
 }
 
@@ -1333,6 +1778,174 @@ func (u *DistributionUpsertBulk) SetClearOld(v bool) *DistributionUpsertBulk {
 func (u *DistributionUpsertBulk) UpdateClearOld() *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.UpdateClearOld()
+	})
+}
+
+// SetDeployType sets the "deploy_type" field.
+func (u *DistributionUpsertBulk) SetDeployType(v distribution.DeployType) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDeployType(v)
+	})
+}
+
+// UpdateDeployType sets the "deploy_type" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDeployType() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDeployType()
+	})
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (u *DistributionUpsertBulk) ClearDeployType() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDeployType()
+	})
+}
+
+// SetImage sets the "image" field.
+func (u *DistributionUpsertBulk) SetImage(v string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetImage(v)
+	})
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateImage() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateImage()
+	})
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *DistributionUpsertBulk) ClearImage() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearImage()
+	})
+}
+
+// SetContainerName sets the "container_name" field.
+func (u *DistributionUpsertBulk) SetContainerName(v string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetContainerName(v)
+	})
+}
+
+// UpdateContainerName sets the "container_name" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateContainerName() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateContainerName()
+	})
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (u *DistributionUpsertBulk) ClearContainerName() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearContainerName()
+	})
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (u *DistributionUpsertBulk) SetDockerPorts(v []string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerPorts(v)
+	})
+}
+
+// UpdateDockerPorts sets the "docker_ports" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDockerPorts() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerPorts()
+	})
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (u *DistributionUpsertBulk) ClearDockerPorts() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerPorts()
+	})
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (u *DistributionUpsertBulk) SetDockerEnvs(v []string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerEnvs(v)
+	})
+}
+
+// UpdateDockerEnvs sets the "docker_envs" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDockerEnvs() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerEnvs()
+	})
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (u *DistributionUpsertBulk) ClearDockerEnvs() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerEnvs()
+	})
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (u *DistributionUpsertBulk) SetDockerVolumes(v []string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerVolumes(v)
+	})
+}
+
+// UpdateDockerVolumes sets the "docker_volumes" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDockerVolumes() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerVolumes()
+	})
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (u *DistributionUpsertBulk) ClearDockerVolumes() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerVolumes()
+	})
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (u *DistributionUpsertBulk) SetDockerRestart(v string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerRestart(v)
+	})
+}
+
+// UpdateDockerRestart sets the "docker_restart" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDockerRestart() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerRestart()
+	})
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (u *DistributionUpsertBulk) ClearDockerRestart() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerRestart()
+	})
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (u *DistributionUpsertBulk) SetDockerNetwork(v string) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetDockerNetwork(v)
+	})
+}
+
+// UpdateDockerNetwork sets the "docker_network" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateDockerNetwork() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateDockerNetwork()
+	})
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (u *DistributionUpsertBulk) ClearDockerNetwork() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.ClearDockerNetwork()
 	})
 }
 

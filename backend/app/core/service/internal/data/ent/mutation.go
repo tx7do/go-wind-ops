@@ -19562,32 +19562,43 @@ func (m *DictTypeMutation) ResetEdge(name string) error {
 // DistributionMutation represents an operation that mutates the Distribution nodes in the graph.
 type DistributionMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *uint32
-	created_at        *time.Time
-	updated_at        *time.Time
-	deleted_at        *time.Time
-	created_by        *uint32
-	addcreated_by     *int32
-	updated_by        *uint32
-	addupdated_by     *int32
-	deleted_by        *uint32
-	adddeleted_by     *int32
-	name              *string
-	build_id          *uint32
-	addbuild_id       *int32
-	project_ids       *[]uint32
-	appendproject_ids []uint32
-	clear_old         *bool
-	after_opt         *distribution.AfterOpt
-	description       *string
-	labels            *[]string
-	appendlabels      []string
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*Distribution, error)
-	predicates        []predicate.Distribution
+	op                   Op
+	typ                  string
+	id                   *uint32
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	created_by           *uint32
+	addcreated_by        *int32
+	updated_by           *uint32
+	addupdated_by        *int32
+	deleted_by           *uint32
+	adddeleted_by        *int32
+	name                 *string
+	build_id             *uint32
+	addbuild_id          *int32
+	project_ids          *[]uint32
+	appendproject_ids    []uint32
+	clear_old            *bool
+	deploy_type          *distribution.DeployType
+	image                *string
+	container_name       *string
+	docker_ports         *[]string
+	appenddocker_ports   []string
+	docker_envs          *[]string
+	appenddocker_envs    []string
+	docker_volumes       *[]string
+	appenddocker_volumes []string
+	docker_restart       *string
+	docker_network       *string
+	after_opt            *distribution.AfterOpt
+	description          *string
+	labels               *[]string
+	appendlabels         []string
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*Distribution, error)
+	predicates           []predicate.Distribution
 }
 
 var _ ent.Mutation = (*DistributionMutation)(nil)
@@ -20244,6 +20255,446 @@ func (m *DistributionMutation) ResetClearOld() {
 	m.clear_old = nil
 }
 
+// SetDeployType sets the "deploy_type" field.
+func (m *DistributionMutation) SetDeployType(dt distribution.DeployType) {
+	m.deploy_type = &dt
+}
+
+// DeployType returns the value of the "deploy_type" field in the mutation.
+func (m *DistributionMutation) DeployType() (r distribution.DeployType, exists bool) {
+	v := m.deploy_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeployType returns the old "deploy_type" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDeployType(ctx context.Context) (v *distribution.DeployType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeployType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeployType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeployType: %w", err)
+	}
+	return oldValue.DeployType, nil
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (m *DistributionMutation) ClearDeployType() {
+	m.deploy_type = nil
+	m.clearedFields[distribution.FieldDeployType] = struct{}{}
+}
+
+// DeployTypeCleared returns if the "deploy_type" field was cleared in this mutation.
+func (m *DistributionMutation) DeployTypeCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDeployType]
+	return ok
+}
+
+// ResetDeployType resets all changes to the "deploy_type" field.
+func (m *DistributionMutation) ResetDeployType() {
+	m.deploy_type = nil
+	delete(m.clearedFields, distribution.FieldDeployType)
+}
+
+// SetImage sets the "image" field.
+func (m *DistributionMutation) SetImage(s string) {
+	m.image = &s
+}
+
+// Image returns the value of the "image" field in the mutation.
+func (m *DistributionMutation) Image() (r string, exists bool) {
+	v := m.image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImage returns the old "image" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldImage(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImage: %w", err)
+	}
+	return oldValue.Image, nil
+}
+
+// ClearImage clears the value of the "image" field.
+func (m *DistributionMutation) ClearImage() {
+	m.image = nil
+	m.clearedFields[distribution.FieldImage] = struct{}{}
+}
+
+// ImageCleared returns if the "image" field was cleared in this mutation.
+func (m *DistributionMutation) ImageCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldImage]
+	return ok
+}
+
+// ResetImage resets all changes to the "image" field.
+func (m *DistributionMutation) ResetImage() {
+	m.image = nil
+	delete(m.clearedFields, distribution.FieldImage)
+}
+
+// SetContainerName sets the "container_name" field.
+func (m *DistributionMutation) SetContainerName(s string) {
+	m.container_name = &s
+}
+
+// ContainerName returns the value of the "container_name" field in the mutation.
+func (m *DistributionMutation) ContainerName() (r string, exists bool) {
+	v := m.container_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContainerName returns the old "container_name" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldContainerName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContainerName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContainerName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContainerName: %w", err)
+	}
+	return oldValue.ContainerName, nil
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (m *DistributionMutation) ClearContainerName() {
+	m.container_name = nil
+	m.clearedFields[distribution.FieldContainerName] = struct{}{}
+}
+
+// ContainerNameCleared returns if the "container_name" field was cleared in this mutation.
+func (m *DistributionMutation) ContainerNameCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldContainerName]
+	return ok
+}
+
+// ResetContainerName resets all changes to the "container_name" field.
+func (m *DistributionMutation) ResetContainerName() {
+	m.container_name = nil
+	delete(m.clearedFields, distribution.FieldContainerName)
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (m *DistributionMutation) SetDockerPorts(s []string) {
+	m.docker_ports = &s
+	m.appenddocker_ports = nil
+}
+
+// DockerPorts returns the value of the "docker_ports" field in the mutation.
+func (m *DistributionMutation) DockerPorts() (r []string, exists bool) {
+	v := m.docker_ports
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDockerPorts returns the old "docker_ports" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDockerPorts(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDockerPorts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDockerPorts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDockerPorts: %w", err)
+	}
+	return oldValue.DockerPorts, nil
+}
+
+// AppendDockerPorts adds s to the "docker_ports" field.
+func (m *DistributionMutation) AppendDockerPorts(s []string) {
+	m.appenddocker_ports = append(m.appenddocker_ports, s...)
+}
+
+// AppendedDockerPorts returns the list of values that were appended to the "docker_ports" field in this mutation.
+func (m *DistributionMutation) AppendedDockerPorts() ([]string, bool) {
+	if len(m.appenddocker_ports) == 0 {
+		return nil, false
+	}
+	return m.appenddocker_ports, true
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (m *DistributionMutation) ClearDockerPorts() {
+	m.docker_ports = nil
+	m.appenddocker_ports = nil
+	m.clearedFields[distribution.FieldDockerPorts] = struct{}{}
+}
+
+// DockerPortsCleared returns if the "docker_ports" field was cleared in this mutation.
+func (m *DistributionMutation) DockerPortsCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDockerPorts]
+	return ok
+}
+
+// ResetDockerPorts resets all changes to the "docker_ports" field.
+func (m *DistributionMutation) ResetDockerPorts() {
+	m.docker_ports = nil
+	m.appenddocker_ports = nil
+	delete(m.clearedFields, distribution.FieldDockerPorts)
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (m *DistributionMutation) SetDockerEnvs(s []string) {
+	m.docker_envs = &s
+	m.appenddocker_envs = nil
+}
+
+// DockerEnvs returns the value of the "docker_envs" field in the mutation.
+func (m *DistributionMutation) DockerEnvs() (r []string, exists bool) {
+	v := m.docker_envs
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDockerEnvs returns the old "docker_envs" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDockerEnvs(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDockerEnvs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDockerEnvs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDockerEnvs: %w", err)
+	}
+	return oldValue.DockerEnvs, nil
+}
+
+// AppendDockerEnvs adds s to the "docker_envs" field.
+func (m *DistributionMutation) AppendDockerEnvs(s []string) {
+	m.appenddocker_envs = append(m.appenddocker_envs, s...)
+}
+
+// AppendedDockerEnvs returns the list of values that were appended to the "docker_envs" field in this mutation.
+func (m *DistributionMutation) AppendedDockerEnvs() ([]string, bool) {
+	if len(m.appenddocker_envs) == 0 {
+		return nil, false
+	}
+	return m.appenddocker_envs, true
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (m *DistributionMutation) ClearDockerEnvs() {
+	m.docker_envs = nil
+	m.appenddocker_envs = nil
+	m.clearedFields[distribution.FieldDockerEnvs] = struct{}{}
+}
+
+// DockerEnvsCleared returns if the "docker_envs" field was cleared in this mutation.
+func (m *DistributionMutation) DockerEnvsCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDockerEnvs]
+	return ok
+}
+
+// ResetDockerEnvs resets all changes to the "docker_envs" field.
+func (m *DistributionMutation) ResetDockerEnvs() {
+	m.docker_envs = nil
+	m.appenddocker_envs = nil
+	delete(m.clearedFields, distribution.FieldDockerEnvs)
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (m *DistributionMutation) SetDockerVolumes(s []string) {
+	m.docker_volumes = &s
+	m.appenddocker_volumes = nil
+}
+
+// DockerVolumes returns the value of the "docker_volumes" field in the mutation.
+func (m *DistributionMutation) DockerVolumes() (r []string, exists bool) {
+	v := m.docker_volumes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDockerVolumes returns the old "docker_volumes" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDockerVolumes(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDockerVolumes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDockerVolumes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDockerVolumes: %w", err)
+	}
+	return oldValue.DockerVolumes, nil
+}
+
+// AppendDockerVolumes adds s to the "docker_volumes" field.
+func (m *DistributionMutation) AppendDockerVolumes(s []string) {
+	m.appenddocker_volumes = append(m.appenddocker_volumes, s...)
+}
+
+// AppendedDockerVolumes returns the list of values that were appended to the "docker_volumes" field in this mutation.
+func (m *DistributionMutation) AppendedDockerVolumes() ([]string, bool) {
+	if len(m.appenddocker_volumes) == 0 {
+		return nil, false
+	}
+	return m.appenddocker_volumes, true
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (m *DistributionMutation) ClearDockerVolumes() {
+	m.docker_volumes = nil
+	m.appenddocker_volumes = nil
+	m.clearedFields[distribution.FieldDockerVolumes] = struct{}{}
+}
+
+// DockerVolumesCleared returns if the "docker_volumes" field was cleared in this mutation.
+func (m *DistributionMutation) DockerVolumesCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDockerVolumes]
+	return ok
+}
+
+// ResetDockerVolumes resets all changes to the "docker_volumes" field.
+func (m *DistributionMutation) ResetDockerVolumes() {
+	m.docker_volumes = nil
+	m.appenddocker_volumes = nil
+	delete(m.clearedFields, distribution.FieldDockerVolumes)
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (m *DistributionMutation) SetDockerRestart(s string) {
+	m.docker_restart = &s
+}
+
+// DockerRestart returns the value of the "docker_restart" field in the mutation.
+func (m *DistributionMutation) DockerRestart() (r string, exists bool) {
+	v := m.docker_restart
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDockerRestart returns the old "docker_restart" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDockerRestart(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDockerRestart is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDockerRestart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDockerRestart: %w", err)
+	}
+	return oldValue.DockerRestart, nil
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (m *DistributionMutation) ClearDockerRestart() {
+	m.docker_restart = nil
+	m.clearedFields[distribution.FieldDockerRestart] = struct{}{}
+}
+
+// DockerRestartCleared returns if the "docker_restart" field was cleared in this mutation.
+func (m *DistributionMutation) DockerRestartCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDockerRestart]
+	return ok
+}
+
+// ResetDockerRestart resets all changes to the "docker_restart" field.
+func (m *DistributionMutation) ResetDockerRestart() {
+	m.docker_restart = nil
+	delete(m.clearedFields, distribution.FieldDockerRestart)
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (m *DistributionMutation) SetDockerNetwork(s string) {
+	m.docker_network = &s
+}
+
+// DockerNetwork returns the value of the "docker_network" field in the mutation.
+func (m *DistributionMutation) DockerNetwork() (r string, exists bool) {
+	v := m.docker_network
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDockerNetwork returns the old "docker_network" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDockerNetwork(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDockerNetwork is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDockerNetwork requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDockerNetwork: %w", err)
+	}
+	return oldValue.DockerNetwork, nil
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (m *DistributionMutation) ClearDockerNetwork() {
+	m.docker_network = nil
+	m.clearedFields[distribution.FieldDockerNetwork] = struct{}{}
+}
+
+// DockerNetworkCleared returns if the "docker_network" field was cleared in this mutation.
+func (m *DistributionMutation) DockerNetworkCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDockerNetwork]
+	return ok
+}
+
+// ResetDockerNetwork resets all changes to the "docker_network" field.
+func (m *DistributionMutation) ResetDockerNetwork() {
+	m.docker_network = nil
+	delete(m.clearedFields, distribution.FieldDockerNetwork)
+}
+
 // SetAfterOpt sets the "after_opt" field.
 func (m *DistributionMutation) SetAfterOpt(do distribution.AfterOpt) {
 	m.after_opt = &do
@@ -20441,7 +20892,7 @@ func (m *DistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DistributionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, distribution.FieldCreatedAt)
 	}
@@ -20471,6 +20922,30 @@ func (m *DistributionMutation) Fields() []string {
 	}
 	if m.clear_old != nil {
 		fields = append(fields, distribution.FieldClearOld)
+	}
+	if m.deploy_type != nil {
+		fields = append(fields, distribution.FieldDeployType)
+	}
+	if m.image != nil {
+		fields = append(fields, distribution.FieldImage)
+	}
+	if m.container_name != nil {
+		fields = append(fields, distribution.FieldContainerName)
+	}
+	if m.docker_ports != nil {
+		fields = append(fields, distribution.FieldDockerPorts)
+	}
+	if m.docker_envs != nil {
+		fields = append(fields, distribution.FieldDockerEnvs)
+	}
+	if m.docker_volumes != nil {
+		fields = append(fields, distribution.FieldDockerVolumes)
+	}
+	if m.docker_restart != nil {
+		fields = append(fields, distribution.FieldDockerRestart)
+	}
+	if m.docker_network != nil {
+		fields = append(fields, distribution.FieldDockerNetwork)
 	}
 	if m.after_opt != nil {
 		fields = append(fields, distribution.FieldAfterOpt)
@@ -20509,6 +20984,22 @@ func (m *DistributionMutation) Field(name string) (ent.Value, bool) {
 		return m.ProjectIds()
 	case distribution.FieldClearOld:
 		return m.ClearOld()
+	case distribution.FieldDeployType:
+		return m.DeployType()
+	case distribution.FieldImage:
+		return m.Image()
+	case distribution.FieldContainerName:
+		return m.ContainerName()
+	case distribution.FieldDockerPorts:
+		return m.DockerPorts()
+	case distribution.FieldDockerEnvs:
+		return m.DockerEnvs()
+	case distribution.FieldDockerVolumes:
+		return m.DockerVolumes()
+	case distribution.FieldDockerRestart:
+		return m.DockerRestart()
+	case distribution.FieldDockerNetwork:
+		return m.DockerNetwork()
 	case distribution.FieldAfterOpt:
 		return m.AfterOpt()
 	case distribution.FieldDescription:
@@ -20544,6 +21035,22 @@ func (m *DistributionMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldProjectIds(ctx)
 	case distribution.FieldClearOld:
 		return m.OldClearOld(ctx)
+	case distribution.FieldDeployType:
+		return m.OldDeployType(ctx)
+	case distribution.FieldImage:
+		return m.OldImage(ctx)
+	case distribution.FieldContainerName:
+		return m.OldContainerName(ctx)
+	case distribution.FieldDockerPorts:
+		return m.OldDockerPorts(ctx)
+	case distribution.FieldDockerEnvs:
+		return m.OldDockerEnvs(ctx)
+	case distribution.FieldDockerVolumes:
+		return m.OldDockerVolumes(ctx)
+	case distribution.FieldDockerRestart:
+		return m.OldDockerRestart(ctx)
+	case distribution.FieldDockerNetwork:
+		return m.OldDockerNetwork(ctx)
 	case distribution.FieldAfterOpt:
 		return m.OldAfterOpt(ctx)
 	case distribution.FieldDescription:
@@ -20628,6 +21135,62 @@ func (m *DistributionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetClearOld(v)
+		return nil
+	case distribution.FieldDeployType:
+		v, ok := value.(distribution.DeployType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeployType(v)
+		return nil
+	case distribution.FieldImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImage(v)
+		return nil
+	case distribution.FieldContainerName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContainerName(v)
+		return nil
+	case distribution.FieldDockerPorts:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDockerPorts(v)
+		return nil
+	case distribution.FieldDockerEnvs:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDockerEnvs(v)
+		return nil
+	case distribution.FieldDockerVolumes:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDockerVolumes(v)
+		return nil
+	case distribution.FieldDockerRestart:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDockerRestart(v)
+		return nil
+	case distribution.FieldDockerNetwork:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDockerNetwork(v)
 		return nil
 	case distribution.FieldAfterOpt:
 		v, ok := value.(distribution.AfterOpt)
@@ -20752,6 +21315,30 @@ func (m *DistributionMutation) ClearedFields() []string {
 	if m.FieldCleared(distribution.FieldProjectIds) {
 		fields = append(fields, distribution.FieldProjectIds)
 	}
+	if m.FieldCleared(distribution.FieldDeployType) {
+		fields = append(fields, distribution.FieldDeployType)
+	}
+	if m.FieldCleared(distribution.FieldImage) {
+		fields = append(fields, distribution.FieldImage)
+	}
+	if m.FieldCleared(distribution.FieldContainerName) {
+		fields = append(fields, distribution.FieldContainerName)
+	}
+	if m.FieldCleared(distribution.FieldDockerPorts) {
+		fields = append(fields, distribution.FieldDockerPorts)
+	}
+	if m.FieldCleared(distribution.FieldDockerEnvs) {
+		fields = append(fields, distribution.FieldDockerEnvs)
+	}
+	if m.FieldCleared(distribution.FieldDockerVolumes) {
+		fields = append(fields, distribution.FieldDockerVolumes)
+	}
+	if m.FieldCleared(distribution.FieldDockerRestart) {
+		fields = append(fields, distribution.FieldDockerRestart)
+	}
+	if m.FieldCleared(distribution.FieldDockerNetwork) {
+		fields = append(fields, distribution.FieldDockerNetwork)
+	}
 	if m.FieldCleared(distribution.FieldAfterOpt) {
 		fields = append(fields, distribution.FieldAfterOpt)
 	}
@@ -20795,6 +21382,30 @@ func (m *DistributionMutation) ClearField(name string) error {
 		return nil
 	case distribution.FieldProjectIds:
 		m.ClearProjectIds()
+		return nil
+	case distribution.FieldDeployType:
+		m.ClearDeployType()
+		return nil
+	case distribution.FieldImage:
+		m.ClearImage()
+		return nil
+	case distribution.FieldContainerName:
+		m.ClearContainerName()
+		return nil
+	case distribution.FieldDockerPorts:
+		m.ClearDockerPorts()
+		return nil
+	case distribution.FieldDockerEnvs:
+		m.ClearDockerEnvs()
+		return nil
+	case distribution.FieldDockerVolumes:
+		m.ClearDockerVolumes()
+		return nil
+	case distribution.FieldDockerRestart:
+		m.ClearDockerRestart()
+		return nil
+	case distribution.FieldDockerNetwork:
+		m.ClearDockerNetwork()
 		return nil
 	case distribution.FieldAfterOpt:
 		m.ClearAfterOpt()
@@ -20842,6 +21453,30 @@ func (m *DistributionMutation) ResetField(name string) error {
 		return nil
 	case distribution.FieldClearOld:
 		m.ResetClearOld()
+		return nil
+	case distribution.FieldDeployType:
+		m.ResetDeployType()
+		return nil
+	case distribution.FieldImage:
+		m.ResetImage()
+		return nil
+	case distribution.FieldContainerName:
+		m.ResetContainerName()
+		return nil
+	case distribution.FieldDockerPorts:
+		m.ResetDockerPorts()
+		return nil
+	case distribution.FieldDockerEnvs:
+		m.ResetDockerEnvs()
+		return nil
+	case distribution.FieldDockerVolumes:
+		m.ResetDockerVolumes()
+		return nil
+	case distribution.FieldDockerRestart:
+		m.ResetDockerRestart()
+		return nil
+	case distribution.FieldDockerNetwork:
+		m.ResetDockerNetwork()
 		return nil
 	case distribution.FieldAfterOpt:
 		m.ResetAfterOpt()

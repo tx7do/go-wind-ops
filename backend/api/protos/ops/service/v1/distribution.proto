@@ -105,6 +105,45 @@ message Distribution {
 
   repeated string labels = 8 [json_name = "labels"]; // 标签
 
+  // 部署类型(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum DeployType {
+    DEPLOY_TYPE_UNSPECIFIED = 0; // 未知
+
+    FILE = 1;   // 产物文件分发(经 MinIO 预签名 URL 投递解包)
+    DOCKER = 2; // Docker 镜像部署(pull + run,目标机需有 docker)
+  }
+
+  optional DeployType deploy_type = 9 [
+    json_name = "deployType",
+    (gnostic.openapi.v3.property) = {
+      description: "部署类型:FILE=产物文件分发,DOCKER=镜像部署"
+    }
+  ]; // 部署类型
+
+  optional string image = 10 [
+    json_name = "image",
+    (gnostic.openapi.v3.property) = {
+      description: "镜像 tag(DOCKER 用,支持 {buildNo} 占位符)"
+    }
+  ]; // 镜像 tag
+
+  optional string container_name = 11 [
+    json_name = "containerName",
+    (gnostic.openapi.v3.property) = {
+      description: "容器名(DOCKER 用;部署时先强制删除同名容器再 run)"
+    }
+  ]; // 容器名
+
+  repeated string docker_ports = 12 [json_name = "dockerPorts"]; // 端口映射(host:container)
+
+  repeated string docker_envs = 13 [json_name = "dockerEnvs"]; // 环境变量(K=V)
+
+  repeated string docker_volumes = 14 [json_name = "dockerVolumes"]; // 卷挂载(host:container)
+
+  optional string docker_restart = 15 [json_name = "dockerRestart"]; // 容器重启策略
+
+  optional string docker_network = 16 [json_name = "dockerNetwork"]; // 容器网络
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

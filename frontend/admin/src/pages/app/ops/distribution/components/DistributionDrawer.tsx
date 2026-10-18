@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   DrawerForm,
+  ProFormDependency,
   ProFormSelect,
   ProFormSwitch,
   ProFormText,
@@ -17,6 +18,12 @@ import type {
 import { fetchListBuilds, fetchListProjects } from '@/api/hooks';
 import { PaginationQuery } from '@/core';
 import { useCreateDistribution, useUpdateDistribution } from '@/api/hooks/distribution';
+
+/** 多行输入的换行符与占位样例(避免在 JSX 里写转义字面量)。 */
+const NL = String.fromCharCode(10);
+const PORTS_PLACEHOLDER = '8080:8080' + NL + '443:443';
+const ENVS_PLACEHOLDER = 'TZ=Asia/Shanghai' + NL + 'GIN_MODE=release';
+const VOLS_PLACEHOLDER = '/data/app:/app/data';
 
 interface DistributionDrawerProps {
   open: boolean;
@@ -121,12 +128,94 @@ const DistributionDrawer: React.FC<DistributionDrawerProps> = ({
             rules={[{ required: true, message: t('projectRequired') }]}
             initialValue={data?.projectIds}
           />
+          <ProFormSelect
+            name="deployType"
+            label={t('deployType')}
+            options={[
+              { label: t('deployFile'), value: 'FILE' },
+              { label: t('deployDocker'), value: 'DOCKER' },
+            ]}
+            initialValue={data?.deployType ?? 'FILE'}
+            extra={t('deployTypeHint')}
+          />
           <ProFormSwitch
             name="clearOld"
             label={t('clearOld')}
             extra={t('clearOldHint')}
             initialValue={data?.clearOld ?? false}
           />
+          <ProFormDependency name={['deployType']}>
+            {({ deployType }) =>
+              deployType === 'DOCKER' ? (
+                <>
+                  <ProFormText
+                    name="image"
+                    label={t('image')}
+                    rules={[{ required: true, message: t('imageRequired') }]}
+                    placeholder="registry.example.com/app:{buildNo}"
+                    initialValue={data?.image}
+                    extra={t('imageHint')}
+                  />
+                  <ProFormText
+                    name="containerName"
+                    label={t('containerName')}
+                    rules={[{ required: true, message: t('containerNameRequired') }]}
+                    initialValue={data?.containerName}
+                    extra={t('containerNameHint')}
+                  />
+                  <ProFormTextArea
+                    name="dockerPorts"
+                    label={t('dockerPorts')}
+placeholder={PORTS_PLACEHOLDER}
+                    fieldProps={{ rows: 2, allowClear: true }}
+                    transform={(v: string) =>
+                      String(v || '')
+                        .split(NL)
+                        .map((x) => x.trim())
+                        .filter(Boolean)
+                    }
+                    initialValue={(data?.dockerPorts ?? []).join(NL)}
+                  />
+                  <ProFormTextArea
+                    name="dockerEnvs"
+                    label={t('dockerEnvs')}
+placeholder={ENVS_PLACEHOLDER}
+                    fieldProps={{ rows: 2, allowClear: true }}
+                    transform={(v: string) =>
+                      String(v || '')
+                        .split(NL)
+                        .map((x) => x.trim())
+                        .filter(Boolean)
+                    }
+                    initialValue={(data?.dockerEnvs ?? []).join(NL)}
+                  />
+                  <ProFormTextArea
+                    name="dockerVolumes"
+                    label={t('dockerVolumes')}
+placeholder={VOLS_PLACEHOLDER}
+                    fieldProps={{ rows: 2, allowClear: true }}
+                    transform={(v: string) =>
+                      String(v || '')
+                        .split(NL)
+                        .map((x) => x.trim())
+                        .filter(Boolean)
+                    }
+                    initialValue={(data?.dockerVolumes ?? []).join(NL)}
+                  />
+                  <ProFormText
+                    name="dockerRestart"
+                    label={t('dockerRestart')}
+                    initialValue={data?.dockerRestart ?? 'unless-stopped'}
+                  />
+                  <ProFormText
+                    name="dockerNetwork"
+                    label={t('dockerNetwork')}
+                    initialValue={data?.dockerNetwork}
+                  />
+                </>
+              ) : null
+            }
+          </ProFormDependency>
           <ProFormSelect
             name="afterOpt"
             label={t('afterOpt')}

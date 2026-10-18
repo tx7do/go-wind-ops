@@ -81,6 +81,26 @@ func (m *Distribution) validate(all bool) error {
 		// no validation rules for Description
 	}
 
+	if m.DeployType != nil {
+		// no validation rules for DeployType
+	}
+
+	if m.Image != nil {
+		// no validation rules for Image
+	}
+
+	if m.ContainerName != nil {
+		// no validation rules for ContainerName
+	}
+
+	if m.DockerRestart != nil {
+		// no validation rules for DockerRestart
+	}
+
+	if m.DockerNetwork != nil {
+		// no validation rules for DockerNetwork
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

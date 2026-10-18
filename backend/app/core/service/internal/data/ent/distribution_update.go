@@ -218,6 +218,160 @@ func (_u *DistributionUpdate) SetNillableClearOld(v *bool) *DistributionUpdate {
 	return _u
 }
 
+// SetDeployType sets the "deploy_type" field.
+func (_u *DistributionUpdate) SetDeployType(v distribution.DeployType) *DistributionUpdate {
+	_u.mutation.SetDeployType(v)
+	return _u
+}
+
+// SetNillableDeployType sets the "deploy_type" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableDeployType(v *distribution.DeployType) *DistributionUpdate {
+	if v != nil {
+		_u.SetDeployType(*v)
+	}
+	return _u
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (_u *DistributionUpdate) ClearDeployType() *DistributionUpdate {
+	_u.mutation.ClearDeployType()
+	return _u
+}
+
+// SetImage sets the "image" field.
+func (_u *DistributionUpdate) SetImage(v string) *DistributionUpdate {
+	_u.mutation.SetImage(v)
+	return _u
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableImage(v *string) *DistributionUpdate {
+	if v != nil {
+		_u.SetImage(*v)
+	}
+	return _u
+}
+
+// ClearImage clears the value of the "image" field.
+func (_u *DistributionUpdate) ClearImage() *DistributionUpdate {
+	_u.mutation.ClearImage()
+	return _u
+}
+
+// SetContainerName sets the "container_name" field.
+func (_u *DistributionUpdate) SetContainerName(v string) *DistributionUpdate {
+	_u.mutation.SetContainerName(v)
+	return _u
+}
+
+// SetNillableContainerName sets the "container_name" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableContainerName(v *string) *DistributionUpdate {
+	if v != nil {
+		_u.SetContainerName(*v)
+	}
+	return _u
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (_u *DistributionUpdate) ClearContainerName() *DistributionUpdate {
+	_u.mutation.ClearContainerName()
+	return _u
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (_u *DistributionUpdate) SetDockerPorts(v []string) *DistributionUpdate {
+	_u.mutation.SetDockerPorts(v)
+	return _u
+}
+
+// AppendDockerPorts appends value to the "docker_ports" field.
+func (_u *DistributionUpdate) AppendDockerPorts(v []string) *DistributionUpdate {
+	_u.mutation.AppendDockerPorts(v)
+	return _u
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (_u *DistributionUpdate) ClearDockerPorts() *DistributionUpdate {
+	_u.mutation.ClearDockerPorts()
+	return _u
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (_u *DistributionUpdate) SetDockerEnvs(v []string) *DistributionUpdate {
+	_u.mutation.SetDockerEnvs(v)
+	return _u
+}
+
+// AppendDockerEnvs appends value to the "docker_envs" field.
+func (_u *DistributionUpdate) AppendDockerEnvs(v []string) *DistributionUpdate {
+	_u.mutation.AppendDockerEnvs(v)
+	return _u
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (_u *DistributionUpdate) ClearDockerEnvs() *DistributionUpdate {
+	_u.mutation.ClearDockerEnvs()
+	return _u
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (_u *DistributionUpdate) SetDockerVolumes(v []string) *DistributionUpdate {
+	_u.mutation.SetDockerVolumes(v)
+	return _u
+}
+
+// AppendDockerVolumes appends value to the "docker_volumes" field.
+func (_u *DistributionUpdate) AppendDockerVolumes(v []string) *DistributionUpdate {
+	_u.mutation.AppendDockerVolumes(v)
+	return _u
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (_u *DistributionUpdate) ClearDockerVolumes() *DistributionUpdate {
+	_u.mutation.ClearDockerVolumes()
+	return _u
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (_u *DistributionUpdate) SetDockerRestart(v string) *DistributionUpdate {
+	_u.mutation.SetDockerRestart(v)
+	return _u
+}
+
+// SetNillableDockerRestart sets the "docker_restart" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableDockerRestart(v *string) *DistributionUpdate {
+	if v != nil {
+		_u.SetDockerRestart(*v)
+	}
+	return _u
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (_u *DistributionUpdate) ClearDockerRestart() *DistributionUpdate {
+	_u.mutation.ClearDockerRestart()
+	return _u
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (_u *DistributionUpdate) SetDockerNetwork(v string) *DistributionUpdate {
+	_u.mutation.SetDockerNetwork(v)
+	return _u
+}
+
+// SetNillableDockerNetwork sets the "docker_network" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableDockerNetwork(v *string) *DistributionUpdate {
+	if v != nil {
+		_u.SetDockerNetwork(*v)
+	}
+	return _u
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (_u *DistributionUpdate) ClearDockerNetwork() *DistributionUpdate {
+	_u.mutation.ClearDockerNetwork()
+	return _u
+}
+
 // SetAfterOpt sets the "after_opt" field.
 func (_u *DistributionUpdate) SetAfterOpt(v distribution.AfterOpt) *DistributionUpdate {
 	_u.mutation.SetAfterOpt(v)
@@ -320,6 +474,11 @@ func (_u *DistributionUpdate) check() error {
 			return &ValidationError{Name: "build_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.build_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.DeployType(); ok {
+		if err := distribution.DeployTypeValidator(v); err != nil {
+			return &ValidationError{Name: "deploy_type", err: fmt.Errorf(`ent: validator failed for field "Distribution.deploy_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.AfterOpt(); ok {
 		if err := distribution.AfterOptValidator(v); err != nil {
 			return &ValidationError{Name: "after_opt", err: fmt.Errorf(`ent: validator failed for field "Distribution.after_opt": %w`, err)}
@@ -410,6 +569,69 @@ func (_u *DistributionUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if value, ok := _u.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.DeployType(); ok {
+		_spec.SetField(distribution.FieldDeployType, field.TypeEnum, value)
+	}
+	if _u.mutation.DeployTypeCleared() {
+		_spec.ClearField(distribution.FieldDeployType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Image(); ok {
+		_spec.SetField(distribution.FieldImage, field.TypeString, value)
+	}
+	if _u.mutation.ImageCleared() {
+		_spec.ClearField(distribution.FieldImage, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContainerName(); ok {
+		_spec.SetField(distribution.FieldContainerName, field.TypeString, value)
+	}
+	if _u.mutation.ContainerNameCleared() {
+		_spec.ClearField(distribution.FieldContainerName, field.TypeString)
+	}
+	if value, ok := _u.mutation.DockerPorts(); ok {
+		_spec.SetField(distribution.FieldDockerPorts, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerPorts(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerPorts, value)
+		})
+	}
+	if _u.mutation.DockerPortsCleared() {
+		_spec.ClearField(distribution.FieldDockerPorts, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerEnvs(); ok {
+		_spec.SetField(distribution.FieldDockerEnvs, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerEnvs(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerEnvs, value)
+		})
+	}
+	if _u.mutation.DockerEnvsCleared() {
+		_spec.ClearField(distribution.FieldDockerEnvs, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerVolumes(); ok {
+		_spec.SetField(distribution.FieldDockerVolumes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerVolumes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerVolumes, value)
+		})
+	}
+	if _u.mutation.DockerVolumesCleared() {
+		_spec.ClearField(distribution.FieldDockerVolumes, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerRestart(); ok {
+		_spec.SetField(distribution.FieldDockerRestart, field.TypeString, value)
+	}
+	if _u.mutation.DockerRestartCleared() {
+		_spec.ClearField(distribution.FieldDockerRestart, field.TypeString)
+	}
+	if value, ok := _u.mutation.DockerNetwork(); ok {
+		_spec.SetField(distribution.FieldDockerNetwork, field.TypeString, value)
+	}
+	if _u.mutation.DockerNetworkCleared() {
+		_spec.ClearField(distribution.FieldDockerNetwork, field.TypeString)
 	}
 	if value, ok := _u.mutation.AfterOpt(); ok {
 		_spec.SetField(distribution.FieldAfterOpt, field.TypeEnum, value)
@@ -644,6 +866,160 @@ func (_u *DistributionUpdateOne) SetNillableClearOld(v *bool) *DistributionUpdat
 	return _u
 }
 
+// SetDeployType sets the "deploy_type" field.
+func (_u *DistributionUpdateOne) SetDeployType(v distribution.DeployType) *DistributionUpdateOne {
+	_u.mutation.SetDeployType(v)
+	return _u
+}
+
+// SetNillableDeployType sets the "deploy_type" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableDeployType(v *distribution.DeployType) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetDeployType(*v)
+	}
+	return _u
+}
+
+// ClearDeployType clears the value of the "deploy_type" field.
+func (_u *DistributionUpdateOne) ClearDeployType() *DistributionUpdateOne {
+	_u.mutation.ClearDeployType()
+	return _u
+}
+
+// SetImage sets the "image" field.
+func (_u *DistributionUpdateOne) SetImage(v string) *DistributionUpdateOne {
+	_u.mutation.SetImage(v)
+	return _u
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableImage(v *string) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetImage(*v)
+	}
+	return _u
+}
+
+// ClearImage clears the value of the "image" field.
+func (_u *DistributionUpdateOne) ClearImage() *DistributionUpdateOne {
+	_u.mutation.ClearImage()
+	return _u
+}
+
+// SetContainerName sets the "container_name" field.
+func (_u *DistributionUpdateOne) SetContainerName(v string) *DistributionUpdateOne {
+	_u.mutation.SetContainerName(v)
+	return _u
+}
+
+// SetNillableContainerName sets the "container_name" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableContainerName(v *string) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetContainerName(*v)
+	}
+	return _u
+}
+
+// ClearContainerName clears the value of the "container_name" field.
+func (_u *DistributionUpdateOne) ClearContainerName() *DistributionUpdateOne {
+	_u.mutation.ClearContainerName()
+	return _u
+}
+
+// SetDockerPorts sets the "docker_ports" field.
+func (_u *DistributionUpdateOne) SetDockerPorts(v []string) *DistributionUpdateOne {
+	_u.mutation.SetDockerPorts(v)
+	return _u
+}
+
+// AppendDockerPorts appends value to the "docker_ports" field.
+func (_u *DistributionUpdateOne) AppendDockerPorts(v []string) *DistributionUpdateOne {
+	_u.mutation.AppendDockerPorts(v)
+	return _u
+}
+
+// ClearDockerPorts clears the value of the "docker_ports" field.
+func (_u *DistributionUpdateOne) ClearDockerPorts() *DistributionUpdateOne {
+	_u.mutation.ClearDockerPorts()
+	return _u
+}
+
+// SetDockerEnvs sets the "docker_envs" field.
+func (_u *DistributionUpdateOne) SetDockerEnvs(v []string) *DistributionUpdateOne {
+	_u.mutation.SetDockerEnvs(v)
+	return _u
+}
+
+// AppendDockerEnvs appends value to the "docker_envs" field.
+func (_u *DistributionUpdateOne) AppendDockerEnvs(v []string) *DistributionUpdateOne {
+	_u.mutation.AppendDockerEnvs(v)
+	return _u
+}
+
+// ClearDockerEnvs clears the value of the "docker_envs" field.
+func (_u *DistributionUpdateOne) ClearDockerEnvs() *DistributionUpdateOne {
+	_u.mutation.ClearDockerEnvs()
+	return _u
+}
+
+// SetDockerVolumes sets the "docker_volumes" field.
+func (_u *DistributionUpdateOne) SetDockerVolumes(v []string) *DistributionUpdateOne {
+	_u.mutation.SetDockerVolumes(v)
+	return _u
+}
+
+// AppendDockerVolumes appends value to the "docker_volumes" field.
+func (_u *DistributionUpdateOne) AppendDockerVolumes(v []string) *DistributionUpdateOne {
+	_u.mutation.AppendDockerVolumes(v)
+	return _u
+}
+
+// ClearDockerVolumes clears the value of the "docker_volumes" field.
+func (_u *DistributionUpdateOne) ClearDockerVolumes() *DistributionUpdateOne {
+	_u.mutation.ClearDockerVolumes()
+	return _u
+}
+
+// SetDockerRestart sets the "docker_restart" field.
+func (_u *DistributionUpdateOne) SetDockerRestart(v string) *DistributionUpdateOne {
+	_u.mutation.SetDockerRestart(v)
+	return _u
+}
+
+// SetNillableDockerRestart sets the "docker_restart" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableDockerRestart(v *string) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetDockerRestart(*v)
+	}
+	return _u
+}
+
+// ClearDockerRestart clears the value of the "docker_restart" field.
+func (_u *DistributionUpdateOne) ClearDockerRestart() *DistributionUpdateOne {
+	_u.mutation.ClearDockerRestart()
+	return _u
+}
+
+// SetDockerNetwork sets the "docker_network" field.
+func (_u *DistributionUpdateOne) SetDockerNetwork(v string) *DistributionUpdateOne {
+	_u.mutation.SetDockerNetwork(v)
+	return _u
+}
+
+// SetNillableDockerNetwork sets the "docker_network" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableDockerNetwork(v *string) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetDockerNetwork(*v)
+	}
+	return _u
+}
+
+// ClearDockerNetwork clears the value of the "docker_network" field.
+func (_u *DistributionUpdateOne) ClearDockerNetwork() *DistributionUpdateOne {
+	_u.mutation.ClearDockerNetwork()
+	return _u
+}
+
 // SetAfterOpt sets the "after_opt" field.
 func (_u *DistributionUpdateOne) SetAfterOpt(v distribution.AfterOpt) *DistributionUpdateOne {
 	_u.mutation.SetAfterOpt(v)
@@ -759,6 +1135,11 @@ func (_u *DistributionUpdateOne) check() error {
 			return &ValidationError{Name: "build_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.build_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.DeployType(); ok {
+		if err := distribution.DeployTypeValidator(v); err != nil {
+			return &ValidationError{Name: "deploy_type", err: fmt.Errorf(`ent: validator failed for field "Distribution.deploy_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.AfterOpt(); ok {
 		if err := distribution.AfterOptValidator(v); err != nil {
 			return &ValidationError{Name: "after_opt", err: fmt.Errorf(`ent: validator failed for field "Distribution.after_opt": %w`, err)}
@@ -866,6 +1247,69 @@ func (_u *DistributionUpdateOne) sqlSave(ctx context.Context) (_node *Distributi
 	}
 	if value, ok := _u.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.DeployType(); ok {
+		_spec.SetField(distribution.FieldDeployType, field.TypeEnum, value)
+	}
+	if _u.mutation.DeployTypeCleared() {
+		_spec.ClearField(distribution.FieldDeployType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Image(); ok {
+		_spec.SetField(distribution.FieldImage, field.TypeString, value)
+	}
+	if _u.mutation.ImageCleared() {
+		_spec.ClearField(distribution.FieldImage, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContainerName(); ok {
+		_spec.SetField(distribution.FieldContainerName, field.TypeString, value)
+	}
+	if _u.mutation.ContainerNameCleared() {
+		_spec.ClearField(distribution.FieldContainerName, field.TypeString)
+	}
+	if value, ok := _u.mutation.DockerPorts(); ok {
+		_spec.SetField(distribution.FieldDockerPorts, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerPorts(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerPorts, value)
+		})
+	}
+	if _u.mutation.DockerPortsCleared() {
+		_spec.ClearField(distribution.FieldDockerPorts, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerEnvs(); ok {
+		_spec.SetField(distribution.FieldDockerEnvs, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerEnvs(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerEnvs, value)
+		})
+	}
+	if _u.mutation.DockerEnvsCleared() {
+		_spec.ClearField(distribution.FieldDockerEnvs, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerVolumes(); ok {
+		_spec.SetField(distribution.FieldDockerVolumes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDockerVolumes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldDockerVolumes, value)
+		})
+	}
+	if _u.mutation.DockerVolumesCleared() {
+		_spec.ClearField(distribution.FieldDockerVolumes, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.DockerRestart(); ok {
+		_spec.SetField(distribution.FieldDockerRestart, field.TypeString, value)
+	}
+	if _u.mutation.DockerRestartCleared() {
+		_spec.ClearField(distribution.FieldDockerRestart, field.TypeString)
+	}
+	if value, ok := _u.mutation.DockerNetwork(); ok {
+		_spec.SetField(distribution.FieldDockerNetwork, field.TypeString, value)
+	}
+	if _u.mutation.DockerNetworkCleared() {
+		_spec.ClearField(distribution.FieldDockerNetwork, field.TypeString)
 	}
 	if value, ok := _u.mutation.AfterOpt(); ok {
 		_spec.SetField(distribution.FieldAfterOpt, field.TypeEnum, value)

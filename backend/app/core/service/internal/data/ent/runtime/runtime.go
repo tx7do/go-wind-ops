@@ -443,6 +443,10 @@ func init() {
 	distributionDescClearOld := distributionFields[3].Descriptor()
 	// distribution.DefaultClearOld holds the default value on creation for the clear_old field.
 	distribution.DefaultClearOld = distributionDescClearOld.Default.(bool)
+	// distributionDescDockerRestart is the schema descriptor for docker_restart field.
+	distributionDescDockerRestart := distributionFields[10].Descriptor()
+	// distribution.DefaultDockerRestart holds the default value on creation for the docker_restart field.
+	distribution.DefaultDockerRestart = distributionDescDockerRestart.Default.(string)
 	// distributionDescID is the schema descriptor for id field.
 	distributionDescID := distributionMixinFields0[0].Descriptor()
 	// distribution.IDValidator is a validator for the "id" field. It is called by the builders before save.

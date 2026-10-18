@@ -216,8 +216,8 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 	if res.Success && strings.HasPrefix(string(res.Action), "project_") {
 		s.applyProjectOperationResult(ctx, res)
 	}
-	// dist_apply:无论成败都要终态化分发记录(失败时带原因)
-	if res.Action == signal.CommandActionDistApply {
+	// dist_apply/docker_deploy:无论成败都要终态化分发记录(失败时带原因)
+	if res.Action == signal.CommandActionDistApply || res.Action == signal.CommandActionDockerDeploy {
 		s.applyDistributionResult(ctx, res)
 	}
 

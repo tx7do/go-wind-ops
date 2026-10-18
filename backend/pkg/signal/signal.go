@@ -284,8 +284,36 @@ type FileTransferComplete struct {
 
 // 文件管理操作
 const (
+	CommandActionDockerDeploy CommandAction = "docker_deploy"
+
 	CommandActionFileList   CommandAction = "file_list"
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
 	CommandActionFileDelete CommandAction = "file_delete"
 )
+
+// ============================================================================
+// Docker 镜像部署
+// ============================================================================
+
+// DockerDeployPayload docker_deploy 指令载荷:镜像 tag + 容器参数。
+// Image 支持 {buildNo} 占位符,由 core 侧替换为实际构建号。
+type DockerDeployPayload struct {
+	DistributionId uint32   `json:"distribution_id"`
+	ProjectId      uint32   `json:"project_id,omitempty"`
+	Image          string   `json:"image"`
+	ContainerName  string   `json:"container_name"`
+	Ports          []string `json:"ports,omitempty"`   // host:container
+	Envs           []string `json:"envs,omitempty"`    // K=V
+	Volumes        []string `json:"volumes,omitempty"` // host:container
+	Restart        string   `json:"restart,omitempty"` // 缺省 unless-stopped
+	Network        string   `json:"network,omitempty"`
+}
+
+// DockerDeployResult docker_deploy 回执。
+type DockerDeployResult struct {
+	Image         string `json:"image"`
+	ContainerName string `json:"container_name,omitempty"`
+	ContainerId   string `json:"container_id,omitempty"`
+	Output        string `json:"output,omitempty"`
+}

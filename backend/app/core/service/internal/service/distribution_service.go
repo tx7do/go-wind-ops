@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -146,17 +148,30 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	if err != nil {
 		return nil, opsV1.ErrorBadRequest("build history not found")
 	}
-	if history.GetStatus() != opsV1.BuildHistory_SUCCESS || history.GetArtifactObjectKey() == "" {
-		return nil, opsV1.ErrorBadRequest("build history has no successful artifact")
-	}
 
-	if s.ossClient == nil || s.ossClient.GetClient() == nil {
-		return nil, opsV1.ErrorServiceUnavailable("oss client not configured")
-	}
-	urlObj, err := s.ossClient.GetClient().PresignedGetObject(ctx, history.GetArtifactBucket(), history.GetArtifactObjectKey(), artifactUrlExpiry, nil)
-	if err != nil {
-		s.log.Errorf("presign artifact url (history=%d): %s", historyID, err.Error())
-		return nil, opsV1.ErrorInternalServerError("presign url failed")
+	// 部署类型分支:FILE=产物文件分发(需产物+预签名);DOCKER=镜像部署(需镜像+容器名)
+	isDocker := dist.GetDeployType() == opsV1.Distribution_DOCKER
+	var downloadUrl string
+	if isDocker {
+		if dist.GetImage() == "" || dist.GetContainerName() == "" {
+			return nil, opsV1.ErrorBadRequest("docker deployment requires image and containerName")
+		}
+		if history.GetStatus() != opsV1.BuildHistory_SUCCESS {
+			return nil, opsV1.ErrorBadRequest("build history is not successful")
+		}
+	} else {
+		if history.GetStatus() != opsV1.BuildHistory_SUCCESS || history.GetArtifactObjectKey() == "" {
+			return nil, opsV1.ErrorBadRequest("build history has no successful artifact")
+		}
+		if s.ossClient == nil || s.ossClient.GetClient() == nil {
+			return nil, opsV1.ErrorServiceUnavailable("oss client not configured")
+		}
+		urlObj, err := s.ossClient.GetClient().PresignedGetObject(ctx, history.GetArtifactBucket(), history.GetArtifactObjectKey(), artifactUrlExpiry, nil)
+		if err != nil {
+			s.log.Errorf("presign artifact url (history=%d): %s", historyID, err.Error())
+			return nil, opsV1.ErrorInternalServerError("presign url failed")
+		}
+		downloadUrl = urlObj.String()
 	}
 
 	afterOpt := signal.AfterNone
@@ -187,22 +202,41 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 			continue
 		}
 
-		payload := &signal.DistributionPayload{
-			DistributionId: dist.GetId(),
-			ProjectId:      project.GetId(),
-			ProjectName:    project.GetName(),
-			ProjectDir:     project.GetProjectDir(),
-			ClearOld:       dist.GetClearOld(),
-			DownloadUrl:    urlObj.String(),
-			FileName:       artifactFileName(history.GetArtifactObjectKey()),
-			AfterOpt:       afterOpt,
-			StartCommand:   project.GetStartCommand(),
-			StopCommand:    project.GetStopCommand(),
-			StatusCommand:  project.GetStatusCommand(),
+		action := signal.CommandActionDistApply
+		var payload any
+		if isDocker {
+			// 镜像 tag 支持 {buildNo} 占位符,替换为本次构建号
+			imageTag := strings.ReplaceAll(dist.GetImage(), "{buildNo}", fmt.Sprintf("%d", history.GetBuildNo()))
+			payload = &signal.DockerDeployPayload{
+				DistributionId: dist.GetId(),
+				ProjectId:      project.GetId(),
+				Image:          imageTag,
+				ContainerName:  dist.GetContainerName(),
+				Ports:          dist.GetDockerPorts(),
+				Envs:           dist.GetDockerEnvs(),
+				Volumes:        dist.GetDockerVolumes(),
+				Restart:        dist.GetDockerRestart(),
+				Network:        dist.GetDockerNetwork(),
+			}
+			action = signal.CommandActionDockerDeploy
+		} else {
+			payload = &signal.DistributionPayload{
+				DistributionId: dist.GetId(),
+				ProjectId:      project.GetId(),
+				ProjectName:    project.GetName(),
+				ProjectDir:     project.GetProjectDir(),
+				ClearOld:       dist.GetClearOld(),
+				DownloadUrl:    downloadUrl,
+				FileName:       artifactFileName(history.GetArtifactObjectKey()),
+				AfterOpt:       afterOpt,
+				StartCommand:   project.GetStartCommand(),
+				StopCommand:    project.GetStopCommand(),
+				StatusCommand:  project.GetStatusCommand(),
+			}
 		}
 
 		requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
-			signal.CommandActionDistApply, payload, operatorID)
+			action, payload, operatorID)
 		if err != nil {
 			s.log.Errorf("dispatch distribution failed (dist=%d project=%d): %s", dist.GetId(), pid, err.Error())
 			failed++

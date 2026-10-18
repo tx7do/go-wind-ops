@@ -80,19 +80,77 @@ func (Distribution_AfterOpt) EnumDescriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{0, 0}
 }
 
+// 部署类型(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+type Distribution_DeployType int32
+
+const (
+	Distribution_DEPLOY_TYPE_UNSPECIFIED Distribution_DeployType = 0 // 未知
+	Distribution_FILE                    Distribution_DeployType = 1 // 产物文件分发(经 MinIO 预签名 URL 投递解包)
+	Distribution_DOCKER                  Distribution_DeployType = 2 // Docker 镜像部署(pull + run,目标机需有 docker)
+)
+
+// Enum value maps for Distribution_DeployType.
+var (
+	Distribution_DeployType_name = map[int32]string{
+		0: "DEPLOY_TYPE_UNSPECIFIED",
+		1: "FILE",
+		2: "DOCKER",
+	}
+	Distribution_DeployType_value = map[string]int32{
+		"DEPLOY_TYPE_UNSPECIFIED": 0,
+		"FILE":                    1,
+		"DOCKER":                  2,
+	}
+)
+
+func (x Distribution_DeployType) Enum() *Distribution_DeployType {
+	p := new(Distribution_DeployType)
+	*p = x
+	return p
+}
+
+func (x Distribution_DeployType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Distribution_DeployType) Descriptor() protoreflect.EnumDescriptor {
+	return file_ops_service_v1_distribution_proto_enumTypes[1].Descriptor()
+}
+
+func (Distribution_DeployType) Type() protoreflect.EnumType {
+	return &file_ops_service_v1_distribution_proto_enumTypes[1]
+}
+
+func (x Distribution_DeployType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Distribution_DeployType.Descriptor instead.
+func (Distribution_DeployType) EnumDescriptor() ([]byte, []int) {
+	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{0, 1}
+}
+
 // 分发配置
 type Distribution struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                       // 分发配置ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                    // 分发名
-	BuildId       *uint32                `protobuf:"varint,3,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                              // 构建来源
-	ProjectIds    []uint32               `protobuf:"varint,4,rep,packed,name=project_ids,json=projectIds,proto3" json:"project_ids,omitempty"`                                    // 目标项目列表
-	ClearOld      *bool                  `protobuf:"varint,5,opt,name=clear_old,json=clearOld,proto3,oneof" json:"clear_old,omitempty"`                                           // 清空旧内容
-	AfterOpt      *Distribution_AfterOpt `protobuf:"varint,6,opt,name=after_opt,json=afterOpt,proto3,enum=ops.service.v1.Distribution_AfterOpt,oneof" json:"after_opt,omitempty"` // 分发后动作
-	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                      // 描述
-	Labels        []string               `protobuf:"bytes,8,rep,name=labels,proto3" json:"labels,omitempty"`                                                                      // 标签
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                        // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                        // 更新时间
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Id            *uint32                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 分发配置ID
+	Name          *string                  `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                            // 分发名
+	BuildId       *uint32                  `protobuf:"varint,3,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                                      // 构建来源
+	ProjectIds    []uint32                 `protobuf:"varint,4,rep,packed,name=project_ids,json=projectIds,proto3" json:"project_ids,omitempty"`                                            // 目标项目列表
+	ClearOld      *bool                    `protobuf:"varint,5,opt,name=clear_old,json=clearOld,proto3,oneof" json:"clear_old,omitempty"`                                                   // 清空旧内容
+	AfterOpt      *Distribution_AfterOpt   `protobuf:"varint,6,opt,name=after_opt,json=afterOpt,proto3,enum=ops.service.v1.Distribution_AfterOpt,oneof" json:"after_opt,omitempty"`         // 分发后动作
+	Description   *string                  `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                              // 描述
+	Labels        []string                 `protobuf:"bytes,8,rep,name=labels,proto3" json:"labels,omitempty"`                                                                              // 标签
+	DeployType    *Distribution_DeployType `protobuf:"varint,9,opt,name=deploy_type,json=deployType,proto3,enum=ops.service.v1.Distribution_DeployType,oneof" json:"deploy_type,omitempty"` // 部署类型
+	Image         *string                  `protobuf:"bytes,10,opt,name=image,proto3,oneof" json:"image,omitempty"`                                                                         // 镜像 tag
+	ContainerName *string                  `protobuf:"bytes,11,opt,name=container_name,json=containerName,proto3,oneof" json:"container_name,omitempty"`                                    // 容器名
+	DockerPorts   []string                 `protobuf:"bytes,12,rep,name=docker_ports,json=dockerPorts,proto3" json:"docker_ports,omitempty"`                                                // 端口映射(host:container)
+	DockerEnvs    []string                 `protobuf:"bytes,13,rep,name=docker_envs,json=dockerEnvs,proto3" json:"docker_envs,omitempty"`                                                   // 环境变量(K=V)
+	DockerVolumes []string                 `protobuf:"bytes,14,rep,name=docker_volumes,json=dockerVolumes,proto3" json:"docker_volumes,omitempty"`                                          // 卷挂载(host:container)
+	DockerRestart *string                  `protobuf:"bytes,15,opt,name=docker_restart,json=dockerRestart,proto3,oneof" json:"docker_restart,omitempty"`                                    // 容器重启策略
+	DockerNetwork *string                  `protobuf:"bytes,16,opt,name=docker_network,json=dockerNetwork,proto3,oneof" json:"docker_network,omitempty"`                                    // 容器网络
+	CreatedAt     *timestamppb.Timestamp   `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                // 创建时间
+	UpdatedAt     *timestamppb.Timestamp   `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,6 +239,62 @@ func (x *Distribution) GetLabels() []string {
 		return x.Labels
 	}
 	return nil
+}
+
+func (x *Distribution) GetDeployType() Distribution_DeployType {
+	if x != nil && x.DeployType != nil {
+		return *x.DeployType
+	}
+	return Distribution_DEPLOY_TYPE_UNSPECIFIED
+}
+
+func (x *Distribution) GetImage() string {
+	if x != nil && x.Image != nil {
+		return *x.Image
+	}
+	return ""
+}
+
+func (x *Distribution) GetContainerName() string {
+	if x != nil && x.ContainerName != nil {
+		return *x.ContainerName
+	}
+	return ""
+}
+
+func (x *Distribution) GetDockerPorts() []string {
+	if x != nil {
+		return x.DockerPorts
+	}
+	return nil
+}
+
+func (x *Distribution) GetDockerEnvs() []string {
+	if x != nil {
+		return x.DockerEnvs
+	}
+	return nil
+}
+
+func (x *Distribution) GetDockerVolumes() []string {
+	if x != nil {
+		return x.DockerVolumes
+	}
+	return nil
+}
+
+func (x *Distribution) GetDockerRestart() string {
+	if x != nil && x.DockerRestart != nil {
+		return *x.DockerRestart
+	}
+	return ""
+}
+
+func (x *Distribution) GetDockerNetwork() string {
+	if x != nil && x.DockerNetwork != nil {
+		return *x.DockerNetwork
+	}
+	return ""
 }
 
 func (x *Distribution) GetCreatedAt() *timestamppb.Timestamp {
@@ -778,7 +892,7 @@ var File_ops_service_v1_distribution_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
-	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc8\x06\n" +
+	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf8\v\n" +
 	"\fDistribution\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17分发名(全局唯一)H\x01R\x04name\x88\x01\x01\x12W\n" +
@@ -788,16 +902,34 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\tclear_old\x18\x05 \x01(\bB8\xbaG5\x92\x022分发前清空项目目录旧内容(危险操作)H\x03R\bclearOld\x88\x01\x01\x12^\n" +
 	"\tafter_opt\x18\x06 \x01(\x0e2%.ops.service.v1.Distribution.AfterOptB\x15\xbaG\x12\x92\x02\x0f分发后动作H\x04R\bafterOpt\x88\x01\x01\x123\n" +
 	"\vdescription\x18\a \x01(\tB\f\xbaG\t\x92\x02\x06描述H\x05R\vdescription\x88\x01\x01\x12\x16\n" +
-	"\x06labels\x18\b \x03(\tR\x06labels\x12C\n" +
+	"\x06labels\x18\b \x03(\tR\x06labels\x12\x8d\x01\n" +
+	"\vdeploy_type\x18\t \x01(\x0e2'.ops.service.v1.Distribution.DeployTypeB>\xbaG;\x92\x028部署类型:FILE=产物文件分发,DOCKER=镜像部署H\x06R\n" +
+	"deployType\x88\x01\x01\x12R\n" +
+	"\x05image\x18\n" +
+	" \x01(\tB7\xbaG4\x92\x021镜像 tag(DOCKER 用,支持 {buildNo} 占位符)H\aR\x05image\x88\x01\x01\x12s\n" +
+	"\x0econtainer_name\x18\v \x01(\tBG\xbaGD\x92\x02A容器名(DOCKER 用;部署时先强制删除同名容器再 run)H\bR\rcontainerName\x88\x01\x01\x12!\n" +
+	"\fdocker_ports\x18\f \x03(\tR\vdockerPorts\x12\x1f\n" +
+	"\vdocker_envs\x18\r \x03(\tR\n" +
+	"dockerEnvs\x12%\n" +
+	"\x0edocker_volumes\x18\x0e \x03(\tR\rdockerVolumes\x12*\n" +
+	"\x0edocker_restart\x18\x0f \x01(\tH\tR\rdockerRestart\x88\x01\x01\x12*\n" +
+	"\x0edocker_network\x18\x10 \x01(\tH\n" +
+	"R\rdockerNetwork\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x06R\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tupdatedAt\x88\x01\x01\"=\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tupdatedAt\x88\x01\x01\"=\n" +
 	"\bAfterOpt\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NONE\x10\x01\x12\v\n" +
 	"\aRESTART\x10\x02\x12\t\n" +
-	"\x05START\x10\x03B\x05\n" +
+	"\x05START\x10\x03\"?\n" +
+	"\n" +
+	"DeployType\x12\x1b\n" +
+	"\x17DEPLOY_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04FILE\x10\x01\x12\n" +
+	"\n" +
+	"\x06DOCKER\x10\x02B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\v\n" +
 	"\t_build_idB\f\n" +
@@ -805,7 +937,12 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"_clear_oldB\f\n" +
 	"\n" +
 	"_after_optB\x0e\n" +
-	"\f_descriptionB\r\n" +
+	"\f_descriptionB\x0e\n" +
+	"\f_deploy_typeB\b\n" +
+	"\x06_imageB\x11\n" +
+	"\x0f_container_nameB\x11\n" +
+	"\x0f_docker_restartB\x11\n" +
+	"\x0f_docker_networkB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"d\n" +
 	"\x18ListDistributionResponse\x12\x14\n" +
@@ -895,58 +1032,60 @@ func file_ops_service_v1_distribution_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_distribution_proto_rawDescData
 }
 
-var file_ops_service_v1_distribution_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_ops_service_v1_distribution_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_ops_service_v1_distribution_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_ops_service_v1_distribution_proto_goTypes = []any{
 	(Distribution_AfterOpt)(0),             // 0: ops.service.v1.Distribution.AfterOpt
-	(*Distribution)(nil),                   // 1: ops.service.v1.Distribution
-	(*ListDistributionResponse)(nil),       // 2: ops.service.v1.ListDistributionResponse
-	(*GetDistributionRequest)(nil),         // 3: ops.service.v1.GetDistributionRequest
-	(*CreateDistributionRequest)(nil),      // 4: ops.service.v1.CreateDistributionRequest
-	(*UpdateDistributionRequest)(nil),      // 5: ops.service.v1.UpdateDistributionRequest
-	(*DeleteDistributionRequest)(nil),      // 6: ops.service.v1.DeleteDistributionRequest
-	(*TriggerDistributionRequest)(nil),     // 7: ops.service.v1.TriggerDistributionRequest
-	(*TriggerDistributionResponse)(nil),    // 8: ops.service.v1.TriggerDistributionResponse
-	(*DistributionRecord)(nil),             // 9: ops.service.v1.DistributionRecord
-	(*ListDistributionRecordResponse)(nil), // 10: ops.service.v1.ListDistributionRecordResponse
-	(*GetDistributionRecordRequest)(nil),   // 11: ops.service.v1.GetDistributionRecordRequest
-	(*timestamppb.Timestamp)(nil),          // 12: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),          // 13: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),               // 14: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                  // 15: google.protobuf.Empty
+	(Distribution_DeployType)(0),           // 1: ops.service.v1.Distribution.DeployType
+	(*Distribution)(nil),                   // 2: ops.service.v1.Distribution
+	(*ListDistributionResponse)(nil),       // 3: ops.service.v1.ListDistributionResponse
+	(*GetDistributionRequest)(nil),         // 4: ops.service.v1.GetDistributionRequest
+	(*CreateDistributionRequest)(nil),      // 5: ops.service.v1.CreateDistributionRequest
+	(*UpdateDistributionRequest)(nil),      // 6: ops.service.v1.UpdateDistributionRequest
+	(*DeleteDistributionRequest)(nil),      // 7: ops.service.v1.DeleteDistributionRequest
+	(*TriggerDistributionRequest)(nil),     // 8: ops.service.v1.TriggerDistributionRequest
+	(*TriggerDistributionResponse)(nil),    // 9: ops.service.v1.TriggerDistributionResponse
+	(*DistributionRecord)(nil),             // 10: ops.service.v1.DistributionRecord
+	(*ListDistributionRecordResponse)(nil), // 11: ops.service.v1.ListDistributionRecordResponse
+	(*GetDistributionRecordRequest)(nil),   // 12: ops.service.v1.GetDistributionRecordRequest
+	(*timestamppb.Timestamp)(nil),          // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),          // 14: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),               // 15: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                  // 16: google.protobuf.Empty
 }
 var file_ops_service_v1_distribution_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.Distribution.after_opt:type_name -> ops.service.v1.Distribution.AfterOpt
-	12, // 1: ops.service.v1.Distribution.created_at:type_name -> google.protobuf.Timestamp
-	12, // 2: ops.service.v1.Distribution.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: ops.service.v1.ListDistributionResponse.items:type_name -> ops.service.v1.Distribution
-	1,  // 4: ops.service.v1.CreateDistributionRequest.data:type_name -> ops.service.v1.Distribution
-	1,  // 5: ops.service.v1.UpdateDistributionRequest.data:type_name -> ops.service.v1.Distribution
-	13, // 6: ops.service.v1.UpdateDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 7: ops.service.v1.DistributionRecord.created_at:type_name -> google.protobuf.Timestamp
-	12, // 8: ops.service.v1.DistributionRecord.finished_at:type_name -> google.protobuf.Timestamp
-	9,  // 9: ops.service.v1.ListDistributionRecordResponse.items:type_name -> ops.service.v1.DistributionRecord
-	14, // 10: ops.service.v1.DistributionService.ListDistributions:input_type -> pagination.PagingRequest
-	3,  // 11: ops.service.v1.DistributionService.GetDistribution:input_type -> ops.service.v1.GetDistributionRequest
-	4,  // 12: ops.service.v1.DistributionService.CreateDistribution:input_type -> ops.service.v1.CreateDistributionRequest
-	5,  // 13: ops.service.v1.DistributionService.UpdateDistribution:input_type -> ops.service.v1.UpdateDistributionRequest
-	6,  // 14: ops.service.v1.DistributionService.DeleteDistribution:input_type -> ops.service.v1.DeleteDistributionRequest
-	7,  // 15: ops.service.v1.DistributionService.TriggerDistribution:input_type -> ops.service.v1.TriggerDistributionRequest
-	14, // 16: ops.service.v1.DistributionService.ListDistributionRecords:input_type -> pagination.PagingRequest
-	11, // 17: ops.service.v1.DistributionService.GetDistributionRecord:input_type -> ops.service.v1.GetDistributionRecordRequest
-	2,  // 18: ops.service.v1.DistributionService.ListDistributions:output_type -> ops.service.v1.ListDistributionResponse
-	1,  // 19: ops.service.v1.DistributionService.GetDistribution:output_type -> ops.service.v1.Distribution
-	1,  // 20: ops.service.v1.DistributionService.CreateDistribution:output_type -> ops.service.v1.Distribution
-	15, // 21: ops.service.v1.DistributionService.UpdateDistribution:output_type -> google.protobuf.Empty
-	15, // 22: ops.service.v1.DistributionService.DeleteDistribution:output_type -> google.protobuf.Empty
-	8,  // 23: ops.service.v1.DistributionService.TriggerDistribution:output_type -> ops.service.v1.TriggerDistributionResponse
-	10, // 24: ops.service.v1.DistributionService.ListDistributionRecords:output_type -> ops.service.v1.ListDistributionRecordResponse
-	9,  // 25: ops.service.v1.DistributionService.GetDistributionRecord:output_type -> ops.service.v1.DistributionRecord
-	18, // [18:26] is the sub-list for method output_type
-	10, // [10:18] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	1,  // 1: ops.service.v1.Distribution.deploy_type:type_name -> ops.service.v1.Distribution.DeployType
+	13, // 2: ops.service.v1.Distribution.created_at:type_name -> google.protobuf.Timestamp
+	13, // 3: ops.service.v1.Distribution.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 4: ops.service.v1.ListDistributionResponse.items:type_name -> ops.service.v1.Distribution
+	2,  // 5: ops.service.v1.CreateDistributionRequest.data:type_name -> ops.service.v1.Distribution
+	2,  // 6: ops.service.v1.UpdateDistributionRequest.data:type_name -> ops.service.v1.Distribution
+	14, // 7: ops.service.v1.UpdateDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	13, // 8: ops.service.v1.DistributionRecord.created_at:type_name -> google.protobuf.Timestamp
+	13, // 9: ops.service.v1.DistributionRecord.finished_at:type_name -> google.protobuf.Timestamp
+	10, // 10: ops.service.v1.ListDistributionRecordResponse.items:type_name -> ops.service.v1.DistributionRecord
+	15, // 11: ops.service.v1.DistributionService.ListDistributions:input_type -> pagination.PagingRequest
+	4,  // 12: ops.service.v1.DistributionService.GetDistribution:input_type -> ops.service.v1.GetDistributionRequest
+	5,  // 13: ops.service.v1.DistributionService.CreateDistribution:input_type -> ops.service.v1.CreateDistributionRequest
+	6,  // 14: ops.service.v1.DistributionService.UpdateDistribution:input_type -> ops.service.v1.UpdateDistributionRequest
+	7,  // 15: ops.service.v1.DistributionService.DeleteDistribution:input_type -> ops.service.v1.DeleteDistributionRequest
+	8,  // 16: ops.service.v1.DistributionService.TriggerDistribution:input_type -> ops.service.v1.TriggerDistributionRequest
+	15, // 17: ops.service.v1.DistributionService.ListDistributionRecords:input_type -> pagination.PagingRequest
+	12, // 18: ops.service.v1.DistributionService.GetDistributionRecord:input_type -> ops.service.v1.GetDistributionRecordRequest
+	3,  // 19: ops.service.v1.DistributionService.ListDistributions:output_type -> ops.service.v1.ListDistributionResponse
+	2,  // 20: ops.service.v1.DistributionService.GetDistribution:output_type -> ops.service.v1.Distribution
+	2,  // 21: ops.service.v1.DistributionService.CreateDistribution:output_type -> ops.service.v1.Distribution
+	16, // 22: ops.service.v1.DistributionService.UpdateDistribution:output_type -> google.protobuf.Empty
+	16, // 23: ops.service.v1.DistributionService.DeleteDistribution:output_type -> google.protobuf.Empty
+	9,  // 24: ops.service.v1.DistributionService.TriggerDistribution:output_type -> ops.service.v1.TriggerDistributionResponse
+	11, // 25: ops.service.v1.DistributionService.ListDistributionRecords:output_type -> ops.service.v1.ListDistributionRecordResponse
+	10, // 26: ops.service.v1.DistributionService.GetDistributionRecord:output_type -> ops.service.v1.DistributionRecord
+	19, // [19:27] is the sub-list for method output_type
+	11, // [11:19] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_distribution_proto_init() }
@@ -966,7 +1105,7 @@ func file_ops_service_v1_distribution_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_distribution_proto_rawDesc), len(file_ops_service_v1_distribution_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,

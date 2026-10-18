@@ -27,6 +27,8 @@ type DistributionRepo struct {
 	mapper        *mapper.CopierMapper[opsV1.Distribution, ent.Distribution]
 	typeConverter *mapper.EnumTypeConverter[opsV1.Distribution_AfterOpt, distribution.AfterOpt]
 
+	deployTypeConverter *mapper.EnumTypeConverter[opsV1.Distribution_DeployType, distribution.DeployType]
+
 	repository *entCrud.Repository[
 		ent.DistributionQuery, ent.DistributionSelect,
 		ent.DistributionCreate, ent.DistributionCreateBulk,
@@ -43,6 +45,8 @@ func NewDistributionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*e
 		entClient:     entClient,
 		mapper:        mapper.NewCopierMapper[opsV1.Distribution, ent.Distribution](),
 		typeConverter: mapper.NewEnumTypeConverter[opsV1.Distribution_AfterOpt, distribution.AfterOpt](opsV1.Distribution_AfterOpt_name, opsV1.Distribution_AfterOpt_value),
+
+		deployTypeConverter: mapper.NewEnumTypeConverter[opsV1.Distribution_DeployType, distribution.DeployType](opsV1.Distribution_DeployType_name, opsV1.Distribution_DeployType_value),
 	}
 
 	repo.init()
@@ -64,6 +68,7 @@ func (r *DistributionRepo) init() {
 	r.mapper.AppendConverters(copierutil.NewTimeTimestamppbConverterPair())
 
 	r.mapper.AppendConverters(r.typeConverter.NewConverterPair())
+	r.mapper.AppendConverters(r.deployTypeConverter.NewConverterPair())
 }
 
 func (r *DistributionRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
@@ -188,6 +193,7 @@ func (r *DistributionRepo) Update(ctx context.Context, req *opsV1.UpdateDistribu
 			if req.Data.AfterOpt != nil {
 				builder.SetAfterOpt(afterOptToEntity(req.Data.GetAfterOpt()))
 			}
+			applyDistributionDockerFieldsUpdate(builder, req.Data)
 			if len(req.Data.Labels) > 0 {
 				builder.SetLabels(req.Data.Labels)
 			}
@@ -228,4 +234,52 @@ func afterOptToEntity(v opsV1.Distribution_AfterOpt) distribution.AfterOpt {
 	default:
 		return distribution.AfterOptNone
 	}
+}
+
+// applyDistributionDockerFields 回写 DOCKER 部署相关字段(FILE 分发时留空即不生效)。
+func applyDistributionDockerFields(builder *ent.DistributionCreate, data *opsV1.Distribution) {
+	if data.DeployType != nil {
+		builder.SetDeployType(deployTypeToEntity(data.GetDeployType()))
+	}
+	builder.SetNillableImage(data.Image).
+		SetNillableContainerName(data.ContainerName).
+		SetNillableDockerRestart(data.DockerRestart).
+		SetNillableDockerNetwork(data.DockerNetwork)
+	if len(data.GetDockerPorts()) > 0 {
+		builder.SetDockerPorts(data.GetDockerPorts())
+	}
+	if len(data.GetDockerEnvs()) > 0 {
+		builder.SetDockerEnvs(data.GetDockerEnvs())
+	}
+	if len(data.GetDockerVolumes()) > 0 {
+		builder.SetDockerVolumes(data.GetDockerVolumes())
+	}
+}
+
+// applyDistributionDockerFieldsUpdate 更新分支的 DOCKER 字段回写。
+func applyDistributionDockerFieldsUpdate(builder *ent.DistributionUpdateOne, data *opsV1.Distribution) {
+	if data.DeployType != nil {
+		builder.SetDeployType(deployTypeToEntity(data.GetDeployType()))
+	}
+	builder.SetNillableImage(data.Image).
+		SetNillableContainerName(data.ContainerName).
+		SetNillableDockerRestart(data.DockerRestart).
+		SetNillableDockerNetwork(data.DockerNetwork)
+	if len(data.GetDockerPorts()) > 0 {
+		builder.SetDockerPorts(data.GetDockerPorts())
+	}
+	if len(data.GetDockerEnvs()) > 0 {
+		builder.SetDockerEnvs(data.GetDockerEnvs())
+	}
+	if len(data.GetDockerVolumes()) > 0 {
+		builder.SetDockerVolumes(data.GetDockerVolumes())
+	}
+}
+
+// deployTypeToEntity proto 枚举 → ent 枚举(ent 存 FILE/DOCKER)。
+func deployTypeToEntity(v opsV1.Distribution_DeployType) distribution.DeployType {
+	if v == opsV1.Distribution_DOCKER {
+		return distribution.DeployTypeDocker
+	}
+	return distribution.DeployTypeFile
 }

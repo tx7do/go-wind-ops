@@ -33,6 +33,22 @@ const (
 	FieldProjectIds = "project_ids"
 	// FieldClearOld holds the string denoting the clear_old field in the database.
 	FieldClearOld = "clear_old"
+	// FieldDeployType holds the string denoting the deploy_type field in the database.
+	FieldDeployType = "deploy_type"
+	// FieldImage holds the string denoting the image field in the database.
+	FieldImage = "image"
+	// FieldContainerName holds the string denoting the container_name field in the database.
+	FieldContainerName = "container_name"
+	// FieldDockerPorts holds the string denoting the docker_ports field in the database.
+	FieldDockerPorts = "docker_ports"
+	// FieldDockerEnvs holds the string denoting the docker_envs field in the database.
+	FieldDockerEnvs = "docker_envs"
+	// FieldDockerVolumes holds the string denoting the docker_volumes field in the database.
+	FieldDockerVolumes = "docker_volumes"
+	// FieldDockerRestart holds the string denoting the docker_restart field in the database.
+	FieldDockerRestart = "docker_restart"
+	// FieldDockerNetwork holds the string denoting the docker_network field in the database.
+	FieldDockerNetwork = "docker_network"
 	// FieldAfterOpt holds the string denoting the after_opt field in the database.
 	FieldAfterOpt = "after_opt"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -56,6 +72,14 @@ var Columns = []string{
 	FieldBuildID,
 	FieldProjectIds,
 	FieldClearOld,
+	FieldDeployType,
+	FieldImage,
+	FieldContainerName,
+	FieldDockerPorts,
+	FieldDockerEnvs,
+	FieldDockerVolumes,
+	FieldDockerRestart,
+	FieldDockerNetwork,
 	FieldAfterOpt,
 	FieldDescription,
 	FieldLabels,
@@ -78,9 +102,37 @@ var (
 	BuildIDValidator func(uint32) error
 	// DefaultClearOld holds the default value on creation for the "clear_old" field.
 	DefaultClearOld bool
+	// DefaultDockerRestart holds the default value on creation for the "docker_restart" field.
+	DefaultDockerRestart string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// DeployType defines the type for the "deploy_type" enum field.
+type DeployType string
+
+// DeployTypeFile is the default value of the DeployType enum.
+const DefaultDeployType = DeployTypeFile
+
+// DeployType values.
+const (
+	DeployTypeFile   DeployType = "FILE"
+	DeployTypeDocker DeployType = "DOCKER"
+)
+
+func (dt DeployType) String() string {
+	return string(dt)
+}
+
+// DeployTypeValidator is a validator for the "deploy_type" field enum values. It is called by the builders before save.
+func DeployTypeValidator(dt DeployType) error {
+	switch dt {
+	case DeployTypeFile, DeployTypeDocker:
+		return nil
+	default:
+		return fmt.Errorf("distribution: invalid enum value for deploy_type field: %q", dt)
+	}
+}
 
 // AfterOpt defines the type for the "after_opt" enum field.
 type AfterOpt string
@@ -160,6 +212,31 @@ func ByBuildID(opts ...sql.OrderTermOption) OrderOption {
 // ByClearOld orders the results by the clear_old field.
 func ByClearOld(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClearOld, opts...).ToFunc()
+}
+
+// ByDeployType orders the results by the deploy_type field.
+func ByDeployType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeployType, opts...).ToFunc()
+}
+
+// ByImage orders the results by the image field.
+func ByImage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImage, opts...).ToFunc()
+}
+
+// ByContainerName orders the results by the container_name field.
+func ByContainerName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContainerName, opts...).ToFunc()
+}
+
+// ByDockerRestart orders the results by the docker_restart field.
+func ByDockerRestart(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDockerRestart, opts...).ToFunc()
+}
+
+// ByDockerNetwork orders the results by the docker_network field.
+func ByDockerNetwork(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDockerNetwork, opts...).ToFunc()
 }
 
 // ByAfterOpt orders the results by the after_opt field.

@@ -41,5 +41,20 @@
   "noRecords": "No distribution records",
   "detail": "Detail",
   "detailTitle": "Distribution Record #{{id}}",
-  "noResult": "No result data"
+  "noResult": "No result data",
+  "deployType": "Deploy Type",
+  "deployFile": "File",
+  "deployDocker": "Image",
+  "deployTypeHint": "DOCKER deploy requires docker on target machines; pulls and runs the image directly without artifact delivery",
+  "image": "Image Tag",
+  "imageHint": "Supports {buildNo} placeholder, replaced with the actual build number on trigger",
+  "imageRequired": "Image tag is required for DOCKER deploy",
+  "containerName": "Container Name",
+  "containerNameHint": "Existing container with the same name is force-removed before starting the new one",
+  "containerNameRequired": "Container name is required for DOCKER deploy",
+  "dockerPorts": "Port Mappings",
+  "dockerEnvs": "Environment Variables",
+  "dockerVolumes": "Volume Mounts",
+  "dockerRestart": "Restart Policy",
+  "dockerNetwork": "Network"
 }

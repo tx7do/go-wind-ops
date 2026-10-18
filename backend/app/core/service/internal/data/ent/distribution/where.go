@@ -99,6 +99,26 @@ func ClearOld(v bool) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldClearOld, v))
 }
 
+// Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
+func Image(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldImage, v))
+}
+
+// ContainerName applies equality check predicate on the "container_name" field. It's identical to ContainerNameEQ.
+func ContainerName(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldContainerName, v))
+}
+
+// DockerRestart applies equality check predicate on the "docker_restart" field. It's identical to DockerRestartEQ.
+func DockerRestart(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldDockerRestart, v))
+}
+
+// DockerNetwork applies equality check predicate on the "docker_network" field. It's identical to DockerNetworkEQ.
+func DockerNetwork(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldDockerNetwork, v))
+}
+
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldDescription, v))
@@ -527,6 +547,366 @@ func ClearOldEQ(v bool) predicate.Distribution {
 // ClearOldNEQ applies the NEQ predicate on the "clear_old" field.
 func ClearOldNEQ(v bool) predicate.Distribution {
 	return predicate.Distribution(sql.FieldNEQ(FieldClearOld, v))
+}
+
+// DeployTypeEQ applies the EQ predicate on the "deploy_type" field.
+func DeployTypeEQ(v DeployType) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldDeployType, v))
+}
+
+// DeployTypeNEQ applies the NEQ predicate on the "deploy_type" field.
+func DeployTypeNEQ(v DeployType) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldDeployType, v))
+}
+
+// DeployTypeIn applies the In predicate on the "deploy_type" field.
+func DeployTypeIn(vs ...DeployType) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldDeployType, vs...))
+}
+
+// DeployTypeNotIn applies the NotIn predicate on the "deploy_type" field.
+func DeployTypeNotIn(vs ...DeployType) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldDeployType, vs...))
+}
+
+// DeployTypeIsNil applies the IsNil predicate on the "deploy_type" field.
+func DeployTypeIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDeployType))
+}
+
+// DeployTypeNotNil applies the NotNil predicate on the "deploy_type" field.
+func DeployTypeNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDeployType))
+}
+
+// ImageEQ applies the EQ predicate on the "image" field.
+func ImageEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldImage, v))
+}
+
+// ImageNEQ applies the NEQ predicate on the "image" field.
+func ImageNEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldImage, v))
+}
+
+// ImageIn applies the In predicate on the "image" field.
+func ImageIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldImage, vs...))
+}
+
+// ImageNotIn applies the NotIn predicate on the "image" field.
+func ImageNotIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldImage, vs...))
+}
+
+// ImageGT applies the GT predicate on the "image" field.
+func ImageGT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGT(FieldImage, v))
+}
+
+// ImageGTE applies the GTE predicate on the "image" field.
+func ImageGTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGTE(FieldImage, v))
+}
+
+// ImageLT applies the LT predicate on the "image" field.
+func ImageLT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLT(FieldImage, v))
+}
+
+// ImageLTE applies the LTE predicate on the "image" field.
+func ImageLTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLTE(FieldImage, v))
+}
+
+// ImageContains applies the Contains predicate on the "image" field.
+func ImageContains(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContains(FieldImage, v))
+}
+
+// ImageHasPrefix applies the HasPrefix predicate on the "image" field.
+func ImageHasPrefix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasPrefix(FieldImage, v))
+}
+
+// ImageHasSuffix applies the HasSuffix predicate on the "image" field.
+func ImageHasSuffix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasSuffix(FieldImage, v))
+}
+
+// ImageIsNil applies the IsNil predicate on the "image" field.
+func ImageIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldImage))
+}
+
+// ImageNotNil applies the NotNil predicate on the "image" field.
+func ImageNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldImage))
+}
+
+// ImageEqualFold applies the EqualFold predicate on the "image" field.
+func ImageEqualFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEqualFold(FieldImage, v))
+}
+
+// ImageContainsFold applies the ContainsFold predicate on the "image" field.
+func ImageContainsFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContainsFold(FieldImage, v))
+}
+
+// ContainerNameEQ applies the EQ predicate on the "container_name" field.
+func ContainerNameEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldContainerName, v))
+}
+
+// ContainerNameNEQ applies the NEQ predicate on the "container_name" field.
+func ContainerNameNEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldContainerName, v))
+}
+
+// ContainerNameIn applies the In predicate on the "container_name" field.
+func ContainerNameIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldContainerName, vs...))
+}
+
+// ContainerNameNotIn applies the NotIn predicate on the "container_name" field.
+func ContainerNameNotIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldContainerName, vs...))
+}
+
+// ContainerNameGT applies the GT predicate on the "container_name" field.
+func ContainerNameGT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGT(FieldContainerName, v))
+}
+
+// ContainerNameGTE applies the GTE predicate on the "container_name" field.
+func ContainerNameGTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGTE(FieldContainerName, v))
+}
+
+// ContainerNameLT applies the LT predicate on the "container_name" field.
+func ContainerNameLT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLT(FieldContainerName, v))
+}
+
+// ContainerNameLTE applies the LTE predicate on the "container_name" field.
+func ContainerNameLTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLTE(FieldContainerName, v))
+}
+
+// ContainerNameContains applies the Contains predicate on the "container_name" field.
+func ContainerNameContains(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContains(FieldContainerName, v))
+}
+
+// ContainerNameHasPrefix applies the HasPrefix predicate on the "container_name" field.
+func ContainerNameHasPrefix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasPrefix(FieldContainerName, v))
+}
+
+// ContainerNameHasSuffix applies the HasSuffix predicate on the "container_name" field.
+func ContainerNameHasSuffix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasSuffix(FieldContainerName, v))
+}
+
+// ContainerNameIsNil applies the IsNil predicate on the "container_name" field.
+func ContainerNameIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldContainerName))
+}
+
+// ContainerNameNotNil applies the NotNil predicate on the "container_name" field.
+func ContainerNameNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldContainerName))
+}
+
+// ContainerNameEqualFold applies the EqualFold predicate on the "container_name" field.
+func ContainerNameEqualFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEqualFold(FieldContainerName, v))
+}
+
+// ContainerNameContainsFold applies the ContainsFold predicate on the "container_name" field.
+func ContainerNameContainsFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContainsFold(FieldContainerName, v))
+}
+
+// DockerPortsIsNil applies the IsNil predicate on the "docker_ports" field.
+func DockerPortsIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDockerPorts))
+}
+
+// DockerPortsNotNil applies the NotNil predicate on the "docker_ports" field.
+func DockerPortsNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDockerPorts))
+}
+
+// DockerEnvsIsNil applies the IsNil predicate on the "docker_envs" field.
+func DockerEnvsIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDockerEnvs))
+}
+
+// DockerEnvsNotNil applies the NotNil predicate on the "docker_envs" field.
+func DockerEnvsNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDockerEnvs))
+}
+
+// DockerVolumesIsNil applies the IsNil predicate on the "docker_volumes" field.
+func DockerVolumesIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDockerVolumes))
+}
+
+// DockerVolumesNotNil applies the NotNil predicate on the "docker_volumes" field.
+func DockerVolumesNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDockerVolumes))
+}
+
+// DockerRestartEQ applies the EQ predicate on the "docker_restart" field.
+func DockerRestartEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldDockerRestart, v))
+}
+
+// DockerRestartNEQ applies the NEQ predicate on the "docker_restart" field.
+func DockerRestartNEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldDockerRestart, v))
+}
+
+// DockerRestartIn applies the In predicate on the "docker_restart" field.
+func DockerRestartIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldDockerRestart, vs...))
+}
+
+// DockerRestartNotIn applies the NotIn predicate on the "docker_restart" field.
+func DockerRestartNotIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldDockerRestart, vs...))
+}
+
+// DockerRestartGT applies the GT predicate on the "docker_restart" field.
+func DockerRestartGT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGT(FieldDockerRestart, v))
+}
+
+// DockerRestartGTE applies the GTE predicate on the "docker_restart" field.
+func DockerRestartGTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGTE(FieldDockerRestart, v))
+}
+
+// DockerRestartLT applies the LT predicate on the "docker_restart" field.
+func DockerRestartLT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLT(FieldDockerRestart, v))
+}
+
+// DockerRestartLTE applies the LTE predicate on the "docker_restart" field.
+func DockerRestartLTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLTE(FieldDockerRestart, v))
+}
+
+// DockerRestartContains applies the Contains predicate on the "docker_restart" field.
+func DockerRestartContains(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContains(FieldDockerRestart, v))
+}
+
+// DockerRestartHasPrefix applies the HasPrefix predicate on the "docker_restart" field.
+func DockerRestartHasPrefix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasPrefix(FieldDockerRestart, v))
+}
+
+// DockerRestartHasSuffix applies the HasSuffix predicate on the "docker_restart" field.
+func DockerRestartHasSuffix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasSuffix(FieldDockerRestart, v))
+}
+
+// DockerRestartIsNil applies the IsNil predicate on the "docker_restart" field.
+func DockerRestartIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDockerRestart))
+}
+
+// DockerRestartNotNil applies the NotNil predicate on the "docker_restart" field.
+func DockerRestartNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDockerRestart))
+}
+
+// DockerRestartEqualFold applies the EqualFold predicate on the "docker_restart" field.
+func DockerRestartEqualFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEqualFold(FieldDockerRestart, v))
+}
+
+// DockerRestartContainsFold applies the ContainsFold predicate on the "docker_restart" field.
+func DockerRestartContainsFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContainsFold(FieldDockerRestart, v))
+}
+
+// DockerNetworkEQ applies the EQ predicate on the "docker_network" field.
+func DockerNetworkEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldDockerNetwork, v))
+}
+
+// DockerNetworkNEQ applies the NEQ predicate on the "docker_network" field.
+func DockerNetworkNEQ(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldDockerNetwork, v))
+}
+
+// DockerNetworkIn applies the In predicate on the "docker_network" field.
+func DockerNetworkIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldDockerNetwork, vs...))
+}
+
+// DockerNetworkNotIn applies the NotIn predicate on the "docker_network" field.
+func DockerNetworkNotIn(vs ...string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldDockerNetwork, vs...))
+}
+
+// DockerNetworkGT applies the GT predicate on the "docker_network" field.
+func DockerNetworkGT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGT(FieldDockerNetwork, v))
+}
+
+// DockerNetworkGTE applies the GTE predicate on the "docker_network" field.
+func DockerNetworkGTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGTE(FieldDockerNetwork, v))
+}
+
+// DockerNetworkLT applies the LT predicate on the "docker_network" field.
+func DockerNetworkLT(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLT(FieldDockerNetwork, v))
+}
+
+// DockerNetworkLTE applies the LTE predicate on the "docker_network" field.
+func DockerNetworkLTE(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLTE(FieldDockerNetwork, v))
+}
+
+// DockerNetworkContains applies the Contains predicate on the "docker_network" field.
+func DockerNetworkContains(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContains(FieldDockerNetwork, v))
+}
+
+// DockerNetworkHasPrefix applies the HasPrefix predicate on the "docker_network" field.
+func DockerNetworkHasPrefix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasPrefix(FieldDockerNetwork, v))
+}
+
+// DockerNetworkHasSuffix applies the HasSuffix predicate on the "docker_network" field.
+func DockerNetworkHasSuffix(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldHasSuffix(FieldDockerNetwork, v))
+}
+
+// DockerNetworkIsNil applies the IsNil predicate on the "docker_network" field.
+func DockerNetworkIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldDockerNetwork))
+}
+
+// DockerNetworkNotNil applies the NotNil predicate on the "docker_network" field.
+func DockerNetworkNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldDockerNetwork))
+}
+
+// DockerNetworkEqualFold applies the EqualFold predicate on the "docker_network" field.
+func DockerNetworkEqualFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEqualFold(FieldDockerNetwork, v))
+}
+
+// DockerNetworkContainsFold applies the ContainsFold predicate on the "docker_network" field.
+func DockerNetworkContainsFold(v string) predicate.Distribution {
+	return predicate.Distribution(sql.FieldContainsFold(FieldDockerNetwork, v))
 }
 
 // AfterOptEQ applies the EQ predicate on the "after_opt" field.
