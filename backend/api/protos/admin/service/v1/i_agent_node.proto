@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/agent_node.proto";
+
+// AgentNodeService 受管机器(agent 节点)管理
+service AgentNodeService {
+  // 查询节点列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListAgentNodeResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/agent-nodes"
+    };
+  }
+
+  // 查询节点详情
+  rpc Get (ops.service.v1.GetAgentNodeRequest) returns (ops.service.v1.AgentNode) {
+    option (google.api.http) = {
+      get: "/admin/v1/agent-nodes/{id}"
+    };
+  }
+
+  // 更新节点(显示名/标签)
+  rpc Update (ops.service.v1.UpdateAgentNodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/agent-nodes/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除节点记录
+  rpc Delete (ops.service.v1.DeleteAgentNodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/agent-nodes/{id}"
+    };
+  }
+
+  // 向节点下发指令(如 ping),返回幂等 request_id
+  rpc SendCommand (ops.service.v1.SendCommandRequest) returns (ops.service.v1.SendCommandResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/agent-nodes/{id}/commands:send"
+      body: "*"
+    };
+  }
+}

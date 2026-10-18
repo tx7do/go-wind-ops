@@ -1,0 +1,244 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AgentNodeService 受管机器(agent 节点)管理服务。
+// 节点记录由 agent 经 MQTT 准入时自动创建(TOFU),本服务提供运维侧的
+// 查询/维护(改名/打标签/删除)与指令下发入口。
+service AgentNodeService {
+  // 查询节点列表
+  rpc ListAgentNodes (pagination.PagingRequest) returns (ListAgentNodeResponse) {}
+
+  // 查询节点详情
+  rpc GetAgentNode (GetAgentNodeRequest) returns (AgentNode) {}
+
+  // 更新节点(显示名/标签等运维侧字段;机器指纹由 agent 心跳维护,不可手工改)
+  rpc UpdateAgentNode (UpdateAgentNodeRequest) returns (google.protobuf.Empty) {}
+
+  // 删除节点记录(若对应 agent 仍在线,下次准入会按 TOFU 重新注册)
+  rpc DeleteAgentNode (DeleteAgentNodeRequest) returns (google.protobuf.Empty) {}
+
+  // 向节点下发指令(如 ping),返回幂等 request_id;执行结果经 MQTT
+  // command/result 回传,当前记录在 core 日志(审计落库为后续迭代)。
+  rpc SendCommand (SendCommandRequest) returns (SendCommandResponse) {}
+}
+
+// 节点在线状态
+enum AgentNodeStatus {
+  AGENT_NODE_STATUS_UNSPECIFIED = 0; // 未知
+
+  ONLINE = 1;  // 在线
+  OFFLINE = 2; // 离线
+}
+
+// 受管机器上的 agent 节点
+message AgentNode {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "节点ID"
+    }
+  ]; // 节点ID
+
+  optional string agent_id = 2 [
+    json_name = "agentId",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "机器唯一标识(machine-id),MQTT 主题与准入的锚点"
+    }
+  ]; // 机器唯一标识
+
+  optional string name = 3 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {
+      description: "节点显示名(默认取 hostname,可人工修改)"
+    }
+  ]; // 节点显示名
+
+  optional AgentNodeStatus status = 4 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "在线状态"
+    }
+  ]; // 在线状态
+
+  optional string hostname = 5 [
+    json_name = "hostname",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 主机名
+
+  optional string os = 6 [
+    json_name = "os",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 操作系统(linux/windows/darwin)
+
+  optional string arch = 7 [
+    json_name = "arch",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // CPU 架构
+
+  optional string platform = 8 [
+    json_name = "platform",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 发行版/系统名称
+
+  optional string platform_version = 9 [
+    json_name = "platformVersion",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 系统版本
+
+  optional string kernel_version = 10 [
+    json_name = "kernelVersion",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 内核版本
+
+  optional string agent_version = 11 [
+    json_name = "agentVersion",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // agent 进程版本
+
+  repeated string ips = 12 [
+    json_name = "ips",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 非环回 IP 列表
+
+  optional int32 cpu_cores = 13 [
+    json_name = "cpuCores",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 逻辑核数
+
+  optional uint64 mem_total_bytes = 14 [
+    json_name = "memTotalBytes",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 物理内存总量(字节)
+
+  repeated string labels = 15 [
+    json_name = "labels",
+    (gnostic.openapi.v3.property) = {
+      description: "人工标签(分组/筛选)"
+    }
+  ]; // 人工标签
+
+  // ── 心跳快照(最近一次心跳时点) ──
+
+  optional double cpu_percent = 20 [
+    json_name = "cpuPercent",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // CPU 占用百分比
+
+  optional double memory_used_percent = 21 [
+    json_name = "memoryUsedPercent",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 内存占用百分比
+
+  optional double disk_used_percent = 22 [
+    json_name = "diskUsedPercent",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 磁盘占用百分比
+
+  optional uint64 uptime_seconds = 23 [
+    json_name = "uptimeSeconds",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 系统运行时长(秒)
+
+  optional google.protobuf.Timestamp last_heartbeat_at = 24 [
+    json_name = "lastHeartbeatAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "最后心跳时间"
+    }
+  ]; // 最后心跳时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间(首次准入)
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListAgentNodeResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated AgentNode items = 2 [json_name = "items"]; // 节点列表
+}
+
+message GetAgentNodeRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 节点ID
+}
+
+message UpdateAgentNodeRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 节点ID
+
+  AgentNode data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据(仅 name/labels 可更新)
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表(name/labels)"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteAgentNodeRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 节点ID
+}
+
+message SendCommandRequest {
+  // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // 节点ID
+
+  optional string agent_id = 2 [
+    json_name = "agentId",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // 机器唯一标识
+
+  string action = 3 [
+    json_name = "action",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "指令动作(小写下划线,当前支持 ping)"
+    }
+  ]; // 指令动作
+
+  optional string payload = 4 [
+    json_name = "payload",
+    (gnostic.openapi.v3.property) = {
+      description: "指令载荷(JSON 字符串)"
+    }
+  ]; // 指令载荷(JSON 字符串)
+}
+
+message SendCommandResponse {
+  string request_id = 1 [json_name = "requestId"]; // 幂等键,执行结果按此回执
+}

@@ -1,0 +1,29 @@
+server:
+  grpc:
+    addr: "0.0.0.0:0"
+    timeout: 10s
+    middleware:
+      enable_logging: true
+      enable_recovery: true
+      enable_tracing: true
+      enable_validate: true
+      enable_circuit_breaker: true
+      enable_metadata: true
+
+  asynq:
+    # db2 专库：db1 的 asynq:{default} 队列被本机多个项目共用，外来 asynq
+    # worker 会抢走本项目的任务（handler not found → 重试归档，任务丢失）。
+    uri: "redis://:*Abcd123456@redis:6379/2"
+    enable_gracefully_shutdown: true
+    shutdown_timeout: 3s
+    codec: "json"
+  mqtt:
+    endpoint: "tcp://127.0.0.1:1883"
+    codec: "json"
+    username: "core"
+    password: "core-pass"
+    clean_session: false
+    auto_reconnect: true
+    resume_subs: true
+    connect_retry_interval: 5s
+    max_reconnect_interval: 60s

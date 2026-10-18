@@ -1,0 +1,317 @@
+// Package agent 是运行在受管机器上的 agent 应用服务:经 MQTT 与 core 保持
+// 信令长连接(准入认证 → 周期心跳 → 指令接收/执行/结果回传),大文件经
+// 预签名 URL 与对象存储直传直拉。本进程不注册服务发现、不连数据库。
+package agent
+
+import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	kratosLog "github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-transport/broker"
+
+	"go-wind-ops/pkg/machine"
+	"go-wind-ops/pkg/signal"
+	"go-wind-ops/pkg/topic"
+)
+
+const (
+	// heartbeatInterval 心跳周期;core 侧超过 offlineAfter(默认 3 个周期)
+	// 未收到心跳即标记节点离线。
+	heartbeatInterval = 30 * time.Second
+	// authRetryInterval/authRetryMax 准入请求重试:未认证前周期性重发,
+	// 规避"agent 先于 core 连上 broker,首条 auth/request 被丢弃"的启动竞争。
+	authRetryInterval = 5 * time.Second
+	authRetryMax      = 12
+	// defaultTokenFile token 默认落盘位置(进程工作目录;注意不能放进 -c 指向的
+	// configs 目录——kratos-bootstrap 配置加载器会扫描该目录下所有文件)。
+	defaultTokenFile = "auth.token"
+)
+
+// CommandHandler 指令处理器:按 action 注册,返回值作为 CommandResult.Data。
+type CommandHandler func(ctx context.Context, env *signal.CommandEnvelope) (any, error)
+
+// Service agent 应用服务。
+type Service struct {
+	ctx *bootstrap.Context
+
+	agentID   string
+	version   string
+	tokenPath string
+
+	mu       sync.RWMutex
+	token    string
+	handlers map[signal.CommandAction]CommandHandler
+
+	mqttBroker atomic.Value // broker.Broker
+	authed     atomic.Bool
+
+	stopCh chan struct{}
+}
+
+// NewService 构造 agent 服务:确定机器 ID、加载或生成本地 token、
+// 注册内置指令处理器。
+func NewService(ctx *bootstrap.Context) *Service {
+	version := ""
+	if ai := ctx.GetAppInfo(); ai != nil {
+		version = ai.GetVersion()
+	}
+
+	tokenPath := os.Getenv("AGENT_AUTH_TOKEN_FILE")
+	if tokenPath == "" {
+		tokenPath = defaultTokenFile
+	}
+
+	s := &Service{
+		ctx:       ctx,
+		agentID:   machine.MachineID(),
+		version:   version,
+		tokenPath: tokenPath,
+		handlers:  make(map[signal.CommandAction]CommandHandler),
+		stopCh:    make(chan struct{}),
+	}
+
+	s.RegisterHandler(signal.CommandActionPing, s.handlePing)
+
+	ctx.NewLoggerHelper("agent/service").Infof("agent initialized (agentId=%s version=%s tokenFile=%s)", s.agentID, s.version, tokenPath)
+	return s
+}
+
+func (s *Service) AgentID() string { return s.agentID }
+
+// RegisterHandler 注册指令处理器(业务轮按域扩展入口)。
+func (s *Service) RegisterHandler(action signal.CommandAction, h CommandHandler) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.handlers[action] = h
+}
+
+// LoadOrGenerateAuthToken 加载本地 token;不存在则生成 32 字节随机 hex 并落盘
+// (文件权限 0600)。core 侧只存 SHA-256 哈希,token 明文只存在本机。
+func (s *Service) LoadOrGenerateAuthToken() error {
+	if data, err := os.ReadFile(s.tokenPath); err == nil {
+		token := strings.TrimSpace(string(data))
+		if len(token) >= 32 {
+			s.mu.Lock()
+			s.token = token
+			s.mu.Unlock()
+			return nil
+		}
+	}
+
+	buf := make([]byte, 32)
+	if _, err := rand.Read(buf); err != nil {
+		return fmt.Errorf("generate token: %w", err)
+	}
+	token := hex.EncodeToString(buf)
+
+	if err := os.MkdirAll(filepath.Dir(s.tokenPath), 0o700); err != nil {
+		return fmt.Errorf("mkdir for token file: %w", err)
+	}
+	if err := os.WriteFile(s.tokenPath, []byte(token+"\n"), 0o600); err != nil {
+		return fmt.Errorf("write token file: %w", err)
+	}
+
+	s.mu.Lock()
+	s.token = token
+	s.mu.Unlock()
+
+	s.ctx.NewLoggerHelper("agent/service").Infof("generated new auth token at %s", s.tokenPath)
+	return nil
+}
+
+// GetAuthToken 返回当前 token(MQTT server 组装连接参数时取用)。
+func (s *Service) GetAuthToken() string {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.token
+}
+
+// RegisterMqttBroker 注入共享 MQTT 连接(publish 用)。
+func (s *Service) RegisterMqttBroker(b broker.Broker) {
+	s.mqttBroker.Store(b)
+}
+
+// OnMqttConnected 连接(含重连)建立后的回调:发布准入请求。
+// 重连后会重复认证,保证断线恢复后无需重启进程。
+// 若 core 侧订阅尚未就绪(启动顺序竞争)首条 auth/request 会丢,故以有界
+// 重试兜底:未认证前每 authRetryInterval 重发,认证成功即停。
+func (s *Service) OnMqttConnected() {
+	s.authed.Store(false)
+	go func() {
+		log := s.log()
+		for i := 0; i < authRetryMax; i++ {
+			if s.authed.Load() {
+				return
+			}
+			if err := s.publishAuthRequest(); err != nil {
+				log.Warnf("publish auth request: %v", err)
+			}
+			select {
+			case <-s.stopCh:
+				return
+			case <-time.After(authRetryInterval):
+			}
+		}
+		if !s.authed.Load() {
+			log.Errorf("auth request retry exhausted (%d attempts) without acknowledgement", authRetryMax)
+		}
+	}()
+}
+
+// Start 启动心跳循环。由 mqtt_server 在 kratos App 启动前调用;主题订阅与
+// broker 注入也由其完成,本方法只负责本地准备工作与周期任务。
+func (s *Service) Start(ctx context.Context) error {
+	if err := s.LoadOrGenerateAuthToken(); err != nil {
+		return err
+	}
+	s.startHeartbeatLoop(ctx)
+	return nil
+}
+
+// Stop 停止心跳循环。
+func (s *Service) Stop() {
+	select {
+	case <-s.stopCh:
+	default:
+		close(s.stopCh)
+	}
+}
+
+// ============================================================================
+// 订阅处理(由 internal/server 的 mqtt_server 注册到具体主题)
+// ============================================================================
+
+// HandleAuthResponse 处理 core 的准入应答。
+func (s *Service) HandleAuthResponse(ctx context.Context, _ string, _ broker.Headers, resp *signal.AgentAuthResponse) error {
+	log := s.log()
+	if resp == nil {
+		return nil
+	}
+	if resp.OK {
+		s.authed.Store(true)
+		log.Infof("authenticated by core (server_time=%s)", resp.ServerTime.Format(time.RFC3339))
+		return nil
+	}
+	s.authed.Store(false)
+	// 拒绝多为 token 与库内哈希不符(重装/复制 token 文件);保留进程便于排查,
+	// 不自动重新生成 token(会污染准入记录)。
+	log.Errorf("auth DENIED by core: %s", resp.Reason)
+	return nil
+}
+
+// HandleCommand 处理 core 下发的指令信封:分发到 action 处理器并回传结果。
+func (s *Service) HandleCommand(ctx context.Context, topicStr string, _ broker.Headers, env *signal.CommandEnvelope) error {
+	log := s.log()
+	if env == nil || env.RequestId == "" {
+		log.Warn("received nil/invalid command envelope")
+		return nil
+	}
+	log.Infof("command received (request_id=%s action=%s)", env.RequestId, env.Action)
+
+	result := signal.CommandResult{
+		RequestId:  env.RequestId,
+		AgentId:    s.agentID,
+		Action:     env.Action,
+		FinishedAt: time.Now(),
+	}
+
+	s.mu.RLock()
+	handler, ok := s.handlers[env.Action]
+	s.mu.RUnlock()
+
+	if !ok {
+		result.Success = false
+		result.Error = fmt.Sprintf("unsupported action %q", env.Action)
+	} else if data, err := handler(ctx, env); err != nil {
+		result.Success = false
+		result.Error = err.Error()
+	} else if data != nil {
+		if encoded, encErr := json.Marshal(data); encErr == nil {
+			result.Data = encoded
+		}
+		result.Success = true
+	} else {
+		result.Success = true
+	}
+
+	return s.publish(topic.MakeMqttTopicCommandResult(s.agentID), &result)
+}
+
+// ============================================================================
+// 内部实现
+// ============================================================================
+
+func (s *Service) handlePing(_ context.Context, env *signal.CommandEnvelope) (any, error) {
+	payload := signal.PingPayload{}
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, &payload); err != nil {
+			return nil, fmt.Errorf("decode ping payload: %w", err)
+		}
+	}
+	return signal.PingResult{
+		SentAt:     payload.SentAt,
+		ReceivedAt: time.Now(),
+		AgentTime:  time.Now(),
+	}, nil
+}
+
+func (s *Service) publishAuthRequest() error {
+	req := signal.AgentAuthRequest{
+		AgentId: s.agentID,
+		Token:   s.GetAuthToken(),
+		Info:    machine.Fingerprint(s.version),
+	}
+	return s.publish(topic.MakeMqttTopicAuth(s.agentID, true), &req)
+}
+
+func (s *Service) publish(topicStr string, msg any) error {
+	b, ok := s.mqttBroker.Load().(broker.Broker)
+	if !ok || b == nil {
+		return fmt.Errorf("mqtt broker not ready")
+	}
+	return b.Publish(context.Background(), topicStr, broker.NewMessage(msg))
+}
+
+// startHeartbeatLoop 周期上报心跳(内含指标快照);未通过准入前不发。
+func (s *Service) startHeartbeatLoop(ctx context.Context) {
+	go func() {
+		log := s.log()
+		ticker := time.NewTicker(heartbeatInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-s.stopCh:
+				return
+			case <-ticker.C:
+				if !s.authed.Load() {
+					continue
+				}
+				hb := &signal.Heartbeat{
+					AgentId:   s.agentID,
+					Timestamp: time.Now(),
+					Version:   s.version,
+					Metrics:   machine.Snapshot(),
+				}
+				if err := s.publish(topic.MakeMqttTopicHeartbeat(s.agentID), hb); err != nil {
+					log.Warnf("publish heartbeat: %v", err)
+				}
+			}
+		}
+	}()
+}
+
+func (s *Service) log() *kratosLog.Helper { return s.ctx.NewLoggerHelper("agent/service") }

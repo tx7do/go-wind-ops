@@ -1,0 +1,8 @@
+openapi: 3.0.3
+info:
+  title: GoWind Ops Front API
+  description: |
+    go-wind-ops 前台 BFF 接口。本文档为占位:完整 OpenAPI 需在恢复 protoc/buf
+    工具链后由 `make openapi` 从 api/protos 重新生成。
+  version: "0.1.0"
+paths: {}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "errors/errors.proto";
+
+// 运维平台(agent 节点)错误定义
+enum AgentNodeErrorReason {
+  option (errors.default_code) = 500;
+
+  // 400
+  BAD_REQUEST = 0 [(errors.code) = 400]; // 错误请求
+
+  // 403
+  FORBIDDEN = 300 [(errors.code) = 403]; // 禁止访问
+
+  // 404
+  NOT_FOUND = 400 [(errors.code) = 404]; // 节点不存在
+
+  // 409
+  CONFLICT = 900 [(errors.code) = 409]; // 冲突
+
+  // 500
+  INTERNAL_SERVER_ERROR = 1000 [(errors.code) = 500]; // 内部错误
+
+  // 503
+  SERVICE_UNAVAILABLE = 1100 [(errors.code) = 503]; // MQTT 通道不可用
+}

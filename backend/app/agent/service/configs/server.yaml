@@ -1,0 +1,11 @@
+server:
+  mqtt:
+    endpoint: "tcp://127.0.0.1:1883"
+    codec: "json"
+    username: "agent"
+    password: "agent-pass"
+    clean_session: false
+    auto_reconnect: true
+    resume_subs: true
+    connect_retry_interval: 5s
+    max_reconnect_interval: 60s
