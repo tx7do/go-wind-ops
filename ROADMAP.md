@@ -31,10 +31,8 @@
 ### 2.1 构建日志实时 tail ✅ 已完成
 **实现**：`GetBuildHistoryLog(id, offset)` 增量拉取（字节偏移安全切分），REST 路由 `/admin/v1/build-histories/{id}/log`；前端日志弹窗运行中每 2s 追加新片段并自动滚动，终态停止。采用增量轮询替代 SSE/WebSocket，免去 BFF 长连接改造与鉴权复杂度。
 
-### 2.2 构建流水线（Build Pipeline）
-**场景**：多模块项目需要按依赖顺序构建（先后端后前端），或构建后自动分发。
-**方案**：ops_build_pipeline 表定义 DAG 步骤（每步指向 build_id 或 script_id），调度器按拓扑序执行，失败即中止。
-**工作量**：后端 2 天 + 前端 1 天。
+### 2.2 构建流水线（Build Pipeline）✅ 已完成
+**实现**：ops_build_pipelines + ops_pipeline_runs 两表；步骤为有序列表（BUILD/SCRIPT/DISTRIBUTION 三类，v1 线性即退化 DAG，按序执行失败即中止，未执行步骤标 SKIPPED）。触发建 run 后异步推进：构建轮询历史终态、脚本按指令台账轮询退出码（输出截断入日志）、分发轮询全部目标记录终态（TriggerDistributionResponse 补 record_ids）。运行日志增量落库，前端与构建日志同款 2s delta tail。执行 goroutine 脱离请求生命周期，崩溃遗留 RUNNING 由启动清扫定案。
 
 ### 2.3 产物版本管理与保留策略 ✅ 已完成
 **实现**：对象键含构建号天然有版本；构建配置 `artifact_retention`（保留最近 N 个成功构建产物，0=不限），调度器每小时清扫超额对象（删 MinIO + 清记录指针）；构建历史页已支持产物下载与回滚分发（回滚=用旧构建号产物重新触发分发）。
