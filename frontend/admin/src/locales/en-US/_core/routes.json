@@ -10,6 +10,8 @@
   "command-records": "Command Records",
   "monitors": "Monitors",
   "alerts": "Alerts",
+  "notification-channels": "Notification Channels",
+  "approvals": "Approvals",
   "tenant": "Tenant Management",
   "tenant-members": "Tenant Members",
   "permission": "Permission Management",

@@ -39,3 +39,7 @@ export function useRejectApproval(
     ...options,
   });
 }
+
+export async function fetchListApprovals(params: PaginationQuery) {
+  return apiClient.approvalService.List(params.toRawParams());
+}

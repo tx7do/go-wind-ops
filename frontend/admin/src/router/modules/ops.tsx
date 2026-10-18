@@ -115,6 +115,28 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'notification-channels',
+        path: 'notification-channels',
+        element: createLazyRoute(() => import('@/pages/app/ops/notification-channel')),
+        meta: {
+          title: 'routes:notification-channels',
+          icon: 'lucide:radio',
+          order: 10,
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
+        name: 'approvals',
+        path: 'approvals',
+        element: createLazyRoute(() => import('@/pages/app/ops/approval')),
+        meta: {
+          title: 'routes:approvals',
+          icon: 'lucide:check-circle',
+          order: 11,
+          authority: ['sys:platform_admin'],
+        },
+      },
     ],
   },
 ];

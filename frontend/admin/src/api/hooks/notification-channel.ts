@@ -54,3 +54,7 @@ export function useDeleteNotificationChannel(
     ...options,
   });
 }
+
+export async function fetchListNotificationChannels(params: PaginationQuery) {
+  return apiClient.notificationChannelService.List(params.toRawParams());
+}

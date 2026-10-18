@@ -10,6 +10,8 @@
   "command-records": "指令台账",
   "monitors": "监控规则",
   "alerts": "告警记录",
+  "notification-channels": "通知渠道",
+  "approvals": "操作审批",
   "tenant": "租户管理",
   "tenant-members": "租户成员",
   "permission": "权限管理",
