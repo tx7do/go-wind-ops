@@ -25,9 +25,9 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
   const [loading, setLoading] = useState(false);
   const [logRecord, setLogRecord] = useState<BuildHistory | undefined>();
 
-  useEffect(() => {
+  // 加载 + RUNNING 时自动轮询(3s)
+  const load = async () => {
     if (!build?.id) return;
-    setLoading(true);
     fetchListBuildHistories(new PaginationQuery({ paging: { page: 1, pageSize: 50 } }))
       .then((resp) => {
         setItems(
@@ -37,7 +37,17 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         );
       })
       .finally(() => setLoading(false));
-  }, [build?.id]);
+  };
+
+  useEffect(() => { load(); }, [build?.id]);
+
+  useEffect(() => {
+    if (!build?.id) return;
+    const hasActive = items.some((h) => h.status === 'PENDING' || h.status === 'RUNNING');
+    if (!hasActive) return;
+    const timer = setInterval(load, 3000);
+    return () => clearInterval(timer);
+  }, [build?.id, items]);
 
   const statusTag = (status: string | undefined) => {
     switch (status) {

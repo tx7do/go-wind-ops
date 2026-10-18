@@ -213,6 +213,15 @@ func (r *BuildHistoryRepo) UpdateFinished(ctx context.Context, id uint32, status
 	return err
 }
 
+// UpdateLogText 增量刷新日志(RUNNING 期间调用,让前端轮询可见进度)。
+func (r *BuildHistoryRepo) UpdateLogText(ctx context.Context, id uint32, logText string) error {
+	_, err := r.entClient.Client().BuildHistory.
+		UpdateOneID(id).
+		SetLog(logText).
+		Save(ctx)
+	return err
+}
+
 // FinalizeInterrupted 服务启动时把上次遗留的 PENDING/RUNNING 定案 FAILED
 // (core 重启会中断进行中的构建),返回行数。
 func (r *BuildHistoryRepo) FinalizeInterrupted(ctx context.Context) (int, error) {

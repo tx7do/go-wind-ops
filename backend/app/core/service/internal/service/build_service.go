@@ -234,6 +234,10 @@ func (s *BuildService) runBuild(historyID uint32) {
 	code, out, timedOut, err := shellexec.RunGit(ctx, workspace, cloneTimeout,
 		"clone", "--depth", "1", "--single-branch", "--branch", branch, buildGitURL(repoEntity), "src")
 	logLines = "$ git clone --depth 1 --single-branch --branch " + branch + " <url> src\n" + out
+
+	// 克隆完成即增量落库(前端立即可见)
+	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+
 	if timedOut {
 		fail("git clone timeout")
 		return
@@ -243,7 +247,7 @@ func (s *BuildService) runBuild(historyID uint32) {
 		return
 	}
 
-	// ── 2. 构建命令 ──
+	// ── 2. 构建命令(后台执行 + 定期刷新日志到 DB)──
 	timeoutSeconds := buildDto.GetTimeoutSeconds()
 	if timeoutSeconds == 0 {
 		timeoutSeconds = defaultBuildTimeoutSeconds
@@ -252,8 +256,28 @@ func (s *BuildService) runBuild(historyID uint32) {
 		timeoutSeconds = maxBuildTimeoutSeconds
 	}
 	buildCmd := buildDto.GetBuildCommand()
+	logLines += "\n\n$ " + buildCmd + "\n"
+	// 先落库"构建命令开始执行",让前端看到当前状态
+	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+
+	// 定期刷新日志(构建命令可能运行几分钟;让前端 3s 轮询可见进展)
+	flushDone := make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-flushDone:
+				return
+			case <-ticker.C:
+				_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+			}
+		}
+	}()
+
 	code, out, timedOut, err = shellexec.Run(ctx, srcDir, buildCmd, time.Duration(timeoutSeconds)*time.Second)
-	logLines += "\n\n$ " + buildCmd + "\n" + out
+	close(flushDone)
+	logLines += out
 	if timedOut {
 		fail(fmt.Sprintf("build command timeout after %ds", timeoutSeconds))
 		return
