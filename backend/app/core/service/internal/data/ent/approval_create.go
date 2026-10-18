@@ -76,6 +76,12 @@ func (_c *ApprovalCreate) SetOperationRefID(v uint32) *ApprovalCreate {
 	return _c
 }
 
+// SetAgentID sets the "agent_id" field.
+func (_c *ApprovalCreate) SetAgentID(v string) *ApprovalCreate {
+	_c.mutation.SetAgentID(v)
+	return _c
+}
+
 // SetOperationName sets the "operation_name" field.
 func (_c *ApprovalCreate) SetOperationName(v string) *ApprovalCreate {
 	_c.mutation.SetOperationName(v)
@@ -253,6 +259,14 @@ func (_c *ApprovalCreate) check() error {
 			return &ValidationError{Name: "operation_ref_id", err: fmt.Errorf(`ent: validator failed for field "Approval.operation_ref_id": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.AgentID(); !ok {
+		return &ValidationError{Name: "agent_id", err: errors.New(`ent: missing required field "Approval.agent_id"`)}
+	}
+	if v, ok := _c.mutation.AgentID(); ok {
+		if err := approval.AgentIDValidator(v); err != nil {
+			return &ValidationError{Name: "agent_id", err: fmt.Errorf(`ent: validator failed for field "Approval.agent_id": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.OperationName(); !ok {
 		return &ValidationError{Name: "operation_name", err: errors.New(`ent: missing required field "Approval.operation_name"`)}
 	}
@@ -326,6 +340,10 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.OperationRefID(); ok {
 		_spec.SetField(approval.FieldOperationRefID, field.TypeUint32, value)
 		_node.OperationRefID = value
+	}
+	if value, ok := _c.mutation.AgentID(); ok {
+		_spec.SetField(approval.FieldAgentID, field.TypeString, value)
+		_node.AgentID = value
 	}
 	if value, ok := _c.mutation.OperationName(); ok {
 		_spec.SetField(approval.FieldOperationName, field.TypeString, value)
@@ -474,6 +492,18 @@ func (u *ApprovalUpsert) UpdateOperationRefID() *ApprovalUpsert {
 // AddOperationRefID adds v to the "operation_ref_id" field.
 func (u *ApprovalUpsert) AddOperationRefID(v uint32) *ApprovalUpsert {
 	u.Add(approval.FieldOperationRefID, v)
+	return u
+}
+
+// SetAgentID sets the "agent_id" field.
+func (u *ApprovalUpsert) SetAgentID(v string) *ApprovalUpsert {
+	u.Set(approval.FieldAgentID, v)
+	return u
+}
+
+// UpdateAgentID sets the "agent_id" field to the value that was provided on create.
+func (u *ApprovalUpsert) UpdateAgentID() *ApprovalUpsert {
+	u.SetExcluded(approval.FieldAgentID)
 	return u
 }
 
@@ -746,6 +776,20 @@ func (u *ApprovalUpsertOne) AddOperationRefID(v uint32) *ApprovalUpsertOne {
 func (u *ApprovalUpsertOne) UpdateOperationRefID() *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.UpdateOperationRefID()
+	})
+}
+
+// SetAgentID sets the "agent_id" field.
+func (u *ApprovalUpsertOne) SetAgentID(v string) *ApprovalUpsertOne {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.SetAgentID(v)
+	})
+}
+
+// UpdateAgentID sets the "agent_id" field to the value that was provided on create.
+func (u *ApprovalUpsertOne) UpdateAgentID() *ApprovalUpsertOne {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.UpdateAgentID()
 	})
 }
 
@@ -1208,6 +1252,20 @@ func (u *ApprovalUpsertBulk) AddOperationRefID(v uint32) *ApprovalUpsertBulk {
 func (u *ApprovalUpsertBulk) UpdateOperationRefID() *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.UpdateOperationRefID()
+	})
+}
+
+// SetAgentID sets the "agent_id" field.
+func (u *ApprovalUpsertBulk) SetAgentID(v string) *ApprovalUpsertBulk {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.SetAgentID(v)
+	})
+}
+
+// UpdateAgentID sets the "agent_id" field to the value that was provided on create.
+func (u *ApprovalUpsertBulk) UpdateAgentID() *ApprovalUpsertBulk {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.UpdateAgentID()
 	})
 }
 

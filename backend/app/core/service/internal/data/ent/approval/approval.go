@@ -23,6 +23,8 @@ const (
 	FieldOperationType = "operation_type"
 	// FieldOperationRefID holds the string denoting the operation_ref_id field in the database.
 	FieldOperationRefID = "operation_ref_id"
+	// FieldAgentID holds the string denoting the agent_id field in the database.
+	FieldAgentID = "agent_id"
 	// FieldOperationName holds the string denoting the operation_name field in the database.
 	FieldOperationName = "operation_name"
 	// FieldPayload holds the string denoting the payload field in the database.
@@ -51,6 +53,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldOperationType,
 	FieldOperationRefID,
+	FieldAgentID,
 	FieldOperationName,
 	FieldPayload,
 	FieldRequesterID,
@@ -76,6 +79,8 @@ var (
 	OperationTypeValidator func(string) error
 	// OperationRefIDValidator is a validator for the "operation_ref_id" field. It is called by the builders before save.
 	OperationRefIDValidator func(uint32) error
+	// AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
+	AgentIDValidator func(string) error
 	// OperationNameValidator is a validator for the "operation_name" field. It is called by the builders before save.
 	OperationNameValidator func(string) error
 	// DefaultRequesterID holds the default value on creation for the "requester_id" field.
@@ -144,6 +149,11 @@ func ByOperationType(opts ...sql.OrderTermOption) OrderOption {
 // ByOperationRefID orders the results by the operation_ref_id field.
 func ByOperationRefID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOperationRefID, opts...).ToFunc()
+}
+
+// ByAgentID orders the results by the agent_id field.
+func ByAgentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAgentID, opts...).ToFunc()
 }
 
 // ByOperationName orders the results by the operation_name field.

@@ -79,6 +79,11 @@ func OperationRefID(v uint32) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldOperationRefID, v))
 }
 
+// AgentID applies equality check predicate on the "agent_id" field. It's identical to AgentIDEQ.
+func AgentID(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldEQ(FieldAgentID, v))
+}
+
 // OperationName applies equality check predicate on the "operation_name" field. It's identical to OperationNameEQ.
 func OperationName(v string) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldOperationName, v))
@@ -367,6 +372,71 @@ func OperationRefIDLT(v uint32) predicate.Approval {
 // OperationRefIDLTE applies the LTE predicate on the "operation_ref_id" field.
 func OperationRefIDLTE(v uint32) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldOperationRefID, v))
+}
+
+// AgentIDEQ applies the EQ predicate on the "agent_id" field.
+func AgentIDEQ(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldEQ(FieldAgentID, v))
+}
+
+// AgentIDNEQ applies the NEQ predicate on the "agent_id" field.
+func AgentIDNEQ(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldNEQ(FieldAgentID, v))
+}
+
+// AgentIDIn applies the In predicate on the "agent_id" field.
+func AgentIDIn(vs ...string) predicate.Approval {
+	return predicate.Approval(sql.FieldIn(FieldAgentID, vs...))
+}
+
+// AgentIDNotIn applies the NotIn predicate on the "agent_id" field.
+func AgentIDNotIn(vs ...string) predicate.Approval {
+	return predicate.Approval(sql.FieldNotIn(FieldAgentID, vs...))
+}
+
+// AgentIDGT applies the GT predicate on the "agent_id" field.
+func AgentIDGT(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldGT(FieldAgentID, v))
+}
+
+// AgentIDGTE applies the GTE predicate on the "agent_id" field.
+func AgentIDGTE(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldGTE(FieldAgentID, v))
+}
+
+// AgentIDLT applies the LT predicate on the "agent_id" field.
+func AgentIDLT(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldLT(FieldAgentID, v))
+}
+
+// AgentIDLTE applies the LTE predicate on the "agent_id" field.
+func AgentIDLTE(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldLTE(FieldAgentID, v))
+}
+
+// AgentIDContains applies the Contains predicate on the "agent_id" field.
+func AgentIDContains(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldContains(FieldAgentID, v))
+}
+
+// AgentIDHasPrefix applies the HasPrefix predicate on the "agent_id" field.
+func AgentIDHasPrefix(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldHasPrefix(FieldAgentID, v))
+}
+
+// AgentIDHasSuffix applies the HasSuffix predicate on the "agent_id" field.
+func AgentIDHasSuffix(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldHasSuffix(FieldAgentID, v))
+}
+
+// AgentIDEqualFold applies the EqualFold predicate on the "agent_id" field.
+func AgentIDEqualFold(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldEqualFold(FieldAgentID, v))
+}
+
+// AgentIDContainsFold applies the ContainsFold predicate on the "agent_id" field.
+func AgentIDContainsFold(v string) predicate.Approval {
+	return predicate.Approval(sql.FieldContainsFold(FieldAgentID, v))
 }
 
 // OperationNameEQ applies the EQ predicate on the "operation_name" field.

@@ -39,6 +39,10 @@ func (Approval) Fields() []ent.Field {
 			Comment("操作关联实体 ID(分发配置 ID 或脚本 ID)").
 			Positive(),
 
+		field.String("agent_id").
+			Comment("目标节点 agentId(审批通过后据此重新下发指令)").
+			NotEmpty(),
+
 		field.String("operation_name").
 			Comment("操作名称(快照,便于审批人识别)").
 			NotEmpty(),

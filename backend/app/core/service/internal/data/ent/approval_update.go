@@ -104,6 +104,20 @@ func (_u *ApprovalUpdate) AddOperationRefID(v int32) *ApprovalUpdate {
 	return _u
 }
 
+// SetAgentID sets the "agent_id" field.
+func (_u *ApprovalUpdate) SetAgentID(v string) *ApprovalUpdate {
+	_u.mutation.SetAgentID(v)
+	return _u
+}
+
+// SetNillableAgentID sets the "agent_id" field if the given value is not nil.
+func (_u *ApprovalUpdate) SetNillableAgentID(v *string) *ApprovalUpdate {
+	if v != nil {
+		_u.SetAgentID(*v)
+	}
+	return _u
+}
+
 // SetOperationName sets the "operation_name" field.
 func (_u *ApprovalUpdate) SetOperationName(v string) *ApprovalUpdate {
 	_u.mutation.SetOperationName(v)
@@ -310,6 +324,11 @@ func (_u *ApprovalUpdate) check() error {
 			return &ValidationError{Name: "operation_ref_id", err: fmt.Errorf(`ent: validator failed for field "Approval.operation_ref_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.AgentID(); ok {
+		if err := approval.AgentIDValidator(v); err != nil {
+			return &ValidationError{Name: "agent_id", err: fmt.Errorf(`ent: validator failed for field "Approval.agent_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.OperationName(); ok {
 		if err := approval.OperationNameValidator(v); err != nil {
 			return &ValidationError{Name: "operation_name", err: fmt.Errorf(`ent: validator failed for field "Approval.operation_name": %w`, err)}
@@ -364,6 +383,9 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedOperationRefID(); ok {
 		_spec.AddField(approval.FieldOperationRefID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AgentID(); ok {
+		_spec.SetField(approval.FieldAgentID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperationName(); ok {
 		_spec.SetField(approval.FieldOperationName, field.TypeString, value)
@@ -507,6 +529,20 @@ func (_u *ApprovalUpdateOne) SetNillableOperationRefID(v *uint32) *ApprovalUpdat
 // AddOperationRefID adds value to the "operation_ref_id" field.
 func (_u *ApprovalUpdateOne) AddOperationRefID(v int32) *ApprovalUpdateOne {
 	_u.mutation.AddOperationRefID(v)
+	return _u
+}
+
+// SetAgentID sets the "agent_id" field.
+func (_u *ApprovalUpdateOne) SetAgentID(v string) *ApprovalUpdateOne {
+	_u.mutation.SetAgentID(v)
+	return _u
+}
+
+// SetNillableAgentID sets the "agent_id" field if the given value is not nil.
+func (_u *ApprovalUpdateOne) SetNillableAgentID(v *string) *ApprovalUpdateOne {
+	if v != nil {
+		_u.SetAgentID(*v)
+	}
 	return _u
 }
 
@@ -729,6 +765,11 @@ func (_u *ApprovalUpdateOne) check() error {
 			return &ValidationError{Name: "operation_ref_id", err: fmt.Errorf(`ent: validator failed for field "Approval.operation_ref_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.AgentID(); ok {
+		if err := approval.AgentIDValidator(v); err != nil {
+			return &ValidationError{Name: "agent_id", err: fmt.Errorf(`ent: validator failed for field "Approval.agent_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.OperationName(); ok {
 		if err := approval.OperationNameValidator(v); err != nil {
 			return &ValidationError{Name: "operation_name", err: fmt.Errorf(`ent: validator failed for field "Approval.operation_name": %w`, err)}
@@ -800,6 +841,9 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 	}
 	if value, ok := _u.mutation.AddedOperationRefID(); ok {
 		_spec.AddField(approval.FieldOperationRefID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AgentID(); ok {
+		_spec.SetField(approval.FieldAgentID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperationName(); ok {
 		_spec.SetField(approval.FieldOperationName, field.TypeString, value)

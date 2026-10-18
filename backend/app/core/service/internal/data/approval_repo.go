@@ -127,11 +127,12 @@ func (r *ApprovalRepo) GetEntity(ctx context.Context, id uint32) (*ent.Approval,
 }
 
 // Create 创建审批单(PENDING)。operationType 为字符串(distribute/script_exec)。
-func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint32, opName, payload string, requesterID uint32) (*ent.Approval, error) {
+func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint32, agentID, opName, payload string, requesterID uint32) (*ent.Approval, error) {
 	builder := r.entClient.Client().Approval.
 		Create().
 		SetOperationType(operationType).
 		SetOperationRefID(operationRefID).
+		SetAgentID(agentID).
 		SetOperationName(opName).
 		SetStatus(approval.StatusPending)
 

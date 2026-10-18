@@ -28,6 +28,8 @@ type Approval struct {
 	OperationType string `json:"operation_type,omitempty"`
 	// 操作关联实体 ID(分发配置 ID 或脚本 ID)
 	OperationRefID uint32 `json:"operation_ref_id,omitempty"`
+	// 目标节点 agentId(审批通过后据此重新下发指令)
+	AgentID string `json:"agent_id,omitempty"`
 	// 操作名称(快照,便于审批人识别)
 	OperationName string `json:"operation_name,omitempty"`
 	// 操作载荷快照(JSON,审批通过后按此执行)
@@ -54,7 +56,7 @@ func (*Approval) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case approval.FieldID, approval.FieldOperationRefID, approval.FieldRequesterID, approval.FieldApproverID:
 			values[i] = new(sql.NullInt64)
-		case approval.FieldOperationType, approval.FieldOperationName, approval.FieldPayload, approval.FieldStatus, approval.FieldRejectReason, approval.FieldResult:
+		case approval.FieldOperationType, approval.FieldAgentID, approval.FieldOperationName, approval.FieldPayload, approval.FieldStatus, approval.FieldRejectReason, approval.FieldResult:
 			values[i] = new(sql.NullString)
 		case approval.FieldCreatedAt, approval.FieldUpdatedAt, approval.FieldDeletedAt, approval.FieldResolvedAt:
 			values[i] = new(sql.NullTime)
@@ -111,6 +113,12 @@ func (_m *Approval) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field operation_ref_id", values[i])
 			} else if value.Valid {
 				_m.OperationRefID = uint32(value.Int64)
+			}
+		case approval.FieldAgentID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field agent_id", values[i])
+			} else if value.Valid {
+				_m.AgentID = value.String
 			}
 		case approval.FieldOperationName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -222,6 +230,9 @@ func (_m *Approval) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("operation_ref_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.OperationRefID))
+	builder.WriteString(", ")
+	builder.WriteString("agent_id=")
+	builder.WriteString(_m.AgentID)
 	builder.WriteString(", ")
 	builder.WriteString("operation_name=")
 	builder.WriteString(_m.OperationName)

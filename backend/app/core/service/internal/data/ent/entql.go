@@ -209,6 +209,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			approval.FieldDeletedAt:      {Type: field.TypeTime, Column: approval.FieldDeletedAt},
 			approval.FieldOperationType:  {Type: field.TypeString, Column: approval.FieldOperationType},
 			approval.FieldOperationRefID: {Type: field.TypeUint32, Column: approval.FieldOperationRefID},
+			approval.FieldAgentID:        {Type: field.TypeString, Column: approval.FieldAgentID},
 			approval.FieldOperationName:  {Type: field.TypeString, Column: approval.FieldOperationName},
 			approval.FieldPayload:        {Type: field.TypeString, Column: approval.FieldPayload},
 			approval.FieldRequesterID:    {Type: field.TypeUint32, Column: approval.FieldRequesterID},
@@ -2218,6 +2219,11 @@ func (f *ApprovalFilter) WhereOperationType(p entql.StringP) {
 // WhereOperationRefID applies the entql uint32 predicate on the operation_ref_id field.
 func (f *ApprovalFilter) WhereOperationRefID(p entql.Uint32P) {
 	f.Where(p.Field(approval.FieldOperationRefID))
+}
+
+// WhereAgentID applies the entql string predicate on the agent_id field.
+func (f *ApprovalFilter) WhereAgentID(p entql.StringP) {
+	f.Where(p.Field(approval.FieldAgentID))
 }
 
 // WhereOperationName applies the entql string predicate on the operation_name field.

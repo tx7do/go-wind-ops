@@ -7475,6 +7475,7 @@ type ApprovalMutation struct {
 	operation_type      *string
 	operation_ref_id    *uint32
 	addoperation_ref_id *int32
+	agent_id            *string
 	operation_name      *string
 	payload             *string
 	requester_id        *uint32
@@ -7832,6 +7833,42 @@ func (m *ApprovalMutation) AddedOperationRefID() (r int32, exists bool) {
 func (m *ApprovalMutation) ResetOperationRefID() {
 	m.operation_ref_id = nil
 	m.addoperation_ref_id = nil
+}
+
+// SetAgentID sets the "agent_id" field.
+func (m *ApprovalMutation) SetAgentID(s string) {
+	m.agent_id = &s
+}
+
+// AgentID returns the value of the "agent_id" field in the mutation.
+func (m *ApprovalMutation) AgentID() (r string, exists bool) {
+	v := m.agent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgentID returns the old "agent_id" field's value of the Approval entity.
+// If the Approval object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApprovalMutation) OldAgentID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgentID: %w", err)
+	}
+	return oldValue.AgentID, nil
+}
+
+// ResetAgentID resets all changes to the "agent_id" field.
+func (m *ApprovalMutation) ResetAgentID() {
+	m.agent_id = nil
 }
 
 // SetOperationName sets the "operation_name" field.
@@ -8276,7 +8313,7 @@ func (m *ApprovalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApprovalMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, approval.FieldCreatedAt)
 	}
@@ -8291,6 +8328,9 @@ func (m *ApprovalMutation) Fields() []string {
 	}
 	if m.operation_ref_id != nil {
 		fields = append(fields, approval.FieldOperationRefID)
+	}
+	if m.agent_id != nil {
+		fields = append(fields, approval.FieldAgentID)
 	}
 	if m.operation_name != nil {
 		fields = append(fields, approval.FieldOperationName)
@@ -8334,6 +8374,8 @@ func (m *ApprovalMutation) Field(name string) (ent.Value, bool) {
 		return m.OperationType()
 	case approval.FieldOperationRefID:
 		return m.OperationRefID()
+	case approval.FieldAgentID:
+		return m.AgentID()
 	case approval.FieldOperationName:
 		return m.OperationName()
 	case approval.FieldPayload:
@@ -8369,6 +8411,8 @@ func (m *ApprovalMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldOperationType(ctx)
 	case approval.FieldOperationRefID:
 		return m.OldOperationRefID(ctx)
+	case approval.FieldAgentID:
+		return m.OldAgentID(ctx)
 	case approval.FieldOperationName:
 		return m.OldOperationName(ctx)
 	case approval.FieldPayload:
@@ -8428,6 +8472,13 @@ func (m *ApprovalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOperationRefID(v)
+		return nil
+	case approval.FieldAgentID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgentID(v)
 		return nil
 	case approval.FieldOperationName:
 		v, ok := value.(string)
@@ -8644,6 +8695,9 @@ func (m *ApprovalMutation) ResetField(name string) error {
 		return nil
 	case approval.FieldOperationRefID:
 		m.ResetOperationRefID()
+		return nil
+	case approval.FieldAgentID:
+		m.ResetAgentID()
 		return nil
 	case approval.FieldOperationName:
 		m.ResetOperationName()

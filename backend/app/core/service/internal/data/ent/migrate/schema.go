@@ -247,6 +247,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
 		{Name: "operation_type", Type: field.TypeString, Comment: "操作类型(distribute/script_exec)"},
 		{Name: "operation_ref_id", Type: field.TypeUint32, Comment: "操作关联实体 ID(分发配置 ID 或脚本 ID)"},
+		{Name: "agent_id", Type: field.TypeString, Comment: "目标节点 agentId(审批通过后据此重新下发指令)"},
 		{Name: "operation_name", Type: field.TypeString, Comment: "操作名称(快照,便于审批人识别)"},
 		{Name: "payload", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "操作载荷快照(JSON,审批通过后按此执行)"},
 		{Name: "requester_id", Type: field.TypeUint32, Nullable: true, Comment: "发起人", Default: 0},
@@ -266,12 +267,12 @@ var (
 			{
 				Name:    "idx_ops_approval_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsApprovalsColumns[10]},
+				Columns: []*schema.Column{OpsApprovalsColumns[11]},
 			},
 			{
 				Name:    "idx_ops_approval_requester",
 				Unique:  false,
-				Columns: []*schema.Column{OpsApprovalsColumns[8]},
+				Columns: []*schema.Column{OpsApprovalsColumns[9]},
 			},
 		},
 	}

@@ -173,16 +173,20 @@ func init() {
 	approvalDescOperationRefID := approvalFields[1].Descriptor()
 	// approval.OperationRefIDValidator is a validator for the "operation_ref_id" field. It is called by the builders before save.
 	approval.OperationRefIDValidator = approvalDescOperationRefID.Validators[0].(func(uint32) error)
+	// approvalDescAgentID is the schema descriptor for agent_id field.
+	approvalDescAgentID := approvalFields[2].Descriptor()
+	// approval.AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
+	approval.AgentIDValidator = approvalDescAgentID.Validators[0].(func(string) error)
 	// approvalDescOperationName is the schema descriptor for operation_name field.
-	approvalDescOperationName := approvalFields[2].Descriptor()
+	approvalDescOperationName := approvalFields[3].Descriptor()
 	// approval.OperationNameValidator is a validator for the "operation_name" field. It is called by the builders before save.
 	approval.OperationNameValidator = approvalDescOperationName.Validators[0].(func(string) error)
 	// approvalDescRequesterID is the schema descriptor for requester_id field.
-	approvalDescRequesterID := approvalFields[4].Descriptor()
+	approvalDescRequesterID := approvalFields[5].Descriptor()
 	// approval.DefaultRequesterID holds the default value on creation for the requester_id field.
 	approval.DefaultRequesterID = approvalDescRequesterID.Default.(uint32)
 	// approvalDescApproverID is the schema descriptor for approver_id field.
-	approvalDescApproverID := approvalFields[5].Descriptor()
+	approvalDescApproverID := approvalFields[6].Descriptor()
 	// approval.DefaultApproverID holds the default value on creation for the approver_id field.
 	approval.DefaultApproverID = approvalDescApproverID.Default.(uint32)
 	// approvalDescID is the schema descriptor for id field.
