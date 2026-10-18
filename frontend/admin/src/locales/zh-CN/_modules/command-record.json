@@ -1,0 +1,18 @@
+{
+  "moduleName": "指令台账",
+  "detailTitle": "指令详情",
+  "requestId": "request_id",
+  "nodeId": "目标节点",
+  "agentId": "机器标识",
+  "action": "指令动作",
+  "status": "状态",
+  "statusSuccess": "成功",
+  "statusFailed": "失败",
+  "statusPending": "等待回执",
+  "error": "失败原因",
+  "operatorId": "触发人",
+  "createdAt": "下发时间",
+  "finishedAt": "回执时间",
+  "payload": "指令载荷",
+  "result": "执行结果"
+}

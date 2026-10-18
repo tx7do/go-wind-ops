@@ -45,10 +45,10 @@ export * from './policy-evaluation-log';
 
 // 运维域（ops）
 export * from './agent-node';
-// export * from './project';
-// export * from './command-record';
-// export * from './script';
-// export * from './repository';
-// export * from './build';
-// export * from './build-history';
-// export * from './distribution';
+export * from './project';
+export * from './command-record';
+export * from './script';
+export * from './repository';
+export * from './build';
+export * from './build-history';
+export * from './distribution';

@@ -1,0 +1,19 @@
+{
+  "title": "构建历史：{{name}}",
+  "buildNo": "构建号",
+  "status": "状态",
+  "statusSuccess": "成功",
+  "statusFailed": "失败",
+  "statusRunning": "构建中",
+  "statusPending": "排队中",
+  "statusUnknown": "未知",
+  "branch": "分支",
+  "artifactSize": "产物大小",
+  "createdAt": "触发时间",
+  "finishedAt": "结束时间",
+  "action": "操作",
+  "viewLog": "日志",
+  "download": "下载产物",
+  "logTitle": "构建日志 #{{no}}",
+  "logEmpty": "暂无日志"
+}

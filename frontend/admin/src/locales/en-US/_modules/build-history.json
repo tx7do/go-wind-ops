@@ -1,0 +1,19 @@
+{
+  "title": "Build History: {{name}}",
+  "buildNo": "Build No.",
+  "status": "Status",
+  "statusSuccess": "Success",
+  "statusFailed": "Failed",
+  "statusRunning": "Running",
+  "statusPending": "Pending",
+  "statusUnknown": "Unknown",
+  "branch": "Branch",
+  "artifactSize": "Artifact Size",
+  "createdAt": "Triggered At",
+  "finishedAt": "Finished At",
+  "action": "Actions",
+  "viewLog": "Log",
+  "download": "Download",
+  "logTitle": "Build Log #{{no}}",
+  "logEmpty": "No log"
+}

@@ -22,7 +22,7 @@ import { apiClient } from '@/api/client';
 
 export function useListAgentNodes(
   query: PaginationQuery,
-  options?: UseQueryOptions<opsservicev1_ListAgentNodeResponse, Error>,
+  options?: Partial<UseQueryOptions<opsservicev1_ListAgentNodeResponse, Error, opsservicev1_ListAgentNodeResponse, readonly unknown[]>>,
 ) {
   return useQuery({
     queryKey: ['listAgentNodes', query],
@@ -41,7 +41,7 @@ export async function fetchListAgentNodes(params: PaginationQuery) {
 
 export function useGetAgentNode(
   req: opsservicev1_GetAgentNodeRequest,
-  options?: UseQueryOptions<opsservicev1_AgentNode, Error>,
+  options?: Partial<UseQueryOptions<opsservicev1_AgentNode, Error, opsservicev1_AgentNode, readonly unknown[]>>,
 ) {
   return useQuery({
     queryKey: ['getAgentNode', req],

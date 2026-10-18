@@ -1,0 +1,18 @@
+{
+  "moduleName": "Command Records",
+  "detailTitle": "Command Detail",
+  "requestId": "request_id",
+  "nodeId": "Target Node",
+  "agentId": "Agent ID",
+  "action": "Action",
+  "status": "Status",
+  "statusSuccess": "Success",
+  "statusFailed": "Failed",
+  "statusPending": "Pending",
+  "error": "Error",
+  "operatorId": "Operator",
+  "createdAt": "Dispatched At",
+  "finishedAt": "Finished At",
+  "payload": "Payload",
+  "result": "Result"
+}
