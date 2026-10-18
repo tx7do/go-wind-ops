@@ -66,6 +66,8 @@ services:
 #      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
 
   # EMQX:agent 信令 MQTT broker(1883 TCP / 18083 管理控制台,默认账密 admin/public)
+  # 安全:通过环境变量启用 HTTP 认证,指向 core 的 /api/v1/mqtt/auth 端点;
+  # 部署时将 emqx-auth-url 改为 core 可达地址(容器网络内用服务名)
   emqx:
     image: docker.io/emqx/emqx:latest
     container_name: emqx
@@ -79,6 +81,14 @@ services:
       - app-tier
     environment:
       - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
+      # Broker 级 HTTP 认证(EMQX 5.x 环境变量方式;生产推荐在 Dashboard 手动配或用 EMQX API)
+      # EMQX_AUTHENTICATION__1__ENABLE=true
+      # EMQX_AUTHENTICATION__1__MECHANISM=password_based
+      # EMQX_AUTHENTICATION__1__BACKEND=http
+      # EMQX_AUTHENTICATION__1__URL=http://host.docker.internal:9500/api/v1/mqtt/auth
+      # EMQX_AUTHENTICATION__1__METHOD=post
+      # EMQX_AUTHENTICATION__1__BODY={"username":"${username}","password":"${password}"}
+      # EMQX_AUTHENTICATION__1__HEADERS.content-type=application/json
 
   minio:
     image: docker.io/minio/minio:latest

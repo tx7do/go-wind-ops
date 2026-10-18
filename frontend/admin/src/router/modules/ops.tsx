@@ -24,6 +24,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:agent-nodes',
           icon: 'lucide:monitor-dot',
           order: 1,
+          authority: ['ops:node_manage'],
         },
       },
       {
@@ -34,6 +35,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:projects',
           icon: 'lucide:folder-open',
           order: 2,
+          authority: ['ops:project_manage'],
         },
       },
       {
@@ -44,6 +46,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:scripts',
           icon: 'lucide:file-code',
           order: 3,
+          authority: ['ops:script_manage'],
         },
       },
       {
@@ -54,6 +57,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:repositories',
           icon: 'lucide:git-branch',
           order: 4,
+          authority: ['ops:build_manage'],
         },
       },
       {
@@ -64,6 +68,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:builds',
           icon: 'lucide:hammer',
           order: 5,
+          authority: ['ops:build_manage'],
         },
       },
       {
@@ -74,6 +79,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:distributions',
           icon: 'lucide:send',
           order: 6,
+          authority: ['ops:distribute'],
         },
       },
       {
@@ -84,6 +90,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:command-records',
           icon: 'lucide:scroll-text',
           order: 7,
+          authority: ['ops:node_manage'],
         },
       },
       {
@@ -94,6 +101,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:monitors',
           icon: 'lucide:activity',
           order: 8,
+          authority: ['sys:platform_admin'],
         },
       },
       {
@@ -104,6 +112,7 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:alerts',
           icon: 'lucide:bell',
           order: 9,
+          authority: ['sys:platform_admin'],
         },
       },
     ],

@@ -10,6 +10,11 @@ server:
       enable_circuit_breaker: true
       enable_metadata: true
 
+  # 最小 REST:仅用于 EMQX broker 认证 webhook(/api/v1/mqtt/auth)
+  # 及未来的运维端点;无中间件(认证由 EMQX 回调语义保证)
+  rest:
+    addr: "0.0.0.0:9500"
+
   asynq:
     # db2 专库：db1 的 asynq:{default} 队列被本机多个项目共用，外来 asynq
     # worker 会抢走本项目的任务（handler not found → 重试归档，任务丢失）。

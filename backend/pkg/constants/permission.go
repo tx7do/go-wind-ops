@@ -21,6 +21,26 @@ const (
 	// SystemTenantManagerPermissionCode 系统租户管理员权限代码
 	SystemTenantManagerPermissionCode = SystemPermissionCodePrefix + "tenant_manager"
 
+	// OpsPermissionCodePrefix 运维域权限代码前缀
+	OpsPermissionCodePrefix = "ops:"
+
+	// OpsNodeManagePermissionCode 节点管理权限
+	OpsNodeManagePermissionCode = OpsPermissionCodePrefix + "node_manage"
+	// OpsProjectManagePermissionCode 项目管理权限
+	OpsProjectManagePermissionCode = OpsPermissionCodePrefix + "project_manage"
+	// OpsProjectDeployPermissionCode 项目分发部署权限(含启动/停止/重启)
+	OpsProjectDeployPermissionCode = OpsPermissionCodePrefix + "project_deploy"
+	// OpsScriptManagePermissionCode 脚本管理权限
+	OpsScriptManagePermissionCode = OpsPermissionCodePrefix + "script_manage"
+	// OpsScriptExecutePermissionCode 脚本执行权限
+	OpsScriptExecutePermissionCode = OpsPermissionCodePrefix + "script_execute"
+	// OpsBuildManagePermissionCode 构建管理权限
+	OpsBuildManagePermissionCode = OpsPermissionCodePrefix + "build_manage"
+	// OpsBuildTriggerPermissionCode 构建触发权限
+	OpsBuildTriggerPermissionCode = OpsPermissionCodePrefix + "build_trigger"
+	// OpsDistributePermissionCode 分发权限
+	OpsDistributePermissionCode = OpsPermissionCodePrefix + "distribute"
+
 	// SystemPermissionModule 系统权限模块标识
 	SystemPermissionModule = "sys"
 

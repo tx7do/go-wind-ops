@@ -197,6 +197,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, buildService, scriptService, agentService)
 	cronScheduler.Start(ctx.Context())
 
+	// EMQX broker 认证 webhook(最小 HTTP listener, :9500)
+	mqttAuthServer := server.NewMqttAuthServer(ctx, agentNodeRepo)
+
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -230,6 +233,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	servers = append(servers, grpcServer, asynqServer)
 	if mqttServer := server.NewCoreMqttServer(ctx, agentService); mqttServer != nil {
 		servers = append(servers, mqttServer)
+	}
+	// EMQX broker 认证 webhook(最小 HTTP :9500)
+	if mqttAuthServer != nil {
+		servers = append(servers, mqttAuthServer)
 	}
 
 	return newApp(ctx, servers...), rollback, nil
