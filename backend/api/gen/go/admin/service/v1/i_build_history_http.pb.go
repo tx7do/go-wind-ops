@@ -23,6 +23,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationBuildHistoryServiceGet = "/admin.service.v1.BuildHistoryService/Get"
 const OperationBuildHistoryServiceGetArtifactUrl = "/admin.service.v1.BuildHistoryService/GetArtifactUrl"
+const OperationBuildHistoryServiceGetLog = "/admin.service.v1.BuildHistoryService/GetLog"
 const OperationBuildHistoryServiceList = "/admin.service.v1.BuildHistoryService/List"
 
 type BuildHistoryServiceHTTPServer interface {
@@ -30,6 +31,8 @@ type BuildHistoryServiceHTTPServer interface {
 	Get(context.Context, *v11.GetBuildHistoryRequest) (*v11.BuildHistory, error)
 	// GetArtifactUrl 获取产物下载预签名 URL
 	GetArtifactUrl(context.Context, *v11.GetArtifactDownloadUrlRequest) (*v11.GetArtifactDownloadUrlResponse, error)
+	// GetLog 增量拉取构建日志
+	GetLog(context.Context, *v11.GetBuildHistoryLogRequest) (*v11.GetBuildHistoryLogResponse, error)
 	// List 查询构建历史
 	List(context.Context, *v1.PagingRequest) (*v11.ListBuildHistoryResponse, error)
 }
@@ -39,6 +42,8 @@ func RegisterBuildHistoryServiceHTTPServer(s *http.Server, srv BuildHistoryServi
 	r.GET("/admin/v1/build-histories", _BuildHistoryService_List6_HTTP_Handler(srv))
 	r.GET("/admin/v1/build-histories/{id}", _BuildHistoryService_Get6_HTTP_Handler(srv))
 	r.GET("/admin/v1/build-histories/{id}/artifact-url", _BuildHistoryService_GetArtifactUrl0_HTTP_Handler(srv))
+	r.GET("/admin/v1/build-histories/{id}/log/{offset}", _BuildHistoryService_GetLog0_HTTP_Handler(srv))
+	r.GET("/admin/v1/build-histories/{id}/log", _BuildHistoryService_GetLog1_HTTP_Handler(srv))
 }
 
 func _BuildHistoryService_List6_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
@@ -104,11 +109,57 @@ func _BuildHistoryService_GetArtifactUrl0_HTTP_Handler(srv BuildHistoryServiceHT
 	}
 }
 
+func _BuildHistoryService_GetLog0_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetBuildHistoryLogRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBuildHistoryServiceGetLog)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetLog(ctx, req.(*v11.GetBuildHistoryLogRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetBuildHistoryLogResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _BuildHistoryService_GetLog1_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetBuildHistoryLogRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBuildHistoryServiceGetLog)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetLog(ctx, req.(*v11.GetBuildHistoryLogRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetBuildHistoryLogResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type BuildHistoryServiceHTTPClient interface {
 	// Get 查询构建历史详情
 	Get(ctx context.Context, req *v11.GetBuildHistoryRequest, opts ...http.CallOption) (rsp *v11.BuildHistory, err error)
 	// GetArtifactUrl 获取产物下载预签名 URL
 	GetArtifactUrl(ctx context.Context, req *v11.GetArtifactDownloadUrlRequest, opts ...http.CallOption) (rsp *v11.GetArtifactDownloadUrlResponse, err error)
+	// GetLog 增量拉取构建日志
+	GetLog(ctx context.Context, req *v11.GetBuildHistoryLogRequest, opts ...http.CallOption) (rsp *v11.GetBuildHistoryLogResponse, err error)
 	// List 查询构建历史
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListBuildHistoryResponse, err error)
 }
@@ -141,6 +192,20 @@ func (c *BuildHistoryServiceHTTPClientImpl) GetArtifactUrl(ctx context.Context, 
 	pattern := "/admin/v1/build-histories/{id}/artifact-url"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBuildHistoryServiceGetArtifactUrl))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetLog 增量拉取构建日志
+func (c *BuildHistoryServiceHTTPClientImpl) GetLog(ctx context.Context, in *v11.GetBuildHistoryLogRequest, opts ...http.CallOption) (*v11.GetBuildHistoryLogResponse, error) {
+	var out v11.GetBuildHistoryLogResponse
+	pattern := "/admin/v1/build-histories/{id}/log"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationBuildHistoryServiceGetLog))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

@@ -431,6 +431,134 @@ func (x *GetArtifactDownloadUrlResponse) GetSize() uint64 {
 	return 0
 }
 
+type GetBuildHistoryLogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`         // 历史ID
+	Offset        *int64                 `protobuf:"varint,2,opt,name=offset,proto3,oneof" json:"offset,omitempty"` // 已持有的字节数(0=全量)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBuildHistoryLogRequest) Reset() {
+	*x = GetBuildHistoryLogRequest{}
+	mi := &file_ops_service_v1_build_history_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBuildHistoryLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBuildHistoryLogRequest) ProtoMessage() {}
+
+func (x *GetBuildHistoryLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_build_history_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBuildHistoryLogRequest.ProtoReflect.Descriptor instead.
+func (*GetBuildHistoryLogRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetBuildHistoryLogRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *GetBuildHistoryLogRequest) GetOffset() int64 {
+	if x != nil && x.Offset != nil {
+		return *x.Offset
+	}
+	return 0
+}
+
+type GetBuildHistoryLogResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Delta         *string                `protobuf:"bytes,1,opt,name=delta,proto3,oneof" json:"delta,omitempty"`                           // 本次新增日志片段
+	NewOffset     *int64                 `protobuf:"varint,2,opt,name=new_offset,json=newOffset,proto3,oneof" json:"new_offset,omitempty"` // 新的字节总长
+	Status        *string                `protobuf:"bytes,3,opt,name=status,proto3,oneof" json:"status,omitempty"`                         // 当前构建状态
+	Finished      *bool                  `protobuf:"varint,4,opt,name=finished,proto3,oneof" json:"finished,omitempty"`                    // 是否终态(SUCCESS/FAILED)
+	Error         *string                `protobuf:"bytes,5,opt,name=error,proto3,oneof" json:"error,omitempty"`                           // 失败原因
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBuildHistoryLogResponse) Reset() {
+	*x = GetBuildHistoryLogResponse{}
+	mi := &file_ops_service_v1_build_history_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBuildHistoryLogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBuildHistoryLogResponse) ProtoMessage() {}
+
+func (x *GetBuildHistoryLogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_build_history_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBuildHistoryLogResponse.ProtoReflect.Descriptor instead.
+func (*GetBuildHistoryLogResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetBuildHistoryLogResponse) GetDelta() string {
+	if x != nil && x.Delta != nil {
+		return *x.Delta
+	}
+	return ""
+}
+
+func (x *GetBuildHistoryLogResponse) GetNewOffset() int64 {
+	if x != nil && x.NewOffset != nil {
+		return *x.NewOffset
+	}
+	return 0
+}
+
+func (x *GetBuildHistoryLogResponse) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+func (x *GetBuildHistoryLogResponse) GetFinished() bool {
+	if x != nil && x.Finished != nil {
+		return *x.Finished
+	}
+	return false
+}
+
+func (x *GetBuildHistoryLogResponse) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
 var File_ops_service_v1_build_history_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_build_history_proto_rawDesc = "" +
@@ -491,11 +619,29 @@ const file_ops_service_v1_build_history_proto_rawDesc = "" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1d\n" +
 	"\n" +
 	"object_key\x18\x02 \x01(\tR\tobjectKey\x12\x12\n" +
-	"\x04size\x18\x03 \x01(\x04R\x04size2\xc8\x02\n" +
+	"\x04size\x18\x03 \x01(\x04R\x04size\"d\n" +
+	"\x19GetBuildHistoryLogRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
+	"\x06offset\x18\x02 \x01(\x03H\x01R\x06offset\x88\x01\x01B\x05\n" +
+	"\x03_idB\t\n" +
+	"\a_offset\"\x88\x02\n" +
+	"\x1aGetBuildHistoryLogResponse\x12\x1e\n" +
+	"\x05delta\x18\x01 \x01(\tB\x03\xe0A\x03H\x00R\x05delta\x88\x01\x01\x12'\n" +
+	"\n" +
+	"new_offset\x18\x02 \x01(\x03B\x03\xe0A\x03H\x01R\tnewOffset\x88\x01\x01\x12 \n" +
+	"\x06status\x18\x03 \x01(\tB\x03\xe0A\x03H\x02R\x06status\x88\x01\x01\x12$\n" +
+	"\bfinished\x18\x04 \x01(\bB\x03\xe0A\x03H\x03R\bfinished\x88\x01\x01\x12\x1e\n" +
+	"\x05error\x18\x05 \x01(\tB\x03\xe0A\x03H\x04R\x05error\x88\x01\x01B\b\n" +
+	"\x06_deltaB\r\n" +
+	"\v_new_offsetB\t\n" +
+	"\a_statusB\v\n" +
+	"\t_finishedB\b\n" +
+	"\x06_error2\xb7\x03\n" +
 	"\x13BuildHistoryService\x12[\n" +
 	"\x12ListBuildHistories\x12\x19.pagination.PagingRequest\x1a(.ops.service.v1.ListBuildHistoryResponse\"\x00\x12Y\n" +
 	"\x0fGetBuildHistory\x12&.ops.service.v1.GetBuildHistoryRequest\x1a\x1c.ops.service.v1.BuildHistory\"\x00\x12y\n" +
-	"\x16GetArtifactDownloadUrl\x12-.ops.service.v1.GetArtifactDownloadUrlRequest\x1a..ops.service.v1.GetArtifactDownloadUrlResponse\"\x00B\xae\x01\n" +
+	"\x16GetArtifactDownloadUrl\x12-.ops.service.v1.GetArtifactDownloadUrlRequest\x1a..ops.service.v1.GetArtifactDownloadUrlResponse\"\x00\x12m\n" +
+	"\x12GetBuildHistoryLog\x12).ops.service.v1.GetBuildHistoryLogRequest\x1a*.ops.service.v1.GetBuildHistoryLogResponse\"\x00B\xae\x01\n" +
 	"\x12com.ops.service.v1B\x11BuildHistoryProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -511,7 +657,7 @@ func file_ops_service_v1_build_history_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_build_history_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ops_service_v1_build_history_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_ops_service_v1_build_history_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_ops_service_v1_build_history_proto_goTypes = []any{
 	(BuildHistory_Status)(0),               // 0: ops.service.v1.BuildHistory.Status
 	(*BuildHistory)(nil),                   // 1: ops.service.v1.BuildHistory
@@ -519,23 +665,27 @@ var file_ops_service_v1_build_history_proto_goTypes = []any{
 	(*GetBuildHistoryRequest)(nil),         // 3: ops.service.v1.GetBuildHistoryRequest
 	(*GetArtifactDownloadUrlRequest)(nil),  // 4: ops.service.v1.GetArtifactDownloadUrlRequest
 	(*GetArtifactDownloadUrlResponse)(nil), // 5: ops.service.v1.GetArtifactDownloadUrlResponse
-	(*timestamppb.Timestamp)(nil),          // 6: google.protobuf.Timestamp
-	(*v1.PagingRequest)(nil),               // 7: pagination.PagingRequest
+	(*GetBuildHistoryLogRequest)(nil),      // 6: ops.service.v1.GetBuildHistoryLogRequest
+	(*GetBuildHistoryLogResponse)(nil),     // 7: ops.service.v1.GetBuildHistoryLogResponse
+	(*timestamppb.Timestamp)(nil),          // 8: google.protobuf.Timestamp
+	(*v1.PagingRequest)(nil),               // 9: pagination.PagingRequest
 }
 var file_ops_service_v1_build_history_proto_depIdxs = []int32{
 	0, // 0: ops.service.v1.BuildHistory.status:type_name -> ops.service.v1.BuildHistory.Status
-	6, // 1: ops.service.v1.BuildHistory.started_at:type_name -> google.protobuf.Timestamp
-	6, // 2: ops.service.v1.BuildHistory.finished_at:type_name -> google.protobuf.Timestamp
-	6, // 3: ops.service.v1.BuildHistory.created_at:type_name -> google.protobuf.Timestamp
+	8, // 1: ops.service.v1.BuildHistory.started_at:type_name -> google.protobuf.Timestamp
+	8, // 2: ops.service.v1.BuildHistory.finished_at:type_name -> google.protobuf.Timestamp
+	8, // 3: ops.service.v1.BuildHistory.created_at:type_name -> google.protobuf.Timestamp
 	1, // 4: ops.service.v1.ListBuildHistoryResponse.items:type_name -> ops.service.v1.BuildHistory
-	7, // 5: ops.service.v1.BuildHistoryService.ListBuildHistories:input_type -> pagination.PagingRequest
+	9, // 5: ops.service.v1.BuildHistoryService.ListBuildHistories:input_type -> pagination.PagingRequest
 	3, // 6: ops.service.v1.BuildHistoryService.GetBuildHistory:input_type -> ops.service.v1.GetBuildHistoryRequest
 	4, // 7: ops.service.v1.BuildHistoryService.GetArtifactDownloadUrl:input_type -> ops.service.v1.GetArtifactDownloadUrlRequest
-	2, // 8: ops.service.v1.BuildHistoryService.ListBuildHistories:output_type -> ops.service.v1.ListBuildHistoryResponse
-	1, // 9: ops.service.v1.BuildHistoryService.GetBuildHistory:output_type -> ops.service.v1.BuildHistory
-	5, // 10: ops.service.v1.BuildHistoryService.GetArtifactDownloadUrl:output_type -> ops.service.v1.GetArtifactDownloadUrlResponse
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
+	6, // 8: ops.service.v1.BuildHistoryService.GetBuildHistoryLog:input_type -> ops.service.v1.GetBuildHistoryLogRequest
+	2, // 9: ops.service.v1.BuildHistoryService.ListBuildHistories:output_type -> ops.service.v1.ListBuildHistoryResponse
+	1, // 10: ops.service.v1.BuildHistoryService.GetBuildHistory:output_type -> ops.service.v1.BuildHistory
+	5, // 11: ops.service.v1.BuildHistoryService.GetArtifactDownloadUrl:output_type -> ops.service.v1.GetArtifactDownloadUrlResponse
+	7, // 12: ops.service.v1.BuildHistoryService.GetBuildHistoryLog:output_type -> ops.service.v1.GetBuildHistoryLogResponse
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
 	5, // [5:5] is the sub-list for extension extendee
 	0, // [0:5] is the sub-list for field type_name
@@ -549,13 +699,15 @@ func file_ops_service_v1_build_history_proto_init() {
 	file_ops_service_v1_build_history_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_build_history_proto_msgTypes[2].OneofWrappers = []any{}
 	file_ops_service_v1_build_history_proto_msgTypes[3].OneofWrappers = []any{}
+	file_ops_service_v1_build_history_proto_msgTypes[5].OneofWrappers = []any{}
+	file_ops_service_v1_build_history_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_build_history_proto_rawDesc), len(file_ops_service_v1_build_history_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

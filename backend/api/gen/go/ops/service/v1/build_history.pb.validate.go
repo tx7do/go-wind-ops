@@ -736,3 +736,235 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetArtifactDownloadUrlResponseValidationError{}
+
+// Validate checks the field values on GetBuildHistoryLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetBuildHistoryLogRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetBuildHistoryLogRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetBuildHistoryLogRequestMultiError, or nil if none found.
+func (m *GetBuildHistoryLogRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetBuildHistoryLogRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Offset != nil {
+		// no validation rules for Offset
+	}
+
+	if len(errors) > 0 {
+		return GetBuildHistoryLogRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetBuildHistoryLogRequestMultiError is an error wrapping multiple validation
+// errors returned by GetBuildHistoryLogRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetBuildHistoryLogRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetBuildHistoryLogRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetBuildHistoryLogRequestMultiError) AllErrors() []error { return m }
+
+// GetBuildHistoryLogRequestValidationError is the validation error returned by
+// GetBuildHistoryLogRequest.Validate if the designated constraints aren't met.
+type GetBuildHistoryLogRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetBuildHistoryLogRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetBuildHistoryLogRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetBuildHistoryLogRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetBuildHistoryLogRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetBuildHistoryLogRequestValidationError) ErrorName() string {
+	return "GetBuildHistoryLogRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetBuildHistoryLogRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetBuildHistoryLogRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetBuildHistoryLogRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetBuildHistoryLogRequestValidationError{}
+
+// Validate checks the field values on GetBuildHistoryLogResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetBuildHistoryLogResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetBuildHistoryLogResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetBuildHistoryLogResponseMultiError, or nil if none found.
+func (m *GetBuildHistoryLogResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetBuildHistoryLogResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Delta != nil {
+		// no validation rules for Delta
+	}
+
+	if m.NewOffset != nil {
+		// no validation rules for NewOffset
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.Finished != nil {
+		// no validation rules for Finished
+	}
+
+	if m.Error != nil {
+		// no validation rules for Error
+	}
+
+	if len(errors) > 0 {
+		return GetBuildHistoryLogResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetBuildHistoryLogResponseMultiError is an error wrapping multiple
+// validation errors returned by GetBuildHistoryLogResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetBuildHistoryLogResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetBuildHistoryLogResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetBuildHistoryLogResponseMultiError) AllErrors() []error { return m }
+
+// GetBuildHistoryLogResponseValidationError is the validation error returned
+// by GetBuildHistoryLogResponse.Validate if the designated constraints aren't met.
+type GetBuildHistoryLogResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetBuildHistoryLogResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetBuildHistoryLogResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetBuildHistoryLogResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetBuildHistoryLogResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetBuildHistoryLogResponseValidationError) ErrorName() string {
+	return "GetBuildHistoryLogResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetBuildHistoryLogResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetBuildHistoryLogResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetBuildHistoryLogResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetBuildHistoryLogResponseValidationError{}

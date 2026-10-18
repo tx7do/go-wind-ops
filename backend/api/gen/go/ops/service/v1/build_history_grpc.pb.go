@@ -23,6 +23,7 @@ const (
 	BuildHistoryService_ListBuildHistories_FullMethodName     = "/ops.service.v1.BuildHistoryService/ListBuildHistories"
 	BuildHistoryService_GetBuildHistory_FullMethodName        = "/ops.service.v1.BuildHistoryService/GetBuildHistory"
 	BuildHistoryService_GetArtifactDownloadUrl_FullMethodName = "/ops.service.v1.BuildHistoryService/GetArtifactDownloadUrl"
+	BuildHistoryService_GetBuildHistoryLog_FullMethodName     = "/ops.service.v1.BuildHistoryService/GetBuildHistoryLog"
 )
 
 // BuildHistoryServiceClient is the client API for BuildHistoryService service.
@@ -37,6 +38,8 @@ type BuildHistoryServiceClient interface {
 	GetBuildHistory(ctx context.Context, in *GetBuildHistoryRequest, opts ...grpc.CallOption) (*BuildHistory, error)
 	// 获取产物下载预签名 URL(仅 SUCCESS 且有产物时可用)
 	GetArtifactDownloadUrl(ctx context.Context, in *GetArtifactDownloadUrlRequest, opts ...grpc.CallOption) (*GetArtifactDownloadUrlResponse, error)
+	// 增量拉取构建日志(offset 为上次收到的字节长度;日志只追加,字节偏移即安全切分点)
+	GetBuildHistoryLog(ctx context.Context, in *GetBuildHistoryLogRequest, opts ...grpc.CallOption) (*GetBuildHistoryLogResponse, error)
 }
 
 type buildHistoryServiceClient struct {
@@ -77,6 +80,16 @@ func (c *buildHistoryServiceClient) GetArtifactDownloadUrl(ctx context.Context, 
 	return out, nil
 }
 
+func (c *buildHistoryServiceClient) GetBuildHistoryLog(ctx context.Context, in *GetBuildHistoryLogRequest, opts ...grpc.CallOption) (*GetBuildHistoryLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBuildHistoryLogResponse)
+	err := c.cc.Invoke(ctx, BuildHistoryService_GetBuildHistoryLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BuildHistoryServiceServer is the server API for BuildHistoryService service.
 // All implementations must embed UnimplementedBuildHistoryServiceServer
 // for forward compatibility.
@@ -89,6 +102,8 @@ type BuildHistoryServiceServer interface {
 	GetBuildHistory(context.Context, *GetBuildHistoryRequest) (*BuildHistory, error)
 	// 获取产物下载预签名 URL(仅 SUCCESS 且有产物时可用)
 	GetArtifactDownloadUrl(context.Context, *GetArtifactDownloadUrlRequest) (*GetArtifactDownloadUrlResponse, error)
+	// 增量拉取构建日志(offset 为上次收到的字节长度;日志只追加,字节偏移即安全切分点)
+	GetBuildHistoryLog(context.Context, *GetBuildHistoryLogRequest) (*GetBuildHistoryLogResponse, error)
 	mustEmbedUnimplementedBuildHistoryServiceServer()
 }
 
@@ -107,6 +122,9 @@ func (UnimplementedBuildHistoryServiceServer) GetBuildHistory(context.Context, *
 }
 func (UnimplementedBuildHistoryServiceServer) GetArtifactDownloadUrl(context.Context, *GetArtifactDownloadUrlRequest) (*GetArtifactDownloadUrlResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetArtifactDownloadUrl not implemented")
+}
+func (UnimplementedBuildHistoryServiceServer) GetBuildHistoryLog(context.Context, *GetBuildHistoryLogRequest) (*GetBuildHistoryLogResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBuildHistoryLog not implemented")
 }
 func (UnimplementedBuildHistoryServiceServer) mustEmbedUnimplementedBuildHistoryServiceServer() {}
 func (UnimplementedBuildHistoryServiceServer) testEmbeddedByValue()                             {}
@@ -183,6 +201,24 @@ func _BuildHistoryService_GetArtifactDownloadUrl_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BuildHistoryService_GetBuildHistoryLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBuildHistoryLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BuildHistoryServiceServer).GetBuildHistoryLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BuildHistoryService_GetBuildHistoryLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BuildHistoryServiceServer).GetBuildHistoryLog(ctx, req.(*GetBuildHistoryLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BuildHistoryService_ServiceDesc is the grpc.ServiceDesc for BuildHistoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -201,6 +237,10 @@ var BuildHistoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetArtifactDownloadUrl",
 			Handler:    _BuildHistoryService_GetArtifactDownloadUrl_Handler,
+		},
+		{
+			MethodName: "GetBuildHistoryLog",
+			Handler:    _BuildHistoryService_GetBuildHistoryLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

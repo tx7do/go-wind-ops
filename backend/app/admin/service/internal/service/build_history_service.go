@@ -41,3 +41,10 @@ func (s *BuildHistoryService) GetArtifactUrl(ctx context.Context, req *opsV1.Get
 	}
 	return s.buildHistoryServiceClient.GetArtifactDownloadUrl(ctx, req)
 }
+
+func (s *BuildHistoryService) GetLog(ctx context.Context, req *opsV1.GetBuildHistoryLogRequest) (*opsV1.GetBuildHistoryLogResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, adminV1.ErrorBadRequest("invalid request: id required")
+	}
+	return s.buildHistoryServiceClient.GetBuildHistoryLog(ctx, req)
+}

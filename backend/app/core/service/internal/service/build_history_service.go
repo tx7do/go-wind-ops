@@ -47,6 +47,53 @@ func (s *BuildHistoryService) GetBuildHistory(ctx context.Context, req *opsV1.Ge
 }
 
 // GetArtifactDownloadUrl 签发产物下载预签名 URL(1 小时有效)。
+// GetBuildHistoryLog 增量返回构建日志:offset 为调用方已持有的字节长度,
+// 返回自该偏移起的新增片段。日志只追加,字节偏移即安全切分点;若服务端
+// 日志短于 offset(异常截断),退化为全量返回。
+func (s *BuildHistoryService) GetBuildHistoryLog(ctx context.Context, req *opsV1.GetBuildHistoryLogRequest) (*opsV1.GetBuildHistoryLogResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+
+	entity, err := s.repo.GetEntity(ctx, req.GetId())
+	if err != nil {
+		return nil, opsV1.ErrorNotFound("build history not found")
+	}
+
+	logText := ""
+	if entity.Log != nil {
+		logText = *entity.Log
+	}
+	offset := req.GetOffset()
+	if offset < 0 {
+		offset = 0
+	}
+	if offset > int64(len(logText)) {
+		offset = 0
+	}
+
+	delta := logText[offset:]
+	newOffset := int64(len(logText))
+	status := ""
+	if entity.Status != nil {
+		status = string(*entity.Status)
+	}
+	finished := status == "SUCCESS" || status == "FAILED"
+
+	errMsg := ""
+	if entity.Error != nil {
+		errMsg = *entity.Error
+	}
+
+	return &opsV1.GetBuildHistoryLogResponse{
+		Delta:     &delta,
+		NewOffset: &newOffset,
+		Status:    &status,
+		Finished:  &finished,
+		Error:     &errMsg,
+	}, nil
+}
+
 func (s *BuildHistoryService) GetArtifactDownloadUrl(ctx context.Context, req *opsV1.GetArtifactDownloadUrlRequest) (*opsV1.GetArtifactDownloadUrlResponse, error) {
 	if req == nil || req.GetId() == 0 {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")

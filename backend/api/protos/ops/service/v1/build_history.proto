@@ -21,6 +21,9 @@ service BuildHistoryService {
 
   // 获取产物下载预签名 URL(仅 SUCCESS 且有产物时可用)
   rpc GetArtifactDownloadUrl (GetArtifactDownloadUrlRequest) returns (GetArtifactDownloadUrlResponse) {}
+
+  // 增量拉取构建日志(offset 为上次收到的字节长度;日志只追加,字节偏移即安全切分点)
+  rpc GetBuildHistoryLog (GetBuildHistoryLogRequest) returns (GetBuildHistoryLogResponse) {}
 }
 
 // 构建历史
@@ -130,4 +133,42 @@ message GetArtifactDownloadUrlResponse {
   string url = 1 [json_name = "url"]; // 预签名下载 URL
   string object_key = 2 [json_name = "objectKey"]; // 产物对象键
   uint64 size = 3 [json_name = "size"]; // 产物大小(字节)
+}
+
+message GetBuildHistoryLogRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 历史ID
+
+  optional int64 offset = 2 [
+    json_name = "offset"
+  ]; // 已持有的字节数(0=全量)
+}
+
+message GetBuildHistoryLogResponse {
+  optional string delta = 1 [
+    json_name = "delta",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 本次新增日志片段
+
+  optional int64 new_offset = 2 [
+    json_name = "newOffset",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 新的字节总长
+
+  optional string status = 3 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 当前构建状态
+
+  optional bool finished = 4 [
+    json_name = "finished",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否终态(SUCCESS/FAILED)
+
+  optional string error = 5 [
+    json_name = "error",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 失败原因
 }

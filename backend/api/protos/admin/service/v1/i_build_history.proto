@@ -29,4 +29,14 @@ service BuildHistoryService {
       get: "/admin/v1/build-histories/{id}/artifact-url"
     };
   }
+
+  // 增量拉取构建日志
+  rpc GetLog (ops.service.v1.GetBuildHistoryLogRequest) returns (ops.service.v1.GetBuildHistoryLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/build-histories/{id}/log"
+      additional_bindings {
+        get: "/admin/v1/build-histories/{id}/log/{offset}"
+      }
+    };
+  }
 }

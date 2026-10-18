@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Modal, Spin, Table, Tag, Select, App } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Modal, Space, Spin, Table, Tag, Select, App } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { DownloadOutlined, UndoOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { PaginationQuery } from '@/core';
 import {
   fetchListBuildHistories,
   fetchArtifactDownloadUrl,
+  fetchBuildHistoryLog,
 } from '@/api/hooks/build-history';
 import { fetchListDistributions, useTriggerDistribution } from '@/api/hooks/distribution';
 
@@ -29,6 +30,52 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
   const [items, setItems] = useState<BuildHistory[]>([]);
   const [loading, setLoading] = useState(false);
   const [logRecord, setLogRecord] = useState<BuildHistory | undefined>();
+
+  // 日志增量 tail:打开弹窗全量拉一次,运行中每 2s 追加新片段直至终态
+  const [logView, setLogView] = useState<{ text: string; offset: number; status?: string; error?: string }>();
+  const logPreRef = useRef<HTMLPreElement>(null);
+  const openLog = (record: BuildHistory) => {
+    setLogRecord(record);
+    setLogView(undefined);
+  };
+  useEffect(() => {
+    if (!logRecord?.id) return;
+    let alive = true;
+    fetchBuildHistoryLog(logRecord.id, 0)
+      .then((resp) => {
+        if (!alive) return;
+        setLogView({
+          text: resp.delta || '',
+          offset: resp.newOffset ?? 0,
+          status: resp.status,
+          error: resp.error,
+        });
+      })
+      .catch(() => { /* 网络抖动静默,由轮询兜底 */ });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logRecord?.id]);
+  useEffect(() => {
+    if (!logRecord?.id) return;
+    if (logView?.status === 'SUCCESS' || logView?.status === 'FAILED') return;
+    const timer = setInterval(async () => {
+      try {
+        const resp = await fetchBuildHistoryLog(logRecord.id!, logView?.offset ?? 0);
+        setLogView((p) => ({
+          text: (p?.text || '') + (resp.delta || ''),
+          offset: resp.newOffset ?? p?.offset ?? 0,
+          status: resp.status,
+          error: resp.error,
+        }));
+      } catch { /* 静默重试 */ }
+    }, 2000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logRecord?.id, logView?.offset, logView?.status]);
+  // 自动滚动到底
+  useEffect(() => {
+    if (logPreRef.current) logPreRef.current.scrollTop = logPreRef.current.scrollHeight;
+  }, [logView?.text]);
 
   // 回滚:选分发配置
   const [rollbackFor, setRollbackFor] = useState<BuildHistory | undefined>();
@@ -135,7 +182,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
       title: t('action'),
       width: 210,
       render: (_: any, record: BuildHistory) => [
-        <a key="log" onClick={() => setLogRecord(record)}>
+        <a key="log" onClick={() => openLog(record)}>
           {t('viewLog')}
         </a>,
         record.status === 'SUCCESS' && record.artifactObjectKey ? (

@@ -27,30 +27,35 @@ var File_admin_service_v1_i_build_history_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_build_history_proto_rawDesc = "" +
 	"\n" +
-	"&admin/service/v1/i_build_history.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a\"ops/service/v1/build_history.proto2\xa1\x03\n" +
+	"&admin/service/v1/i_build_history.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a\"ops/service/v1/build_history.proto2\xde\x04\n" +
 	"\x13BuildHistoryService\x12n\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.ops.service.v1.ListBuildHistoryResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/build-histories\x12s\n" +
 	"\x03Get\x12&.ops.service.v1.GetBuildHistoryRequest\x1a\x1c.ops.service.v1.BuildHistory\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/build-histories/{id}\x12\xa4\x01\n" +
-	"\x0eGetArtifactUrl\x12-.ops.service.v1.GetArtifactDownloadUrlRequest\x1a..ops.service.v1.GetArtifactDownloadUrlResponse\"3\x82\xd3\xe4\x93\x02-\x12+/admin/v1/build-histories/{id}/artifact-urlB\xbd\x01\n" +
+	"\x0eGetArtifactUrl\x12-.ops.service.v1.GetArtifactDownloadUrlRequest\x1a..ops.service.v1.GetArtifactDownloadUrlResponse\"3\x82\xd3\xe4\x93\x02-\x12+/admin/v1/build-histories/{id}/artifact-url\x12\xba\x01\n" +
+	"\x06GetLog\x12).ops.service.v1.GetBuildHistoryLogRequest\x1a*.ops.service.v1.GetBuildHistoryLogResponse\"Y\x82\xd3\xe4\x93\x02SZ-\x12+/admin/v1/build-histories/{id}/log/{offset}\x12\"/admin/v1/build-histories/{id}/logB\xbd\x01\n" +
 	"\x14com.admin.service.v1B\x12IBuildHistoryProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_build_history_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),                   // 0: pagination.PagingRequest
 	(*v11.GetBuildHistoryRequest)(nil),         // 1: ops.service.v1.GetBuildHistoryRequest
 	(*v11.GetArtifactDownloadUrlRequest)(nil),  // 2: ops.service.v1.GetArtifactDownloadUrlRequest
-	(*v11.ListBuildHistoryResponse)(nil),       // 3: ops.service.v1.ListBuildHistoryResponse
-	(*v11.BuildHistory)(nil),                   // 4: ops.service.v1.BuildHistory
-	(*v11.GetArtifactDownloadUrlResponse)(nil), // 5: ops.service.v1.GetArtifactDownloadUrlResponse
+	(*v11.GetBuildHistoryLogRequest)(nil),      // 3: ops.service.v1.GetBuildHistoryLogRequest
+	(*v11.ListBuildHistoryResponse)(nil),       // 4: ops.service.v1.ListBuildHistoryResponse
+	(*v11.BuildHistory)(nil),                   // 5: ops.service.v1.BuildHistory
+	(*v11.GetArtifactDownloadUrlResponse)(nil), // 6: ops.service.v1.GetArtifactDownloadUrlResponse
+	(*v11.GetBuildHistoryLogResponse)(nil),     // 7: ops.service.v1.GetBuildHistoryLogResponse
 }
 var file_admin_service_v1_i_build_history_proto_depIdxs = []int32{
 	0, // 0: admin.service.v1.BuildHistoryService.List:input_type -> pagination.PagingRequest
 	1, // 1: admin.service.v1.BuildHistoryService.Get:input_type -> ops.service.v1.GetBuildHistoryRequest
 	2, // 2: admin.service.v1.BuildHistoryService.GetArtifactUrl:input_type -> ops.service.v1.GetArtifactDownloadUrlRequest
-	3, // 3: admin.service.v1.BuildHistoryService.List:output_type -> ops.service.v1.ListBuildHistoryResponse
-	4, // 4: admin.service.v1.BuildHistoryService.Get:output_type -> ops.service.v1.BuildHistory
-	5, // 5: admin.service.v1.BuildHistoryService.GetArtifactUrl:output_type -> ops.service.v1.GetArtifactDownloadUrlResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: admin.service.v1.BuildHistoryService.GetLog:input_type -> ops.service.v1.GetBuildHistoryLogRequest
+	4, // 4: admin.service.v1.BuildHistoryService.List:output_type -> ops.service.v1.ListBuildHistoryResponse
+	5, // 5: admin.service.v1.BuildHistoryService.Get:output_type -> ops.service.v1.BuildHistory
+	6, // 6: admin.service.v1.BuildHistoryService.GetArtifactUrl:output_type -> ops.service.v1.GetArtifactDownloadUrlResponse
+	7, // 7: admin.service.v1.BuildHistoryService.GetLog:output_type -> ops.service.v1.GetBuildHistoryLogResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

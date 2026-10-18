@@ -2226,6 +2226,10 @@ export interface BuildHistoryService {
   GetArtifactUrl(
     request: opsservicev1_GetArtifactDownloadUrlRequest,
   ): Promise<opsservicev1_GetArtifactDownloadUrlResponse>;
+  // 增量拉取构建日志
+  GetLog(
+    request: opsservicev1_GetBuildHistoryLogRequest,
+  ): Promise<opsservicev1_GetBuildHistoryLogResponse>;
 }
 
 export function createBuildHistoryServiceClient(
@@ -2369,6 +2373,27 @@ export function createBuildHistoryServiceClient(
         method: 'GetArtifactUrl',
       }) as Promise<opsservicev1_GetArtifactDownloadUrlResponse>;
     },
+    GetLog(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/build-histories/${request.id}/log`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'BuildHistoryService',
+        method: 'GetLog',
+      }) as Promise<opsservicev1_GetBuildHistoryLogResponse>;
+    },
   };
 }
 export type opsservicev1_ListBuildHistoryResponse = {
@@ -2446,6 +2471,31 @@ export type opsservicev1_GetArtifactDownloadUrlResponse = {
   objectKey: string | undefined;
   size: number | undefined;
   url: string | undefined;
+};
+
+export type opsservicev1_GetBuildHistoryLogRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  offset?: number;
+};
+
+export type opsservicev1_GetBuildHistoryLogResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  delta?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  error?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  finished?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  newOffset?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  status?: string;
 };
 
 // CommandRecordService agent 指令台账查询

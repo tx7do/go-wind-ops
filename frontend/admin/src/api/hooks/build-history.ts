@@ -5,6 +5,7 @@ import {
 import {
   type opsservicev1_BuildHistory,
   type opsservicev1_GetArtifactDownloadUrlResponse,
+  type opsservicev1_GetBuildHistoryLogResponse,
   type opsservicev1_GetBuildHistoryRequest,
   type opsservicev1_ListBuildHistoryResponse,
 } from '@/api/generated/admin/service/v1';
@@ -43,4 +44,9 @@ export function useGetBuildHistory(
 
 export async function fetchArtifactDownloadUrl(id: number): Promise<opsservicev1_GetArtifactDownloadUrlResponse> {
   return apiClient.buildHistoryService.GetArtifactUrl({ id });
+}
+
+/** 增量拉取构建日志:offset 传上次返回的 newOffset(0=全量)。 */
+export async function fetchBuildHistoryLog(id: number, offset: number): Promise<opsservicev1_GetBuildHistoryLogResponse> {
+  return apiClient.buildHistoryService.GetLog({ id, offset });
 }
