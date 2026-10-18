@@ -77,10 +77,8 @@
 
 ## Phase 5 · 平台化
 
-### 5.1 OpenAPI 与 CI/CD 集成
-**场景**：外部系统（Jenkins/GitLab CI/GitHub Actions）通过 API 触发构建/分发。
-**方案**：ops 域关键操作暴露 OpenAPI 端点（带 API Key 认证）；GitLab CI 调 `POST /api/v1/builds/{id}:trigger` 即可；Webhook 接收器（Git push → 自动触发关联构建）。
-**工作量**：后端 1 天。
+### 5.1 OpenAPI 与 CI/CD 集成 ✅ 已完成
+**实现**：ops_api_keys 表（明文 opsk_<48hex> 仅创建时返一次，库存 SHA-256+前缀；状态/过期/最近使用）；core ApiKeyService CRUD+Validate（异步回写最近使用）。admin BFF `/openapi/` 直注册 mux（绕 JWT 中间件），handler 内验 `X-Api-Key`/`Authorization: Bearer` 后转发：`POST /openapi/v1/builds|distributions|pipelines/{id}/trigger` 与 `POST /openapi/v1/webhooks/git/{buildId}?branch=`（解析 GitHub/GitLab/Gitea 通用 ref 字段，按分支过滤命中即触发）。前端密钥管理页含明文一次性展示与 curl 用法模板。
 
 ### 5.2 环境与工作空间
 **场景**：dev/staging/prod 环境隔离，同名项目在不同环境独立管理。
