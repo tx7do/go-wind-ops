@@ -83,10 +83,8 @@
 ### 5.2 环境与工作空间 ✅ 已完成(v1 轻量方案)
 **实现**：agent_node/project 新增 `env` 标签（default/dev/staging/prod），节点页/项目页 env 列按环境着色 + 搜索筛选（走 PagingRequest 结构化 Filter 服务端生效）+ 表单选择；节点页顺带补了此前缺失的编辑入口（改名/改环境）。跨资源级联约束（如分发目标 env 匹配校验）留待 v2。
 
-### 5.3 插件化指令扩展
-**场景**：业务团队自定义 agent 指令（如数据库备份、SSL 证书续期）。
-**方案**：agent 侧 `RegisterHandler` 已有注册机制；增加从 `plugins/` 目录动态加载脚本文件映射为自定义 action；core 侧增加 action 注册表管理页面。
-**工作量**：后端+agent 1.5 天 + 前端 1 天。
+### 5.3 插件化指令扩展 ✅ 已完成
+**实现**：agent 启动扫描 AGENT_PLUGINS_DIR（缺省 ./plugins），脚本文件名主干=action 名（plugin_<stem> 白名单校验），按扩展名选解释器（.bat/.cmd→cmd、.ps1→powershell、.sh→bash、.py→python、.exe→直连 argv），另注册 plugin_list 清单指令；执行 RunArgv 直连+超时杀树（缺省 60s 上限 600s），非零退出码作为回执返回而非传输错误。core PluginService 同步代理清单/执行（action 白名单）；前端插件指令页（清单+执行抽屉+结果弹窗）。与基座嵌入式脚本引擎（gopher-lua/goja，服务端业务钩子）定位不同——运维插件跑在目标机 OS 上，不需要解释器沙箱。
 
 ---
 
