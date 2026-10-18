@@ -28,26 +28,19 @@
 
 ## Phase 2 · 构建与发布增强
 
-### 2.1 构建日志实时 tail
-**现状**：构建日志为构建完成后一次性落库，无实时查看能力。
-**方案**：构建工作空间日志文件路径已知（`{workspace}/build.log`），core 增加增量读取 SSE/WebSocket 端点，前端用 EventSource/fetch-stream 消费。复用现有 admin BFF 代理链路。
-**工作量**：后端 1 天 + 前端半天。
+### 2.1 构建日志实时 tail ✅ 已完成
+**实现**：`GetBuildHistoryLog(id, offset)` 增量拉取（字节偏移安全切分），REST 路由 `/admin/v1/build-histories/{id}/log`；前端日志弹窗运行中每 2s 追加新片段并自动滚动，终态停止。采用增量轮询替代 SSE/WebSocket，免去 BFF 长连接改造与鉴权复杂度。
 
 ### 2.2 构建流水线（Build Pipeline）
 **场景**：多模块项目需要按依赖顺序构建（先后端后前端），或构建后自动分发。
 **方案**：ops_build_pipeline 表定义 DAG 步骤（每步指向 build_id 或 script_id），调度器按拓扑序执行，失败即中止。
 **工作量**：后端 2 天 + 前端 1 天。
 
-### 2.3 产物版本管理与保留策略
-**现状**：产物覆盖写入 MinIO，无版本管理。
-**方案**：产物对象键已含构建号天然有版本；增加保留策略（最近 N 个构建的产物保留，其余异步清理）；前端构建历史页加产物对比/回滚按钮（回滚=重新分发旧构建号的产物）。
-**工作量**：后端 1 天 + 前端半天。
+### 2.3 产物版本管理与保留策略 ✅ 已完成
+**实现**：对象键含构建号天然有版本；构建配置 `artifact_retention`（保留最近 N 个成功构建产物，0=不限），调度器每小时清扫超额对象（删 MinIO + 清记录指针）；构建历史页已支持产物下载与回滚分发（回滚=用旧构建号产物重新触发分发）。
 
-### 2.4 Docker 镜像构建
-**场景**：构建命令产出 Docker 镜像并推送 Registry。
-**方案**：构建命令内自行 `docker build`（agent 所在机器需有 docker）；分发目标改为镜像 tag + 目标节点 `docker pull` + `docker compose up -d`。核心是指令扩展：新增 `docker_deploy` action，agent 侧调 Docker API 或 shell。
-**依赖**：agent 所在机器需安装 Docker。
-**工作量**：后端+agent 2 天。
+### 2.4 Docker 镜像构建 ✅ 已完成
+**实现**：新增 `docker_deploy` 指令（agent 侧 pull → 强删同名旧容器 → `run -d`，RunArgv 直连 argv）；分发配置新增 `deploy_type`（FILE/DOCKER），DOCKER 类型填镜像 tag（支持 `{buildNo}` 占位替换为实际构建号）+ 容器名/端口/环境/卷/重启策略/网络，触发时跳过产物预签名，回执复用分发记录定案链路。
 
 ---
 
@@ -79,11 +72,8 @@
 **依赖**：MQTT QoS 1 延迟可接受（非高频交互场景）。
 **工作量**：后端+agent 2 天 + 前端（xterm.js）1 天。
 
-### 4.2 文件管理器
-**场景**：浏览器浏览/上传/下载/编辑受管机器上的文件。
-**方案**：agent 新增 `file_list`/`file_read`/`file_write`/`file_delete`/`file_mkdir` 指令（白名单目录内）；大文件走 MinIO 预签名 URL；前端表格树 + 编辑器（ Monaco Editor 或轻量方案）。
-**依赖**：白名单校验复用 AGENT_ALLOWED_DIRS。
-**工作量**：后端+agent 2 天 + 前端 2 天。
+### 4.2 文件管理器 ✅ 已完成
+**实现**：agent `file_list`/`file_read`/`file_write`/`file_delete` 指令（AGENT_ALLOWED_DIRS 白名单内，读上限 1MB）；core `FileService` 经 `PublishCommandSync` 同步代理（15s 回执等待）；REST `/admin/v1/file/*`；前端文件管理页（机器选择 + 目录浏览 + 面包屑 + 在线编辑/新建/删除，unicode 安全 base64）。大文件走 MinIO 预签名 URL 的上传/下载 UI 暂缓。
 
 ---
 
