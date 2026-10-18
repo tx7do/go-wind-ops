@@ -92,6 +92,10 @@ const (
 	// 构建产物分发:载荷为 DistributionPayload,结果为 DistributionResult。
 	// 产物内容经 MinIO 预签名 URL 直下,不过 MQTT。
 	CommandActionDistApply CommandAction = "dist_apply"
+
+	// 项目运行日志:查询为同步指令(core 等待回执),清空为异步。
+	CommandActionProjectLog      CommandAction = "project_log"
+	CommandActionProjectLogClear CommandAction = "project_log_clear"
 )
 
 // CommandEnvelope core 下发给 agent 的统一指令信封。
@@ -215,6 +219,25 @@ type DistributionResult struct {
 	DistributionId uint32 `json:"distribution_id"`
 	DeployedFiles  int    `json:"deployed_files"`
 	Output         string `json:"output,omitempty"`
+}
+
+// ============================================================================
+// 项目运行日志
+// ============================================================================
+
+// ProjectLogPayload 日志查询载荷(core 从项目记录组装)。
+type ProjectLogPayload struct {
+	ProjectId uint32 `json:"project_id"`
+	Dir       string `json:"dir"`
+	MaxBytes  int64  `json:"max_bytes,omitempty"` // 读取尾部字节数,默认 64KB,上限 256KB
+}
+
+// ProjectLogResult 日志查询回执。
+type ProjectLogResult struct {
+	ProjectId uint32 `json:"project_id"`
+	Size      int64  `json:"size"`      // 日志文件总大小
+	Truncated bool   `json:"truncated"` // 是否只返回了尾部
+	Content   string `json:"content"`
 }
 
 // ============================================================================

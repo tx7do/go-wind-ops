@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -14,6 +16,9 @@ import (
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
+
+// logQueryTimeout 日志查询同步指令的回执等待时长。
+const logQueryTimeout = 10 * time.Second
 
 // ProjectService 受管机器应用项目管理:CRUD 落库,生命周期操作经 MQTT
 // 指令下发到节点 agent(agent 侧校验授权目录),结果回执写指令台账并
@@ -141,6 +146,80 @@ func (s *ProjectService) OperateProject(ctx context.Context, req *opsV1.OperateP
 	}
 
 	return &opsV1.OperateProjectResponse{RequestId: requestId}, nil
+}
+
+// GetProjectLog 查询项目运行日志尾部:经同步指令等 agent 回执(10s 超时)。
+func (s *ProjectService) GetProjectLog(ctx context.Context, req *opsV1.GetProjectLogRequest) (*opsV1.GetProjectLogResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+
+	project, node, err := s.resolveWithNode(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.agentService.PublishCommandSync(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionProjectLog,
+		&signal.ProjectLogPayload{
+			ProjectId: project.GetId(),
+			Dir:       project.GetProjectDir(),
+			MaxBytes:  int64(req.GetMaxBytes()),
+		},
+		operatorIDOf(ctx), logQueryTimeout)
+	if err != nil {
+		s.log.Errorf("query project log failed (project=%d): %s", project.GetId(), err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("%s", "query project log failed: "+err.Error())
+	}
+	if !res.Success {
+		return nil, opsV1.ErrorInternalServerError("%s", "query project log: "+res.Error)
+	}
+
+	var out signal.ProjectLogResult
+	if err = json.Unmarshal(res.Data, &out); err != nil {
+		return nil, opsV1.ErrorInternalServerError("decode project log result")
+	}
+
+	return &opsV1.GetProjectLogResponse{
+		Content:   out.Content,
+		Size:      out.Size,
+		Truncated: out.Truncated,
+	}, nil
+}
+
+// ClearProjectLog 清空项目运行日志(异步指令)。
+func (s *ProjectService) ClearProjectLog(ctx context.Context, req *opsV1.ClearProjectLogRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+
+	project, node, err := s.resolveWithNode(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionProjectLogClear,
+		&signal.ProjectLogPayload{ProjectId: project.GetId(), Dir: project.GetProjectDir()},
+		operatorIDOf(ctx))
+	if err != nil {
+		return nil, opsV1.ErrorServiceUnavailable("clear project log failed: mqtt channel unavailable")
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// resolveWithNode 取项目及其节点。
+func (s *ProjectService) resolveWithNode(ctx context.Context, projectID uint32) (*opsV1.Project, *opsV1.AgentNode, error) {
+	project, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID})
+	if err != nil {
+		return nil, nil, err
+	}
+	nodeID := project.GetNodeId()
+	node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+	if err != nil {
+		return nil, nil, opsV1.ErrorBadRequest("project node not found")
+	}
+	return project, node, nil
 }
 
 func operationName(op opsV1.ProjectOperation) string {

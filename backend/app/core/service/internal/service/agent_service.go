@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -44,6 +45,9 @@ type AgentService struct {
 	log            *log.Helper
 
 	mqttBroker atomic.Value // broker.Broker
+
+	// waiters 同步指令的等待队列:request_id → 回执投递通道。
+	waiters sync.Map
 }
 
 func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, ossClient *oss.MinIOClient) *AgentService {
@@ -180,6 +184,16 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 		s.applyDistributionResult(ctx, res)
 	}
 
+	// 同步指令等待者投递(查询类指令经此返回调用方)
+	if w, ok := s.waiters.LoadAndDelete(res.RequestId); ok {
+		if ch, ok := w.(chan *signal.CommandResult); ok {
+			select {
+			case ch <- res:
+			default:
+			}
+		}
+	}
+
 	if res.Success {
 		s.log.Infof("command result SUCCESS (request_id=%s agent=%s action=%s data=%s)",
 			res.RequestId, res.AgentId, res.Action, string(res.Data))
@@ -229,6 +243,30 @@ func (s *AgentService) applyProjectOperationResult(ctx context.Context, res *sig
 // PublishCommand 向指定 agent 下发指令:创建 PENDING 台账行 → MQTT 发布;
 // 发布失败即时定案 FAILED 并返回错误。返回幂等 request_id。
 func (s *AgentService) PublishCommand(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32) (string, error) {
+	return s.publish(ctx, nodeID, agentId, action, payload, operatorId, nil)
+}
+
+// PublishCommandSync 下发指令并等待回执(查询类指令用)。超时未回执返回
+// 错误;迟到回执仍会由台账/分发对账链路消费。
+func (s *AgentService) PublishCommandSync(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32, timeout time.Duration) (*signal.CommandResult, error) {
+	waiter := make(chan *signal.CommandResult, 1)
+	if _, err := s.publish(ctx, nodeID, agentId, action, payload, operatorId, waiter); err != nil {
+		return nil, err
+	}
+
+	select {
+	case res := <-waiter:
+		return res, nil
+	case <-time.After(timeout):
+		return nil, fmt.Errorf("command timeout after %s", timeout)
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+}
+
+// publish 指令下发内部实现:创建 PENDING 台账行 → MQTT 发布;waiter 非空时
+// 注册同步等待。
+func (s *AgentService) publish(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32, waiter chan *signal.CommandResult) (string, error) {
 	b, ok := s.mqttBroker.Load().(broker.Broker)
 	if !ok || b == nil {
 		return "", fmt.Errorf("mqtt broker not ready")
@@ -256,7 +294,14 @@ func (s *AgentService) PublishCommand(ctx context.Context, nodeID uint32, agentI
 		return "", fmt.Errorf("create command record: %w", err)
 	}
 
+	if waiter != nil {
+		s.waiters.Store(requestId, waiter)
+	}
+
 	if err := b.Publish(ctx, topic.MakeMqttTopicCommand(agentId), broker.NewMessage(env)); err != nil {
+		if waiter != nil {
+			s.waiters.Delete(requestId)
+		}
 		_ = s.recordRepo.FinalizeByRequestID(ctx, requestId, "FAILED", "publish failed: "+err.Error(), "")
 		return "", err
 	}

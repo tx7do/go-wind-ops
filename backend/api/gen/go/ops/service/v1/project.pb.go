@@ -622,6 +622,162 @@ func (x *OperateProjectResponse) GetRequestId() string {
 	return ""
 }
 
+type GetProjectLogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                             // 项目ID
+	MaxBytes      *int32                 `protobuf:"varint,2,opt,name=max_bytes,json=maxBytes,proto3,oneof" json:"max_bytes,omitempty"` // 读取尾部字节数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProjectLogRequest) Reset() {
+	*x = GetProjectLogRequest{}
+	mi := &file_ops_service_v1_project_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProjectLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProjectLogRequest) ProtoMessage() {}
+
+func (x *GetProjectLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_project_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProjectLogRequest.ProtoReflect.Descriptor instead.
+func (*GetProjectLogRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetProjectLogRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *GetProjectLogRequest) GetMaxBytes() int32 {
+	if x != nil && x.MaxBytes != nil {
+		return *x.MaxBytes
+	}
+	return 0
+}
+
+type GetProjectLogResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`      // 日志内容(尾部)
+	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`           // 日志文件总大小(字节)
+	Truncated     bool                   `protobuf:"varint,3,opt,name=truncated,proto3" json:"truncated,omitempty"` // 是否只返回了尾部
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProjectLogResponse) Reset() {
+	*x = GetProjectLogResponse{}
+	mi := &file_ops_service_v1_project_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProjectLogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProjectLogResponse) ProtoMessage() {}
+
+func (x *GetProjectLogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_project_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProjectLogResponse.ProtoReflect.Descriptor instead.
+func (*GetProjectLogResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetProjectLogResponse) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *GetProjectLogResponse) GetSize() int64 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+func (x *GetProjectLogResponse) GetTruncated() bool {
+	if x != nil {
+		return x.Truncated
+	}
+	return false
+}
+
+type ClearProjectLogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClearProjectLogRequest) Reset() {
+	*x = ClearProjectLogRequest{}
+	mi := &file_ops_service_v1_project_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClearProjectLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClearProjectLogRequest) ProtoMessage() {}
+
+func (x *ClearProjectLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_project_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClearProjectLogRequest.ProtoReflect.Descriptor instead.
+func (*ClearProjectLogRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ClearProjectLogRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
 var File_ops_service_v1_project_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_project_proto_rawDesc = "" +
@@ -685,7 +841,20 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\x03_id\"7\n" +
 	"\x16OperateProjectResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId*I\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xa4\x01\n" +
+	"\x14GetProjectLogRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12]\n" +
+	"\tmax_bytes\x18\x02 \x01(\x05B;\xbaG8\x92\x025读取日志尾部字节数(默认 64KB,上限 256KB)H\x01R\bmaxBytes\x88\x01\x01B\x05\n" +
+	"\x03_idB\f\n" +
+	"\n" +
+	"_max_bytes\"c\n" +
+	"\x15GetProjectLogResponse\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\x12\x12\n" +
+	"\x04size\x18\x02 \x01(\x03R\x04size\x12\x1c\n" +
+	"\ttruncated\x18\x03 \x01(\bR\ttruncated\"9\n" +
+	"\x16ClearProjectLogRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x03_id*I\n" +
 	"\rProjectStatus\x12\x1e\n" +
 	"\x1aPROJECT_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aRUNNING\x10\x01\x12\v\n" +
@@ -696,7 +865,7 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\x04STOP\x10\x02\x12\v\n" +
 	"\aRESTART\x10\x03\x12\n" +
 	"\n" +
-	"\x06STATUS\x10\x042\x85\x04\n" +
+	"\x06STATUS\x10\x042\xba\x05\n" +
 	"\x0eProjectService\x12P\n" +
 	"\fListProjects\x12\x19.pagination.PagingRequest\x1a#.ops.service.v1.ListProjectResponse\"\x00\x12J\n" +
 	"\n" +
@@ -704,7 +873,9 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\rCreateProject\x12$.ops.service.v1.CreateProjectRequest\x1a\x17.ops.service.v1.Project\"\x00\x12O\n" +
 	"\rUpdateProject\x12$.ops.service.v1.UpdateProjectRequest\x1a\x16.google.protobuf.Empty\"\x00\x12O\n" +
 	"\rDeleteProject\x12$.ops.service.v1.DeleteProjectRequest\x1a\x16.google.protobuf.Empty\"\x00\x12a\n" +
-	"\x0eOperateProject\x12%.ops.service.v1.OperateProjectRequest\x1a&.ops.service.v1.OperateProjectResponse\"\x00B\xa9\x01\n" +
+	"\x0eOperateProject\x12%.ops.service.v1.OperateProjectRequest\x1a&.ops.service.v1.OperateProjectResponse\"\x00\x12^\n" +
+	"\rGetProjectLog\x12$.ops.service.v1.GetProjectLogRequest\x1a%.ops.service.v1.GetProjectLogResponse\"\x00\x12S\n" +
+	"\x0fClearProjectLog\x12&.ops.service.v1.ClearProjectLogRequest\x1a\x16.google.protobuf.Empty\"\x00B\xa9\x01\n" +
 	"\x12com.ops.service.v1B\fProjectProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -720,7 +891,7 @@ func file_ops_service_v1_project_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_project_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_ops_service_v1_project_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_ops_service_v1_project_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_ops_service_v1_project_proto_goTypes = []any{
 	(ProjectStatus)(0),             // 0: ops.service.v1.ProjectStatus
 	(ProjectOperation)(0),          // 1: ops.service.v1.ProjectOperation
@@ -732,35 +903,42 @@ var file_ops_service_v1_project_proto_goTypes = []any{
 	(*DeleteProjectRequest)(nil),   // 7: ops.service.v1.DeleteProjectRequest
 	(*OperateProjectRequest)(nil),  // 8: ops.service.v1.OperateProjectRequest
 	(*OperateProjectResponse)(nil), // 9: ops.service.v1.OperateProjectResponse
-	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),  // 11: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),       // 12: pagination.PagingRequest
-	(*emptypb.Empty)(nil),          // 13: google.protobuf.Empty
+	(*GetProjectLogRequest)(nil),   // 10: ops.service.v1.GetProjectLogRequest
+	(*GetProjectLogResponse)(nil),  // 11: ops.service.v1.GetProjectLogResponse
+	(*ClearProjectLogRequest)(nil), // 12: ops.service.v1.ClearProjectLogRequest
+	(*timestamppb.Timestamp)(nil),  // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),  // 14: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),       // 15: pagination.PagingRequest
+	(*emptypb.Empty)(nil),          // 16: google.protobuf.Empty
 }
 var file_ops_service_v1_project_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.Project.last_status:type_name -> ops.service.v1.ProjectStatus
-	10, // 1: ops.service.v1.Project.last_status_at:type_name -> google.protobuf.Timestamp
-	10, // 2: ops.service.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	10, // 3: ops.service.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 1: ops.service.v1.Project.last_status_at:type_name -> google.protobuf.Timestamp
+	13, // 2: ops.service.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	13, // 3: ops.service.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 4: ops.service.v1.ListProjectResponse.items:type_name -> ops.service.v1.Project
 	2,  // 5: ops.service.v1.CreateProjectRequest.data:type_name -> ops.service.v1.Project
 	2,  // 6: ops.service.v1.UpdateProjectRequest.data:type_name -> ops.service.v1.Project
-	11, // 7: ops.service.v1.UpdateProjectRequest.update_mask:type_name -> google.protobuf.FieldMask
+	14, // 7: ops.service.v1.UpdateProjectRequest.update_mask:type_name -> google.protobuf.FieldMask
 	1,  // 8: ops.service.v1.OperateProjectRequest.operation:type_name -> ops.service.v1.ProjectOperation
-	12, // 9: ops.service.v1.ProjectService.ListProjects:input_type -> pagination.PagingRequest
+	15, // 9: ops.service.v1.ProjectService.ListProjects:input_type -> pagination.PagingRequest
 	4,  // 10: ops.service.v1.ProjectService.GetProject:input_type -> ops.service.v1.GetProjectRequest
 	5,  // 11: ops.service.v1.ProjectService.CreateProject:input_type -> ops.service.v1.CreateProjectRequest
 	6,  // 12: ops.service.v1.ProjectService.UpdateProject:input_type -> ops.service.v1.UpdateProjectRequest
 	7,  // 13: ops.service.v1.ProjectService.DeleteProject:input_type -> ops.service.v1.DeleteProjectRequest
 	8,  // 14: ops.service.v1.ProjectService.OperateProject:input_type -> ops.service.v1.OperateProjectRequest
-	3,  // 15: ops.service.v1.ProjectService.ListProjects:output_type -> ops.service.v1.ListProjectResponse
-	2,  // 16: ops.service.v1.ProjectService.GetProject:output_type -> ops.service.v1.Project
-	2,  // 17: ops.service.v1.ProjectService.CreateProject:output_type -> ops.service.v1.Project
-	13, // 18: ops.service.v1.ProjectService.UpdateProject:output_type -> google.protobuf.Empty
-	13, // 19: ops.service.v1.ProjectService.DeleteProject:output_type -> google.protobuf.Empty
-	9,  // 20: ops.service.v1.ProjectService.OperateProject:output_type -> ops.service.v1.OperateProjectResponse
-	15, // [15:21] is the sub-list for method output_type
-	9,  // [9:15] is the sub-list for method input_type
+	10, // 15: ops.service.v1.ProjectService.GetProjectLog:input_type -> ops.service.v1.GetProjectLogRequest
+	12, // 16: ops.service.v1.ProjectService.ClearProjectLog:input_type -> ops.service.v1.ClearProjectLogRequest
+	3,  // 17: ops.service.v1.ProjectService.ListProjects:output_type -> ops.service.v1.ListProjectResponse
+	2,  // 18: ops.service.v1.ProjectService.GetProject:output_type -> ops.service.v1.Project
+	2,  // 19: ops.service.v1.ProjectService.CreateProject:output_type -> ops.service.v1.Project
+	16, // 20: ops.service.v1.ProjectService.UpdateProject:output_type -> google.protobuf.Empty
+	16, // 21: ops.service.v1.ProjectService.DeleteProject:output_type -> google.protobuf.Empty
+	9,  // 22: ops.service.v1.ProjectService.OperateProject:output_type -> ops.service.v1.OperateProjectResponse
+	11, // 23: ops.service.v1.ProjectService.GetProjectLog:output_type -> ops.service.v1.GetProjectLogResponse
+	16, // 24: ops.service.v1.ProjectService.ClearProjectLog:output_type -> google.protobuf.Empty
+	17, // [17:25] is the sub-list for method output_type
+	9,  // [9:17] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -776,13 +954,15 @@ func file_ops_service_v1_project_proto_init() {
 	file_ops_service_v1_project_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_project_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_project_proto_msgTypes[6].OneofWrappers = []any{}
+	file_ops_service_v1_project_proto_msgTypes[8].OneofWrappers = []any{}
+	file_ops_service_v1_project_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_project_proto_rawDesc), len(file_ops_service_v1_project_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

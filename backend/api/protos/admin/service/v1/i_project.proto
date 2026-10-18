@@ -54,4 +54,18 @@ service ProjectService {
       body: "*"
     };
   }
+
+  // 查询项目运行日志尾部
+  rpc GetLog (ops.service.v1.GetProjectLogRequest) returns (ops.service.v1.GetProjectLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/projects/{id}/log"
+    };
+  }
+
+  // 清空项目运行日志
+  rpc ClearLog (ops.service.v1.ClearProjectLogRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/projects/{id}/log"
+    };
+  }
 }

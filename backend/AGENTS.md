@@ -102,6 +102,13 @@
 - 回执:agent 下载产物(HTTP 直拉,不过 MQTT)→ zip 解包(防 zip slip)/单文件复制进项目目录(clearOld 可选,白名单校验)→ afterOpt 联动重启/启动(项目命令随载荷下发)→ 回执按 command_request_id 回写分发记录终态;超时由 30s 扫描定案
 - **坑**:回执终态化必须区分指令成败——`dist_apply` 失败回执也要把分发记录定案 FAILED(曾因只处理 Success 分支导致失败记录停留 PENDING)
 
+## 运行日志与同步指令
+
+- 项目进程输出落盘 `<项目目录>/.ops-project.log`(追加写,启动/停止有分隔行);**进程 Stdout 直接绑文件句柄,禁止接内存 buffer**——长驻进程会把 buffer 撑爆
+- 日志查询是**同步指令**:core `PublishCommandSync` 注册等待者→MQTT 下发→`HandleCommandResult` 投递回执→调用方 10s 超时;迟到回执仍由台账链路对账。查询类指令(小输出)用它,执行类指令用异步 `PublishCommand`
+- REST:`GET /admin/v1/projects/{id}/log`(尾部,默认 64KB/上限 256KB)、`DELETE .../log`(清空)
+- Windows 控制台程序输出多为 GBK:日志按**原样字节**存储与传输,不做转码(增强项:按节点编码转换)
+
 ## 开发调试工具
 
 - `go run ./tools/mqtt-pub -topic ops/agent/<agentId>/command -payload '{"request_id":"t1","action":"ping"}'`：手动注入 MQTT 指令

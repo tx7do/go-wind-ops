@@ -28,14 +28,16 @@ var File_admin_service_v1_i_project_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_project_proto_rawDesc = "" +
 	"\n" +
-	" admin/service/v1/i_project.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cops/service/v1/project.proto2\xa4\x05\n" +
+	" admin/service/v1/i_project.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cops/service/v1/project.proto2\x91\a\n" +
 	"\x0eProjectService\x12b\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.ops.service.v1.ListProjectResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/projects\x12b\n" +
 	"\x03Get\x12!.ops.service.v1.GetProjectRequest\x1a\x17.ops.service.v1.Project\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/projects/{id}\x12f\n" +
 	"\x06Create\x12$.ops.service.v1.CreateProjectRequest\x1a\x17.ops.service.v1.Project\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/projects\x12j\n" +
 	"\x06Update\x12$.ops.service.v1.UpdateProjectRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\x1a\x17/admin/v1/projects/{id}\x12g\n" +
 	"\x06Delete\x12$.ops.service.v1.DeleteProjectRequest\x1a\x16.google.protobuf.Empty\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/admin/v1/projects/{id}\x12\x8c\x01\n" +
-	"\aOperate\x12%.ops.service.v1.OperateProjectRequest\x1a&.ops.service.v1.OperateProjectResponse\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/projects/{id}/operations:sendB\xb8\x01\n" +
+	"\aOperate\x12%.ops.service.v1.OperateProjectRequest\x1a&.ops.service.v1.OperateProjectResponse\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/projects/{id}/operations:send\x12z\n" +
+	"\x06GetLog\x12$.ops.service.v1.GetProjectLogRequest\x1a%.ops.service.v1.GetProjectLogResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/admin/v1/projects/{id}/log\x12o\n" +
+	"\bClearLog\x12&.ops.service.v1.ClearProjectLogRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/admin/v1/projects/{id}/logB\xb8\x01\n" +
 	"\x14com.admin.service.v1B\rIProjectProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_project_proto_goTypes = []any{
@@ -45,29 +47,36 @@ var file_admin_service_v1_i_project_proto_goTypes = []any{
 	(*v11.UpdateProjectRequest)(nil),   // 3: ops.service.v1.UpdateProjectRequest
 	(*v11.DeleteProjectRequest)(nil),   // 4: ops.service.v1.DeleteProjectRequest
 	(*v11.OperateProjectRequest)(nil),  // 5: ops.service.v1.OperateProjectRequest
-	(*v11.ListProjectResponse)(nil),    // 6: ops.service.v1.ListProjectResponse
-	(*v11.Project)(nil),                // 7: ops.service.v1.Project
-	(*emptypb.Empty)(nil),              // 8: google.protobuf.Empty
-	(*v11.OperateProjectResponse)(nil), // 9: ops.service.v1.OperateProjectResponse
+	(*v11.GetProjectLogRequest)(nil),   // 6: ops.service.v1.GetProjectLogRequest
+	(*v11.ClearProjectLogRequest)(nil), // 7: ops.service.v1.ClearProjectLogRequest
+	(*v11.ListProjectResponse)(nil),    // 8: ops.service.v1.ListProjectResponse
+	(*v11.Project)(nil),                // 9: ops.service.v1.Project
+	(*emptypb.Empty)(nil),              // 10: google.protobuf.Empty
+	(*v11.OperateProjectResponse)(nil), // 11: ops.service.v1.OperateProjectResponse
+	(*v11.GetProjectLogResponse)(nil),  // 12: ops.service.v1.GetProjectLogResponse
 }
 var file_admin_service_v1_i_project_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.ProjectService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.ProjectService.Get:input_type -> ops.service.v1.GetProjectRequest
-	2, // 2: admin.service.v1.ProjectService.Create:input_type -> ops.service.v1.CreateProjectRequest
-	3, // 3: admin.service.v1.ProjectService.Update:input_type -> ops.service.v1.UpdateProjectRequest
-	4, // 4: admin.service.v1.ProjectService.Delete:input_type -> ops.service.v1.DeleteProjectRequest
-	5, // 5: admin.service.v1.ProjectService.Operate:input_type -> ops.service.v1.OperateProjectRequest
-	6, // 6: admin.service.v1.ProjectService.List:output_type -> ops.service.v1.ListProjectResponse
-	7, // 7: admin.service.v1.ProjectService.Get:output_type -> ops.service.v1.Project
-	7, // 8: admin.service.v1.ProjectService.Create:output_type -> ops.service.v1.Project
-	8, // 9: admin.service.v1.ProjectService.Update:output_type -> google.protobuf.Empty
-	8, // 10: admin.service.v1.ProjectService.Delete:output_type -> google.protobuf.Empty
-	9, // 11: admin.service.v1.ProjectService.Operate:output_type -> ops.service.v1.OperateProjectResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.ProjectService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.ProjectService.Get:input_type -> ops.service.v1.GetProjectRequest
+	2,  // 2: admin.service.v1.ProjectService.Create:input_type -> ops.service.v1.CreateProjectRequest
+	3,  // 3: admin.service.v1.ProjectService.Update:input_type -> ops.service.v1.UpdateProjectRequest
+	4,  // 4: admin.service.v1.ProjectService.Delete:input_type -> ops.service.v1.DeleteProjectRequest
+	5,  // 5: admin.service.v1.ProjectService.Operate:input_type -> ops.service.v1.OperateProjectRequest
+	6,  // 6: admin.service.v1.ProjectService.GetLog:input_type -> ops.service.v1.GetProjectLogRequest
+	7,  // 7: admin.service.v1.ProjectService.ClearLog:input_type -> ops.service.v1.ClearProjectLogRequest
+	8,  // 8: admin.service.v1.ProjectService.List:output_type -> ops.service.v1.ListProjectResponse
+	9,  // 9: admin.service.v1.ProjectService.Get:output_type -> ops.service.v1.Project
+	9,  // 10: admin.service.v1.ProjectService.Create:output_type -> ops.service.v1.Project
+	10, // 11: admin.service.v1.ProjectService.Update:output_type -> google.protobuf.Empty
+	10, // 12: admin.service.v1.ProjectService.Delete:output_type -> google.protobuf.Empty
+	11, // 13: admin.service.v1.ProjectService.Operate:output_type -> ops.service.v1.OperateProjectResponse
+	12, // 14: admin.service.v1.ProjectService.GetLog:output_type -> ops.service.v1.GetProjectLogResponse
+	10, // 15: admin.service.v1.ProjectService.ClearLog:output_type -> google.protobuf.Empty
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_project_proto_init() }

@@ -1128,3 +1128,327 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = OperateProjectResponseValidationError{}
+
+// Validate checks the field values on GetProjectLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetProjectLogRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetProjectLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetProjectLogRequestMultiError, or nil if none found.
+func (m *GetProjectLogRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetProjectLogRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.MaxBytes != nil {
+		// no validation rules for MaxBytes
+	}
+
+	if len(errors) > 0 {
+		return GetProjectLogRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetProjectLogRequestMultiError is an error wrapping multiple validation
+// errors returned by GetProjectLogRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetProjectLogRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetProjectLogRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetProjectLogRequestMultiError) AllErrors() []error { return m }
+
+// GetProjectLogRequestValidationError is the validation error returned by
+// GetProjectLogRequest.Validate if the designated constraints aren't met.
+type GetProjectLogRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetProjectLogRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetProjectLogRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetProjectLogRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetProjectLogRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetProjectLogRequestValidationError) ErrorName() string {
+	return "GetProjectLogRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetProjectLogRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetProjectLogRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetProjectLogRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetProjectLogRequestValidationError{}
+
+// Validate checks the field values on GetProjectLogResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetProjectLogResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetProjectLogResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetProjectLogResponseMultiError, or nil if none found.
+func (m *GetProjectLogResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetProjectLogResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Content
+
+	// no validation rules for Size
+
+	// no validation rules for Truncated
+
+	if len(errors) > 0 {
+		return GetProjectLogResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetProjectLogResponseMultiError is an error wrapping multiple validation
+// errors returned by GetProjectLogResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetProjectLogResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetProjectLogResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetProjectLogResponseMultiError) AllErrors() []error { return m }
+
+// GetProjectLogResponseValidationError is the validation error returned by
+// GetProjectLogResponse.Validate if the designated constraints aren't met.
+type GetProjectLogResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetProjectLogResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetProjectLogResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetProjectLogResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetProjectLogResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetProjectLogResponseValidationError) ErrorName() string {
+	return "GetProjectLogResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetProjectLogResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetProjectLogResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetProjectLogResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetProjectLogResponseValidationError{}
+
+// Validate checks the field values on ClearProjectLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ClearProjectLogRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ClearProjectLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ClearProjectLogRequestMultiError, or nil if none found.
+func (m *ClearProjectLogRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ClearProjectLogRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if len(errors) > 0 {
+		return ClearProjectLogRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ClearProjectLogRequestMultiError is an error wrapping multiple validation
+// errors returned by ClearProjectLogRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ClearProjectLogRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ClearProjectLogRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ClearProjectLogRequestMultiError) AllErrors() []error { return m }
+
+// ClearProjectLogRequestValidationError is the validation error returned by
+// ClearProjectLogRequest.Validate if the designated constraints aren't met.
+type ClearProjectLogRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ClearProjectLogRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ClearProjectLogRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ClearProjectLogRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ClearProjectLogRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ClearProjectLogRequestValidationError) ErrorName() string {
+	return "ClearProjectLogRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ClearProjectLogRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sClearProjectLogRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ClearProjectLogRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ClearProjectLogRequestValidationError{}

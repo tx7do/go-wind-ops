@@ -67,3 +67,21 @@ func (s *ProjectService) Operate(ctx context.Context, req *opsV1.OperateProjectR
 	}
 	return s.projectServiceClient.OperateProject(ctx, req)
 }
+
+func (s *ProjectService) GetLog(ctx context.Context, req *opsV1.GetProjectLogRequest) (*opsV1.GetProjectLogResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, adminV1.ErrorBadRequest("invalid request: id required")
+	}
+	return s.projectServiceClient.GetProjectLog(ctx, req)
+}
+
+func (s *ProjectService) ClearLog(ctx context.Context, req *opsV1.ClearProjectLogRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, adminV1.ErrorBadRequest("invalid request: id required")
+	}
+	_, err := s.projectServiceClient.ClearProjectLog(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}

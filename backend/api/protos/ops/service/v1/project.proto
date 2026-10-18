@@ -35,6 +35,12 @@ service ProjectService {
   // 项目生命周期操作:下发指令到节点 agent,返回幂等 request_id;
   // 执行结果按 request_id 回写指令台账。
   rpc OperateProject (OperateProjectRequest) returns (OperateProjectResponse) {}
+
+  // 查询项目运行日志尾部(同步指令,core 等待 agent 回执)
+  rpc GetProjectLog (GetProjectLogRequest) returns (GetProjectLogResponse) {}
+
+  // 清空项目运行日志
+  rpc ClearProjectLog (ClearProjectLogRequest) returns (google.protobuf.Empty) {}
 }
 
 // 项目运行状态(由 agent 状态操作回填)
@@ -201,4 +207,31 @@ message OperateProjectRequest {
 
 message OperateProjectResponse {
   string request_id = 1 [json_name = "requestId"]; // 幂等键,结果见指令台账
+}
+
+message GetProjectLogRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+
+  optional int32 max_bytes = 2 [
+    json_name = "maxBytes",
+    (gnostic.openapi.v3.property) = {
+      description: "读取日志尾部字节数(默认 64KB,上限 256KB)"
+    }
+  ]; // 读取尾部字节数
+}
+
+message GetProjectLogResponse {
+  string content = 1 [json_name = "content"]; // 日志内容(尾部)
+  int64 size = 2 [json_name = "size"]; // 日志文件总大小(字节)
+  bool truncated = 3 [json_name = "truncated"]; // 是否只返回了尾部
+}
+
+message ClearProjectLogRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
 }

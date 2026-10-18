@@ -11,10 +11,10 @@
 package agent
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -30,9 +30,12 @@ import (
 
 const (
 	pidFileName       = ".ops-project.pid"
+	logFileName       = ".ops-project.log"
 	outputLimit       = 64 << 10 // 回传输出上限 64KB
 	startGracePeriod  = 800 * time.Millisecond
 	shellWaitTimeout  = 30 * time.Second
+	logReadDefault    = 64 << 10  // 日志读取默认尾部字节数
+	logReadMax        = 256 << 10 // 日志读取上限
 )
 
 // LoadAllowedDirs 读取授权目录列表(AGENT_ALLOWED_DIRS,平台列表分隔符分隔)。
@@ -57,6 +60,8 @@ func (s *Service) registerProjectHandlers() {
 	s.RegisterHandler(signal.CommandActionProjectStop, s.handleProjectStop)
 	s.RegisterHandler(signal.CommandActionProjectRestart, s.handleProjectRestart)
 	s.RegisterHandler(signal.CommandActionProjectStatus, s.handleProjectStatus)
+	s.RegisterHandler(signal.CommandActionProjectLog, s.handleProjectLog)
+	s.RegisterHandler(signal.CommandActionProjectLogClear, s.handleProjectLogClear)
 }
 
 // checkDir 校验项目目录在授权列表内(授权列表未配置则全部拒绝)。
@@ -230,35 +235,145 @@ func (s *Service) handleProjectStatus(ctx context.Context, env *signal.CommandEn
 // 进程/Shell 工具(实现收敛到 pkg/shellexec;此处保留薄别名)
 // ============================================================================
 
+// handleProjectLog 读取项目运行日志尾部。
+func (s *Service) handleProjectLog(_ context.Context, env *signal.CommandEnvelope) (any, error) {
+	payload := &signal.ProjectLogPayload{}
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, payload); err != nil {
+			return nil, fmt.Errorf("decode payload: %w", err)
+		}
+	}
+	if payload.Dir == "" || payload.ProjectId == 0 {
+		return nil, fmt.Errorf("payload.dir/project_id are required")
+	}
+
+	maxBytes := payload.MaxBytes
+	if maxBytes <= 0 {
+		maxBytes = logReadDefault
+	}
+	if maxBytes > logReadMax {
+		maxBytes = logReadMax
+	}
+
+	logPath := filepath.Join(payload.Dir, logFileName)
+	info, err := os.Stat(logPath)
+	if os.IsNotExist(err) {
+		return signal.ProjectLogResult{ProjectId: payload.ProjectId, Content: ""}, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("stat project log: %w", err)
+	}
+
+	content, truncated, err := readLogFileTail(logPath, info.Size(), maxBytes)
+	if err != nil {
+		return nil, fmt.Errorf("read project log: %w", err)
+	}
+
+	return signal.ProjectLogResult{
+		ProjectId: payload.ProjectId,
+		Size:      info.Size(),
+		Truncated: truncated,
+		Content:   content,
+	}, nil
+}
+
+// handleProjectLogClear 清空项目运行日志。
+func (s *Service) handleProjectLogClear(_ context.Context, env *signal.CommandEnvelope) (any, error) {
+	payload := &signal.ProjectLogPayload{}
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, payload); err != nil {
+			return nil, fmt.Errorf("decode payload: %w", err)
+		}
+	}
+	if payload.Dir == "" {
+		return nil, fmt.Errorf("payload.dir is required")
+	}
+
+	if err := os.Truncate(filepath.Join(payload.Dir, logFileName), 0); err != nil && !os.IsNotExist(err) {
+		return nil, fmt.Errorf("truncate project log: %w", err)
+	}
+	return map[string]any{"cleared": true}, nil
+}
+
+// readLogFileTail 读文件尾部 maxBytes 字节。
+func readLogFileTail(path string, size, maxBytes int64) (content string, truncated bool, err error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", false, err
+	}
+	defer f.Close()
+
+	offset := int64(0)
+	if size > maxBytes {
+		offset = size - maxBytes
+		truncated = true
+	}
+	if _, err = f.Seek(offset, io.SeekStart); err != nil {
+		return "", truncated, err
+	}
+	data, err := io.ReadAll(f)
+	if err != nil {
+		return "", truncated, err
+	}
+	return string(data), truncated, nil
+}
+
 // startDetached 以分离进程执行启动命令:存活超过宽限期视为成功。
-// 返回 pid、是否存活、宽限期内捕获的输出。
+// 进程输出追加到 <dir>/.ops-project.log(不落内存——长驻进程的管道
+// buffer 会无限增长);返回 pid、是否存活、启动即失败时的输出片段。
 func startDetached(ctx context.Context, dir, command string) (int, bool, string, error) {
+	// 目录缺失时自动创建(首次启动/分发前手动启动场景)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return 0, false, "", fmt.Errorf("ensure project dir: %w", err)
+	}
+
+	logFile, err := os.OpenFile(filepath.Join(dir, logFileName), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return 0, false, "", fmt.Errorf("open project log: %w", err)
+	}
+	defer logFile.Close()
+
+	fmt.Fprintf(logFile, "\n===== start %s cmd: %s =====\n", time.Now().Format("2006-01-02 15:04:05"), command)
+
 	cmd := shellexec.Command(command)
 	cmd.Dir = dir
-
-	var buf bytes.Buffer
-	cmd.Stdout = &buf
-	cmd.Stderr = &buf
+	cmd.Stdout = logFile
+	cmd.Stderr = logFile
 
 	if err := cmd.Start(); err != nil {
-		return 0, false, buf.String(), err
+		fmt.Fprintf(logFile, "===== start failed: %s =====\n", err.Error())
+		return 0, false, err.Error(), err
 	}
 	pid := cmd.Process.Pid
+	fmt.Fprintf(logFile, "===== pid %d =====\n", pid)
 
 	exited := make(chan error, 1)
 	go func() { exited <- cmd.Wait() }()
 
 	select {
 	case err := <-exited:
-		return pid, false, buf.String(), err
+		// 启动即退出:回读日志尾部辅助排障
+		return pid, false, readLogTail(dir, outputLimit), err
 	case <-ctx.Done():
 		_ = killTree(pid)
-		return pid, false, buf.String(), ctx.Err()
+		return pid, false, readLogTail(dir, outputLimit), ctx.Err()
 	case <-time.After(startGracePeriod):
 		// 存活超过宽限期:启动成功;Wait 交给进程自行结束,避免僵尸
 		go func() { <-exited }()
-		return pid, true, buf.String(), nil
+		return pid, true, "", nil
 	}
+}
+
+// readLogTail 读取日志文件尾部(排障辅助)。
+func readLogTail(dir string, maxBytes int64) string {
+	data, err := os.ReadFile(filepath.Join(dir, logFileName))
+	if err != nil {
+		return ""
+	}
+	if int64(len(data)) > maxBytes {
+		data = data[int64(len(data))-maxBytes:]
+	}
+	return string(data)
 }
 
 func readPidFile(dir string) int {

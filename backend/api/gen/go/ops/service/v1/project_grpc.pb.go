@@ -21,12 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectService_ListProjects_FullMethodName   = "/ops.service.v1.ProjectService/ListProjects"
-	ProjectService_GetProject_FullMethodName     = "/ops.service.v1.ProjectService/GetProject"
-	ProjectService_CreateProject_FullMethodName  = "/ops.service.v1.ProjectService/CreateProject"
-	ProjectService_UpdateProject_FullMethodName  = "/ops.service.v1.ProjectService/UpdateProject"
-	ProjectService_DeleteProject_FullMethodName  = "/ops.service.v1.ProjectService/DeleteProject"
-	ProjectService_OperateProject_FullMethodName = "/ops.service.v1.ProjectService/OperateProject"
+	ProjectService_ListProjects_FullMethodName    = "/ops.service.v1.ProjectService/ListProjects"
+	ProjectService_GetProject_FullMethodName      = "/ops.service.v1.ProjectService/GetProject"
+	ProjectService_CreateProject_FullMethodName   = "/ops.service.v1.ProjectService/CreateProject"
+	ProjectService_UpdateProject_FullMethodName   = "/ops.service.v1.ProjectService/UpdateProject"
+	ProjectService_DeleteProject_FullMethodName   = "/ops.service.v1.ProjectService/DeleteProject"
+	ProjectService_OperateProject_FullMethodName  = "/ops.service.v1.ProjectService/OperateProject"
+	ProjectService_GetProjectLog_FullMethodName   = "/ops.service.v1.ProjectService/GetProjectLog"
+	ProjectService_ClearProjectLog_FullMethodName = "/ops.service.v1.ProjectService/ClearProjectLog"
 )
 
 // ProjectServiceClient is the client API for ProjectService service.
@@ -50,6 +52,10 @@ type ProjectServiceClient interface {
 	// 项目生命周期操作:下发指令到节点 agent,返回幂等 request_id;
 	// 执行结果按 request_id 回写指令台账。
 	OperateProject(ctx context.Context, in *OperateProjectRequest, opts ...grpc.CallOption) (*OperateProjectResponse, error)
+	// 查询项目运行日志尾部(同步指令,core 等待 agent 回执)
+	GetProjectLog(ctx context.Context, in *GetProjectLogRequest, opts ...grpc.CallOption) (*GetProjectLogResponse, error)
+	// 清空项目运行日志
+	ClearProjectLog(ctx context.Context, in *ClearProjectLogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type projectServiceClient struct {
@@ -120,6 +126,26 @@ func (c *projectServiceClient) OperateProject(ctx context.Context, in *OperatePr
 	return out, nil
 }
 
+func (c *projectServiceClient) GetProjectLog(ctx context.Context, in *GetProjectLogRequest, opts ...grpc.CallOption) (*GetProjectLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProjectLogResponse)
+	err := c.cc.Invoke(ctx, ProjectService_GetProjectLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) ClearProjectLog(ctx context.Context, in *ClearProjectLogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ProjectService_ClearProjectLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations must embed UnimplementedProjectServiceServer
 // for forward compatibility.
@@ -141,6 +167,10 @@ type ProjectServiceServer interface {
 	// 项目生命周期操作:下发指令到节点 agent,返回幂等 request_id;
 	// 执行结果按 request_id 回写指令台账。
 	OperateProject(context.Context, *OperateProjectRequest) (*OperateProjectResponse, error)
+	// 查询项目运行日志尾部(同步指令,core 等待 agent 回执)
+	GetProjectLog(context.Context, *GetProjectLogRequest) (*GetProjectLogResponse, error)
+	// 清空项目运行日志
+	ClearProjectLog(context.Context, *ClearProjectLogRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProjectServiceServer()
 }
 
@@ -168,6 +198,12 @@ func (UnimplementedProjectServiceServer) DeleteProject(context.Context, *DeleteP
 }
 func (UnimplementedProjectServiceServer) OperateProject(context.Context, *OperateProjectRequest) (*OperateProjectResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method OperateProject not implemented")
+}
+func (UnimplementedProjectServiceServer) GetProjectLog(context.Context, *GetProjectLogRequest) (*GetProjectLogResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProjectLog not implemented")
+}
+func (UnimplementedProjectServiceServer) ClearProjectLog(context.Context, *ClearProjectLogRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClearProjectLog not implemented")
 }
 func (UnimplementedProjectServiceServer) mustEmbedUnimplementedProjectServiceServer() {}
 func (UnimplementedProjectServiceServer) testEmbeddedByValue()                        {}
@@ -298,6 +334,42 @@ func _ProjectService_OperateProject_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectService_GetProjectLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProjectLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).GetProjectLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectService_GetProjectLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).GetProjectLog(ctx, req.(*GetProjectLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_ClearProjectLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearProjectLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).ClearProjectLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectService_ClearProjectLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).ClearProjectLog(ctx, req.(*ClearProjectLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +400,14 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OperateProject",
 			Handler:    _ProjectService_OperateProject_Handler,
+		},
+		{
+			MethodName: "GetProjectLog",
+			Handler:    _ProjectService_GetProjectLog_Handler,
+		},
+		{
+			MethodName: "ClearProjectLog",
+			Handler:    _ProjectService_ClearProjectLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

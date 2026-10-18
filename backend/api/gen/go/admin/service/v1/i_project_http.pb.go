@@ -22,20 +22,26 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationProjectServiceClearLog = "/admin.service.v1.ProjectService/ClearLog"
 const OperationProjectServiceCreate = "/admin.service.v1.ProjectService/Create"
 const OperationProjectServiceDelete = "/admin.service.v1.ProjectService/Delete"
 const OperationProjectServiceGet = "/admin.service.v1.ProjectService/Get"
+const OperationProjectServiceGetLog = "/admin.service.v1.ProjectService/GetLog"
 const OperationProjectServiceList = "/admin.service.v1.ProjectService/List"
 const OperationProjectServiceOperate = "/admin.service.v1.ProjectService/Operate"
 const OperationProjectServiceUpdate = "/admin.service.v1.ProjectService/Update"
 
 type ProjectServiceHTTPServer interface {
+	// ClearLog 清空项目运行日志
+	ClearLog(context.Context, *v11.ClearProjectLogRequest) (*emptypb.Empty, error)
 	// Create 创建项目
 	Create(context.Context, *v11.CreateProjectRequest) (*v11.Project, error)
 	// Delete 删除项目
 	Delete(context.Context, *v11.DeleteProjectRequest) (*emptypb.Empty, error)
 	// Get 查询项目详情
 	Get(context.Context, *v11.GetProjectRequest) (*v11.Project, error)
+	// GetLog 查询项目运行日志尾部
+	GetLog(context.Context, *v11.GetProjectLogRequest) (*v11.GetProjectLogResponse, error)
 	// List 查询项目列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListProjectResponse, error)
 	// Operate 项目生命周期操作(启动/停止/重启/状态),下发指令到节点 agent
@@ -52,6 +58,8 @@ func RegisterProjectServiceHTTPServer(s *http.Server, srv ProjectServiceHTTPServ
 	r.PUT("/admin/v1/projects/{id}", _ProjectService_Update13_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/projects/{id}", _ProjectService_Delete13_HTTP_Handler(srv))
 	r.POST("/admin/v1/projects/{id}/operations:send", _ProjectService_Operate0_HTTP_Handler(srv))
+	r.GET("/admin/v1/projects/{id}/log", _ProjectService_GetLog0_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/projects/{id}/log", _ProjectService_ClearLog0_HTTP_Handler(srv))
 }
 
 func _ProjectService_List21_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
@@ -189,13 +197,61 @@ func _ProjectService_Operate0_HTTP_Handler(srv ProjectServiceHTTPServer) func(ct
 	}
 }
 
+func _ProjectService_GetLog0_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetProjectLogRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationProjectServiceGetLog)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetLog(ctx, req.(*v11.GetProjectLogRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetProjectLogResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ProjectService_ClearLog0_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ClearProjectLogRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationProjectServiceClearLog)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ClearLog(ctx, req.(*v11.ClearProjectLogRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ProjectServiceHTTPClient interface {
+	// ClearLog 清空项目运行日志
+	ClearLog(ctx context.Context, req *v11.ClearProjectLogRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Create 创建项目
 	Create(ctx context.Context, req *v11.CreateProjectRequest, opts ...http.CallOption) (rsp *v11.Project, err error)
 	// Delete 删除项目
 	Delete(ctx context.Context, req *v11.DeleteProjectRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 查询项目详情
 	Get(ctx context.Context, req *v11.GetProjectRequest, opts ...http.CallOption) (rsp *v11.Project, err error)
+	// GetLog 查询项目运行日志尾部
+	GetLog(ctx context.Context, req *v11.GetProjectLogRequest, opts ...http.CallOption) (rsp *v11.GetProjectLogResponse, err error)
 	// List 查询项目列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListProjectResponse, err error)
 	// Operate 项目生命周期操作(启动/停止/重启/状态),下发指令到节点 agent
@@ -210,6 +266,20 @@ type ProjectServiceHTTPClientImpl struct {
 
 func NewProjectServiceHTTPClient(client *http.Client) ProjectServiceHTTPClient {
 	return &ProjectServiceHTTPClientImpl{client}
+}
+
+// ClearLog 清空项目运行日志
+func (c *ProjectServiceHTTPClientImpl) ClearLog(ctx context.Context, in *v11.ClearProjectLogRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/projects/{id}/log"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationProjectServiceClearLog))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Create 创建项目
@@ -246,6 +316,20 @@ func (c *ProjectServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetProje
 	pattern := "/admin/v1/projects/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProjectServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetLog 查询项目运行日志尾部
+func (c *ProjectServiceHTTPClientImpl) GetLog(ctx context.Context, in *v11.GetProjectLogRequest, opts ...http.CallOption) (*v11.GetProjectLogResponse, error) {
+	var out v11.GetProjectLogResponse
+	pattern := "/admin/v1/projects/{id}/log"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationProjectServiceGetLog))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
