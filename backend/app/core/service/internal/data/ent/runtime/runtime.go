@@ -9,6 +9,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
@@ -157,6 +158,35 @@ func init() {
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint32) error)
+	approvalMixin := schema.Approval{}.Mixin()
+	approvalMixinFields0 := approvalMixin[0].Fields()
+	_ = approvalMixinFields0
+	approvalFields := schema.Approval{}.Fields()
+	_ = approvalFields
+	// approvalDescOperationType is the schema descriptor for operation_type field.
+	approvalDescOperationType := approvalFields[0].Descriptor()
+	// approval.OperationTypeValidator is a validator for the "operation_type" field. It is called by the builders before save.
+	approval.OperationTypeValidator = approvalDescOperationType.Validators[0].(func(string) error)
+	// approvalDescOperationRefID is the schema descriptor for operation_ref_id field.
+	approvalDescOperationRefID := approvalFields[1].Descriptor()
+	// approval.OperationRefIDValidator is a validator for the "operation_ref_id" field. It is called by the builders before save.
+	approval.OperationRefIDValidator = approvalDescOperationRefID.Validators[0].(func(uint32) error)
+	// approvalDescOperationName is the schema descriptor for operation_name field.
+	approvalDescOperationName := approvalFields[2].Descriptor()
+	// approval.OperationNameValidator is a validator for the "operation_name" field. It is called by the builders before save.
+	approval.OperationNameValidator = approvalDescOperationName.Validators[0].(func(string) error)
+	// approvalDescRequesterID is the schema descriptor for requester_id field.
+	approvalDescRequesterID := approvalFields[4].Descriptor()
+	// approval.DefaultRequesterID holds the default value on creation for the requester_id field.
+	approval.DefaultRequesterID = approvalDescRequesterID.Default.(uint32)
+	// approvalDescApproverID is the schema descriptor for approver_id field.
+	approvalDescApproverID := approvalFields[5].Descriptor()
+	// approval.DefaultApproverID holds the default value on creation for the approver_id field.
+	approval.DefaultApproverID = approvalDescApproverID.Default.(uint32)
+	// approvalDescID is the schema descriptor for id field.
+	approvalDescID := approvalMixinFields0[0].Descriptor()
+	// approval.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	approval.IDValidator = approvalDescID.Validators[0].(func(uint32) error)
 	buildMixin := schema.Build{}.Mixin()
 	buildMixinFields0 := buildMixin[0].Fields()
 	_ = buildMixinFields0

@@ -239,6 +239,42 @@ var (
 			},
 		},
 	}
+	// OpsApprovalsColumns holds the columns for the "ops_approvals" table.
+	OpsApprovalsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "operation_type", Type: field.TypeString, Comment: "操作类型(distribute/script_exec)"},
+		{Name: "operation_ref_id", Type: field.TypeUint32, Comment: "操作关联实体 ID(分发配置 ID 或脚本 ID)"},
+		{Name: "operation_name", Type: field.TypeString, Comment: "操作名称(快照,便于审批人识别)"},
+		{Name: "payload", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "操作载荷快照(JSON,审批通过后按此执行)"},
+		{Name: "requester_id", Type: field.TypeUint32, Nullable: true, Comment: "发起人", Default: 0},
+		{Name: "approver_id", Type: field.TypeUint32, Nullable: true, Comment: "审批人", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "审批状态", Enums: []string{"PENDING", "APPROVED", "REJECTED"}, Default: "PENDING"},
+		{Name: "reject_reason", Type: field.TypeString, Nullable: true, Comment: "驳回原因"},
+		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON)"},
+		{Name: "resolved_at", Type: field.TypeTime, Nullable: true, Comment: "审批时间"},
+	}
+	// OpsApprovalsTable holds the schema information for the "ops_approvals" table.
+	OpsApprovalsTable = &schema.Table{
+		Name:       "ops_approvals",
+		Comment:    "操作审批单表",
+		Columns:    OpsApprovalsColumns,
+		PrimaryKey: []*schema.Column{OpsApprovalsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_approval_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsApprovalsColumns[10]},
+			},
+			{
+				Name:    "idx_ops_approval_requester",
+				Unique:  false,
+				Columns: []*schema.Column{OpsApprovalsColumns[8]},
+			},
+		},
+	}
 	// OpsBuildsColumns holds the columns for the "ops_builds" table.
 	OpsBuildsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3019,6 +3055,7 @@ var (
 		OpsAlertsTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		OpsApprovalsTable,
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
 		OpsCommandRecordsTable,
@@ -3082,6 +3119,11 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsApprovalsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_approvals",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

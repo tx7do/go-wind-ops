@@ -43,15 +43,15 @@ type DictTypeServiceHTTPServer interface {
 
 func RegisterDictTypeServiceHTTPServer(s *http.Server, srv DictTypeServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/dict/types", _DictTypeService_List9_HTTP_Handler(srv))
-	r.GET("/admin/v1/dict/types/code/{code}", _DictTypeService_Get8_HTTP_Handler(srv))
-	r.GET("/admin/v1/dict/types/{id}", _DictTypeService_Get9_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types", _DictTypeService_List10_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types/code/{code}", _DictTypeService_Get9_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types/{id}", _DictTypeService_Get10_HTTP_Handler(srv))
 	r.POST("/admin/v1/dict/types", _DictTypeService_Create3_HTTP_Handler(srv))
 	r.PUT("/admin/v1/dict/types/{id}", _DictTypeService_Update4_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/dict/types", _DictTypeService_Delete4_HTTP_Handler(srv))
 }
 
-func _DictTypeService_List9_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_List10_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -70,7 +70,7 @@ func _DictTypeService_List9_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx
 	}
 }
 
-func _DictTypeService_Get8_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_Get9_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetDictTypeRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -92,7 +92,7 @@ func _DictTypeService_Get8_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx 
 	}
 }
 
-func _DictTypeService_Get9_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_Get10_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetDictTypeRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/approval.proto";
+
+// ApprovalService 操作审批
+service ApprovalService {
+  // 查询审批单列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListApprovalResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/approvals"
+    };
+  }
+
+  // 查询审批单详情
+  rpc Get (ops.service.v1.GetApprovalRequest) returns (ops.service.v1.Approval) {
+    option (google.api.http) = {
+      get: "/admin/v1/approvals/{id}"
+    };
+  }
+
+  // 审批通过
+  rpc Approve (ops.service.v1.ApproveApprovalRequest) returns (ops.service.v1.op_approval_result) {
+    option (google.api.http) = {
+      post: "/admin/v1/approvals/{id}:approve"
+      body: "*"
+    };
+  }
+
+  // 审批驳回
+  rpc Reject (ops.service.v1.RejectApprovalRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/approvals/{id}:reject"
+      body: "*"
+    };
+  }
+}

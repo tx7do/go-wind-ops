@@ -140,6 +140,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	distributionRepo := data.NewDistributionRepo(ctx, entClient)
 	distributionRecordRepo := data.NewDistributionRecordRepo(ctx, entClient)
 	monitorRepo := data.NewMonitorRepo(ctx, entClient)
+	approvalRepo := data.NewApprovalRepo(ctx, entClient)
 	alertRepo := data.NewAlertRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
@@ -193,6 +194,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	distributionService := service.NewDistributionService(ctx, distributionRepo, distributionRecordRepo, buildRepo, buildHistoryRepo, projectRepo, agentNodeRepo, minIOClient, agentService)
 	monitorService := service.NewMonitorService(ctx, monitorRepo)
 	alertService := service.NewAlertService(ctx, alertRepo)
+	approvalService := service.NewApprovalService(ctx, approvalRepo)
 
 	// 定时调度(构建/脚本 cron + 监控检查)
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, buildService, scriptService, agentService)
@@ -220,6 +222,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		repositoryService, buildService, buildHistoryService,
 		distributionService,
 		monitorService, alertService,
+		approvalService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

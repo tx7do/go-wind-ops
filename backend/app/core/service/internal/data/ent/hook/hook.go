@@ -56,6 +56,18 @@ func (f ApiAuditLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiAuditLogMutation", m)
 }
 
+// The ApprovalFunc type is an adapter to allow the use of ordinary
+// function as Approval mutator.
+type ApprovalFunc func(context.Context, *ent.ApprovalMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApprovalFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApprovalMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApprovalMutation", m)
+}
+
 // The BuildFunc type is an adapter to allow the use of ordinary
 // function as Build mutator.
 type BuildFunc func(context.Context, *ent.BuildMutation) (ent.Value, error)

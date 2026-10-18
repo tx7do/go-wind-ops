@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// ApprovalService 操作审批:危险操作(生产分发/脚本执行)需审批人确认后才执行。
+service ApprovalService {
+  // 查询审批单列表
+  rpc ListApprovals (pagination.PagingRequest) returns (ListApprovalResponse) {}
+
+  // 查询审批单详情
+  rpc GetApproval (GetApprovalRequest) returns (Approval) {}
+
+  // 审批通过(执行实际操作)
+  rpc ApproveApproval (ApproveApprovalRequest) returns (op_approval_result) {}
+
+  // 审批驳回
+  rpc RejectApproval (RejectApprovalRequest) returns (google.protobuf.Empty) {}
+}
+
+// op_approval_result 审批通过后的执行结果
+message op_approval_result {
+  string request_id = 1 [json_name = "requestId"]; // 指令幂等键
+}
+
+// 审批单
+message Approval {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 审批单ID
+
+  optional string operation_type = 2 [
+    json_name = "operationType",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 操作类型(distribute/script_exec)
+
+  optional uint32 operation_ref_id = 3 [
+    json_name = "operationRefId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 关联实体ID
+
+  optional string operation_name = 4 [
+    json_name = "operationName",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 操作名称
+
+  optional string payload = 5 [
+    json_name = "payload",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 操作载荷快照(JSON)
+
+  optional uint32 requester_id = 6 [
+    json_name = "requesterId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 发起人
+
+  optional uint32 approver_id = 7 [
+    json_name = "approverId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 审批人
+
+  optional string status = 8 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 审批状态(PENDING/APPROVED/REJECTED)
+
+  optional string reject_reason = 9 [
+    json_name = "rejectReason",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 驳回原因
+
+  optional string result = 10 [
+    json_name = "result",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行结果(JSON)
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 发起时间
+
+  optional google.protobuf.Timestamp resolved_at = 31 [
+    json_name = "resolvedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 审批时间
+}
+
+message ListApprovalResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Approval items = 2 [json_name = "items"]; // 审批单列表
+}
+
+message GetApprovalRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 审批单ID
+}
+
+message ApproveApprovalRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 审批单ID
+}
+
+message RejectApprovalRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 审批单ID
+
+  optional string reason = 2 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {
+      description: "驳回原因"
+    }
+  ]; // 驳回原因
+}

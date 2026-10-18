@@ -46,15 +46,15 @@ type BuildServiceHTTPServer interface {
 
 func RegisterBuildServiceHTTPServer(s *http.Server, srv BuildServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/builds", _BuildService_List4_HTTP_Handler(srv))
-	r.GET("/admin/v1/builds/{id}", _BuildService_Get4_HTTP_Handler(srv))
+	r.GET("/admin/v1/builds", _BuildService_List5_HTTP_Handler(srv))
+	r.GET("/admin/v1/builds/{id}", _BuildService_Get5_HTTP_Handler(srv))
 	r.POST("/admin/v1/builds", _BuildService_Create1_HTTP_Handler(srv))
 	r.PUT("/admin/v1/builds/{id}", _BuildService_Update2_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/builds/{id}", _BuildService_Delete2_HTTP_Handler(srv))
 	r.POST("/admin/v1/builds/{id}/builds:trigger", _BuildService_Trigger0_HTTP_Handler(srv))
 }
 
-func _BuildService_List4_HTTP_Handler(srv BuildServiceHTTPServer) func(ctx http.Context) error {
+func _BuildService_List5_HTTP_Handler(srv BuildServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _BuildService_List4_HTTP_Handler(srv BuildServiceHTTPServer) func(ctx http.
 	}
 }
 
-func _BuildService_Get4_HTTP_Handler(srv BuildServiceHTTPServer) func(ctx http.Context) error {
+func _BuildService_Get5_HTTP_Handler(srv BuildServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetBuildRequest
 		if err := ctx.BindQuery(&in); err != nil {

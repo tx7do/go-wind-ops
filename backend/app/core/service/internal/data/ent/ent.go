@@ -10,6 +10,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
@@ -122,6 +123,7 @@ func checkColumn(t, c string) error {
 			alert.Table:               alert.ValidColumn,
 			api.Table:                 api.ValidColumn,
 			apiauditlog.Table:         apiauditlog.ValidColumn,
+			approval.Table:            approval.ValidColumn,
 			build.Table:               build.ValidColumn,
 			buildhistory.Table:        buildhistory.ValidColumn,
 			commandrecord.Table:       commandrecord.ValidColumn,
