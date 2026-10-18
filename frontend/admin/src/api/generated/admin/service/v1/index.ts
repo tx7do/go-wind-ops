@@ -4201,6 +4201,18 @@ export interface FileService {
   DeleteAgentFile(
     request: opsservicev1_DeleteAgentFileRequest,
   ): Promise<opsservicev1_DeleteAgentFileResponse>;
+  // 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+  PullAgentFile(
+    request: opsservicev1_PullAgentFileRequest,
+  ): Promise<opsservicev1_PullAgentFileResponse>;
+  // 预备推送(签发浏览器直传 URL)
+  PrepareAgentFilePush(
+    request: opsservicev1_PrepareAgentFilePushRequest,
+  ): Promise<opsservicev1_PrepareAgentFilePushResponse>;
+  // 完成推送(指令 agent 落盘)
+  CompleteAgentFilePush(
+    request: opsservicev1_CompleteAgentFilePushRequest,
+  ): Promise<opsservicev1_CompleteAgentFilePushResponse>;
 }
 
 export function createFileServiceClient(
@@ -4268,6 +4280,30 @@ export function createFileServiceClient(
         service: 'FileService',
         method: 'DeleteAgentFile',
       }) as Promise<opsservicev1_DeleteAgentFileResponse>;
+    },
+    PullAgentFile(request) {
+      const path = `admin/v1/file/pull`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FileService',
+        method: 'PullAgentFile',
+      }) as Promise<opsservicev1_PullAgentFileResponse>;
+    },
+    PrepareAgentFilePush(request) {
+      const path = `admin/v1/file/push-url`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FileService',
+        method: 'PrepareAgentFilePush',
+      }) as Promise<opsservicev1_PrepareAgentFilePushResponse>;
+    },
+    CompleteAgentFilePush(request) {
+      const path = `admin/v1/file/push`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FileService',
+        method: 'CompleteAgentFilePush',
+      }) as Promise<opsservicev1_CompleteAgentFilePushResponse>;
     },
   };
 }
@@ -4360,6 +4396,66 @@ export type opsservicev1_DeleteAgentFileResponse = {
   //
   // Behaviors: OUTPUT_ONLY
   deleted?: string;
+};
+
+export type opsservicev1_PullAgentFileRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_PullAgentFileResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  sha256?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  url?: string;
+};
+
+export type opsservicev1_PrepareAgentFilePushRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_PrepareAgentFilePushResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  objectKey?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  uploadUrl?: string;
+};
+
+export type opsservicev1_CompleteAgentFilePushRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  objectKey?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_CompleteAgentFilePushResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  sha256?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
 };
 
 // 语言管理服务

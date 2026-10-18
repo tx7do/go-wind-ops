@@ -31,5 +31,11 @@
   "emptyDir": "目录为空",
   "pickAgentFirst": "请先选择机器并输入目录",
   "whitelistHint": "路径白名单",
-  "whitelistDesc": "仅允许访问 agent 配置的 AGENT_ALLOWED_DIRS 授权目录内的路径。"
+  "whitelistDesc": "仅允许访问 agent 配置的 AGENT_ALLOWED_DIRS 授权目录内的路径。",
+  "upload": "上传文件",
+  "download": "下载",
+  "pullReady": "已就绪({size} 字节),已打开下载窗口",
+  "pullFailed": "拉取失败(机器离线/路径未授权/超时)",
+  "uploadDone": "已上传({size} 字节)",
+  "uploadFailed": "上传失败"
 }

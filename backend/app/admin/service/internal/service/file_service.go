@@ -53,3 +53,24 @@ func (s *FileService) DeleteAgentFile(ctx context.Context, req *opsV1.DeleteAgen
 	}
 	return s.fileServiceClient.DeleteAgentFile(ctx, req)
 }
+
+func (s *FileService) PullAgentFile(ctx context.Context, req *opsV1.PullAgentFileRequest) (*opsV1.PullAgentFileResponse, error) {
+	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
+		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
+	}
+	return s.fileServiceClient.PullAgentFile(ctx, req)
+}
+
+func (s *FileService) PrepareAgentFilePush(ctx context.Context, req *opsV1.PrepareAgentFilePushRequest) (*opsV1.PrepareAgentFilePushResponse, error) {
+	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
+		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
+	}
+	return s.fileServiceClient.PrepareAgentFilePush(ctx, req)
+}
+
+func (s *FileService) CompleteAgentFilePush(ctx context.Context, req *opsV1.CompleteAgentFilePushRequest) (*opsV1.CompleteAgentFilePushResponse, error) {
+	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" || req.GetObjectKey() == "" {
+		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path/objectKey required")
+	}
+	return s.fileServiceClient.CompleteAgentFilePush(ctx, req)
+}

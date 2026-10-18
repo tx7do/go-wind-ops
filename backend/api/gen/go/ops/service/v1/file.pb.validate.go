@@ -1064,3 +1064,675 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteAgentFileResponseValidationError{}
+
+// Validate checks the field values on PullAgentFileRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PullAgentFileRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PullAgentFileRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PullAgentFileRequestMultiError, or nil if none found.
+func (m *PullAgentFileRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PullAgentFileRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AgentId != nil {
+		// no validation rules for AgentId
+	}
+
+	if m.Path != nil {
+		// no validation rules for Path
+	}
+
+	if len(errors) > 0 {
+		return PullAgentFileRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PullAgentFileRequestMultiError is an error wrapping multiple validation
+// errors returned by PullAgentFileRequest.ValidateAll() if the designated
+// constraints aren't met.
+type PullAgentFileRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PullAgentFileRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PullAgentFileRequestMultiError) AllErrors() []error { return m }
+
+// PullAgentFileRequestValidationError is the validation error returned by
+// PullAgentFileRequest.Validate if the designated constraints aren't met.
+type PullAgentFileRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PullAgentFileRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PullAgentFileRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PullAgentFileRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PullAgentFileRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PullAgentFileRequestValidationError) ErrorName() string {
+	return "PullAgentFileRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PullAgentFileRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPullAgentFileRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PullAgentFileRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PullAgentFileRequestValidationError{}
+
+// Validate checks the field values on PullAgentFileResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PullAgentFileResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PullAgentFileResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PullAgentFileResponseMultiError, or nil if none found.
+func (m *PullAgentFileResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PullAgentFileResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Url != nil {
+		// no validation rules for Url
+	}
+
+	if m.Size != nil {
+		// no validation rules for Size
+	}
+
+	if m.Sha256 != nil {
+		// no validation rules for Sha256
+	}
+
+	if len(errors) > 0 {
+		return PullAgentFileResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PullAgentFileResponseMultiError is an error wrapping multiple validation
+// errors returned by PullAgentFileResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PullAgentFileResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PullAgentFileResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PullAgentFileResponseMultiError) AllErrors() []error { return m }
+
+// PullAgentFileResponseValidationError is the validation error returned by
+// PullAgentFileResponse.Validate if the designated constraints aren't met.
+type PullAgentFileResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PullAgentFileResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PullAgentFileResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PullAgentFileResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PullAgentFileResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PullAgentFileResponseValidationError) ErrorName() string {
+	return "PullAgentFileResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PullAgentFileResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPullAgentFileResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PullAgentFileResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PullAgentFileResponseValidationError{}
+
+// Validate checks the field values on PrepareAgentFilePushRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PrepareAgentFilePushRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PrepareAgentFilePushRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PrepareAgentFilePushRequestMultiError, or nil if none found.
+func (m *PrepareAgentFilePushRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PrepareAgentFilePushRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AgentId != nil {
+		// no validation rules for AgentId
+	}
+
+	if m.Path != nil {
+		// no validation rules for Path
+	}
+
+	if len(errors) > 0 {
+		return PrepareAgentFilePushRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PrepareAgentFilePushRequestMultiError is an error wrapping multiple
+// validation errors returned by PrepareAgentFilePushRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PrepareAgentFilePushRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PrepareAgentFilePushRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PrepareAgentFilePushRequestMultiError) AllErrors() []error { return m }
+
+// PrepareAgentFilePushRequestValidationError is the validation error returned
+// by PrepareAgentFilePushRequest.Validate if the designated constraints
+// aren't met.
+type PrepareAgentFilePushRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PrepareAgentFilePushRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PrepareAgentFilePushRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PrepareAgentFilePushRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PrepareAgentFilePushRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PrepareAgentFilePushRequestValidationError) ErrorName() string {
+	return "PrepareAgentFilePushRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PrepareAgentFilePushRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPrepareAgentFilePushRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PrepareAgentFilePushRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PrepareAgentFilePushRequestValidationError{}
+
+// Validate checks the field values on PrepareAgentFilePushResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PrepareAgentFilePushResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PrepareAgentFilePushResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PrepareAgentFilePushResponseMultiError, or nil if none found.
+func (m *PrepareAgentFilePushResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PrepareAgentFilePushResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UploadUrl != nil {
+		// no validation rules for UploadUrl
+	}
+
+	if m.ObjectKey != nil {
+		// no validation rules for ObjectKey
+	}
+
+	if len(errors) > 0 {
+		return PrepareAgentFilePushResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PrepareAgentFilePushResponseMultiError is an error wrapping multiple
+// validation errors returned by PrepareAgentFilePushResponse.ValidateAll() if
+// the designated constraints aren't met.
+type PrepareAgentFilePushResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PrepareAgentFilePushResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PrepareAgentFilePushResponseMultiError) AllErrors() []error { return m }
+
+// PrepareAgentFilePushResponseValidationError is the validation error returned
+// by PrepareAgentFilePushResponse.Validate if the designated constraints
+// aren't met.
+type PrepareAgentFilePushResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PrepareAgentFilePushResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PrepareAgentFilePushResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PrepareAgentFilePushResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PrepareAgentFilePushResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PrepareAgentFilePushResponseValidationError) ErrorName() string {
+	return "PrepareAgentFilePushResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PrepareAgentFilePushResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPrepareAgentFilePushResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PrepareAgentFilePushResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PrepareAgentFilePushResponseValidationError{}
+
+// Validate checks the field values on CompleteAgentFilePushRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CompleteAgentFilePushRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteAgentFilePushRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CompleteAgentFilePushRequestMultiError, or nil if none found.
+func (m *CompleteAgentFilePushRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteAgentFilePushRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AgentId != nil {
+		// no validation rules for AgentId
+	}
+
+	if m.Path != nil {
+		// no validation rules for Path
+	}
+
+	if m.ObjectKey != nil {
+		// no validation rules for ObjectKey
+	}
+
+	if len(errors) > 0 {
+		return CompleteAgentFilePushRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteAgentFilePushRequestMultiError is an error wrapping multiple
+// validation errors returned by CompleteAgentFilePushRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CompleteAgentFilePushRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteAgentFilePushRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteAgentFilePushRequestMultiError) AllErrors() []error { return m }
+
+// CompleteAgentFilePushRequestValidationError is the validation error returned
+// by CompleteAgentFilePushRequest.Validate if the designated constraints
+// aren't met.
+type CompleteAgentFilePushRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteAgentFilePushRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteAgentFilePushRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteAgentFilePushRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteAgentFilePushRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteAgentFilePushRequestValidationError) ErrorName() string {
+	return "CompleteAgentFilePushRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteAgentFilePushRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteAgentFilePushRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteAgentFilePushRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteAgentFilePushRequestValidationError{}
+
+// Validate checks the field values on CompleteAgentFilePushResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CompleteAgentFilePushResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteAgentFilePushResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CompleteAgentFilePushResponseMultiError, or nil if none found.
+func (m *CompleteAgentFilePushResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteAgentFilePushResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Size != nil {
+		// no validation rules for Size
+	}
+
+	if m.Sha256 != nil {
+		// no validation rules for Sha256
+	}
+
+	if len(errors) > 0 {
+		return CompleteAgentFilePushResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteAgentFilePushResponseMultiError is an error wrapping multiple
+// validation errors returned by CompleteAgentFilePushResponse.ValidateAll()
+// if the designated constraints aren't met.
+type CompleteAgentFilePushResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteAgentFilePushResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteAgentFilePushResponseMultiError) AllErrors() []error { return m }
+
+// CompleteAgentFilePushResponseValidationError is the validation error
+// returned by CompleteAgentFilePushResponse.Validate if the designated
+// constraints aren't met.
+type CompleteAgentFilePushResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteAgentFilePushResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteAgentFilePushResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteAgentFilePushResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteAgentFilePushResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteAgentFilePushResponseValidationError) ErrorName() string {
+	return "CompleteAgentFilePushResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteAgentFilePushResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteAgentFilePushResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteAgentFilePushResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteAgentFilePushResponseValidationError{}

@@ -18,6 +18,15 @@ service FileService {
 
   // 删除 agent 上文件或目录
   rpc DeleteAgentFile (DeleteAgentFileRequest) returns (DeleteAgentFileResponse) {}
+
+  // 拉取大文件:agent 经预签名 URL 上传到对象存储,返回浏览器下载 URL
+  rpc PullAgentFile (PullAgentFileRequest) returns (PullAgentFileResponse) {}
+
+  // 预备推送:签发浏览器直传对象存储的预签名 URL
+  rpc PrepareAgentFilePush (PrepareAgentFilePushRequest) returns (PrepareAgentFilePushResponse) {}
+
+  // 完成推送:指令 agent 从对象存储下载写入目标路径
+  rpc CompleteAgentFilePush (CompleteAgentFilePushRequest) returns (CompleteAgentFilePushResponse) {}
 }
 
 // 目录条目
@@ -142,4 +151,86 @@ message DeleteAgentFileResponse {
     json_name = "deleted",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 已删除路径
+}
+
+message PullAgentFileRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 文件绝对路径
+}
+
+message PullAgentFileResponse {
+  optional string url = 1 [
+    json_name = "url",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 浏览器下载预签名 URL
+
+  optional int64 size = 2 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 文件字节
+
+  optional string sha256 = 3 [
+    json_name = "sha256",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 校验和
+}
+
+message PrepareAgentFilePushRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标绝对路径
+}
+
+message PrepareAgentFilePushResponse {
+  optional string upload_url = 1 [
+    json_name = "uploadUrl",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 浏览器直传预签名 URL(PUT)
+
+  optional string object_key = 2 [
+    json_name = "objectKey",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 对象键(Complete 时回传)
+}
+
+message CompleteAgentFilePushRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标绝对路径
+
+  optional string object_key = 3 [
+    json_name = "objectKey",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 对象键
+}
+
+message CompleteAgentFilePushResponse {
+  optional int64 size = 1 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 写入字节
+
+  optional string sha256 = 2 [
+    json_name = "sha256",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 校验和
 }

@@ -26,39 +26,54 @@ var File_admin_service_v1_i_file_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_file_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_file.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x19ops/service/v1/file.proto2\x90\x04\n" +
+	"\x1dadmin/service/v1/i_file.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x19ops/service/v1/file.proto2\xbd\a\n" +
 	"\vFileService\x12|\n" +
 	"\x0eListAgentFiles\x12%.ops.service.v1.ListAgentFilesRequest\x1a&.ops.service.v1.ListAgentFilesResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/admin/v1/file/list\x12y\n" +
 	"\rReadAgentFile\x12$.ops.service.v1.ReadAgentFileRequest\x1a%.ops.service.v1.ReadAgentFileResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/admin/v1/file/read\x12\x80\x01\n" +
 	"\x0eWriteAgentFile\x12%.ops.service.v1.WriteAgentFileRequest\x1a&.ops.service.v1.WriteAgentFileResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/admin/v1/file/write\x12\x84\x01\n" +
-	"\x0fDeleteAgentFile\x12&.ops.service.v1.DeleteAgentFileRequest\x1a'.ops.service.v1.DeleteAgentFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/file/deleteB\xb5\x01\n" +
+	"\x0fDeleteAgentFile\x12&.ops.service.v1.DeleteAgentFileRequest\x1a'.ops.service.v1.DeleteAgentFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/file/delete\x12|\n" +
+	"\rPullAgentFile\x12$.ops.service.v1.PullAgentFileRequest\x1a%.ops.service.v1.PullAgentFileResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/admin/v1/file/pull\x12\x95\x01\n" +
+	"\x14PrepareAgentFilePush\x12+.ops.service.v1.PrepareAgentFilePushRequest\x1a,.ops.service.v1.PrepareAgentFilePushResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/admin/v1/file/push-url\x12\x94\x01\n" +
+	"\x15CompleteAgentFilePush\x12,.ops.service.v1.CompleteAgentFilePushRequest\x1a-.ops.service.v1.CompleteAgentFilePushResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/admin/v1/file/pushB\xb5\x01\n" +
 	"\x14com.admin.service.v1B\n" +
 	"IFileProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_file_proto_goTypes = []any{
-	(*v1.ListAgentFilesRequest)(nil),   // 0: ops.service.v1.ListAgentFilesRequest
-	(*v1.ReadAgentFileRequest)(nil),    // 1: ops.service.v1.ReadAgentFileRequest
-	(*v1.WriteAgentFileRequest)(nil),   // 2: ops.service.v1.WriteAgentFileRequest
-	(*v1.DeleteAgentFileRequest)(nil),  // 3: ops.service.v1.DeleteAgentFileRequest
-	(*v1.ListAgentFilesResponse)(nil),  // 4: ops.service.v1.ListAgentFilesResponse
-	(*v1.ReadAgentFileResponse)(nil),   // 5: ops.service.v1.ReadAgentFileResponse
-	(*v1.WriteAgentFileResponse)(nil),  // 6: ops.service.v1.WriteAgentFileResponse
-	(*v1.DeleteAgentFileResponse)(nil), // 7: ops.service.v1.DeleteAgentFileResponse
+	(*v1.ListAgentFilesRequest)(nil),         // 0: ops.service.v1.ListAgentFilesRequest
+	(*v1.ReadAgentFileRequest)(nil),          // 1: ops.service.v1.ReadAgentFileRequest
+	(*v1.WriteAgentFileRequest)(nil),         // 2: ops.service.v1.WriteAgentFileRequest
+	(*v1.DeleteAgentFileRequest)(nil),        // 3: ops.service.v1.DeleteAgentFileRequest
+	(*v1.PullAgentFileRequest)(nil),          // 4: ops.service.v1.PullAgentFileRequest
+	(*v1.PrepareAgentFilePushRequest)(nil),   // 5: ops.service.v1.PrepareAgentFilePushRequest
+	(*v1.CompleteAgentFilePushRequest)(nil),  // 6: ops.service.v1.CompleteAgentFilePushRequest
+	(*v1.ListAgentFilesResponse)(nil),        // 7: ops.service.v1.ListAgentFilesResponse
+	(*v1.ReadAgentFileResponse)(nil),         // 8: ops.service.v1.ReadAgentFileResponse
+	(*v1.WriteAgentFileResponse)(nil),        // 9: ops.service.v1.WriteAgentFileResponse
+	(*v1.DeleteAgentFileResponse)(nil),       // 10: ops.service.v1.DeleteAgentFileResponse
+	(*v1.PullAgentFileResponse)(nil),         // 11: ops.service.v1.PullAgentFileResponse
+	(*v1.PrepareAgentFilePushResponse)(nil),  // 12: ops.service.v1.PrepareAgentFilePushResponse
+	(*v1.CompleteAgentFilePushResponse)(nil), // 13: ops.service.v1.CompleteAgentFilePushResponse
 }
 var file_admin_service_v1_i_file_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.FileService.ListAgentFiles:input_type -> ops.service.v1.ListAgentFilesRequest
-	1, // 1: admin.service.v1.FileService.ReadAgentFile:input_type -> ops.service.v1.ReadAgentFileRequest
-	2, // 2: admin.service.v1.FileService.WriteAgentFile:input_type -> ops.service.v1.WriteAgentFileRequest
-	3, // 3: admin.service.v1.FileService.DeleteAgentFile:input_type -> ops.service.v1.DeleteAgentFileRequest
-	4, // 4: admin.service.v1.FileService.ListAgentFiles:output_type -> ops.service.v1.ListAgentFilesResponse
-	5, // 5: admin.service.v1.FileService.ReadAgentFile:output_type -> ops.service.v1.ReadAgentFileResponse
-	6, // 6: admin.service.v1.FileService.WriteAgentFile:output_type -> ops.service.v1.WriteAgentFileResponse
-	7, // 7: admin.service.v1.FileService.DeleteAgentFile:output_type -> ops.service.v1.DeleteAgentFileResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.FileService.ListAgentFiles:input_type -> ops.service.v1.ListAgentFilesRequest
+	1,  // 1: admin.service.v1.FileService.ReadAgentFile:input_type -> ops.service.v1.ReadAgentFileRequest
+	2,  // 2: admin.service.v1.FileService.WriteAgentFile:input_type -> ops.service.v1.WriteAgentFileRequest
+	3,  // 3: admin.service.v1.FileService.DeleteAgentFile:input_type -> ops.service.v1.DeleteAgentFileRequest
+	4,  // 4: admin.service.v1.FileService.PullAgentFile:input_type -> ops.service.v1.PullAgentFileRequest
+	5,  // 5: admin.service.v1.FileService.PrepareAgentFilePush:input_type -> ops.service.v1.PrepareAgentFilePushRequest
+	6,  // 6: admin.service.v1.FileService.CompleteAgentFilePush:input_type -> ops.service.v1.CompleteAgentFilePushRequest
+	7,  // 7: admin.service.v1.FileService.ListAgentFiles:output_type -> ops.service.v1.ListAgentFilesResponse
+	8,  // 8: admin.service.v1.FileService.ReadAgentFile:output_type -> ops.service.v1.ReadAgentFileResponse
+	9,  // 9: admin.service.v1.FileService.WriteAgentFile:output_type -> ops.service.v1.WriteAgentFileResponse
+	10, // 10: admin.service.v1.FileService.DeleteAgentFile:output_type -> ops.service.v1.DeleteAgentFileResponse
+	11, // 11: admin.service.v1.FileService.PullAgentFile:output_type -> ops.service.v1.PullAgentFileResponse
+	12, // 12: admin.service.v1.FileService.PrepareAgentFilePush:output_type -> ops.service.v1.PrepareAgentFilePushResponse
+	13, // 13: admin.service.v1.FileService.CompleteAgentFilePush:output_type -> ops.service.v1.CompleteAgentFilePushResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_file_proto_init() }

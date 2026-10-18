@@ -295,6 +295,8 @@ const (
 	// 脚本文件注册为 plugin_<文件名主干> 的自定义 action。
 	CommandActionPluginPrefix CommandAction = "plugin_"
 
+	CommandActionFilePull  CommandAction = "file_pull"  // agent 上传本地文件到对象存储
+	CommandActionFilePush  CommandAction = "file_push"  // agent 从对象存储下载到本地路径
 	CommandActionFileList   CommandAction = "file_list"
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
@@ -393,4 +395,20 @@ type PluginExecResult struct {
 	ExitCode int    `json:"exit_code"`
 	Output   string `json:"output"`
 	Duration string `json:"duration,omitempty"`
+}
+
+// ============================================================================
+// 文件管理大文件通道(经对象存储预签名 URL,agent 拉取/推送)
+// ============================================================================
+
+// FilePullPayload file_pull 载荷:agent 把本地文件流式上传到预签名 URL。
+type FilePullPayload struct {
+	Path string `json:"path"`
+	Url  string `json:"url"`
+}
+
+// FilePushPayload file_push 载荷:agent 从预签名 URL 下载写入本地路径。
+type FilePushPayload struct {
+	Path string `json:"path"`
+	Url  string `json:"url"`
 }

@@ -20,10 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	FileService_ListAgentFiles_FullMethodName  = "/admin.service.v1.FileService/ListAgentFiles"
-	FileService_ReadAgentFile_FullMethodName   = "/admin.service.v1.FileService/ReadAgentFile"
-	FileService_WriteAgentFile_FullMethodName  = "/admin.service.v1.FileService/WriteAgentFile"
-	FileService_DeleteAgentFile_FullMethodName = "/admin.service.v1.FileService/DeleteAgentFile"
+	FileService_ListAgentFiles_FullMethodName        = "/admin.service.v1.FileService/ListAgentFiles"
+	FileService_ReadAgentFile_FullMethodName         = "/admin.service.v1.FileService/ReadAgentFile"
+	FileService_WriteAgentFile_FullMethodName        = "/admin.service.v1.FileService/WriteAgentFile"
+	FileService_DeleteAgentFile_FullMethodName       = "/admin.service.v1.FileService/DeleteAgentFile"
+	FileService_PullAgentFile_FullMethodName         = "/admin.service.v1.FileService/PullAgentFile"
+	FileService_PrepareAgentFilePush_FullMethodName  = "/admin.service.v1.FileService/PrepareAgentFilePush"
+	FileService_CompleteAgentFilePush_FullMethodName = "/admin.service.v1.FileService/CompleteAgentFilePush"
 )
 
 // FileServiceClient is the client API for FileService service.
@@ -40,6 +43,12 @@ type FileServiceClient interface {
 	WriteAgentFile(ctx context.Context, in *v1.WriteAgentFileRequest, opts ...grpc.CallOption) (*v1.WriteAgentFileResponse, error)
 	// 删除文件或目录
 	DeleteAgentFile(ctx context.Context, in *v1.DeleteAgentFileRequest, opts ...grpc.CallOption) (*v1.DeleteAgentFileResponse, error)
+	// 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+	PullAgentFile(ctx context.Context, in *v1.PullAgentFileRequest, opts ...grpc.CallOption) (*v1.PullAgentFileResponse, error)
+	// 预备推送(签发浏览器直传 URL)
+	PrepareAgentFilePush(ctx context.Context, in *v1.PrepareAgentFilePushRequest, opts ...grpc.CallOption) (*v1.PrepareAgentFilePushResponse, error)
+	// 完成推送(指令 agent 落盘)
+	CompleteAgentFilePush(ctx context.Context, in *v1.CompleteAgentFilePushRequest, opts ...grpc.CallOption) (*v1.CompleteAgentFilePushResponse, error)
 }
 
 type fileServiceClient struct {
@@ -90,6 +99,36 @@ func (c *fileServiceClient) DeleteAgentFile(ctx context.Context, in *v1.DeleteAg
 	return out, nil
 }
 
+func (c *fileServiceClient) PullAgentFile(ctx context.Context, in *v1.PullAgentFileRequest, opts ...grpc.CallOption) (*v1.PullAgentFileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.PullAgentFileResponse)
+	err := c.cc.Invoke(ctx, FileService_PullAgentFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileServiceClient) PrepareAgentFilePush(ctx context.Context, in *v1.PrepareAgentFilePushRequest, opts ...grpc.CallOption) (*v1.PrepareAgentFilePushResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.PrepareAgentFilePushResponse)
+	err := c.cc.Invoke(ctx, FileService_PrepareAgentFilePush_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileServiceClient) CompleteAgentFilePush(ctx context.Context, in *v1.CompleteAgentFilePushRequest, opts ...grpc.CallOption) (*v1.CompleteAgentFilePushResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.CompleteAgentFilePushResponse)
+	err := c.cc.Invoke(ctx, FileService_CompleteAgentFilePush_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileServiceServer is the server API for FileService service.
 // All implementations must embed UnimplementedFileServiceServer
 // for forward compatibility.
@@ -104,6 +143,12 @@ type FileServiceServer interface {
 	WriteAgentFile(context.Context, *v1.WriteAgentFileRequest) (*v1.WriteAgentFileResponse, error)
 	// 删除文件或目录
 	DeleteAgentFile(context.Context, *v1.DeleteAgentFileRequest) (*v1.DeleteAgentFileResponse, error)
+	// 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+	PullAgentFile(context.Context, *v1.PullAgentFileRequest) (*v1.PullAgentFileResponse, error)
+	// 预备推送(签发浏览器直传 URL)
+	PrepareAgentFilePush(context.Context, *v1.PrepareAgentFilePushRequest) (*v1.PrepareAgentFilePushResponse, error)
+	// 完成推送(指令 agent 落盘)
+	CompleteAgentFilePush(context.Context, *v1.CompleteAgentFilePushRequest) (*v1.CompleteAgentFilePushResponse, error)
 	mustEmbedUnimplementedFileServiceServer()
 }
 
@@ -125,6 +170,15 @@ func (UnimplementedFileServiceServer) WriteAgentFile(context.Context, *v1.WriteA
 }
 func (UnimplementedFileServiceServer) DeleteAgentFile(context.Context, *v1.DeleteAgentFileRequest) (*v1.DeleteAgentFileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteAgentFile not implemented")
+}
+func (UnimplementedFileServiceServer) PullAgentFile(context.Context, *v1.PullAgentFileRequest) (*v1.PullAgentFileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PullAgentFile not implemented")
+}
+func (UnimplementedFileServiceServer) PrepareAgentFilePush(context.Context, *v1.PrepareAgentFilePushRequest) (*v1.PrepareAgentFilePushResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PrepareAgentFilePush not implemented")
+}
+func (UnimplementedFileServiceServer) CompleteAgentFilePush(context.Context, *v1.CompleteAgentFilePushRequest) (*v1.CompleteAgentFilePushResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompleteAgentFilePush not implemented")
 }
 func (UnimplementedFileServiceServer) mustEmbedUnimplementedFileServiceServer() {}
 func (UnimplementedFileServiceServer) testEmbeddedByValue()                     {}
@@ -219,6 +273,60 @@ func _FileService_DeleteAgentFile_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileService_PullAgentFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PullAgentFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).PullAgentFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileService_PullAgentFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).PullAgentFile(ctx, req.(*v1.PullAgentFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileService_PrepareAgentFilePush_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PrepareAgentFilePushRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).PrepareAgentFilePush(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileService_PrepareAgentFilePush_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).PrepareAgentFilePush(ctx, req.(*v1.PrepareAgentFilePushRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileService_CompleteAgentFilePush_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.CompleteAgentFilePushRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).CompleteAgentFilePush(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileService_CompleteAgentFilePush_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).CompleteAgentFilePush(ctx, req.(*v1.CompleteAgentFilePushRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileService_ServiceDesc is the grpc.ServiceDesc for FileService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +349,18 @@ var FileService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAgentFile",
 			Handler:    _FileService_DeleteAgentFile_Handler,
+		},
+		{
+			MethodName: "PullAgentFile",
+			Handler:    _FileService_PullAgentFile_Handler,
+		},
+		{
+			MethodName: "PrepareAgentFilePush",
+			Handler:    _FileService_PrepareAgentFilePush_Handler,
+		},
+		{
+			MethodName: "CompleteAgentFilePush",
+			Handler:    _FileService_CompleteAgentFilePush_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

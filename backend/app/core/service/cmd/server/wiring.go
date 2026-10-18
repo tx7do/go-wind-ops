@@ -200,7 +200,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	alertService := service.NewAlertService(ctx, alertRepo)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)
 	approvalService := service.NewApprovalService(ctx, approvalRepo, agentService)
-	fileService := service.NewFileService(ctx, agentService, agentNodeRepo)
+	fileService := service.NewFileService(ctx, agentService, agentNodeRepo, minIOClient)
 	terminalService := service.NewTerminalService(ctx, agentService, agentNodeRepo)
 	pipelineService := service.NewPipelineService(ctx, pipelineRepo, pipelineRunRepo, buildHistoryRepo, commandRecordRepo, distributionRecordRepo, buildService, scriptService, distributionService)
 	apiKeyService := service.NewApiKeyService(ctx, apiKeyRepo)

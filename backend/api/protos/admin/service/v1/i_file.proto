@@ -37,4 +37,28 @@ service FileService {
       body: "*"
     };
   }
+
+  // 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+  rpc PullAgentFile (ops.service.v1.PullAgentFileRequest) returns (ops.service.v1.PullAgentFileResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/pull"
+      body: "*"
+    };
+  }
+
+  // 预备推送(签发浏览器直传 URL)
+  rpc PrepareAgentFilePush (ops.service.v1.PrepareAgentFilePushRequest) returns (ops.service.v1.PrepareAgentFilePushResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/push-url"
+      body: "*"
+    };
+  }
+
+  // 完成推送(指令 agent 落盘)
+  rpc CompleteAgentFilePush (ops.service.v1.CompleteAgentFilePushRequest) returns (ops.service.v1.CompleteAgentFilePushResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/push"
+      body: "*"
+    };
+  }
 }

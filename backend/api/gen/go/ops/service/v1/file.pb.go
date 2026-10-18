@@ -515,6 +515,334 @@ func (x *DeleteAgentFileResponse) GetDeleted() string {
 	return ""
 }
 
+type PullAgentFileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AgentId       *string                `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 机器唯一标识
+	Path          *string                `protobuf:"bytes,2,opt,name=path,proto3,oneof" json:"path,omitempty"`                      // 文件绝对路径
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PullAgentFileRequest) Reset() {
+	*x = PullAgentFileRequest{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PullAgentFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PullAgentFileRequest) ProtoMessage() {}
+
+func (x *PullAgentFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PullAgentFileRequest.ProtoReflect.Descriptor instead.
+func (*PullAgentFileRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *PullAgentFileRequest) GetAgentId() string {
+	if x != nil && x.AgentId != nil {
+		return *x.AgentId
+	}
+	return ""
+}
+
+func (x *PullAgentFileRequest) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
+	}
+	return ""
+}
+
+type PullAgentFileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           *string                `protobuf:"bytes,1,opt,name=url,proto3,oneof" json:"url,omitempty"`       // 浏览器下载预签名 URL
+	Size          *int64                 `protobuf:"varint,2,opt,name=size,proto3,oneof" json:"size,omitempty"`    // 文件字节
+	Sha256        *string                `protobuf:"bytes,3,opt,name=sha256,proto3,oneof" json:"sha256,omitempty"` // 校验和
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PullAgentFileResponse) Reset() {
+	*x = PullAgentFileResponse{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PullAgentFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PullAgentFileResponse) ProtoMessage() {}
+
+func (x *PullAgentFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PullAgentFileResponse.ProtoReflect.Descriptor instead.
+func (*PullAgentFileResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *PullAgentFileResponse) GetUrl() string {
+	if x != nil && x.Url != nil {
+		return *x.Url
+	}
+	return ""
+}
+
+func (x *PullAgentFileResponse) GetSize() int64 {
+	if x != nil && x.Size != nil {
+		return *x.Size
+	}
+	return 0
+}
+
+func (x *PullAgentFileResponse) GetSha256() string {
+	if x != nil && x.Sha256 != nil {
+		return *x.Sha256
+	}
+	return ""
+}
+
+type PrepareAgentFilePushRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AgentId       *string                `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 机器唯一标识
+	Path          *string                `protobuf:"bytes,2,opt,name=path,proto3,oneof" json:"path,omitempty"`                      // 目标绝对路径
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PrepareAgentFilePushRequest) Reset() {
+	*x = PrepareAgentFilePushRequest{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PrepareAgentFilePushRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PrepareAgentFilePushRequest) ProtoMessage() {}
+
+func (x *PrepareAgentFilePushRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PrepareAgentFilePushRequest.ProtoReflect.Descriptor instead.
+func (*PrepareAgentFilePushRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PrepareAgentFilePushRequest) GetAgentId() string {
+	if x != nil && x.AgentId != nil {
+		return *x.AgentId
+	}
+	return ""
+}
+
+func (x *PrepareAgentFilePushRequest) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
+	}
+	return ""
+}
+
+type PrepareAgentFilePushResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadUrl     *string                `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"` // 浏览器直传预签名 URL(PUT)
+	ObjectKey     *string                `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key,omitempty"` // 对象键(Complete 时回传)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PrepareAgentFilePushResponse) Reset() {
+	*x = PrepareAgentFilePushResponse{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PrepareAgentFilePushResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PrepareAgentFilePushResponse) ProtoMessage() {}
+
+func (x *PrepareAgentFilePushResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PrepareAgentFilePushResponse.ProtoReflect.Descriptor instead.
+func (*PrepareAgentFilePushResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *PrepareAgentFilePushResponse) GetUploadUrl() string {
+	if x != nil && x.UploadUrl != nil {
+		return *x.UploadUrl
+	}
+	return ""
+}
+
+func (x *PrepareAgentFilePushResponse) GetObjectKey() string {
+	if x != nil && x.ObjectKey != nil {
+		return *x.ObjectKey
+	}
+	return ""
+}
+
+type CompleteAgentFilePushRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AgentId       *string                `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`       // 机器唯一标识
+	Path          *string                `protobuf:"bytes,2,opt,name=path,proto3,oneof" json:"path,omitempty"`                            // 目标绝对路径
+	ObjectKey     *string                `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key,omitempty"` // 对象键
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteAgentFilePushRequest) Reset() {
+	*x = CompleteAgentFilePushRequest{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteAgentFilePushRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteAgentFilePushRequest) ProtoMessage() {}
+
+func (x *CompleteAgentFilePushRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteAgentFilePushRequest.ProtoReflect.Descriptor instead.
+func (*CompleteAgentFilePushRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CompleteAgentFilePushRequest) GetAgentId() string {
+	if x != nil && x.AgentId != nil {
+		return *x.AgentId
+	}
+	return ""
+}
+
+func (x *CompleteAgentFilePushRequest) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
+	}
+	return ""
+}
+
+func (x *CompleteAgentFilePushRequest) GetObjectKey() string {
+	if x != nil && x.ObjectKey != nil {
+		return *x.ObjectKey
+	}
+	return ""
+}
+
+type CompleteAgentFilePushResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Size          *int64                 `protobuf:"varint,1,opt,name=size,proto3,oneof" json:"size,omitempty"`    // 写入字节
+	Sha256        *string                `protobuf:"bytes,2,opt,name=sha256,proto3,oneof" json:"sha256,omitempty"` // 校验和
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteAgentFilePushResponse) Reset() {
+	*x = CompleteAgentFilePushResponse{}
+	mi := &file_ops_service_v1_file_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteAgentFilePushResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteAgentFilePushResponse) ProtoMessage() {}
+
+func (x *CompleteAgentFilePushResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_file_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteAgentFilePushResponse.ProtoReflect.Descriptor instead.
+func (*CompleteAgentFilePushResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_file_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CompleteAgentFilePushResponse) GetSize() int64 {
+	if x != nil && x.Size != nil {
+		return *x.Size
+	}
+	return 0
+}
+
+func (x *CompleteAgentFilePushResponse) GetSha256() string {
+	if x != nil && x.Sha256 != nil {
+		return *x.Sha256
+	}
+	return ""
+}
+
 var File_ops_service_v1_file_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_file_proto_rawDesc = "" +
@@ -571,12 +899,52 @@ const file_ops_service_v1_file_proto_rawDesc = "" +
 	"\x17DeleteAgentFileResponse\x12\"\n" +
 	"\adeleted\x18\x01 \x01(\tB\x03\xe0A\x03H\x00R\adeleted\x88\x01\x01B\n" +
 	"\n" +
-	"\b_deleted2\x99\x03\n" +
+	"\b_deleted\"o\n" +
+	"\x14PullAgentFileRequest\x12#\n" +
+	"\bagent_id\x18\x01 \x01(\tB\x03\xe0A\x02H\x00R\aagentId\x88\x01\x01\x12\x1c\n" +
+	"\x04path\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04path\x88\x01\x01B\v\n" +
+	"\t_agent_idB\a\n" +
+	"\x05_path\"\x8f\x01\n" +
+	"\x15PullAgentFileResponse\x12\x1a\n" +
+	"\x03url\x18\x01 \x01(\tB\x03\xe0A\x03H\x00R\x03url\x88\x01\x01\x12\x1c\n" +
+	"\x04size\x18\x02 \x01(\x03B\x03\xe0A\x03H\x01R\x04size\x88\x01\x01\x12 \n" +
+	"\x06sha256\x18\x03 \x01(\tB\x03\xe0A\x03H\x02R\x06sha256\x88\x01\x01B\x06\n" +
+	"\x04_urlB\a\n" +
+	"\x05_sizeB\t\n" +
+	"\a_sha256\"v\n" +
+	"\x1bPrepareAgentFilePushRequest\x12#\n" +
+	"\bagent_id\x18\x01 \x01(\tB\x03\xe0A\x02H\x00R\aagentId\x88\x01\x01\x12\x1c\n" +
+	"\x04path\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04path\x88\x01\x01B\v\n" +
+	"\t_agent_idB\a\n" +
+	"\x05_path\"\x8e\x01\n" +
+	"\x1cPrepareAgentFilePushResponse\x12'\n" +
+	"\n" +
+	"upload_url\x18\x01 \x01(\tB\x03\xe0A\x03H\x00R\tuploadUrl\x88\x01\x01\x12'\n" +
+	"\n" +
+	"object_key\x18\x02 \x01(\tB\x03\xe0A\x03H\x01R\tobjectKey\x88\x01\x01B\r\n" +
+	"\v_upload_urlB\r\n" +
+	"\v_object_key\"\xaf\x01\n" +
+	"\x1cCompleteAgentFilePushRequest\x12#\n" +
+	"\bagent_id\x18\x01 \x01(\tB\x03\xe0A\x02H\x00R\aagentId\x88\x01\x01\x12\x1c\n" +
+	"\x04path\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04path\x88\x01\x01\x12'\n" +
+	"\n" +
+	"object_key\x18\x03 \x01(\tB\x03\xe0A\x02H\x02R\tobjectKey\x88\x01\x01B\v\n" +
+	"\t_agent_idB\a\n" +
+	"\x05_pathB\r\n" +
+	"\v_object_key\"s\n" +
+	"\x1dCompleteAgentFilePushResponse\x12\x1c\n" +
+	"\x04size\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x04size\x88\x01\x01\x12 \n" +
+	"\x06sha256\x18\x02 \x01(\tB\x03\xe0A\x03H\x01R\x06sha256\x88\x01\x01B\a\n" +
+	"\x05_sizeB\t\n" +
+	"\a_sha2562\xe6\x05\n" +
 	"\vFileService\x12a\n" +
 	"\x0eListAgentFiles\x12%.ops.service.v1.ListAgentFilesRequest\x1a&.ops.service.v1.ListAgentFilesResponse\"\x00\x12^\n" +
 	"\rReadAgentFile\x12$.ops.service.v1.ReadAgentFileRequest\x1a%.ops.service.v1.ReadAgentFileResponse\"\x00\x12a\n" +
 	"\x0eWriteAgentFile\x12%.ops.service.v1.WriteAgentFileRequest\x1a&.ops.service.v1.WriteAgentFileResponse\"\x00\x12d\n" +
-	"\x0fDeleteAgentFile\x12&.ops.service.v1.DeleteAgentFileRequest\x1a'.ops.service.v1.DeleteAgentFileResponse\"\x00B\xa6\x01\n" +
+	"\x0fDeleteAgentFile\x12&.ops.service.v1.DeleteAgentFileRequest\x1a'.ops.service.v1.DeleteAgentFileResponse\"\x00\x12^\n" +
+	"\rPullAgentFile\x12$.ops.service.v1.PullAgentFileRequest\x1a%.ops.service.v1.PullAgentFileResponse\"\x00\x12s\n" +
+	"\x14PrepareAgentFilePush\x12+.ops.service.v1.PrepareAgentFilePushRequest\x1a,.ops.service.v1.PrepareAgentFilePushResponse\"\x00\x12v\n" +
+	"\x15CompleteAgentFilePush\x12,.ops.service.v1.CompleteAgentFilePushRequest\x1a-.ops.service.v1.CompleteAgentFilePushResponse\"\x00B\xa6\x01\n" +
 	"\x12com.ops.service.v1B\tFileProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -591,33 +959,45 @@ func file_ops_service_v1_file_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_file_proto_rawDescData
 }
 
-var file_ops_service_v1_file_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_ops_service_v1_file_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_ops_service_v1_file_proto_goTypes = []any{
-	(*AgentFileEntry)(nil),          // 0: ops.service.v1.AgentFileEntry
-	(*ListAgentFilesRequest)(nil),   // 1: ops.service.v1.ListAgentFilesRequest
-	(*ListAgentFilesResponse)(nil),  // 2: ops.service.v1.ListAgentFilesResponse
-	(*ReadAgentFileRequest)(nil),    // 3: ops.service.v1.ReadAgentFileRequest
-	(*ReadAgentFileResponse)(nil),   // 4: ops.service.v1.ReadAgentFileResponse
-	(*WriteAgentFileRequest)(nil),   // 5: ops.service.v1.WriteAgentFileRequest
-	(*WriteAgentFileResponse)(nil),  // 6: ops.service.v1.WriteAgentFileResponse
-	(*DeleteAgentFileRequest)(nil),  // 7: ops.service.v1.DeleteAgentFileRequest
-	(*DeleteAgentFileResponse)(nil), // 8: ops.service.v1.DeleteAgentFileResponse
+	(*AgentFileEntry)(nil),                // 0: ops.service.v1.AgentFileEntry
+	(*ListAgentFilesRequest)(nil),         // 1: ops.service.v1.ListAgentFilesRequest
+	(*ListAgentFilesResponse)(nil),        // 2: ops.service.v1.ListAgentFilesResponse
+	(*ReadAgentFileRequest)(nil),          // 3: ops.service.v1.ReadAgentFileRequest
+	(*ReadAgentFileResponse)(nil),         // 4: ops.service.v1.ReadAgentFileResponse
+	(*WriteAgentFileRequest)(nil),         // 5: ops.service.v1.WriteAgentFileRequest
+	(*WriteAgentFileResponse)(nil),        // 6: ops.service.v1.WriteAgentFileResponse
+	(*DeleteAgentFileRequest)(nil),        // 7: ops.service.v1.DeleteAgentFileRequest
+	(*DeleteAgentFileResponse)(nil),       // 8: ops.service.v1.DeleteAgentFileResponse
+	(*PullAgentFileRequest)(nil),          // 9: ops.service.v1.PullAgentFileRequest
+	(*PullAgentFileResponse)(nil),         // 10: ops.service.v1.PullAgentFileResponse
+	(*PrepareAgentFilePushRequest)(nil),   // 11: ops.service.v1.PrepareAgentFilePushRequest
+	(*PrepareAgentFilePushResponse)(nil),  // 12: ops.service.v1.PrepareAgentFilePushResponse
+	(*CompleteAgentFilePushRequest)(nil),  // 13: ops.service.v1.CompleteAgentFilePushRequest
+	(*CompleteAgentFilePushResponse)(nil), // 14: ops.service.v1.CompleteAgentFilePushResponse
 }
 var file_ops_service_v1_file_proto_depIdxs = []int32{
-	0, // 0: ops.service.v1.ListAgentFilesResponse.entries:type_name -> ops.service.v1.AgentFileEntry
-	1, // 1: ops.service.v1.FileService.ListAgentFiles:input_type -> ops.service.v1.ListAgentFilesRequest
-	3, // 2: ops.service.v1.FileService.ReadAgentFile:input_type -> ops.service.v1.ReadAgentFileRequest
-	5, // 3: ops.service.v1.FileService.WriteAgentFile:input_type -> ops.service.v1.WriteAgentFileRequest
-	7, // 4: ops.service.v1.FileService.DeleteAgentFile:input_type -> ops.service.v1.DeleteAgentFileRequest
-	2, // 5: ops.service.v1.FileService.ListAgentFiles:output_type -> ops.service.v1.ListAgentFilesResponse
-	4, // 6: ops.service.v1.FileService.ReadAgentFile:output_type -> ops.service.v1.ReadAgentFileResponse
-	6, // 7: ops.service.v1.FileService.WriteAgentFile:output_type -> ops.service.v1.WriteAgentFileResponse
-	8, // 8: ops.service.v1.FileService.DeleteAgentFile:output_type -> ops.service.v1.DeleteAgentFileResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0,  // 0: ops.service.v1.ListAgentFilesResponse.entries:type_name -> ops.service.v1.AgentFileEntry
+	1,  // 1: ops.service.v1.FileService.ListAgentFiles:input_type -> ops.service.v1.ListAgentFilesRequest
+	3,  // 2: ops.service.v1.FileService.ReadAgentFile:input_type -> ops.service.v1.ReadAgentFileRequest
+	5,  // 3: ops.service.v1.FileService.WriteAgentFile:input_type -> ops.service.v1.WriteAgentFileRequest
+	7,  // 4: ops.service.v1.FileService.DeleteAgentFile:input_type -> ops.service.v1.DeleteAgentFileRequest
+	9,  // 5: ops.service.v1.FileService.PullAgentFile:input_type -> ops.service.v1.PullAgentFileRequest
+	11, // 6: ops.service.v1.FileService.PrepareAgentFilePush:input_type -> ops.service.v1.PrepareAgentFilePushRequest
+	13, // 7: ops.service.v1.FileService.CompleteAgentFilePush:input_type -> ops.service.v1.CompleteAgentFilePushRequest
+	2,  // 8: ops.service.v1.FileService.ListAgentFiles:output_type -> ops.service.v1.ListAgentFilesResponse
+	4,  // 9: ops.service.v1.FileService.ReadAgentFile:output_type -> ops.service.v1.ReadAgentFileResponse
+	6,  // 10: ops.service.v1.FileService.WriteAgentFile:output_type -> ops.service.v1.WriteAgentFileResponse
+	8,  // 11: ops.service.v1.FileService.DeleteAgentFile:output_type -> ops.service.v1.DeleteAgentFileResponse
+	10, // 12: ops.service.v1.FileService.PullAgentFile:output_type -> ops.service.v1.PullAgentFileResponse
+	12, // 13: ops.service.v1.FileService.PrepareAgentFilePush:output_type -> ops.service.v1.PrepareAgentFilePushResponse
+	14, // 14: ops.service.v1.FileService.CompleteAgentFilePush:output_type -> ops.service.v1.CompleteAgentFilePushResponse
+	8,  // [8:15] is the sub-list for method output_type
+	1,  // [1:8] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_file_proto_init() }
@@ -634,13 +1014,19 @@ func file_ops_service_v1_file_proto_init() {
 	file_ops_service_v1_file_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_file_proto_msgTypes[7].OneofWrappers = []any{}
 	file_ops_service_v1_file_proto_msgTypes[8].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[9].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[10].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[11].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[12].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[13].OneofWrappers = []any{}
+	file_ops_service_v1_file_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_file_proto_rawDesc), len(file_ops_service_v1_file_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

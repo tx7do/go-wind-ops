@@ -20,16 +20,25 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationFileServiceCompleteAgentFilePush = "/admin.service.v1.FileService/CompleteAgentFilePush"
 const OperationFileServiceDeleteAgentFile = "/admin.service.v1.FileService/DeleteAgentFile"
 const OperationFileServiceListAgentFiles = "/admin.service.v1.FileService/ListAgentFiles"
+const OperationFileServicePrepareAgentFilePush = "/admin.service.v1.FileService/PrepareAgentFilePush"
+const OperationFileServicePullAgentFile = "/admin.service.v1.FileService/PullAgentFile"
 const OperationFileServiceReadAgentFile = "/admin.service.v1.FileService/ReadAgentFile"
 const OperationFileServiceWriteAgentFile = "/admin.service.v1.FileService/WriteAgentFile"
 
 type FileServiceHTTPServer interface {
+	// CompleteAgentFilePush 完成推送(指令 agent 落盘)
+	CompleteAgentFilePush(context.Context, *v1.CompleteAgentFilePushRequest) (*v1.CompleteAgentFilePushResponse, error)
 	// DeleteAgentFile 删除文件或目录
 	DeleteAgentFile(context.Context, *v1.DeleteAgentFileRequest) (*v1.DeleteAgentFileResponse, error)
 	// ListAgentFiles 列出目录内容
 	ListAgentFiles(context.Context, *v1.ListAgentFilesRequest) (*v1.ListAgentFilesResponse, error)
+	// PrepareAgentFilePush 预备推送(签发浏览器直传 URL)
+	PrepareAgentFilePush(context.Context, *v1.PrepareAgentFilePushRequest) (*v1.PrepareAgentFilePushResponse, error)
+	// PullAgentFile 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+	PullAgentFile(context.Context, *v1.PullAgentFileRequest) (*v1.PullAgentFileResponse, error)
 	// ReadAgentFile 读取文件内容
 	ReadAgentFile(context.Context, *v1.ReadAgentFileRequest) (*v1.ReadAgentFileResponse, error)
 	// WriteAgentFile 写入文件
@@ -42,6 +51,9 @@ func RegisterFileServiceHTTPServer(s *http.Server, srv FileServiceHTTPServer) {
 	r.GET("/admin/v1/file/read", _FileService_ReadAgentFile0_HTTP_Handler(srv))
 	r.POST("/admin/v1/file/write", _FileService_WriteAgentFile0_HTTP_Handler(srv))
 	r.POST("/admin/v1/file/delete", _FileService_DeleteAgentFile0_HTTP_Handler(srv))
+	r.POST("/admin/v1/file/pull", _FileService_PullAgentFile0_HTTP_Handler(srv))
+	r.POST("/admin/v1/file/push-url", _FileService_PrepareAgentFilePush0_HTTP_Handler(srv))
+	r.POST("/admin/v1/file/push", _FileService_CompleteAgentFilePush0_HTTP_Handler(srv))
 }
 
 func _FileService_ListAgentFiles0_HTTP_Handler(srv FileServiceHTTPServer) func(ctx http.Context) error {
@@ -126,11 +138,83 @@ func _FileService_DeleteAgentFile0_HTTP_Handler(srv FileServiceHTTPServer) func(
 	}
 }
 
+func _FileService_PullAgentFile0_HTTP_Handler(srv FileServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PullAgentFileRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFileServicePullAgentFile)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PullAgentFile(ctx, req.(*v1.PullAgentFileRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.PullAgentFileResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _FileService_PrepareAgentFilePush0_HTTP_Handler(srv FileServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PrepareAgentFilePushRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFileServicePrepareAgentFilePush)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PrepareAgentFilePush(ctx, req.(*v1.PrepareAgentFilePushRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.PrepareAgentFilePushResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _FileService_CompleteAgentFilePush0_HTTP_Handler(srv FileServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.CompleteAgentFilePushRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFileServiceCompleteAgentFilePush)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CompleteAgentFilePush(ctx, req.(*v1.CompleteAgentFilePushRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.CompleteAgentFilePushResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type FileServiceHTTPClient interface {
+	// CompleteAgentFilePush 完成推送(指令 agent 落盘)
+	CompleteAgentFilePush(ctx context.Context, req *v1.CompleteAgentFilePushRequest, opts ...http.CallOption) (rsp *v1.CompleteAgentFilePushResponse, err error)
 	// DeleteAgentFile 删除文件或目录
 	DeleteAgentFile(ctx context.Context, req *v1.DeleteAgentFileRequest, opts ...http.CallOption) (rsp *v1.DeleteAgentFileResponse, err error)
 	// ListAgentFiles 列出目录内容
 	ListAgentFiles(ctx context.Context, req *v1.ListAgentFilesRequest, opts ...http.CallOption) (rsp *v1.ListAgentFilesResponse, err error)
+	// PrepareAgentFilePush 预备推送(签发浏览器直传 URL)
+	PrepareAgentFilePush(ctx context.Context, req *v1.PrepareAgentFilePushRequest, opts ...http.CallOption) (rsp *v1.PrepareAgentFilePushResponse, err error)
+	// PullAgentFile 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+	PullAgentFile(ctx context.Context, req *v1.PullAgentFileRequest, opts ...http.CallOption) (rsp *v1.PullAgentFileResponse, err error)
 	// ReadAgentFile 读取文件内容
 	ReadAgentFile(ctx context.Context, req *v1.ReadAgentFileRequest, opts ...http.CallOption) (rsp *v1.ReadAgentFileResponse, err error)
 	// WriteAgentFile 写入文件
@@ -143,6 +227,20 @@ type FileServiceHTTPClientImpl struct {
 
 func NewFileServiceHTTPClient(client *http.Client) FileServiceHTTPClient {
 	return &FileServiceHTTPClientImpl{client}
+}
+
+// CompleteAgentFilePush 完成推送(指令 agent 落盘)
+func (c *FileServiceHTTPClientImpl) CompleteAgentFilePush(ctx context.Context, in *v1.CompleteAgentFilePushRequest, opts ...http.CallOption) (*v1.CompleteAgentFilePushResponse, error) {
+	var out v1.CompleteAgentFilePushResponse
+	pattern := "/admin/v1/file/push"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationFileServiceCompleteAgentFilePush))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // DeleteAgentFile 删除文件或目录
@@ -167,6 +265,34 @@ func (c *FileServiceHTTPClientImpl) ListAgentFiles(ctx context.Context, in *v1.L
 	opts = append(opts, http.Operation(OperationFileServiceListAgentFiles))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PrepareAgentFilePush 预备推送(签发浏览器直传 URL)
+func (c *FileServiceHTTPClientImpl) PrepareAgentFilePush(ctx context.Context, in *v1.PrepareAgentFilePushRequest, opts ...http.CallOption) (*v1.PrepareAgentFilePushResponse, error) {
+	var out v1.PrepareAgentFilePushResponse
+	pattern := "/admin/v1/file/push-url"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationFileServicePrepareAgentFilePush))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PullAgentFile 拉取大文件(agent 上传对象存储,返回浏览器下载 URL)
+func (c *FileServiceHTTPClientImpl) PullAgentFile(ctx context.Context, in *v1.PullAgentFileRequest, opts ...http.CallOption) (*v1.PullAgentFileResponse, error) {
+	var out v1.PullAgentFileResponse
+	pattern := "/admin/v1/file/pull"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationFileServicePullAgentFile))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

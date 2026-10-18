@@ -31,5 +31,11 @@
   "emptyDir": "Empty directory",
   "pickAgentFirst": "Select a machine and enter a directory first",
   "whitelistHint": "Path whitelist",
-  "whitelistDesc": "Only paths inside the agent's AGENT_ALLOWED_DIRS whitelist can be accessed."
+  "whitelistDesc": "Only paths inside the agent's AGENT_ALLOWED_DIRS whitelist can be accessed.",
+  "upload": "Upload",
+  "download": "Download",
+  "pullReady": "Ready ({size} bytes), download window opened",
+  "pullFailed": "Pull failed (machine offline / path not allowed / timeout)",
+  "uploadDone": "Uploaded ({size} bytes)",
+  "uploadFailed": "Upload failed"
 }

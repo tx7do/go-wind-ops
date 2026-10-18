@@ -1,19 +1,30 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
 import {
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
   EyeOutlined,
   FolderOpenOutlined,
   ReloadOutlined,
   FileAddOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentFileEntry as FileEntry } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
-import { useDeleteAgentFile, useListAgentFiles, useReadAgentFile, useWriteAgentFile } from '@/api/hooks/file';
+import {
+  fetchCompleteAgentFilePush,
+  fetchPrepareAgentFilePush,
+  fetchPullAgentFile,
+  putFileToPresignedUrl,
+  useDeleteAgentFile,
+  useListAgentFiles,
+  useReadAgentFile,
+  useWriteAgentFile,
+} from '@/api/hooks/file';
 
 /** Unicode 安全的 base64 编解码(TextEncoder/Decoder 中转)。 */
 function utf8ToBase64(s: string): string {
@@ -86,6 +97,47 @@ const FileManager = () => {
     },
     onError: (e: Error) => message.error(e.message || t('writeFailed')),
   });
+  // 大文件下载:agent 经对象存储中转,拿预签名 URL 后开新窗口
+  const [pulling, setPulling] = useState(false);
+  const downloadFile = async (path: string) => {
+    if (!agentId) return;
+    setPulling(true);
+    try {
+      const resp = await fetchPullAgentFile(agentId, path);
+      window.open(resp.url, '_blank');
+      message.success(t('pullReady', { size: resp.size ?? 0 }));
+    } catch (e) {
+      message.error((e as Error).message || t('pullFailed'));
+    } finally {
+      setPulling(false);
+    }
+  };
+
+  // 大文件上传:直传对象存储 → 指令 agent 落盘
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const onUploadPicked = async (file: File) => {
+    if (!agentId || !currentDir) {
+      message.warning(t('pickAgentFirst'));
+      return false;
+    }
+    const targetPath = joinPath(currentDir, file.name);
+    setUploading(true);
+    try {
+      const prep = await fetchPrepareAgentFilePush(agentId, targetPath);
+      await putFileToPresignedUrl(prep.uploadUrl || '', file);
+      const done = await fetchCompleteAgentFilePush(agentId, targetPath, prep.objectKey || '');
+      message.success(t('uploadDone', { size: done.size ?? 0 }));
+      refresh();
+    } catch (e) {
+      message.error((e as Error).message || t('uploadFailed'));
+    } finally {
+      setUploading(false);
+      if (uploadInputRef.current) uploadInputRef.current.value = '';
+    }
+    return false; // 阻止 antd Upload 默认行为
+  };
+
   const deleteMutation = useDeleteAgentFile({
     onSuccess: () => {
       message.success(t('deleteSuccess'));
@@ -142,7 +194,10 @@ const FileManager = () => {
             {r.isDir ? (
               <a onClick={() => openDir(p)}><FolderOpenOutlined /> {t('open')}</a>
             ) : (
-              <a onClick={() => readMutation.mutate({ agentId: agentId!, path: p })}><EditOutlined /> {t('edit')}</a>
+              <>
+                <a onClick={() => readMutation.mutate({ agentId: agentId!, path: p })}><EditOutlined /> {t('edit')}</a>
+                <a onClick={() => downloadFile(p)}><DownloadOutlined /> {t('download')}</a>
+              </>
             )}
             <Popconfirm
               title={t('deleteConfirm')}
@@ -190,6 +245,18 @@ const FileManager = () => {
           <Button type="primary" ghost disabled={!canBrowse} onClick={() => setNewFile({ open: true, path: currentDir.endsWith('/') ? currentDir : currentDir + '/' })}>
             <FileAddOutlined /> {t('newFile')}
           </Button>
+          <Button disabled={!canBrowse} loading={uploading} onClick={() => uploadInputRef.current?.click()}>
+            <UploadOutlined /> {t('upload')}
+          </Button>
+          <input
+            ref={uploadInputRef}
+            type="file"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void onUploadPicked(f);
+            }}
+          />
         </Space>
 
         {canBrowse && (

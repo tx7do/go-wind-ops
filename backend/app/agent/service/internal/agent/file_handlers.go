@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strings"
 
+	"go-wind-ops/pkg/filetransfer"
 	"go-wind-ops/pkg/signal"
 )
 
@@ -21,6 +22,39 @@ func (s *Service) registerFileHandlers() {
 	s.RegisterHandler("file_read", s.handleFileRead)
 	s.RegisterHandler("file_write", s.handleFileWrite)
 	s.RegisterHandler("file_delete", s.handleFileDelete)
+	s.RegisterHandler(signal.CommandActionFilePull, s.handleFilePull)
+	s.RegisterHandler(signal.CommandActionFilePush, s.handleFilePush)
+}
+
+// handleFilePull 大文件通道:把本地文件流式上传到预签名 URL(白名单内)。
+func (s *Service) handleFilePull(ctx context.Context, env *signal.CommandEnvelope) (any, error) {
+	var p signal.FilePullPayload
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, &p); err != nil { return nil, fmt.Errorf("decode: %w", err) }
+	}
+	if p.Path == "" || p.Url == "" { return nil, fmt.Errorf("path/url required") }
+	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+
+	size, sha256hex, err := filetransfer.UploadFileToPresignedURL(ctx, p.Path, p.Url, nil)
+	if err != nil { return nil, fmt.Errorf("upload: %w", err) }
+	s.log().Infof("file pulled to object storage (path=%s size=%d sha256=%s)", p.Path, size, sha256hex[:12])
+	return map[string]any{"path": p.Path, "size": size, "sha256": sha256hex}, nil
+}
+
+// handleFilePush 大文件通道:从预签名 URL 下载写入本地路径(白名单内)。
+func (s *Service) handleFilePush(ctx context.Context, env *signal.CommandEnvelope) (any, error) {
+	var p signal.FilePushPayload
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, &p); err != nil { return nil, fmt.Errorf("decode: %w", err) }
+	}
+	if p.Path == "" || p.Url == "" { return nil, fmt.Errorf("path/url required") }
+	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+	if err := os.MkdirAll(filepath.Dir(p.Path), 0o755); err != nil { return nil, err }
+
+	size, sha256hex, err := filetransfer.DownloadToFile(ctx, p.Url, p.Path)
+	if err != nil { return nil, fmt.Errorf("download: %w", err) }
+	s.log().Infof("file pushed from object storage (path=%s size=%d sha256=%s)", p.Path, size, sha256hex[:12])
+	return map[string]any{"path": p.Path, "size": size, "sha256": sha256hex}, nil
 }
 
 // handleFileList 列出目录内容。

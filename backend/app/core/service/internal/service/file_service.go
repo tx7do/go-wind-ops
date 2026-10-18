@@ -5,12 +5,18 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"path/filepath"
+	"strings"
 	"time"
+
+	"github.com/tx7do/go-utils/id"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/signal"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
@@ -25,13 +31,15 @@ type FileService struct {
 	log      *log.Helper
 	agentSvc *AgentService
 	nodeRepo *data.AgentNodeRepo
+	ossClient *oss.MinIOClient
 }
 
-func NewFileService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo) *FileService {
+func NewFileService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo, ossClient *oss.MinIOClient) *FileService {
 	return &FileService{
 		log:      ctx.NewLoggerHelper("file/service/core-service"),
 		agentSvc: agentSvc,
 		nodeRepo: nodeRepo,
+		ossClient: ossClient,
 	}
 }
 
@@ -62,6 +70,140 @@ func (s *FileService) resolveAgentID(ctx context.Context, agentId string) (strin
 		}
 	}
 	return agentId, nil
+}
+
+// ── 大文件通道:agent ↔ 对象存储 ↔ 浏览器 ──
+
+const (
+	filePresignExpiry  = 15 * time.Minute // 预签名有效期
+	fileTransferSync   = 10 * time.Minute // agent 传输回执等待上限
+	fileObjectPrefix   = "agent-files"    // 传输对象键前缀(Complete 时防越权)
+	fileBucketTransfer = oss.BucketFiles
+)
+
+// fileTransferObjectKey 生成传输对象键:agent-files/{agentId}/{uuid}{ext}。
+func fileTransferObjectKey(agentId, path string) string {
+	return fmt.Sprintf("%s/%s/%s%s", fileObjectPrefix, agentId, id.NewGUIDv4(false), filepath.Ext(path))
+}
+
+// presignPut/Get 预签名工具(含桶确保存在)。
+func (s *FileService) presignPut(ctx context.Context, objectKey string) (string, error) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return "", opsV1.ErrorServiceUnavailable("oss client not configured")
+	}
+	if err := s.ossClient.EnsureBucketExists(ctx, fileBucketTransfer); err != nil {
+		return "", opsV1.ErrorInternalServerError("ensure bucket failed")
+	}
+	u, err := s.ossClient.GetClient().PresignedPutObject(ctx, fileBucketTransfer, objectKey, filePresignExpiry)
+	if err != nil {
+		return "", opsV1.ErrorInternalServerError("presign put failed")
+	}
+	return u.String(), nil
+}
+
+func (s *FileService) presignGet(ctx context.Context, objectKey string) (string, error) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return "", opsV1.ErrorServiceUnavailable("oss client not configured")
+	}
+	u, err := s.ossClient.GetClient().PresignedGetObject(ctx, fileBucketTransfer, objectKey, filePresignExpiry, nil)
+	if err != nil {
+		return "", opsV1.ErrorInternalServerError("presign get failed")
+	}
+	return u.String(), nil
+}
+
+// pullResult agent 传输回执(size/sha256)。
+func decodeTransferResult(data json.RawMessage) (int64, string, error) {
+	var out struct {
+		Size   int64  `json:"size"`
+		Sha256 string `json:"sha256"`
+	}
+	if err := json.Unmarshal(data, &out); err != nil {
+		return 0, "", err
+	}
+	return out.Size, out.Sha256, nil
+}
+
+// PullAgentFile 拉取大文件:agent 上传对象存储 → 返回浏览器下载 URL。
+func (s *FileService) PullAgentFile(ctx context.Context, req *opsV1.PullAgentFileRequest) (*opsV1.PullAgentFileResponse, error) {
+	if req == nil || req.GetPath() == "" {
+		return nil, opsV1.ErrorBadRequest("path required")
+	}
+	agentId, err := s.resolveAgentID(ctx, req.GetAgentId())
+	if err != nil {
+		return nil, err
+	}
+
+	objectKey := fileTransferObjectKey(agentId, req.GetPath())
+	uploadURL, err := s.presignPut(ctx, objectKey)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.callSync(ctx, agentId, signal.CommandActionFilePull,
+		&signal.FilePullPayload{Path: req.GetPath(), Url: uploadURL})
+	if err != nil {
+		return nil, err
+	}
+	size, sha256hex, err := decodeTransferResult(res.Data)
+	if err != nil {
+		return nil, opsV1.ErrorInternalServerError("decode transfer result: %s", err.Error())
+	}
+
+	downloadURL, err := s.presignGet(ctx, objectKey)
+	if err != nil {
+		return nil, err
+	}
+	s.log.Infof("agent file pulled (agent=%s path=%s size=%d)", agentId, req.GetPath(), size)
+	return &opsV1.PullAgentFileResponse{Url: &downloadURL, Size: &size, Sha256: &sha256hex}, nil
+}
+
+// PrepareAgentFilePush 签发浏览器直传 URL。
+func (s *FileService) PrepareAgentFilePush(ctx context.Context, req *opsV1.PrepareAgentFilePushRequest) (*opsV1.PrepareAgentFilePushResponse, error) {
+	if req == nil || req.GetPath() == "" {
+		return nil, opsV1.ErrorBadRequest("path required")
+	}
+	agentId, err := s.resolveAgentID(ctx, req.GetAgentId())
+	if err != nil {
+		return nil, err
+	}
+	objectKey := fileTransferObjectKey(agentId, req.GetPath())
+	uploadURL, err := s.presignPut(ctx, objectKey)
+	if err != nil {
+		return nil, err
+	}
+	return &opsV1.PrepareAgentFilePushResponse{UploadUrl: &uploadURL, ObjectKey: &objectKey}, nil
+}
+
+// CompleteAgentFilePush 指令 agent 从对象存储下载落盘。
+func (s *FileService) CompleteAgentFilePush(ctx context.Context, req *opsV1.CompleteAgentFilePushRequest) (*opsV1.CompleteAgentFilePushResponse, error) {
+	if req == nil || req.GetPath() == "" || req.GetObjectKey() == "" {
+		return nil, opsV1.ErrorBadRequest("path/objectKey required")
+	}
+	// 防越权:对象键必须落在传输前缀下
+	if !strings.HasPrefix(req.GetObjectKey(), fileObjectPrefix+"/") {
+		return nil, opsV1.ErrorBadRequest("invalid objectKey")
+	}
+	agentId, err := s.resolveAgentID(ctx, req.GetAgentId())
+	if err != nil {
+		return nil, err
+	}
+
+	downloadURL, err := s.presignGet(ctx, req.GetObjectKey())
+	if err != nil {
+		return nil, err
+	}
+	res, err := s.callSync(ctx, agentId, signal.CommandActionFilePush,
+		&signal.FilePushPayload{Path: req.GetPath(), Url: downloadURL})
+	if err != nil {
+		return nil, err
+	}
+	size, sha256hex, err := decodeTransferResult(res.Data)
+	if err != nil {
+		return nil, opsV1.ErrorInternalServerError("decode transfer result: %s", err.Error())
+	}
+	s.log.Infof("agent file pushed (agent=%s path=%s size=%d)", agentId, req.GetPath(), size)
+	return &opsV1.CompleteAgentFilePushResponse{Size: &size, Sha256: &sha256hex}, nil
 }
 
 func (s *FileService) ListAgentFiles(ctx context.Context, req *opsV1.ListAgentFilesRequest) (*opsV1.ListAgentFilesResponse, error) {
