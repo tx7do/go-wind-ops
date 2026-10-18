@@ -93,6 +93,19 @@ message Build {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 最新构建号
 
+
+  optional string cron = 12 [
+    json_name = "cron",
+    (gnostic.openapi.v3.property) = {
+      description: "定时构建 cron 表达式(5 段标准语法,空为手动触发)"
+    }
+  ]; // 定时构建
+
+  optional google.protobuf.Timestamp last_cron_at = 13 [
+    json_name = "lastCronAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 上次调度锚点
+
   optional string description = 9 [
     json_name = "description",
     (gnostic.openapi.v3.property) = {

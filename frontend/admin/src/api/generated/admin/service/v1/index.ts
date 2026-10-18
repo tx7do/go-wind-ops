@@ -758,6 +758,213 @@ export type opsservicev1_SendCommandResponse = {
   requestId: string | undefined;
 };
 
+// AlertService 告警记录查询
+export interface AlertService {
+  // 查询告警列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListAlertResponse>;
+  // 查询告警详情
+  Get(
+    request: opsservicev1_GetAlertRequest,
+  ): Promise<opsservicev1_Alert>;
+  // 标记告警已恢复
+  Resolve(
+    request: opsservicev1_ResolveAlertRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createAlertServiceClient(
+  transport: ClientTransport,
+): AlertService {
+  return {
+    List(request) {
+      const path = `admin/v1/alerts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AlertService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListAlertResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/alerts/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AlertService',
+        method: 'Get',
+      }) as Promise<opsservicev1_Alert>;
+    },
+    Resolve(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/alerts/${request.id}:resolve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AlertService',
+        method: 'Resolve',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListAlertResponse = {
+  items: opsservicev1_Alert[] | undefined;
+  total: number | undefined;
+};
+
+// 告警记录
+export type opsservicev1_Alert = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  level?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  message?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  monitorId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  notified?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  projectId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  resolved?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  resolvedAt?: wellKnownTimestamp;
+};
+
+export type opsservicev1_GetAlertRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_ResolveAlertRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
 // API资源管理服务
 export interface ApiService {
   // 查询API资源列表
@@ -1659,11 +1866,15 @@ export type opsservicev1_Build = {
   //
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
+  cron?: string;
   description?: string;
   //
   // Behaviors: OUTPUT_ONLY
   id?: number;
   labels: string[] | undefined;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastCronAt?: wellKnownTimestamp;
   //
   // Behaviors: REQUIRED
   name?: string;
@@ -3261,7 +3472,7 @@ export type opsservicev1_Distribution = {
   name?: string;
   //
   // Behaviors: REQUIRED
-  projectId?: number;
+  projectIds: number[] | undefined;
   //
   // Behaviors: OUTPUT_ONLY
   updatedAt?: wellKnownTimestamp;
@@ -4400,6 +4611,251 @@ export type permissionservicev1_UpdateMenuRequest = {
 export type permissionservicev1_DeleteMenuRequest = {
   id?: number;
   operatorId?: number;
+};
+
+// MonitorService 监控规则管理
+export interface MonitorService {
+  // 查询监控规则列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListMonitorResponse>;
+  // 查询监控规则详情
+  Get(
+    request: opsservicev1_GetMonitorRequest,
+  ): Promise<opsservicev1_Monitor>;
+  // 创建监控规则
+  Create(
+    request: opsservicev1_CreateMonitorRequest,
+  ): Promise<opsservicev1_Monitor>;
+  // 更新监控规则
+  Update(
+    request: opsservicev1_UpdateMonitorRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除监控规则
+  Delete(
+    request: opsservicev1_DeleteMonitorRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createMonitorServiceClient(
+  transport: ClientTransport,
+): MonitorService {
+  return {
+    List(request) {
+      const path = `admin/v1/monitors`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MonitorService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListMonitorResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitors/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MonitorService',
+        method: 'Get',
+      }) as Promise<opsservicev1_Monitor>;
+    },
+    Create(request) {
+      const path = `admin/v1/monitors`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MonitorService',
+        method: 'Create',
+      }) as Promise<opsservicev1_Monitor>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitors/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'MonitorService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitors/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'MonitorService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListMonitorResponse = {
+  items: opsservicev1_Monitor[] | undefined;
+  total: number | undefined;
+};
+
+// 监控规则
+export type opsservicev1_Monitor = {
+  autoRestart?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: REQUIRED
+  cron?: string;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: REQUIRED
+  projectId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+  webhookUrl?: string;
+};
+
+export type opsservicev1_GetMonitorRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateMonitorRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_Monitor | undefined;
+};
+
+export type opsservicev1_UpdateMonitorRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_Monitor | undefined;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteMonitorRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
 };
 
 // 操作审计日志管理服务
@@ -7193,11 +7649,16 @@ export type opsservicev1_Script = {
   //
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
+  cron?: string;
+  cronNodeId?: number;
   description?: string;
   //
   // Behaviors: OUTPUT_ONLY
   id?: number;
   labels: string[] | undefined;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastCronAt?: wellKnownTimestamp;
   //
   // Behaviors: REQUIRED
   name?: string;
@@ -8544,6 +9005,7 @@ export type identityservicev1_EmailVerification = {
 export class ApiClient {
   private _adminPortalService?: AdminPortalService;
   private _agentNodeService?: AgentNodeService;
+  private _alertService?: AlertService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
   private _authenticationService?: AuthenticationService;
@@ -8558,6 +9020,7 @@ export class ApiClient {
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
   private _menuService?: MenuService;
+  private _monitorService?: MonitorService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orgUnitService?: OrgUnitService;
   private _permissionAuditLogService?: PermissionAuditLogService;
@@ -8585,6 +9048,10 @@ export class ApiClient {
 
   get agentNodeService(): AgentNodeService {
     return this._agentNodeService ??= createAgentNodeServiceClient(this._transport);
+  }
+
+  get alertService(): AlertService {
+    return this._alertService ??= createAlertServiceClient(this._transport);
   }
 
   get apiAuditLogService(): ApiAuditLogService {
@@ -8641,6 +9108,10 @@ export class ApiClient {
 
   get menuService(): MenuService {
     return this._menuService ??= createMenuServiceClient(this._transport);
+  }
+
+  get monitorService(): MonitorService {
+    return this._monitorService ??= createMonitorServiceClient(this._transport);
   }
 
   get operationAuditLogService(): OperationAuditLogService {

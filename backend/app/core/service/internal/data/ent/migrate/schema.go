@@ -53,6 +53,39 @@ var (
 			},
 		},
 	}
+	// OpsAlertsColumns holds the columns for the "ops_alerts" table.
+	OpsAlertsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "monitor_id", Type: field.TypeUint32, Comment: "来源监控规则(ops_monitors.id)"},
+		{Name: "project_id", Type: field.TypeUint32, Comment: "关联项目"},
+		{Name: "level", Type: field.TypeEnum, Comment: "告警级别", Enums: []string{"WARNING", "ERROR", "RECOVERY"}, Default: "ERROR"},
+		{Name: "message", Type: field.TypeString, Comment: "告警内容"},
+		{Name: "resolved", Type: field.TypeBool, Comment: "是否已恢复/确认", Default: false},
+		{Name: "resolved_at", Type: field.TypeTime, Nullable: true, Comment: "恢复时间"},
+		{Name: "notified", Type: field.TypeBool, Comment: "是否已外呼 webhook", Default: false},
+	}
+	// OpsAlertsTable holds the schema information for the "ops_alerts" table.
+	OpsAlertsTable = &schema.Table{
+		Name:       "ops_alerts",
+		Comment:    "告警记录表",
+		Columns:    OpsAlertsColumns,
+		PrimaryKey: []*schema.Column{OpsAlertsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_alert_monitor",
+				Unique:  false,
+				Columns: []*schema.Column{OpsAlertsColumns[4]},
+			},
+			{
+				Name:    "idx_ops_alert_resolved",
+				Unique:  false,
+				Columns: []*schema.Column{OpsAlertsColumns[8]},
+			},
+		},
+	}
 	// SysApisColumns holds the columns for the "sys_apis" table.
 	SysApisColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -222,6 +255,8 @@ var (
 		{Name: "artifact_path", Type: field.TypeString, Comment: "产物路径(相对仓库目录,支持 glob;多个匹配打包 zip)"},
 		{Name: "timeout_seconds", Type: field.TypeUint32, Nullable: true, Comment: "构建超时(秒,默认 600,上限 3600)", Default: 600},
 		{Name: "build_no", Type: field.TypeUint32, Comment: "最新构建号(触发时自增)", Default: 0},
+		{Name: "cron", Type: field.TypeString, Nullable: true, Comment: "定时构建 cron 表达式(5 段标准语法,空为手动触发)"},
+		{Name: "last_cron_at", Type: field.TypeTime, Nullable: true, Comment: "上次定时调度锚点(调度器去重用)"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
 	}
@@ -588,7 +623,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "name", Type: field.TypeString, Unique: true, Comment: "分发名(全局唯一)"},
 		{Name: "build_id", Type: field.TypeUint32, Comment: "构建来源(ops_builds.id);触发时取其最新成功产物"},
-		{Name: "project_id", Type: field.TypeUint32, Comment: "目标项目(ops_projects.id)"},
+		{Name: "project_ids", Type: field.TypeJSON, Nullable: true, Comment: "目标项目 ID 列表(支持多目标,逐项目触发分发记录)"},
 		{Name: "clear_old", Type: field.TypeBool, Comment: "分发前清空项目目录旧内容(危险操作,谨慎开启)", Default: false},
 		{Name: "after_opt", Type: field.TypeEnum, Nullable: true, Comment: "分发后动作", Enums: []string{"NONE", "RESTART", "START"}, Default: "NONE"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
@@ -612,7 +647,7 @@ var (
 				Columns: []*schema.Column{OpsDistributionsColumns[8]},
 			},
 			{
-				Name:    "idx_ops_distribution_project",
+				Name:    "idx_ops_distribution_projects",
 				Unique:  false,
 				Columns: []*schema.Column{OpsDistributionsColumns[9]},
 			},
@@ -1322,6 +1357,42 @@ var (
 				Name:    "idx_sys_menu_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{SysMenusColumns[1]},
+			},
+		},
+	}
+	// OpsMonitorsColumns holds the columns for the "ops_monitors" table.
+	OpsMonitorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "规则名(全局唯一)"},
+		{Name: "project_id", Type: field.TypeUint32, Comment: "被监控项目(ops_projects.id)"},
+		{Name: "cron", Type: field.TypeString, Comment: "检查周期 cron 表达式(5 段标准语法)"},
+		{Name: "auto_restart", Type: field.TypeBool, Comment: "异常时自动重启项目", Default: false},
+		{Name: "webhook_url", Type: field.TypeString, Nullable: true, Comment: "告警通知 webhook 地址(空则只落告警不外呼)"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsMonitorsTable holds the schema information for the "ops_monitors" table.
+	OpsMonitorsTable = &schema.Table{
+		Name:       "ops_monitors",
+		Comment:    "监控规则表",
+		Columns:    OpsMonitorsColumns,
+		PrimaryKey: []*schema.Column{OpsMonitorsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_monitor_project",
+				Unique:  false,
+				Columns: []*schema.Column{OpsMonitorsColumns[8]},
+			},
+			{
+				Name:    "idx_ops_monitor_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{OpsMonitorsColumns[12]},
 			},
 		},
 	}
@@ -2340,6 +2411,9 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "脚本描述"},
 		{Name: "content", Type: field.TypeString, Size: 2147483647, Comment: "脚本内容(按目标节点平台 shell 语法编写)"},
 		{Name: "timeout_seconds", Type: field.TypeUint32, Nullable: true, Comment: "执行超时(秒,默认 60,上限 600)", Default: 60},
+		{Name: "cron", Type: field.TypeString, Nullable: true, Comment: "定时执行 cron 表达式(5 段标准语法,空为手动触发)"},
+		{Name: "cron_node_id", Type: field.TypeUint32, Nullable: true, Comment: "定时执行的目标节点(0 为未配置,不调度)", Default: 0},
+		{Name: "last_cron_at", Type: field.TypeTime, Nullable: true, Comment: "上次定时调度锚点(调度器去重用)"},
 		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
 	}
 	// OpsScriptsTable holds the schema information for the "ops_scripts" table.
@@ -2915,6 +2989,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		OpsAgentNodesTable,
+		OpsAlertsTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
 		OpsBuildsTable,
@@ -2934,6 +3009,7 @@ var (
 		SysMembershipPositionsTable,
 		SysMembershipRolesTable,
 		SysMenusTable,
+		OpsMonitorsTable,
 		SysOperationAuditLogsTable,
 		SysOrgUnitsTable,
 		SysPermissionsTable,
@@ -2963,6 +3039,11 @@ var (
 func init() {
 	OpsAgentNodesTable.Annotation = &entsql.Annotation{
 		Table:     "ops_agent_nodes",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsAlertsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_alerts",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3061,6 +3142,11 @@ func init() {
 	SysMenusTable.ForeignKeys[0].RefTable = SysMenusTable
 	SysMenusTable.Annotation = &entsql.Annotation{
 		Table:     "sys_menus",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsMonitorsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_monitors",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -40,9 +40,9 @@ func (Distribution) Fields() []ent.Field {
 			Comment("构建来源(ops_builds.id);触发时取其最新成功产物").
 			Positive(),
 
-		field.Uint32("project_id").
-			Comment("目标项目(ops_projects.id)").
-			Positive(),
+		field.JSON("project_ids", []uint32{}).
+			Comment("目标项目 ID 列表(支持多目标,逐项目触发分发记录)").
+			Optional(),
 
 		field.Bool("clear_old").
 			Comment("分发前清空项目目录旧内容(危险操作,谨慎开启)").
@@ -84,6 +84,6 @@ func (Distribution) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name").StorageKey("uidx_ops_distribution_name"),
 		index.Fields("build_id").StorageKey("idx_ops_distribution_build"),
-		index.Fields("project_id").StorageKey("idx_ops_distribution_project"),
+		index.Fields("project_ids").StorageKey("idx_ops_distribution_projects"),
 	}
 }

@@ -88,6 +88,43 @@ func (m *Build) validate(all bool) error {
 		// no validation rules for BuildNo
 	}
 
+	if m.Cron != nil {
+		// no validation rules for Cron
+	}
+
+	if m.LastCronAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetLastCronAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BuildValidationError{
+						field:  "LastCronAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BuildValidationError{
+						field:  "LastCronAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLastCronAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BuildValidationError{
+					field:  "LastCronAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Description != nil {
 		// no validation rules for Description
 	}

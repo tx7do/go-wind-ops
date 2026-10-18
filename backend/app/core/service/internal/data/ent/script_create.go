@@ -146,6 +146,48 @@ func (_c *ScriptCreate) SetNillableTimeoutSeconds(v *uint32) *ScriptCreate {
 	return _c
 }
 
+// SetCron sets the "cron" field.
+func (_c *ScriptCreate) SetCron(v string) *ScriptCreate {
+	_c.mutation.SetCron(v)
+	return _c
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_c *ScriptCreate) SetNillableCron(v *string) *ScriptCreate {
+	if v != nil {
+		_c.SetCron(*v)
+	}
+	return _c
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (_c *ScriptCreate) SetCronNodeID(v uint32) *ScriptCreate {
+	_c.mutation.SetCronNodeID(v)
+	return _c
+}
+
+// SetNillableCronNodeID sets the "cron_node_id" field if the given value is not nil.
+func (_c *ScriptCreate) SetNillableCronNodeID(v *uint32) *ScriptCreate {
+	if v != nil {
+		_c.SetCronNodeID(*v)
+	}
+	return _c
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_c *ScriptCreate) SetLastCronAt(v time.Time) *ScriptCreate {
+	_c.mutation.SetLastCronAt(v)
+	return _c
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_c *ScriptCreate) SetNillableLastCronAt(v *time.Time) *ScriptCreate {
+	if v != nil {
+		_c.SetLastCronAt(*v)
+	}
+	return _c
+}
+
 // SetLabels sets the "labels" field.
 func (_c *ScriptCreate) SetLabels(v []string) *ScriptCreate {
 	_c.mutation.SetLabels(v)
@@ -196,6 +238,10 @@ func (_c *ScriptCreate) defaults() {
 	if _, ok := _c.mutation.TimeoutSeconds(); !ok {
 		v := script.DefaultTimeoutSeconds
 		_c.mutation.SetTimeoutSeconds(v)
+	}
+	if _, ok := _c.mutation.CronNodeID(); !ok {
+		v := script.DefaultCronNodeID
+		_c.mutation.SetCronNodeID(v)
 	}
 }
 
@@ -289,6 +335,18 @@ func (_c *ScriptCreate) createSpec() (*Script, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.TimeoutSeconds(); ok {
 		_spec.SetField(script.FieldTimeoutSeconds, field.TypeUint32, value)
 		_node.TimeoutSeconds = &value
+	}
+	if value, ok := _c.mutation.Cron(); ok {
+		_spec.SetField(script.FieldCron, field.TypeString, value)
+		_node.Cron = &value
+	}
+	if value, ok := _c.mutation.CronNodeID(); ok {
+		_spec.SetField(script.FieldCronNodeID, field.TypeUint32, value)
+		_node.CronNodeID = &value
+	}
+	if value, ok := _c.mutation.LastCronAt(); ok {
+		_spec.SetField(script.FieldLastCronAt, field.TypeTime, value)
+		_node.LastCronAt = &value
 	}
 	if value, ok := _c.mutation.Labels(); ok {
 		_spec.SetField(script.FieldLabels, field.TypeJSON, value)
@@ -517,6 +575,66 @@ func (u *ScriptUpsert) AddTimeoutSeconds(v uint32) *ScriptUpsert {
 // ClearTimeoutSeconds clears the value of the "timeout_seconds" field.
 func (u *ScriptUpsert) ClearTimeoutSeconds() *ScriptUpsert {
 	u.SetNull(script.FieldTimeoutSeconds)
+	return u
+}
+
+// SetCron sets the "cron" field.
+func (u *ScriptUpsert) SetCron(v string) *ScriptUpsert {
+	u.Set(script.FieldCron, v)
+	return u
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *ScriptUpsert) UpdateCron() *ScriptUpsert {
+	u.SetExcluded(script.FieldCron)
+	return u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *ScriptUpsert) ClearCron() *ScriptUpsert {
+	u.SetNull(script.FieldCron)
+	return u
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (u *ScriptUpsert) SetCronNodeID(v uint32) *ScriptUpsert {
+	u.Set(script.FieldCronNodeID, v)
+	return u
+}
+
+// UpdateCronNodeID sets the "cron_node_id" field to the value that was provided on create.
+func (u *ScriptUpsert) UpdateCronNodeID() *ScriptUpsert {
+	u.SetExcluded(script.FieldCronNodeID)
+	return u
+}
+
+// AddCronNodeID adds v to the "cron_node_id" field.
+func (u *ScriptUpsert) AddCronNodeID(v uint32) *ScriptUpsert {
+	u.Add(script.FieldCronNodeID, v)
+	return u
+}
+
+// ClearCronNodeID clears the value of the "cron_node_id" field.
+func (u *ScriptUpsert) ClearCronNodeID() *ScriptUpsert {
+	u.SetNull(script.FieldCronNodeID)
+	return u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *ScriptUpsert) SetLastCronAt(v time.Time) *ScriptUpsert {
+	u.Set(script.FieldLastCronAt, v)
+	return u
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *ScriptUpsert) UpdateLastCronAt() *ScriptUpsert {
+	u.SetExcluded(script.FieldLastCronAt)
+	return u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *ScriptUpsert) ClearLastCronAt() *ScriptUpsert {
+	u.SetNull(script.FieldLastCronAt)
 	return u
 }
 
@@ -789,6 +907,76 @@ func (u *ScriptUpsertOne) UpdateTimeoutSeconds() *ScriptUpsertOne {
 func (u *ScriptUpsertOne) ClearTimeoutSeconds() *ScriptUpsertOne {
 	return u.Update(func(s *ScriptUpsert) {
 		s.ClearTimeoutSeconds()
+	})
+}
+
+// SetCron sets the "cron" field.
+func (u *ScriptUpsertOne) SetCron(v string) *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetCron(v)
+	})
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *ScriptUpsertOne) UpdateCron() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateCron()
+	})
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *ScriptUpsertOne) ClearCron() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearCron()
+	})
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (u *ScriptUpsertOne) SetCronNodeID(v uint32) *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetCronNodeID(v)
+	})
+}
+
+// AddCronNodeID adds v to the "cron_node_id" field.
+func (u *ScriptUpsertOne) AddCronNodeID(v uint32) *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.AddCronNodeID(v)
+	})
+}
+
+// UpdateCronNodeID sets the "cron_node_id" field to the value that was provided on create.
+func (u *ScriptUpsertOne) UpdateCronNodeID() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateCronNodeID()
+	})
+}
+
+// ClearCronNodeID clears the value of the "cron_node_id" field.
+func (u *ScriptUpsertOne) ClearCronNodeID() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearCronNodeID()
+	})
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *ScriptUpsertOne) SetLastCronAt(v time.Time) *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetLastCronAt(v)
+	})
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *ScriptUpsertOne) UpdateLastCronAt() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateLastCronAt()
+	})
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *ScriptUpsertOne) ClearLastCronAt() *ScriptUpsertOne {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearLastCronAt()
 	})
 }
 
@@ -1230,6 +1418,76 @@ func (u *ScriptUpsertBulk) UpdateTimeoutSeconds() *ScriptUpsertBulk {
 func (u *ScriptUpsertBulk) ClearTimeoutSeconds() *ScriptUpsertBulk {
 	return u.Update(func(s *ScriptUpsert) {
 		s.ClearTimeoutSeconds()
+	})
+}
+
+// SetCron sets the "cron" field.
+func (u *ScriptUpsertBulk) SetCron(v string) *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetCron(v)
+	})
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *ScriptUpsertBulk) UpdateCron() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateCron()
+	})
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *ScriptUpsertBulk) ClearCron() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearCron()
+	})
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (u *ScriptUpsertBulk) SetCronNodeID(v uint32) *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetCronNodeID(v)
+	})
+}
+
+// AddCronNodeID adds v to the "cron_node_id" field.
+func (u *ScriptUpsertBulk) AddCronNodeID(v uint32) *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.AddCronNodeID(v)
+	})
+}
+
+// UpdateCronNodeID sets the "cron_node_id" field to the value that was provided on create.
+func (u *ScriptUpsertBulk) UpdateCronNodeID() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateCronNodeID()
+	})
+}
+
+// ClearCronNodeID clears the value of the "cron_node_id" field.
+func (u *ScriptUpsertBulk) ClearCronNodeID() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearCronNodeID()
+	})
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *ScriptUpsertBulk) SetLastCronAt(v time.Time) *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.SetLastCronAt(v)
+	})
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *ScriptUpsertBulk) UpdateLastCronAt() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.UpdateLastCronAt()
+	})
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *ScriptUpsertBulk) ClearLastCronAt() *ScriptUpsertBulk {
+	return u.Update(func(s *ScriptUpsert) {
+		s.ClearLastCronAt()
 	})
 }
 

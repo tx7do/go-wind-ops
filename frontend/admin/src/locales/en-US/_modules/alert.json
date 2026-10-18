@@ -1,0 +1,16 @@
+{
+  "moduleName": "alert",
+  "monitorId": "Monitor",
+  "projectId": "Project",
+  "level": "Level",
+  "message": "Message",
+  "resolved": "Resolved",
+  "yes": "Yes",
+  "no": "No",
+  "createdAt": "Time",
+  "action": "Actions",
+  "resolve": "Resolve",
+  "resolveConfirm": "Mark this alert as resolved?",
+  "resolveSuccess": "Alert resolved",
+  "resolveFailed": "Operation failed"
+}

@@ -39,6 +39,12 @@ type Script struct {
 	Content string `json:"content,omitempty"`
 	// 执行超时(秒,默认 60,上限 600)
 	TimeoutSeconds *uint32 `json:"timeout_seconds,omitempty"`
+	// 定时执行 cron 表达式(5 段标准语法,空为手动触发)
+	Cron *string `json:"cron,omitempty"`
+	// 定时执行的目标节点(0 为未配置,不调度)
+	CronNodeID *uint32 `json:"cron_node_id,omitempty"`
+	// 上次定时调度锚点(调度器去重用)
+	LastCronAt *time.Time `json:"last_cron_at,omitempty"`
 	// 标签
 	Labels       []string `json:"labels,omitempty"`
 	selectValues sql.SelectValues
@@ -51,11 +57,11 @@ func (*Script) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case script.FieldLabels:
 			values[i] = new([]byte)
-		case script.FieldID, script.FieldCreatedBy, script.FieldUpdatedBy, script.FieldDeletedBy, script.FieldTimeoutSeconds:
+		case script.FieldID, script.FieldCreatedBy, script.FieldUpdatedBy, script.FieldDeletedBy, script.FieldTimeoutSeconds, script.FieldCronNodeID:
 			values[i] = new(sql.NullInt64)
-		case script.FieldName, script.FieldDescription, script.FieldContent:
+		case script.FieldName, script.FieldDescription, script.FieldContent, script.FieldCron:
 			values[i] = new(sql.NullString)
-		case script.FieldCreatedAt, script.FieldUpdatedAt, script.FieldDeletedAt:
+		case script.FieldCreatedAt, script.FieldUpdatedAt, script.FieldDeletedAt, script.FieldLastCronAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -146,6 +152,27 @@ func (_m *Script) assignValues(columns []string, values []any) error {
 				_m.TimeoutSeconds = new(uint32)
 				*_m.TimeoutSeconds = uint32(value.Int64)
 			}
+		case script.FieldCron:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cron", values[i])
+			} else if value.Valid {
+				_m.Cron = new(string)
+				*_m.Cron = value.String
+			}
+		case script.FieldCronNodeID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cron_node_id", values[i])
+			} else if value.Valid {
+				_m.CronNodeID = new(uint32)
+				*_m.CronNodeID = uint32(value.Int64)
+			}
+		case script.FieldLastCronAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_cron_at", values[i])
+			} else if value.Valid {
+				_m.LastCronAt = new(time.Time)
+				*_m.LastCronAt = value.Time
+			}
 		case script.FieldLabels:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field labels", values[i])
@@ -234,6 +261,21 @@ func (_m *Script) String() string {
 	if v := _m.TimeoutSeconds; v != nil {
 		builder.WriteString("timeout_seconds=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Cron; v != nil {
+		builder.WriteString("cron=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.CronNodeID; v != nil {
+		builder.WriteString("cron_node_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.LastCronAt; v != nil {
+		builder.WriteString("last_cron_at=")
+		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
 	builder.WriteString("labels=")

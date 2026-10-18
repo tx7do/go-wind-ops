@@ -119,6 +119,16 @@ func BuildNo(v uint32) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldBuildNo, v))
 }
 
+// Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
+func Cron(v string) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldCron, v))
+}
+
+// LastCronAt applies equality check predicate on the "last_cron_at" field. It's identical to LastCronAtEQ.
+func LastCronAt(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldLastCronAt, v))
+}
+
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldDescription, v))
@@ -822,6 +832,131 @@ func BuildNoLT(v uint32) predicate.Build {
 // BuildNoLTE applies the LTE predicate on the "build_no" field.
 func BuildNoLTE(v uint32) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldBuildNo, v))
+}
+
+// CronEQ applies the EQ predicate on the "cron" field.
+func CronEQ(v string) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldCron, v))
+}
+
+// CronNEQ applies the NEQ predicate on the "cron" field.
+func CronNEQ(v string) predicate.Build {
+	return predicate.Build(sql.FieldNEQ(FieldCron, v))
+}
+
+// CronIn applies the In predicate on the "cron" field.
+func CronIn(vs ...string) predicate.Build {
+	return predicate.Build(sql.FieldIn(FieldCron, vs...))
+}
+
+// CronNotIn applies the NotIn predicate on the "cron" field.
+func CronNotIn(vs ...string) predicate.Build {
+	return predicate.Build(sql.FieldNotIn(FieldCron, vs...))
+}
+
+// CronGT applies the GT predicate on the "cron" field.
+func CronGT(v string) predicate.Build {
+	return predicate.Build(sql.FieldGT(FieldCron, v))
+}
+
+// CronGTE applies the GTE predicate on the "cron" field.
+func CronGTE(v string) predicate.Build {
+	return predicate.Build(sql.FieldGTE(FieldCron, v))
+}
+
+// CronLT applies the LT predicate on the "cron" field.
+func CronLT(v string) predicate.Build {
+	return predicate.Build(sql.FieldLT(FieldCron, v))
+}
+
+// CronLTE applies the LTE predicate on the "cron" field.
+func CronLTE(v string) predicate.Build {
+	return predicate.Build(sql.FieldLTE(FieldCron, v))
+}
+
+// CronContains applies the Contains predicate on the "cron" field.
+func CronContains(v string) predicate.Build {
+	return predicate.Build(sql.FieldContains(FieldCron, v))
+}
+
+// CronHasPrefix applies the HasPrefix predicate on the "cron" field.
+func CronHasPrefix(v string) predicate.Build {
+	return predicate.Build(sql.FieldHasPrefix(FieldCron, v))
+}
+
+// CronHasSuffix applies the HasSuffix predicate on the "cron" field.
+func CronHasSuffix(v string) predicate.Build {
+	return predicate.Build(sql.FieldHasSuffix(FieldCron, v))
+}
+
+// CronIsNil applies the IsNil predicate on the "cron" field.
+func CronIsNil() predicate.Build {
+	return predicate.Build(sql.FieldIsNull(FieldCron))
+}
+
+// CronNotNil applies the NotNil predicate on the "cron" field.
+func CronNotNil() predicate.Build {
+	return predicate.Build(sql.FieldNotNull(FieldCron))
+}
+
+// CronEqualFold applies the EqualFold predicate on the "cron" field.
+func CronEqualFold(v string) predicate.Build {
+	return predicate.Build(sql.FieldEqualFold(FieldCron, v))
+}
+
+// CronContainsFold applies the ContainsFold predicate on the "cron" field.
+func CronContainsFold(v string) predicate.Build {
+	return predicate.Build(sql.FieldContainsFold(FieldCron, v))
+}
+
+// LastCronAtEQ applies the EQ predicate on the "last_cron_at" field.
+func LastCronAtEQ(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldEQ(FieldLastCronAt, v))
+}
+
+// LastCronAtNEQ applies the NEQ predicate on the "last_cron_at" field.
+func LastCronAtNEQ(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldNEQ(FieldLastCronAt, v))
+}
+
+// LastCronAtIn applies the In predicate on the "last_cron_at" field.
+func LastCronAtIn(vs ...time.Time) predicate.Build {
+	return predicate.Build(sql.FieldIn(FieldLastCronAt, vs...))
+}
+
+// LastCronAtNotIn applies the NotIn predicate on the "last_cron_at" field.
+func LastCronAtNotIn(vs ...time.Time) predicate.Build {
+	return predicate.Build(sql.FieldNotIn(FieldLastCronAt, vs...))
+}
+
+// LastCronAtGT applies the GT predicate on the "last_cron_at" field.
+func LastCronAtGT(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldGT(FieldLastCronAt, v))
+}
+
+// LastCronAtGTE applies the GTE predicate on the "last_cron_at" field.
+func LastCronAtGTE(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldGTE(FieldLastCronAt, v))
+}
+
+// LastCronAtLT applies the LT predicate on the "last_cron_at" field.
+func LastCronAtLT(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldLT(FieldLastCronAt, v))
+}
+
+// LastCronAtLTE applies the LTE predicate on the "last_cron_at" field.
+func LastCronAtLTE(v time.Time) predicate.Build {
+	return predicate.Build(sql.FieldLTE(FieldLastCronAt, v))
+}
+
+// LastCronAtIsNil applies the IsNil predicate on the "last_cron_at" field.
+func LastCronAtIsNil() predicate.Build {
+	return predicate.Build(sql.FieldIsNull(FieldLastCronAt))
+}
+
+// LastCronAtNotNil applies the NotNil predicate on the "last_cron_at" field.
+func LastCronAtNotNil() predicate.Build {
+	return predicate.Build(sql.FieldNotNull(FieldLastCronAt))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.

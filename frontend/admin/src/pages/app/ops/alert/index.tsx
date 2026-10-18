@@ -1,0 +1,72 @@
+import { useRef } from 'react';
+import type { ProColumns, ActionType } from '@ant-design/pro-components';
+import ListTable from '@/components/common/ListTable';
+import { Popconfirm, Tag, App } from 'antd';
+import { useTranslation } from 'react-i18next';
+import type { opsservicev1_Alert as Alert } from '@/api/generated/admin/service/v1';
+import { PaginationQuery } from '@/core';
+import { TABLE } from '@/config/constants';
+import { fetchListAlerts, useResolveAlert } from '@/api/hooks/alert';
+import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+
+const AlertManagement = () => {
+  const { t } = useTranslation('alert');
+  const actionRef = useRef<ActionType>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tableScrollY = useProTableScrollY(containerRef);
+
+  const resolveMutation = useResolveAlert({
+    onSuccess: () => { message.success(t('resolveSuccess')); actionRef.current?.reload(); },
+    onError: (e: Error) => message.error(e.message || t('resolveFailed')),
+  });
+
+  const { message } = App.useApp();
+
+  const columns: ProColumns<Alert>[] = [
+    { title: t('monitorId'), dataIndex: 'monitorId', width: 90, hideInSearch: true },
+    { title: t('projectId'), dataIndex: 'projectId', width: 90, hideInSearch: true },
+    {
+      title: t('level'), dataIndex: 'level', width: 100,
+      render: (_, r) => r.level === 'ERROR' ? <Tag color="error">{r.level}</Tag> : r.level === 'RECOVERY' ? <Tag color="success">{r.level}</Tag> : <Tag color="warning">{r.level}</Tag>,
+    },
+    { title: t('message'), dataIndex: 'message', ellipsis: true },
+    {
+      title: t('resolved'), width: 90, hideInSearch: true,
+      render: (_, r) => r.resolved ? <Tag color="success">{t('yes')}</Tag> : <Tag color="error">{t('no')}</Tag>,
+    },
+    { title: t('createdAt'), dataIndex: 'createdAt', width: 165, valueType: 'dateTime' },
+    {
+      title: t('action'), valueType: 'option', width: 100,
+      render: (_, r) => !r.resolved ? [
+        <Popconfirm key="resolve" title={t('resolveConfirm')} onConfirm={() => r.id && resolveMutation.mutate({ id: r.id })} okText="OK" cancelText="Cancel">
+          <a>{t('resolve')}</a>
+        </Popconfirm>,
+      ] : [],
+    },
+  ];
+
+  return (
+    <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
+      <div ref={containerRef} className="page-container-content">
+        <ListTable<Alert>
+          actionRef={actionRef} columns={columns} rowKey="id"
+          headerTitle={t('moduleName')}
+          request={async (params, sorter) => {
+            const q = new PaginationQuery({
+              paging: { page: params.current || 1, pageSize: params.pageSize || 10 },
+              orderBy: sorter && Object.keys(sorter).length > 0 ? Object.entries(sorter).map(([k, v]) => v === 'ascend' ? k : `-${k}`) : ['-createdAt'],
+            });
+            const resp = await fetchListAlerts(q);
+            return { data: resp.items || [], total: resp.total || 0, success: true };
+          }}
+          pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
+          toolBarRender={() => []}
+          options={{ density: true, fullScreen: true, setting: true, reload: true }}
+          size="middle" bordered scroll={{ y: tableScrollY, x: 1000 }}
+        />
+      </div>
+    </ContentContainer>
+  );
+};
+export default AlertManagement;

@@ -86,6 +86,26 @@ export const opsRoutes: AppRouteObject[] = [
           order: 7,
         },
       },
+      {
+        name: 'monitors',
+        path: 'monitors',
+        element: createLazyRoute(() => import('@/pages/app/ops/monitor')),
+        meta: {
+          title: 'routes:monitors',
+          icon: 'lucide:activity',
+          order: 8,
+        },
+      },
+      {
+        name: 'alerts',
+        path: 'alerts',
+        element: createLazyRoute(() => import('@/pages/app/ops/alert')),
+        meta: {
+          title: 'routes:alerts',
+          icon: 'lucide:bell',
+          order: 9,
+        },
+      },
     ],
   },
 ];

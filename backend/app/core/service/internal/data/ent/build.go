@@ -45,6 +45,10 @@ type Build struct {
 	TimeoutSeconds *uint32 `json:"timeout_seconds,omitempty"`
 	// 最新构建号(触发时自增)
 	BuildNo uint32 `json:"build_no,omitempty"`
+	// 定时构建 cron 表达式(5 段标准语法,空为手动触发)
+	Cron *string `json:"cron,omitempty"`
+	// 上次定时调度锚点(调度器去重用)
+	LastCronAt *time.Time `json:"last_cron_at,omitempty"`
 	// 描述
 	Description *string `json:"description,omitempty"`
 	// 标签
@@ -61,9 +65,9 @@ func (*Build) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case build.FieldID, build.FieldCreatedBy, build.FieldUpdatedBy, build.FieldDeletedBy, build.FieldRepositoryID, build.FieldTimeoutSeconds, build.FieldBuildNo:
 			values[i] = new(sql.NullInt64)
-		case build.FieldName, build.FieldBranch, build.FieldBuildCommand, build.FieldArtifactPath, build.FieldDescription:
+		case build.FieldName, build.FieldBranch, build.FieldBuildCommand, build.FieldArtifactPath, build.FieldCron, build.FieldDescription:
 			values[i] = new(sql.NullString)
-		case build.FieldCreatedAt, build.FieldUpdatedAt, build.FieldDeletedAt:
+		case build.FieldCreatedAt, build.FieldUpdatedAt, build.FieldDeletedAt, build.FieldLastCronAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -172,6 +176,20 @@ func (_m *Build) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.BuildNo = uint32(value.Int64)
 			}
+		case build.FieldCron:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cron", values[i])
+			} else if value.Valid {
+				_m.Cron = new(string)
+				*_m.Cron = value.String
+			}
+		case build.FieldLastCronAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_cron_at", values[i])
+			} else if value.Valid {
+				_m.LastCronAt = new(time.Time)
+				*_m.LastCronAt = value.Time
+			}
 		case build.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -277,6 +295,16 @@ func (_m *Build) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("build_no=")
 	builder.WriteString(fmt.Sprintf("%v", _m.BuildNo))
+	builder.WriteString(", ")
+	if v := _m.Cron; v != nil {
+		builder.WriteString("cron=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.LastCronAt; v != nil {
+		builder.WriteString("last_cron_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := _m.Description; v != nil {
 		builder.WriteString("description=")

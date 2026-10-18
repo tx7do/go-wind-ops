@@ -1,0 +1,22 @@
+{
+  "moduleName": "监控规则",
+  "name": "规则名称",
+  "projectId": "被监控项目",
+  "cron": "检查周期",
+  "cronHint": "5 段标准 cron 语法",
+  "autoRestart": "自动重启",
+  "enabled": "启用",
+  "webhookUrl": "告警 Webhook",
+  "description": "描述",
+  "yes": "是",
+  "no": "否",
+  "create": "新建监控规则",
+  "edit": "编辑监控规则",
+  "createSuccess": "监控规则已创建",
+  "createFailed": "创建失败",
+  "updateSuccess": "监控规则已更新",
+  "updateFailed": "更新失败",
+  "deleteSuccess": "监控规则已删除",
+  "deleteFailed": "删除失败",
+  "deleteConfirmTitle": "确认删除监控规则"
+}

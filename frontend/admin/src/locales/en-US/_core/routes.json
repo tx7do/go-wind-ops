@@ -8,6 +8,8 @@
   "builds": "Builds",
   "distributions": "Distributions",
   "command-records": "Command Records",
+  "monitors": "Monitors",
+  "alerts": "Alerts",
   "tenant": "Tenant Management",
   "tenant-members": "Tenant Members",
   "permission": "Permission Management",

@@ -1,0 +1,22 @@
+{
+  "moduleName": "monitor",
+  "name": "Rule Name",
+  "projectId": "Project",
+  "cron": "Check Cron",
+  "cronHint": "5-field standard cron",
+  "autoRestart": "Auto Restart",
+  "enabled": "Enabled",
+  "webhookUrl": "Alert Webhook",
+  "description": "Description",
+  "yes": "Yes",
+  "no": "No",
+  "create": "New Monitor",
+  "edit": "Edit Monitor",
+  "createSuccess": "Monitor created",
+  "createFailed": "Create failed",
+  "updateSuccess": "Monitor updated",
+  "updateFailed": "Update failed",
+  "deleteSuccess": "Monitor deleted",
+  "deleteFailed": "Delete failed",
+  "deleteConfirmTitle": "Delete monitor"
+}

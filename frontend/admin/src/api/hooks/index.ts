@@ -52,3 +52,5 @@ export * from './repository';
 export * from './build';
 export * from './build-history';
 export * from './distribution';
+export * from './monitor';
+export * from './alert';

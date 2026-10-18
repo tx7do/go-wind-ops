@@ -114,11 +114,12 @@ const DistributionDrawer: React.FC<DistributionDrawerProps> = ({
             initialValue={data?.buildId}
           />
           <ProFormSelect
-            name="projectId"
+            name="projectIds"
+            mode="multiple"
             label={t('projectId')}
             options={projectOptions}
             rules={[{ required: true, message: t('projectRequired') }]}
-            initialValue={data?.projectId}
+            initialValue={data?.projectIds}
           />
           <ProFormSwitch
             name="clearOld"

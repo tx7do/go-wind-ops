@@ -135,6 +135,30 @@ func (f AgentNodeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AgentNodeMutation", m)
 }
 
+// The AlertQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AlertQueryRuleFunc func(context.Context, *ent.AlertQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AlertQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AlertQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AlertQuery", q)
+}
+
+// The AlertMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AlertMutationRuleFunc func(context.Context, *ent.AlertMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AlertMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AlertMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AlertMutation", m)
+}
+
 // The ApiQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ApiQueryRuleFunc func(context.Context, *ent.APIQuery) error
@@ -589,6 +613,30 @@ func (f MenuMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.MenuMutation", m)
+}
+
+// The MonitorQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type MonitorQueryRuleFunc func(context.Context, *ent.MonitorQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f MonitorQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.MonitorQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.MonitorQuery", q)
+}
+
+// The MonitorMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type MonitorMutationRuleFunc func(context.Context, *ent.MonitorMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f MonitorMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.MonitorMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.MonitorMutation", m)
 }
 
 // The OperationAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1180,6 +1228,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AgentNodeQuery:
 		return q.Filter(), nil
+	case *ent.AlertQuery:
+		return q.Filter(), nil
 	case *ent.APIQuery:
 		return q.Filter(), nil
 	case *ent.ApiAuditLogQuery:
@@ -1217,6 +1267,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.MembershipRoleQuery:
 		return q.Filter(), nil
 	case *ent.MenuQuery:
+		return q.Filter(), nil
+	case *ent.MonitorQuery:
 		return q.Filter(), nil
 	case *ent.OperationAuditLogQuery:
 		return q.Filter(), nil
@@ -1273,6 +1325,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AgentNodeMutation:
 		return m.Filter(), nil
+	case *ent.AlertMutation:
+		return m.Filter(), nil
 	case *ent.APIMutation:
 		return m.Filter(), nil
 	case *ent.ApiAuditLogMutation:
@@ -1310,6 +1364,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.MembershipRoleMutation:
 		return m.Filter(), nil
 	case *ent.MenuMutation:
+		return m.Filter(), nil
+	case *ent.MonitorMutation:
 		return m.Filter(), nil
 	case *ent.OperationAuditLogMutation:
 		return m.Filter(), nil

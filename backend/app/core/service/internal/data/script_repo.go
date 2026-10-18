@@ -206,3 +206,21 @@ func (r *ScriptRepo) Delete(ctx context.Context, req *opsV1.DeleteScriptRequest)
 
 	return nil
 }
+
+// AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected
+// 时更新为 now,返回是否抢到(多副本去重)。
+func (r *ScriptRepo) AdvanceCronAnchor(ctx context.Context, scriptID uint32, expected, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Script.
+		Update().
+		Where(
+			script.IDEQ(scriptID),
+			script.LastCronAtEQ(expected),
+		).
+		SetLastCronAt(now).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("advance cron anchor [script=%d]: %s", scriptID, err.Error())
+		return false, err
+	}
+	return n > 0, nil
+}

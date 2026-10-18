@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/alert.proto";
+
+// AlertService 告警记录查询
+service AlertService {
+  // 查询告警列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListAlertResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/alerts"
+    };
+  }
+
+  // 查询告警详情
+  rpc Get (ops.service.v1.GetAlertRequest) returns (ops.service.v1.Alert) {
+    option (google.api.http) = {
+      get: "/admin/v1/alerts/{id}"
+    };
+  }
+
+  // 标记告警已恢复
+  rpc Resolve (ops.service.v1.ResolveAlertRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/alerts/{id}:resolve"
+      body: "*"
+    };
+  }
+}

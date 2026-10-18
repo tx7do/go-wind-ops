@@ -29,8 +29,8 @@ const (
 	FieldName = "name"
 	// FieldBuildID holds the string denoting the build_id field in the database.
 	FieldBuildID = "build_id"
-	// FieldProjectID holds the string denoting the project_id field in the database.
-	FieldProjectID = "project_id"
+	// FieldProjectIds holds the string denoting the project_ids field in the database.
+	FieldProjectIds = "project_ids"
 	// FieldClearOld holds the string denoting the clear_old field in the database.
 	FieldClearOld = "clear_old"
 	// FieldAfterOpt holds the string denoting the after_opt field in the database.
@@ -54,7 +54,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldName,
 	FieldBuildID,
-	FieldProjectID,
+	FieldProjectIds,
 	FieldClearOld,
 	FieldAfterOpt,
 	FieldDescription,
@@ -76,8 +76,6 @@ var (
 	NameValidator func(string) error
 	// BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
 	BuildIDValidator func(uint32) error
-	// ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	ProjectIDValidator func(uint32) error
 	// DefaultClearOld holds the default value on creation for the "clear_old" field.
 	DefaultClearOld bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -157,11 +155,6 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByBuildID orders the results by the build_id field.
 func ByBuildID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBuildID, opts...).ToFunc()
-}
-
-// ByProjectID orders the results by the project_id field.
-func ByProjectID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldProjectID, opts...).ToFunc()
 }
 
 // ByClearOld orders the results by the clear_old field.

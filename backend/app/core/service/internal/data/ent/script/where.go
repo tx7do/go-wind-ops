@@ -104,6 +104,21 @@ func TimeoutSeconds(v uint32) predicate.Script {
 	return predicate.Script(sql.FieldEQ(FieldTimeoutSeconds, v))
 }
 
+// Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
+func Cron(v string) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldCron, v))
+}
+
+// CronNodeID applies equality check predicate on the "cron_node_id" field. It's identical to CronNodeIDEQ.
+func CronNodeID(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldCronNodeID, v))
+}
+
+// LastCronAt applies equality check predicate on the "last_cron_at" field. It's identical to LastCronAtEQ.
+func LastCronAt(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldLastCronAt, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Script {
 	return predicate.Script(sql.FieldEQ(FieldCreatedAt, v))
@@ -657,6 +672,181 @@ func TimeoutSecondsIsNil() predicate.Script {
 // TimeoutSecondsNotNil applies the NotNil predicate on the "timeout_seconds" field.
 func TimeoutSecondsNotNil() predicate.Script {
 	return predicate.Script(sql.FieldNotNull(FieldTimeoutSeconds))
+}
+
+// CronEQ applies the EQ predicate on the "cron" field.
+func CronEQ(v string) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldCron, v))
+}
+
+// CronNEQ applies the NEQ predicate on the "cron" field.
+func CronNEQ(v string) predicate.Script {
+	return predicate.Script(sql.FieldNEQ(FieldCron, v))
+}
+
+// CronIn applies the In predicate on the "cron" field.
+func CronIn(vs ...string) predicate.Script {
+	return predicate.Script(sql.FieldIn(FieldCron, vs...))
+}
+
+// CronNotIn applies the NotIn predicate on the "cron" field.
+func CronNotIn(vs ...string) predicate.Script {
+	return predicate.Script(sql.FieldNotIn(FieldCron, vs...))
+}
+
+// CronGT applies the GT predicate on the "cron" field.
+func CronGT(v string) predicate.Script {
+	return predicate.Script(sql.FieldGT(FieldCron, v))
+}
+
+// CronGTE applies the GTE predicate on the "cron" field.
+func CronGTE(v string) predicate.Script {
+	return predicate.Script(sql.FieldGTE(FieldCron, v))
+}
+
+// CronLT applies the LT predicate on the "cron" field.
+func CronLT(v string) predicate.Script {
+	return predicate.Script(sql.FieldLT(FieldCron, v))
+}
+
+// CronLTE applies the LTE predicate on the "cron" field.
+func CronLTE(v string) predicate.Script {
+	return predicate.Script(sql.FieldLTE(FieldCron, v))
+}
+
+// CronContains applies the Contains predicate on the "cron" field.
+func CronContains(v string) predicate.Script {
+	return predicate.Script(sql.FieldContains(FieldCron, v))
+}
+
+// CronHasPrefix applies the HasPrefix predicate on the "cron" field.
+func CronHasPrefix(v string) predicate.Script {
+	return predicate.Script(sql.FieldHasPrefix(FieldCron, v))
+}
+
+// CronHasSuffix applies the HasSuffix predicate on the "cron" field.
+func CronHasSuffix(v string) predicate.Script {
+	return predicate.Script(sql.FieldHasSuffix(FieldCron, v))
+}
+
+// CronIsNil applies the IsNil predicate on the "cron" field.
+func CronIsNil() predicate.Script {
+	return predicate.Script(sql.FieldIsNull(FieldCron))
+}
+
+// CronNotNil applies the NotNil predicate on the "cron" field.
+func CronNotNil() predicate.Script {
+	return predicate.Script(sql.FieldNotNull(FieldCron))
+}
+
+// CronEqualFold applies the EqualFold predicate on the "cron" field.
+func CronEqualFold(v string) predicate.Script {
+	return predicate.Script(sql.FieldEqualFold(FieldCron, v))
+}
+
+// CronContainsFold applies the ContainsFold predicate on the "cron" field.
+func CronContainsFold(v string) predicate.Script {
+	return predicate.Script(sql.FieldContainsFold(FieldCron, v))
+}
+
+// CronNodeIDEQ applies the EQ predicate on the "cron_node_id" field.
+func CronNodeIDEQ(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldCronNodeID, v))
+}
+
+// CronNodeIDNEQ applies the NEQ predicate on the "cron_node_id" field.
+func CronNodeIDNEQ(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldNEQ(FieldCronNodeID, v))
+}
+
+// CronNodeIDIn applies the In predicate on the "cron_node_id" field.
+func CronNodeIDIn(vs ...uint32) predicate.Script {
+	return predicate.Script(sql.FieldIn(FieldCronNodeID, vs...))
+}
+
+// CronNodeIDNotIn applies the NotIn predicate on the "cron_node_id" field.
+func CronNodeIDNotIn(vs ...uint32) predicate.Script {
+	return predicate.Script(sql.FieldNotIn(FieldCronNodeID, vs...))
+}
+
+// CronNodeIDGT applies the GT predicate on the "cron_node_id" field.
+func CronNodeIDGT(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldGT(FieldCronNodeID, v))
+}
+
+// CronNodeIDGTE applies the GTE predicate on the "cron_node_id" field.
+func CronNodeIDGTE(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldGTE(FieldCronNodeID, v))
+}
+
+// CronNodeIDLT applies the LT predicate on the "cron_node_id" field.
+func CronNodeIDLT(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldLT(FieldCronNodeID, v))
+}
+
+// CronNodeIDLTE applies the LTE predicate on the "cron_node_id" field.
+func CronNodeIDLTE(v uint32) predicate.Script {
+	return predicate.Script(sql.FieldLTE(FieldCronNodeID, v))
+}
+
+// CronNodeIDIsNil applies the IsNil predicate on the "cron_node_id" field.
+func CronNodeIDIsNil() predicate.Script {
+	return predicate.Script(sql.FieldIsNull(FieldCronNodeID))
+}
+
+// CronNodeIDNotNil applies the NotNil predicate on the "cron_node_id" field.
+func CronNodeIDNotNil() predicate.Script {
+	return predicate.Script(sql.FieldNotNull(FieldCronNodeID))
+}
+
+// LastCronAtEQ applies the EQ predicate on the "last_cron_at" field.
+func LastCronAtEQ(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldEQ(FieldLastCronAt, v))
+}
+
+// LastCronAtNEQ applies the NEQ predicate on the "last_cron_at" field.
+func LastCronAtNEQ(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldNEQ(FieldLastCronAt, v))
+}
+
+// LastCronAtIn applies the In predicate on the "last_cron_at" field.
+func LastCronAtIn(vs ...time.Time) predicate.Script {
+	return predicate.Script(sql.FieldIn(FieldLastCronAt, vs...))
+}
+
+// LastCronAtNotIn applies the NotIn predicate on the "last_cron_at" field.
+func LastCronAtNotIn(vs ...time.Time) predicate.Script {
+	return predicate.Script(sql.FieldNotIn(FieldLastCronAt, vs...))
+}
+
+// LastCronAtGT applies the GT predicate on the "last_cron_at" field.
+func LastCronAtGT(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldGT(FieldLastCronAt, v))
+}
+
+// LastCronAtGTE applies the GTE predicate on the "last_cron_at" field.
+func LastCronAtGTE(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldGTE(FieldLastCronAt, v))
+}
+
+// LastCronAtLT applies the LT predicate on the "last_cron_at" field.
+func LastCronAtLT(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldLT(FieldLastCronAt, v))
+}
+
+// LastCronAtLTE applies the LTE predicate on the "last_cron_at" field.
+func LastCronAtLTE(v time.Time) predicate.Script {
+	return predicate.Script(sql.FieldLTE(FieldLastCronAt, v))
+}
+
+// LastCronAtIsNil applies the IsNil predicate on the "last_cron_at" field.
+func LastCronAtIsNil() predicate.Script {
+	return predicate.Script(sql.FieldIsNull(FieldLastCronAt))
+}
+
+// LastCronAtNotNil applies the NotNil predicate on the "last_cron_at" field.
+func LastCronAtNotNil() predicate.Script {
+	return predicate.Script(sql.FieldNotNull(FieldLastCronAt))
 }
 
 // LabelsIsNil applies the IsNil predicate on the "labels" field.

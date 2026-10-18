@@ -8,6 +8,8 @@
   "builds": "构建管理",
   "distributions": "分发管理",
   "command-records": "指令台账",
+  "monitors": "监控规则",
+  "alerts": "告警记录",
   "tenant": "租户管理",
   "tenant-members": "租户成员",
   "permission": "权限管理",

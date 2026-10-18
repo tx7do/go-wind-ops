@@ -31,6 +31,12 @@ const (
 	FieldContent = "content"
 	// FieldTimeoutSeconds holds the string denoting the timeout_seconds field in the database.
 	FieldTimeoutSeconds = "timeout_seconds"
+	// FieldCron holds the string denoting the cron field in the database.
+	FieldCron = "cron"
+	// FieldCronNodeID holds the string denoting the cron_node_id field in the database.
+	FieldCronNodeID = "cron_node_id"
+	// FieldLastCronAt holds the string denoting the last_cron_at field in the database.
+	FieldLastCronAt = "last_cron_at"
 	// FieldLabels holds the string denoting the labels field in the database.
 	FieldLabels = "labels"
 	// Table holds the table name of the script in the database.
@@ -50,6 +56,9 @@ var Columns = []string{
 	FieldDescription,
 	FieldContent,
 	FieldTimeoutSeconds,
+	FieldCron,
+	FieldCronNodeID,
+	FieldLastCronAt,
 	FieldLabels,
 }
 
@@ -68,6 +77,8 @@ var (
 	NameValidator func(string) error
 	// DefaultTimeoutSeconds holds the default value on creation for the "timeout_seconds" field.
 	DefaultTimeoutSeconds uint32
+	// DefaultCronNodeID holds the default value on creation for the "cron_node_id" field.
+	DefaultCronNodeID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -128,4 +139,19 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 // ByTimeoutSeconds orders the results by the timeout_seconds field.
 func ByTimeoutSeconds(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimeoutSeconds, opts...).ToFunc()
+}
+
+// ByCron orders the results by the cron field.
+func ByCron(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCron, opts...).ToFunc()
+}
+
+// ByCronNodeID orders the results by the cron_node_id field.
+func ByCronNodeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCronNodeID, opts...).ToFunc()
+}
+
+// ByLastCronAt orders the results by the last_cron_at field.
+func ByLastCronAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastCronAt, opts...).ToFunc()
 }

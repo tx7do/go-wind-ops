@@ -282,6 +282,46 @@ func (_u *BuildUpdate) AddBuildNo(v int32) *BuildUpdate {
 	return _u
 }
 
+// SetCron sets the "cron" field.
+func (_u *BuildUpdate) SetCron(v string) *BuildUpdate {
+	_u.mutation.SetCron(v)
+	return _u
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_u *BuildUpdate) SetNillableCron(v *string) *BuildUpdate {
+	if v != nil {
+		_u.SetCron(*v)
+	}
+	return _u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (_u *BuildUpdate) ClearCron() *BuildUpdate {
+	_u.mutation.ClearCron()
+	return _u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_u *BuildUpdate) SetLastCronAt(v time.Time) *BuildUpdate {
+	_u.mutation.SetLastCronAt(v)
+	return _u
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_u *BuildUpdate) SetNillableLastCronAt(v *time.Time) *BuildUpdate {
+	if v != nil {
+		_u.SetLastCronAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (_u *BuildUpdate) ClearLastCronAt() *BuildUpdate {
+	_u.mutation.ClearLastCronAt()
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *BuildUpdate) SetDescription(v string) *BuildUpdate {
 	_u.mutation.SetDescription(v)
@@ -472,6 +512,18 @@ func (_u *BuildUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedBuildNo(); ok {
 		_spec.AddField(build.FieldBuildNo, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.Cron(); ok {
+		_spec.SetField(build.FieldCron, field.TypeString, value)
+	}
+	if _u.mutation.CronCleared() {
+		_spec.ClearField(build.FieldCron, field.TypeString)
+	}
+	if value, ok := _u.mutation.LastCronAt(); ok {
+		_spec.SetField(build.FieldLastCronAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCronAtCleared() {
+		_spec.ClearField(build.FieldLastCronAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(build.FieldDescription, field.TypeString, value)
@@ -764,6 +816,46 @@ func (_u *BuildUpdateOne) AddBuildNo(v int32) *BuildUpdateOne {
 	return _u
 }
 
+// SetCron sets the "cron" field.
+func (_u *BuildUpdateOne) SetCron(v string) *BuildUpdateOne {
+	_u.mutation.SetCron(v)
+	return _u
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_u *BuildUpdateOne) SetNillableCron(v *string) *BuildUpdateOne {
+	if v != nil {
+		_u.SetCron(*v)
+	}
+	return _u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (_u *BuildUpdateOne) ClearCron() *BuildUpdateOne {
+	_u.mutation.ClearCron()
+	return _u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_u *BuildUpdateOne) SetLastCronAt(v time.Time) *BuildUpdateOne {
+	_u.mutation.SetLastCronAt(v)
+	return _u
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_u *BuildUpdateOne) SetNillableLastCronAt(v *time.Time) *BuildUpdateOne {
+	if v != nil {
+		_u.SetLastCronAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (_u *BuildUpdateOne) ClearLastCronAt() *BuildUpdateOne {
+	_u.mutation.ClearLastCronAt()
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *BuildUpdateOne) SetDescription(v string) *BuildUpdateOne {
 	_u.mutation.SetDescription(v)
@@ -984,6 +1076,18 @@ func (_u *BuildUpdateOne) sqlSave(ctx context.Context) (_node *Build, err error)
 	}
 	if value, ok := _u.mutation.AddedBuildNo(); ok {
 		_spec.AddField(build.FieldBuildNo, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.Cron(); ok {
+		_spec.SetField(build.FieldCron, field.TypeString, value)
+	}
+	if _u.mutation.CronCleared() {
+		_spec.ClearField(build.FieldCron, field.TypeString)
+	}
+	if value, ok := _u.mutation.LastCronAt(); ok {
+		_spec.SetField(build.FieldLastCronAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCronAtCleared() {
+		_spec.ClearField(build.FieldLastCronAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(build.FieldDescription, field.TypeString, value)

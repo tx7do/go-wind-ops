@@ -143,7 +143,7 @@ func (r *DistributionRepo) Create(ctx context.Context, req *opsV1.CreateDistribu
 	builder := r.entClient.Client().Distribution.Create().
 		SetName(req.Data.GetName()).
 		SetBuildID(req.Data.GetBuildId()).
-		SetProjectID(req.Data.GetProjectId()).
+		SetProjectIds(req.Data.GetProjectIds()).
 		SetClearOld(req.Data.GetClearOld()).
 		SetNillableDescription(req.Data.Description).
 		SetLabels(req.Data.Labels)
@@ -182,8 +182,8 @@ func (r *DistributionRepo) Update(ctx context.Context, req *opsV1.UpdateDistribu
 			if req.Data.BuildId != nil && req.Data.GetBuildId() > 0 {
 				builder.SetBuildID(req.Data.GetBuildId())
 			}
-			if req.Data.ProjectId != nil && req.Data.GetProjectId() > 0 {
-				builder.SetProjectID(req.Data.GetProjectId())
+			if len(req.Data.GetProjectIds()) > 0 {
+				builder.SetProjectIds(req.Data.GetProjectIds())
 			}
 			if req.Data.AfterOpt != nil {
 				builder.SetAfterOpt(afterOptToEntity(req.Data.GetAfterOpt()))

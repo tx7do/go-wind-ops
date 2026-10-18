@@ -37,6 +37,10 @@ const (
 	FieldTimeoutSeconds = "timeout_seconds"
 	// FieldBuildNo holds the string denoting the build_no field in the database.
 	FieldBuildNo = "build_no"
+	// FieldCron holds the string denoting the cron field in the database.
+	FieldCron = "cron"
+	// FieldLastCronAt holds the string denoting the last_cron_at field in the database.
+	FieldLastCronAt = "last_cron_at"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldLabels holds the string denoting the labels field in the database.
@@ -61,6 +65,8 @@ var Columns = []string{
 	FieldArtifactPath,
 	FieldTimeoutSeconds,
 	FieldBuildNo,
+	FieldCron,
+	FieldLastCronAt,
 	FieldDescription,
 	FieldLabels,
 }
@@ -163,6 +169,16 @@ func ByTimeoutSeconds(opts ...sql.OrderTermOption) OrderOption {
 // ByBuildNo orders the results by the build_no field.
 func ByBuildNo(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBuildNo, opts...).ToFunc()
+}
+
+// ByCron orders the results by the cron field.
+func ByCron(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCron, opts...).ToFunc()
+}
+
+// ByLastCronAt orders the results by the last_cron_at field.
+func ByLastCronAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastCronAt, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

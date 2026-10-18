@@ -186,24 +186,21 @@ func (_u *DistributionUpdate) AddBuildID(v int32) *DistributionUpdate {
 	return _u
 }
 
-// SetProjectID sets the "project_id" field.
-func (_u *DistributionUpdate) SetProjectID(v uint32) *DistributionUpdate {
-	_u.mutation.ResetProjectID()
-	_u.mutation.SetProjectID(v)
+// SetProjectIds sets the "project_ids" field.
+func (_u *DistributionUpdate) SetProjectIds(v []uint32) *DistributionUpdate {
+	_u.mutation.SetProjectIds(v)
 	return _u
 }
 
-// SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *DistributionUpdate) SetNillableProjectID(v *uint32) *DistributionUpdate {
-	if v != nil {
-		_u.SetProjectID(*v)
-	}
+// AppendProjectIds appends value to the "project_ids" field.
+func (_u *DistributionUpdate) AppendProjectIds(v []uint32) *DistributionUpdate {
+	_u.mutation.AppendProjectIds(v)
 	return _u
 }
 
-// AddProjectID adds value to the "project_id" field.
-func (_u *DistributionUpdate) AddProjectID(v int32) *DistributionUpdate {
-	_u.mutation.AddProjectID(v)
+// ClearProjectIds clears the value of the "project_ids" field.
+func (_u *DistributionUpdate) ClearProjectIds() *DistributionUpdate {
+	_u.mutation.ClearProjectIds()
 	return _u
 }
 
@@ -323,11 +320,6 @@ func (_u *DistributionUpdate) check() error {
 			return &ValidationError{Name: "build_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.build_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := distribution.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.project_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.AfterOpt(); ok {
 		if err := distribution.AfterOptValidator(v); err != nil {
 			return &ValidationError{Name: "after_opt", err: fmt.Errorf(`ent: validator failed for field "Distribution.after_opt": %w`, err)}
@@ -405,11 +397,16 @@ func (_u *DistributionUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if value, ok := _u.mutation.AddedBuildID(); ok {
 		_spec.AddField(distribution.FieldBuildID, field.TypeUint32, value)
 	}
-	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(distribution.FieldProjectID, field.TypeUint32, value)
+	if value, ok := _u.mutation.ProjectIds(); ok {
+		_spec.SetField(distribution.FieldProjectIds, field.TypeJSON, value)
 	}
-	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(distribution.FieldProjectID, field.TypeUint32, value)
+	if value, ok := _u.mutation.AppendedProjectIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldProjectIds, value)
+		})
+	}
+	if _u.mutation.ProjectIdsCleared() {
+		_spec.ClearField(distribution.FieldProjectIds, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)
@@ -615,24 +612,21 @@ func (_u *DistributionUpdateOne) AddBuildID(v int32) *DistributionUpdateOne {
 	return _u
 }
 
-// SetProjectID sets the "project_id" field.
-func (_u *DistributionUpdateOne) SetProjectID(v uint32) *DistributionUpdateOne {
-	_u.mutation.ResetProjectID()
-	_u.mutation.SetProjectID(v)
+// SetProjectIds sets the "project_ids" field.
+func (_u *DistributionUpdateOne) SetProjectIds(v []uint32) *DistributionUpdateOne {
+	_u.mutation.SetProjectIds(v)
 	return _u
 }
 
-// SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *DistributionUpdateOne) SetNillableProjectID(v *uint32) *DistributionUpdateOne {
-	if v != nil {
-		_u.SetProjectID(*v)
-	}
+// AppendProjectIds appends value to the "project_ids" field.
+func (_u *DistributionUpdateOne) AppendProjectIds(v []uint32) *DistributionUpdateOne {
+	_u.mutation.AppendProjectIds(v)
 	return _u
 }
 
-// AddProjectID adds value to the "project_id" field.
-func (_u *DistributionUpdateOne) AddProjectID(v int32) *DistributionUpdateOne {
-	_u.mutation.AddProjectID(v)
+// ClearProjectIds clears the value of the "project_ids" field.
+func (_u *DistributionUpdateOne) ClearProjectIds() *DistributionUpdateOne {
+	_u.mutation.ClearProjectIds()
 	return _u
 }
 
@@ -765,11 +759,6 @@ func (_u *DistributionUpdateOne) check() error {
 			return &ValidationError{Name: "build_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.build_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := distribution.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.project_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.AfterOpt(); ok {
 		if err := distribution.AfterOptValidator(v); err != nil {
 			return &ValidationError{Name: "after_opt", err: fmt.Errorf(`ent: validator failed for field "Distribution.after_opt": %w`, err)}
@@ -864,11 +853,16 @@ func (_u *DistributionUpdateOne) sqlSave(ctx context.Context) (_node *Distributi
 	if value, ok := _u.mutation.AddedBuildID(); ok {
 		_spec.AddField(distribution.FieldBuildID, field.TypeUint32, value)
 	}
-	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(distribution.FieldProjectID, field.TypeUint32, value)
+	if value, ok := _u.mutation.ProjectIds(); ok {
+		_spec.SetField(distribution.FieldProjectIds, field.TypeJSON, value)
 	}
-	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(distribution.FieldProjectID, field.TypeUint32, value)
+	if value, ok := _u.mutation.AppendedProjectIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, distribution.FieldProjectIds, value)
+		})
+	}
+	if _u.mutation.ProjectIdsCleared() {
+		_spec.ClearField(distribution.FieldProjectIds, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)

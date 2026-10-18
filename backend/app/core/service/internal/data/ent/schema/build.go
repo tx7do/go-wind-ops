@@ -64,6 +64,16 @@ func (Build) Fields() []ent.Field {
 			Comment("最新构建号(触发时自增)").
 			Default(0),
 
+		field.String("cron").
+			Comment("定时构建 cron 表达式(5 段标准语法,空为手动触发)").
+			Optional().
+			Nillable(),
+
+		field.Time("last_cron_at").
+			Comment("上次定时调度锚点(调度器去重用)").
+			Optional().
+			Nillable(),
+
 		field.String("description").
 			Comment("描述").
 			Optional().

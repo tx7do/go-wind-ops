@@ -226,6 +226,73 @@ func (_u *ScriptUpdate) ClearTimeoutSeconds() *ScriptUpdate {
 	return _u
 }
 
+// SetCron sets the "cron" field.
+func (_u *ScriptUpdate) SetCron(v string) *ScriptUpdate {
+	_u.mutation.SetCron(v)
+	return _u
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_u *ScriptUpdate) SetNillableCron(v *string) *ScriptUpdate {
+	if v != nil {
+		_u.SetCron(*v)
+	}
+	return _u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (_u *ScriptUpdate) ClearCron() *ScriptUpdate {
+	_u.mutation.ClearCron()
+	return _u
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (_u *ScriptUpdate) SetCronNodeID(v uint32) *ScriptUpdate {
+	_u.mutation.ResetCronNodeID()
+	_u.mutation.SetCronNodeID(v)
+	return _u
+}
+
+// SetNillableCronNodeID sets the "cron_node_id" field if the given value is not nil.
+func (_u *ScriptUpdate) SetNillableCronNodeID(v *uint32) *ScriptUpdate {
+	if v != nil {
+		_u.SetCronNodeID(*v)
+	}
+	return _u
+}
+
+// AddCronNodeID adds value to the "cron_node_id" field.
+func (_u *ScriptUpdate) AddCronNodeID(v int32) *ScriptUpdate {
+	_u.mutation.AddCronNodeID(v)
+	return _u
+}
+
+// ClearCronNodeID clears the value of the "cron_node_id" field.
+func (_u *ScriptUpdate) ClearCronNodeID() *ScriptUpdate {
+	_u.mutation.ClearCronNodeID()
+	return _u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_u *ScriptUpdate) SetLastCronAt(v time.Time) *ScriptUpdate {
+	_u.mutation.SetLastCronAt(v)
+	return _u
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_u *ScriptUpdate) SetNillableLastCronAt(v *time.Time) *ScriptUpdate {
+	if v != nil {
+		_u.SetLastCronAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (_u *ScriptUpdate) ClearLastCronAt() *ScriptUpdate {
+	_u.mutation.ClearLastCronAt()
+	return _u
+}
+
 // SetLabels sets the "labels" field.
 func (_u *ScriptUpdate) SetLabels(v []string) *ScriptUpdate {
 	_u.mutation.SetLabels(v)
@@ -366,6 +433,27 @@ func (_u *ScriptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TimeoutSecondsCleared() {
 		_spec.ClearField(script.FieldTimeoutSeconds, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Cron(); ok {
+		_spec.SetField(script.FieldCron, field.TypeString, value)
+	}
+	if _u.mutation.CronCleared() {
+		_spec.ClearField(script.FieldCron, field.TypeString)
+	}
+	if value, ok := _u.mutation.CronNodeID(); ok {
+		_spec.SetField(script.FieldCronNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedCronNodeID(); ok {
+		_spec.AddField(script.FieldCronNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.CronNodeIDCleared() {
+		_spec.ClearField(script.FieldCronNodeID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.LastCronAt(); ok {
+		_spec.SetField(script.FieldLastCronAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCronAtCleared() {
+		_spec.ClearField(script.FieldLastCronAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Labels(); ok {
 		_spec.SetField(script.FieldLabels, field.TypeJSON, value)
@@ -596,6 +684,73 @@ func (_u *ScriptUpdateOne) ClearTimeoutSeconds() *ScriptUpdateOne {
 	return _u
 }
 
+// SetCron sets the "cron" field.
+func (_u *ScriptUpdateOne) SetCron(v string) *ScriptUpdateOne {
+	_u.mutation.SetCron(v)
+	return _u
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_u *ScriptUpdateOne) SetNillableCron(v *string) *ScriptUpdateOne {
+	if v != nil {
+		_u.SetCron(*v)
+	}
+	return _u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (_u *ScriptUpdateOne) ClearCron() *ScriptUpdateOne {
+	_u.mutation.ClearCron()
+	return _u
+}
+
+// SetCronNodeID sets the "cron_node_id" field.
+func (_u *ScriptUpdateOne) SetCronNodeID(v uint32) *ScriptUpdateOne {
+	_u.mutation.ResetCronNodeID()
+	_u.mutation.SetCronNodeID(v)
+	return _u
+}
+
+// SetNillableCronNodeID sets the "cron_node_id" field if the given value is not nil.
+func (_u *ScriptUpdateOne) SetNillableCronNodeID(v *uint32) *ScriptUpdateOne {
+	if v != nil {
+		_u.SetCronNodeID(*v)
+	}
+	return _u
+}
+
+// AddCronNodeID adds value to the "cron_node_id" field.
+func (_u *ScriptUpdateOne) AddCronNodeID(v int32) *ScriptUpdateOne {
+	_u.mutation.AddCronNodeID(v)
+	return _u
+}
+
+// ClearCronNodeID clears the value of the "cron_node_id" field.
+func (_u *ScriptUpdateOne) ClearCronNodeID() *ScriptUpdateOne {
+	_u.mutation.ClearCronNodeID()
+	return _u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_u *ScriptUpdateOne) SetLastCronAt(v time.Time) *ScriptUpdateOne {
+	_u.mutation.SetLastCronAt(v)
+	return _u
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_u *ScriptUpdateOne) SetNillableLastCronAt(v *time.Time) *ScriptUpdateOne {
+	if v != nil {
+		_u.SetLastCronAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (_u *ScriptUpdateOne) ClearLastCronAt() *ScriptUpdateOne {
+	_u.mutation.ClearLastCronAt()
+	return _u
+}
+
 // SetLabels sets the "labels" field.
 func (_u *ScriptUpdateOne) SetLabels(v []string) *ScriptUpdateOne {
 	_u.mutation.SetLabels(v)
@@ -766,6 +921,27 @@ func (_u *ScriptUpdateOne) sqlSave(ctx context.Context) (_node *Script, err erro
 	}
 	if _u.mutation.TimeoutSecondsCleared() {
 		_spec.ClearField(script.FieldTimeoutSeconds, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Cron(); ok {
+		_spec.SetField(script.FieldCron, field.TypeString, value)
+	}
+	if _u.mutation.CronCleared() {
+		_spec.ClearField(script.FieldCron, field.TypeString)
+	}
+	if value, ok := _u.mutation.CronNodeID(); ok {
+		_spec.SetField(script.FieldCronNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedCronNodeID(); ok {
+		_spec.AddField(script.FieldCronNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.CronNodeIDCleared() {
+		_spec.ClearField(script.FieldCronNodeID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.LastCronAt(); ok {
+		_spec.SetField(script.FieldLastCronAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCronAtCleared() {
+		_spec.ClearField(script.FieldLastCronAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Labels(); ok {
 		_spec.SetField(script.FieldLabels, field.TypeJSON, value)

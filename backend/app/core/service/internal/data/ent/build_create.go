@@ -172,6 +172,34 @@ func (_c *BuildCreate) SetNillableBuildNo(v *uint32) *BuildCreate {
 	return _c
 }
 
+// SetCron sets the "cron" field.
+func (_c *BuildCreate) SetCron(v string) *BuildCreate {
+	_c.mutation.SetCron(v)
+	return _c
+}
+
+// SetNillableCron sets the "cron" field if the given value is not nil.
+func (_c *BuildCreate) SetNillableCron(v *string) *BuildCreate {
+	if v != nil {
+		_c.SetCron(*v)
+	}
+	return _c
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (_c *BuildCreate) SetLastCronAt(v time.Time) *BuildCreate {
+	_c.mutation.SetLastCronAt(v)
+	return _c
+}
+
+// SetNillableLastCronAt sets the "last_cron_at" field if the given value is not nil.
+func (_c *BuildCreate) SetNillableLastCronAt(v *time.Time) *BuildCreate {
+	if v != nil {
+		_c.SetLastCronAt(*v)
+	}
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *BuildCreate) SetDescription(v string) *BuildCreate {
 	_c.mutation.SetDescription(v)
@@ -369,6 +397,14 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.BuildNo(); ok {
 		_spec.SetField(build.FieldBuildNo, field.TypeUint32, value)
 		_node.BuildNo = value
+	}
+	if value, ok := _c.mutation.Cron(); ok {
+		_spec.SetField(build.FieldCron, field.TypeString, value)
+		_node.Cron = &value
+	}
+	if value, ok := _c.mutation.LastCronAt(); ok {
+		_spec.SetField(build.FieldLastCronAt, field.TypeTime, value)
+		_node.LastCronAt = &value
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(build.FieldDescription, field.TypeString, value)
@@ -649,6 +685,42 @@ func (u *BuildUpsert) UpdateBuildNo() *BuildUpsert {
 // AddBuildNo adds v to the "build_no" field.
 func (u *BuildUpsert) AddBuildNo(v uint32) *BuildUpsert {
 	u.Add(build.FieldBuildNo, v)
+	return u
+}
+
+// SetCron sets the "cron" field.
+func (u *BuildUpsert) SetCron(v string) *BuildUpsert {
+	u.Set(build.FieldCron, v)
+	return u
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *BuildUpsert) UpdateCron() *BuildUpsert {
+	u.SetExcluded(build.FieldCron)
+	return u
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *BuildUpsert) ClearCron() *BuildUpsert {
+	u.SetNull(build.FieldCron)
+	return u
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *BuildUpsert) SetLastCronAt(v time.Time) *BuildUpsert {
+	u.Set(build.FieldLastCronAt, v)
+	return u
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *BuildUpsert) UpdateLastCronAt() *BuildUpsert {
+	u.SetExcluded(build.FieldLastCronAt)
+	return u
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *BuildUpsert) ClearLastCronAt() *BuildUpsert {
+	u.SetNull(build.FieldLastCronAt)
 	return u
 }
 
@@ -995,6 +1067,48 @@ func (u *BuildUpsertOne) AddBuildNo(v uint32) *BuildUpsertOne {
 func (u *BuildUpsertOne) UpdateBuildNo() *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.UpdateBuildNo()
+	})
+}
+
+// SetCron sets the "cron" field.
+func (u *BuildUpsertOne) SetCron(v string) *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetCron(v)
+	})
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *BuildUpsertOne) UpdateCron() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateCron()
+	})
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *BuildUpsertOne) ClearCron() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearCron()
+	})
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *BuildUpsertOne) SetLastCronAt(v time.Time) *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetLastCronAt(v)
+	})
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *BuildUpsertOne) UpdateLastCronAt() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateLastCronAt()
+	})
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *BuildUpsertOne) ClearLastCronAt() *BuildUpsertOne {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearLastCronAt()
 	})
 }
 
@@ -1513,6 +1627,48 @@ func (u *BuildUpsertBulk) AddBuildNo(v uint32) *BuildUpsertBulk {
 func (u *BuildUpsertBulk) UpdateBuildNo() *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.UpdateBuildNo()
+	})
+}
+
+// SetCron sets the "cron" field.
+func (u *BuildUpsertBulk) SetCron(v string) *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetCron(v)
+	})
+}
+
+// UpdateCron sets the "cron" field to the value that was provided on create.
+func (u *BuildUpsertBulk) UpdateCron() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateCron()
+	})
+}
+
+// ClearCron clears the value of the "cron" field.
+func (u *BuildUpsertBulk) ClearCron() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearCron()
+	})
+}
+
+// SetLastCronAt sets the "last_cron_at" field.
+func (u *BuildUpsertBulk) SetLastCronAt(v time.Time) *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.SetLastCronAt(v)
+	})
+}
+
+// UpdateLastCronAt sets the "last_cron_at" field to the value that was provided on create.
+func (u *BuildUpsertBulk) UpdateLastCronAt() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.UpdateLastCronAt()
+	})
+}
+
+// ClearLastCronAt clears the value of the "last_cron_at" field.
+func (u *BuildUpsertBulk) ClearLastCronAt() *BuildUpsertBulk {
+	return u.Update(func(s *BuildUpsert) {
+		s.ClearLastCronAt()
 	})
 }
 

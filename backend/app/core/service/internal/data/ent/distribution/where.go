@@ -94,11 +94,6 @@ func BuildID(v uint32) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldBuildID, v))
 }
 
-// ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldEQ(FieldProjectID, v))
-}
-
 // ClearOld applies equality check predicate on the "clear_old" field. It's identical to ClearOldEQ.
 func ClearOld(v bool) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldClearOld, v))
@@ -514,44 +509,14 @@ func BuildIDLTE(v uint32) predicate.Distribution {
 	return predicate.Distribution(sql.FieldLTE(FieldBuildID, v))
 }
 
-// ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldEQ(FieldProjectID, v))
+// ProjectIdsIsNil applies the IsNil predicate on the "project_ids" field.
+func ProjectIdsIsNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldIsNull(FieldProjectIds))
 }
 
-// ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldNEQ(FieldProjectID, v))
-}
-
-// ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldIn(FieldProjectID, vs...))
-}
-
-// ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldNotIn(FieldProjectID, vs...))
-}
-
-// ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldGT(FieldProjectID, v))
-}
-
-// ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldGTE(FieldProjectID, v))
-}
-
-// ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldLT(FieldProjectID, v))
-}
-
-// ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v uint32) predicate.Distribution {
-	return predicate.Distribution(sql.FieldLTE(FieldProjectID, v))
+// ProjectIdsNotNil applies the NotNil predicate on the "project_ids" field.
+func ProjectIdsNotNil() predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotNull(FieldProjectIds))
 }
 
 // ClearOldEQ applies the EQ predicate on the "clear_old" field.

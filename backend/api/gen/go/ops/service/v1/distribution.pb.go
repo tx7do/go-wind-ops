@@ -86,7 +86,7 @@ type Distribution struct {
 	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                       // 分发配置ID
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                    // 分发名
 	BuildId       *uint32                `protobuf:"varint,3,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                              // 构建来源
-	ProjectId     *uint32                `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                                        // 目标项目
+	ProjectIds    []uint32               `protobuf:"varint,4,rep,packed,name=project_ids,json=projectIds,proto3" json:"project_ids,omitempty"`                                    // 目标项目列表
 	ClearOld      *bool                  `protobuf:"varint,5,opt,name=clear_old,json=clearOld,proto3,oneof" json:"clear_old,omitempty"`                                           // 清空旧内容
 	AfterOpt      *Distribution_AfterOpt `protobuf:"varint,6,opt,name=after_opt,json=afterOpt,proto3,enum=ops.service.v1.Distribution_AfterOpt,oneof" json:"after_opt,omitempty"` // 分发后动作
 	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                      // 描述
@@ -148,11 +148,11 @@ func (x *Distribution) GetBuildId() uint32 {
 	return 0
 }
 
-func (x *Distribution) GetProjectId() uint32 {
-	if x != nil && x.ProjectId != nil {
-		return *x.ProjectId
+func (x *Distribution) GetProjectIds() []uint32 {
+	if x != nil {
+		return x.ProjectIds
 	}
-	return 0
+	return nil
 }
 
 func (x *Distribution) GetClearOld() bool {
@@ -551,7 +551,7 @@ type DistributionRecord struct {
 	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 记录ID
 	DistributionId   *uint32                `protobuf:"varint,2,opt,name=distribution_id,json=distributionId,proto3,oneof" json:"distribution_id,omitempty"`        // 分发配置ID
 	BuildHistoryId   *uint32                `protobuf:"varint,3,opt,name=build_history_id,json=buildHistoryId,proto3,oneof" json:"build_history_id,omitempty"`      // 构建历史ID
-	ProjectId        *uint32                `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                       // 目标项目ID
+	ProjectId        *uint32                `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                       // 目标项目ID(逐目标一条记录)
 	NodeId           *uint32                `protobuf:"varint,5,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                // 目标节点ID
 	CommandRequestId *string                `protobuf:"bytes,6,opt,name=command_request_id,json=commandRequestId,proto3,oneof" json:"command_request_id,omitempty"` // 关联指令幂等键
 	Status           *string                `protobuf:"bytes,7,opt,name=status,proto3,oneof" json:"status,omitempty"`                                               // 分发状态(PENDING/SUCCESS/FAILED)
@@ -778,21 +778,21 @@ var File_ops_service_v1_distribution_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
-	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc1\x06\n" +
+	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc8\x06\n" +
 	"\fDistribution\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17分发名(全局唯一)H\x01R\x04name\x88\x01\x01\x12W\n" +
-	"\bbuild_id\x18\x03 \x01(\rB7\xe0A\x02\xbaG1\x92\x02.构建来源ID(触发时取最新成功产物)H\x02R\abuildId\x88\x01\x01\x12;\n" +
-	"\n" +
-	"project_id\x18\x04 \x01(\rB\x17\xe0A\x02\xbaG\x11\x92\x02\x0e目标项目IDH\x03R\tprojectId\x88\x01\x01\x12Z\n" +
-	"\tclear_old\x18\x05 \x01(\bB8\xbaG5\x92\x022分发前清空项目目录旧内容(危险操作)H\x04R\bclearOld\x88\x01\x01\x12^\n" +
-	"\tafter_opt\x18\x06 \x01(\x0e2%.ops.service.v1.Distribution.AfterOptB\x15\xbaG\x12\x92\x02\x0f分发后动作H\x05R\bafterOpt\x88\x01\x01\x123\n" +
-	"\vdescription\x18\a \x01(\tB\f\xbaG\t\x92\x02\x06描述H\x06R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\bbuild_id\x18\x03 \x01(\rB7\xe0A\x02\xbaG1\x92\x02.构建来源ID(触发时取最新成功产物)H\x02R\abuildId\x88\x01\x01\x12Q\n" +
+	"\vproject_ids\x18\x04 \x03(\rB0\xe0A\x02\xbaG*\x92\x02'目标项目 ID 列表(支持多目标)R\n" +
+	"projectIds\x12Z\n" +
+	"\tclear_old\x18\x05 \x01(\bB8\xbaG5\x92\x022分发前清空项目目录旧内容(危险操作)H\x03R\bclearOld\x88\x01\x01\x12^\n" +
+	"\tafter_opt\x18\x06 \x01(\x0e2%.ops.service.v1.Distribution.AfterOptB\x15\xbaG\x12\x92\x02\x0f分发后动作H\x04R\bafterOpt\x88\x01\x01\x123\n" +
+	"\vdescription\x18\a \x01(\tB\f\xbaG\t\x92\x02\x06描述H\x05R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06labels\x18\b \x03(\tR\x06labels\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x06R\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\tupdatedAt\x88\x01\x01\"=\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tupdatedAt\x88\x01\x01\"=\n" +
 	"\bAfterOpt\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NONE\x10\x01\x12\v\n" +
@@ -800,8 +800,7 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\x05START\x10\x03B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\v\n" +
-	"\t_build_idB\r\n" +
-	"\v_project_idB\f\n" +
+	"\t_build_idB\f\n" +
 	"\n" +
 	"_clear_oldB\f\n" +
 	"\n" +

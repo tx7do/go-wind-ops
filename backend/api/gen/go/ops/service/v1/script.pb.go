@@ -36,6 +36,9 @@ type Script struct {
 	Content        *string                `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`                                      // 脚本内容
 	TimeoutSeconds *uint32                `protobuf:"varint,5,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"` // 执行超时
 	Labels         []string               `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty"`                                              // 标签
+	Cron           *string                `protobuf:"bytes,8,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                            // 定时执行
+	CronNodeId     *uint32                `protobuf:"varint,9,opt,name=cron_node_id,json=cronNodeId,proto3,oneof" json:"cron_node_id,omitempty"`           // 定时执行目标节点
+	LastCronAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=last_cron_at,json=lastCronAt,proto3,oneof" json:"last_cron_at,omitempty"`           // 上次调度锚点
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                // 创建时间
 	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                // 更新时间
 	unknownFields  protoimpl.UnknownFields
@@ -110,6 +113,27 @@ func (x *Script) GetTimeoutSeconds() uint32 {
 func (x *Script) GetLabels() []string {
 	if x != nil {
 		return x.Labels
+	}
+	return nil
+}
+
+func (x *Script) GetCron() string {
+	if x != nil && x.Cron != nil {
+		return *x.Cron
+	}
+	return ""
+}
+
+func (x *Script) GetCronNodeId() uint32 {
+	if x != nil && x.CronNodeId != nil {
+		return *x.CronNodeId
+	}
+	return 0
+}
+
+func (x *Script) GetLastCronAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastCronAt
 	}
 	return nil
 }
@@ -481,24 +505,33 @@ var File_ops_service_v1_script_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_script_proto_rawDesc = "" +
 	"\n" +
-	"\x1bops/service/v1/script.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd4\x04\n" +
+	"\x1bops/service/v1/script.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x83\a\n" +
 	"\x06Script\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17脚本名(全局唯一)H\x01R\x04name\x88\x01\x01\x129\n" +
 	"\vdescription\x18\x03 \x01(\tB\x12\xbaG\x0f\x92\x02\f脚本描述H\x02R\vdescription\x88\x01\x01\x12^\n" +
 	"\acontent\x18\x04 \x01(\tB?\xe0A\x02\xbaG9\x92\x026脚本内容(按目标节点平台 shell 语法编写)H\x03R\acontent\x88\x01\x01\x12Z\n" +
 	"\x0ftimeout_seconds\x18\x05 \x01(\rB,\xbaG)\x92\x02&执行超时(秒,默认 60,上限 600)H\x04R\x0etimeoutSeconds\x88\x01\x01\x12\x16\n" +
-	"\x06labels\x18\x06 \x03(\tR\x06labels\x12C\n" +
+	"\x06labels\x18\x06 \x03(\tR\x06labels\x12`\n" +
+	"\x04cron\x18\b \x01(\tBG\xbaGD\x92\x02A定时执行 cron 表达式(5 段标准语法,空为手动触发)H\x05R\x04cron\x88\x01\x01\x12X\n" +
+	"\fcron_node_id\x18\t \x01(\rB1\xbaG.\x92\x02+定时执行的目标节点(0 为未配置)H\x06R\n" +
+	"cronNodeId\x88\x01\x01\x12F\n" +
+	"\flast_cron_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\n" +
+	"lastCronAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x05R\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x06R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_contentB\x12\n" +
-	"\x10_timeout_secondsB\r\n" +
+	"\x10_timeout_secondsB\a\n" +
+	"\x05_cronB\x0f\n" +
+	"\r_cron_node_idB\x0f\n" +
+	"\r_last_cron_atB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"X\n" +
 	"\x12ListScriptResponse\x12\x14\n" +
@@ -566,29 +599,30 @@ var file_ops_service_v1_script_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),         // 11: google.protobuf.Empty
 }
 var file_ops_service_v1_script_proto_depIdxs = []int32{
-	8,  // 0: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 1: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 2: ops.service.v1.ListScriptResponse.items:type_name -> ops.service.v1.Script
-	0,  // 3: ops.service.v1.CreateScriptRequest.data:type_name -> ops.service.v1.Script
-	0,  // 4: ops.service.v1.UpdateScriptRequest.data:type_name -> ops.service.v1.Script
-	9,  // 5: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 6: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
-	2,  // 7: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
-	3,  // 8: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
-	4,  // 9: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
-	5,  // 10: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
-	6,  // 11: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
-	1,  // 12: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
-	0,  // 13: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
-	0,  // 14: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
-	11, // 15: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
-	11, // 16: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
-	7,  // 17: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	8,  // 0: ops.service.v1.Script.last_cron_at:type_name -> google.protobuf.Timestamp
+	8,  // 1: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 2: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: ops.service.v1.ListScriptResponse.items:type_name -> ops.service.v1.Script
+	0,  // 4: ops.service.v1.CreateScriptRequest.data:type_name -> ops.service.v1.Script
+	0,  // 5: ops.service.v1.UpdateScriptRequest.data:type_name -> ops.service.v1.Script
+	9,  // 6: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 7: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
+	2,  // 8: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
+	3,  // 9: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
+	4,  // 10: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
+	5,  // 11: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
+	6,  // 12: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
+	1,  // 13: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
+	0,  // 14: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
+	0,  // 15: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
+	11, // 16: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
+	11, // 17: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
+	7,  // 18: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_script_proto_init() }

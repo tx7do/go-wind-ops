@@ -69,10 +69,6 @@ func (m *Distribution) validate(all bool) error {
 		// no validation rules for BuildId
 	}
 
-	if m.ProjectId != nil {
-		// no validation rules for ProjectId
-	}
-
 	if m.ClearOld != nil {
 		// no validation rules for ClearOld
 	}

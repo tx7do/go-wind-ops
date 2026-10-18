@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AlertService 告警记录查询(只读;写入由监控调度器驱动)。
+service AlertService {
+  // 查询告警列表
+  rpc ListAlerts (pagination.PagingRequest) returns (ListAlertResponse) {}
+
+  // 查询告警详情
+  rpc GetAlert (GetAlertRequest) returns (Alert) {}
+
+  // 标记告警已恢复/确认
+  rpc ResolveAlert (ResolveAlertRequest) returns (google.protobuf.Empty) {}
+}
+
+// 告警记录
+message Alert {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 告警ID
+
+  optional uint32 monitor_id = 2 [
+    json_name = "monitorId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 来源监控规则
+
+  optional uint32 project_id = 3 [
+    json_name = "projectId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 关联项目
+
+  optional string level = 4 [
+    json_name = "level",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 级别(WARNING/ERROR/RECOVERY)
+
+  optional string message = 5 [
+    json_name = "message",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 告警内容
+
+  optional bool resolved = 6 [
+    json_name = "resolved",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否已恢复
+
+  optional bool notified = 7 [
+    json_name = "notified",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否已外呼 webhook
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 告警时间
+
+  optional google.protobuf.Timestamp resolved_at = 31 [
+    json_name = "resolvedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 恢复时间
+}
+
+message ListAlertResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Alert items = 2 [json_name = "items"]; // 告警列表
+}
+
+message GetAlertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 告警ID
+}
+
+message ResolveAlertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 告警ID
+}

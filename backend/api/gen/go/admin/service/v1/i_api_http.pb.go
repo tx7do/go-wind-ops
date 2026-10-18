@@ -49,8 +49,8 @@ type ApiServiceHTTPServer interface {
 
 func RegisterApiServiceHTTPServer(s *http.Server, srv ApiServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/apis", _ApiService_List1_HTTP_Handler(srv))
-	r.GET("/admin/v1/apis/{id}", _ApiService_Get1_HTTP_Handler(srv))
+	r.GET("/admin/v1/apis", _ApiService_List2_HTTP_Handler(srv))
+	r.GET("/admin/v1/apis/{id}", _ApiService_Get2_HTTP_Handler(srv))
 	r.POST("/admin/v1/apis", _ApiService_Create0_HTTP_Handler(srv))
 	r.PUT("/admin/v1/apis/{id}", _ApiService_Update1_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/apis/{id}", _ApiService_Delete1_HTTP_Handler(srv))
@@ -58,7 +58,7 @@ func RegisterApiServiceHTTPServer(s *http.Server, srv ApiServiceHTTPServer) {
 	r.GET("/admin/v1/apis/walk-route", _ApiService_GetWalkRouteData0_HTTP_Handler(srv))
 }
 
-func _ApiService_List1_HTTP_Handler(srv ApiServiceHTTPServer) func(ctx http.Context) error {
+func _ApiService_List2_HTTP_Handler(srv ApiServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -77,7 +77,7 @@ func _ApiService_List1_HTTP_Handler(srv ApiServiceHTTPServer) func(ctx http.Cont
 	}
 }
 
-func _ApiService_Get1_HTTP_Handler(srv ApiServiceHTTPServer) func(ctx http.Context) error {
+func _ApiService_Get2_HTTP_Handler(srv ApiServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetApiRequest
 		if err := ctx.BindQuery(&in); err != nil {

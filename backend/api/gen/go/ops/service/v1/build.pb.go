@@ -38,6 +38,8 @@ type Build struct {
 	ArtifactPath   *string                `protobuf:"bytes,6,opt,name=artifact_path,json=artifactPath,proto3,oneof" json:"artifact_path,omitempty"`        // 产物路径
 	TimeoutSeconds *uint32                `protobuf:"varint,7,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"` // 构建超时
 	BuildNo        *uint32                `protobuf:"varint,8,opt,name=build_no,json=buildNo,proto3,oneof" json:"build_no,omitempty"`                      // 最新构建号
+	Cron           *string                `protobuf:"bytes,12,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                           // 定时构建
+	LastCronAt     *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=last_cron_at,json=lastCronAt,proto3,oneof" json:"last_cron_at,omitempty"`           // 上次调度锚点
 	Description    *string                `protobuf:"bytes,9,opt,name=description,proto3,oneof" json:"description,omitempty"`                              // 描述
 	Labels         []string               `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`                                             // 标签
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                // 创建时间
@@ -130,6 +132,20 @@ func (x *Build) GetBuildNo() uint32 {
 		return *x.BuildNo
 	}
 	return 0
+}
+
+func (x *Build) GetCron() string {
+	if x != nil && x.Cron != nil {
+		return *x.Cron
+	}
+	return ""
+}
+
+func (x *Build) GetLastCronAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastCronAt
+	}
+	return nil
 }
 
 func (x *Build) GetDescription() string {
@@ -504,7 +520,7 @@ var File_ops_service_v1_build_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\n" +
-	"\x1aops/service/v1/build.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc7\a\n" +
+	"\x1aops/service/v1/build.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8b\t\n" +
 	"\x05Build\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17构建名(全局唯一)H\x01R\x04name\x88\x01\x01\x12>\n" +
@@ -513,15 +529,18 @@ const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\rbuild_command\x18\x05 \x01(\tB?\xe0A\x02\xbaG9\x92\x026构建命令(在仓库工作目录内以 shell 执行)H\x04R\fbuildCommand\x88\x01\x01\x12v\n" +
 	"\rartifact_path\x18\x06 \x01(\tBL\xe0A\x02\xbaGF\x92\x02C产物路径(相对仓库目录,支持 glob;多个匹配打包 zip)H\x05R\fartifactPath\x88\x01\x01\x12\\\n" +
 	"\x0ftimeout_seconds\x18\a \x01(\rB.\xbaG+\x92\x02(构建超时(秒,默认 600,上限 3600)H\x06R\x0etimeoutSeconds\x88\x01\x01\x12#\n" +
-	"\bbuild_no\x18\b \x01(\rB\x03\xe0A\x03H\aR\abuildNo\x88\x01\x01\x123\n" +
-	"\vdescription\x18\t \x01(\tB\f\xbaG\t\x92\x02\x06描述H\bR\vdescription\x88\x01\x01\x12\x16\n" +
+	"\bbuild_no\x18\b \x01(\rB\x03\xe0A\x03H\aR\abuildNo\x88\x01\x01\x12`\n" +
+	"\x04cron\x18\f \x01(\tBG\xbaGD\x92\x02A定时构建 cron 表达式(5 段标准语法,空为手动触发)H\bR\x04cron\x88\x01\x01\x12F\n" +
+	"\flast_cron_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\n" +
+	"lastCronAt\x88\x01\x01\x123\n" +
+	"\vdescription\x18\t \x01(\tB\f\xbaG\t\x92\x02\x06描述H\n" +
+	"R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06labels\x18\n" +
 	" \x03(\tR\x06labels\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
-	"R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x10\n" +
 	"\x0e_repository_idB\t\n" +
@@ -529,7 +548,9 @@ const file_ops_service_v1_build_proto_rawDesc = "" +
 	"\x0e_build_commandB\x10\n" +
 	"\x0e_artifact_pathB\x12\n" +
 	"\x10_timeout_secondsB\v\n" +
-	"\t_build_noB\x0e\n" +
+	"\t_build_noB\a\n" +
+	"\x05_cronB\x0f\n" +
+	"\r_last_cron_atB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"V\n" +
@@ -596,29 +617,30 @@ var file_ops_service_v1_build_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),         // 11: google.protobuf.Empty
 }
 var file_ops_service_v1_build_proto_depIdxs = []int32{
-	8,  // 0: ops.service.v1.Build.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 1: ops.service.v1.Build.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 2: ops.service.v1.ListBuildResponse.items:type_name -> ops.service.v1.Build
-	0,  // 3: ops.service.v1.CreateBuildRequest.data:type_name -> ops.service.v1.Build
-	0,  // 4: ops.service.v1.UpdateBuildRequest.data:type_name -> ops.service.v1.Build
-	9,  // 5: ops.service.v1.UpdateBuildRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 6: ops.service.v1.BuildService.ListBuilds:input_type -> pagination.PagingRequest
-	2,  // 7: ops.service.v1.BuildService.GetBuild:input_type -> ops.service.v1.GetBuildRequest
-	3,  // 8: ops.service.v1.BuildService.CreateBuild:input_type -> ops.service.v1.CreateBuildRequest
-	4,  // 9: ops.service.v1.BuildService.UpdateBuild:input_type -> ops.service.v1.UpdateBuildRequest
-	5,  // 10: ops.service.v1.BuildService.DeleteBuild:input_type -> ops.service.v1.DeleteBuildRequest
-	6,  // 11: ops.service.v1.BuildService.TriggerBuild:input_type -> ops.service.v1.TriggerBuildRequest
-	1,  // 12: ops.service.v1.BuildService.ListBuilds:output_type -> ops.service.v1.ListBuildResponse
-	0,  // 13: ops.service.v1.BuildService.GetBuild:output_type -> ops.service.v1.Build
-	0,  // 14: ops.service.v1.BuildService.CreateBuild:output_type -> ops.service.v1.Build
-	11, // 15: ops.service.v1.BuildService.UpdateBuild:output_type -> google.protobuf.Empty
-	11, // 16: ops.service.v1.BuildService.DeleteBuild:output_type -> google.protobuf.Empty
-	7,  // 17: ops.service.v1.BuildService.TriggerBuild:output_type -> ops.service.v1.TriggerBuildResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	8,  // 0: ops.service.v1.Build.last_cron_at:type_name -> google.protobuf.Timestamp
+	8,  // 1: ops.service.v1.Build.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 2: ops.service.v1.Build.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: ops.service.v1.ListBuildResponse.items:type_name -> ops.service.v1.Build
+	0,  // 4: ops.service.v1.CreateBuildRequest.data:type_name -> ops.service.v1.Build
+	0,  // 5: ops.service.v1.UpdateBuildRequest.data:type_name -> ops.service.v1.Build
+	9,  // 6: ops.service.v1.UpdateBuildRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 7: ops.service.v1.BuildService.ListBuilds:input_type -> pagination.PagingRequest
+	2,  // 8: ops.service.v1.BuildService.GetBuild:input_type -> ops.service.v1.GetBuildRequest
+	3,  // 9: ops.service.v1.BuildService.CreateBuild:input_type -> ops.service.v1.CreateBuildRequest
+	4,  // 10: ops.service.v1.BuildService.UpdateBuild:input_type -> ops.service.v1.UpdateBuildRequest
+	5,  // 11: ops.service.v1.BuildService.DeleteBuild:input_type -> ops.service.v1.DeleteBuildRequest
+	6,  // 12: ops.service.v1.BuildService.TriggerBuild:input_type -> ops.service.v1.TriggerBuildRequest
+	1,  // 13: ops.service.v1.BuildService.ListBuilds:output_type -> ops.service.v1.ListBuildResponse
+	0,  // 14: ops.service.v1.BuildService.GetBuild:output_type -> ops.service.v1.Build
+	0,  // 15: ops.service.v1.BuildService.CreateBuild:output_type -> ops.service.v1.Build
+	11, // 16: ops.service.v1.BuildService.UpdateBuild:output_type -> google.protobuf.Empty
+	11, // 17: ops.service.v1.BuildService.DeleteBuild:output_type -> google.protobuf.Empty
+	7,  // 18: ops.service.v1.BuildService.TriggerBuild:output_type -> ops.service.v1.TriggerBuildResponse
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_build_proto_init() }

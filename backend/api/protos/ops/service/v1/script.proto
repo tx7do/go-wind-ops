@@ -75,6 +75,26 @@ message Script {
 
   repeated string labels = 6 [json_name = "labels"]; // 标签
 
+
+  optional string cron = 8 [
+    json_name = "cron",
+    (gnostic.openapi.v3.property) = {
+      description: "定时执行 cron 表达式(5 段标准语法,空为手动触发)"
+    }
+  ]; // 定时执行
+
+  optional uint32 cron_node_id = 9 [
+    json_name = "cronNodeId",
+    (gnostic.openapi.v3.property) = {
+      description: "定时执行的目标节点(0 为未配置)"
+    }
+  ]; // 定时执行目标节点
+
+  optional google.protobuf.Timestamp last_cron_at = 10 [
+    json_name = "lastCronAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 上次调度锚点
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

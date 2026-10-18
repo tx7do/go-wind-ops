@@ -20,6 +20,18 @@ func (f AgentNodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AgentNodeMutation", m)
 }
 
+// The AlertFunc type is an adapter to allow the use of ordinary
+// function as Alert mutator.
+type AlertFunc func(context.Context, *ent.AlertMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AlertMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlertMutation", m)
+}
+
 // The ApiFunc type is an adapter to allow the use of ordinary
 // function as Api mutator.
 type ApiFunc func(context.Context, *ent.APIMutation) (ent.Value, error)
@@ -246,6 +258,18 @@ func (f MenuFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MenuMutation", m)
+}
+
+// The MonitorFunc type is an adapter to allow the use of ordinary
+// function as Monitor mutator.
+type MonitorFunc func(context.Context, *ent.MonitorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MonitorMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorMutation", m)
 }
 
 // The OperationAuditLogFunc type is an adapter to allow the use of ordinary

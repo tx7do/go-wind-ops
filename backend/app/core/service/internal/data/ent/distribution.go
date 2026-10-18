@@ -35,8 +35,8 @@ type Distribution struct {
 	Name string `json:"name,omitempty"`
 	// 构建来源(ops_builds.id);触发时取其最新成功产物
 	BuildID uint32 `json:"build_id,omitempty"`
-	// 目标项目(ops_projects.id)
-	ProjectID uint32 `json:"project_id,omitempty"`
+	// 目标项目 ID 列表(支持多目标,逐项目触发分发记录)
+	ProjectIds []uint32 `json:"project_ids,omitempty"`
 	// 分发前清空项目目录旧内容(危险操作,谨慎开启)
 	ClearOld bool `json:"clear_old,omitempty"`
 	// 分发后动作
@@ -53,11 +53,11 @@ func (*Distribution) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case distribution.FieldLabels:
+		case distribution.FieldProjectIds, distribution.FieldLabels:
 			values[i] = new([]byte)
 		case distribution.FieldClearOld:
 			values[i] = new(sql.NullBool)
-		case distribution.FieldID, distribution.FieldCreatedBy, distribution.FieldUpdatedBy, distribution.FieldDeletedBy, distribution.FieldBuildID, distribution.FieldProjectID:
+		case distribution.FieldID, distribution.FieldCreatedBy, distribution.FieldUpdatedBy, distribution.FieldDeletedBy, distribution.FieldBuildID:
 			values[i] = new(sql.NullInt64)
 		case distribution.FieldName, distribution.FieldAfterOpt, distribution.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -138,11 +138,13 @@ func (_m *Distribution) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.BuildID = uint32(value.Int64)
 			}
-		case distribution.FieldProjectID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field project_id", values[i])
-			} else if value.Valid {
-				_m.ProjectID = uint32(value.Int64)
+		case distribution.FieldProjectIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field project_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.ProjectIds); err != nil {
+					return fmt.Errorf("unmarshal field project_ids: %w", err)
+				}
 			}
 		case distribution.FieldClearOld:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -244,8 +246,8 @@ func (_m *Distribution) String() string {
 	builder.WriteString("build_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.BuildID))
 	builder.WriteString(", ")
-	builder.WriteString("project_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.ProjectID))
+	builder.WriteString("project_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ProjectIds))
 	builder.WriteString(", ")
 	builder.WriteString("clear_old=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ClearOld))

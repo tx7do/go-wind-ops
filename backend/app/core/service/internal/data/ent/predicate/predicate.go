@@ -9,6 +9,9 @@ import (
 // AgentNode is the predicate function for agentnode builders.
 type AgentNode func(*sql.Selector)
 
+// Alert is the predicate function for alert builders.
+type Alert func(*sql.Selector)
+
 // Api is the predicate function for api builders.
 type Api func(*sql.Selector)
 
@@ -65,6 +68,9 @@ type MembershipRole func(*sql.Selector)
 
 // Menu is the predicate function for menu builders.
 type Menu func(*sql.Selector)
+
+// Monitor is the predicate function for monitor builders.
+type Monitor func(*sql.Selector)
 
 // OperationAuditLog is the predicate function for operationauditlog builders.
 type OperationAuditLog func(*sql.Selector)

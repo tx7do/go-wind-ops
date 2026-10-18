@@ -60,15 +60,15 @@ func (s *DistributionService) CreateDistribution(ctx context.Context, req *opsV1
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
-	if req.Data.GetName() == "" || req.Data.GetBuildId() == 0 || req.Data.GetProjectId() == 0 {
-		return nil, opsV1.ErrorBadRequest("name/buildId/projectId are required")
+	if req.Data.GetName() == "" || req.Data.GetBuildId() == 0 || len(req.Data.GetProjectIds()) == 0 {
+		return nil, opsV1.ErrorBadRequest("name/buildId/projectIds are required")
 	}
 
-	if _, err := s.buildRepo.Get(ctx, &opsV1.GetBuildRequest{Id: req.Data.BuildId}); err != nil {
-		return nil, opsV1.ErrorBadRequest("build not found")
-	}
-	if _, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: req.Data.ProjectId}); err != nil {
-		return nil, opsV1.ErrorBadRequest("project not found")
+	for _, pid := range req.Data.GetProjectIds() {
+		pid := pid
+		if _, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &pid}); err != nil {
+			return nil, opsV1.ErrorBadRequest("project not found")
+		}
 	}
 
 	taken, err := s.repo.IsNameTaken(ctx, req.Data.GetName(), 0)
@@ -119,7 +119,9 @@ func (s *DistributionService) GetDistributionRecord(ctx context.Context, req *op
 }
 
 // TriggerDistribution 触发分发:解析目标 → 取产物 → 签发下载 URL →
-// dist_apply 指令下发 → 创建分发记录(回执驱动终态)。
+// TriggerDistribution 触发分发:解析多目标 → 取产物 → 签发下载 URL →
+// 逐目标下发 dist_apply 指令 → 逐目标创建分发记录(回执驱动终态)。
+// 任一目标失败不影响其余目标。
 func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV1.TriggerDistributionRequest) (*opsV1.TriggerDistributionResponse, error) {
 	if req == nil || req.GetId() == 0 {
 		return nil, opsV1.ErrorBadRequest("invalid parameter: id required")
@@ -129,17 +131,10 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	if err != nil {
 		return nil, err
 	}
-
-	project, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: dist.ProjectId})
-	if err != nil {
-		return nil, opsV1.ErrorBadRequest("project not found")
-	}
-	node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: project.NodeId})
-	if err != nil {
-		return nil, opsV1.ErrorBadRequest("project node not found")
+	if len(dist.GetProjectIds()) == 0 {
+		return nil, opsV1.ErrorBadRequest("distribution has no target projects")
 	}
 
-	// 产物来源:显式指定历史,否则取该构建配置最新成功产物
 	historyID := req.GetHistoryId()
 	if historyID == 0 {
 		historyID, err = s.latestSuccessHistoryID(ctx, dist.GetBuildId())
@@ -155,7 +150,6 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 		return nil, opsV1.ErrorBadRequest("build history has no successful artifact")
 	}
 
-	// 签发产物下载预签名 URL(1h 有效)
 	if s.ossClient == nil || s.ossClient.GetClient() == nil {
 		return nil, opsV1.ErrorServiceUnavailable("oss client not configured")
 	}
@@ -172,39 +166,72 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	case opsV1.Distribution_START:
 		afterOpt = signal.AfterStart
 	}
-	payload := &signal.DistributionPayload{
-		DistributionId: dist.GetId(),
-		ProjectId:      project.GetId(),
-		ProjectName:    project.GetName(),
-		ProjectDir:     project.GetProjectDir(),
-		ClearOld:       dist.GetClearOld(),
-		DownloadUrl:    urlObj.String(),
-		FileName:       artifactFileName(history.GetArtifactObjectKey()),
-		AfterOpt:       afterOpt,
-		StartCommand:   project.GetStartCommand(),
-		StopCommand:    project.GetStopCommand(),
-		StatusCommand:  project.GetStatusCommand(),
+	operatorID := operatorIDOf(ctx)
+
+	var firstRecordID uint32
+	var firstRequestID string
+	var dispatched, failed int
+	for _, pid := range dist.GetProjectIds() {
+		pid := pid
+		project, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &pid})
+		if err != nil {
+			s.log.Warnf("distribution target project [%d] not found, skip", pid)
+			failed++
+			continue
+		}
+		nodeID := project.GetNodeId()
+		node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+		if err != nil {
+			s.log.Warnf("distribution target project [%d] node not found, skip", pid)
+			failed++
+			continue
+		}
+
+		payload := &signal.DistributionPayload{
+			DistributionId: dist.GetId(),
+			ProjectId:      project.GetId(),
+			ProjectName:    project.GetName(),
+			ProjectDir:     project.GetProjectDir(),
+			ClearOld:       dist.GetClearOld(),
+			DownloadUrl:    urlObj.String(),
+			FileName:       artifactFileName(history.GetArtifactObjectKey()),
+			AfterOpt:       afterOpt,
+			StartCommand:   project.GetStartCommand(),
+			StopCommand:    project.GetStopCommand(),
+			StatusCommand:  project.GetStatusCommand(),
+		}
+
+		requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+			signal.CommandActionDistApply, payload, operatorID)
+		if err != nil {
+			s.log.Errorf("dispatch distribution failed (dist=%d project=%d): %s", dist.GetId(), pid, err.Error())
+			failed++
+			continue
+		}
+
+		record, err := s.recordRepo.Create(ctx, dist.GetId(), historyID, project.GetId(), node.GetId(), requestId, operatorID)
+		if err != nil {
+			failed++
+			continue
+		}
+		if firstRecordID == 0 {
+			firstRecordID = record.ID
+			firstRequestID = requestId
+		}
+		dispatched++
 	}
 
-	nodeID := node.GetId()
-	requestId, err := s.agentService.PublishCommand(ctx, nodeID, node.GetAgentId(),
-		signal.CommandActionDistApply, payload, operatorIDOf(ctx))
-	if err != nil {
-		s.log.Errorf("dispatch distribution failed (dist=%d): %s", dist.GetId(), err.Error())
-		return nil, opsV1.ErrorServiceUnavailable("dispatch command failed: mqtt channel unavailable")
+	if dispatched == 0 {
+		return nil, opsV1.ErrorServiceUnavailable("no distribution target dispatched successfully")
 	}
 
-	historyIDValue := historyID
-	record, err := s.recordRepo.Create(ctx, dist.GetId(), historyIDValue, project.GetId(), nodeID, requestId, operatorIDOf(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	s.log.Infof("distribution triggered (dist=%d history=%d project=%d record=%d request=%s)",
-		dist.GetId(), historyID, project.GetId(), record.ID, requestId)
-	return &opsV1.TriggerDistributionResponse{RecordId: record.ID, CommandRequestId: requestId}, nil
+	s.log.Infof("distribution triggered (dist=%d history=%d dispatched=%d failed=%d)",
+		dist.GetId(), historyID, dispatched, failed)
+	return &opsV1.TriggerDistributionResponse{
+		RecordId:         firstRecordID,
+		CommandRequestId: firstRequestID,
+	}, nil
 }
-
 // latestSuccessHistoryID 取构建配置最新的 SUCCESS 历史;无则报错。
 func (s *DistributionService) latestSuccessHistoryID(ctx context.Context, buildID uint32) (uint32, error) {
 	resp, err := s.historyRepo.List(ctx, &paginationV1.PagingRequest{

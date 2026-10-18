@@ -118,9 +118,9 @@ func (_c *DistributionCreate) SetBuildID(v uint32) *DistributionCreate {
 	return _c
 }
 
-// SetProjectID sets the "project_id" field.
-func (_c *DistributionCreate) SetProjectID(v uint32) *DistributionCreate {
-	_c.mutation.SetProjectID(v)
+// SetProjectIds sets the "project_ids" field.
+func (_c *DistributionCreate) SetProjectIds(v []uint32) *DistributionCreate {
+	_c.mutation.SetProjectIds(v)
 	return _c
 }
 
@@ -241,14 +241,6 @@ func (_c *DistributionCreate) check() error {
 			return &ValidationError{Name: "build_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.build_id": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.ProjectID(); !ok {
-		return &ValidationError{Name: "project_id", err: errors.New(`ent: missing required field "Distribution.project_id"`)}
-	}
-	if v, ok := _c.mutation.ProjectID(); ok {
-		if err := distribution.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Distribution.project_id": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.ClearOld(); !ok {
 		return &ValidationError{Name: "clear_old", err: errors.New(`ent: missing required field "Distribution.clear_old"`)}
 	}
@@ -327,9 +319,9 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 		_spec.SetField(distribution.FieldBuildID, field.TypeUint32, value)
 		_node.BuildID = value
 	}
-	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(distribution.FieldProjectID, field.TypeUint32, value)
-		_node.ProjectID = value
+	if value, ok := _c.mutation.ProjectIds(); ok {
+		_spec.SetField(distribution.FieldProjectIds, field.TypeJSON, value)
+		_node.ProjectIds = value
 	}
 	if value, ok := _c.mutation.ClearOld(); ok {
 		_spec.SetField(distribution.FieldClearOld, field.TypeBool, value)
@@ -537,21 +529,21 @@ func (u *DistributionUpsert) AddBuildID(v uint32) *DistributionUpsert {
 	return u
 }
 
-// SetProjectID sets the "project_id" field.
-func (u *DistributionUpsert) SetProjectID(v uint32) *DistributionUpsert {
-	u.Set(distribution.FieldProjectID, v)
+// SetProjectIds sets the "project_ids" field.
+func (u *DistributionUpsert) SetProjectIds(v []uint32) *DistributionUpsert {
+	u.Set(distribution.FieldProjectIds, v)
 	return u
 }
 
-// UpdateProjectID sets the "project_id" field to the value that was provided on create.
-func (u *DistributionUpsert) UpdateProjectID() *DistributionUpsert {
-	u.SetExcluded(distribution.FieldProjectID)
+// UpdateProjectIds sets the "project_ids" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateProjectIds() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldProjectIds)
 	return u
 }
 
-// AddProjectID adds v to the "project_id" field.
-func (u *DistributionUpsert) AddProjectID(v uint32) *DistributionUpsert {
-	u.Add(distribution.FieldProjectID, v)
+// ClearProjectIds clears the value of the "project_ids" field.
+func (u *DistributionUpsert) ClearProjectIds() *DistributionUpsert {
+	u.SetNull(distribution.FieldProjectIds)
 	return u
 }
 
@@ -833,24 +825,24 @@ func (u *DistributionUpsertOne) UpdateBuildID() *DistributionUpsertOne {
 	})
 }
 
-// SetProjectID sets the "project_id" field.
-func (u *DistributionUpsertOne) SetProjectID(v uint32) *DistributionUpsertOne {
+// SetProjectIds sets the "project_ids" field.
+func (u *DistributionUpsertOne) SetProjectIds(v []uint32) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
-		s.SetProjectID(v)
+		s.SetProjectIds(v)
 	})
 }
 
-// AddProjectID adds v to the "project_id" field.
-func (u *DistributionUpsertOne) AddProjectID(v uint32) *DistributionUpsertOne {
+// UpdateProjectIds sets the "project_ids" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateProjectIds() *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
-		s.AddProjectID(v)
+		s.UpdateProjectIds()
 	})
 }
 
-// UpdateProjectID sets the "project_id" field to the value that was provided on create.
-func (u *DistributionUpsertOne) UpdateProjectID() *DistributionUpsertOne {
+// ClearProjectIds clears the value of the "project_ids" field.
+func (u *DistributionUpsertOne) ClearProjectIds() *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
-		s.UpdateProjectID()
+		s.ClearProjectIds()
 	})
 }
 
@@ -1309,24 +1301,24 @@ func (u *DistributionUpsertBulk) UpdateBuildID() *DistributionUpsertBulk {
 	})
 }
 
-// SetProjectID sets the "project_id" field.
-func (u *DistributionUpsertBulk) SetProjectID(v uint32) *DistributionUpsertBulk {
+// SetProjectIds sets the "project_ids" field.
+func (u *DistributionUpsertBulk) SetProjectIds(v []uint32) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
-		s.SetProjectID(v)
+		s.SetProjectIds(v)
 	})
 }
 
-// AddProjectID adds v to the "project_id" field.
-func (u *DistributionUpsertBulk) AddProjectID(v uint32) *DistributionUpsertBulk {
+// UpdateProjectIds sets the "project_ids" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateProjectIds() *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
-		s.AddProjectID(v)
+		s.UpdateProjectIds()
 	})
 }
 
-// UpdateProjectID sets the "project_id" field to the value that was provided on create.
-func (u *DistributionUpsertBulk) UpdateProjectID() *DistributionUpsertBulk {
+// ClearProjectIds clears the value of the "project_ids" field.
+func (u *DistributionUpsertBulk) ClearProjectIds() *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
-		s.UpdateProjectID()
+		s.ClearProjectIds()
 	})
 }
 

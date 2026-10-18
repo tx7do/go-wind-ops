@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// AgentNode is the client for interacting with the AgentNode builders.
 	AgentNode *AgentNodeClient
+	// Alert is the client for interacting with the Alert builders.
+	Alert *AlertClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -52,6 +54,8 @@ type Tx struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// Monitor is the client for interacting with the Monitor builders.
+	Monitor *MonitorClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -230,6 +234,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.AgentNode = NewAgentNodeClient(tx.config)
+	tx.Alert = NewAlertClient(tx.config)
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Build = NewBuildClient(tx.config)
@@ -249,6 +254,7 @@ func (tx *Tx) init() {
 	tx.MembershipPosition = NewMembershipPositionClient(tx.config)
 	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
+	tx.Monitor = NewMonitorClient(tx.config)
 	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)

@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// MonitorService 监控规则管理:周期检查项目运行状态,异常时产生告警
+// 并可自动重启;告警外呼 webhook 由 core 调度器执行。
+service MonitorService {
+  // 查询监控规则列表
+  rpc ListMonitors (pagination.PagingRequest) returns (ListMonitorResponse) {}
+
+  // 查询监控规则详情
+  rpc GetMonitor (GetMonitorRequest) returns (Monitor) {}
+
+  // 创建监控规则
+  rpc CreateMonitor (CreateMonitorRequest) returns (Monitor) {}
+
+  // 更新监控规则
+  rpc UpdateMonitor (UpdateMonitorRequest) returns (google.protobuf.Empty) {}
+
+  // 删除监控规则
+  rpc DeleteMonitor (DeleteMonitorRequest) returns (google.protobuf.Empty) {}
+}
+
+// 监控规则
+message Monitor {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 规则ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "规则名(全局唯一)"
+    }
+  ]; // 规则名
+
+  optional uint32 project_id = 3 [
+    json_name = "projectId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "被监控项目ID"
+    }
+  ]; // 被监控项目
+
+  optional string cron = 4 [
+    json_name = "cron",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "检查周期 cron 表达式(5 段标准语法)"
+    }
+  ]; // 检查周期
+
+  optional bool auto_restart = 5 [
+    json_name = "autoRestart",
+    (gnostic.openapi.v3.property) = {
+      description: "异常时自动重启项目"
+    }
+  ]; // 自动重启
+
+  optional string webhook_url = 6 [
+    json_name = "webhookUrl",
+    (gnostic.openapi.v3.property) = {
+      description: "告警通知 webhook 地址(POST JSON)"
+    }
+  ]; // 告警 webhook
+
+  optional bool enabled = 7 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 8 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListMonitorResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Monitor items = 2 [json_name = "items"]; // 规则列表
+}
+
+message GetMonitorRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 规则ID
+}
+
+message CreateMonitorRequest {
+  Monitor data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 规则数据
+}
+
+message UpdateMonitorRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 规则ID
+
+  Monitor data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteMonitorRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 规则ID
+}

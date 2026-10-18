@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/monitor.proto";
+
+// MonitorService 监控规则管理
+service MonitorService {
+  // 查询监控规则列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListMonitorResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/monitors"
+    };
+  }
+
+  // 查询监控规则详情
+  rpc Get (ops.service.v1.GetMonitorRequest) returns (ops.service.v1.Monitor) {
+    option (google.api.http) = {
+      get: "/admin/v1/monitors/{id}"
+    };
+  }
+
+  // 创建监控规则
+  rpc Create (ops.service.v1.CreateMonitorRequest) returns (ops.service.v1.Monitor) {
+    option (google.api.http) = {
+      post: "/admin/v1/monitors"
+      body: "*"
+    };
+  }
+
+  // 更新监控规则
+  rpc Update (ops.service.v1.UpdateMonitorRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/monitors/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除监控规则
+  rpc Delete (ops.service.v1.DeleteMonitorRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/monitors/{id}"
+    };
+  }
+}

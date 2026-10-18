@@ -12,6 +12,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/migrate"
 
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
+	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
@@ -31,6 +32,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
+	"go-wind-ops/app/core/service/internal/data/ent/monitor"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -68,6 +70,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// AgentNode is the client for interacting with the AgentNode builders.
 	AgentNode *AgentNodeClient
+	// Alert is the client for interacting with the Alert builders.
+	Alert *AlertClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -106,6 +110,8 @@ type Client struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// Monitor is the client for interacting with the Monitor builders.
+	Monitor *MonitorClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -164,6 +170,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.AgentNode = NewAgentNodeClient(c.config)
+	c.Alert = NewAlertClient(c.config)
 	c.Api = NewAPIClient(c.config)
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.Build = NewBuildClient(c.config)
@@ -183,6 +190,7 @@ func (c *Client) init() {
 	c.MembershipPosition = NewMembershipPositionClient(c.config)
 	c.MembershipRole = NewMembershipRoleClient(c.config)
 	c.Menu = NewMenuClient(c.config)
+	c.Monitor = NewMonitorClient(c.config)
 	c.OperationAuditLog = NewOperationAuditLogClient(c.config)
 	c.OrgUnit = NewOrgUnitClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
@@ -299,6 +307,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                 ctx,
 		config:              cfg,
 		AgentNode:           NewAgentNodeClient(cfg),
+		Alert:               NewAlertClient(cfg),
 		Api:                 NewAPIClient(cfg),
 		ApiAuditLog:         NewApiAuditLogClient(cfg),
 		Build:               NewBuildClient(cfg),
@@ -318,6 +327,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MembershipPosition:  NewMembershipPositionClient(cfg),
 		MembershipRole:      NewMembershipRoleClient(cfg),
 		Menu:                NewMenuClient(cfg),
+		Monitor:             NewMonitorClient(cfg),
 		OperationAuditLog:   NewOperationAuditLogClient(cfg),
 		OrgUnit:             NewOrgUnitClient(cfg),
 		Permission:          NewPermissionClient(cfg),
@@ -361,6 +371,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                 ctx,
 		config:              cfg,
 		AgentNode:           NewAgentNodeClient(cfg),
+		Alert:               NewAlertClient(cfg),
 		Api:                 NewAPIClient(cfg),
 		ApiAuditLog:         NewApiAuditLogClient(cfg),
 		Build:               NewBuildClient(cfg),
@@ -380,6 +391,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MembershipPosition:  NewMembershipPositionClient(cfg),
 		MembershipRole:      NewMembershipRoleClient(cfg),
 		Menu:                NewMenuClient(cfg),
+		Monitor:             NewMonitorClient(cfg),
 		OperationAuditLog:   NewOperationAuditLogClient(cfg),
 		OrgUnit:             NewOrgUnitClient(cfg),
 		Permission:          NewPermissionClient(cfg),
@@ -432,15 +444,16 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AgentNode, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Project, c.Repository, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory,
+		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
+		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.OperationAuditLog, c.OrgUnit,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -450,15 +463,16 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AgentNode, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Project, c.Repository, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory,
+		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
+		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.OperationAuditLog, c.OrgUnit,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -469,6 +483,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AgentNodeMutation:
 		return c.AgentNode.mutate(ctx, m)
+	case *AlertMutation:
+		return c.Alert.mutate(ctx, m)
 	case *APIMutation:
 		return c.Api.mutate(ctx, m)
 	case *ApiAuditLogMutation:
@@ -507,6 +523,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MembershipRole.mutate(ctx, m)
 	case *MenuMutation:
 		return c.Menu.mutate(ctx, m)
+	case *MonitorMutation:
+		return c.Monitor.mutate(ctx, m)
 	case *OperationAuditLogMutation:
 		return c.OperationAuditLog.mutate(ctx, m)
 	case *OrgUnitMutation:
@@ -688,6 +706,139 @@ func (c *AgentNodeClient) mutate(ctx context.Context, m *AgentNodeMutation) (Val
 		return (&AgentNodeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown AgentNode mutation op: %q", m.Op())
+	}
+}
+
+// AlertClient is a client for the Alert schema.
+type AlertClient struct {
+	config
+}
+
+// NewAlertClient returns a client for the Alert from the given config.
+func NewAlertClient(c config) *AlertClient {
+	return &AlertClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alert.Hooks(f(g(h())))`.
+func (c *AlertClient) Use(hooks ...Hook) {
+	c.hooks.Alert = append(c.hooks.Alert, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `alert.Intercept(f(g(h())))`.
+func (c *AlertClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Alert = append(c.inters.Alert, interceptors...)
+}
+
+// Create returns a builder for creating a Alert entity.
+func (c *AlertClient) Create() *AlertCreate {
+	mutation := newAlertMutation(c.config, OpCreate)
+	return &AlertCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Alert entities.
+func (c *AlertClient) CreateBulk(builders ...*AlertCreate) *AlertCreateBulk {
+	return &AlertCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AlertClient) MapCreateBulk(slice any, setFunc func(*AlertCreate, int)) *AlertCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AlertCreateBulk{err: fmt.Errorf("calling to AlertClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AlertCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AlertCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Alert.
+func (c *AlertClient) Update() *AlertUpdate {
+	mutation := newAlertMutation(c.config, OpUpdate)
+	return &AlertUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlertClient) UpdateOne(_m *Alert) *AlertUpdateOne {
+	mutation := newAlertMutation(c.config, OpUpdateOne, withAlert(_m))
+	return &AlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlertClient) UpdateOneID(id uint32) *AlertUpdateOne {
+	mutation := newAlertMutation(c.config, OpUpdateOne, withAlertID(id))
+	return &AlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Alert.
+func (c *AlertClient) Delete() *AlertDelete {
+	mutation := newAlertMutation(c.config, OpDelete)
+	return &AlertDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AlertClient) DeleteOne(_m *Alert) *AlertDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AlertClient) DeleteOneID(id uint32) *AlertDeleteOne {
+	builder := c.Delete().Where(alert.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlertDeleteOne{builder}
+}
+
+// Query returns a query builder for Alert.
+func (c *AlertClient) Query() *AlertQuery {
+	return &AlertQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAlert},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Alert entity by its id.
+func (c *AlertClient) Get(ctx context.Context, id uint32) (*Alert, error) {
+	return c.Query().Where(alert.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlertClient) GetX(ctx context.Context, id uint32) *Alert {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AlertClient) Hooks() []Hook {
+	return c.hooks.Alert
+}
+
+// Interceptors returns the client interceptors.
+func (c *AlertClient) Interceptors() []Interceptor {
+	return c.inters.Alert
+}
+
+func (c *AlertClient) mutate(ctx context.Context, m *AlertMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AlertCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AlertUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AlertDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Alert mutation op: %q", m.Op())
 	}
 }
 
@@ -3324,6 +3475,139 @@ func (c *MenuClient) mutate(ctx context.Context, m *MenuMutation) (Value, error)
 		return (&MenuDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Menu mutation op: %q", m.Op())
+	}
+}
+
+// MonitorClient is a client for the Monitor schema.
+type MonitorClient struct {
+	config
+}
+
+// NewMonitorClient returns a client for the Monitor from the given config.
+func NewMonitorClient(c config) *MonitorClient {
+	return &MonitorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `monitor.Hooks(f(g(h())))`.
+func (c *MonitorClient) Use(hooks ...Hook) {
+	c.hooks.Monitor = append(c.hooks.Monitor, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `monitor.Intercept(f(g(h())))`.
+func (c *MonitorClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Monitor = append(c.inters.Monitor, interceptors...)
+}
+
+// Create returns a builder for creating a Monitor entity.
+func (c *MonitorClient) Create() *MonitorCreate {
+	mutation := newMonitorMutation(c.config, OpCreate)
+	return &MonitorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Monitor entities.
+func (c *MonitorClient) CreateBulk(builders ...*MonitorCreate) *MonitorCreateBulk {
+	return &MonitorCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MonitorClient) MapCreateBulk(slice any, setFunc func(*MonitorCreate, int)) *MonitorCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MonitorCreateBulk{err: fmt.Errorf("calling to MonitorClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MonitorCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MonitorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Monitor.
+func (c *MonitorClient) Update() *MonitorUpdate {
+	mutation := newMonitorMutation(c.config, OpUpdate)
+	return &MonitorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MonitorClient) UpdateOne(_m *Monitor) *MonitorUpdateOne {
+	mutation := newMonitorMutation(c.config, OpUpdateOne, withMonitor(_m))
+	return &MonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MonitorClient) UpdateOneID(id uint32) *MonitorUpdateOne {
+	mutation := newMonitorMutation(c.config, OpUpdateOne, withMonitorID(id))
+	return &MonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Monitor.
+func (c *MonitorClient) Delete() *MonitorDelete {
+	mutation := newMonitorMutation(c.config, OpDelete)
+	return &MonitorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MonitorClient) DeleteOne(_m *Monitor) *MonitorDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MonitorClient) DeleteOneID(id uint32) *MonitorDeleteOne {
+	builder := c.Delete().Where(monitor.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MonitorDeleteOne{builder}
+}
+
+// Query returns a query builder for Monitor.
+func (c *MonitorClient) Query() *MonitorQuery {
+	return &MonitorQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMonitor},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Monitor entity by its id.
+func (c *MonitorClient) Get(ctx context.Context, id uint32) (*Monitor, error) {
+	return c.Query().Where(monitor.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MonitorClient) GetX(ctx context.Context, id uint32) *Monitor {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MonitorClient) Hooks() []Hook {
+	return c.hooks.Monitor
+}
+
+// Interceptors returns the client interceptors.
+func (c *MonitorClient) Interceptors() []Interceptor {
+	return c.inters.Monitor
+}
+
+func (c *MonitorClient) mutate(ctx context.Context, m *MonitorMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MonitorCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MonitorUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MonitorDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Monitor mutation op: %q", m.Op())
 	}
 }
 
@@ -6472,23 +6756,25 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AgentNode, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
+		AgentNode, Alert, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Project,
-		Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Hook
 	}
 	inters struct {
-		AgentNode, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
+		AgentNode, Alert, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Project,
-		Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

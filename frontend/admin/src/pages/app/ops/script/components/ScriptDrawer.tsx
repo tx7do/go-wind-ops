@@ -3,6 +3,7 @@ import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   DrawerForm,
   ProFormDigit,
+  ProFormSelect,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
@@ -114,6 +115,21 @@ const ScriptDrawer: React.FC<ScriptDrawerProps> = ({
             max={600}
             fieldProps={{ precision: 0 }}
             initialValue={60}
+          />
+          <ProFormText
+            name="cron"
+            label={t('cron')}
+            placeholder="*/30 * * * *"
+            extra={t('cronHint')}
+            initialValue={data?.cron}
+          />
+          <ProFormSelect
+            name="cronNodeId"
+            label={t('cronNode')}
+            placeholder={t('cronNodePlaceholder')}
+            allowClear
+            options={[]}
+            initialValue={data?.cronNodeId}
           />
         </>
       )}

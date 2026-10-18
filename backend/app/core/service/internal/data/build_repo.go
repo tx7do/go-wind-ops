@@ -1,6 +1,7 @@
 package data
 
 import (
+	"time"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
@@ -229,4 +230,22 @@ func (r *BuildRepo) IncrBuildNo(ctx context.Context, buildID uint32) (uint32, er
 		return 0, opsV1.ErrorInternalServerError("incr build no failed")
 	}
 	return entity.BuildNo, nil
+}
+
+// AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected
+// 时更新为 now,返回是否抢到(多副本去重)。
+func (r *BuildRepo) AdvanceCronAnchor(ctx context.Context, buildID uint32, expected, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Build.
+		Update().
+		Where(
+			build.IDEQ(buildID),
+			build.LastCronAtEQ(expected),
+		).
+		SetLastCronAt(now).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("advance cron anchor [build=%d]: %s", buildID, err.Error())
+		return false, err
+	}
+	return n > 0, nil
 }

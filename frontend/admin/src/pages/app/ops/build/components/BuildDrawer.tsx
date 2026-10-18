@@ -139,6 +139,13 @@ const BuildDrawer: React.FC<BuildDrawerProps> = ({
             fieldProps={{ precision: 0 }}
             initialValue={600}
           />
+          <ProFormText
+            name="cron"
+            label={t('cron')}
+            placeholder="*/30 * * * *"
+            extra={t('cronHint')}
+            initialValue={data?.cron}
+          />
           <ProFormTextArea
             name="description"
             label={t('description')}

@@ -52,6 +52,22 @@ func (Script) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("cron").
+			Comment("定时执行 cron 表达式(5 段标准语法,空为手动触发)").
+			Optional().
+			Nillable(),
+
+		field.Uint32("cron_node_id").
+			Comment("定时执行的目标节点(0 为未配置,不调度)").
+			Default(0).
+			Optional().
+			Nillable(),
+
+		field.Time("last_cron_at").
+			Comment("上次定时调度锚点(调度器去重用)").
+			Optional().
+			Nillable(),
+
 		field.JSON("labels", []string{}).
 			Comment("标签").
 			Optional(),

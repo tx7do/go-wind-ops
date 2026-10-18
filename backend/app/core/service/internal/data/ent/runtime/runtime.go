@@ -6,6 +6,7 @@ import (
 	"context"
 	permissionpb "go-wind-ops/api/gen/go/permission/service/v1"
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
+	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
@@ -25,6 +26,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
+	"go-wind-ops/app/core/service/internal/data/ent/monitor"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -75,6 +77,35 @@ func init() {
 	agentnodeDescID := agentnodeMixinFields0[0].Descriptor()
 	// agentnode.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	agentnode.IDValidator = agentnodeDescID.Validators[0].(func(uint32) error)
+	alertMixin := schema.Alert{}.Mixin()
+	alertMixinFields0 := alertMixin[0].Fields()
+	_ = alertMixinFields0
+	alertFields := schema.Alert{}.Fields()
+	_ = alertFields
+	// alertDescMonitorID is the schema descriptor for monitor_id field.
+	alertDescMonitorID := alertFields[0].Descriptor()
+	// alert.MonitorIDValidator is a validator for the "monitor_id" field. It is called by the builders before save.
+	alert.MonitorIDValidator = alertDescMonitorID.Validators[0].(func(uint32) error)
+	// alertDescProjectID is the schema descriptor for project_id field.
+	alertDescProjectID := alertFields[1].Descriptor()
+	// alert.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	alert.ProjectIDValidator = alertDescProjectID.Validators[0].(func(uint32) error)
+	// alertDescMessage is the schema descriptor for message field.
+	alertDescMessage := alertFields[3].Descriptor()
+	// alert.MessageValidator is a validator for the "message" field. It is called by the builders before save.
+	alert.MessageValidator = alertDescMessage.Validators[0].(func(string) error)
+	// alertDescResolved is the schema descriptor for resolved field.
+	alertDescResolved := alertFields[4].Descriptor()
+	// alert.DefaultResolved holds the default value on creation for the resolved field.
+	alert.DefaultResolved = alertDescResolved.Default.(bool)
+	// alertDescNotified is the schema descriptor for notified field.
+	alertDescNotified := alertFields[6].Descriptor()
+	// alert.DefaultNotified holds the default value on creation for the notified field.
+	alert.DefaultNotified = alertDescNotified.Default.(bool)
+	// alertDescID is the schema descriptor for id field.
+	alertDescID := alertMixinFields0[0].Descriptor()
+	// alert.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	alert.IDValidator = alertDescID.Validators[0].(func(uint32) error)
 	apiMixin := schema.Api{}.Mixin()
 	api.Policy = privacy.NewPolicies(apiMixin[4], schema.Api{})
 	api.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -371,10 +402,6 @@ func init() {
 	distributionDescBuildID := distributionFields[1].Descriptor()
 	// distribution.BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
 	distribution.BuildIDValidator = distributionDescBuildID.Validators[0].(func(uint32) error)
-	// distributionDescProjectID is the schema descriptor for project_id field.
-	distributionDescProjectID := distributionFields[2].Descriptor()
-	// distribution.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	distribution.ProjectIDValidator = distributionDescProjectID.Validators[0].(func(uint32) error)
 	// distributionDescClearOld is the schema descriptor for clear_old field.
 	distributionDescClearOld := distributionFields[3].Descriptor()
 	// distribution.DefaultClearOld holds the default value on creation for the clear_old field.
@@ -647,6 +674,35 @@ func init() {
 	menuDescID := menuMixinFields0[0].Descriptor()
 	// menu.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	menu.IDValidator = menuDescID.Validators[0].(func(uint32) error)
+	monitorMixin := schema.Monitor{}.Mixin()
+	monitorMixinFields0 := monitorMixin[0].Fields()
+	_ = monitorMixinFields0
+	monitorFields := schema.Monitor{}.Fields()
+	_ = monitorFields
+	// monitorDescName is the schema descriptor for name field.
+	monitorDescName := monitorFields[0].Descriptor()
+	// monitor.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	monitor.NameValidator = monitorDescName.Validators[0].(func(string) error)
+	// monitorDescProjectID is the schema descriptor for project_id field.
+	monitorDescProjectID := monitorFields[1].Descriptor()
+	// monitor.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	monitor.ProjectIDValidator = monitorDescProjectID.Validators[0].(func(uint32) error)
+	// monitorDescCron is the schema descriptor for cron field.
+	monitorDescCron := monitorFields[2].Descriptor()
+	// monitor.CronValidator is a validator for the "cron" field. It is called by the builders before save.
+	monitor.CronValidator = monitorDescCron.Validators[0].(func(string) error)
+	// monitorDescAutoRestart is the schema descriptor for auto_restart field.
+	monitorDescAutoRestart := monitorFields[3].Descriptor()
+	// monitor.DefaultAutoRestart holds the default value on creation for the auto_restart field.
+	monitor.DefaultAutoRestart = monitorDescAutoRestart.Default.(bool)
+	// monitorDescEnabled is the schema descriptor for enabled field.
+	monitorDescEnabled := monitorFields[5].Descriptor()
+	// monitor.DefaultEnabled holds the default value on creation for the enabled field.
+	monitor.DefaultEnabled = monitorDescEnabled.Default.(bool)
+	// monitorDescID is the schema descriptor for id field.
+	monitorDescID := monitorMixinFields0[0].Descriptor()
+	// monitor.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	monitor.IDValidator = monitorDescID.Validators[0].(func(uint32) error)
 	operationauditlogMixin := schema.OperationAuditLog{}.Mixin()
 	operationauditlog.Policy = privacy.NewPolicies(operationauditlogMixin[2], schema.OperationAuditLog{})
 	operationauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1144,6 +1200,10 @@ func init() {
 	scriptDescTimeoutSeconds := scriptFields[3].Descriptor()
 	// script.DefaultTimeoutSeconds holds the default value on creation for the timeout_seconds field.
 	script.DefaultTimeoutSeconds = scriptDescTimeoutSeconds.Default.(uint32)
+	// scriptDescCronNodeID is the schema descriptor for cron_node_id field.
+	scriptDescCronNodeID := scriptFields[5].Descriptor()
+	// script.DefaultCronNodeID holds the default value on creation for the cron_node_id field.
+	script.DefaultCronNodeID = scriptDescCronNodeID.Default.(uint32)
 	// scriptDescID is the schema descriptor for id field.
 	scriptDescID := scriptMixinFields0[0].Descriptor()
 	// script.IDValidator is a validator for the "id" field. It is called by the builders before save.
