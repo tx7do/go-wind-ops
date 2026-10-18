@@ -35,24 +35,26 @@ const (
 // AgentService core 侧 agent 信令处理服务:准入认证、心跳落库、指令下发
 // 与结果回执。指令台账落库(ops_command_records),按 request_id 幂等。
 type AgentService struct {
-	ctx        *bootstrap.Context
-	repo       *data.AgentNodeRepo
-	recordRepo *data.CommandRecordRepo
-	projectRepo *data.ProjectRepo
-	ossClient  *oss.MinIOClient
-	log        *log.Helper
+	ctx            *bootstrap.Context
+	repo           *data.AgentNodeRepo
+	recordRepo     *data.CommandRecordRepo
+	projectRepo    *data.ProjectRepo
+	distRecordRepo *data.DistributionRecordRepo
+	ossClient      *oss.MinIOClient
+	log            *log.Helper
 
 	mqttBroker atomic.Value // broker.Broker
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
-		ctx:         ctx,
-		repo:        repo,
-		recordRepo:  recordRepo,
-		projectRepo: projectRepo,
-		ossClient:   ossClient,
-		log:         ctx.NewLoggerHelper("agent/service/core-service"),
+		ctx:            ctx,
+		repo:           repo,
+		recordRepo:     recordRepo,
+		projectRepo:    projectRepo,
+		distRecordRepo: distRecordRepo,
+		ossClient:      ossClient,
+		log:            ctx.NewLoggerHelper("agent/service/core-service"),
 	}
 }
 
@@ -81,6 +83,11 @@ func (s *AgentService) Start(ctx context.Context) {
 					s.log.Warnf("command timeout sweep: %s", err.Error())
 				} else if n > 0 {
 					s.log.Infof("command timeout sweep: finalized %d stale command(s)", n)
+				}
+				if n, err := s.distRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
+					s.log.Warnf("distribution timeout sweep: %s", err.Error())
+				} else if n > 0 {
+					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", n)
 				}
 			}
 		}
@@ -168,6 +175,10 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 	if res.Success && strings.HasPrefix(string(res.Action), "project_") {
 		s.applyProjectOperationResult(ctx, res)
 	}
+	// dist_apply:无论成败都要终态化分发记录(失败时带原因)
+	if res.Action == signal.CommandActionDistApply {
+		s.applyDistributionResult(ctx, res)
+	}
 
 	if res.Success {
 		s.log.Infof("command result SUCCESS (request_id=%s agent=%s action=%s data=%s)",
@@ -177,6 +188,14 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 			res.RequestId, res.AgentId, res.Action, res.Error)
 	}
 	return nil
+}
+
+// applyDistributionResult 把分发回执回写到分发记录(按指令幂等键对账)。
+func (s *AgentService) applyDistributionResult(ctx context.Context, res *signal.CommandResult) {
+	if err := s.distRecordRepo.FinalizeByCommandRequestID(ctx, res.RequestId,
+		toRecordStatus(res.Success), strings.TrimSpace(res.Error), string(res.Data)); err != nil {
+		s.log.Warnf("finalize distribution record [%s]: %s", res.RequestId, err.Error())
+	}
 }
 
 // applyProjectOperationResult 把项目操作回执回填到项目表(last_pid/last_status)。

@@ -128,6 +128,30 @@ func (f DictTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictTypeMutation", m)
 }
 
+// The DistributionFunc type is an adapter to allow the use of ordinary
+// function as Distribution mutator.
+type DistributionFunc func(context.Context, *ent.DistributionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DistributionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DistributionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DistributionMutation", m)
+}
+
+// The DistributionRecordFunc type is an adapter to allow the use of ordinary
+// function as DistributionRecord mutator.
+type DistributionRecordFunc func(context.Context, *ent.DistributionRecordMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DistributionRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DistributionRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DistributionRecordMutation", m)
+}
+
 // The LanguageFunc type is an adapter to allow the use of ordinary
 // function as Language mutator.
 type LanguageFunc func(context.Context, *ent.LanguageMutation) (ent.Value, error)

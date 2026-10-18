@@ -68,6 +68,7 @@ func NewGrpcServer(
 	repositoryService *service.RepositoryService,
 	buildService *service.BuildService,
 	buildHistoryService *service.BuildHistoryService,
+	distributionService *service.DistributionService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -118,6 +119,7 @@ func NewGrpcServer(
 	opsV1.RegisterRepositoryServiceServer(srv, repositoryService)
 	opsV1.RegisterBuildServiceServer(srv, buildService)
 	opsV1.RegisterBuildHistoryServiceServer(srv, buildHistoryService)
+	opsV1.RegisterDistributionServiceServer(srv, distributionService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

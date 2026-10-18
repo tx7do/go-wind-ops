@@ -347,3 +347,12 @@ func NewBuildHistoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) 
 
 	return opsV1.NewBuildHistoryServiceClient(cli)
 }
+
+func NewDistributionServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.DistributionServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewDistributionServiceClient(cli)
+}

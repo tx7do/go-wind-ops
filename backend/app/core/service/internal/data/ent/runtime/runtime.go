@@ -15,6 +15,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
+	"go-wind-ops/app/core/service/internal/data/ent/distribution"
+	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
@@ -356,6 +358,64 @@ func init() {
 	dicttypeDescID := dicttypeMixinFields0[0].Descriptor()
 	// dicttype.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	dicttype.IDValidator = dicttypeDescID.Validators[0].(func(uint32) error)
+	distributionMixin := schema.Distribution{}.Mixin()
+	distributionMixinFields0 := distributionMixin[0].Fields()
+	_ = distributionMixinFields0
+	distributionFields := schema.Distribution{}.Fields()
+	_ = distributionFields
+	// distributionDescName is the schema descriptor for name field.
+	distributionDescName := distributionFields[0].Descriptor()
+	// distribution.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	distribution.NameValidator = distributionDescName.Validators[0].(func(string) error)
+	// distributionDescBuildID is the schema descriptor for build_id field.
+	distributionDescBuildID := distributionFields[1].Descriptor()
+	// distribution.BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
+	distribution.BuildIDValidator = distributionDescBuildID.Validators[0].(func(uint32) error)
+	// distributionDescProjectID is the schema descriptor for project_id field.
+	distributionDescProjectID := distributionFields[2].Descriptor()
+	// distribution.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	distribution.ProjectIDValidator = distributionDescProjectID.Validators[0].(func(uint32) error)
+	// distributionDescClearOld is the schema descriptor for clear_old field.
+	distributionDescClearOld := distributionFields[3].Descriptor()
+	// distribution.DefaultClearOld holds the default value on creation for the clear_old field.
+	distribution.DefaultClearOld = distributionDescClearOld.Default.(bool)
+	// distributionDescID is the schema descriptor for id field.
+	distributionDescID := distributionMixinFields0[0].Descriptor()
+	// distribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	distribution.IDValidator = distributionDescID.Validators[0].(func(uint32) error)
+	distributionrecordMixin := schema.DistributionRecord{}.Mixin()
+	distributionrecordMixinFields0 := distributionrecordMixin[0].Fields()
+	_ = distributionrecordMixinFields0
+	distributionrecordFields := schema.DistributionRecord{}.Fields()
+	_ = distributionrecordFields
+	// distributionrecordDescDistributionID is the schema descriptor for distribution_id field.
+	distributionrecordDescDistributionID := distributionrecordFields[0].Descriptor()
+	// distributionrecord.DistributionIDValidator is a validator for the "distribution_id" field. It is called by the builders before save.
+	distributionrecord.DistributionIDValidator = distributionrecordDescDistributionID.Validators[0].(func(uint32) error)
+	// distributionrecordDescBuildHistoryID is the schema descriptor for build_history_id field.
+	distributionrecordDescBuildHistoryID := distributionrecordFields[1].Descriptor()
+	// distributionrecord.BuildHistoryIDValidator is a validator for the "build_history_id" field. It is called by the builders before save.
+	distributionrecord.BuildHistoryIDValidator = distributionrecordDescBuildHistoryID.Validators[0].(func(uint32) error)
+	// distributionrecordDescProjectID is the schema descriptor for project_id field.
+	distributionrecordDescProjectID := distributionrecordFields[2].Descriptor()
+	// distributionrecord.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	distributionrecord.ProjectIDValidator = distributionrecordDescProjectID.Validators[0].(func(uint32) error)
+	// distributionrecordDescNodeID is the schema descriptor for node_id field.
+	distributionrecordDescNodeID := distributionrecordFields[3].Descriptor()
+	// distributionrecord.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	distributionrecord.NodeIDValidator = distributionrecordDescNodeID.Validators[0].(func(uint32) error)
+	// distributionrecordDescCommandRequestID is the schema descriptor for command_request_id field.
+	distributionrecordDescCommandRequestID := distributionrecordFields[4].Descriptor()
+	// distributionrecord.CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
+	distributionrecord.CommandRequestIDValidator = distributionrecordDescCommandRequestID.Validators[0].(func(string) error)
+	// distributionrecordDescOperatorID is the schema descriptor for operator_id field.
+	distributionrecordDescOperatorID := distributionrecordFields[8].Descriptor()
+	// distributionrecord.DefaultOperatorID holds the default value on creation for the operator_id field.
+	distributionrecord.DefaultOperatorID = distributionrecordDescOperatorID.Default.(uint32)
+	// distributionrecordDescID is the schema descriptor for id field.
+	distributionrecordDescID := distributionrecordMixinFields0[0].Descriptor()
+	// distributionrecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	distributionrecord.IDValidator = distributionrecordDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0

@@ -32,6 +32,10 @@ type Tx struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// Distribution is the client for interacting with the Distribution builders.
+	Distribution *DistributionClient
+	// DistributionRecord is the client for interacting with the DistributionRecord builders.
+	DistributionRecord *DistributionRecordClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -235,6 +239,8 @@ func (tx *Tx) init() {
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
+	tx.Distribution = NewDistributionClient(tx.config)
+	tx.DistributionRecord = NewDistributionRecordClient(tx.config)
 	tx.Language = NewLanguageClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)

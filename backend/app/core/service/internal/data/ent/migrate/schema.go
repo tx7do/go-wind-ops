@@ -577,6 +577,88 @@ var (
 			},
 		},
 	}
+	// OpsDistributionsColumns holds the columns for the "ops_distributions" table.
+	OpsDistributionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "分发名(全局唯一)"},
+		{Name: "build_id", Type: field.TypeUint32, Comment: "构建来源(ops_builds.id);触发时取其最新成功产物"},
+		{Name: "project_id", Type: field.TypeUint32, Comment: "目标项目(ops_projects.id)"},
+		{Name: "clear_old", Type: field.TypeBool, Comment: "分发前清空项目目录旧内容(危险操作,谨慎开启)", Default: false},
+		{Name: "after_opt", Type: field.TypeEnum, Nullable: true, Comment: "分发后动作", Enums: []string{"NONE", "RESTART", "START"}, Default: "NONE"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
+	}
+	// OpsDistributionsTable holds the schema information for the "ops_distributions" table.
+	OpsDistributionsTable = &schema.Table{
+		Name:       "ops_distributions",
+		Comment:    "构建产物分发配置表",
+		Columns:    OpsDistributionsColumns,
+		PrimaryKey: []*schema.Column{OpsDistributionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_distribution_name",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionsColumns[7]},
+			},
+			{
+				Name:    "idx_ops_distribution_build",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionsColumns[8]},
+			},
+			{
+				Name:    "idx_ops_distribution_project",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionsColumns[9]},
+			},
+		},
+	}
+	// OpsDistributionRecordsColumns holds the columns for the "ops_distribution_records" table.
+	OpsDistributionRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "distribution_id", Type: field.TypeUint32, Comment: "分发配置(ops_distributions.id)"},
+		{Name: "build_history_id", Type: field.TypeUint32, Comment: "构建历史(ops_build_histories.id)"},
+		{Name: "project_id", Type: field.TypeUint32, Comment: "目标项目(ops_projects.id)"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "目标节点(ops_agent_nodes.id)"},
+		{Name: "command_request_id", Type: field.TypeString, Comment: "关联的 MQTT 指令幂等键(dist_apply)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分发状态", Enums: []string{"PENDING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON:部署文件数/输出等)"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间"},
+	}
+	// OpsDistributionRecordsTable holds the schema information for the "ops_distribution_records" table.
+	OpsDistributionRecordsTable = &schema.Table{
+		Name:       "ops_distribution_records",
+		Comment:    "分发执行记录表",
+		Columns:    OpsDistributionRecordsColumns,
+		PrimaryKey: []*schema.Column{OpsDistributionRecordsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_dist_record_dist",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[4]},
+			},
+			{
+				Name:    "uidx_ops_dist_record_req",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[8]},
+			},
+			{
+				Name:    "idx_ops_dist_record_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[9]},
+			},
+		},
+	}
 	// SysLanguagesColumns holds the columns for the "sys_languages" table.
 	SysLanguagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2842,6 +2924,8 @@ var (
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
+		OpsDistributionsTable,
+		OpsDistributionRecordsTable,
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
@@ -2926,6 +3010,16 @@ func init() {
 	}
 	SysDictTypesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_dict_types",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsDistributionsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_distributions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsDistributionRecordsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_distribution_records",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

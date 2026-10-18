@@ -129,7 +129,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dictTypeRepo := data.NewDictTypeRepo(ctx, entClient, dictEntryRepo)
 	languageRepo := data.NewLanguageRepo(ctx, entClient)
 
-	// Agent 节点(受管机器资产)与项目/指令台账/脚本/构建
+	// Agent 节点(受管机器资产)与项目/指令台账/脚本/构建/分发
 	agentNodeRepo := data.NewAgentNodeRepo(ctx, entClient)
 	projectRepo := data.NewProjectRepo(ctx, entClient)
 	commandRecordRepo := data.NewCommandRecordRepo(ctx, entClient)
@@ -137,6 +137,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	repositoryRepo := data.NewRepositoryRepo(ctx, entClient)
 	buildRepo := data.NewBuildRepo(ctx, entClient)
 	buildHistoryRepo := data.NewBuildHistoryRepo(ctx, entClient)
+	distributionRepo := data.NewDistributionRepo(ctx, entClient)
+	distributionRecordRepo := data.NewDistributionRecordRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
@@ -177,7 +179,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
-	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, minIOClient)
+	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, minIOClient)
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
@@ -185,6 +187,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	repositoryService := service.NewRepositoryService(ctx, repositoryRepo)
 	buildService := service.NewBuildService(ctx, buildRepo, repositoryRepo, buildHistoryRepo, minIOClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryRepo, buildRepo, repositoryRepo, minIOClient)
+	distributionService := service.NewDistributionService(ctx, distributionRepo, distributionRecordRepo, buildRepo, buildHistoryRepo, projectRepo, agentNodeRepo, minIOClient, agentService)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -203,6 +206,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		projectService, commandRecordService,
 		scriptService,
 		repositoryService, buildService, buildHistoryService,
+		distributionService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

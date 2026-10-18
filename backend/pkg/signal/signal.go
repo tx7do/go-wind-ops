@@ -88,6 +88,10 @@ const (
 
 	// 脚本远程执行:载荷为 ScriptExecPayload,结果为 ScriptExecResult。
 	CommandActionScriptExec CommandAction = "script_exec"
+
+	// 构建产物分发:载荷为 DistributionPayload,结果为 DistributionResult。
+	// 产物内容经 MinIO 预签名 URL 直下,不过 MQTT。
+	CommandActionDistApply CommandAction = "dist_apply"
 )
 
 // CommandEnvelope core 下发给 agent 的统一指令信封。
@@ -177,6 +181,40 @@ type ScriptExecResult struct {
 	ExitCode int    `json:"exit_code"`
 	Output   string `json:"output"`
 	Duration string `json:"duration,omitempty"`
+}
+
+// ============================================================================
+// 构建产物分发
+// ============================================================================
+
+// AfterOpt 分发后动作取值。
+const (
+	AfterNone    = "NONE"
+	AfterRestart = "RESTART"
+	AfterStart   = "START"
+)
+
+// DistributionPayload 分发载荷:core 组装(产物走预签名 URL,agent 直接下载)。
+type DistributionPayload struct {
+	DistributionId uint32 `json:"distribution_id"`
+	ProjectId      uint32 `json:"project_id"`
+	ProjectName    string `json:"project_name"`
+	ProjectDir     string `json:"project_dir"`
+	ClearOld       bool   `json:"clear_old,omitempty"`
+	DownloadUrl    string `json:"download_url"`
+	FileName       string `json:"file_name"`
+	AfterOpt       string `json:"after_opt,omitempty"`
+	// 项目操作命令(AfterOpt=RESTART/START 时由 agent 联动执行)
+	StartCommand  string `json:"start_command,omitempty"`
+	StopCommand   string `json:"stop_command,omitempty"`
+	StatusCommand string `json:"status_command,omitempty"`
+}
+
+// DistributionResult 分发回执。
+type DistributionResult struct {
+	DistributionId uint32 `json:"distribution_id"`
+	DeployedFiles  int    `json:"deployed_files"`
+	Output         string `json:"output,omitempty"`
 }
 
 // ============================================================================

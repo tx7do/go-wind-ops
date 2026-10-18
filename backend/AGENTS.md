@@ -93,7 +93,14 @@
 - 执行器：`build_service.go` runBuild(goroutine)——git clone(argv 直传,本地盘符路径自动转 file:/// URL;`D:/...` 直写会被 git 当 scp 主机名)→ 构建命令(shellexec.Run,超时杀树)→ 产物 glob 收集(多文件打包 zip)→ MinIO `artifacts` 桶
 - 状态机：PENDING→RUNNING→SUCCESS/FAILED;同配置存在未终态历史时触发返回 409;core 启动清扫把遗留 RUNNING/PENDING 定案 FAILED
 - 工作空间:`OPS_BUILD_WORKSPACE`(默认 ./data/builds),构建结束即删除;日志截断 512KB 落库
-- **坑**:ent 枚举与 proto 枚举按"值名"映射(EnumTypeConverter),两端正名必须一致——同包顶层枚举值冲突时把枚举嵌进 message(如 BuildHistory.Status)而不是加前缀
+- **坑**:ent 枚举与 proto 枚举按"值名"映射(EnumTypeConverter),两端正名必须一致——同包顶层枚举值冲突时把枚举嵌进 message(如 BuildHistory.Status、Distribution.AfterOpt)而不是加前缀
+
+## 分发域(ops,OutGiving v1)
+
+- 契约:`api/protos/ops/service/v1/distribution.proto`;admin REST `/admin/v1/distributions`(`POST {id}/distributions:trigger`,可指定 historyId)、`/admin/v1/distribution-records`
+- 触发链:分发配置→目标项目→节点→最新成功构建历史→签发产物预签名 URL→`dist_apply` 指令→分发记录(PENDING,记 command_request_id)
+- 回执:agent 下载产物(HTTP 直拉,不过 MQTT)→ zip 解包(防 zip slip)/单文件复制进项目目录(clearOld 可选,白名单校验)→ afterOpt 联动重启/启动(项目命令随载荷下发)→ 回执按 command_request_id 回写分发记录终态;超时由 30s 扫描定案
+- **坑**:回执终态化必须区分指令成败——`dist_apply` 失败回执也要把分发记录定案 FAILED(曾因只处理 Success 分支导致失败记录停留 PENDING)
 
 ## 开发调试工具
 

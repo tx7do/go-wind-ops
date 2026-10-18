@@ -123,6 +123,7 @@ func NewRestServer(
 	repositoryService *service.RepositoryService,
 	buildService *service.BuildService,
 	buildHistoryService *service.BuildHistoryService,
+	distributionService *service.DistributionService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -172,6 +173,7 @@ func NewRestServer(
 	adminV1.RegisterRepositoryServiceHTTPServer(srv, repositoryService)
 	adminV1.RegisterBuildServiceHTTPServer(srv, buildService)
 	adminV1.RegisterBuildHistoryServiceHTTPServer(srv, buildHistoryService)
+	adminV1.RegisterDistributionServiceHTTPServer(srv, distributionService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

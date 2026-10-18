@@ -351,6 +351,54 @@ func (f DictTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DictTypeMutation", m)
 }
 
+// The DistributionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type DistributionQueryRuleFunc func(context.Context, *ent.DistributionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f DistributionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.DistributionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.DistributionQuery", q)
+}
+
+// The DistributionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type DistributionMutationRuleFunc func(context.Context, *ent.DistributionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f DistributionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.DistributionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DistributionMutation", m)
+}
+
+// The DistributionRecordQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type DistributionRecordQueryRuleFunc func(context.Context, *ent.DistributionRecordQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f DistributionRecordQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.DistributionRecordQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.DistributionRecordQuery", q)
+}
+
+// The DistributionRecordMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type DistributionRecordMutationRuleFunc func(context.Context, *ent.DistributionRecordMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f DistributionRecordMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.DistributionRecordMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DistributionRecordMutation", m)
+}
+
 // The LanguageQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type LanguageQueryRuleFunc func(context.Context, *ent.LanguageQuery) error
@@ -1150,6 +1198,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.DictTypeQuery:
 		return q.Filter(), nil
+	case *ent.DistributionQuery:
+		return q.Filter(), nil
+	case *ent.DistributionRecordQuery:
+		return q.Filter(), nil
 	case *ent.LanguageQuery:
 		return q.Filter(), nil
 	case *ent.LoginAuditLogQuery:
@@ -1238,6 +1290,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictEntryI18nMutation:
 		return m.Filter(), nil
 	case *ent.DictTypeMutation:
+		return m.Filter(), nil
+	case *ent.DistributionMutation:
+		return m.Filter(), nil
+	case *ent.DistributionRecordMutation:
 		return m.Filter(), nil
 	case *ent.LanguageMutation:
 		return m.Filter(), nil

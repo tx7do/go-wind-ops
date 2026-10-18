@@ -46,15 +46,15 @@ type ScriptServiceHTTPServer interface {
 
 func RegisterScriptServiceHTTPServer(s *http.Server, srv ScriptServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/scripts", _ScriptService_List23_HTTP_Handler(srv))
-	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get23_HTTP_Handler(srv))
-	r.POST("/admin/v1/scripts", _ScriptService_Create14_HTTP_Handler(srv))
-	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update15_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/scripts/{id}", _ScriptService_Delete15_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts", _ScriptService_List24_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get24_HTTP_Handler(srv))
+	r.POST("/admin/v1/scripts", _ScriptService_Create15_HTTP_Handler(srv))
+	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update16_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/scripts/{id}", _ScriptService_Delete16_HTTP_Handler(srv))
 	r.POST("/admin/v1/scripts/{id}/executions:send", _ScriptService_Execute0_HTTP_Handler(srv))
 }
 
-func _ScriptService_List23_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_List24_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _ScriptService_List23_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _ScriptService_Get23_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Get24_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetScriptRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _ScriptService_Get23_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _ScriptService_Create14_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Create15_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateScriptRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _ScriptService_Create14_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ScriptService_Update15_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Update16_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateScriptRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _ScriptService_Update15_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ScriptService_Delete15_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Delete16_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteScriptRequest
 		if err := ctx.BindQuery(&in); err != nil {

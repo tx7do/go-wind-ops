@@ -36,6 +36,12 @@ type DictEntryI18n func(*sql.Selector)
 // DictType is the predicate function for dicttype builders.
 type DictType func(*sql.Selector)
 
+// Distribution is the predicate function for distribution builders.
+type Distribution func(*sql.Selector)
+
+// DistributionRecord is the predicate function for distributionrecord builders.
+type DistributionRecord func(*sql.Selector)
+
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)
 

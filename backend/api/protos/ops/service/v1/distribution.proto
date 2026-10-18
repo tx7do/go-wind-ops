@@ -1,0 +1,254 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// DistributionService 构建产物分发(v1 单项目目标):
+// 触发时取构建配置的最新成功产物,经 MinIO 预签名 URL 下发到目标节点,
+// agent 下载解包到项目目录(白名单校验),可联动重启项目。
+service DistributionService {
+  // 查询分发配置列表
+  rpc ListDistributions (pagination.PagingRequest) returns (ListDistributionResponse) {}
+
+  // 查询分发配置详情
+  rpc GetDistribution (GetDistributionRequest) returns (Distribution) {}
+
+  // 创建分发配置
+  rpc CreateDistribution (CreateDistributionRequest) returns (Distribution) {}
+
+  // 更新分发配置
+  rpc UpdateDistribution (UpdateDistributionRequest) returns (google.protobuf.Empty) {}
+
+  // 删除分发配置
+  rpc DeleteDistribution (DeleteDistributionRequest) returns (google.protobuf.Empty) {}
+
+  // 触发分发(异步执行);historyId 缺省取构建配置最新成功产物
+  rpc TriggerDistribution (TriggerDistributionRequest) returns (TriggerDistributionResponse) {}
+
+  // 查询分发执行记录
+  rpc ListDistributionRecords (pagination.PagingRequest) returns (ListDistributionRecordResponse) {}
+
+  // 查询分发执行记录详情
+  rpc GetDistributionRecord (GetDistributionRecordRequest) returns (DistributionRecord) {}
+}
+
+// 分发配置
+message Distribution {
+  // 分发后动作(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum AfterOpt {
+    UNSPECIFIED = 0; // 未知
+
+    NONE = 1;    // 不做任何动作
+    RESTART = 2; // 重启项目
+    START = 3;   // 启动项目
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 分发配置ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "分发名(全局唯一)"
+    }
+  ]; // 分发名
+
+  optional uint32 build_id = 3 [
+    json_name = "buildId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "构建来源ID(触发时取最新成功产物)"
+    }
+  ]; // 构建来源
+
+  optional uint32 project_id = 4 [
+    json_name = "projectId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "目标项目ID"
+    }
+  ]; // 目标项目
+
+  optional bool clear_old = 5 [
+    json_name = "clearOld",
+    (gnostic.openapi.v3.property) = {
+      description: "分发前清空项目目录旧内容(危险操作)"
+    }
+  ]; // 清空旧内容
+
+  optional AfterOpt after_opt = 6 [
+    json_name = "afterOpt",
+    (gnostic.openapi.v3.property) = {
+      description: "分发后动作"
+    }
+  ]; // 分发后动作
+
+  optional string description = 7 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  repeated string labels = 8 [json_name = "labels"]; // 标签
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListDistributionResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Distribution items = 2 [json_name = "items"]; // 分发配置列表
+}
+
+message GetDistributionRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 分发配置ID
+}
+
+message CreateDistributionRequest {
+  Distribution data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 分发配置数据
+}
+
+message UpdateDistributionRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 分发配置ID
+
+  Distribution data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteDistributionRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 分发配置ID
+}
+
+message TriggerDistributionRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 分发配置ID
+
+  optional uint32 history_id = 2 [
+    json_name = "historyId",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // 指定构建历史ID(缺省取最新成功)
+}
+
+message TriggerDistributionResponse {
+  uint32 record_id = 1 [json_name = "recordId"]; // 分发记录ID
+  string command_request_id = 2 [json_name = "commandRequestId"]; // 关联指令幂等键
+}
+
+// 分发执行记录
+message DistributionRecord {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional uint32 distribution_id = 2 [
+    json_name = "distributionId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 分发配置ID
+
+  optional uint32 build_history_id = 3 [
+    json_name = "buildHistoryId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 构建历史ID
+
+  optional uint32 project_id = 4 [
+    json_name = "projectId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 目标项目ID
+
+  optional uint32 node_id = 5 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 目标节点ID
+
+  optional string command_request_id = 6 [
+    json_name = "commandRequestId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 关联指令幂等键
+
+  optional string status = 7 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 分发状态(PENDING/SUCCESS/FAILED)
+
+  optional string error = 8 [
+    json_name = "error",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 失败原因
+
+  optional string result = 9 [
+    json_name = "result",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行结果数据(JSON)
+
+  optional uint32 operator_id = 10 [
+    json_name = "operatorId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发人
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发时间
+
+  optional google.protobuf.Timestamp finished_at = 31 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 结束时间
+}
+
+message ListDistributionRecordResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated DistributionRecord items = 2 [json_name = "items"]; // 记录列表
+}
+
+message GetDistributionRecordRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 记录ID
+}

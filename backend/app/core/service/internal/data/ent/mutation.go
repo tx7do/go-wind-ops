@@ -19,6 +19,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
+	"go-wind-ops/app/core/service/internal/data/ent/distribution"
+	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
@@ -77,6 +79,8 @@ const (
 	TypeDictEntry           = "DictEntry"
 	TypeDictEntryI18n       = "DictEntryI18n"
 	TypeDictType            = "DictType"
+	TypeDistribution        = "Distribution"
+	TypeDistributionRecord  = "DistributionRecord"
 	TypeLanguage            = "Language"
 	TypeLoginAuditLog       = "LoginAuditLog"
 	TypeLoginPolicy         = "LoginPolicy"
@@ -17117,6 +17121,2652 @@ func (m *DictTypeMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown DictType edge %s", name)
+}
+
+// DistributionMutation represents an operation that mutates the Distribution nodes in the graph.
+type DistributionMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	name          *string
+	build_id      *uint32
+	addbuild_id   *int32
+	project_id    *uint32
+	addproject_id *int32
+	clear_old     *bool
+	after_opt     *distribution.AfterOpt
+	description   *string
+	labels        *[]string
+	appendlabels  []string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Distribution, error)
+	predicates    []predicate.Distribution
+}
+
+var _ ent.Mutation = (*DistributionMutation)(nil)
+
+// distributionOption allows management of the mutation configuration using functional options.
+type distributionOption func(*DistributionMutation)
+
+// newDistributionMutation creates new mutation for the Distribution entity.
+func newDistributionMutation(c config, op Op, opts ...distributionOption) *DistributionMutation {
+	m := &DistributionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDistribution,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDistributionID sets the ID field of the mutation.
+func withDistributionID(id uint32) distributionOption {
+	return func(m *DistributionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Distribution
+		)
+		m.oldValue = func(ctx context.Context) (*Distribution, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Distribution.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDistribution sets the old Distribution of the mutation.
+func withDistribution(node *Distribution) distributionOption {
+	return func(m *DistributionMutation) {
+		m.oldValue = func(context.Context) (*Distribution, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DistributionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DistributionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Distribution entities.
+func (m *DistributionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DistributionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DistributionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Distribution.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DistributionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DistributionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *DistributionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[distribution.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *DistributionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DistributionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, distribution.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DistributionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DistributionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *DistributionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[distribution.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *DistributionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DistributionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, distribution.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DistributionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DistributionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *DistributionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[distribution.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *DistributionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DistributionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, distribution.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *DistributionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *DistributionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *DistributionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *DistributionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *DistributionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[distribution.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *DistributionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *DistributionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, distribution.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *DistributionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *DistributionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *DistributionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *DistributionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *DistributionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[distribution.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *DistributionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *DistributionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, distribution.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *DistributionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *DistributionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *DistributionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *DistributionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *DistributionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[distribution.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *DistributionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *DistributionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, distribution.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *DistributionMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *DistributionMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *DistributionMutation) ResetName() {
+	m.name = nil
+}
+
+// SetBuildID sets the "build_id" field.
+func (m *DistributionMutation) SetBuildID(u uint32) {
+	m.build_id = &u
+	m.addbuild_id = nil
+}
+
+// BuildID returns the value of the "build_id" field in the mutation.
+func (m *DistributionMutation) BuildID() (r uint32, exists bool) {
+	v := m.build_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBuildID returns the old "build_id" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldBuildID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBuildID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBuildID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBuildID: %w", err)
+	}
+	return oldValue.BuildID, nil
+}
+
+// AddBuildID adds u to the "build_id" field.
+func (m *DistributionMutation) AddBuildID(u int32) {
+	if m.addbuild_id != nil {
+		*m.addbuild_id += u
+	} else {
+		m.addbuild_id = &u
+	}
+}
+
+// AddedBuildID returns the value that was added to the "build_id" field in this mutation.
+func (m *DistributionMutation) AddedBuildID() (r int32, exists bool) {
+	v := m.addbuild_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBuildID resets all changes to the "build_id" field.
+func (m *DistributionMutation) ResetBuildID() {
+	m.build_id = nil
+	m.addbuild_id = nil
+}
+
+// SetProjectID sets the "project_id" field.
+func (m *DistributionMutation) SetProjectID(u uint32) {
+	m.project_id = &u
+	m.addproject_id = nil
+}
+
+// ProjectID returns the value of the "project_id" field in the mutation.
+func (m *DistributionMutation) ProjectID() (r uint32, exists bool) {
+	v := m.project_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProjectID returns the old "project_id" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldProjectID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProjectID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProjectID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProjectID: %w", err)
+	}
+	return oldValue.ProjectID, nil
+}
+
+// AddProjectID adds u to the "project_id" field.
+func (m *DistributionMutation) AddProjectID(u int32) {
+	if m.addproject_id != nil {
+		*m.addproject_id += u
+	} else {
+		m.addproject_id = &u
+	}
+}
+
+// AddedProjectID returns the value that was added to the "project_id" field in this mutation.
+func (m *DistributionMutation) AddedProjectID() (r int32, exists bool) {
+	v := m.addproject_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProjectID resets all changes to the "project_id" field.
+func (m *DistributionMutation) ResetProjectID() {
+	m.project_id = nil
+	m.addproject_id = nil
+}
+
+// SetClearOld sets the "clear_old" field.
+func (m *DistributionMutation) SetClearOld(b bool) {
+	m.clear_old = &b
+}
+
+// ClearOld returns the value of the "clear_old" field in the mutation.
+func (m *DistributionMutation) ClearOld() (r bool, exists bool) {
+	v := m.clear_old
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClearOld returns the old "clear_old" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldClearOld(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClearOld is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClearOld requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClearOld: %w", err)
+	}
+	return oldValue.ClearOld, nil
+}
+
+// ResetClearOld resets all changes to the "clear_old" field.
+func (m *DistributionMutation) ResetClearOld() {
+	m.clear_old = nil
+}
+
+// SetAfterOpt sets the "after_opt" field.
+func (m *DistributionMutation) SetAfterOpt(do distribution.AfterOpt) {
+	m.after_opt = &do
+}
+
+// AfterOpt returns the value of the "after_opt" field in the mutation.
+func (m *DistributionMutation) AfterOpt() (r distribution.AfterOpt, exists bool) {
+	v := m.after_opt
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAfterOpt returns the old "after_opt" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldAfterOpt(ctx context.Context) (v *distribution.AfterOpt, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAfterOpt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAfterOpt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAfterOpt: %w", err)
+	}
+	return oldValue.AfterOpt, nil
+}
+
+// ClearAfterOpt clears the value of the "after_opt" field.
+func (m *DistributionMutation) ClearAfterOpt() {
+	m.after_opt = nil
+	m.clearedFields[distribution.FieldAfterOpt] = struct{}{}
+}
+
+// AfterOptCleared returns if the "after_opt" field was cleared in this mutation.
+func (m *DistributionMutation) AfterOptCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldAfterOpt]
+	return ok
+}
+
+// ResetAfterOpt resets all changes to the "after_opt" field.
+func (m *DistributionMutation) ResetAfterOpt() {
+	m.after_opt = nil
+	delete(m.clearedFields, distribution.FieldAfterOpt)
+}
+
+// SetDescription sets the "description" field.
+func (m *DistributionMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *DistributionMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *DistributionMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[distribution.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *DistributionMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *DistributionMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, distribution.FieldDescription)
+}
+
+// SetLabels sets the "labels" field.
+func (m *DistributionMutation) SetLabels(s []string) {
+	m.labels = &s
+	m.appendlabels = nil
+}
+
+// Labels returns the value of the "labels" field in the mutation.
+func (m *DistributionMutation) Labels() (r []string, exists bool) {
+	v := m.labels
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLabels returns the old "labels" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldLabels(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLabels is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLabels requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLabels: %w", err)
+	}
+	return oldValue.Labels, nil
+}
+
+// AppendLabels adds s to the "labels" field.
+func (m *DistributionMutation) AppendLabels(s []string) {
+	m.appendlabels = append(m.appendlabels, s...)
+}
+
+// AppendedLabels returns the list of values that were appended to the "labels" field in this mutation.
+func (m *DistributionMutation) AppendedLabels() ([]string, bool) {
+	if len(m.appendlabels) == 0 {
+		return nil, false
+	}
+	return m.appendlabels, true
+}
+
+// ClearLabels clears the value of the "labels" field.
+func (m *DistributionMutation) ClearLabels() {
+	m.labels = nil
+	m.appendlabels = nil
+	m.clearedFields[distribution.FieldLabels] = struct{}{}
+}
+
+// LabelsCleared returns if the "labels" field was cleared in this mutation.
+func (m *DistributionMutation) LabelsCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldLabels]
+	return ok
+}
+
+// ResetLabels resets all changes to the "labels" field.
+func (m *DistributionMutation) ResetLabels() {
+	m.labels = nil
+	m.appendlabels = nil
+	delete(m.clearedFields, distribution.FieldLabels)
+}
+
+// Where appends a list predicates to the DistributionMutation builder.
+func (m *DistributionMutation) Where(ps ...predicate.Distribution) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DistributionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DistributionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Distribution, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DistributionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DistributionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Distribution).
+func (m *DistributionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DistributionMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, distribution.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, distribution.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, distribution.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, distribution.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, distribution.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, distribution.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, distribution.FieldName)
+	}
+	if m.build_id != nil {
+		fields = append(fields, distribution.FieldBuildID)
+	}
+	if m.project_id != nil {
+		fields = append(fields, distribution.FieldProjectID)
+	}
+	if m.clear_old != nil {
+		fields = append(fields, distribution.FieldClearOld)
+	}
+	if m.after_opt != nil {
+		fields = append(fields, distribution.FieldAfterOpt)
+	}
+	if m.description != nil {
+		fields = append(fields, distribution.FieldDescription)
+	}
+	if m.labels != nil {
+		fields = append(fields, distribution.FieldLabels)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DistributionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case distribution.FieldCreatedAt:
+		return m.CreatedAt()
+	case distribution.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case distribution.FieldDeletedAt:
+		return m.DeletedAt()
+	case distribution.FieldCreatedBy:
+		return m.CreatedBy()
+	case distribution.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case distribution.FieldDeletedBy:
+		return m.DeletedBy()
+	case distribution.FieldName:
+		return m.Name()
+	case distribution.FieldBuildID:
+		return m.BuildID()
+	case distribution.FieldProjectID:
+		return m.ProjectID()
+	case distribution.FieldClearOld:
+		return m.ClearOld()
+	case distribution.FieldAfterOpt:
+		return m.AfterOpt()
+	case distribution.FieldDescription:
+		return m.Description()
+	case distribution.FieldLabels:
+		return m.Labels()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DistributionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case distribution.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case distribution.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case distribution.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case distribution.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case distribution.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case distribution.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case distribution.FieldName:
+		return m.OldName(ctx)
+	case distribution.FieldBuildID:
+		return m.OldBuildID(ctx)
+	case distribution.FieldProjectID:
+		return m.OldProjectID(ctx)
+	case distribution.FieldClearOld:
+		return m.OldClearOld(ctx)
+	case distribution.FieldAfterOpt:
+		return m.OldAfterOpt(ctx)
+	case distribution.FieldDescription:
+		return m.OldDescription(ctx)
+	case distribution.FieldLabels:
+		return m.OldLabels(ctx)
+	}
+	return nil, fmt.Errorf("unknown Distribution field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DistributionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case distribution.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case distribution.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case distribution.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case distribution.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case distribution.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case distribution.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case distribution.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case distribution.FieldBuildID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBuildID(v)
+		return nil
+	case distribution.FieldProjectID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProjectID(v)
+		return nil
+	case distribution.FieldClearOld:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClearOld(v)
+		return nil
+	case distribution.FieldAfterOpt:
+		v, ok := value.(distribution.AfterOpt)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAfterOpt(v)
+		return nil
+	case distribution.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case distribution.FieldLabels:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLabels(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Distribution field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DistributionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, distribution.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, distribution.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, distribution.FieldDeletedBy)
+	}
+	if m.addbuild_id != nil {
+		fields = append(fields, distribution.FieldBuildID)
+	}
+	if m.addproject_id != nil {
+		fields = append(fields, distribution.FieldProjectID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DistributionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case distribution.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case distribution.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case distribution.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case distribution.FieldBuildID:
+		return m.AddedBuildID()
+	case distribution.FieldProjectID:
+		return m.AddedProjectID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DistributionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case distribution.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case distribution.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case distribution.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case distribution.FieldBuildID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBuildID(v)
+		return nil
+	case distribution.FieldProjectID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProjectID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Distribution numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DistributionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(distribution.FieldCreatedAt) {
+		fields = append(fields, distribution.FieldCreatedAt)
+	}
+	if m.FieldCleared(distribution.FieldUpdatedAt) {
+		fields = append(fields, distribution.FieldUpdatedAt)
+	}
+	if m.FieldCleared(distribution.FieldDeletedAt) {
+		fields = append(fields, distribution.FieldDeletedAt)
+	}
+	if m.FieldCleared(distribution.FieldCreatedBy) {
+		fields = append(fields, distribution.FieldCreatedBy)
+	}
+	if m.FieldCleared(distribution.FieldUpdatedBy) {
+		fields = append(fields, distribution.FieldUpdatedBy)
+	}
+	if m.FieldCleared(distribution.FieldDeletedBy) {
+		fields = append(fields, distribution.FieldDeletedBy)
+	}
+	if m.FieldCleared(distribution.FieldAfterOpt) {
+		fields = append(fields, distribution.FieldAfterOpt)
+	}
+	if m.FieldCleared(distribution.FieldDescription) {
+		fields = append(fields, distribution.FieldDescription)
+	}
+	if m.FieldCleared(distribution.FieldLabels) {
+		fields = append(fields, distribution.FieldLabels)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DistributionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DistributionMutation) ClearField(name string) error {
+	switch name {
+	case distribution.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case distribution.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case distribution.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case distribution.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case distribution.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case distribution.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case distribution.FieldAfterOpt:
+		m.ClearAfterOpt()
+		return nil
+	case distribution.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case distribution.FieldLabels:
+		m.ClearLabels()
+		return nil
+	}
+	return fmt.Errorf("unknown Distribution nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DistributionMutation) ResetField(name string) error {
+	switch name {
+	case distribution.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case distribution.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case distribution.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case distribution.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case distribution.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case distribution.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case distribution.FieldName:
+		m.ResetName()
+		return nil
+	case distribution.FieldBuildID:
+		m.ResetBuildID()
+		return nil
+	case distribution.FieldProjectID:
+		m.ResetProjectID()
+		return nil
+	case distribution.FieldClearOld:
+		m.ResetClearOld()
+		return nil
+	case distribution.FieldAfterOpt:
+		m.ResetAfterOpt()
+		return nil
+	case distribution.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case distribution.FieldLabels:
+		m.ResetLabels()
+		return nil
+	}
+	return fmt.Errorf("unknown Distribution field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DistributionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DistributionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DistributionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DistributionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DistributionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DistributionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DistributionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Distribution unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DistributionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Distribution edge %s", name)
+}
+
+// DistributionRecordMutation represents an operation that mutates the DistributionRecord nodes in the graph.
+type DistributionRecordMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *uint32
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	distribution_id     *uint32
+	adddistribution_id  *int32
+	build_history_id    *uint32
+	addbuild_history_id *int32
+	project_id          *uint32
+	addproject_id       *int32
+	node_id             *uint32
+	addnode_id          *int32
+	command_request_id  *string
+	status              *distributionrecord.Status
+	error               *string
+	result              *string
+	operator_id         *uint32
+	addoperator_id      *int32
+	finished_at         *time.Time
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*DistributionRecord, error)
+	predicates          []predicate.DistributionRecord
+}
+
+var _ ent.Mutation = (*DistributionRecordMutation)(nil)
+
+// distributionrecordOption allows management of the mutation configuration using functional options.
+type distributionrecordOption func(*DistributionRecordMutation)
+
+// newDistributionRecordMutation creates new mutation for the DistributionRecord entity.
+func newDistributionRecordMutation(c config, op Op, opts ...distributionrecordOption) *DistributionRecordMutation {
+	m := &DistributionRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDistributionRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDistributionRecordID sets the ID field of the mutation.
+func withDistributionRecordID(id uint32) distributionrecordOption {
+	return func(m *DistributionRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DistributionRecord
+		)
+		m.oldValue = func(ctx context.Context) (*DistributionRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DistributionRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDistributionRecord sets the old DistributionRecord of the mutation.
+func withDistributionRecord(node *DistributionRecord) distributionrecordOption {
+	return func(m *DistributionRecordMutation) {
+		m.oldValue = func(context.Context) (*DistributionRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DistributionRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DistributionRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DistributionRecord entities.
+func (m *DistributionRecordMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DistributionRecordMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DistributionRecordMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DistributionRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DistributionRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DistributionRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *DistributionRecordMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[distributionrecord.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *DistributionRecordMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DistributionRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, distributionrecord.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DistributionRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DistributionRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *DistributionRecordMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[distributionrecord.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *DistributionRecordMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DistributionRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, distributionrecord.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DistributionRecordMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DistributionRecordMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *DistributionRecordMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[distributionrecord.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *DistributionRecordMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DistributionRecordMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, distributionrecord.FieldDeletedAt)
+}
+
+// SetDistributionID sets the "distribution_id" field.
+func (m *DistributionRecordMutation) SetDistributionID(u uint32) {
+	m.distribution_id = &u
+	m.adddistribution_id = nil
+}
+
+// DistributionID returns the value of the "distribution_id" field in the mutation.
+func (m *DistributionRecordMutation) DistributionID() (r uint32, exists bool) {
+	v := m.distribution_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDistributionID returns the old "distribution_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldDistributionID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDistributionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDistributionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDistributionID: %w", err)
+	}
+	return oldValue.DistributionID, nil
+}
+
+// AddDistributionID adds u to the "distribution_id" field.
+func (m *DistributionRecordMutation) AddDistributionID(u int32) {
+	if m.adddistribution_id != nil {
+		*m.adddistribution_id += u
+	} else {
+		m.adddistribution_id = &u
+	}
+}
+
+// AddedDistributionID returns the value that was added to the "distribution_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedDistributionID() (r int32, exists bool) {
+	v := m.adddistribution_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDistributionID resets all changes to the "distribution_id" field.
+func (m *DistributionRecordMutation) ResetDistributionID() {
+	m.distribution_id = nil
+	m.adddistribution_id = nil
+}
+
+// SetBuildHistoryID sets the "build_history_id" field.
+func (m *DistributionRecordMutation) SetBuildHistoryID(u uint32) {
+	m.build_history_id = &u
+	m.addbuild_history_id = nil
+}
+
+// BuildHistoryID returns the value of the "build_history_id" field in the mutation.
+func (m *DistributionRecordMutation) BuildHistoryID() (r uint32, exists bool) {
+	v := m.build_history_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBuildHistoryID returns the old "build_history_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldBuildHistoryID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBuildHistoryID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBuildHistoryID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBuildHistoryID: %w", err)
+	}
+	return oldValue.BuildHistoryID, nil
+}
+
+// AddBuildHistoryID adds u to the "build_history_id" field.
+func (m *DistributionRecordMutation) AddBuildHistoryID(u int32) {
+	if m.addbuild_history_id != nil {
+		*m.addbuild_history_id += u
+	} else {
+		m.addbuild_history_id = &u
+	}
+}
+
+// AddedBuildHistoryID returns the value that was added to the "build_history_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedBuildHistoryID() (r int32, exists bool) {
+	v := m.addbuild_history_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBuildHistoryID resets all changes to the "build_history_id" field.
+func (m *DistributionRecordMutation) ResetBuildHistoryID() {
+	m.build_history_id = nil
+	m.addbuild_history_id = nil
+}
+
+// SetProjectID sets the "project_id" field.
+func (m *DistributionRecordMutation) SetProjectID(u uint32) {
+	m.project_id = &u
+	m.addproject_id = nil
+}
+
+// ProjectID returns the value of the "project_id" field in the mutation.
+func (m *DistributionRecordMutation) ProjectID() (r uint32, exists bool) {
+	v := m.project_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProjectID returns the old "project_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldProjectID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProjectID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProjectID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProjectID: %w", err)
+	}
+	return oldValue.ProjectID, nil
+}
+
+// AddProjectID adds u to the "project_id" field.
+func (m *DistributionRecordMutation) AddProjectID(u int32) {
+	if m.addproject_id != nil {
+		*m.addproject_id += u
+	} else {
+		m.addproject_id = &u
+	}
+}
+
+// AddedProjectID returns the value that was added to the "project_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedProjectID() (r int32, exists bool) {
+	v := m.addproject_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProjectID resets all changes to the "project_id" field.
+func (m *DistributionRecordMutation) ResetProjectID() {
+	m.project_id = nil
+	m.addproject_id = nil
+}
+
+// SetNodeID sets the "node_id" field.
+func (m *DistributionRecordMutation) SetNodeID(u uint32) {
+	m.node_id = &u
+	m.addnode_id = nil
+}
+
+// NodeID returns the value of the "node_id" field in the mutation.
+func (m *DistributionRecordMutation) NodeID() (r uint32, exists bool) {
+	v := m.node_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNodeID returns the old "node_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldNodeID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNodeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNodeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNodeID: %w", err)
+	}
+	return oldValue.NodeID, nil
+}
+
+// AddNodeID adds u to the "node_id" field.
+func (m *DistributionRecordMutation) AddNodeID(u int32) {
+	if m.addnode_id != nil {
+		*m.addnode_id += u
+	} else {
+		m.addnode_id = &u
+	}
+}
+
+// AddedNodeID returns the value that was added to the "node_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedNodeID() (r int32, exists bool) {
+	v := m.addnode_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetNodeID resets all changes to the "node_id" field.
+func (m *DistributionRecordMutation) ResetNodeID() {
+	m.node_id = nil
+	m.addnode_id = nil
+}
+
+// SetCommandRequestID sets the "command_request_id" field.
+func (m *DistributionRecordMutation) SetCommandRequestID(s string) {
+	m.command_request_id = &s
+}
+
+// CommandRequestID returns the value of the "command_request_id" field in the mutation.
+func (m *DistributionRecordMutation) CommandRequestID() (r string, exists bool) {
+	v := m.command_request_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommandRequestID returns the old "command_request_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldCommandRequestID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommandRequestID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommandRequestID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommandRequestID: %w", err)
+	}
+	return oldValue.CommandRequestID, nil
+}
+
+// ResetCommandRequestID resets all changes to the "command_request_id" field.
+func (m *DistributionRecordMutation) ResetCommandRequestID() {
+	m.command_request_id = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *DistributionRecordMutation) SetStatus(d distributionrecord.Status) {
+	m.status = &d
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *DistributionRecordMutation) Status() (r distributionrecord.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldStatus(ctx context.Context) (v *distributionrecord.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *DistributionRecordMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[distributionrecord.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *DistributionRecordMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *DistributionRecordMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, distributionrecord.FieldStatus)
+}
+
+// SetError sets the "error" field.
+func (m *DistributionRecordMutation) SetError(s string) {
+	m.error = &s
+}
+
+// Error returns the value of the "error" field in the mutation.
+func (m *DistributionRecordMutation) Error() (r string, exists bool) {
+	v := m.error
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldError returns the old "error" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldError(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldError is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldError requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldError: %w", err)
+	}
+	return oldValue.Error, nil
+}
+
+// ClearError clears the value of the "error" field.
+func (m *DistributionRecordMutation) ClearError() {
+	m.error = nil
+	m.clearedFields[distributionrecord.FieldError] = struct{}{}
+}
+
+// ErrorCleared returns if the "error" field was cleared in this mutation.
+func (m *DistributionRecordMutation) ErrorCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldError]
+	return ok
+}
+
+// ResetError resets all changes to the "error" field.
+func (m *DistributionRecordMutation) ResetError() {
+	m.error = nil
+	delete(m.clearedFields, distributionrecord.FieldError)
+}
+
+// SetResult sets the "result" field.
+func (m *DistributionRecordMutation) SetResult(s string) {
+	m.result = &s
+}
+
+// Result returns the value of the "result" field in the mutation.
+func (m *DistributionRecordMutation) Result() (r string, exists bool) {
+	v := m.result
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResult returns the old "result" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldResult(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResult is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResult requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResult: %w", err)
+	}
+	return oldValue.Result, nil
+}
+
+// ClearResult clears the value of the "result" field.
+func (m *DistributionRecordMutation) ClearResult() {
+	m.result = nil
+	m.clearedFields[distributionrecord.FieldResult] = struct{}{}
+}
+
+// ResultCleared returns if the "result" field was cleared in this mutation.
+func (m *DistributionRecordMutation) ResultCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldResult]
+	return ok
+}
+
+// ResetResult resets all changes to the "result" field.
+func (m *DistributionRecordMutation) ResetResult() {
+	m.result = nil
+	delete(m.clearedFields, distributionrecord.FieldResult)
+}
+
+// SetOperatorID sets the "operator_id" field.
+func (m *DistributionRecordMutation) SetOperatorID(u uint32) {
+	m.operator_id = &u
+	m.addoperator_id = nil
+}
+
+// OperatorID returns the value of the "operator_id" field in the mutation.
+func (m *DistributionRecordMutation) OperatorID() (r uint32, exists bool) {
+	v := m.operator_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperatorID returns the old "operator_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldOperatorID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperatorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperatorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperatorID: %w", err)
+	}
+	return oldValue.OperatorID, nil
+}
+
+// AddOperatorID adds u to the "operator_id" field.
+func (m *DistributionRecordMutation) AddOperatorID(u int32) {
+	if m.addoperator_id != nil {
+		*m.addoperator_id += u
+	} else {
+		m.addoperator_id = &u
+	}
+}
+
+// AddedOperatorID returns the value that was added to the "operator_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedOperatorID() (r int32, exists bool) {
+	v := m.addoperator_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearOperatorID clears the value of the "operator_id" field.
+func (m *DistributionRecordMutation) ClearOperatorID() {
+	m.operator_id = nil
+	m.addoperator_id = nil
+	m.clearedFields[distributionrecord.FieldOperatorID] = struct{}{}
+}
+
+// OperatorIDCleared returns if the "operator_id" field was cleared in this mutation.
+func (m *DistributionRecordMutation) OperatorIDCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldOperatorID]
+	return ok
+}
+
+// ResetOperatorID resets all changes to the "operator_id" field.
+func (m *DistributionRecordMutation) ResetOperatorID() {
+	m.operator_id = nil
+	m.addoperator_id = nil
+	delete(m.clearedFields, distributionrecord.FieldOperatorID)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *DistributionRecordMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *DistributionRecordMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *DistributionRecordMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[distributionrecord.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *DistributionRecordMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *DistributionRecordMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, distributionrecord.FieldFinishedAt)
+}
+
+// Where appends a list predicates to the DistributionRecordMutation builder.
+func (m *DistributionRecordMutation) Where(ps ...predicate.DistributionRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DistributionRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DistributionRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DistributionRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DistributionRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DistributionRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DistributionRecord).
+func (m *DistributionRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DistributionRecordMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, distributionrecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, distributionrecord.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, distributionrecord.FieldDeletedAt)
+	}
+	if m.distribution_id != nil {
+		fields = append(fields, distributionrecord.FieldDistributionID)
+	}
+	if m.build_history_id != nil {
+		fields = append(fields, distributionrecord.FieldBuildHistoryID)
+	}
+	if m.project_id != nil {
+		fields = append(fields, distributionrecord.FieldProjectID)
+	}
+	if m.node_id != nil {
+		fields = append(fields, distributionrecord.FieldNodeID)
+	}
+	if m.command_request_id != nil {
+		fields = append(fields, distributionrecord.FieldCommandRequestID)
+	}
+	if m.status != nil {
+		fields = append(fields, distributionrecord.FieldStatus)
+	}
+	if m.error != nil {
+		fields = append(fields, distributionrecord.FieldError)
+	}
+	if m.result != nil {
+		fields = append(fields, distributionrecord.FieldResult)
+	}
+	if m.operator_id != nil {
+		fields = append(fields, distributionrecord.FieldOperatorID)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, distributionrecord.FieldFinishedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DistributionRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case distributionrecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case distributionrecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case distributionrecord.FieldDeletedAt:
+		return m.DeletedAt()
+	case distributionrecord.FieldDistributionID:
+		return m.DistributionID()
+	case distributionrecord.FieldBuildHistoryID:
+		return m.BuildHistoryID()
+	case distributionrecord.FieldProjectID:
+		return m.ProjectID()
+	case distributionrecord.FieldNodeID:
+		return m.NodeID()
+	case distributionrecord.FieldCommandRequestID:
+		return m.CommandRequestID()
+	case distributionrecord.FieldStatus:
+		return m.Status()
+	case distributionrecord.FieldError:
+		return m.Error()
+	case distributionrecord.FieldResult:
+		return m.Result()
+	case distributionrecord.FieldOperatorID:
+		return m.OperatorID()
+	case distributionrecord.FieldFinishedAt:
+		return m.FinishedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DistributionRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case distributionrecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case distributionrecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case distributionrecord.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case distributionrecord.FieldDistributionID:
+		return m.OldDistributionID(ctx)
+	case distributionrecord.FieldBuildHistoryID:
+		return m.OldBuildHistoryID(ctx)
+	case distributionrecord.FieldProjectID:
+		return m.OldProjectID(ctx)
+	case distributionrecord.FieldNodeID:
+		return m.OldNodeID(ctx)
+	case distributionrecord.FieldCommandRequestID:
+		return m.OldCommandRequestID(ctx)
+	case distributionrecord.FieldStatus:
+		return m.OldStatus(ctx)
+	case distributionrecord.FieldError:
+		return m.OldError(ctx)
+	case distributionrecord.FieldResult:
+		return m.OldResult(ctx)
+	case distributionrecord.FieldOperatorID:
+		return m.OldOperatorID(ctx)
+	case distributionrecord.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown DistributionRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DistributionRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case distributionrecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case distributionrecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case distributionrecord.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case distributionrecord.FieldDistributionID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDistributionID(v)
+		return nil
+	case distributionrecord.FieldBuildHistoryID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBuildHistoryID(v)
+		return nil
+	case distributionrecord.FieldProjectID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProjectID(v)
+		return nil
+	case distributionrecord.FieldNodeID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNodeID(v)
+		return nil
+	case distributionrecord.FieldCommandRequestID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommandRequestID(v)
+		return nil
+	case distributionrecord.FieldStatus:
+		v, ok := value.(distributionrecord.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case distributionrecord.FieldError:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetError(v)
+		return nil
+	case distributionrecord.FieldResult:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResult(v)
+		return nil
+	case distributionrecord.FieldOperatorID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperatorID(v)
+		return nil
+	case distributionrecord.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DistributionRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DistributionRecordMutation) AddedFields() []string {
+	var fields []string
+	if m.adddistribution_id != nil {
+		fields = append(fields, distributionrecord.FieldDistributionID)
+	}
+	if m.addbuild_history_id != nil {
+		fields = append(fields, distributionrecord.FieldBuildHistoryID)
+	}
+	if m.addproject_id != nil {
+		fields = append(fields, distributionrecord.FieldProjectID)
+	}
+	if m.addnode_id != nil {
+		fields = append(fields, distributionrecord.FieldNodeID)
+	}
+	if m.addoperator_id != nil {
+		fields = append(fields, distributionrecord.FieldOperatorID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DistributionRecordMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case distributionrecord.FieldDistributionID:
+		return m.AddedDistributionID()
+	case distributionrecord.FieldBuildHistoryID:
+		return m.AddedBuildHistoryID()
+	case distributionrecord.FieldProjectID:
+		return m.AddedProjectID()
+	case distributionrecord.FieldNodeID:
+		return m.AddedNodeID()
+	case distributionrecord.FieldOperatorID:
+		return m.AddedOperatorID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DistributionRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case distributionrecord.FieldDistributionID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDistributionID(v)
+		return nil
+	case distributionrecord.FieldBuildHistoryID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBuildHistoryID(v)
+		return nil
+	case distributionrecord.FieldProjectID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProjectID(v)
+		return nil
+	case distributionrecord.FieldNodeID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNodeID(v)
+		return nil
+	case distributionrecord.FieldOperatorID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOperatorID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DistributionRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DistributionRecordMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(distributionrecord.FieldCreatedAt) {
+		fields = append(fields, distributionrecord.FieldCreatedAt)
+	}
+	if m.FieldCleared(distributionrecord.FieldUpdatedAt) {
+		fields = append(fields, distributionrecord.FieldUpdatedAt)
+	}
+	if m.FieldCleared(distributionrecord.FieldDeletedAt) {
+		fields = append(fields, distributionrecord.FieldDeletedAt)
+	}
+	if m.FieldCleared(distributionrecord.FieldStatus) {
+		fields = append(fields, distributionrecord.FieldStatus)
+	}
+	if m.FieldCleared(distributionrecord.FieldError) {
+		fields = append(fields, distributionrecord.FieldError)
+	}
+	if m.FieldCleared(distributionrecord.FieldResult) {
+		fields = append(fields, distributionrecord.FieldResult)
+	}
+	if m.FieldCleared(distributionrecord.FieldOperatorID) {
+		fields = append(fields, distributionrecord.FieldOperatorID)
+	}
+	if m.FieldCleared(distributionrecord.FieldFinishedAt) {
+		fields = append(fields, distributionrecord.FieldFinishedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DistributionRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DistributionRecordMutation) ClearField(name string) error {
+	switch name {
+	case distributionrecord.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case distributionrecord.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case distributionrecord.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case distributionrecord.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case distributionrecord.FieldError:
+		m.ClearError()
+		return nil
+	case distributionrecord.FieldResult:
+		m.ClearResult()
+		return nil
+	case distributionrecord.FieldOperatorID:
+		m.ClearOperatorID()
+		return nil
+	case distributionrecord.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown DistributionRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DistributionRecordMutation) ResetField(name string) error {
+	switch name {
+	case distributionrecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case distributionrecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case distributionrecord.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case distributionrecord.FieldDistributionID:
+		m.ResetDistributionID()
+		return nil
+	case distributionrecord.FieldBuildHistoryID:
+		m.ResetBuildHistoryID()
+		return nil
+	case distributionrecord.FieldProjectID:
+		m.ResetProjectID()
+		return nil
+	case distributionrecord.FieldNodeID:
+		m.ResetNodeID()
+		return nil
+	case distributionrecord.FieldCommandRequestID:
+		m.ResetCommandRequestID()
+		return nil
+	case distributionrecord.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case distributionrecord.FieldError:
+		m.ResetError()
+		return nil
+	case distributionrecord.FieldResult:
+		m.ResetResult()
+		return nil
+	case distributionrecord.FieldOperatorID:
+		m.ResetOperatorID()
+		return nil
+	case distributionrecord.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown DistributionRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DistributionRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DistributionRecordMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DistributionRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DistributionRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DistributionRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DistributionRecordMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DistributionRecordMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown DistributionRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DistributionRecordMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown DistributionRecord edge %s", name)
 }
 
 // LanguageMutation represents an operation that mutates the Language nodes in the graph.

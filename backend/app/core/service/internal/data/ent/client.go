@@ -21,6 +21,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
+	"go-wind-ops/app/core/service/internal/data/ent/distribution"
+	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
@@ -84,6 +86,10 @@ type Client struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// Distribution is the client for interacting with the Distribution builders.
+	Distribution *DistributionClient
+	// DistributionRecord is the client for interacting with the DistributionRecord builders.
+	DistributionRecord *DistributionRecordClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -167,6 +173,8 @@ func (c *Client) init() {
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
+	c.Distribution = NewDistributionClient(c.config)
+	c.DistributionRecord = NewDistributionRecordClient(c.config)
 	c.Language = NewLanguageClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
@@ -300,6 +308,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntry:           NewDictEntryClient(cfg),
 		DictEntryI18n:       NewDictEntryI18nClient(cfg),
 		DictType:            NewDictTypeClient(cfg),
+		Distribution:        NewDistributionClient(cfg),
+		DistributionRecord:  NewDistributionRecordClient(cfg),
 		Language:            NewLanguageClient(cfg),
 		LoginAuditLog:       NewLoginAuditLogClient(cfg),
 		LoginPolicy:         NewLoginPolicyClient(cfg),
@@ -360,6 +370,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntry:           NewDictEntryClient(cfg),
 		DictEntryI18n:       NewDictEntryI18nClient(cfg),
 		DictType:            NewDictTypeClient(cfg),
+		Distribution:        NewDistributionClient(cfg),
+		DistributionRecord:  NewDistributionRecordClient(cfg),
 		Language:            NewLanguageClient(cfg),
 		LoginAuditLog:       NewLoginAuditLogClient(cfg),
 		LoginPolicy:         NewLoginPolicyClient(cfg),
@@ -421,14 +433,14 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AgentNode, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
+		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Project, c.Repository, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -439,14 +451,14 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AgentNode, c.Api, c.ApiAuditLog, c.Build, c.BuildHistory, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
+		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Project, c.Repository, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -475,6 +487,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictEntryI18n.mutate(ctx, m)
 	case *DictTypeMutation:
 		return c.DictType.mutate(ctx, m)
+	case *DistributionMutation:
+		return c.Distribution.mutate(ctx, m)
+	case *DistributionRecordMutation:
+		return c.DistributionRecord.mutate(ctx, m)
 	case *LanguageMutation:
 		return c.Language.mutate(ctx, m)
 	case *LoginAuditLogMutation:
@@ -1939,6 +1955,272 @@ func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value
 		return (&DictTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown DictType mutation op: %q", m.Op())
+	}
+}
+
+// DistributionClient is a client for the Distribution schema.
+type DistributionClient struct {
+	config
+}
+
+// NewDistributionClient returns a client for the Distribution from the given config.
+func NewDistributionClient(c config) *DistributionClient {
+	return &DistributionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `distribution.Hooks(f(g(h())))`.
+func (c *DistributionClient) Use(hooks ...Hook) {
+	c.hooks.Distribution = append(c.hooks.Distribution, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `distribution.Intercept(f(g(h())))`.
+func (c *DistributionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Distribution = append(c.inters.Distribution, interceptors...)
+}
+
+// Create returns a builder for creating a Distribution entity.
+func (c *DistributionClient) Create() *DistributionCreate {
+	mutation := newDistributionMutation(c.config, OpCreate)
+	return &DistributionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Distribution entities.
+func (c *DistributionClient) CreateBulk(builders ...*DistributionCreate) *DistributionCreateBulk {
+	return &DistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DistributionClient) MapCreateBulk(slice any, setFunc func(*DistributionCreate, int)) *DistributionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DistributionCreateBulk{err: fmt.Errorf("calling to DistributionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DistributionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Distribution.
+func (c *DistributionClient) Update() *DistributionUpdate {
+	mutation := newDistributionMutation(c.config, OpUpdate)
+	return &DistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DistributionClient) UpdateOne(_m *Distribution) *DistributionUpdateOne {
+	mutation := newDistributionMutation(c.config, OpUpdateOne, withDistribution(_m))
+	return &DistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DistributionClient) UpdateOneID(id uint32) *DistributionUpdateOne {
+	mutation := newDistributionMutation(c.config, OpUpdateOne, withDistributionID(id))
+	return &DistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Distribution.
+func (c *DistributionClient) Delete() *DistributionDelete {
+	mutation := newDistributionMutation(c.config, OpDelete)
+	return &DistributionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DistributionClient) DeleteOne(_m *Distribution) *DistributionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DistributionClient) DeleteOneID(id uint32) *DistributionDeleteOne {
+	builder := c.Delete().Where(distribution.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DistributionDeleteOne{builder}
+}
+
+// Query returns a query builder for Distribution.
+func (c *DistributionClient) Query() *DistributionQuery {
+	return &DistributionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDistribution},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Distribution entity by its id.
+func (c *DistributionClient) Get(ctx context.Context, id uint32) (*Distribution, error) {
+	return c.Query().Where(distribution.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DistributionClient) GetX(ctx context.Context, id uint32) *Distribution {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *DistributionClient) Hooks() []Hook {
+	return c.hooks.Distribution
+}
+
+// Interceptors returns the client interceptors.
+func (c *DistributionClient) Interceptors() []Interceptor {
+	return c.inters.Distribution
+}
+
+func (c *DistributionClient) mutate(ctx context.Context, m *DistributionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DistributionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DistributionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Distribution mutation op: %q", m.Op())
+	}
+}
+
+// DistributionRecordClient is a client for the DistributionRecord schema.
+type DistributionRecordClient struct {
+	config
+}
+
+// NewDistributionRecordClient returns a client for the DistributionRecord from the given config.
+func NewDistributionRecordClient(c config) *DistributionRecordClient {
+	return &DistributionRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `distributionrecord.Hooks(f(g(h())))`.
+func (c *DistributionRecordClient) Use(hooks ...Hook) {
+	c.hooks.DistributionRecord = append(c.hooks.DistributionRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `distributionrecord.Intercept(f(g(h())))`.
+func (c *DistributionRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DistributionRecord = append(c.inters.DistributionRecord, interceptors...)
+}
+
+// Create returns a builder for creating a DistributionRecord entity.
+func (c *DistributionRecordClient) Create() *DistributionRecordCreate {
+	mutation := newDistributionRecordMutation(c.config, OpCreate)
+	return &DistributionRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DistributionRecord entities.
+func (c *DistributionRecordClient) CreateBulk(builders ...*DistributionRecordCreate) *DistributionRecordCreateBulk {
+	return &DistributionRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DistributionRecordClient) MapCreateBulk(slice any, setFunc func(*DistributionRecordCreate, int)) *DistributionRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DistributionRecordCreateBulk{err: fmt.Errorf("calling to DistributionRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DistributionRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DistributionRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DistributionRecord.
+func (c *DistributionRecordClient) Update() *DistributionRecordUpdate {
+	mutation := newDistributionRecordMutation(c.config, OpUpdate)
+	return &DistributionRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DistributionRecordClient) UpdateOne(_m *DistributionRecord) *DistributionRecordUpdateOne {
+	mutation := newDistributionRecordMutation(c.config, OpUpdateOne, withDistributionRecord(_m))
+	return &DistributionRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DistributionRecordClient) UpdateOneID(id uint32) *DistributionRecordUpdateOne {
+	mutation := newDistributionRecordMutation(c.config, OpUpdateOne, withDistributionRecordID(id))
+	return &DistributionRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DistributionRecord.
+func (c *DistributionRecordClient) Delete() *DistributionRecordDelete {
+	mutation := newDistributionRecordMutation(c.config, OpDelete)
+	return &DistributionRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DistributionRecordClient) DeleteOne(_m *DistributionRecord) *DistributionRecordDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DistributionRecordClient) DeleteOneID(id uint32) *DistributionRecordDeleteOne {
+	builder := c.Delete().Where(distributionrecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DistributionRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for DistributionRecord.
+func (c *DistributionRecordClient) Query() *DistributionRecordQuery {
+	return &DistributionRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDistributionRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DistributionRecord entity by its id.
+func (c *DistributionRecordClient) Get(ctx context.Context, id uint32) (*DistributionRecord, error) {
+	return c.Query().Where(distributionrecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DistributionRecordClient) GetX(ctx context.Context, id uint32) *DistributionRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *DistributionRecordClient) Hooks() []Hook {
+	return c.hooks.DistributionRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *DistributionRecordClient) Interceptors() []Interceptor {
+	return c.inters.DistributionRecord
+}
+
+func (c *DistributionRecordClient) mutate(ctx context.Context, m *DistributionRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DistributionRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DistributionRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DistributionRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DistributionRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DistributionRecord mutation op: %q", m.Op())
 	}
 }
 
@@ -6191,22 +6473,22 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		AgentNode, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Language,
-		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, OperationAuditLog, OrgUnit, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Hook
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
+		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
+		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Project,
+		Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Api, ApiAuditLog, Build, BuildHistory, CommandRecord,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Language,
-		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, OperationAuditLog, OrgUnit, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Interceptor
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
+		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
+		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Project,
+		Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

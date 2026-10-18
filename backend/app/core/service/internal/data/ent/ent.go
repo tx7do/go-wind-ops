@@ -16,6 +16,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
+	"go-wind-ops/app/core/service/internal/data/ent/distribution"
+	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
@@ -123,6 +125,8 @@ func checkColumn(t, c string) error {
 			dictentry.Table:           dictentry.ValidColumn,
 			dictentryi18n.Table:       dictentryi18n.ValidColumn,
 			dicttype.Table:            dicttype.ValidColumn,
+			distribution.Table:        distribution.ValidColumn,
+			distributionrecord.Table:  distributionrecord.ValidColumn,
 			language.Table:            language.ValidColumn,
 			loginauditlog.Table:       loginauditlog.ValidColumn,
 			loginpolicy.Table:         loginpolicy.ValidColumn,
