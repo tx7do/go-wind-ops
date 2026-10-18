@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/pipeline.proto";
+
+// PipelineService 构建流水线门面:配置 CRUD + 触发 + 运行记录查询。
+service PipelineService {
+  // 查询流水线列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListPipelineResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/pipelines"
+    };
+  }
+
+  // 查询流水线详情
+  rpc Get (ops.service.v1.GetPipelineRequest) returns (ops.service.v1.Pipeline) {
+    option (google.api.http) = {
+      get: "/admin/v1/pipelines/{id}"
+    };
+  }
+
+  // 创建流水线
+  rpc Create (ops.service.v1.CreatePipelineRequest) returns (ops.service.v1.Pipeline) {
+    option (google.api.http) = {
+      post: "/admin/v1/pipelines"
+      body: "*"
+    };
+  }
+
+  // 更新流水线
+  rpc Update (ops.service.v1.UpdatePipelineRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/pipelines/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除流水线
+  rpc Delete (ops.service.v1.DeletePipelineRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/pipelines/{id}"
+    };
+  }
+
+  // 触发流水线
+  rpc Trigger (ops.service.v1.TriggerPipelineRequest) returns (ops.service.v1.TriggerPipelineResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/pipelines/{id}/trigger"
+      body: "*"
+    };
+  }
+
+  // 查询运行记录列表
+  rpc ListRuns (pagination.PagingRequest) returns (ops.service.v1.ListPipelineRunResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/pipeline-runs"
+    };
+  }
+
+  // 查询运行记录详情
+  rpc GetRun (ops.service.v1.GetPipelineRunRequest) returns (ops.service.v1.PipelineRun) {
+    option (google.api.http) = {
+      get: "/admin/v1/pipeline-runs/{id}"
+    };
+  }
+
+  // 增量拉取运行日志
+  rpc GetRunLog (ops.service.v1.GetPipelineRunLogRequest) returns (ops.service.v1.GetPipelineRunLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/pipeline-runs/{id}/log"
+    };
+  }
+}

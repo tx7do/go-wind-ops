@@ -129,6 +129,7 @@ func NewRestServer(
 	approvalService *service.ApprovalService,
 	notificationChannelService *service.NotificationChannelService,
 	fileService *service.FileService,
+	pipelineService *service.PipelineService,
 	terminalWsHandler *TerminalWsHandler,
 
 	authenticationService *service.AuthenticationService,
@@ -191,6 +192,7 @@ func NewRestServer(
 	adminV1.RegisterApprovalServiceHTTPServer(srv, approvalService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
 	adminV1.RegisterFileServiceHTTPServer(srv, fileService)
+	adminV1.RegisterPipelineServiceHTTPServer(srv, pipelineService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

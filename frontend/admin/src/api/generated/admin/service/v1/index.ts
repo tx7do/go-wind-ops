@@ -3874,6 +3874,7 @@ export type opsservicev1_TriggerDistributionRequest = {
 export type opsservicev1_TriggerDistributionResponse = {
   commandRequestId: string | undefined;
   recordId: number | undefined;
+  recordIds: number[] | undefined;
 };
 
 export type opsservicev1_ListDistributionRecordResponse = {
@@ -6861,6 +6862,533 @@ export type permissionservicev1_DeletePermissionGroupRequest = {
   id?: number;
 };
 
+// PipelineService 构建流水线门面:配置 CRUD + 触发 + 运行记录查询。
+export interface PipelineService {
+  // 查询流水线列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListPipelineResponse>;
+  // 查询流水线详情
+  Get(
+    request: opsservicev1_GetPipelineRequest,
+  ): Promise<opsservicev1_Pipeline>;
+  // 创建流水线
+  Create(
+    request: opsservicev1_CreatePipelineRequest,
+  ): Promise<opsservicev1_Pipeline>;
+  // 更新流水线
+  Update(
+    request: opsservicev1_UpdatePipelineRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除流水线
+  Delete(
+    request: opsservicev1_DeletePipelineRequest,
+  ): Promise<wellKnownEmpty>;
+  // 触发流水线
+  Trigger(
+    request: opsservicev1_TriggerPipelineRequest,
+  ): Promise<opsservicev1_TriggerPipelineResponse>;
+  // 查询运行记录列表
+  ListRuns(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListPipelineRunResponse>;
+  // 查询运行记录详情
+  GetRun(
+    request: opsservicev1_GetPipelineRunRequest,
+  ): Promise<opsservicev1_PipelineRun>;
+  // 增量拉取运行日志
+  GetRunLog(
+    request: opsservicev1_GetPipelineRunLogRequest,
+  ): Promise<opsservicev1_GetPipelineRunLogResponse>;
+}
+
+export function createPipelineServiceClient(
+  transport: ClientTransport,
+): PipelineService {
+  return {
+    List(request) {
+      const path = `admin/v1/pipelines`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PipelineService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListPipelineResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipelines/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PipelineService',
+        method: 'Get',
+      }) as Promise<opsservicev1_Pipeline>;
+    },
+    Create(request) {
+      const path = `admin/v1/pipelines`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PipelineService',
+        method: 'Create',
+      }) as Promise<opsservicev1_Pipeline>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipelines/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PipelineService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipelines/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PipelineService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Trigger(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipelines/${request.id}/trigger`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PipelineService',
+        method: 'Trigger',
+      }) as Promise<opsservicev1_TriggerPipelineResponse>;
+    },
+    ListRuns(request) {
+      const path = `admin/v1/pipeline-runs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PipelineService',
+        method: 'ListRuns',
+      }) as Promise<opsservicev1_ListPipelineRunResponse>;
+    },
+    GetRun(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipeline-runs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PipelineService',
+        method: 'GetRun',
+      }) as Promise<opsservicev1_PipelineRun>;
+    },
+    GetRunLog(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pipeline-runs/${request.id}/log`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PipelineService',
+        method: 'GetRunLog',
+      }) as Promise<opsservicev1_GetPipelineRunLogResponse>;
+    },
+  };
+}
+export type opsservicev1_ListPipelineResponse = {
+  items: opsservicev1_Pipeline[] | undefined;
+  total: number | undefined;
+};
+
+// 流水线
+export type opsservicev1_Pipeline = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  labels: string[] | undefined;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: REQUIRED
+  steps: opsservicev1_PipelineStep[] | undefined;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+};
+
+// 流水线步骤
+export type opsservicev1_PipelineStep = {
+  agentId?: string;
+  name?: string;
+  //
+  // Behaviors: REQUIRED
+  refId?: number;
+  //
+  // Behaviors: REQUIRED
+  type?: opsservicev1_PipelineStep_StepType;
+};
+
+// 步骤类型(嵌套定义;值名与落库 JSON 字符串一致)
+export type opsservicev1_PipelineStep_StepType =
+  | 'BUILD'
+  | 'DISTRIBUTION'
+  | 'SCRIPT'
+  | 'STEP_TYPE_UNSPECIFIED';
+export type opsservicev1_GetPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreatePipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_Pipeline;
+};
+
+export type opsservicev1_UpdatePipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_Pipeline;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_DeletePipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_TriggerPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_TriggerPipelineResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  runId?: number;
+};
+
+export type opsservicev1_ListPipelineRunResponse = {
+  items: opsservicev1_PipelineRun[] | undefined;
+  total: number | undefined;
+};
+
+// 流水线运行记录
+export type opsservicev1_PipelineRun = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  currentStep?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  error?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  finishedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  operatorId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  pipelineId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  startedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  status?: opsservicev1_PipelineRun_Status;
+  //
+  // Behaviors: OUTPUT_ONLY
+  stepResults: opsservicev1_PipelineStepResult[] | undefined;
+  //
+  // Behaviors: OUTPUT_ONLY
+  steps: opsservicev1_PipelineStep[] | undefined;
+};
+
+// 运行状态(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_PipelineRun_Status =
+  | 'FAILED'
+  | 'PENDING'
+  | 'RUN_STATUS_UNSPECIFIED'
+  | 'RUNNING'
+  | 'SUCCESS';
+// 步骤执行结果
+export type opsservicev1_PipelineStepResult = {
+  durationMs?: number;
+  error?: string;
+  name?: string;
+  refId?: number;
+  status?: string;
+  type?: string;
+};
+
+export type opsservicev1_GetPipelineRunRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_GetPipelineRunLogRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  offset?: number;
+};
+
+export type opsservicev1_GetPipelineRunLogResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  delta?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  finished?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  newOffset?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  status?: string;
+};
+
 // 策略评估日志服务
 export interface PolicyEvaluationLogService {
   // 查询策略评估日志列表
@@ -9807,6 +10335,7 @@ export class ApiClient {
   private _permissionAuditLogService?: PermissionAuditLogService;
   private _permissionGroupService?: PermissionGroupService;
   private _permissionService?: PermissionService;
+  private _pipelineService?: PipelineService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _projectService?: ProjectService;
@@ -9925,6 +10454,10 @@ export class ApiClient {
 
   get permissionService(): PermissionService {
     return this._permissionService ??= createPermissionServiceClient(this._transport);
+  }
+
+  get pipelineService(): PipelineService {
+    return this._pipelineService ??= createPipelineServiceClient(this._transport);
   }
 
   get policyEvaluationLogService(): PolicyEvaluationLogService {

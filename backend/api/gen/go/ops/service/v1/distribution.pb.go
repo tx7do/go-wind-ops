@@ -609,8 +609,9 @@ func (x *TriggerDistributionRequest) GetHistoryId() uint32 {
 
 type TriggerDistributionResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	RecordId         uint32                 `protobuf:"varint,1,opt,name=record_id,json=recordId,proto3" json:"record_id,omitempty"`                          // 分发记录ID
-	CommandRequestId string                 `protobuf:"bytes,2,opt,name=command_request_id,json=commandRequestId,proto3" json:"command_request_id,omitempty"` // 关联指令幂等键
+	RecordId         uint32                 `protobuf:"varint,1,opt,name=record_id,json=recordId,proto3" json:"record_id,omitempty"`                          // 分发记录ID(首个)
+	CommandRequestId string                 `protobuf:"bytes,2,opt,name=command_request_id,json=commandRequestId,proto3" json:"command_request_id,omitempty"` // 关联指令幂等键(首个)
+	RecordIds        []uint32               `protobuf:"varint,3,rep,packed,name=record_ids,json=recordIds,proto3" json:"record_ids,omitempty"`                // 全部目标分发记录ID(流水线步骤轮询终态用)
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -657,6 +658,13 @@ func (x *TriggerDistributionResponse) GetCommandRequestId() string {
 		return x.CommandRequestId
 	}
 	return ""
+}
+
+func (x *TriggerDistributionResponse) GetRecordIds() []uint32 {
+	if x != nil {
+		return x.RecordIds
+	}
+	return nil
 }
 
 // 分发执行记录
@@ -967,10 +975,12 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
 	"history_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\thistoryId\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
-	"\v_history_id\"h\n" +
+	"\v_history_id\"\x87\x01\n" +
 	"\x1bTriggerDistributionResponse\x12\x1b\n" +
 	"\trecord_id\x18\x01 \x01(\rR\brecordId\x12,\n" +
-	"\x12command_request_id\x18\x02 \x01(\tR\x10commandRequestId\"\xe5\x05\n" +
+	"\x12command_request_id\x18\x02 \x01(\tR\x10commandRequestId\x12\x1d\n" +
+	"\n" +
+	"record_ids\x18\x03 \x03(\rR\trecordIds\"\xe5\x05\n" +
 	"\x12DistributionRecord\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x121\n" +
 	"\x0fdistribution_id\x18\x02 \x01(\rB\x03\xe0A\x03H\x01R\x0edistributionId\x88\x01\x01\x122\n" +

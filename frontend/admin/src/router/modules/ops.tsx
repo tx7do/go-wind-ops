@@ -83,13 +83,24 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'pipelines',
+        path: 'pipelines',
+        element: createLazyRoute(() => import('@/pages/app/ops/pipeline')),
+        meta: {
+          title: 'routes:pipelines',
+          icon: 'lucide:workflow',
+          order: 7,
+          authority: ['ops:build_manage'],
+        },
+      },
+      {
         name: 'distributions',
         path: 'distributions',
         element: createLazyRoute(() => import('@/pages/app/ops/distribution')),
         meta: {
           title: 'routes:distributions',
           icon: 'lucide:send',
-          order: 7,
+          order: 8,
           authority: ['ops:distribute'],
         },
       },
@@ -100,7 +111,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:file-manager',
           icon: 'lucide:folder-tree',
-          order: 9,
+          order: 10,
           authority: ['ops:node_manage'],
         },
       },
@@ -111,7 +122,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:command-records',
           icon: 'lucide:scroll-text',
-          order: 8,
+          order: 9,
           authority: ['ops:node_manage'],
         },
       },
@@ -122,7 +133,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:monitors',
           icon: 'lucide:activity',
-          order: 10,
+          order: 11,
           authority: ['sys:platform_admin'],
         },
       },
@@ -133,7 +144,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:alerts',
           icon: 'lucide:bell',
-          order: 11,
+          order: 12,
           authority: ['sys:platform_admin'],
         },
       },
@@ -144,7 +155,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:notification-channels',
           icon: 'lucide:radio',
-          order: 12,
+          order: 13,
           authority: ['sys:platform_admin'],
         },
       },
@@ -155,7 +166,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:approvals',
           icon: 'lucide:check-circle',
-          order: 13,
+          order: 14,
           authority: ['sys:platform_admin'],
         },
       },

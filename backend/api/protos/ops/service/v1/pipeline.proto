@@ -1,0 +1,279 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// PipelineService 构建流水线:有序步骤(构建/脚本/分发)按序执行、
+// 失败即中止。触发即创建运行记录并异步推进,执行横幅与脚本输出
+// 增量落库,可经 GetPipelineRunLog 增量 tail。
+service PipelineService {
+  // 查询流水线列表
+  rpc ListPipelines (pagination.PagingRequest) returns (ListPipelineResponse) {}
+
+  // 查询流水线详情
+  rpc GetPipeline (GetPipelineRequest) returns (Pipeline) {}
+
+  // 创建流水线
+  rpc CreatePipeline (CreatePipelineRequest) returns (Pipeline) {}
+
+  // 更新流水线
+  rpc UpdatePipeline (UpdatePipelineRequest) returns (google.protobuf.Empty) {}
+
+  // 删除流水线
+  rpc DeletePipeline (DeletePipelineRequest) returns (google.protobuf.Empty) {}
+
+  // 触发流水线(异步执行,返回运行记录 ID)
+  rpc TriggerPipeline (TriggerPipelineRequest) returns (TriggerPipelineResponse) {}
+
+  // 查询运行记录列表
+  rpc ListPipelineRuns (pagination.PagingRequest) returns (ListPipelineRunResponse) {}
+
+  // 查询运行记录详情
+  rpc GetPipelineRun (GetPipelineRunRequest) returns (PipelineRun) {}
+
+  // 增量拉取运行日志(offset 为上次收到的字节长度;日志只追加)
+  rpc GetPipelineRunLog (GetPipelineRunLogRequest) returns (GetPipelineRunLogResponse) {}
+}
+
+// 流水线
+message Pipeline {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 流水线ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线名
+
+  repeated PipelineStep steps = 3 [
+    json_name = "steps",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 步骤列表(按序执行,失败即中止)
+
+  optional string description = 4 [json_name = "description"]; // 描述
+
+  repeated string labels = 5 [json_name = "labels"]; // 标签
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+// 流水线步骤
+message PipelineStep {
+  // 步骤类型(嵌套定义;值名与落库 JSON 字符串一致)
+  enum StepType {
+    STEP_TYPE_UNSPECIFIED = 0; // 未知
+
+    BUILD = 1;        // 构建(等待终态,SUCCESS 才继续)
+    SCRIPT = 2;       // 脚本(在 agent_id 指定机器上执行,退出码 0 才继续)
+    DISTRIBUTION = 3; // 分发(等待全部目标记录终态,无 FAILED 才继续)
+  }
+
+  optional StepType type = 1 [
+    json_name = "type",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 步骤类型
+
+  optional uint32 ref_id = 2 [
+    json_name = "refId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 引用对象 ID(构建/脚本/分发配置)
+
+  optional string agent_id = 3 [
+    json_name = "agentId"
+  ]; // 目标机器(SCRIPT 步骤必填)
+
+  optional string name = 4 [
+    json_name = "name"
+  ]; // 展示名(可空,缺省用引用对象名)
+}
+
+message ListPipelineResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Pipeline items = 2 [json_name = "items"]; // 流水线列表
+}
+
+message GetPipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+}
+
+message CreatePipelineRequest {
+  optional Pipeline data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 创建数据
+}
+
+message UpdatePipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+
+  optional Pipeline data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 更新数据
+}
+
+message DeletePipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+}
+
+message TriggerPipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+}
+
+message TriggerPipelineResponse {
+  optional uint32 run_id = 1 [
+    json_name = "runId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 运行记录ID
+}
+
+message ListPipelineRunResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated PipelineRun items = 2 [json_name = "items"]; // 运行记录列表
+}
+
+message GetPipelineRunRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 运行记录ID
+}
+
+// 流水线运行记录
+message PipelineRun {
+  // 运行状态(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum Status {
+    RUN_STATUS_UNSPECIFIED = 0; // 未知
+
+    PENDING = 1;  // 待执行
+    RUNNING = 2;  // 执行中
+    SUCCESS = 3;  // 成功
+    FAILED = 4;   // 失败(某步骤失败即中止)
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 运行记录ID
+
+  optional uint32 pipeline_id = 2 [
+    json_name = "pipelineId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 流水线ID
+
+  optional Status status = 3 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 运行状态
+
+  repeated PipelineStep steps = 4 [
+    json_name = "steps",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 步骤快照(触发时定版)
+
+  optional int32 current_step = 5 [
+    json_name = "currentStep",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 当前步骤下标(0 起,-1=未开始)
+
+  repeated PipelineStepResult step_results = 6 [
+    json_name = "stepResults",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 每步结果(按步骤顺序)
+
+  optional string error = 7 [
+    json_name = "error",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 失败原因
+
+  optional google.protobuf.Timestamp started_at = 8 [
+    json_name = "startedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 开始时间
+
+  optional google.protobuf.Timestamp finished_at = 9 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 结束时间
+
+  optional uint32 operator_id = 10 [
+    json_name = "operatorId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 触发人
+}
+
+// 步骤执行结果
+message PipelineStepResult {
+  optional string type = 1 [json_name = "type"]; // 步骤类型(BUILD/SCRIPT/DISTRIBUTION)
+
+  optional uint32 ref_id = 2 [json_name = "refId"]; // 引用对象 ID
+
+  optional string name = 3 [json_name = "name"]; // 展示名
+
+  optional string status = 4 [json_name = "status"]; // 结果(SUCCESS/FAILED/SKIPPED)
+
+  optional string error = 5 [json_name = "error"]; // 失败原因
+
+  optional int64 duration_ms = 6 [json_name = "durationMs"]; // 耗时(毫秒)
+}
+
+message GetPipelineRunLogRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 运行记录ID
+
+  optional int64 offset = 2 [json_name = "offset"]; // 已持有的字节数(0=全量)
+}
+
+message GetPipelineRunLogResponse {
+  optional string delta = 1 [
+    json_name = "delta",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 本次新增日志片段
+
+  optional int64 new_offset = 2 [
+    json_name = "newOffset",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 新的字节总长
+
+  optional string status = 3 [
+    json_name = "status",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 当前运行状态
+
+  optional bool finished = 4 [
+    json_name = "finished",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否终态(SUCCESS/FAILED)
+}

@@ -26,6 +26,8 @@ type Tx struct {
 	Build *BuildClient
 	// BuildHistory is the client for interacting with the BuildHistory builders.
 	BuildHistory *BuildHistoryClient
+	// BuildPipeline is the client for interacting with the BuildPipeline builders.
+	BuildPipeline *BuildPipelineClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -80,6 +82,8 @@ type Tx struct {
 	PermissionMenu *PermissionMenuClient
 	// PermissionPolicy is the client for interacting with the PermissionPolicy builders.
 	PermissionPolicy *PermissionPolicyClient
+	// PipelineRun is the client for interacting with the PipelineRun builders.
+	PipelineRun *PipelineRunClient
 	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
@@ -248,6 +252,7 @@ func (tx *Tx) init() {
 	tx.Approval = NewApprovalClient(tx.config)
 	tx.Build = NewBuildClient(tx.config)
 	tx.BuildHistory = NewBuildHistoryClient(tx.config)
+	tx.BuildPipeline = NewBuildPipelineClient(tx.config)
 	tx.CommandRecord = NewCommandRecordClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
@@ -275,6 +280,7 @@ func (tx *Tx) init() {
 	tx.PermissionGroup = NewPermissionGroupClient(tx.config)
 	tx.PermissionMenu = NewPermissionMenuClient(tx.config)
 	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
+	tx.PipelineRun = NewPipelineRunClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)

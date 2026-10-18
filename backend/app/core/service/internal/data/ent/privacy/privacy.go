@@ -279,6 +279,30 @@ func (f BuildHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BuildHistoryMutation", m)
 }
 
+// The BuildPipelineQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BuildPipelineQueryRuleFunc func(context.Context, *ent.BuildPipelineQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BuildPipelineQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BuildPipelineQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BuildPipelineQuery", q)
+}
+
+// The BuildPipelineMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BuildPipelineMutationRuleFunc func(context.Context, *ent.BuildPipelineMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BuildPipelineMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BuildPipelineMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BuildPipelineMutation", m)
+}
+
 // The CommandRecordQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommandRecordQueryRuleFunc func(context.Context, *ent.CommandRecordQuery) error
@@ -927,6 +951,30 @@ func (f PermissionPolicyMutationRuleFunc) EvalMutation(ctx context.Context, m en
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PermissionPolicyMutation", m)
 }
 
+// The PipelineRunQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PipelineRunQueryRuleFunc func(context.Context, *ent.PipelineRunQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PipelineRunQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PipelineRunQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PipelineRunQuery", q)
+}
+
+// The PipelineRunMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PipelineRunMutationRuleFunc func(context.Context, *ent.PipelineRunMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PipelineRunMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PipelineRunMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PipelineRunMutation", m)
+}
+
 // The PolicyEvaluationLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PolicyEvaluationLogQueryRuleFunc func(context.Context, *ent.PolicyEvaluationLogQuery) error
@@ -1336,6 +1384,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.BuildHistoryQuery:
 		return q.Filter(), nil
+	case *ent.BuildPipelineQuery:
+		return q.Filter(), nil
 	case *ent.CommandRecordQuery:
 		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
@@ -1390,6 +1440,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PermissionPolicyQuery:
 		return q.Filter(), nil
+	case *ent.PipelineRunQuery:
+		return q.Filter(), nil
 	case *ent.PolicyEvaluationLogQuery:
 		return q.Filter(), nil
 	case *ent.PositionQuery:
@@ -1440,6 +1492,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.BuildMutation:
 		return m.Filter(), nil
 	case *ent.BuildHistoryMutation:
+		return m.Filter(), nil
+	case *ent.BuildPipelineMutation:
 		return m.Filter(), nil
 	case *ent.CommandRecordMutation:
 		return m.Filter(), nil
@@ -1494,6 +1548,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PermissionMenuMutation:
 		return m.Filter(), nil
 	case *ent.PermissionPolicyMutation:
+		return m.Filter(), nil
+	case *ent.PipelineRunMutation:
 		return m.Filter(), nil
 	case *ent.PolicyEvaluationLogMutation:
 		return m.Filter(), nil

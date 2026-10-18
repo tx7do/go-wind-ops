@@ -350,6 +350,34 @@ var (
 			},
 		},
 	}
+	// OpsBuildPipelinesColumns holds the columns for the "ops_build_pipelines" table.
+	OpsBuildPipelinesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "流水线名(全局唯一)"},
+		{Name: "steps", Type: field.TypeString, Size: 2147483647, Comment: "步骤列表(JSON 数组:type=BUILD/SCRIPT/DISTRIBUTION,ref_id,agent_id,name)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
+	}
+	// OpsBuildPipelinesTable holds the schema information for the "ops_build_pipelines" table.
+	OpsBuildPipelinesTable = &schema.Table{
+		Name:       "ops_build_pipelines",
+		Comment:    "构建流水线配置表",
+		Columns:    OpsBuildPipelinesColumns,
+		PrimaryKey: []*schema.Column{OpsBuildPipelinesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_pipeline_name",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBuildPipelinesColumns[7]},
+			},
+		},
+	}
 	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
 	OpsCommandRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2053,6 +2081,42 @@ var (
 			},
 		},
 	}
+	// OpsPipelineRunsColumns holds the columns for the "ops_pipeline_runs" table.
+	OpsPipelineRunsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "pipeline_id", Type: field.TypeUint32, Comment: "流水线配置(ops_build_pipelines.id)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "运行状态", Enums: []string{"PENDING", "RUNNING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "steps", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "步骤快照(JSON,触发时定版,配置后改不影响本 run)"},
+		{Name: "current_step", Type: field.TypeInt32, Comment: "当前执行到的步骤下标(0 起,-1=未开始)", Default: -1},
+		{Name: "step_results", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "每步结果(JSON 数组:type/ref_id/name/status/error/duration)"},
+		{Name: "log", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "运行日志(步骤横幅+脚本输出,增量落库)"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因(首个失败步骤)"},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "开始执行时间"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间(终态)"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
+	}
+	// OpsPipelineRunsTable holds the schema information for the "ops_pipeline_runs" table.
+	OpsPipelineRunsTable = &schema.Table{
+		Name:       "ops_pipeline_runs",
+		Comment:    "流水线运行记录表",
+		Columns:    OpsPipelineRunsColumns,
+		PrimaryKey: []*schema.Column{OpsPipelineRunsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_pipeline_run_pipeline",
+				Unique:  false,
+				Columns: []*schema.Column{OpsPipelineRunsColumns[4]},
+			},
+			{
+				Name:    "idx_ops_pipeline_run_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsPipelineRunsColumns[5]},
+			},
+		},
+	}
 	// SysPolicyEvaluationLogsColumns holds the columns for the "sys_policy_evaluation_logs" table.
 	SysPolicyEvaluationLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3138,6 +3202,7 @@ var (
 		OpsApprovalsTable,
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
+		OpsBuildPipelinesTable,
 		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
@@ -3165,6 +3230,7 @@ var (
 		SysPermissionGroupsTable,
 		SysPermissionMenusTable,
 		SysPermissionPoliciesTable,
+		OpsPipelineRunsTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
 		OpsProjectsTable,
@@ -3216,6 +3282,11 @@ func init() {
 	}
 	OpsBuildHistoriesTable.Annotation = &entsql.Annotation{
 		Table:     "ops_build_histories",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsBuildPipelinesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_build_pipelines",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3356,6 +3427,11 @@ func init() {
 	}
 	SysPermissionPoliciesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_permission_policies",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsPipelineRunsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_pipeline_runs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

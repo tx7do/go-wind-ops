@@ -12,6 +12,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
+	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -39,6 +40,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionmenu"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/pipelinerun"
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
@@ -255,6 +257,19 @@ func init() {
 	buildhistoryDescID := buildhistoryMixinFields0[0].Descriptor()
 	// buildhistory.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	buildhistory.IDValidator = buildhistoryDescID.Validators[0].(func(uint32) error)
+	buildpipelineMixin := schema.BuildPipeline{}.Mixin()
+	buildpipelineMixinFields0 := buildpipelineMixin[0].Fields()
+	_ = buildpipelineMixinFields0
+	buildpipelineFields := schema.BuildPipeline{}.Fields()
+	_ = buildpipelineFields
+	// buildpipelineDescName is the schema descriptor for name field.
+	buildpipelineDescName := buildpipelineFields[0].Descriptor()
+	// buildpipeline.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	buildpipeline.NameValidator = buildpipelineDescName.Validators[0].(func(string) error)
+	// buildpipelineDescID is the schema descriptor for id field.
+	buildpipelineDescID := buildpipelineMixinFields0[0].Descriptor()
+	// buildpipeline.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	buildpipeline.IDValidator = buildpipelineDescID.Validators[0].(func(uint32) error)
 	commandrecordMixin := schema.CommandRecord{}.Mixin()
 	commandrecordMixinFields0 := commandrecordMixin[0].Fields()
 	_ = commandrecordMixinFields0
@@ -1063,6 +1078,27 @@ func init() {
 	permissionpolicyDescID := permissionpolicyMixinFields0[0].Descriptor()
 	// permissionpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	permissionpolicy.IDValidator = permissionpolicyDescID.Validators[0].(func(uint32) error)
+	pipelinerunMixin := schema.PipelineRun{}.Mixin()
+	pipelinerunMixinFields0 := pipelinerunMixin[0].Fields()
+	_ = pipelinerunMixinFields0
+	pipelinerunFields := schema.PipelineRun{}.Fields()
+	_ = pipelinerunFields
+	// pipelinerunDescPipelineID is the schema descriptor for pipeline_id field.
+	pipelinerunDescPipelineID := pipelinerunFields[0].Descriptor()
+	// pipelinerun.PipelineIDValidator is a validator for the "pipeline_id" field. It is called by the builders before save.
+	pipelinerun.PipelineIDValidator = pipelinerunDescPipelineID.Validators[0].(func(uint32) error)
+	// pipelinerunDescCurrentStep is the schema descriptor for current_step field.
+	pipelinerunDescCurrentStep := pipelinerunFields[3].Descriptor()
+	// pipelinerun.DefaultCurrentStep holds the default value on creation for the current_step field.
+	pipelinerun.DefaultCurrentStep = pipelinerunDescCurrentStep.Default.(int32)
+	// pipelinerunDescOperatorID is the schema descriptor for operator_id field.
+	pipelinerunDescOperatorID := pipelinerunFields[9].Descriptor()
+	// pipelinerun.DefaultOperatorID holds the default value on creation for the operator_id field.
+	pipelinerun.DefaultOperatorID = pipelinerunDescOperatorID.Default.(uint32)
+	// pipelinerunDescID is the schema descriptor for id field.
+	pipelinerunDescID := pipelinerunMixinFields0[0].Descriptor()
+	// pipelinerun.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	pipelinerun.IDValidator = pipelinerunDescID.Validators[0].(func(uint32) error)
 	policyevaluationlogMixin := schema.PolicyEvaluationLog{}.Mixin()
 	policyevaluationlog.Policy = privacy.NewPolicies(policyevaluationlogMixin[2], schema.PolicyEvaluationLog{})
 	policyevaluationlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -18,6 +18,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
+	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -45,6 +46,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionmenu"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/pipelinerun"
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
@@ -86,6 +88,8 @@ type Client struct {
 	Build *BuildClient
 	// BuildHistory is the client for interacting with the BuildHistory builders.
 	BuildHistory *BuildHistoryClient
+	// BuildPipeline is the client for interacting with the BuildPipeline builders.
+	BuildPipeline *BuildPipelineClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -140,6 +144,8 @@ type Client struct {
 	PermissionMenu *PermissionMenuClient
 	// PermissionPolicy is the client for interacting with the PermissionPolicy builders.
 	PermissionPolicy *PermissionPolicyClient
+	// PipelineRun is the client for interacting with the PipelineRun builders.
+	PipelineRun *PipelineRunClient
 	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
@@ -188,6 +194,7 @@ func (c *Client) init() {
 	c.Approval = NewApprovalClient(c.config)
 	c.Build = NewBuildClient(c.config)
 	c.BuildHistory = NewBuildHistoryClient(c.config)
+	c.BuildPipeline = NewBuildPipelineClient(c.config)
 	c.CommandRecord = NewCommandRecordClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
@@ -215,6 +222,7 @@ func (c *Client) init() {
 	c.PermissionGroup = NewPermissionGroupClient(c.config)
 	c.PermissionMenu = NewPermissionMenuClient(c.config)
 	c.PermissionPolicy = NewPermissionPolicyClient(c.config)
+	c.PipelineRun = NewPipelineRunClient(c.config)
 	c.PolicyEvaluationLog = NewPolicyEvaluationLogClient(c.config)
 	c.Position = NewPositionClient(c.config)
 	c.Project = NewProjectClient(c.config)
@@ -329,6 +337,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Approval:             NewApprovalClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
+		BuildPipeline:        NewBuildPipelineClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
@@ -356,6 +365,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PermissionGroup:      NewPermissionGroupClient(cfg),
 		PermissionMenu:       NewPermissionMenuClient(cfg),
 		PermissionPolicy:     NewPermissionPolicyClient(cfg),
+		PipelineRun:          NewPipelineRunClient(cfg),
 		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
 		Position:             NewPositionClient(cfg),
 		Project:              NewProjectClient(cfg),
@@ -397,6 +407,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Approval:             NewApprovalClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
+		BuildPipeline:        NewBuildPipelineClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
@@ -424,6 +435,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PermissionGroup:      NewPermissionGroupClient(cfg),
 		PermissionMenu:       NewPermissionMenuClient(cfg),
 		PermissionPolicy:     NewPermissionPolicyClient(cfg),
+		PipelineRun:          NewPipelineRunClient(cfg),
 		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
 		Position:             NewPositionClient(cfg),
 		Project:              NewProjectClient(cfg),
@@ -469,15 +481,16 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Approval, c.Build, c.BuildHistory,
-		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
-		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric,
+		c.NotificationChannel, c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog,
+		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -488,15 +501,16 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Approval, c.Build, c.BuildHistory,
-		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
-		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric,
+		c.NotificationChannel, c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog,
+		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -519,6 +533,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Build.mutate(ctx, m)
 	case *BuildHistoryMutation:
 		return c.BuildHistory.mutate(ctx, m)
+	case *BuildPipelineMutation:
+		return c.BuildPipeline.mutate(ctx, m)
 	case *CommandRecordMutation:
 		return c.CommandRecord.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
@@ -573,6 +589,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PermissionMenu.mutate(ctx, m)
 	case *PermissionPolicyMutation:
 		return c.PermissionPolicy.mutate(ctx, m)
+	case *PipelineRunMutation:
+		return c.PipelineRun.mutate(ctx, m)
 	case *PolicyEvaluationLogMutation:
 		return c.PolicyEvaluationLog.mutate(ctx, m)
 	case *PositionMutation:
@@ -1538,6 +1556,139 @@ func (c *BuildHistoryClient) mutate(ctx context.Context, m *BuildHistoryMutation
 		return (&BuildHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown BuildHistory mutation op: %q", m.Op())
+	}
+}
+
+// BuildPipelineClient is a client for the BuildPipeline schema.
+type BuildPipelineClient struct {
+	config
+}
+
+// NewBuildPipelineClient returns a client for the BuildPipeline from the given config.
+func NewBuildPipelineClient(c config) *BuildPipelineClient {
+	return &BuildPipelineClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `buildpipeline.Hooks(f(g(h())))`.
+func (c *BuildPipelineClient) Use(hooks ...Hook) {
+	c.hooks.BuildPipeline = append(c.hooks.BuildPipeline, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `buildpipeline.Intercept(f(g(h())))`.
+func (c *BuildPipelineClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BuildPipeline = append(c.inters.BuildPipeline, interceptors...)
+}
+
+// Create returns a builder for creating a BuildPipeline entity.
+func (c *BuildPipelineClient) Create() *BuildPipelineCreate {
+	mutation := newBuildPipelineMutation(c.config, OpCreate)
+	return &BuildPipelineCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of BuildPipeline entities.
+func (c *BuildPipelineClient) CreateBulk(builders ...*BuildPipelineCreate) *BuildPipelineCreateBulk {
+	return &BuildPipelineCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BuildPipelineClient) MapCreateBulk(slice any, setFunc func(*BuildPipelineCreate, int)) *BuildPipelineCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BuildPipelineCreateBulk{err: fmt.Errorf("calling to BuildPipelineClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BuildPipelineCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BuildPipelineCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BuildPipeline.
+func (c *BuildPipelineClient) Update() *BuildPipelineUpdate {
+	mutation := newBuildPipelineMutation(c.config, OpUpdate)
+	return &BuildPipelineUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BuildPipelineClient) UpdateOne(_m *BuildPipeline) *BuildPipelineUpdateOne {
+	mutation := newBuildPipelineMutation(c.config, OpUpdateOne, withBuildPipeline(_m))
+	return &BuildPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BuildPipelineClient) UpdateOneID(id uint32) *BuildPipelineUpdateOne {
+	mutation := newBuildPipelineMutation(c.config, OpUpdateOne, withBuildPipelineID(id))
+	return &BuildPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BuildPipeline.
+func (c *BuildPipelineClient) Delete() *BuildPipelineDelete {
+	mutation := newBuildPipelineMutation(c.config, OpDelete)
+	return &BuildPipelineDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BuildPipelineClient) DeleteOne(_m *BuildPipeline) *BuildPipelineDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BuildPipelineClient) DeleteOneID(id uint32) *BuildPipelineDeleteOne {
+	builder := c.Delete().Where(buildpipeline.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BuildPipelineDeleteOne{builder}
+}
+
+// Query returns a query builder for BuildPipeline.
+func (c *BuildPipelineClient) Query() *BuildPipelineQuery {
+	return &BuildPipelineQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBuildPipeline},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a BuildPipeline entity by its id.
+func (c *BuildPipelineClient) Get(ctx context.Context, id uint32) (*BuildPipeline, error) {
+	return c.Query().Where(buildpipeline.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BuildPipelineClient) GetX(ctx context.Context, id uint32) *BuildPipeline {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BuildPipelineClient) Hooks() []Hook {
+	return c.hooks.BuildPipeline
+}
+
+// Interceptors returns the client interceptors.
+func (c *BuildPipelineClient) Interceptors() []Interceptor {
+	return c.inters.BuildPipeline
+}
+
+func (c *BuildPipelineClient) mutate(ctx context.Context, m *BuildPipelineMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BuildPipelineCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BuildPipelineUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BuildPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BuildPipelineDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown BuildPipeline mutation op: %q", m.Op())
 	}
 }
 
@@ -5311,6 +5462,139 @@ func (c *PermissionPolicyClient) mutate(ctx context.Context, m *PermissionPolicy
 	}
 }
 
+// PipelineRunClient is a client for the PipelineRun schema.
+type PipelineRunClient struct {
+	config
+}
+
+// NewPipelineRunClient returns a client for the PipelineRun from the given config.
+func NewPipelineRunClient(c config) *PipelineRunClient {
+	return &PipelineRunClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pipelinerun.Hooks(f(g(h())))`.
+func (c *PipelineRunClient) Use(hooks ...Hook) {
+	c.hooks.PipelineRun = append(c.hooks.PipelineRun, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pipelinerun.Intercept(f(g(h())))`.
+func (c *PipelineRunClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PipelineRun = append(c.inters.PipelineRun, interceptors...)
+}
+
+// Create returns a builder for creating a PipelineRun entity.
+func (c *PipelineRunClient) Create() *PipelineRunCreate {
+	mutation := newPipelineRunMutation(c.config, OpCreate)
+	return &PipelineRunCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PipelineRun entities.
+func (c *PipelineRunClient) CreateBulk(builders ...*PipelineRunCreate) *PipelineRunCreateBulk {
+	return &PipelineRunCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PipelineRunClient) MapCreateBulk(slice any, setFunc func(*PipelineRunCreate, int)) *PipelineRunCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PipelineRunCreateBulk{err: fmt.Errorf("calling to PipelineRunClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PipelineRunCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PipelineRunCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PipelineRun.
+func (c *PipelineRunClient) Update() *PipelineRunUpdate {
+	mutation := newPipelineRunMutation(c.config, OpUpdate)
+	return &PipelineRunUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PipelineRunClient) UpdateOne(_m *PipelineRun) *PipelineRunUpdateOne {
+	mutation := newPipelineRunMutation(c.config, OpUpdateOne, withPipelineRun(_m))
+	return &PipelineRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PipelineRunClient) UpdateOneID(id uint32) *PipelineRunUpdateOne {
+	mutation := newPipelineRunMutation(c.config, OpUpdateOne, withPipelineRunID(id))
+	return &PipelineRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PipelineRun.
+func (c *PipelineRunClient) Delete() *PipelineRunDelete {
+	mutation := newPipelineRunMutation(c.config, OpDelete)
+	return &PipelineRunDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PipelineRunClient) DeleteOne(_m *PipelineRun) *PipelineRunDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PipelineRunClient) DeleteOneID(id uint32) *PipelineRunDeleteOne {
+	builder := c.Delete().Where(pipelinerun.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PipelineRunDeleteOne{builder}
+}
+
+// Query returns a query builder for PipelineRun.
+func (c *PipelineRunClient) Query() *PipelineRunQuery {
+	return &PipelineRunQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePipelineRun},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PipelineRun entity by its id.
+func (c *PipelineRunClient) Get(ctx context.Context, id uint32) (*PipelineRun, error) {
+	return c.Query().Where(pipelinerun.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PipelineRunClient) GetX(ctx context.Context, id uint32) *PipelineRun {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PipelineRunClient) Hooks() []Hook {
+	return c.hooks.PipelineRun
+}
+
+// Interceptors returns the client interceptors.
+func (c *PipelineRunClient) Interceptors() []Interceptor {
+	return c.inters.PipelineRun
+}
+
+func (c *PipelineRunClient) mutate(ctx context.Context, m *PipelineRunMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PipelineRunCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PipelineRunUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PipelineRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PipelineRunDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PipelineRun mutation op: %q", m.Op())
+	}
+}
+
 // PolicyEvaluationLogClient is a client for the PolicyEvaluationLog schema.
 type PolicyEvaluationLogClient struct {
 	config
@@ -7321,26 +7605,26 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		AgentNode, Alert, Api, ApiAuditLog, Approval, Build, BuildHistory,
-		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
-		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		BuildPipeline, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
+		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, Approval, Build, BuildHistory,
-		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
-		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		BuildPipeline, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
+		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Interceptor
 	}
 )

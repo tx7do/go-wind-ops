@@ -16,6 +16,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
+	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -43,6 +44,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionmenu"
 	"go-wind-ops/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/pipelinerun"
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -82,6 +84,7 @@ const (
 	TypeApproval             = "Approval"
 	TypeBuild                = "Build"
 	TypeBuildHistory         = "BuildHistory"
+	TypeBuildPipeline        = "BuildPipeline"
 	TypeCommandRecord        = "CommandRecord"
 	TypeDataAccessAuditLog   = "DataAccessAuditLog"
 	TypeDictEntry            = "DictEntry"
@@ -109,6 +112,7 @@ const (
 	TypePermissionGroup      = "PermissionGroup"
 	TypePermissionMenu       = "PermissionMenu"
 	TypePermissionPolicy     = "PermissionPolicy"
+	TypePipelineRun          = "PipelineRun"
 	TypePolicyEvaluationLog  = "PolicyEvaluationLog"
 	TypePosition             = "Position"
 	TypeProject              = "Project"
@@ -12004,6 +12008,1101 @@ func (m *BuildHistoryMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *BuildHistoryMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown BuildHistory edge %s", name)
+}
+
+// BuildPipelineMutation represents an operation that mutates the BuildPipeline nodes in the graph.
+type BuildPipelineMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	name          *string
+	steps         *string
+	description   *string
+	labels        *[]string
+	appendlabels  []string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*BuildPipeline, error)
+	predicates    []predicate.BuildPipeline
+}
+
+var _ ent.Mutation = (*BuildPipelineMutation)(nil)
+
+// buildpipelineOption allows management of the mutation configuration using functional options.
+type buildpipelineOption func(*BuildPipelineMutation)
+
+// newBuildPipelineMutation creates new mutation for the BuildPipeline entity.
+func newBuildPipelineMutation(c config, op Op, opts ...buildpipelineOption) *BuildPipelineMutation {
+	m := &BuildPipelineMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeBuildPipeline,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withBuildPipelineID sets the ID field of the mutation.
+func withBuildPipelineID(id uint32) buildpipelineOption {
+	return func(m *BuildPipelineMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *BuildPipeline
+		)
+		m.oldValue = func(ctx context.Context) (*BuildPipeline, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().BuildPipeline.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withBuildPipeline sets the old BuildPipeline of the mutation.
+func withBuildPipeline(node *BuildPipeline) buildpipelineOption {
+	return func(m *BuildPipelineMutation) {
+		m.oldValue = func(context.Context) (*BuildPipeline, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m BuildPipelineMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m BuildPipelineMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of BuildPipeline entities.
+func (m *BuildPipelineMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *BuildPipelineMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *BuildPipelineMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().BuildPipeline.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *BuildPipelineMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *BuildPipelineMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *BuildPipelineMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[buildpipeline.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *BuildPipelineMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *BuildPipelineMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, buildpipeline.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *BuildPipelineMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *BuildPipelineMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *BuildPipelineMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[buildpipeline.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *BuildPipelineMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *BuildPipelineMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, buildpipeline.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *BuildPipelineMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *BuildPipelineMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *BuildPipelineMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[buildpipeline.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *BuildPipelineMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *BuildPipelineMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, buildpipeline.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *BuildPipelineMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *BuildPipelineMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *BuildPipelineMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *BuildPipelineMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *BuildPipelineMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[buildpipeline.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *BuildPipelineMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *BuildPipelineMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, buildpipeline.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *BuildPipelineMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *BuildPipelineMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *BuildPipelineMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *BuildPipelineMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *BuildPipelineMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[buildpipeline.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *BuildPipelineMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *BuildPipelineMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, buildpipeline.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *BuildPipelineMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *BuildPipelineMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *BuildPipelineMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *BuildPipelineMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *BuildPipelineMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[buildpipeline.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *BuildPipelineMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *BuildPipelineMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, buildpipeline.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *BuildPipelineMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *BuildPipelineMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *BuildPipelineMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSteps sets the "steps" field.
+func (m *BuildPipelineMutation) SetSteps(s string) {
+	m.steps = &s
+}
+
+// Steps returns the value of the "steps" field in the mutation.
+func (m *BuildPipelineMutation) Steps() (r string, exists bool) {
+	v := m.steps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSteps returns the old "steps" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldSteps(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSteps is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSteps requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSteps: %w", err)
+	}
+	return oldValue.Steps, nil
+}
+
+// ResetSteps resets all changes to the "steps" field.
+func (m *BuildPipelineMutation) ResetSteps() {
+	m.steps = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *BuildPipelineMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *BuildPipelineMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *BuildPipelineMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[buildpipeline.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *BuildPipelineMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *BuildPipelineMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, buildpipeline.FieldDescription)
+}
+
+// SetLabels sets the "labels" field.
+func (m *BuildPipelineMutation) SetLabels(s []string) {
+	m.labels = &s
+	m.appendlabels = nil
+}
+
+// Labels returns the value of the "labels" field in the mutation.
+func (m *BuildPipelineMutation) Labels() (r []string, exists bool) {
+	v := m.labels
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLabels returns the old "labels" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldLabels(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLabels is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLabels requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLabels: %w", err)
+	}
+	return oldValue.Labels, nil
+}
+
+// AppendLabels adds s to the "labels" field.
+func (m *BuildPipelineMutation) AppendLabels(s []string) {
+	m.appendlabels = append(m.appendlabels, s...)
+}
+
+// AppendedLabels returns the list of values that were appended to the "labels" field in this mutation.
+func (m *BuildPipelineMutation) AppendedLabels() ([]string, bool) {
+	if len(m.appendlabels) == 0 {
+		return nil, false
+	}
+	return m.appendlabels, true
+}
+
+// ClearLabels clears the value of the "labels" field.
+func (m *BuildPipelineMutation) ClearLabels() {
+	m.labels = nil
+	m.appendlabels = nil
+	m.clearedFields[buildpipeline.FieldLabels] = struct{}{}
+}
+
+// LabelsCleared returns if the "labels" field was cleared in this mutation.
+func (m *BuildPipelineMutation) LabelsCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldLabels]
+	return ok
+}
+
+// ResetLabels resets all changes to the "labels" field.
+func (m *BuildPipelineMutation) ResetLabels() {
+	m.labels = nil
+	m.appendlabels = nil
+	delete(m.clearedFields, buildpipeline.FieldLabels)
+}
+
+// Where appends a list predicates to the BuildPipelineMutation builder.
+func (m *BuildPipelineMutation) Where(ps ...predicate.BuildPipeline) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the BuildPipelineMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *BuildPipelineMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.BuildPipeline, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *BuildPipelineMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *BuildPipelineMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (BuildPipeline).
+func (m *BuildPipelineMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *BuildPipelineMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, buildpipeline.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, buildpipeline.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, buildpipeline.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, buildpipeline.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, buildpipeline.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, buildpipeline.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, buildpipeline.FieldName)
+	}
+	if m.steps != nil {
+		fields = append(fields, buildpipeline.FieldSteps)
+	}
+	if m.description != nil {
+		fields = append(fields, buildpipeline.FieldDescription)
+	}
+	if m.labels != nil {
+		fields = append(fields, buildpipeline.FieldLabels)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *BuildPipelineMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case buildpipeline.FieldCreatedAt:
+		return m.CreatedAt()
+	case buildpipeline.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case buildpipeline.FieldDeletedAt:
+		return m.DeletedAt()
+	case buildpipeline.FieldCreatedBy:
+		return m.CreatedBy()
+	case buildpipeline.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case buildpipeline.FieldDeletedBy:
+		return m.DeletedBy()
+	case buildpipeline.FieldName:
+		return m.Name()
+	case buildpipeline.FieldSteps:
+		return m.Steps()
+	case buildpipeline.FieldDescription:
+		return m.Description()
+	case buildpipeline.FieldLabels:
+		return m.Labels()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *BuildPipelineMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case buildpipeline.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case buildpipeline.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case buildpipeline.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case buildpipeline.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case buildpipeline.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case buildpipeline.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case buildpipeline.FieldName:
+		return m.OldName(ctx)
+	case buildpipeline.FieldSteps:
+		return m.OldSteps(ctx)
+	case buildpipeline.FieldDescription:
+		return m.OldDescription(ctx)
+	case buildpipeline.FieldLabels:
+		return m.OldLabels(ctx)
+	}
+	return nil, fmt.Errorf("unknown BuildPipeline field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BuildPipelineMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case buildpipeline.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case buildpipeline.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case buildpipeline.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case buildpipeline.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case buildpipeline.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case buildpipeline.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case buildpipeline.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case buildpipeline.FieldSteps:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSteps(v)
+		return nil
+	case buildpipeline.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case buildpipeline.FieldLabels:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLabels(v)
+		return nil
+	}
+	return fmt.Errorf("unknown BuildPipeline field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *BuildPipelineMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, buildpipeline.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, buildpipeline.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, buildpipeline.FieldDeletedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *BuildPipelineMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case buildpipeline.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case buildpipeline.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case buildpipeline.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BuildPipelineMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case buildpipeline.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case buildpipeline.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case buildpipeline.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown BuildPipeline numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *BuildPipelineMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(buildpipeline.FieldCreatedAt) {
+		fields = append(fields, buildpipeline.FieldCreatedAt)
+	}
+	if m.FieldCleared(buildpipeline.FieldUpdatedAt) {
+		fields = append(fields, buildpipeline.FieldUpdatedAt)
+	}
+	if m.FieldCleared(buildpipeline.FieldDeletedAt) {
+		fields = append(fields, buildpipeline.FieldDeletedAt)
+	}
+	if m.FieldCleared(buildpipeline.FieldCreatedBy) {
+		fields = append(fields, buildpipeline.FieldCreatedBy)
+	}
+	if m.FieldCleared(buildpipeline.FieldUpdatedBy) {
+		fields = append(fields, buildpipeline.FieldUpdatedBy)
+	}
+	if m.FieldCleared(buildpipeline.FieldDeletedBy) {
+		fields = append(fields, buildpipeline.FieldDeletedBy)
+	}
+	if m.FieldCleared(buildpipeline.FieldDescription) {
+		fields = append(fields, buildpipeline.FieldDescription)
+	}
+	if m.FieldCleared(buildpipeline.FieldLabels) {
+		fields = append(fields, buildpipeline.FieldLabels)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *BuildPipelineMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *BuildPipelineMutation) ClearField(name string) error {
+	switch name {
+	case buildpipeline.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case buildpipeline.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case buildpipeline.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case buildpipeline.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case buildpipeline.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case buildpipeline.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case buildpipeline.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case buildpipeline.FieldLabels:
+		m.ClearLabels()
+		return nil
+	}
+	return fmt.Errorf("unknown BuildPipeline nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *BuildPipelineMutation) ResetField(name string) error {
+	switch name {
+	case buildpipeline.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case buildpipeline.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case buildpipeline.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case buildpipeline.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case buildpipeline.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case buildpipeline.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case buildpipeline.FieldName:
+		m.ResetName()
+		return nil
+	case buildpipeline.FieldSteps:
+		m.ResetSteps()
+		return nil
+	case buildpipeline.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case buildpipeline.FieldLabels:
+		m.ResetLabels()
+		return nil
+	}
+	return fmt.Errorf("unknown BuildPipeline field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *BuildPipelineMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *BuildPipelineMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *BuildPipelineMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *BuildPipelineMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *BuildPipelineMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *BuildPipelineMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *BuildPipelineMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown BuildPipeline unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *BuildPipelineMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown BuildPipeline edge %s", name)
 }
 
 // CommandRecordMutation represents an operation that mutates the CommandRecord nodes in the graph.
@@ -54048,6 +55147,1301 @@ func (m *PermissionPolicyMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PermissionPolicyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PermissionPolicy edge %s", name)
+}
+
+// PipelineRunMutation represents an operation that mutates the PipelineRun nodes in the graph.
+type PipelineRunMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	pipeline_id     *uint32
+	addpipeline_id  *int32
+	status          *pipelinerun.Status
+	steps           *string
+	current_step    *int32
+	addcurrent_step *int32
+	step_results    *string
+	log             *string
+	error           *string
+	started_at      *time.Time
+	finished_at     *time.Time
+	operator_id     *uint32
+	addoperator_id  *int32
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*PipelineRun, error)
+	predicates      []predicate.PipelineRun
+}
+
+var _ ent.Mutation = (*PipelineRunMutation)(nil)
+
+// pipelinerunOption allows management of the mutation configuration using functional options.
+type pipelinerunOption func(*PipelineRunMutation)
+
+// newPipelineRunMutation creates new mutation for the PipelineRun entity.
+func newPipelineRunMutation(c config, op Op, opts ...pipelinerunOption) *PipelineRunMutation {
+	m := &PipelineRunMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePipelineRun,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPipelineRunID sets the ID field of the mutation.
+func withPipelineRunID(id uint32) pipelinerunOption {
+	return func(m *PipelineRunMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PipelineRun
+		)
+		m.oldValue = func(ctx context.Context) (*PipelineRun, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PipelineRun.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPipelineRun sets the old PipelineRun of the mutation.
+func withPipelineRun(node *PipelineRun) pipelinerunOption {
+	return func(m *PipelineRunMutation) {
+		m.oldValue = func(context.Context) (*PipelineRun, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PipelineRunMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PipelineRunMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PipelineRun entities.
+func (m *PipelineRunMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PipelineRunMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PipelineRunMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PipelineRun.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PipelineRunMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PipelineRunMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PipelineRunMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[pipelinerun.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PipelineRunMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PipelineRunMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, pipelinerun.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PipelineRunMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PipelineRunMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PipelineRunMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[pipelinerun.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PipelineRunMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PipelineRunMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, pipelinerun.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PipelineRunMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PipelineRunMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PipelineRunMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[pipelinerun.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PipelineRunMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PipelineRunMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, pipelinerun.FieldDeletedAt)
+}
+
+// SetPipelineID sets the "pipeline_id" field.
+func (m *PipelineRunMutation) SetPipelineID(u uint32) {
+	m.pipeline_id = &u
+	m.addpipeline_id = nil
+}
+
+// PipelineID returns the value of the "pipeline_id" field in the mutation.
+func (m *PipelineRunMutation) PipelineID() (r uint32, exists bool) {
+	v := m.pipeline_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPipelineID returns the old "pipeline_id" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldPipelineID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPipelineID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPipelineID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPipelineID: %w", err)
+	}
+	return oldValue.PipelineID, nil
+}
+
+// AddPipelineID adds u to the "pipeline_id" field.
+func (m *PipelineRunMutation) AddPipelineID(u int32) {
+	if m.addpipeline_id != nil {
+		*m.addpipeline_id += u
+	} else {
+		m.addpipeline_id = &u
+	}
+}
+
+// AddedPipelineID returns the value that was added to the "pipeline_id" field in this mutation.
+func (m *PipelineRunMutation) AddedPipelineID() (r int32, exists bool) {
+	v := m.addpipeline_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPipelineID resets all changes to the "pipeline_id" field.
+func (m *PipelineRunMutation) ResetPipelineID() {
+	m.pipeline_id = nil
+	m.addpipeline_id = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *PipelineRunMutation) SetStatus(pi pipelinerun.Status) {
+	m.status = &pi
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PipelineRunMutation) Status() (r pipelinerun.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldStatus(ctx context.Context) (v *pipelinerun.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *PipelineRunMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[pipelinerun.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PipelineRunMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PipelineRunMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, pipelinerun.FieldStatus)
+}
+
+// SetSteps sets the "steps" field.
+func (m *PipelineRunMutation) SetSteps(s string) {
+	m.steps = &s
+}
+
+// Steps returns the value of the "steps" field in the mutation.
+func (m *PipelineRunMutation) Steps() (r string, exists bool) {
+	v := m.steps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSteps returns the old "steps" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldSteps(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSteps is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSteps requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSteps: %w", err)
+	}
+	return oldValue.Steps, nil
+}
+
+// ClearSteps clears the value of the "steps" field.
+func (m *PipelineRunMutation) ClearSteps() {
+	m.steps = nil
+	m.clearedFields[pipelinerun.FieldSteps] = struct{}{}
+}
+
+// StepsCleared returns if the "steps" field was cleared in this mutation.
+func (m *PipelineRunMutation) StepsCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldSteps]
+	return ok
+}
+
+// ResetSteps resets all changes to the "steps" field.
+func (m *PipelineRunMutation) ResetSteps() {
+	m.steps = nil
+	delete(m.clearedFields, pipelinerun.FieldSteps)
+}
+
+// SetCurrentStep sets the "current_step" field.
+func (m *PipelineRunMutation) SetCurrentStep(i int32) {
+	m.current_step = &i
+	m.addcurrent_step = nil
+}
+
+// CurrentStep returns the value of the "current_step" field in the mutation.
+func (m *PipelineRunMutation) CurrentStep() (r int32, exists bool) {
+	v := m.current_step
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentStep returns the old "current_step" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldCurrentStep(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentStep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentStep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentStep: %w", err)
+	}
+	return oldValue.CurrentStep, nil
+}
+
+// AddCurrentStep adds i to the "current_step" field.
+func (m *PipelineRunMutation) AddCurrentStep(i int32) {
+	if m.addcurrent_step != nil {
+		*m.addcurrent_step += i
+	} else {
+		m.addcurrent_step = &i
+	}
+}
+
+// AddedCurrentStep returns the value that was added to the "current_step" field in this mutation.
+func (m *PipelineRunMutation) AddedCurrentStep() (r int32, exists bool) {
+	v := m.addcurrent_step
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentStep resets all changes to the "current_step" field.
+func (m *PipelineRunMutation) ResetCurrentStep() {
+	m.current_step = nil
+	m.addcurrent_step = nil
+}
+
+// SetStepResults sets the "step_results" field.
+func (m *PipelineRunMutation) SetStepResults(s string) {
+	m.step_results = &s
+}
+
+// StepResults returns the value of the "step_results" field in the mutation.
+func (m *PipelineRunMutation) StepResults() (r string, exists bool) {
+	v := m.step_results
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStepResults returns the old "step_results" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldStepResults(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStepResults is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStepResults requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStepResults: %w", err)
+	}
+	return oldValue.StepResults, nil
+}
+
+// ClearStepResults clears the value of the "step_results" field.
+func (m *PipelineRunMutation) ClearStepResults() {
+	m.step_results = nil
+	m.clearedFields[pipelinerun.FieldStepResults] = struct{}{}
+}
+
+// StepResultsCleared returns if the "step_results" field was cleared in this mutation.
+func (m *PipelineRunMutation) StepResultsCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldStepResults]
+	return ok
+}
+
+// ResetStepResults resets all changes to the "step_results" field.
+func (m *PipelineRunMutation) ResetStepResults() {
+	m.step_results = nil
+	delete(m.clearedFields, pipelinerun.FieldStepResults)
+}
+
+// SetLog sets the "log" field.
+func (m *PipelineRunMutation) SetLog(s string) {
+	m.log = &s
+}
+
+// Log returns the value of the "log" field in the mutation.
+func (m *PipelineRunMutation) Log() (r string, exists bool) {
+	v := m.log
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLog returns the old "log" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldLog(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLog is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLog requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLog: %w", err)
+	}
+	return oldValue.Log, nil
+}
+
+// ClearLog clears the value of the "log" field.
+func (m *PipelineRunMutation) ClearLog() {
+	m.log = nil
+	m.clearedFields[pipelinerun.FieldLog] = struct{}{}
+}
+
+// LogCleared returns if the "log" field was cleared in this mutation.
+func (m *PipelineRunMutation) LogCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldLog]
+	return ok
+}
+
+// ResetLog resets all changes to the "log" field.
+func (m *PipelineRunMutation) ResetLog() {
+	m.log = nil
+	delete(m.clearedFields, pipelinerun.FieldLog)
+}
+
+// SetError sets the "error" field.
+func (m *PipelineRunMutation) SetError(s string) {
+	m.error = &s
+}
+
+// Error returns the value of the "error" field in the mutation.
+func (m *PipelineRunMutation) Error() (r string, exists bool) {
+	v := m.error
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldError returns the old "error" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldError(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldError is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldError requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldError: %w", err)
+	}
+	return oldValue.Error, nil
+}
+
+// ClearError clears the value of the "error" field.
+func (m *PipelineRunMutation) ClearError() {
+	m.error = nil
+	m.clearedFields[pipelinerun.FieldError] = struct{}{}
+}
+
+// ErrorCleared returns if the "error" field was cleared in this mutation.
+func (m *PipelineRunMutation) ErrorCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldError]
+	return ok
+}
+
+// ResetError resets all changes to the "error" field.
+func (m *PipelineRunMutation) ResetError() {
+	m.error = nil
+	delete(m.clearedFields, pipelinerun.FieldError)
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *PipelineRunMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *PipelineRunMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *PipelineRunMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[pipelinerun.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *PipelineRunMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *PipelineRunMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, pipelinerun.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *PipelineRunMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *PipelineRunMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *PipelineRunMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[pipelinerun.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *PipelineRunMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *PipelineRunMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, pipelinerun.FieldFinishedAt)
+}
+
+// SetOperatorID sets the "operator_id" field.
+func (m *PipelineRunMutation) SetOperatorID(u uint32) {
+	m.operator_id = &u
+	m.addoperator_id = nil
+}
+
+// OperatorID returns the value of the "operator_id" field in the mutation.
+func (m *PipelineRunMutation) OperatorID() (r uint32, exists bool) {
+	v := m.operator_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperatorID returns the old "operator_id" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldOperatorID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperatorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperatorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperatorID: %w", err)
+	}
+	return oldValue.OperatorID, nil
+}
+
+// AddOperatorID adds u to the "operator_id" field.
+func (m *PipelineRunMutation) AddOperatorID(u int32) {
+	if m.addoperator_id != nil {
+		*m.addoperator_id += u
+	} else {
+		m.addoperator_id = &u
+	}
+}
+
+// AddedOperatorID returns the value that was added to the "operator_id" field in this mutation.
+func (m *PipelineRunMutation) AddedOperatorID() (r int32, exists bool) {
+	v := m.addoperator_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearOperatorID clears the value of the "operator_id" field.
+func (m *PipelineRunMutation) ClearOperatorID() {
+	m.operator_id = nil
+	m.addoperator_id = nil
+	m.clearedFields[pipelinerun.FieldOperatorID] = struct{}{}
+}
+
+// OperatorIDCleared returns if the "operator_id" field was cleared in this mutation.
+func (m *PipelineRunMutation) OperatorIDCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldOperatorID]
+	return ok
+}
+
+// ResetOperatorID resets all changes to the "operator_id" field.
+func (m *PipelineRunMutation) ResetOperatorID() {
+	m.operator_id = nil
+	m.addoperator_id = nil
+	delete(m.clearedFields, pipelinerun.FieldOperatorID)
+}
+
+// Where appends a list predicates to the PipelineRunMutation builder.
+func (m *PipelineRunMutation) Where(ps ...predicate.PipelineRun) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PipelineRunMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PipelineRunMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PipelineRun, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PipelineRunMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PipelineRunMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PipelineRun).
+func (m *PipelineRunMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PipelineRunMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, pipelinerun.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, pipelinerun.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, pipelinerun.FieldDeletedAt)
+	}
+	if m.pipeline_id != nil {
+		fields = append(fields, pipelinerun.FieldPipelineID)
+	}
+	if m.status != nil {
+		fields = append(fields, pipelinerun.FieldStatus)
+	}
+	if m.steps != nil {
+		fields = append(fields, pipelinerun.FieldSteps)
+	}
+	if m.current_step != nil {
+		fields = append(fields, pipelinerun.FieldCurrentStep)
+	}
+	if m.step_results != nil {
+		fields = append(fields, pipelinerun.FieldStepResults)
+	}
+	if m.log != nil {
+		fields = append(fields, pipelinerun.FieldLog)
+	}
+	if m.error != nil {
+		fields = append(fields, pipelinerun.FieldError)
+	}
+	if m.started_at != nil {
+		fields = append(fields, pipelinerun.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, pipelinerun.FieldFinishedAt)
+	}
+	if m.operator_id != nil {
+		fields = append(fields, pipelinerun.FieldOperatorID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PipelineRunMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case pipelinerun.FieldCreatedAt:
+		return m.CreatedAt()
+	case pipelinerun.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case pipelinerun.FieldDeletedAt:
+		return m.DeletedAt()
+	case pipelinerun.FieldPipelineID:
+		return m.PipelineID()
+	case pipelinerun.FieldStatus:
+		return m.Status()
+	case pipelinerun.FieldSteps:
+		return m.Steps()
+	case pipelinerun.FieldCurrentStep:
+		return m.CurrentStep()
+	case pipelinerun.FieldStepResults:
+		return m.StepResults()
+	case pipelinerun.FieldLog:
+		return m.Log()
+	case pipelinerun.FieldError:
+		return m.Error()
+	case pipelinerun.FieldStartedAt:
+		return m.StartedAt()
+	case pipelinerun.FieldFinishedAt:
+		return m.FinishedAt()
+	case pipelinerun.FieldOperatorID:
+		return m.OperatorID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PipelineRunMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case pipelinerun.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case pipelinerun.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case pipelinerun.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case pipelinerun.FieldPipelineID:
+		return m.OldPipelineID(ctx)
+	case pipelinerun.FieldStatus:
+		return m.OldStatus(ctx)
+	case pipelinerun.FieldSteps:
+		return m.OldSteps(ctx)
+	case pipelinerun.FieldCurrentStep:
+		return m.OldCurrentStep(ctx)
+	case pipelinerun.FieldStepResults:
+		return m.OldStepResults(ctx)
+	case pipelinerun.FieldLog:
+		return m.OldLog(ctx)
+	case pipelinerun.FieldError:
+		return m.OldError(ctx)
+	case pipelinerun.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case pipelinerun.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	case pipelinerun.FieldOperatorID:
+		return m.OldOperatorID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PipelineRun field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PipelineRunMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case pipelinerun.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case pipelinerun.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case pipelinerun.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case pipelinerun.FieldPipelineID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPipelineID(v)
+		return nil
+	case pipelinerun.FieldStatus:
+		v, ok := value.(pipelinerun.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case pipelinerun.FieldSteps:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSteps(v)
+		return nil
+	case pipelinerun.FieldCurrentStep:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentStep(v)
+		return nil
+	case pipelinerun.FieldStepResults:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStepResults(v)
+		return nil
+	case pipelinerun.FieldLog:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLog(v)
+		return nil
+	case pipelinerun.FieldError:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetError(v)
+		return nil
+	case pipelinerun.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case pipelinerun.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	case pipelinerun.FieldOperatorID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperatorID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PipelineRun field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PipelineRunMutation) AddedFields() []string {
+	var fields []string
+	if m.addpipeline_id != nil {
+		fields = append(fields, pipelinerun.FieldPipelineID)
+	}
+	if m.addcurrent_step != nil {
+		fields = append(fields, pipelinerun.FieldCurrentStep)
+	}
+	if m.addoperator_id != nil {
+		fields = append(fields, pipelinerun.FieldOperatorID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PipelineRunMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case pipelinerun.FieldPipelineID:
+		return m.AddedPipelineID()
+	case pipelinerun.FieldCurrentStep:
+		return m.AddedCurrentStep()
+	case pipelinerun.FieldOperatorID:
+		return m.AddedOperatorID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PipelineRunMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case pipelinerun.FieldPipelineID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPipelineID(v)
+		return nil
+	case pipelinerun.FieldCurrentStep:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentStep(v)
+		return nil
+	case pipelinerun.FieldOperatorID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOperatorID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PipelineRun numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PipelineRunMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(pipelinerun.FieldCreatedAt) {
+		fields = append(fields, pipelinerun.FieldCreatedAt)
+	}
+	if m.FieldCleared(pipelinerun.FieldUpdatedAt) {
+		fields = append(fields, pipelinerun.FieldUpdatedAt)
+	}
+	if m.FieldCleared(pipelinerun.FieldDeletedAt) {
+		fields = append(fields, pipelinerun.FieldDeletedAt)
+	}
+	if m.FieldCleared(pipelinerun.FieldStatus) {
+		fields = append(fields, pipelinerun.FieldStatus)
+	}
+	if m.FieldCleared(pipelinerun.FieldSteps) {
+		fields = append(fields, pipelinerun.FieldSteps)
+	}
+	if m.FieldCleared(pipelinerun.FieldStepResults) {
+		fields = append(fields, pipelinerun.FieldStepResults)
+	}
+	if m.FieldCleared(pipelinerun.FieldLog) {
+		fields = append(fields, pipelinerun.FieldLog)
+	}
+	if m.FieldCleared(pipelinerun.FieldError) {
+		fields = append(fields, pipelinerun.FieldError)
+	}
+	if m.FieldCleared(pipelinerun.FieldStartedAt) {
+		fields = append(fields, pipelinerun.FieldStartedAt)
+	}
+	if m.FieldCleared(pipelinerun.FieldFinishedAt) {
+		fields = append(fields, pipelinerun.FieldFinishedAt)
+	}
+	if m.FieldCleared(pipelinerun.FieldOperatorID) {
+		fields = append(fields, pipelinerun.FieldOperatorID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PipelineRunMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PipelineRunMutation) ClearField(name string) error {
+	switch name {
+	case pipelinerun.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case pipelinerun.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case pipelinerun.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case pipelinerun.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case pipelinerun.FieldSteps:
+		m.ClearSteps()
+		return nil
+	case pipelinerun.FieldStepResults:
+		m.ClearStepResults()
+		return nil
+	case pipelinerun.FieldLog:
+		m.ClearLog()
+		return nil
+	case pipelinerun.FieldError:
+		m.ClearError()
+		return nil
+	case pipelinerun.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case pipelinerun.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
+	case pipelinerun.FieldOperatorID:
+		m.ClearOperatorID()
+		return nil
+	}
+	return fmt.Errorf("unknown PipelineRun nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PipelineRunMutation) ResetField(name string) error {
+	switch name {
+	case pipelinerun.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case pipelinerun.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case pipelinerun.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case pipelinerun.FieldPipelineID:
+		m.ResetPipelineID()
+		return nil
+	case pipelinerun.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case pipelinerun.FieldSteps:
+		m.ResetSteps()
+		return nil
+	case pipelinerun.FieldCurrentStep:
+		m.ResetCurrentStep()
+		return nil
+	case pipelinerun.FieldStepResults:
+		m.ResetStepResults()
+		return nil
+	case pipelinerun.FieldLog:
+		m.ResetLog()
+		return nil
+	case pipelinerun.FieldError:
+		m.ResetError()
+		return nil
+	case pipelinerun.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case pipelinerun.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	case pipelinerun.FieldOperatorID:
+		m.ResetOperatorID()
+		return nil
+	}
+	return fmt.Errorf("unknown PipelineRun field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PipelineRunMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PipelineRunMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PipelineRunMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PipelineRunMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PipelineRunMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PipelineRunMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PipelineRunMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PipelineRun unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PipelineRunMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PipelineRun edge %s", name)
 }
 
 // PolicyEvaluationLogMutation represents an operation that mutates the PolicyEvaluationLog nodes in the graph.

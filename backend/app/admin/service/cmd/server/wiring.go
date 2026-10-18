@@ -120,6 +120,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
 	fileServiceClient := data.NewFileServiceClient(ctx, discovery)
 	terminalServiceClient := data.NewTerminalServiceClient(ctx, discovery)
+	pipelineServiceClient := data.NewPipelineServiceClient(ctx, discovery)
 	repositoryServiceClient := data.NewRepositoryServiceClient(ctx, discovery)
 	buildServiceClient := data.NewBuildServiceClient(ctx, discovery)
 	buildHistoryServiceClient := data.NewBuildHistoryServiceClient(ctx, discovery)
@@ -167,6 +168,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	approvalService := service.NewApprovalService(ctx, approvalServiceClient)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelServiceClient)
 	fileService := service.NewFileService(ctx, fileServiceClient)
+	pipelineService := service.NewPipelineService(ctx, pipelineServiceClient)
 
 	// 字典与多语言
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
@@ -201,6 +203,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		monitorService, alertService,
 		approvalService, notificationChannelService,
 		fileService,
+		pipelineService,
 		terminalWsHandler,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,

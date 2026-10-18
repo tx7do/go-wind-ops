@@ -92,6 +92,18 @@ func (f BuildHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BuildHistoryMutation", m)
 }
 
+// The BuildPipelineFunc type is an adapter to allow the use of ordinary
+// function as BuildPipeline mutator.
+type BuildPipelineFunc func(context.Context, *ent.BuildPipelineMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BuildPipelineFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BuildPipelineMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BuildPipelineMutation", m)
+}
+
 // The CommandRecordFunc type is an adapter to allow the use of ordinary
 // function as CommandRecord mutator.
 type CommandRecordFunc func(context.Context, *ent.CommandRecordMutation) (ent.Value, error)
@@ -414,6 +426,18 @@ func (f PermissionPolicyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PermissionPolicyMutation", m)
+}
+
+// The PipelineRunFunc type is an adapter to allow the use of ordinary
+// function as PipelineRun mutator.
+type PipelineRunFunc func(context.Context, *ent.PipelineRunMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PipelineRunFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PipelineRunMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PipelineRunMutation", m)
 }
 
 // The PolicyEvaluationLogFunc type is an adapter to allow the use of ordinary

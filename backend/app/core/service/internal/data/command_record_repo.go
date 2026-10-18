@@ -149,6 +149,13 @@ func (r *CommandRecordRepo) Create(ctx context.Context, requestID string, nodeID
 	return record, nil
 }
 
+// GetByRequestID 按幂等键取指令记录(流水线脚本步骤轮询终态用)。
+func (r *CommandRecordRepo) GetByRequestID(ctx context.Context, requestID string) (*ent.CommandRecord, error) {
+	return r.entClient.Client().CommandRecord.Query().
+		Where(commandrecord.RequestIDEQ(requestID)).
+		First(ctx)
+}
+
 // FinalizeByRequestID 按幂等键回填台账终态;记录不存在或已终态时静默返回
 // (重复回执/手工注入场景)。
 func (r *CommandRecordRepo) FinalizeByRequestID(ctx context.Context, requestID, status, errMsg, result string) error {

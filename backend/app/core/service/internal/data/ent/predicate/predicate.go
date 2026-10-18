@@ -27,6 +27,9 @@ type Build func(*sql.Selector)
 // BuildHistory is the predicate function for buildhistory builders.
 type BuildHistory func(*sql.Selector)
 
+// BuildPipeline is the predicate function for buildpipeline builders.
+type BuildPipeline func(*sql.Selector)
+
 // CommandRecord is the predicate function for commandrecord builders.
 type CommandRecord func(*sql.Selector)
 
@@ -107,6 +110,9 @@ type PermissionMenu func(*sql.Selector)
 
 // PermissionPolicy is the predicate function for permissionpolicy builders.
 type PermissionPolicy func(*sql.Selector)
+
+// PipelineRun is the predicate function for pipelinerun builders.
+type PipelineRun func(*sql.Selector)
 
 // PolicyEvaluationLog is the predicate function for policyevaluationlog builders.
 type PolicyEvaluationLog func(*sql.Selector)

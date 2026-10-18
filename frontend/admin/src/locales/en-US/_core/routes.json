@@ -7,6 +7,7 @@
   "scripts": "Scripts",
   "repositories": "Repositories",
   "builds": "Builds",
+  "pipelines": "Pipelines",
   "distributions": "Distributions",
   "file-manager": "File Manager",
   "command-records": "Command Records",

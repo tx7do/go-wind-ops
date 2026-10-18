@@ -75,6 +75,7 @@ func NewGrpcServer(
 	approvalService *service.ApprovalService,
 	fileService *service.FileService,
 	terminalService *service.TerminalService,
+	pipelineService *service.PipelineService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -132,6 +133,7 @@ func NewGrpcServer(
 	opsV1.RegisterApprovalServiceServer(srv, approvalService)
 	opsV1.RegisterFileServiceServer(srv, fileService)
 	opsV1.RegisterTerminalServiceServer(srv, terminalService)
+	opsV1.RegisterPipelineServiceServer(srv, pipelineService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

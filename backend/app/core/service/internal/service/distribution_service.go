@@ -186,6 +186,7 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	var firstRecordID uint32
 	var firstRequestID string
 	var dispatched, failed int
+	var recordIDs []uint32
 	for _, pid := range dist.GetProjectIds() {
 		pid := pid
 		project, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &pid})
@@ -252,6 +253,7 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 			firstRecordID = record.ID
 			firstRequestID = requestId
 		}
+		recordIDs = append(recordIDs, record.ID)
 		dispatched++
 	}
 
@@ -264,6 +266,7 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	return &opsV1.TriggerDistributionResponse{
 		RecordId:         firstRecordID,
 		CommandRequestId: firstRequestID,
+		RecordIds:        recordIDs,
 	}, nil
 }
 // latestSuccessHistoryID 取构建配置最新的 SUCCESS 历史;无则报错。

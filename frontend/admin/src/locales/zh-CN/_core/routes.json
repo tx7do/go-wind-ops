@@ -7,6 +7,7 @@
   "scripts": "脚本管理",
   "repositories": "源仓库",
   "builds": "构建管理",
+  "pipelines": "构建流水线",
   "distributions": "分发管理",
   "file-manager": "文件管理",
   "command-records": "指令台账",
