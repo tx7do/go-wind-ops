@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AgentNodeService_ListAgentNodes_FullMethodName  = "/ops.service.v1.AgentNodeService/ListAgentNodes"
-	AgentNodeService_GetAgentNode_FullMethodName    = "/ops.service.v1.AgentNodeService/GetAgentNode"
-	AgentNodeService_UpdateAgentNode_FullMethodName = "/ops.service.v1.AgentNodeService/UpdateAgentNode"
-	AgentNodeService_DeleteAgentNode_FullMethodName = "/ops.service.v1.AgentNodeService/DeleteAgentNode"
-	AgentNodeService_SendCommand_FullMethodName     = "/ops.service.v1.AgentNodeService/SendCommand"
+	AgentNodeService_ListAgentNodes_FullMethodName        = "/ops.service.v1.AgentNodeService/ListAgentNodes"
+	AgentNodeService_GetAgentNode_FullMethodName          = "/ops.service.v1.AgentNodeService/GetAgentNode"
+	AgentNodeService_UpdateAgentNode_FullMethodName       = "/ops.service.v1.AgentNodeService/UpdateAgentNode"
+	AgentNodeService_DeleteAgentNode_FullMethodName       = "/ops.service.v1.AgentNodeService/DeleteAgentNode"
+	AgentNodeService_SendCommand_FullMethodName           = "/ops.service.v1.AgentNodeService/SendCommand"
+	AgentNodeService_GetNodeMetricsHistory_FullMethodName = "/ops.service.v1.AgentNodeService/GetNodeMetricsHistory"
 )
 
 // AgentNodeServiceClient is the client API for AgentNodeService service.
@@ -47,6 +48,8 @@ type AgentNodeServiceClient interface {
 	// 向节点下发指令(如 ping),返回幂等 request_id;执行结果经 MQTT
 	// command/result 回传,当前记录在 core 日志(审计落库为后续迭代)。
 	SendCommand(ctx context.Context, in *SendCommandRequest, opts ...grpc.CallOption) (*SendCommandResponse, error)
+	// 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
+	GetNodeMetricsHistory(ctx context.Context, in *GetNodeMetricsHistoryRequest, opts ...grpc.CallOption) (*GetNodeMetricsHistoryResponse, error)
 }
 
 type agentNodeServiceClient struct {
@@ -107,6 +110,16 @@ func (c *agentNodeServiceClient) SendCommand(ctx context.Context, in *SendComman
 	return out, nil
 }
 
+func (c *agentNodeServiceClient) GetNodeMetricsHistory(ctx context.Context, in *GetNodeMetricsHistoryRequest, opts ...grpc.CallOption) (*GetNodeMetricsHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNodeMetricsHistoryResponse)
+	err := c.cc.Invoke(ctx, AgentNodeService_GetNodeMetricsHistory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentNodeServiceServer is the server API for AgentNodeService service.
 // All implementations must embed UnimplementedAgentNodeServiceServer
 // for forward compatibility.
@@ -126,6 +139,8 @@ type AgentNodeServiceServer interface {
 	// 向节点下发指令(如 ping),返回幂等 request_id;执行结果经 MQTT
 	// command/result 回传,当前记录在 core 日志(审计落库为后续迭代)。
 	SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error)
+	// 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
+	GetNodeMetricsHistory(context.Context, *GetNodeMetricsHistoryRequest) (*GetNodeMetricsHistoryResponse, error)
 	mustEmbedUnimplementedAgentNodeServiceServer()
 }
 
@@ -150,6 +165,9 @@ func (UnimplementedAgentNodeServiceServer) DeleteAgentNode(context.Context, *Del
 }
 func (UnimplementedAgentNodeServiceServer) SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendCommand not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) GetNodeMetricsHistory(context.Context, *GetNodeMetricsHistoryRequest) (*GetNodeMetricsHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNodeMetricsHistory not implemented")
 }
 func (UnimplementedAgentNodeServiceServer) mustEmbedUnimplementedAgentNodeServiceServer() {}
 func (UnimplementedAgentNodeServiceServer) testEmbeddedByValue()                          {}
@@ -262,6 +280,24 @@ func _AgentNodeService_SendCommand_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentNodeService_GetNodeMetricsHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNodeMetricsHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).GetNodeMetricsHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_GetNodeMetricsHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).GetNodeMetricsHistory(ctx, req.(*GetNodeMetricsHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentNodeService_ServiceDesc is the grpc.ServiceDesc for AgentNodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +324,10 @@ var AgentNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendCommand",
 			Handler:    _AgentNodeService_SendCommand_Handler,
+		},
+		{
+			MethodName: "GetNodeMetricsHistory",
+			Handler:    _AgentNodeService_GetNodeMetricsHistory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

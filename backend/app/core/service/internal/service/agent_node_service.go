@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -21,16 +22,18 @@ import (
 type AgentNodeService struct {
 	opsV1.UnimplementedAgentNodeServiceServer
 
-	log  *log.Helper
-	repo *data.AgentNodeRepo
+	log        *log.Helper
+	repo       *data.AgentNodeRepo
+	metricRepo *data.NodeMetricRepo
 
 	agentService *AgentService
 }
 
-func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, agentService *AgentService) *AgentNodeService {
+func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, metricRepo *data.NodeMetricRepo, agentService *AgentService) *AgentNodeService {
 	return &AgentNodeService{
-		log:          ctx.NewLoggerHelper("agent-node/service/core-service"),
-		repo:         repo,
+		log:        ctx.NewLoggerHelper("agent-node/service/core-service"),
+		repo:       repo,
+		metricRepo: metricRepo,
 		agentService: agentService,
 	}
 }
@@ -101,6 +104,41 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 	}
 
 	return &opsV1.SendCommandResponse{RequestId: requestId}, nil
+}
+
+// GetNodeMetricsHistory 查询节点心跳指标时间序列。
+func (s *AgentNodeService) GetNodeMetricsHistory(ctx context.Context, req *opsV1.GetNodeMetricsHistoryRequest) (*opsV1.GetNodeMetricsHistoryResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+
+	hours := int32(req.GetHours())
+	if hours <= 0 {
+		hours = 1
+	}
+	if hours > 168 {
+		hours = 168
+	}
+
+	to := time.Now()
+	from := to.Add(-time.Duration(hours) * time.Hour)
+
+	// 先解析 agentId(指标表按 node_id 索引,这里 id 即 node_id)
+	points, err := s.metricRepo.ListByNodeAndTimeRange(ctx, req.GetId(), from, to)
+	if err != nil {
+		return nil, opsV1.ErrorInternalServerError("query metrics failed")
+	}
+
+	resp := &opsV1.GetNodeMetricsHistoryResponse{}
+	for _, p := range points {
+		resp.Points = append(resp.GetPoints(), &opsV1.GetNodeMetricsHistoryResponse_MetricPoint{
+			Time:              p.Time.Format(time.RFC3339),
+			CpuPercent:        p.CPUPercent,
+			MemoryUsedPercent: p.MemoryUsedPercent,
+			DiskUsedPercent:   p.DiskUsedPercent,
+		})
+	}
+	return resp, nil
 }
 
 // operatorID 从传输层元数据提取操作者(由 admin BFF 的 gRPC 客户端中间件注入)。

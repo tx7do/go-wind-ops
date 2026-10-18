@@ -46,4 +46,11 @@ service AgentNodeService {
       body: "*"
     };
   }
+
+  // 查询节点心跳指标历史
+  rpc GetMetrics (ops.service.v1.GetNodeMetricsHistoryRequest) returns (ops.service.v1.GetNodeMetricsHistoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/agent-nodes/{id}/metrics"
+    };
+  }
 }

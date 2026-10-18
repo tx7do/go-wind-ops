@@ -24,6 +24,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationAgentNodeServiceDelete = "/admin.service.v1.AgentNodeService/Delete"
 const OperationAgentNodeServiceGet = "/admin.service.v1.AgentNodeService/Get"
+const OperationAgentNodeServiceGetMetrics = "/admin.service.v1.AgentNodeService/GetMetrics"
 const OperationAgentNodeServiceList = "/admin.service.v1.AgentNodeService/List"
 const OperationAgentNodeServiceSendCommand = "/admin.service.v1.AgentNodeService/SendCommand"
 const OperationAgentNodeServiceUpdate = "/admin.service.v1.AgentNodeService/Update"
@@ -33,6 +34,8 @@ type AgentNodeServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeleteAgentNodeRequest) (*emptypb.Empty, error)
 	// Get 查询节点详情
 	Get(context.Context, *v11.GetAgentNodeRequest) (*v11.AgentNode, error)
+	// GetMetrics 查询节点心跳指标历史
+	GetMetrics(context.Context, *v11.GetNodeMetricsHistoryRequest) (*v11.GetNodeMetricsHistoryResponse, error)
 	// List 查询节点列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListAgentNodeResponse, error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
@@ -48,6 +51,7 @@ func RegisterAgentNodeServiceHTTPServer(s *http.Server, srv AgentNodeServiceHTTP
 	r.PUT("/admin/v1/agent-nodes/{id}", _AgentNodeService_Update0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/agent-nodes/{id}", _AgentNodeService_Delete0_HTTP_Handler(srv))
 	r.POST("/admin/v1/agent-nodes/{id}/commands:send", _AgentNodeService_SendCommand0_HTTP_Handler(srv))
+	r.GET("/admin/v1/agent-nodes/{id}/metrics", _AgentNodeService_GetMetrics0_HTTP_Handler(srv))
 }
 
 func _AgentNodeService_List0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
@@ -163,11 +167,35 @@ func _AgentNodeService_SendCommand0_HTTP_Handler(srv AgentNodeServiceHTTPServer)
 	}
 }
 
+func _AgentNodeService_GetMetrics0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetNodeMetricsHistoryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAgentNodeServiceGetMetrics)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetMetrics(ctx, req.(*v11.GetNodeMetricsHistoryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetNodeMetricsHistoryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AgentNodeServiceHTTPClient interface {
 	// Delete 删除节点记录
 	Delete(ctx context.Context, req *v11.DeleteAgentNodeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 查询节点详情
 	Get(ctx context.Context, req *v11.GetAgentNodeRequest, opts ...http.CallOption) (rsp *v11.AgentNode, err error)
+	// GetMetrics 查询节点心跳指标历史
+	GetMetrics(ctx context.Context, req *v11.GetNodeMetricsHistoryRequest, opts ...http.CallOption) (rsp *v11.GetNodeMetricsHistoryResponse, err error)
 	// List 查询节点列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListAgentNodeResponse, err error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
@@ -204,6 +232,20 @@ func (c *AgentNodeServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetAge
 	pattern := "/admin/v1/agent-nodes/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAgentNodeServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetMetrics 查询节点心跳指标历史
+func (c *AgentNodeServiceHTTPClientImpl) GetMetrics(ctx context.Context, in *v11.GetNodeMetricsHistoryRequest, opts ...http.CallOption) (*v11.GetNodeMetricsHistoryResponse, error) {
+	var out v11.GetNodeMetricsHistoryResponse
+	pattern := "/admin/v1/agent-nodes/{id}/metrics"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAgentNodeServiceGetMetrics))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

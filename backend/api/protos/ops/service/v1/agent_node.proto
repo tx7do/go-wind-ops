@@ -32,6 +32,9 @@ service AgentNodeService {
   // 向节点下发指令(如 ping),返回幂等 request_id;执行结果经 MQTT
   // command/result 回传,当前记录在 core 日志(审计落库为后续迭代)。
   rpc SendCommand (SendCommandRequest) returns (SendCommandResponse) {}
+
+  // 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
+  rpc GetNodeMetricsHistory (GetNodeMetricsHistoryRequest) returns (GetNodeMetricsHistoryResponse) {}
 }
 
 // 节点在线状态
@@ -241,4 +244,28 @@ message SendCommandRequest {
 
 message SendCommandResponse {
   string request_id = 1 [json_name = "requestId"]; // 幂等键,执行结果按此回执
+}
+
+message GetNodeMetricsHistoryRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 节点ID
+
+  optional int32 hours = 2 [
+    json_name = "hours",
+    (gnostic.openapi.v3.property) = {
+      description: "查询最近 N 小时(默认 1,上限 168)"
+    }
+  ]; // 查询时间范围(小时)
+}
+
+message GetNodeMetricsHistoryResponse {
+  message MetricPoint {
+    string time = 1 [json_name = "time"]; // ISO 8601
+    double cpu_percent = 2 [json_name = "cpuPercent"];
+    double memory_used_percent = 3 [json_name = "memoryUsedPercent"];
+    double disk_used_percent = 4 [json_name = "diskUsedPercent"];
+  }
+  repeated MetricPoint points = 1 [json_name = "points"];
 }

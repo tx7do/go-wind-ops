@@ -603,6 +603,170 @@ func (x *SendCommandResponse) GetRequestId() string {
 	return ""
 }
 
+type GetNodeMetricsHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`       // 节点ID
+	Hours         *int32                 `protobuf:"varint,2,opt,name=hours,proto3,oneof" json:"hours,omitempty"` // 查询时间范围(小时)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetNodeMetricsHistoryRequest) Reset() {
+	*x = GetNodeMetricsHistoryRequest{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetNodeMetricsHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetNodeMetricsHistoryRequest) ProtoMessage() {}
+
+func (x *GetNodeMetricsHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetNodeMetricsHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetNodeMetricsHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetNodeMetricsHistoryRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *GetNodeMetricsHistoryRequest) GetHours() int32 {
+	if x != nil && x.Hours != nil {
+		return *x.Hours
+	}
+	return 0
+}
+
+type GetNodeMetricsHistoryResponse struct {
+	state         protoimpl.MessageState                       `protogen:"open.v1"`
+	Points        []*GetNodeMetricsHistoryResponse_MetricPoint `protobuf:"bytes,1,rep,name=points,proto3" json:"points,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetNodeMetricsHistoryResponse) Reset() {
+	*x = GetNodeMetricsHistoryResponse{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetNodeMetricsHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetNodeMetricsHistoryResponse) ProtoMessage() {}
+
+func (x *GetNodeMetricsHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetNodeMetricsHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetNodeMetricsHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetNodeMetricsHistoryResponse) GetPoints() []*GetNodeMetricsHistoryResponse_MetricPoint {
+	if x != nil {
+		return x.Points
+	}
+	return nil
+}
+
+type GetNodeMetricsHistoryResponse_MetricPoint struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Time              string                 `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"` // ISO 8601
+	CpuPercent        float64                `protobuf:"fixed64,2,opt,name=cpu_percent,json=cpuPercent,proto3" json:"cpu_percent,omitempty"`
+	MemoryUsedPercent float64                `protobuf:"fixed64,3,opt,name=memory_used_percent,json=memoryUsedPercent,proto3" json:"memory_used_percent,omitempty"`
+	DiskUsedPercent   float64                `protobuf:"fixed64,4,opt,name=disk_used_percent,json=diskUsedPercent,proto3" json:"disk_used_percent,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) Reset() {
+	*x = GetNodeMetricsHistoryResponse_MetricPoint{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetNodeMetricsHistoryResponse_MetricPoint) ProtoMessage() {}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetNodeMetricsHistoryResponse_MetricPoint.ProtoReflect.Descriptor instead.
+func (*GetNodeMetricsHistoryResponse_MetricPoint) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8, 0}
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) GetTime() string {
+	if x != nil {
+		return x.Time
+	}
+	return ""
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) GetCpuPercent() float64 {
+	if x != nil {
+		return x.CpuPercent
+	}
+	return 0
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) GetMemoryUsedPercent() float64 {
+	if x != nil {
+		return x.MemoryUsedPercent
+	}
+	return 0
+}
+
+func (x *GetNodeMetricsHistoryResponse_MetricPoint) GetDiskUsedPercent() float64 {
+	if x != nil {
+		return x.DiskUsedPercent
+	}
+	return 0
+}
+
 var File_ops_service_v1_agent_node_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_agent_node_proto_rawDesc = "" +
@@ -683,18 +847,32 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\b_payload\"4\n" +
 	"\x13SendCommandResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId*M\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\x96\x01\n" +
+	"\x1cGetNodeMetricsHistoryRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12K\n" +
+	"\x05hours\x18\x02 \x01(\x05B0\xbaG-\x92\x02*查询最近 N 小时(默认 1,上限 168)H\x01R\x05hours\x88\x01\x01B\x05\n" +
+	"\x03_idB\b\n" +
+	"\x06_hours\"\x93\x02\n" +
+	"\x1dGetNodeMetricsHistoryResponse\x12Q\n" +
+	"\x06points\x18\x01 \x03(\v29.ops.service.v1.GetNodeMetricsHistoryResponse.MetricPointR\x06points\x1a\x9e\x01\n" +
+	"\vMetricPoint\x12\x12\n" +
+	"\x04time\x18\x01 \x01(\tR\x04time\x12\x1f\n" +
+	"\vcpu_percent\x18\x02 \x01(\x01R\n" +
+	"cpuPercent\x12.\n" +
+	"\x13memory_used_percent\x18\x03 \x01(\x01R\x11memoryUsedPercent\x12*\n" +
+	"\x11disk_used_percent\x18\x04 \x01(\x01R\x0fdiskUsedPercent*M\n" +
 	"\x0fAgentNodeStatus\x12!\n" +
 	"\x1dAGENT_NODE_STATUS_UNSPECIFIED\x10\x00\x12\n" +
 	"\n" +
 	"\x06ONLINE\x10\x01\x12\v\n" +
-	"\aOFFLINE\x10\x022\xbe\x03\n" +
+	"\aOFFLINE\x10\x022\xb6\x04\n" +
 	"\x10AgentNodeService\x12T\n" +
 	"\x0eListAgentNodes\x12\x19.pagination.PagingRequest\x1a%.ops.service.v1.ListAgentNodeResponse\"\x00\x12P\n" +
 	"\fGetAgentNode\x12#.ops.service.v1.GetAgentNodeRequest\x1a\x19.ops.service.v1.AgentNode\"\x00\x12S\n" +
 	"\x0fUpdateAgentNode\x12&.ops.service.v1.UpdateAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
 	"\x0fDeleteAgentNode\x12&.ops.service.v1.DeleteAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\x00\x12X\n" +
-	"\vSendCommand\x12\".ops.service.v1.SendCommandRequest\x1a#.ops.service.v1.SendCommandResponse\"\x00B\xab\x01\n" +
+	"\vSendCommand\x12\".ops.service.v1.SendCommandRequest\x1a#.ops.service.v1.SendCommandResponse\"\x00\x12v\n" +
+	"\x15GetNodeMetricsHistory\x12,.ops.service.v1.GetNodeMetricsHistoryRequest\x1a-.ops.service.v1.GetNodeMetricsHistoryResponse\"\x00B\xab\x01\n" +
 	"\x12com.ops.service.v1B\x0eAgentNodeProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -710,44 +888,50 @@ func file_ops_service_v1_agent_node_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_agent_node_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_ops_service_v1_agent_node_proto_goTypes = []any{
-	(AgentNodeStatus)(0),           // 0: ops.service.v1.AgentNodeStatus
-	(*AgentNode)(nil),              // 1: ops.service.v1.AgentNode
-	(*ListAgentNodeResponse)(nil),  // 2: ops.service.v1.ListAgentNodeResponse
-	(*GetAgentNodeRequest)(nil),    // 3: ops.service.v1.GetAgentNodeRequest
-	(*UpdateAgentNodeRequest)(nil), // 4: ops.service.v1.UpdateAgentNodeRequest
-	(*DeleteAgentNodeRequest)(nil), // 5: ops.service.v1.DeleteAgentNodeRequest
-	(*SendCommandRequest)(nil),     // 6: ops.service.v1.SendCommandRequest
-	(*SendCommandResponse)(nil),    // 7: ops.service.v1.SendCommandResponse
-	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),  // 9: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),       // 10: pagination.PagingRequest
-	(*emptypb.Empty)(nil),          // 11: google.protobuf.Empty
+	(AgentNodeStatus)(0),                              // 0: ops.service.v1.AgentNodeStatus
+	(*AgentNode)(nil),                                 // 1: ops.service.v1.AgentNode
+	(*ListAgentNodeResponse)(nil),                     // 2: ops.service.v1.ListAgentNodeResponse
+	(*GetAgentNodeRequest)(nil),                       // 3: ops.service.v1.GetAgentNodeRequest
+	(*UpdateAgentNodeRequest)(nil),                    // 4: ops.service.v1.UpdateAgentNodeRequest
+	(*DeleteAgentNodeRequest)(nil),                    // 5: ops.service.v1.DeleteAgentNodeRequest
+	(*SendCommandRequest)(nil),                        // 6: ops.service.v1.SendCommandRequest
+	(*SendCommandResponse)(nil),                       // 7: ops.service.v1.SendCommandResponse
+	(*GetNodeMetricsHistoryRequest)(nil),              // 8: ops.service.v1.GetNodeMetricsHistoryRequest
+	(*GetNodeMetricsHistoryResponse)(nil),             // 9: ops.service.v1.GetNodeMetricsHistoryResponse
+	(*GetNodeMetricsHistoryResponse_MetricPoint)(nil), // 10: ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	(*timestamppb.Timestamp)(nil),                     // 11: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                     // 12: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                          // 13: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                             // 14: google.protobuf.Empty
 }
 var file_ops_service_v1_agent_node_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.AgentNode.status:type_name -> ops.service.v1.AgentNodeStatus
-	8,  // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
+	11, // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
+	11, // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: ops.service.v1.ListAgentNodeResponse.items:type_name -> ops.service.v1.AgentNode
 	1,  // 5: ops.service.v1.UpdateAgentNodeRequest.data:type_name -> ops.service.v1.AgentNode
-	9,  // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 7: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
-	3,  // 8: ops.service.v1.AgentNodeService.GetAgentNode:input_type -> ops.service.v1.GetAgentNodeRequest
-	4,  // 9: ops.service.v1.AgentNodeService.UpdateAgentNode:input_type -> ops.service.v1.UpdateAgentNodeRequest
-	5,  // 10: ops.service.v1.AgentNodeService.DeleteAgentNode:input_type -> ops.service.v1.DeleteAgentNodeRequest
-	6,  // 11: ops.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
-	2,  // 12: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
-	1,  // 13: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
-	11, // 14: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
-	11, // 15: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
-	7,  // 16: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	12, // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 7: ops.service.v1.GetNodeMetricsHistoryResponse.points:type_name -> ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	13, // 8: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
+	3,  // 9: ops.service.v1.AgentNodeService.GetAgentNode:input_type -> ops.service.v1.GetAgentNodeRequest
+	4,  // 10: ops.service.v1.AgentNodeService.UpdateAgentNode:input_type -> ops.service.v1.UpdateAgentNodeRequest
+	5,  // 11: ops.service.v1.AgentNodeService.DeleteAgentNode:input_type -> ops.service.v1.DeleteAgentNodeRequest
+	6,  // 12: ops.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
+	8,  // 13: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
+	2,  // 14: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
+	1,  // 15: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
+	14, // 16: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
+	14, // 17: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
+	7,  // 18: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
+	9,  // 19: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
+	14, // [14:20] is the sub-list for method output_type
+	8,  // [8:14] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_agent_node_proto_init() }
@@ -760,13 +944,14 @@ func file_ops_service_v1_agent_node_proto_init() {
 	file_ops_service_v1_agent_node_proto_msgTypes[3].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[5].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_agent_node_proto_rawDesc), len(file_ops_service_v1_agent_node_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   7,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

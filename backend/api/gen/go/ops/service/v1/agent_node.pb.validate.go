@@ -1034,3 +1034,365 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SendCommandResponseValidationError{}
+
+// Validate checks the field values on GetNodeMetricsHistoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetNodeMetricsHistoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetNodeMetricsHistoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetNodeMetricsHistoryRequestMultiError, or nil if none found.
+func (m *GetNodeMetricsHistoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetNodeMetricsHistoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Hours != nil {
+		// no validation rules for Hours
+	}
+
+	if len(errors) > 0 {
+		return GetNodeMetricsHistoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetNodeMetricsHistoryRequestMultiError is an error wrapping multiple
+// validation errors returned by GetNodeMetricsHistoryRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetNodeMetricsHistoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetNodeMetricsHistoryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetNodeMetricsHistoryRequestMultiError) AllErrors() []error { return m }
+
+// GetNodeMetricsHistoryRequestValidationError is the validation error returned
+// by GetNodeMetricsHistoryRequest.Validate if the designated constraints
+// aren't met.
+type GetNodeMetricsHistoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetNodeMetricsHistoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetNodeMetricsHistoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetNodeMetricsHistoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetNodeMetricsHistoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetNodeMetricsHistoryRequestValidationError) ErrorName() string {
+	return "GetNodeMetricsHistoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetNodeMetricsHistoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetNodeMetricsHistoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetNodeMetricsHistoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetNodeMetricsHistoryRequestValidationError{}
+
+// Validate checks the field values on GetNodeMetricsHistoryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetNodeMetricsHistoryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetNodeMetricsHistoryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetNodeMetricsHistoryResponseMultiError, or nil if none found.
+func (m *GetNodeMetricsHistoryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetNodeMetricsHistoryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPoints() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetNodeMetricsHistoryResponseValidationError{
+						field:  fmt.Sprintf("Points[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetNodeMetricsHistoryResponseValidationError{
+						field:  fmt.Sprintf("Points[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetNodeMetricsHistoryResponseValidationError{
+					field:  fmt.Sprintf("Points[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetNodeMetricsHistoryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetNodeMetricsHistoryResponseMultiError is an error wrapping multiple
+// validation errors returned by GetNodeMetricsHistoryResponse.ValidateAll()
+// if the designated constraints aren't met.
+type GetNodeMetricsHistoryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetNodeMetricsHistoryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetNodeMetricsHistoryResponseMultiError) AllErrors() []error { return m }
+
+// GetNodeMetricsHistoryResponseValidationError is the validation error
+// returned by GetNodeMetricsHistoryResponse.Validate if the designated
+// constraints aren't met.
+type GetNodeMetricsHistoryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetNodeMetricsHistoryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetNodeMetricsHistoryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetNodeMetricsHistoryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetNodeMetricsHistoryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetNodeMetricsHistoryResponseValidationError) ErrorName() string {
+	return "GetNodeMetricsHistoryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetNodeMetricsHistoryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetNodeMetricsHistoryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetNodeMetricsHistoryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetNodeMetricsHistoryResponseValidationError{}
+
+// Validate checks the field values on
+// GetNodeMetricsHistoryResponse_MetricPoint with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetNodeMetricsHistoryResponse_MetricPoint) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// GetNodeMetricsHistoryResponse_MetricPoint with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// GetNodeMetricsHistoryResponse_MetricPointMultiError, or nil if none found.
+func (m *GetNodeMetricsHistoryResponse_MetricPoint) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetNodeMetricsHistoryResponse_MetricPoint) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Time
+
+	// no validation rules for CpuPercent
+
+	// no validation rules for MemoryUsedPercent
+
+	// no validation rules for DiskUsedPercent
+
+	if len(errors) > 0 {
+		return GetNodeMetricsHistoryResponse_MetricPointMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetNodeMetricsHistoryResponse_MetricPointMultiError is an error wrapping
+// multiple validation errors returned by
+// GetNodeMetricsHistoryResponse_MetricPoint.ValidateAll() if the designated
+// constraints aren't met.
+type GetNodeMetricsHistoryResponse_MetricPointMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetNodeMetricsHistoryResponse_MetricPointMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetNodeMetricsHistoryResponse_MetricPointMultiError) AllErrors() []error { return m }
+
+// GetNodeMetricsHistoryResponse_MetricPointValidationError is the validation
+// error returned by GetNodeMetricsHistoryResponse_MetricPoint.Validate if the
+// designated constraints aren't met.
+type GetNodeMetricsHistoryResponse_MetricPointValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) ErrorName() string {
+	return "GetNodeMetricsHistoryResponse_MetricPointValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetNodeMetricsHistoryResponse_MetricPointValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetNodeMetricsHistoryResponse_MetricPoint.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetNodeMetricsHistoryResponse_MetricPointValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetNodeMetricsHistoryResponse_MetricPointValidationError{}

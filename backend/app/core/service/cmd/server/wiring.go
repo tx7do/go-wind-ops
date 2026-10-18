@@ -183,7 +183,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
 	metricRepo := data.NewNodeMetricRepo(ctx, entClient)
 	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, metricRepo, minIOClient)
-	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, agentService)
+	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, metricRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
 	scriptService := service.NewScriptService(ctx, scriptRepo, agentNodeRepo, agentService)

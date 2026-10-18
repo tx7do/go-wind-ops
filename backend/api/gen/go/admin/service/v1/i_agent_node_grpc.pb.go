@@ -27,6 +27,7 @@ const (
 	AgentNodeService_Update_FullMethodName      = "/admin.service.v1.AgentNodeService/Update"
 	AgentNodeService_Delete_FullMethodName      = "/admin.service.v1.AgentNodeService/Delete"
 	AgentNodeService_SendCommand_FullMethodName = "/admin.service.v1.AgentNodeService/SendCommand"
+	AgentNodeService_GetMetrics_FullMethodName  = "/admin.service.v1.AgentNodeService/GetMetrics"
 )
 
 // AgentNodeServiceClient is the client API for AgentNodeService service.
@@ -45,6 +46,8 @@ type AgentNodeServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeleteAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(ctx context.Context, in *v11.SendCommandRequest, opts ...grpc.CallOption) (*v11.SendCommandResponse, error)
+	// 查询节点心跳指标历史
+	GetMetrics(ctx context.Context, in *v11.GetNodeMetricsHistoryRequest, opts ...grpc.CallOption) (*v11.GetNodeMetricsHistoryResponse, error)
 }
 
 type agentNodeServiceClient struct {
@@ -105,6 +108,16 @@ func (c *agentNodeServiceClient) SendCommand(ctx context.Context, in *v11.SendCo
 	return out, nil
 }
 
+func (c *agentNodeServiceClient) GetMetrics(ctx context.Context, in *v11.GetNodeMetricsHistoryRequest, opts ...grpc.CallOption) (*v11.GetNodeMetricsHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.GetNodeMetricsHistoryResponse)
+	err := c.cc.Invoke(ctx, AgentNodeService_GetMetrics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentNodeServiceServer is the server API for AgentNodeService service.
 // All implementations must embed UnimplementedAgentNodeServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type AgentNodeServiceServer interface {
 	Delete(context.Context, *v11.DeleteAgentNodeRequest) (*emptypb.Empty, error)
 	// 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error)
+	// 查询节点心跳指标历史
+	GetMetrics(context.Context, *v11.GetNodeMetricsHistoryRequest) (*v11.GetNodeMetricsHistoryResponse, error)
 	mustEmbedUnimplementedAgentNodeServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedAgentNodeServiceServer) Delete(context.Context, *v11.DeleteAg
 }
 func (UnimplementedAgentNodeServiceServer) SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendCommand not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) GetMetrics(context.Context, *v11.GetNodeMetricsHistoryRequest) (*v11.GetNodeMetricsHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMetrics not implemented")
 }
 func (UnimplementedAgentNodeServiceServer) mustEmbedUnimplementedAgentNodeServiceServer() {}
 func (UnimplementedAgentNodeServiceServer) testEmbeddedByValue()                          {}
@@ -257,6 +275,24 @@ func _AgentNodeService_SendCommand_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentNodeService_GetMetrics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetNodeMetricsHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).GetMetrics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_GetMetrics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).GetMetrics(ctx, req.(*v11.GetNodeMetricsHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentNodeService_ServiceDesc is the grpc.ServiceDesc for AgentNodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var AgentNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendCommand",
 			Handler:    _AgentNodeService_SendCommand_Handler,
+		},
+		{
+			MethodName: "GetMetrics",
+			Handler:    _AgentNodeService_GetMetrics_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

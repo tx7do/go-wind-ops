@@ -307,6 +307,10 @@ export interface AgentNodeService {
   SendCommand(
     request: opsservicev1_SendCommandRequest,
   ): Promise<opsservicev1_SendCommandResponse>;
+  // 查询节点心跳指标历史
+  GetMetrics(
+    request: opsservicev1_GetNodeMetricsHistoryRequest,
+  ): Promise<opsservicev1_GetNodeMetricsHistoryResponse>;
 }
 
 export function createAgentNodeServiceClient(
@@ -471,6 +475,27 @@ export function createAgentNodeServiceClient(
         service: 'AgentNodeService',
         method: 'SendCommand',
       }) as Promise<opsservicev1_SendCommandResponse>;
+    },
+    GetMetrics(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/agent-nodes/${request.id}/metrics`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.hours) {
+        queryParams.push(
+          `hours=${encodeURIComponent(request.hours.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AgentNodeService',
+        method: 'GetMetrics',
+      }) as Promise<opsservicev1_GetNodeMetricsHistoryResponse>;
     },
   };
 }
@@ -756,6 +781,24 @@ export type opsservicev1_SendCommandRequest = {
 
 export type opsservicev1_SendCommandResponse = {
   requestId: string | undefined;
+};
+
+export type opsservicev1_GetNodeMetricsHistoryRequest = {
+  hours?: number;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_GetNodeMetricsHistoryResponse = {
+  points: opsservicev1_GetNodeMetricsHistoryResponse_MetricPoint[] | undefined;
+};
+
+export type opsservicev1_GetNodeMetricsHistoryResponse_MetricPoint = {
+  cpuPercent: number | undefined;
+  diskUsedPercent: number | undefined;
+  memoryUsedPercent: number | undefined;
+  time: string | undefined;
 };
 
 // AlertService 告警记录查询
