@@ -1,0 +1,22 @@
+{
+  "moduleName": "节点",
+  "name": "节点名称",
+  "status": "状态",
+  "statusOnline": "在线",
+  "statusOffline": "离线",
+  "hostname": "主机名",
+  "platform": "系统 / 架构",
+  "agentVersion": "版本",
+  "ips": "IP 地址",
+  "memory": "内存",
+  "disk": "磁盘",
+  "lastHeartbeatAt": "最后心跳",
+  "action": "操作",
+  "pingTooltip": "下发 ping 探测节点连通性",
+  "pingSent": "ping 已下发（request_id: {{requestId}}），结果见指令台账",
+  "pingFailed": "ping 下发失败",
+  "deleteSuccess": "节点已删除",
+  "deleteFailed": "删除失败",
+  "deleteConfirmTitle": "确认删除节点",
+  "deleteConfirmDesc": "确定删除{{moduleName}}「{{name}}」？若对应 agent 仍在线，重连后将按 TOFU 重新注册。"
+}

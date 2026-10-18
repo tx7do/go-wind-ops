@@ -1,0 +1,22 @@
+{
+  "moduleName": "agent node",
+  "name": "Name",
+  "status": "Status",
+  "statusOnline": "Online",
+  "statusOffline": "Offline",
+  "hostname": "Hostname",
+  "platform": "OS / Arch",
+  "agentVersion": "Version",
+  "ips": "IP Addresses",
+  "memory": "Memory",
+  "disk": "Disk",
+  "lastHeartbeatAt": "Last Heartbeat",
+  "action": "Actions",
+  "pingTooltip": "Send ping to probe node connectivity",
+  "pingSent": "Ping dispatched (request_id: {{requestId}}), see command records for result",
+  "pingFailed": "Failed to dispatch ping",
+  "deleteSuccess": "Agent node deleted",
+  "deleteFailed": "Delete failed",
+  "deleteConfirmTitle": "Delete agent node",
+  "deleteConfirmDesc": "Delete {{moduleName}} \"{{name}}\"? If the agent is still online, it will re-enroll via TOFU on reconnect."
+}

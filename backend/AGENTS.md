@@ -1,6 +1,6 @@
 # AGENTS.md — go-wind-ops 后端开发指南
 
-> 本文件是 backend 子项目的开发规范单一事实源，供开发者与 AI 编码工具使用。
+> 本文件是 backend 子项目的开发规范单一事实源，供开发者与 AI 编码工具使用。管理前端见 `frontend/admin`（React 19 + antd 6 + Vite 6，裁剪自 cms admin 前端；TS API 由后端 `cd api && buf generate --template buf.admin.typescript.gen.yaml` 生成到 `frontend/admin/src/api/generated`；dev 代理 `/admin` → 127.0.0.1:6600；页面加法五件套：api/hooks/页面/router/modules/locales，参照 `pages/app/ops/agent-node`）。
 
 ## 项目概览
 
