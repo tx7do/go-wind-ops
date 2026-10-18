@@ -71,6 +71,7 @@ func NewGrpcServer(
 	distributionService *service.DistributionService,
 	monitorService *service.MonitorService,
 	alertService *service.AlertService,
+	notificationChannelService *service.NotificationChannelService,
 	approvalService *service.ApprovalService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
@@ -125,6 +126,7 @@ func NewGrpcServer(
 	opsV1.RegisterDistributionServiceServer(srv, distributionService)
 	opsV1.RegisterMonitorServiceServer(srv, monitorService)
 	opsV1.RegisterAlertServiceServer(srv, alertService)
+	opsV1.RegisterNotificationChannelServiceServer(srv, notificationChannelService)
 	opsV1.RegisterApprovalServiceServer(srv, approvalService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)

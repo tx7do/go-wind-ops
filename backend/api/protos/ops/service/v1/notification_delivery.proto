@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "pagination/v1/pagination.proto";
+
+// NotificationDeliveryService 告警通知投递台账(只读)。
+service NotificationDeliveryService {
+  rpc ListDeliveries (pagination.PagingRequest) returns (ListNotificationDeliveryResponse) {}
+  rpc GetDelivery (GetNotificationDeliveryRequest) returns (NotificationDelivery) {}
+}
+
+message NotificationDelivery {
+  optional uint32 id = 1 [json_name = "id", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional uint32 alert_id = 2 [json_name = "alertId", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional uint32 channel_id = 3 [json_name = "channelId", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional string channel_type = 4 [json_name = "channelType", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional string target = 5 [json_name = "target", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional string status = 6 [json_name = "status", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional string last_error = 7 [json_name = "lastError", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional string title = 8 [json_name = "title", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional google.protobuf.Timestamp created_at = 30 [json_name = "createdAt", (google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message ListNotificationDeliveryResponse {
+  uint64 total = 1 [json_name = "total"];
+  repeated NotificationDelivery items = 2 [json_name = "items"];
+}
+
+message GetNotificationDeliveryRequest {
+  optional uint32 id = 1 [json_name = "id", (google.api.field_behavior) = REQUIRED];
+}

@@ -60,6 +60,10 @@ type Tx struct {
 	Monitor *MonitorClient
 	// NodeMetric is the client for interacting with the NodeMetric builders.
 	NodeMetric *NodeMetricClient
+	// NotificationChannel is the client for interacting with the NotificationChannel builders.
+	NotificationChannel *NotificationChannelClient
+	// NotificationDelivery is the client for interacting with the NotificationDelivery builders.
+	NotificationDelivery *NotificationDeliveryClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -261,6 +265,8 @@ func (tx *Tx) init() {
 	tx.Menu = NewMenuClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
 	tx.NodeMetric = NewNodeMetricClient(tx.config)
+	tx.NotificationChannel = NewNotificationChannelClient(tx.config)
+	tx.NotificationDelivery = NewNotificationDeliveryClient(tx.config)
 	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)

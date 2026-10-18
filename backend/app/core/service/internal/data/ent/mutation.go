@@ -33,6 +33,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
 	"go-wind-ops/app/core/service/internal/data/ent/nodemetric"
+	"go-wind-ops/app/core/service/internal/data/ent/notificationchannel"
+	"go-wind-ops/app/core/service/internal/data/ent/notificationdelivery"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -73,53 +75,55 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAgentNode           = "AgentNode"
-	TypeAlert               = "Alert"
-	TypeAPI                 = "Api"
-	TypeApiAuditLog         = "ApiAuditLog"
-	TypeApproval            = "Approval"
-	TypeBuild               = "Build"
-	TypeBuildHistory        = "BuildHistory"
-	TypeCommandRecord       = "CommandRecord"
-	TypeDataAccessAuditLog  = "DataAccessAuditLog"
-	TypeDictEntry           = "DictEntry"
-	TypeDictEntryI18n       = "DictEntryI18n"
-	TypeDictType            = "DictType"
-	TypeDistribution        = "Distribution"
-	TypeDistributionRecord  = "DistributionRecord"
-	TypeLanguage            = "Language"
-	TypeLoginAuditLog       = "LoginAuditLog"
-	TypeLoginPolicy         = "LoginPolicy"
-	TypeMembership          = "Membership"
-	TypeMembershipOrgUnit   = "MembershipOrgUnit"
-	TypeMembershipPosition  = "MembershipPosition"
-	TypeMembershipRole      = "MembershipRole"
-	TypeMenu                = "Menu"
-	TypeMonitor             = "Monitor"
-	TypeNodeMetric          = "NodeMetric"
-	TypeOperationAuditLog   = "OperationAuditLog"
-	TypeOrgUnit             = "OrgUnit"
-	TypePermission          = "Permission"
-	TypePermissionApi       = "PermissionApi"
-	TypePermissionAuditLog  = "PermissionAuditLog"
-	TypePermissionGroup     = "PermissionGroup"
-	TypePermissionMenu      = "PermissionMenu"
-	TypePermissionPolicy    = "PermissionPolicy"
-	TypePolicyEvaluationLog = "PolicyEvaluationLog"
-	TypePosition            = "Position"
-	TypeProject             = "Project"
-	TypeRepository          = "Repository"
-	TypeRole                = "Role"
-	TypeRoleMetadata        = "RoleMetadata"
-	TypeRolePermission      = "RolePermission"
-	TypeScript              = "Script"
-	TypeTask                = "Task"
-	TypeTenant              = "Tenant"
-	TypeUser                = "User"
-	TypeUserCredential      = "UserCredential"
-	TypeUserOrgUnit         = "UserOrgUnit"
-	TypeUserPosition        = "UserPosition"
-	TypeUserRole            = "UserRole"
+	TypeAgentNode            = "AgentNode"
+	TypeAlert                = "Alert"
+	TypeAPI                  = "Api"
+	TypeApiAuditLog          = "ApiAuditLog"
+	TypeApproval             = "Approval"
+	TypeBuild                = "Build"
+	TypeBuildHistory         = "BuildHistory"
+	TypeCommandRecord        = "CommandRecord"
+	TypeDataAccessAuditLog   = "DataAccessAuditLog"
+	TypeDictEntry            = "DictEntry"
+	TypeDictEntryI18n        = "DictEntryI18n"
+	TypeDictType             = "DictType"
+	TypeDistribution         = "Distribution"
+	TypeDistributionRecord   = "DistributionRecord"
+	TypeLanguage             = "Language"
+	TypeLoginAuditLog        = "LoginAuditLog"
+	TypeLoginPolicy          = "LoginPolicy"
+	TypeMembership           = "Membership"
+	TypeMembershipOrgUnit    = "MembershipOrgUnit"
+	TypeMembershipPosition   = "MembershipPosition"
+	TypeMembershipRole       = "MembershipRole"
+	TypeMenu                 = "Menu"
+	TypeMonitor              = "Monitor"
+	TypeNodeMetric           = "NodeMetric"
+	TypeNotificationChannel  = "NotificationChannel"
+	TypeNotificationDelivery = "NotificationDelivery"
+	TypeOperationAuditLog    = "OperationAuditLog"
+	TypeOrgUnit              = "OrgUnit"
+	TypePermission           = "Permission"
+	TypePermissionApi        = "PermissionApi"
+	TypePermissionAuditLog   = "PermissionAuditLog"
+	TypePermissionGroup      = "PermissionGroup"
+	TypePermissionMenu       = "PermissionMenu"
+	TypePermissionPolicy     = "PermissionPolicy"
+	TypePolicyEvaluationLog  = "PolicyEvaluationLog"
+	TypePosition             = "Position"
+	TypeProject              = "Project"
+	TypeRepository           = "Repository"
+	TypeRole                 = "Role"
+	TypeRoleMetadata         = "RoleMetadata"
+	TypeRolePermission       = "RolePermission"
+	TypeScript               = "Script"
+	TypeTask                 = "Task"
+	TypeTenant               = "Tenant"
+	TypeUser                 = "User"
+	TypeUserCredential       = "UserCredential"
+	TypeUserOrgUnit          = "UserOrgUnit"
+	TypeUserPosition         = "UserPosition"
+	TypeUserRole             = "UserRole"
 )
 
 // AgentNodeMutation represents an operation that mutates the AgentNode nodes in the graph.
@@ -37769,6 +37773,2760 @@ func (m *NodeMetricMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *NodeMetricMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown NodeMetric edge %s", name)
+}
+
+// NotificationChannelMutation represents an operation that mutates the NotificationChannel nodes in the graph.
+type NotificationChannelMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *uint32
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	created_by         *uint32
+	addcreated_by      *int32
+	updated_by         *uint32
+	addupdated_by      *int32
+	deleted_by         *uint32
+	adddeleted_by      *int32
+	name               *string
+	_type              *notificationchannel.Type
+	webhook_url        *string
+	webhook_secret     *string
+	webhook_sign_style *notificationchannel.WebhookSignStyle
+	smtp_host          *string
+	smtp_port          *int
+	addsmtp_port       *int
+	smtp_username      *string
+	smtp_password      *string
+	smtp_from          *string
+	enabled            *bool
+	description        *string
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*NotificationChannel, error)
+	predicates         []predicate.NotificationChannel
+}
+
+var _ ent.Mutation = (*NotificationChannelMutation)(nil)
+
+// notificationchannelOption allows management of the mutation configuration using functional options.
+type notificationchannelOption func(*NotificationChannelMutation)
+
+// newNotificationChannelMutation creates new mutation for the NotificationChannel entity.
+func newNotificationChannelMutation(c config, op Op, opts ...notificationchannelOption) *NotificationChannelMutation {
+	m := &NotificationChannelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNotificationChannel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNotificationChannelID sets the ID field of the mutation.
+func withNotificationChannelID(id uint32) notificationchannelOption {
+	return func(m *NotificationChannelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NotificationChannel
+		)
+		m.oldValue = func(ctx context.Context) (*NotificationChannel, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NotificationChannel.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNotificationChannel sets the old NotificationChannel of the mutation.
+func withNotificationChannel(node *NotificationChannel) notificationchannelOption {
+	return func(m *NotificationChannelMutation) {
+		m.oldValue = func(context.Context) (*NotificationChannel, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NotificationChannelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NotificationChannelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of NotificationChannel entities.
+func (m *NotificationChannelMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NotificationChannelMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NotificationChannelMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NotificationChannel.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *NotificationChannelMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *NotificationChannelMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *NotificationChannelMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[notificationchannel.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *NotificationChannelMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *NotificationChannelMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, notificationchannel.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *NotificationChannelMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *NotificationChannelMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *NotificationChannelMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[notificationchannel.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *NotificationChannelMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *NotificationChannelMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, notificationchannel.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *NotificationChannelMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *NotificationChannelMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *NotificationChannelMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[notificationchannel.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *NotificationChannelMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *NotificationChannelMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, notificationchannel.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *NotificationChannelMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *NotificationChannelMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *NotificationChannelMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *NotificationChannelMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *NotificationChannelMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[notificationchannel.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *NotificationChannelMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *NotificationChannelMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, notificationchannel.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *NotificationChannelMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *NotificationChannelMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *NotificationChannelMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *NotificationChannelMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *NotificationChannelMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[notificationchannel.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *NotificationChannelMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *NotificationChannelMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, notificationchannel.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *NotificationChannelMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *NotificationChannelMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *NotificationChannelMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *NotificationChannelMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *NotificationChannelMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[notificationchannel.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *NotificationChannelMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *NotificationChannelMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, notificationchannel.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *NotificationChannelMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *NotificationChannelMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *NotificationChannelMutation) ResetName() {
+	m.name = nil
+}
+
+// SetType sets the "type" field.
+func (m *NotificationChannelMutation) SetType(n notificationchannel.Type) {
+	m._type = &n
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *NotificationChannelMutation) GetType() (r notificationchannel.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldType(ctx context.Context) (v notificationchannel.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *NotificationChannelMutation) ResetType() {
+	m._type = nil
+}
+
+// SetWebhookURL sets the "webhook_url" field.
+func (m *NotificationChannelMutation) SetWebhookURL(s string) {
+	m.webhook_url = &s
+}
+
+// WebhookURL returns the value of the "webhook_url" field in the mutation.
+func (m *NotificationChannelMutation) WebhookURL() (r string, exists bool) {
+	v := m.webhook_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebhookURL returns the old "webhook_url" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldWebhookURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebhookURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebhookURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebhookURL: %w", err)
+	}
+	return oldValue.WebhookURL, nil
+}
+
+// ClearWebhookURL clears the value of the "webhook_url" field.
+func (m *NotificationChannelMutation) ClearWebhookURL() {
+	m.webhook_url = nil
+	m.clearedFields[notificationchannel.FieldWebhookURL] = struct{}{}
+}
+
+// WebhookURLCleared returns if the "webhook_url" field was cleared in this mutation.
+func (m *NotificationChannelMutation) WebhookURLCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldWebhookURL]
+	return ok
+}
+
+// ResetWebhookURL resets all changes to the "webhook_url" field.
+func (m *NotificationChannelMutation) ResetWebhookURL() {
+	m.webhook_url = nil
+	delete(m.clearedFields, notificationchannel.FieldWebhookURL)
+}
+
+// SetWebhookSecret sets the "webhook_secret" field.
+func (m *NotificationChannelMutation) SetWebhookSecret(s string) {
+	m.webhook_secret = &s
+}
+
+// WebhookSecret returns the value of the "webhook_secret" field in the mutation.
+func (m *NotificationChannelMutation) WebhookSecret() (r string, exists bool) {
+	v := m.webhook_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebhookSecret returns the old "webhook_secret" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldWebhookSecret(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebhookSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebhookSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebhookSecret: %w", err)
+	}
+	return oldValue.WebhookSecret, nil
+}
+
+// ClearWebhookSecret clears the value of the "webhook_secret" field.
+func (m *NotificationChannelMutation) ClearWebhookSecret() {
+	m.webhook_secret = nil
+	m.clearedFields[notificationchannel.FieldWebhookSecret] = struct{}{}
+}
+
+// WebhookSecretCleared returns if the "webhook_secret" field was cleared in this mutation.
+func (m *NotificationChannelMutation) WebhookSecretCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldWebhookSecret]
+	return ok
+}
+
+// ResetWebhookSecret resets all changes to the "webhook_secret" field.
+func (m *NotificationChannelMutation) ResetWebhookSecret() {
+	m.webhook_secret = nil
+	delete(m.clearedFields, notificationchannel.FieldWebhookSecret)
+}
+
+// SetWebhookSignStyle sets the "webhook_sign_style" field.
+func (m *NotificationChannelMutation) SetWebhookSignStyle(nss notificationchannel.WebhookSignStyle) {
+	m.webhook_sign_style = &nss
+}
+
+// WebhookSignStyle returns the value of the "webhook_sign_style" field in the mutation.
+func (m *NotificationChannelMutation) WebhookSignStyle() (r notificationchannel.WebhookSignStyle, exists bool) {
+	v := m.webhook_sign_style
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebhookSignStyle returns the old "webhook_sign_style" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldWebhookSignStyle(ctx context.Context) (v *notificationchannel.WebhookSignStyle, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebhookSignStyle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebhookSignStyle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebhookSignStyle: %w", err)
+	}
+	return oldValue.WebhookSignStyle, nil
+}
+
+// ClearWebhookSignStyle clears the value of the "webhook_sign_style" field.
+func (m *NotificationChannelMutation) ClearWebhookSignStyle() {
+	m.webhook_sign_style = nil
+	m.clearedFields[notificationchannel.FieldWebhookSignStyle] = struct{}{}
+}
+
+// WebhookSignStyleCleared returns if the "webhook_sign_style" field was cleared in this mutation.
+func (m *NotificationChannelMutation) WebhookSignStyleCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldWebhookSignStyle]
+	return ok
+}
+
+// ResetWebhookSignStyle resets all changes to the "webhook_sign_style" field.
+func (m *NotificationChannelMutation) ResetWebhookSignStyle() {
+	m.webhook_sign_style = nil
+	delete(m.clearedFields, notificationchannel.FieldWebhookSignStyle)
+}
+
+// SetSMTPHost sets the "smtp_host" field.
+func (m *NotificationChannelMutation) SetSMTPHost(s string) {
+	m.smtp_host = &s
+}
+
+// SMTPHost returns the value of the "smtp_host" field in the mutation.
+func (m *NotificationChannelMutation) SMTPHost() (r string, exists bool) {
+	v := m.smtp_host
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSMTPHost returns the old "smtp_host" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSMTPHost(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSMTPHost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSMTPHost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSMTPHost: %w", err)
+	}
+	return oldValue.SMTPHost, nil
+}
+
+// ClearSMTPHost clears the value of the "smtp_host" field.
+func (m *NotificationChannelMutation) ClearSMTPHost() {
+	m.smtp_host = nil
+	m.clearedFields[notificationchannel.FieldSMTPHost] = struct{}{}
+}
+
+// SMTPHostCleared returns if the "smtp_host" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SMTPHostCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSMTPHost]
+	return ok
+}
+
+// ResetSMTPHost resets all changes to the "smtp_host" field.
+func (m *NotificationChannelMutation) ResetSMTPHost() {
+	m.smtp_host = nil
+	delete(m.clearedFields, notificationchannel.FieldSMTPHost)
+}
+
+// SetSMTPPort sets the "smtp_port" field.
+func (m *NotificationChannelMutation) SetSMTPPort(i int) {
+	m.smtp_port = &i
+	m.addsmtp_port = nil
+}
+
+// SMTPPort returns the value of the "smtp_port" field in the mutation.
+func (m *NotificationChannelMutation) SMTPPort() (r int, exists bool) {
+	v := m.smtp_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSMTPPort returns the old "smtp_port" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSMTPPort(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSMTPPort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSMTPPort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSMTPPort: %w", err)
+	}
+	return oldValue.SMTPPort, nil
+}
+
+// AddSMTPPort adds i to the "smtp_port" field.
+func (m *NotificationChannelMutation) AddSMTPPort(i int) {
+	if m.addsmtp_port != nil {
+		*m.addsmtp_port += i
+	} else {
+		m.addsmtp_port = &i
+	}
+}
+
+// AddedSMTPPort returns the value that was added to the "smtp_port" field in this mutation.
+func (m *NotificationChannelMutation) AddedSMTPPort() (r int, exists bool) {
+	v := m.addsmtp_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSMTPPort clears the value of the "smtp_port" field.
+func (m *NotificationChannelMutation) ClearSMTPPort() {
+	m.smtp_port = nil
+	m.addsmtp_port = nil
+	m.clearedFields[notificationchannel.FieldSMTPPort] = struct{}{}
+}
+
+// SMTPPortCleared returns if the "smtp_port" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SMTPPortCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSMTPPort]
+	return ok
+}
+
+// ResetSMTPPort resets all changes to the "smtp_port" field.
+func (m *NotificationChannelMutation) ResetSMTPPort() {
+	m.smtp_port = nil
+	m.addsmtp_port = nil
+	delete(m.clearedFields, notificationchannel.FieldSMTPPort)
+}
+
+// SetSMTPUsername sets the "smtp_username" field.
+func (m *NotificationChannelMutation) SetSMTPUsername(s string) {
+	m.smtp_username = &s
+}
+
+// SMTPUsername returns the value of the "smtp_username" field in the mutation.
+func (m *NotificationChannelMutation) SMTPUsername() (r string, exists bool) {
+	v := m.smtp_username
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSMTPUsername returns the old "smtp_username" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSMTPUsername(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSMTPUsername is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSMTPUsername requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSMTPUsername: %w", err)
+	}
+	return oldValue.SMTPUsername, nil
+}
+
+// ClearSMTPUsername clears the value of the "smtp_username" field.
+func (m *NotificationChannelMutation) ClearSMTPUsername() {
+	m.smtp_username = nil
+	m.clearedFields[notificationchannel.FieldSMTPUsername] = struct{}{}
+}
+
+// SMTPUsernameCleared returns if the "smtp_username" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SMTPUsernameCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSMTPUsername]
+	return ok
+}
+
+// ResetSMTPUsername resets all changes to the "smtp_username" field.
+func (m *NotificationChannelMutation) ResetSMTPUsername() {
+	m.smtp_username = nil
+	delete(m.clearedFields, notificationchannel.FieldSMTPUsername)
+}
+
+// SetSMTPPassword sets the "smtp_password" field.
+func (m *NotificationChannelMutation) SetSMTPPassword(s string) {
+	m.smtp_password = &s
+}
+
+// SMTPPassword returns the value of the "smtp_password" field in the mutation.
+func (m *NotificationChannelMutation) SMTPPassword() (r string, exists bool) {
+	v := m.smtp_password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSMTPPassword returns the old "smtp_password" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSMTPPassword(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSMTPPassword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSMTPPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSMTPPassword: %w", err)
+	}
+	return oldValue.SMTPPassword, nil
+}
+
+// ClearSMTPPassword clears the value of the "smtp_password" field.
+func (m *NotificationChannelMutation) ClearSMTPPassword() {
+	m.smtp_password = nil
+	m.clearedFields[notificationchannel.FieldSMTPPassword] = struct{}{}
+}
+
+// SMTPPasswordCleared returns if the "smtp_password" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SMTPPasswordCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSMTPPassword]
+	return ok
+}
+
+// ResetSMTPPassword resets all changes to the "smtp_password" field.
+func (m *NotificationChannelMutation) ResetSMTPPassword() {
+	m.smtp_password = nil
+	delete(m.clearedFields, notificationchannel.FieldSMTPPassword)
+}
+
+// SetSMTPFrom sets the "smtp_from" field.
+func (m *NotificationChannelMutation) SetSMTPFrom(s string) {
+	m.smtp_from = &s
+}
+
+// SMTPFrom returns the value of the "smtp_from" field in the mutation.
+func (m *NotificationChannelMutation) SMTPFrom() (r string, exists bool) {
+	v := m.smtp_from
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSMTPFrom returns the old "smtp_from" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSMTPFrom(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSMTPFrom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSMTPFrom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSMTPFrom: %w", err)
+	}
+	return oldValue.SMTPFrom, nil
+}
+
+// ClearSMTPFrom clears the value of the "smtp_from" field.
+func (m *NotificationChannelMutation) ClearSMTPFrom() {
+	m.smtp_from = nil
+	m.clearedFields[notificationchannel.FieldSMTPFrom] = struct{}{}
+}
+
+// SMTPFromCleared returns if the "smtp_from" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SMTPFromCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSMTPFrom]
+	return ok
+}
+
+// ResetSMTPFrom resets all changes to the "smtp_from" field.
+func (m *NotificationChannelMutation) ResetSMTPFrom() {
+	m.smtp_from = nil
+	delete(m.clearedFields, notificationchannel.FieldSMTPFrom)
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *NotificationChannelMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *NotificationChannelMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *NotificationChannelMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *NotificationChannelMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *NotificationChannelMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *NotificationChannelMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[notificationchannel.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *NotificationChannelMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *NotificationChannelMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, notificationchannel.FieldDescription)
+}
+
+// Where appends a list predicates to the NotificationChannelMutation builder.
+func (m *NotificationChannelMutation) Where(ps ...predicate.NotificationChannel) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NotificationChannelMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NotificationChannelMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NotificationChannel, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NotificationChannelMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NotificationChannelMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NotificationChannel).
+func (m *NotificationChannelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NotificationChannelMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.created_at != nil {
+		fields = append(fields, notificationchannel.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, notificationchannel.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, notificationchannel.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, notificationchannel.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, notificationchannel.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, notificationchannel.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, notificationchannel.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, notificationchannel.FieldType)
+	}
+	if m.webhook_url != nil {
+		fields = append(fields, notificationchannel.FieldWebhookURL)
+	}
+	if m.webhook_secret != nil {
+		fields = append(fields, notificationchannel.FieldWebhookSecret)
+	}
+	if m.webhook_sign_style != nil {
+		fields = append(fields, notificationchannel.FieldWebhookSignStyle)
+	}
+	if m.smtp_host != nil {
+		fields = append(fields, notificationchannel.FieldSMTPHost)
+	}
+	if m.smtp_port != nil {
+		fields = append(fields, notificationchannel.FieldSMTPPort)
+	}
+	if m.smtp_username != nil {
+		fields = append(fields, notificationchannel.FieldSMTPUsername)
+	}
+	if m.smtp_password != nil {
+		fields = append(fields, notificationchannel.FieldSMTPPassword)
+	}
+	if m.smtp_from != nil {
+		fields = append(fields, notificationchannel.FieldSMTPFrom)
+	}
+	if m.enabled != nil {
+		fields = append(fields, notificationchannel.FieldEnabled)
+	}
+	if m.description != nil {
+		fields = append(fields, notificationchannel.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NotificationChannelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case notificationchannel.FieldCreatedAt:
+		return m.CreatedAt()
+	case notificationchannel.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case notificationchannel.FieldDeletedAt:
+		return m.DeletedAt()
+	case notificationchannel.FieldCreatedBy:
+		return m.CreatedBy()
+	case notificationchannel.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case notificationchannel.FieldDeletedBy:
+		return m.DeletedBy()
+	case notificationchannel.FieldName:
+		return m.Name()
+	case notificationchannel.FieldType:
+		return m.GetType()
+	case notificationchannel.FieldWebhookURL:
+		return m.WebhookURL()
+	case notificationchannel.FieldWebhookSecret:
+		return m.WebhookSecret()
+	case notificationchannel.FieldWebhookSignStyle:
+		return m.WebhookSignStyle()
+	case notificationchannel.FieldSMTPHost:
+		return m.SMTPHost()
+	case notificationchannel.FieldSMTPPort:
+		return m.SMTPPort()
+	case notificationchannel.FieldSMTPUsername:
+		return m.SMTPUsername()
+	case notificationchannel.FieldSMTPPassword:
+		return m.SMTPPassword()
+	case notificationchannel.FieldSMTPFrom:
+		return m.SMTPFrom()
+	case notificationchannel.FieldEnabled:
+		return m.Enabled()
+	case notificationchannel.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NotificationChannelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case notificationchannel.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case notificationchannel.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case notificationchannel.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case notificationchannel.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case notificationchannel.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case notificationchannel.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case notificationchannel.FieldName:
+		return m.OldName(ctx)
+	case notificationchannel.FieldType:
+		return m.OldType(ctx)
+	case notificationchannel.FieldWebhookURL:
+		return m.OldWebhookURL(ctx)
+	case notificationchannel.FieldWebhookSecret:
+		return m.OldWebhookSecret(ctx)
+	case notificationchannel.FieldWebhookSignStyle:
+		return m.OldWebhookSignStyle(ctx)
+	case notificationchannel.FieldSMTPHost:
+		return m.OldSMTPHost(ctx)
+	case notificationchannel.FieldSMTPPort:
+		return m.OldSMTPPort(ctx)
+	case notificationchannel.FieldSMTPUsername:
+		return m.OldSMTPUsername(ctx)
+	case notificationchannel.FieldSMTPPassword:
+		return m.OldSMTPPassword(ctx)
+	case notificationchannel.FieldSMTPFrom:
+		return m.OldSMTPFrom(ctx)
+	case notificationchannel.FieldEnabled:
+		return m.OldEnabled(ctx)
+	case notificationchannel.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown NotificationChannel field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NotificationChannelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case notificationchannel.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case notificationchannel.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case notificationchannel.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case notificationchannel.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case notificationchannel.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case notificationchannel.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case notificationchannel.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case notificationchannel.FieldType:
+		v, ok := value.(notificationchannel.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case notificationchannel.FieldWebhookURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebhookURL(v)
+		return nil
+	case notificationchannel.FieldWebhookSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebhookSecret(v)
+		return nil
+	case notificationchannel.FieldWebhookSignStyle:
+		v, ok := value.(notificationchannel.WebhookSignStyle)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebhookSignStyle(v)
+		return nil
+	case notificationchannel.FieldSMTPHost:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSMTPHost(v)
+		return nil
+	case notificationchannel.FieldSMTPPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSMTPPort(v)
+		return nil
+	case notificationchannel.FieldSMTPUsername:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSMTPUsername(v)
+		return nil
+	case notificationchannel.FieldSMTPPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSMTPPassword(v)
+		return nil
+	case notificationchannel.FieldSMTPFrom:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSMTPFrom(v)
+		return nil
+	case notificationchannel.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	case notificationchannel.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationChannel field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NotificationChannelMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, notificationchannel.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, notificationchannel.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, notificationchannel.FieldDeletedBy)
+	}
+	if m.addsmtp_port != nil {
+		fields = append(fields, notificationchannel.FieldSMTPPort)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NotificationChannelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case notificationchannel.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case notificationchannel.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case notificationchannel.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case notificationchannel.FieldSMTPPort:
+		return m.AddedSMTPPort()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NotificationChannelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case notificationchannel.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case notificationchannel.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case notificationchannel.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case notificationchannel.FieldSMTPPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSMTPPort(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationChannel numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NotificationChannelMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(notificationchannel.FieldCreatedAt) {
+		fields = append(fields, notificationchannel.FieldCreatedAt)
+	}
+	if m.FieldCleared(notificationchannel.FieldUpdatedAt) {
+		fields = append(fields, notificationchannel.FieldUpdatedAt)
+	}
+	if m.FieldCleared(notificationchannel.FieldDeletedAt) {
+		fields = append(fields, notificationchannel.FieldDeletedAt)
+	}
+	if m.FieldCleared(notificationchannel.FieldCreatedBy) {
+		fields = append(fields, notificationchannel.FieldCreatedBy)
+	}
+	if m.FieldCleared(notificationchannel.FieldUpdatedBy) {
+		fields = append(fields, notificationchannel.FieldUpdatedBy)
+	}
+	if m.FieldCleared(notificationchannel.FieldDeletedBy) {
+		fields = append(fields, notificationchannel.FieldDeletedBy)
+	}
+	if m.FieldCleared(notificationchannel.FieldWebhookURL) {
+		fields = append(fields, notificationchannel.FieldWebhookURL)
+	}
+	if m.FieldCleared(notificationchannel.FieldWebhookSecret) {
+		fields = append(fields, notificationchannel.FieldWebhookSecret)
+	}
+	if m.FieldCleared(notificationchannel.FieldWebhookSignStyle) {
+		fields = append(fields, notificationchannel.FieldWebhookSignStyle)
+	}
+	if m.FieldCleared(notificationchannel.FieldSMTPHost) {
+		fields = append(fields, notificationchannel.FieldSMTPHost)
+	}
+	if m.FieldCleared(notificationchannel.FieldSMTPPort) {
+		fields = append(fields, notificationchannel.FieldSMTPPort)
+	}
+	if m.FieldCleared(notificationchannel.FieldSMTPUsername) {
+		fields = append(fields, notificationchannel.FieldSMTPUsername)
+	}
+	if m.FieldCleared(notificationchannel.FieldSMTPPassword) {
+		fields = append(fields, notificationchannel.FieldSMTPPassword)
+	}
+	if m.FieldCleared(notificationchannel.FieldSMTPFrom) {
+		fields = append(fields, notificationchannel.FieldSMTPFrom)
+	}
+	if m.FieldCleared(notificationchannel.FieldDescription) {
+		fields = append(fields, notificationchannel.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NotificationChannelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NotificationChannelMutation) ClearField(name string) error {
+	switch name {
+	case notificationchannel.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case notificationchannel.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case notificationchannel.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case notificationchannel.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case notificationchannel.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case notificationchannel.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case notificationchannel.FieldWebhookURL:
+		m.ClearWebhookURL()
+		return nil
+	case notificationchannel.FieldWebhookSecret:
+		m.ClearWebhookSecret()
+		return nil
+	case notificationchannel.FieldWebhookSignStyle:
+		m.ClearWebhookSignStyle()
+		return nil
+	case notificationchannel.FieldSMTPHost:
+		m.ClearSMTPHost()
+		return nil
+	case notificationchannel.FieldSMTPPort:
+		m.ClearSMTPPort()
+		return nil
+	case notificationchannel.FieldSMTPUsername:
+		m.ClearSMTPUsername()
+		return nil
+	case notificationchannel.FieldSMTPPassword:
+		m.ClearSMTPPassword()
+		return nil
+	case notificationchannel.FieldSMTPFrom:
+		m.ClearSMTPFrom()
+		return nil
+	case notificationchannel.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationChannel nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NotificationChannelMutation) ResetField(name string) error {
+	switch name {
+	case notificationchannel.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case notificationchannel.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case notificationchannel.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case notificationchannel.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case notificationchannel.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case notificationchannel.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case notificationchannel.FieldName:
+		m.ResetName()
+		return nil
+	case notificationchannel.FieldType:
+		m.ResetType()
+		return nil
+	case notificationchannel.FieldWebhookURL:
+		m.ResetWebhookURL()
+		return nil
+	case notificationchannel.FieldWebhookSecret:
+		m.ResetWebhookSecret()
+		return nil
+	case notificationchannel.FieldWebhookSignStyle:
+		m.ResetWebhookSignStyle()
+		return nil
+	case notificationchannel.FieldSMTPHost:
+		m.ResetSMTPHost()
+		return nil
+	case notificationchannel.FieldSMTPPort:
+		m.ResetSMTPPort()
+		return nil
+	case notificationchannel.FieldSMTPUsername:
+		m.ResetSMTPUsername()
+		return nil
+	case notificationchannel.FieldSMTPPassword:
+		m.ResetSMTPPassword()
+		return nil
+	case notificationchannel.FieldSMTPFrom:
+		m.ResetSMTPFrom()
+		return nil
+	case notificationchannel.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	case notificationchannel.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationChannel field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NotificationChannelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NotificationChannelMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NotificationChannelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NotificationChannelMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NotificationChannelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NotificationChannelMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NotificationChannelMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown NotificationChannel unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NotificationChannelMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown NotificationChannel edge %s", name)
+}
+
+// NotificationDeliveryMutation represents an operation that mutates the NotificationDelivery nodes in the graph.
+type NotificationDeliveryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	alert_id      *uint32
+	addalert_id   *int32
+	channel_id    *uint32
+	addchannel_id *int32
+	channel_type  *string
+	target        *string
+	status        *notificationdelivery.Status
+	last_error    *string
+	title         *string
+	content       *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*NotificationDelivery, error)
+	predicates    []predicate.NotificationDelivery
+}
+
+var _ ent.Mutation = (*NotificationDeliveryMutation)(nil)
+
+// notificationdeliveryOption allows management of the mutation configuration using functional options.
+type notificationdeliveryOption func(*NotificationDeliveryMutation)
+
+// newNotificationDeliveryMutation creates new mutation for the NotificationDelivery entity.
+func newNotificationDeliveryMutation(c config, op Op, opts ...notificationdeliveryOption) *NotificationDeliveryMutation {
+	m := &NotificationDeliveryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNotificationDelivery,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNotificationDeliveryID sets the ID field of the mutation.
+func withNotificationDeliveryID(id uint32) notificationdeliveryOption {
+	return func(m *NotificationDeliveryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NotificationDelivery
+		)
+		m.oldValue = func(ctx context.Context) (*NotificationDelivery, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NotificationDelivery.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNotificationDelivery sets the old NotificationDelivery of the mutation.
+func withNotificationDelivery(node *NotificationDelivery) notificationdeliveryOption {
+	return func(m *NotificationDeliveryMutation) {
+		m.oldValue = func(context.Context) (*NotificationDelivery, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NotificationDeliveryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NotificationDeliveryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of NotificationDelivery entities.
+func (m *NotificationDeliveryMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NotificationDeliveryMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NotificationDeliveryMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NotificationDelivery.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *NotificationDeliveryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *NotificationDeliveryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *NotificationDeliveryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[notificationdelivery.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *NotificationDeliveryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, notificationdelivery.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *NotificationDeliveryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *NotificationDeliveryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *NotificationDeliveryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[notificationdelivery.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *NotificationDeliveryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, notificationdelivery.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *NotificationDeliveryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *NotificationDeliveryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *NotificationDeliveryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[notificationdelivery.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *NotificationDeliveryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, notificationdelivery.FieldDeletedAt)
+}
+
+// SetAlertID sets the "alert_id" field.
+func (m *NotificationDeliveryMutation) SetAlertID(u uint32) {
+	m.alert_id = &u
+	m.addalert_id = nil
+}
+
+// AlertID returns the value of the "alert_id" field in the mutation.
+func (m *NotificationDeliveryMutation) AlertID() (r uint32, exists bool) {
+	v := m.alert_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlertID returns the old "alert_id" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldAlertID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlertID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlertID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlertID: %w", err)
+	}
+	return oldValue.AlertID, nil
+}
+
+// AddAlertID adds u to the "alert_id" field.
+func (m *NotificationDeliveryMutation) AddAlertID(u int32) {
+	if m.addalert_id != nil {
+		*m.addalert_id += u
+	} else {
+		m.addalert_id = &u
+	}
+}
+
+// AddedAlertID returns the value that was added to the "alert_id" field in this mutation.
+func (m *NotificationDeliveryMutation) AddedAlertID() (r int32, exists bool) {
+	v := m.addalert_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAlertID resets all changes to the "alert_id" field.
+func (m *NotificationDeliveryMutation) ResetAlertID() {
+	m.alert_id = nil
+	m.addalert_id = nil
+}
+
+// SetChannelID sets the "channel_id" field.
+func (m *NotificationDeliveryMutation) SetChannelID(u uint32) {
+	m.channel_id = &u
+	m.addchannel_id = nil
+}
+
+// ChannelID returns the value of the "channel_id" field in the mutation.
+func (m *NotificationDeliveryMutation) ChannelID() (r uint32, exists bool) {
+	v := m.channel_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannelID returns the old "channel_id" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldChannelID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannelID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannelID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannelID: %w", err)
+	}
+	return oldValue.ChannelID, nil
+}
+
+// AddChannelID adds u to the "channel_id" field.
+func (m *NotificationDeliveryMutation) AddChannelID(u int32) {
+	if m.addchannel_id != nil {
+		*m.addchannel_id += u
+	} else {
+		m.addchannel_id = &u
+	}
+}
+
+// AddedChannelID returns the value that was added to the "channel_id" field in this mutation.
+func (m *NotificationDeliveryMutation) AddedChannelID() (r int32, exists bool) {
+	v := m.addchannel_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetChannelID resets all changes to the "channel_id" field.
+func (m *NotificationDeliveryMutation) ResetChannelID() {
+	m.channel_id = nil
+	m.addchannel_id = nil
+}
+
+// SetChannelType sets the "channel_type" field.
+func (m *NotificationDeliveryMutation) SetChannelType(s string) {
+	m.channel_type = &s
+}
+
+// ChannelType returns the value of the "channel_type" field in the mutation.
+func (m *NotificationDeliveryMutation) ChannelType() (r string, exists bool) {
+	v := m.channel_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannelType returns the old "channel_type" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldChannelType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannelType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannelType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannelType: %w", err)
+	}
+	return oldValue.ChannelType, nil
+}
+
+// ResetChannelType resets all changes to the "channel_type" field.
+func (m *NotificationDeliveryMutation) ResetChannelType() {
+	m.channel_type = nil
+}
+
+// SetTarget sets the "target" field.
+func (m *NotificationDeliveryMutation) SetTarget(s string) {
+	m.target = &s
+}
+
+// Target returns the value of the "target" field in the mutation.
+func (m *NotificationDeliveryMutation) Target() (r string, exists bool) {
+	v := m.target
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTarget returns the old "target" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldTarget(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTarget is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTarget requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTarget: %w", err)
+	}
+	return oldValue.Target, nil
+}
+
+// ClearTarget clears the value of the "target" field.
+func (m *NotificationDeliveryMutation) ClearTarget() {
+	m.target = nil
+	m.clearedFields[notificationdelivery.FieldTarget] = struct{}{}
+}
+
+// TargetCleared returns if the "target" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) TargetCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldTarget]
+	return ok
+}
+
+// ResetTarget resets all changes to the "target" field.
+func (m *NotificationDeliveryMutation) ResetTarget() {
+	m.target = nil
+	delete(m.clearedFields, notificationdelivery.FieldTarget)
+}
+
+// SetStatus sets the "status" field.
+func (m *NotificationDeliveryMutation) SetStatus(n notificationdelivery.Status) {
+	m.status = &n
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *NotificationDeliveryMutation) Status() (r notificationdelivery.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldStatus(ctx context.Context) (v notificationdelivery.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *NotificationDeliveryMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetLastError sets the "last_error" field.
+func (m *NotificationDeliveryMutation) SetLastError(s string) {
+	m.last_error = &s
+}
+
+// LastError returns the value of the "last_error" field in the mutation.
+func (m *NotificationDeliveryMutation) LastError() (r string, exists bool) {
+	v := m.last_error
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastError returns the old "last_error" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldLastError(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastError is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastError requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastError: %w", err)
+	}
+	return oldValue.LastError, nil
+}
+
+// ClearLastError clears the value of the "last_error" field.
+func (m *NotificationDeliveryMutation) ClearLastError() {
+	m.last_error = nil
+	m.clearedFields[notificationdelivery.FieldLastError] = struct{}{}
+}
+
+// LastErrorCleared returns if the "last_error" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) LastErrorCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldLastError]
+	return ok
+}
+
+// ResetLastError resets all changes to the "last_error" field.
+func (m *NotificationDeliveryMutation) ResetLastError() {
+	m.last_error = nil
+	delete(m.clearedFields, notificationdelivery.FieldLastError)
+}
+
+// SetTitle sets the "title" field.
+func (m *NotificationDeliveryMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *NotificationDeliveryMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldTitle(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ClearTitle clears the value of the "title" field.
+func (m *NotificationDeliveryMutation) ClearTitle() {
+	m.title = nil
+	m.clearedFields[notificationdelivery.FieldTitle] = struct{}{}
+}
+
+// TitleCleared returns if the "title" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) TitleCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldTitle]
+	return ok
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *NotificationDeliveryMutation) ResetTitle() {
+	m.title = nil
+	delete(m.clearedFields, notificationdelivery.FieldTitle)
+}
+
+// SetContent sets the "content" field.
+func (m *NotificationDeliveryMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *NotificationDeliveryMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldContent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *NotificationDeliveryMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[notificationdelivery.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *NotificationDeliveryMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, notificationdelivery.FieldContent)
+}
+
+// Where appends a list predicates to the NotificationDeliveryMutation builder.
+func (m *NotificationDeliveryMutation) Where(ps ...predicate.NotificationDelivery) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NotificationDeliveryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NotificationDeliveryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NotificationDelivery, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NotificationDeliveryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NotificationDeliveryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NotificationDelivery).
+func (m *NotificationDeliveryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NotificationDeliveryMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, notificationdelivery.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, notificationdelivery.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, notificationdelivery.FieldDeletedAt)
+	}
+	if m.alert_id != nil {
+		fields = append(fields, notificationdelivery.FieldAlertID)
+	}
+	if m.channel_id != nil {
+		fields = append(fields, notificationdelivery.FieldChannelID)
+	}
+	if m.channel_type != nil {
+		fields = append(fields, notificationdelivery.FieldChannelType)
+	}
+	if m.target != nil {
+		fields = append(fields, notificationdelivery.FieldTarget)
+	}
+	if m.status != nil {
+		fields = append(fields, notificationdelivery.FieldStatus)
+	}
+	if m.last_error != nil {
+		fields = append(fields, notificationdelivery.FieldLastError)
+	}
+	if m.title != nil {
+		fields = append(fields, notificationdelivery.FieldTitle)
+	}
+	if m.content != nil {
+		fields = append(fields, notificationdelivery.FieldContent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NotificationDeliveryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case notificationdelivery.FieldCreatedAt:
+		return m.CreatedAt()
+	case notificationdelivery.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case notificationdelivery.FieldDeletedAt:
+		return m.DeletedAt()
+	case notificationdelivery.FieldAlertID:
+		return m.AlertID()
+	case notificationdelivery.FieldChannelID:
+		return m.ChannelID()
+	case notificationdelivery.FieldChannelType:
+		return m.ChannelType()
+	case notificationdelivery.FieldTarget:
+		return m.Target()
+	case notificationdelivery.FieldStatus:
+		return m.Status()
+	case notificationdelivery.FieldLastError:
+		return m.LastError()
+	case notificationdelivery.FieldTitle:
+		return m.Title()
+	case notificationdelivery.FieldContent:
+		return m.Content()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NotificationDeliveryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case notificationdelivery.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case notificationdelivery.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case notificationdelivery.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case notificationdelivery.FieldAlertID:
+		return m.OldAlertID(ctx)
+	case notificationdelivery.FieldChannelID:
+		return m.OldChannelID(ctx)
+	case notificationdelivery.FieldChannelType:
+		return m.OldChannelType(ctx)
+	case notificationdelivery.FieldTarget:
+		return m.OldTarget(ctx)
+	case notificationdelivery.FieldStatus:
+		return m.OldStatus(ctx)
+	case notificationdelivery.FieldLastError:
+		return m.OldLastError(ctx)
+	case notificationdelivery.FieldTitle:
+		return m.OldTitle(ctx)
+	case notificationdelivery.FieldContent:
+		return m.OldContent(ctx)
+	}
+	return nil, fmt.Errorf("unknown NotificationDelivery field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NotificationDeliveryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case notificationdelivery.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case notificationdelivery.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case notificationdelivery.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case notificationdelivery.FieldAlertID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlertID(v)
+		return nil
+	case notificationdelivery.FieldChannelID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannelID(v)
+		return nil
+	case notificationdelivery.FieldChannelType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannelType(v)
+		return nil
+	case notificationdelivery.FieldTarget:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTarget(v)
+		return nil
+	case notificationdelivery.FieldStatus:
+		v, ok := value.(notificationdelivery.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case notificationdelivery.FieldLastError:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastError(v)
+		return nil
+	case notificationdelivery.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case notificationdelivery.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationDelivery field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NotificationDeliveryMutation) AddedFields() []string {
+	var fields []string
+	if m.addalert_id != nil {
+		fields = append(fields, notificationdelivery.FieldAlertID)
+	}
+	if m.addchannel_id != nil {
+		fields = append(fields, notificationdelivery.FieldChannelID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NotificationDeliveryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case notificationdelivery.FieldAlertID:
+		return m.AddedAlertID()
+	case notificationdelivery.FieldChannelID:
+		return m.AddedChannelID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NotificationDeliveryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case notificationdelivery.FieldAlertID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAlertID(v)
+		return nil
+	case notificationdelivery.FieldChannelID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddChannelID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationDelivery numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NotificationDeliveryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(notificationdelivery.FieldCreatedAt) {
+		fields = append(fields, notificationdelivery.FieldCreatedAt)
+	}
+	if m.FieldCleared(notificationdelivery.FieldUpdatedAt) {
+		fields = append(fields, notificationdelivery.FieldUpdatedAt)
+	}
+	if m.FieldCleared(notificationdelivery.FieldDeletedAt) {
+		fields = append(fields, notificationdelivery.FieldDeletedAt)
+	}
+	if m.FieldCleared(notificationdelivery.FieldTarget) {
+		fields = append(fields, notificationdelivery.FieldTarget)
+	}
+	if m.FieldCleared(notificationdelivery.FieldLastError) {
+		fields = append(fields, notificationdelivery.FieldLastError)
+	}
+	if m.FieldCleared(notificationdelivery.FieldTitle) {
+		fields = append(fields, notificationdelivery.FieldTitle)
+	}
+	if m.FieldCleared(notificationdelivery.FieldContent) {
+		fields = append(fields, notificationdelivery.FieldContent)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NotificationDeliveryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NotificationDeliveryMutation) ClearField(name string) error {
+	switch name {
+	case notificationdelivery.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case notificationdelivery.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case notificationdelivery.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case notificationdelivery.FieldTarget:
+		m.ClearTarget()
+		return nil
+	case notificationdelivery.FieldLastError:
+		m.ClearLastError()
+		return nil
+	case notificationdelivery.FieldTitle:
+		m.ClearTitle()
+		return nil
+	case notificationdelivery.FieldContent:
+		m.ClearContent()
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationDelivery nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NotificationDeliveryMutation) ResetField(name string) error {
+	switch name {
+	case notificationdelivery.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case notificationdelivery.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case notificationdelivery.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case notificationdelivery.FieldAlertID:
+		m.ResetAlertID()
+		return nil
+	case notificationdelivery.FieldChannelID:
+		m.ResetChannelID()
+		return nil
+	case notificationdelivery.FieldChannelType:
+		m.ResetChannelType()
+		return nil
+	case notificationdelivery.FieldTarget:
+		m.ResetTarget()
+		return nil
+	case notificationdelivery.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case notificationdelivery.FieldLastError:
+		m.ResetLastError()
+		return nil
+	case notificationdelivery.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case notificationdelivery.FieldContent:
+		m.ResetContent()
+		return nil
+	}
+	return fmt.Errorf("unknown NotificationDelivery field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NotificationDeliveryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NotificationDeliveryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NotificationDeliveryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NotificationDeliveryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NotificationDeliveryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NotificationDeliveryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NotificationDeliveryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown NotificationDelivery unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NotificationDeliveryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown NotificationDelivery edge %s", name)
 }
 
 // OperationAuditLogMutation represents an operation that mutates the OperationAuditLog nodes in the graph.

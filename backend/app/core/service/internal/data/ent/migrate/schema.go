@@ -1459,6 +1459,76 @@ var (
 			},
 		},
 	}
+	// OpsNotificationChannelsColumns holds the columns for the "ops_notification_channels" table.
+	OpsNotificationChannelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "渠道名(全局唯一)"},
+		{Name: "type", Type: field.TypeEnum, Comment: "渠道类型", Enums: []string{"WEBHOOK", "EMAIL"}, Default: "WEBHOOK"},
+		{Name: "webhook_url", Type: field.TypeString, Nullable: true, Comment: "Webhook URL"},
+		{Name: "webhook_secret", Type: field.TypeString, Nullable: true, Comment: "签名密钥(钉钉/飞书/企微群机器人)"},
+		{Name: "webhook_sign_style", Type: field.TypeEnum, Nullable: true, Comment: "签名风格", Enums: []string{"NONE", "DINGTALK", "FEISHU", "WECOM"}, Default: "NONE"},
+		{Name: "smtp_host", Type: field.TypeString, Nullable: true, Comment: "SMTP 主机"},
+		{Name: "smtp_port", Type: field.TypeInt, Nullable: true, Comment: "SMTP 端口", Default: 587},
+		{Name: "smtp_username", Type: field.TypeString, Nullable: true, Comment: "SMTP 用户名"},
+		{Name: "smtp_password", Type: field.TypeString, Nullable: true, Comment: "SMTP 密码"},
+		{Name: "smtp_from", Type: field.TypeString, Nullable: true, Comment: "发件人地址"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsNotificationChannelsTable holds the schema information for the "ops_notification_channels" table.
+	OpsNotificationChannelsTable = &schema.Table{
+		Name:       "ops_notification_channels",
+		Comment:    "告警通知渠道配置表",
+		Columns:    OpsNotificationChannelsColumns,
+		PrimaryKey: []*schema.Column{OpsNotificationChannelsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_notif_channel_name",
+				Unique:  false,
+				Columns: []*schema.Column{OpsNotificationChannelsColumns[7]},
+			},
+		},
+	}
+	// OpsNotificationDeliveriesColumns holds the columns for the "ops_notification_deliveries" table.
+	OpsNotificationDeliveriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "alert_id", Type: field.TypeUint32, Comment: "关联告警(ops_alerts.id)"},
+		{Name: "channel_id", Type: field.TypeUint32, Comment: "使用的渠道(ops_notification_channels.id)"},
+		{Name: "channel_type", Type: field.TypeString, Comment: "渠道类型快照(WEBHOOK/EMAIL)"},
+		{Name: "target", Type: field.TypeString, Nullable: true, Comment: "发送目标(URL/邮箱,脱敏存储)"},
+		{Name: "status", Type: field.TypeEnum, Comment: "发送状态", Enums: []string{"SENDING", "SENT", "FAILED"}, Default: "SENDING"},
+		{Name: "last_error", Type: field.TypeString, Nullable: true, Comment: "发送失败原因"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "通知标题"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "通知内容"},
+	}
+	// OpsNotificationDeliveriesTable holds the schema information for the "ops_notification_deliveries" table.
+	OpsNotificationDeliveriesTable = &schema.Table{
+		Name:       "ops_notification_deliveries",
+		Comment:    "告警通知投递台账表",
+		Columns:    OpsNotificationDeliveriesColumns,
+		PrimaryKey: []*schema.Column{OpsNotificationDeliveriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_notif_delivery_alert",
+				Unique:  false,
+				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[4]},
+			},
+			{
+				Name:    "idx_ops_notif_delivery_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[8]},
+			},
+		},
+	}
 	// SysOperationAuditLogsColumns holds the columns for the "sys_operation_audit_logs" table.
 	SysOperationAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3075,6 +3145,8 @@ var (
 		SysMenusTable,
 		OpsMonitorsTable,
 		OpsNodeMetricsTable,
+		OpsNotificationChannelsTable,
+		OpsNotificationDeliveriesTable,
 		SysOperationAuditLogsTable,
 		SysOrgUnitsTable,
 		SysPermissionsTable,
@@ -3222,6 +3294,16 @@ func init() {
 	}
 	OpsNodeMetricsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_node_metrics",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsNotificationChannelsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_notification_channels",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsNotificationDeliveriesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_notification_deliveries",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

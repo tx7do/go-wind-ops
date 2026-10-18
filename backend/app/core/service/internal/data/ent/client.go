@@ -35,6 +35,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/menu"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
 	"go-wind-ops/app/core/service/internal/data/ent/nodemetric"
+	"go-wind-ops/app/core/service/internal/data/ent/notificationchannel"
+	"go-wind-ops/app/core/service/internal/data/ent/notificationdelivery"
 	"go-wind-ops/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/orgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/permission"
@@ -118,6 +120,10 @@ type Client struct {
 	Monitor *MonitorClient
 	// NodeMetric is the client for interacting with the NodeMetric builders.
 	NodeMetric *NodeMetricClient
+	// NotificationChannel is the client for interacting with the NotificationChannel builders.
+	NotificationChannel *NotificationChannelClient
+	// NotificationDelivery is the client for interacting with the NotificationDelivery builders.
+	NotificationDelivery *NotificationDeliveryClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
@@ -199,6 +205,8 @@ func (c *Client) init() {
 	c.Menu = NewMenuClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
 	c.NodeMetric = NewNodeMetricClient(c.config)
+	c.NotificationChannel = NewNotificationChannelClient(c.config)
+	c.NotificationDelivery = NewNotificationDeliveryClient(c.config)
 	c.OperationAuditLog = NewOperationAuditLogClient(c.config)
 	c.OrgUnit = NewOrgUnitClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
@@ -312,55 +320,57 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		AgentNode:           NewAgentNodeClient(cfg),
-		Alert:               NewAlertClient(cfg),
-		Api:                 NewAPIClient(cfg),
-		ApiAuditLog:         NewApiAuditLogClient(cfg),
-		Approval:            NewApprovalClient(cfg),
-		Build:               NewBuildClient(cfg),
-		BuildHistory:        NewBuildHistoryClient(cfg),
-		CommandRecord:       NewCommandRecordClient(cfg),
-		DataAccessAuditLog:  NewDataAccessAuditLogClient(cfg),
-		DictEntry:           NewDictEntryClient(cfg),
-		DictEntryI18n:       NewDictEntryI18nClient(cfg),
-		DictType:            NewDictTypeClient(cfg),
-		Distribution:        NewDistributionClient(cfg),
-		DistributionRecord:  NewDistributionRecordClient(cfg),
-		Language:            NewLanguageClient(cfg),
-		LoginAuditLog:       NewLoginAuditLogClient(cfg),
-		LoginPolicy:         NewLoginPolicyClient(cfg),
-		Membership:          NewMembershipClient(cfg),
-		MembershipOrgUnit:   NewMembershipOrgUnitClient(cfg),
-		MembershipPosition:  NewMembershipPositionClient(cfg),
-		MembershipRole:      NewMembershipRoleClient(cfg),
-		Menu:                NewMenuClient(cfg),
-		Monitor:             NewMonitorClient(cfg),
-		NodeMetric:          NewNodeMetricClient(cfg),
-		OperationAuditLog:   NewOperationAuditLogClient(cfg),
-		OrgUnit:             NewOrgUnitClient(cfg),
-		Permission:          NewPermissionClient(cfg),
-		PermissionApi:       NewPermissionApiClient(cfg),
-		PermissionAuditLog:  NewPermissionAuditLogClient(cfg),
-		PermissionGroup:     NewPermissionGroupClient(cfg),
-		PermissionMenu:      NewPermissionMenuClient(cfg),
-		PermissionPolicy:    NewPermissionPolicyClient(cfg),
-		PolicyEvaluationLog: NewPolicyEvaluationLogClient(cfg),
-		Position:            NewPositionClient(cfg),
-		Project:             NewProjectClient(cfg),
-		Repository:          NewRepositoryClient(cfg),
-		Role:                NewRoleClient(cfg),
-		RoleMetadata:        NewRoleMetadataClient(cfg),
-		RolePermission:      NewRolePermissionClient(cfg),
-		Script:              NewScriptClient(cfg),
-		Task:                NewTaskClient(cfg),
-		Tenant:              NewTenantClient(cfg),
-		User:                NewUserClient(cfg),
-		UserCredential:      NewUserCredentialClient(cfg),
-		UserOrgUnit:         NewUserOrgUnitClient(cfg),
-		UserPosition:        NewUserPositionClient(cfg),
-		UserRole:            NewUserRoleClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		AgentNode:            NewAgentNodeClient(cfg),
+		Alert:                NewAlertClient(cfg),
+		Api:                  NewAPIClient(cfg),
+		ApiAuditLog:          NewApiAuditLogClient(cfg),
+		Approval:             NewApprovalClient(cfg),
+		Build:                NewBuildClient(cfg),
+		BuildHistory:         NewBuildHistoryClient(cfg),
+		CommandRecord:        NewCommandRecordClient(cfg),
+		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
+		DictEntry:            NewDictEntryClient(cfg),
+		DictEntryI18n:        NewDictEntryI18nClient(cfg),
+		DictType:             NewDictTypeClient(cfg),
+		Distribution:         NewDistributionClient(cfg),
+		DistributionRecord:   NewDistributionRecordClient(cfg),
+		Language:             NewLanguageClient(cfg),
+		LoginAuditLog:        NewLoginAuditLogClient(cfg),
+		LoginPolicy:          NewLoginPolicyClient(cfg),
+		Membership:           NewMembershipClient(cfg),
+		MembershipOrgUnit:    NewMembershipOrgUnitClient(cfg),
+		MembershipPosition:   NewMembershipPositionClient(cfg),
+		MembershipRole:       NewMembershipRoleClient(cfg),
+		Menu:                 NewMenuClient(cfg),
+		Monitor:              NewMonitorClient(cfg),
+		NodeMetric:           NewNodeMetricClient(cfg),
+		NotificationChannel:  NewNotificationChannelClient(cfg),
+		NotificationDelivery: NewNotificationDeliveryClient(cfg),
+		OperationAuditLog:    NewOperationAuditLogClient(cfg),
+		OrgUnit:              NewOrgUnitClient(cfg),
+		Permission:           NewPermissionClient(cfg),
+		PermissionApi:        NewPermissionApiClient(cfg),
+		PermissionAuditLog:   NewPermissionAuditLogClient(cfg),
+		PermissionGroup:      NewPermissionGroupClient(cfg),
+		PermissionMenu:       NewPermissionMenuClient(cfg),
+		PermissionPolicy:     NewPermissionPolicyClient(cfg),
+		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
+		Position:             NewPositionClient(cfg),
+		Project:              NewProjectClient(cfg),
+		Repository:           NewRepositoryClient(cfg),
+		Role:                 NewRoleClient(cfg),
+		RoleMetadata:         NewRoleMetadataClient(cfg),
+		RolePermission:       NewRolePermissionClient(cfg),
+		Script:               NewScriptClient(cfg),
+		Task:                 NewTaskClient(cfg),
+		Tenant:               NewTenantClient(cfg),
+		User:                 NewUserClient(cfg),
+		UserCredential:       NewUserCredentialClient(cfg),
+		UserOrgUnit:          NewUserOrgUnitClient(cfg),
+		UserPosition:         NewUserPositionClient(cfg),
+		UserRole:             NewUserRoleClient(cfg),
 	}, nil
 }
 
@@ -378,55 +388,57 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		AgentNode:           NewAgentNodeClient(cfg),
-		Alert:               NewAlertClient(cfg),
-		Api:                 NewAPIClient(cfg),
-		ApiAuditLog:         NewApiAuditLogClient(cfg),
-		Approval:            NewApprovalClient(cfg),
-		Build:               NewBuildClient(cfg),
-		BuildHistory:        NewBuildHistoryClient(cfg),
-		CommandRecord:       NewCommandRecordClient(cfg),
-		DataAccessAuditLog:  NewDataAccessAuditLogClient(cfg),
-		DictEntry:           NewDictEntryClient(cfg),
-		DictEntryI18n:       NewDictEntryI18nClient(cfg),
-		DictType:            NewDictTypeClient(cfg),
-		Distribution:        NewDistributionClient(cfg),
-		DistributionRecord:  NewDistributionRecordClient(cfg),
-		Language:            NewLanguageClient(cfg),
-		LoginAuditLog:       NewLoginAuditLogClient(cfg),
-		LoginPolicy:         NewLoginPolicyClient(cfg),
-		Membership:          NewMembershipClient(cfg),
-		MembershipOrgUnit:   NewMembershipOrgUnitClient(cfg),
-		MembershipPosition:  NewMembershipPositionClient(cfg),
-		MembershipRole:      NewMembershipRoleClient(cfg),
-		Menu:                NewMenuClient(cfg),
-		Monitor:             NewMonitorClient(cfg),
-		NodeMetric:          NewNodeMetricClient(cfg),
-		OperationAuditLog:   NewOperationAuditLogClient(cfg),
-		OrgUnit:             NewOrgUnitClient(cfg),
-		Permission:          NewPermissionClient(cfg),
-		PermissionApi:       NewPermissionApiClient(cfg),
-		PermissionAuditLog:  NewPermissionAuditLogClient(cfg),
-		PermissionGroup:     NewPermissionGroupClient(cfg),
-		PermissionMenu:      NewPermissionMenuClient(cfg),
-		PermissionPolicy:    NewPermissionPolicyClient(cfg),
-		PolicyEvaluationLog: NewPolicyEvaluationLogClient(cfg),
-		Position:            NewPositionClient(cfg),
-		Project:             NewProjectClient(cfg),
-		Repository:          NewRepositoryClient(cfg),
-		Role:                NewRoleClient(cfg),
-		RoleMetadata:        NewRoleMetadataClient(cfg),
-		RolePermission:      NewRolePermissionClient(cfg),
-		Script:              NewScriptClient(cfg),
-		Task:                NewTaskClient(cfg),
-		Tenant:              NewTenantClient(cfg),
-		User:                NewUserClient(cfg),
-		UserCredential:      NewUserCredentialClient(cfg),
-		UserOrgUnit:         NewUserOrgUnitClient(cfg),
-		UserPosition:        NewUserPositionClient(cfg),
-		UserRole:            NewUserRoleClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		AgentNode:            NewAgentNodeClient(cfg),
+		Alert:                NewAlertClient(cfg),
+		Api:                  NewAPIClient(cfg),
+		ApiAuditLog:          NewApiAuditLogClient(cfg),
+		Approval:             NewApprovalClient(cfg),
+		Build:                NewBuildClient(cfg),
+		BuildHistory:         NewBuildHistoryClient(cfg),
+		CommandRecord:        NewCommandRecordClient(cfg),
+		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
+		DictEntry:            NewDictEntryClient(cfg),
+		DictEntryI18n:        NewDictEntryI18nClient(cfg),
+		DictType:             NewDictTypeClient(cfg),
+		Distribution:         NewDistributionClient(cfg),
+		DistributionRecord:   NewDistributionRecordClient(cfg),
+		Language:             NewLanguageClient(cfg),
+		LoginAuditLog:        NewLoginAuditLogClient(cfg),
+		LoginPolicy:          NewLoginPolicyClient(cfg),
+		Membership:           NewMembershipClient(cfg),
+		MembershipOrgUnit:    NewMembershipOrgUnitClient(cfg),
+		MembershipPosition:   NewMembershipPositionClient(cfg),
+		MembershipRole:       NewMembershipRoleClient(cfg),
+		Menu:                 NewMenuClient(cfg),
+		Monitor:              NewMonitorClient(cfg),
+		NodeMetric:           NewNodeMetricClient(cfg),
+		NotificationChannel:  NewNotificationChannelClient(cfg),
+		NotificationDelivery: NewNotificationDeliveryClient(cfg),
+		OperationAuditLog:    NewOperationAuditLogClient(cfg),
+		OrgUnit:              NewOrgUnitClient(cfg),
+		Permission:           NewPermissionClient(cfg),
+		PermissionApi:        NewPermissionApiClient(cfg),
+		PermissionAuditLog:   NewPermissionAuditLogClient(cfg),
+		PermissionGroup:      NewPermissionGroupClient(cfg),
+		PermissionMenu:       NewPermissionMenuClient(cfg),
+		PermissionPolicy:     NewPermissionPolicyClient(cfg),
+		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
+		Position:             NewPositionClient(cfg),
+		Project:              NewProjectClient(cfg),
+		Repository:           NewRepositoryClient(cfg),
+		Role:                 NewRoleClient(cfg),
+		RoleMetadata:         NewRoleMetadataClient(cfg),
+		RolePermission:       NewRolePermissionClient(cfg),
+		Script:               NewScriptClient(cfg),
+		Task:                 NewTaskClient(cfg),
+		Tenant:               NewTenantClient(cfg),
+		User:                 NewUserClient(cfg),
+		UserCredential:       NewUserCredentialClient(cfg),
+		UserOrgUnit:          NewUserOrgUnitClient(cfg),
+		UserPosition:         NewUserPositionClient(cfg),
+		UserRole:             NewUserRoleClient(cfg),
 	}, nil
 }
 
@@ -460,12 +472,12 @@ func (c *Client) Use(hooks ...Hook) {
 		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
 		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.OperationAuditLog,
-		c.OrgUnit, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
+		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -479,12 +491,12 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
 		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.OperationAuditLog,
-		c.OrgUnit, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
+		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -541,6 +553,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Monitor.mutate(ctx, m)
 	case *NodeMetricMutation:
 		return c.NodeMetric.mutate(ctx, m)
+	case *NotificationChannelMutation:
+		return c.NotificationChannel.mutate(ctx, m)
+	case *NotificationDeliveryMutation:
+		return c.NotificationDelivery.mutate(ctx, m)
 	case *OperationAuditLogMutation:
 		return c.OperationAuditLog.mutate(ctx, m)
 	case *OrgUnitMutation:
@@ -3893,6 +3909,272 @@ func (c *NodeMetricClient) mutate(ctx context.Context, m *NodeMetricMutation) (V
 	}
 }
 
+// NotificationChannelClient is a client for the NotificationChannel schema.
+type NotificationChannelClient struct {
+	config
+}
+
+// NewNotificationChannelClient returns a client for the NotificationChannel from the given config.
+func NewNotificationChannelClient(c config) *NotificationChannelClient {
+	return &NotificationChannelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `notificationchannel.Hooks(f(g(h())))`.
+func (c *NotificationChannelClient) Use(hooks ...Hook) {
+	c.hooks.NotificationChannel = append(c.hooks.NotificationChannel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `notificationchannel.Intercept(f(g(h())))`.
+func (c *NotificationChannelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NotificationChannel = append(c.inters.NotificationChannel, interceptors...)
+}
+
+// Create returns a builder for creating a NotificationChannel entity.
+func (c *NotificationChannelClient) Create() *NotificationChannelCreate {
+	mutation := newNotificationChannelMutation(c.config, OpCreate)
+	return &NotificationChannelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NotificationChannel entities.
+func (c *NotificationChannelClient) CreateBulk(builders ...*NotificationChannelCreate) *NotificationChannelCreateBulk {
+	return &NotificationChannelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NotificationChannelClient) MapCreateBulk(slice any, setFunc func(*NotificationChannelCreate, int)) *NotificationChannelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NotificationChannelCreateBulk{err: fmt.Errorf("calling to NotificationChannelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NotificationChannelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NotificationChannelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NotificationChannel.
+func (c *NotificationChannelClient) Update() *NotificationChannelUpdate {
+	mutation := newNotificationChannelMutation(c.config, OpUpdate)
+	return &NotificationChannelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NotificationChannelClient) UpdateOne(_m *NotificationChannel) *NotificationChannelUpdateOne {
+	mutation := newNotificationChannelMutation(c.config, OpUpdateOne, withNotificationChannel(_m))
+	return &NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NotificationChannelClient) UpdateOneID(id uint32) *NotificationChannelUpdateOne {
+	mutation := newNotificationChannelMutation(c.config, OpUpdateOne, withNotificationChannelID(id))
+	return &NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NotificationChannel.
+func (c *NotificationChannelClient) Delete() *NotificationChannelDelete {
+	mutation := newNotificationChannelMutation(c.config, OpDelete)
+	return &NotificationChannelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NotificationChannelClient) DeleteOne(_m *NotificationChannel) *NotificationChannelDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NotificationChannelClient) DeleteOneID(id uint32) *NotificationChannelDeleteOne {
+	builder := c.Delete().Where(notificationchannel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NotificationChannelDeleteOne{builder}
+}
+
+// Query returns a query builder for NotificationChannel.
+func (c *NotificationChannelClient) Query() *NotificationChannelQuery {
+	return &NotificationChannelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNotificationChannel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NotificationChannel entity by its id.
+func (c *NotificationChannelClient) Get(ctx context.Context, id uint32) (*NotificationChannel, error) {
+	return c.Query().Where(notificationchannel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NotificationChannelClient) GetX(ctx context.Context, id uint32) *NotificationChannel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NotificationChannelClient) Hooks() []Hook {
+	return c.hooks.NotificationChannel
+}
+
+// Interceptors returns the client interceptors.
+func (c *NotificationChannelClient) Interceptors() []Interceptor {
+	return c.inters.NotificationChannel
+}
+
+func (c *NotificationChannelClient) mutate(ctx context.Context, m *NotificationChannelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NotificationChannelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NotificationChannelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NotificationChannelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NotificationChannel mutation op: %q", m.Op())
+	}
+}
+
+// NotificationDeliveryClient is a client for the NotificationDelivery schema.
+type NotificationDeliveryClient struct {
+	config
+}
+
+// NewNotificationDeliveryClient returns a client for the NotificationDelivery from the given config.
+func NewNotificationDeliveryClient(c config) *NotificationDeliveryClient {
+	return &NotificationDeliveryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `notificationdelivery.Hooks(f(g(h())))`.
+func (c *NotificationDeliveryClient) Use(hooks ...Hook) {
+	c.hooks.NotificationDelivery = append(c.hooks.NotificationDelivery, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `notificationdelivery.Intercept(f(g(h())))`.
+func (c *NotificationDeliveryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NotificationDelivery = append(c.inters.NotificationDelivery, interceptors...)
+}
+
+// Create returns a builder for creating a NotificationDelivery entity.
+func (c *NotificationDeliveryClient) Create() *NotificationDeliveryCreate {
+	mutation := newNotificationDeliveryMutation(c.config, OpCreate)
+	return &NotificationDeliveryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NotificationDelivery entities.
+func (c *NotificationDeliveryClient) CreateBulk(builders ...*NotificationDeliveryCreate) *NotificationDeliveryCreateBulk {
+	return &NotificationDeliveryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NotificationDeliveryClient) MapCreateBulk(slice any, setFunc func(*NotificationDeliveryCreate, int)) *NotificationDeliveryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NotificationDeliveryCreateBulk{err: fmt.Errorf("calling to NotificationDeliveryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NotificationDeliveryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NotificationDeliveryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NotificationDelivery.
+func (c *NotificationDeliveryClient) Update() *NotificationDeliveryUpdate {
+	mutation := newNotificationDeliveryMutation(c.config, OpUpdate)
+	return &NotificationDeliveryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NotificationDeliveryClient) UpdateOne(_m *NotificationDelivery) *NotificationDeliveryUpdateOne {
+	mutation := newNotificationDeliveryMutation(c.config, OpUpdateOne, withNotificationDelivery(_m))
+	return &NotificationDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NotificationDeliveryClient) UpdateOneID(id uint32) *NotificationDeliveryUpdateOne {
+	mutation := newNotificationDeliveryMutation(c.config, OpUpdateOne, withNotificationDeliveryID(id))
+	return &NotificationDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NotificationDelivery.
+func (c *NotificationDeliveryClient) Delete() *NotificationDeliveryDelete {
+	mutation := newNotificationDeliveryMutation(c.config, OpDelete)
+	return &NotificationDeliveryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NotificationDeliveryClient) DeleteOne(_m *NotificationDelivery) *NotificationDeliveryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NotificationDeliveryClient) DeleteOneID(id uint32) *NotificationDeliveryDeleteOne {
+	builder := c.Delete().Where(notificationdelivery.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NotificationDeliveryDeleteOne{builder}
+}
+
+// Query returns a query builder for NotificationDelivery.
+func (c *NotificationDeliveryClient) Query() *NotificationDeliveryQuery {
+	return &NotificationDeliveryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNotificationDelivery},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NotificationDelivery entity by its id.
+func (c *NotificationDeliveryClient) Get(ctx context.Context, id uint32) (*NotificationDelivery, error) {
+	return c.Query().Where(notificationdelivery.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NotificationDeliveryClient) GetX(ctx context.Context, id uint32) *NotificationDelivery {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NotificationDeliveryClient) Hooks() []Hook {
+	return c.hooks.NotificationDelivery
+}
+
+// Interceptors returns the client interceptors.
+func (c *NotificationDeliveryClient) Interceptors() []Interceptor {
+	return c.inters.NotificationDelivery
+}
+
+func (c *NotificationDeliveryClient) mutate(ctx context.Context, m *NotificationDeliveryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NotificationDeliveryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NotificationDeliveryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NotificationDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NotificationDeliveryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NotificationDelivery mutation op: %q", m.Op())
+	}
+}
+
 // OperationAuditLogClient is a client for the OperationAuditLog schema.
 type OperationAuditLogClient struct {
 	config
@@ -7042,21 +7324,23 @@ type (
 		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
 		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, OperationAuditLog, OrgUnit, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Hook
+		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, Approval, Build, BuildHistory,
 		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
 		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, OperationAuditLog, OrgUnit, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Interceptor
+		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Project, Repository, Role, RoleMetadata, RolePermission, Script,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

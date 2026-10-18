@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// NotificationChannelService 告警通知渠道配置管理。
+service NotificationChannelService {
+  // 查询渠道列表
+  rpc ListChannels (pagination.PagingRequest) returns (ListNotificationChannelResponse) {}
+
+  // 查询渠道详情
+  rpc GetChannel (GetNotificationChannelRequest) returns (NotificationChannel) {}
+
+  // 创建渠道
+  rpc CreateChannel (CreateNotificationChannelRequest) returns (NotificationChannel) {}
+
+  // 更新渠道
+  rpc UpdateChannel (UpdateNotificationChannelRequest) returns (google.protobuf.Empty) {}
+
+  // 删除渠道
+  rpc DeleteChannel (DeleteNotificationChannelRequest) returns (google.protobuf.Empty) {}
+}
+
+// 通知渠道类型
+enum NotificationChannelType {
+  NOTIFICATION_CHANNEL_TYPE_UNSPECIFIED = 0;
+
+  WEBHOOK = 1; // Webhook(支持钉钉/飞书/企微群机器人签名)
+  EMAIL = 2;   // 邮件(SMTP)
+}
+
+// 告警通知渠道配置
+message NotificationChannel {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 渠道ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "渠道名(全局唯一)"
+    }
+  ]; // 渠道名
+
+  optional NotificationChannelType type = 3 [
+    json_name = "type",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 渠道类型
+
+  optional string webhook_url = 4 [
+    json_name = "webhookUrl",
+    (gnostic.openapi.v3.property) = {
+      description: "Webhook URL(type=WEBHOOK 时必填)"
+    }
+  ]; // Webhook URL
+
+  optional string webhook_secret = 5 [
+    json_name = "webhookSecret",
+    (gnostic.openapi.v3.property) = {
+      description: "签名密钥(钉钉/飞书/企微群机器人)"
+    }
+  ]; // 签名密钥
+
+  optional string webhook_sign_style = 6 [
+    json_name = "webhookSignStyle",
+    (gnostic.openapi.v3.property) = {
+      description: "签名风格(NONE/DINGTALK/FEISHU/WECOM)"
+    }
+  ]; // 签名风格
+
+  optional string smtp_host = 7 [json_name = "smtpHost"]; // SMTP 主机
+  optional int32 smtp_port = 8 [json_name = "smtpPort"]; // SMTP 端口
+  optional string smtp_username = 9 [json_name = "smtpUsername"]; // SMTP 用户名
+  optional string smtp_password = 10 [
+    json_name = "smtpPassword",
+    (google.api.field_behavior) = INPUT_ONLY
+  ]; // SMTP 密码(写入)
+  optional string smtp_from = 11 [json_name = "smtpFrom"]; // 发件人
+
+  optional bool enabled = 12 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 13 [json_name = "description"]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListNotificationChannelResponse {
+  uint64 total = 1 [json_name = "total"];
+  repeated NotificationChannel items = 2 [json_name = "items"];
+}
+
+message GetNotificationChannelRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message CreateNotificationChannelRequest {
+  NotificationChannel data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message UpdateNotificationChannelRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ];
+  NotificationChannel data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ];
+  google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"];
+}
+
+message DeleteNotificationChannelRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

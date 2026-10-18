@@ -78,6 +78,12 @@ type Monitor func(*sql.Selector)
 // NodeMetric is the predicate function for nodemetric builders.
 type NodeMetric func(*sql.Selector)
 
+// NotificationChannel is the predicate function for notificationchannel builders.
+type NotificationChannel func(*sql.Selector)
+
+// NotificationDelivery is the predicate function for notificationdelivery builders.
+type NotificationDelivery func(*sql.Selector)
+
 // OperationAuditLog is the predicate function for operationauditlog builders.
 type OperationAuditLog func(*sql.Selector)
 
