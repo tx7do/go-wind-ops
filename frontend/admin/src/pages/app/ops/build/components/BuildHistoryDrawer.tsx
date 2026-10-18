@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Modal, Spin, Table, Tag } from 'antd';
+import { Modal, Spin, Table, Tag, Select, App } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UndoOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type {
   opsservicev1_Build as Build,
   opsservicev1_BuildHistory as BuildHistory,
 } from '@/api/generated/admin/service/v1';
-import { fetchListBuildHistories, fetchArtifactDownloadUrl } from '@/api/hooks/build-history';
 import { PaginationQuery } from '@/core';
+import {
+  fetchListBuildHistories,
+  fetchArtifactDownloadUrl,
+} from '@/api/hooks/build-history';
+import { fetchListDistributions, useTriggerDistribution } from '@/api/hooks/distribution';
 
 interface BuildHistoryDrawerProps {
   build?: Build;
@@ -16,18 +20,32 @@ interface BuildHistoryDrawerProps {
 }
 
 /**
- * 构建历史抽屉:列出该构建配置的执行历史,支持看日志/下载产物。
- * 数据按 buildId 客户端过滤(台账量小;后续可加服务端过滤参数)。
+ * 构建历史抽屉:列出该构建配置的执行历史,支持看日志/下载产物/回滚分发。
+ * 回滚 = 用该构建号的产物重新触发一次关联的分发配置。
  */
 const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose }) => {
   const { t } = useTranslation('build-history');
+  const { message } = App.useApp();
   const [items, setItems] = useState<BuildHistory[]>([]);
   const [loading, setLoading] = useState(false);
   const [logRecord, setLogRecord] = useState<BuildHistory | undefined>();
 
-  // 加载 + RUNNING 时自动轮询(3s)
-  const load = async () => {
+  // 回滚:选分发配置
+  const [rollbackFor, setRollbackFor] = useState<BuildHistory | undefined>();
+  const [distOptions, setDistOptions] = useState<{ label: string; value: number }[]>([]);
+  const [selectedDistId, setSelectedDistId] = useState<number | undefined>();
+  const [rollbackLoading, setRollbackLoading] = useState(false);
+  const triggerMutation = useTriggerDistribution({
+    onSuccess: (resp) => {
+      message.success(t('rollbackSent', { recordId: resp.recordId }));
+      setRollbackFor(undefined);
+    },
+    onError: (e: Error) => message.error(e.message || t('rollbackFailed')),
+  });
+
+  useEffect(() => {
     if (!build?.id) return;
+    setLoading(true);
     fetchListBuildHistories(new PaginationQuery({ paging: { page: 1, pageSize: 50 } }))
       .then((resp) => {
         setItems(
@@ -37,17 +55,44 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         );
       })
       .finally(() => setLoading(false));
+  }, [build?.id]);
+
+  // 打开回滚弹窗:拉取关联的分发配置
+  const openRollback = async (record: BuildHistory) => {
+    setRollbackFor(record);
+    try {
+      const resp = await fetchListDistributions(
+        new PaginationQuery({ paging: { page: 1, pageSize: 100 } }),
+      );
+      const matching = (resp.items ?? []).filter((d) => d.buildId === build?.id);
+      setDistOptions(matching.map((d) => ({ label: d.name || String(d.id), value: d.id ?? 0 })));
+      if (matching.length > 0) setSelectedDistId(matching[0].id);
+      else setSelectedDistId(undefined);
+    } catch {
+      setDistOptions([]);
+    }
   };
 
-  useEffect(() => { load(); }, [build?.id]);
+  const confirmRollback = () => {
+    if (!rollbackFor?.id || !selectedDistId) {
+      message.warning(t('selectDistRequired'));
+      return;
+    }
+    setRollbackLoading(true);
+    triggerMutation.mutate(
+      { id: selectedDistId, historyId: rollbackFor.id },
+      { onSettled: () => setRollbackLoading(false) },
+    );
+  };
 
-  useEffect(() => {
-    if (!build?.id) return;
-    const hasActive = items.some((h) => h.status === 'PENDING' || h.status === 'RUNNING');
-    if (!hasActive) return;
-    const timer = setInterval(load, 3000);
-    return () => clearInterval(timer);
-  }, [build?.id, items]);
+  const download = async (record: BuildHistory) => {
+    try {
+      const resp = await fetchArtifactDownloadUrl(record.id ?? 0);
+      window.open(resp.url, '_blank');
+    } catch (e) {
+      console.error('artifact url failed:', e);
+    }
+  };
 
   const statusTag = (status: string | undefined) => {
     switch (status) {
@@ -61,15 +106,6 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         return <Tag color="warning">{t('statusPending')}</Tag>;
       default:
         return <Tag>{t('statusUnknown')}</Tag>;
-    }
-  };
-
-  const download = async (record: BuildHistory) => {
-    try {
-      const resp = await fetchArtifactDownloadUrl(record.id ?? 0);
-      window.open(resp.url, '_blank');
-    } catch (e) {
-      console.error('artifact url failed:', e);
     }
   };
 
@@ -97,14 +133,19 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
     { title: t('finishedAt'), dataIndex: 'finishedAt', width: 170, render: fmtTime },
     {
       title: t('action'),
-      width: 150,
-      render: (_, record) => [
+      width: 210,
+      render: (_: any, record: BuildHistory) => [
         <a key="log" onClick={() => setLogRecord(record)}>
           {t('viewLog')}
         </a>,
         record.status === 'SUCCESS' && record.artifactObjectKey ? (
           <a key="dl" onClick={() => download(record)}>
             <DownloadOutlined /> {t('download')}
+          </a>
+        ) : null,
+        record.status === 'SUCCESS' && record.artifactObjectKey ? (
+          <a key="rollback" onClick={() => openRollback(record)}>
+            <UndoOutlined /> {t('rollback')}
           </a>
         ) : null,
       ],
@@ -162,6 +203,32 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
           {logRecord?.log || t('logEmpty')}
           {logRecord?.error ? `\n[ERROR] ${logRecord.error}` : ''}
         </pre>
+      </Modal>
+
+      {/* 回滚分发弹窗:选分发配置 → 用该构建号的产物重新分发 */}
+      <Modal
+        title={t('rollbackTitle', { no: rollbackFor?.buildNo })}
+        open={!!rollbackFor}
+        onCancel={() => setRollbackFor(undefined)}
+        onOk={confirmRollback}
+        okText={t('rollbackConfirm')}
+        confirmLoading={rollbackLoading}
+        width={420}
+        destroyOnClose
+      >
+        <div style={{ marginBottom: 8 }}>{t('rollbackDistLabel')}</div>
+        <Select
+          style={{ width: '100%' }}
+          placeholder={t('rollbackDistPlaceholder')}
+          value={selectedDistId}
+          onChange={setSelectedDistId}
+          options={distOptions}
+        />
+        {distOptions.length === 0 && (
+          <div style={{ marginTop: 8, color: 'var(--ant-color-error)', fontSize: 12 }}>
+            {t('noMatchingDist')}
+          </div>
+        )}
       </Modal>
     </>
   );

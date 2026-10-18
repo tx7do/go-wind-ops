@@ -15,5 +15,14 @@
   "viewLog": "Log",
   "download": "Download",
   "logTitle": "Build Log #{{no}}",
-  "logEmpty": "No log"
+  "logEmpty": "No log",
+  "rollback": "Rollback",
+  "rollbackTitle": "Rollback distribution #{{no}}",
+  "rollbackDistLabel": "Select distribution config",
+  "rollbackDistPlaceholder": "Select a distribution config",
+  "rollbackConfirm": "Confirm Rollback",
+  "rollbackSent": "Rollback triggered (record #{{recordId}})",
+  "rollbackFailed": "Rollback failed",
+  "selectDistRequired": "Please select a distribution config",
+  "noMatchingDist": "No distribution config found using this build source"
 }

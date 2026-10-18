@@ -15,5 +15,14 @@
   "viewLog": "日志",
   "download": "下载产物",
   "logTitle": "构建日志 #{{no}}",
-  "logEmpty": "暂无日志"
+  "logEmpty": "暂无日志",
+  "rollback": "回滚分发",
+  "rollbackTitle": "回滚分发 #{{no}}",
+  "rollbackDistLabel": "选择分发配置",
+  "rollbackDistPlaceholder": "选择要使用的分发配置",
+  "rollbackConfirm": "确认回滚",
+  "rollbackSent": "回滚分发已触发（记录 #{{recordId}}）",
+  "rollbackFailed": "回滚分发失败",
+  "selectDistRequired": "请选择分发配置",
+  "noMatchingDist": "没有找到使用此构建来源的分发配置"
 }
