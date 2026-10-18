@@ -56,6 +56,8 @@ type Service struct {
 	mqttBroker atomic.Value // broker.Broker
 	authed     atomic.Bool
 
+	terminal *terminalSessionManager
+
 	stopCh chan struct{}
 }
 

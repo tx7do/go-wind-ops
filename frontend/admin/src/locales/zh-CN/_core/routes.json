@@ -2,6 +2,7 @@
   "dashboard": "数据看板",
   "ops": "运维管理",
   "agent-nodes": "节点管理",
+  "terminal": "Web 终端",
   "projects": "项目管理",
   "scripts": "脚本管理",
   "repositories": "源仓库",

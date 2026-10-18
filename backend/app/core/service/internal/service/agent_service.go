@@ -49,6 +49,10 @@ type AgentService struct {
 
 	// waiters 同步指令的等待队列:request_id → 回执投递通道。
 	waiters sync.Map
+
+	// terminalRoutes Web 终端输出路由:"agentId/sessionId" → 流输出通道。
+	terminalRoutesMu sync.Mutex
+	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
 func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
@@ -61,6 +65,8 @@ func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRep
 		metricRepo:     metricRepo,
 		ossClient:      ossClient,
 		log:            ctx.NewLoggerHelper("agent/service/core-service"),
+
+		terminalRoutes: make(map[string]chan *signal.TerminalIO),
 	}
 }
 

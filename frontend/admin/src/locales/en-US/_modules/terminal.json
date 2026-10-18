@@ -1,0 +1,15 @@
+{
+  "moduleName": "Web Terminal",
+  "selectAgent": "Select machine",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "connected": "Connected",
+  "connecting": "Connecting",
+  "disconnected": "Disconnected",
+  "sessionClosed": "Session closed",
+  "wsError": "Connection error",
+  "wsClosed": "Connection closed",
+  "pickAgentFirst": "Select a machine first",
+  "tokenMissing": "Not signed in, please sign in again",
+  "hint": "Pipe-based pseudo terminal: normal commands work; interactive full-screen apps (vim/htop) and Ctrl+C are not supported. Idle sessions disconnect after 15 minutes."
+}

@@ -1,0 +1,15 @@
+{
+  "moduleName": "Web 终端",
+  "selectAgent": "选择机器",
+  "connect": "连接终端",
+  "disconnect": "断开",
+  "connected": "已连接",
+  "connecting": "正在连接",
+  "disconnected": "已断开",
+  "sessionClosed": "会话已结束",
+  "wsError": "连接错误",
+  "wsClosed": "连接已关闭",
+  "pickAgentFirst": "请先选择机器",
+  "tokenMissing": "登录态缺失,请重新登录",
+  "hint": "管道伪终端:支持常规命令;不支持交互式全屏程序(vim/htop)与 Ctrl+C。闲置 15 分钟自动断开。"
+}

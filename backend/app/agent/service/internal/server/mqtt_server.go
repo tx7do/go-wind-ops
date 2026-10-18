@@ -56,5 +56,12 @@ func NewAgentMqttServer(
 		agentService.HandleCommand,
 	)
 
+	// Web 终端输入(通配所有会话,payload.session_id 路由)
+	_ = mqtt.RegisterSubscriber(srv,
+		ctx.Context(),
+		topic.MakeMqttTopicTerminalInput(agentService.AgentID(), "+"),
+		agentService.HandleTerminalInput,
+	)
+
 	return srv
 }

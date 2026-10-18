@@ -28,13 +28,24 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'terminal',
+        path: 'terminal',
+        element: createLazyRoute(() => import('@/pages/app/ops/terminal')),
+        meta: {
+          title: 'routes:terminal',
+          icon: 'lucide:terminal',
+          order: 2,
+          authority: ['ops:node_manage'],
+        },
+      },
+      {
         name: 'projects',
         path: 'projects',
         element: createLazyRoute(() => import('@/pages/app/ops/project')),
         meta: {
           title: 'routes:projects',
           icon: 'lucide:folder-open',
-          order: 2,
+          order: 3,
           authority: ['ops:project_manage'],
         },
       },
@@ -45,7 +56,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:scripts',
           icon: 'lucide:file-code',
-          order: 3,
+          order: 4,
           authority: ['ops:script_manage'],
         },
       },
@@ -56,7 +67,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:repositories',
           icon: 'lucide:git-branch',
-          order: 4,
+          order: 5,
           authority: ['ops:build_manage'],
         },
       },
@@ -67,7 +78,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:builds',
           icon: 'lucide:hammer',
-          order: 5,
+          order: 6,
           authority: ['ops:build_manage'],
         },
       },
@@ -78,7 +89,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:distributions',
           icon: 'lucide:send',
-          order: 6,
+          order: 7,
           authority: ['ops:distribute'],
         },
       },
@@ -89,7 +100,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:file-manager',
           icon: 'lucide:folder-tree',
-          order: 8,
+          order: 9,
           authority: ['ops:node_manage'],
         },
       },
@@ -100,7 +111,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:command-records',
           icon: 'lucide:scroll-text',
-          order: 7,
+          order: 8,
           authority: ['ops:node_manage'],
         },
       },
@@ -111,7 +122,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:monitors',
           icon: 'lucide:activity',
-          order: 9,
+          order: 10,
           authority: ['sys:platform_admin'],
         },
       },
@@ -122,7 +133,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:alerts',
           icon: 'lucide:bell',
-          order: 10,
+          order: 11,
           authority: ['sys:platform_admin'],
         },
       },
@@ -133,7 +144,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:notification-channels',
           icon: 'lucide:radio',
-          order: 11,
+          order: 12,
           authority: ['sys:platform_admin'],
         },
       },
@@ -144,7 +155,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:approvals',
           icon: 'lucide:check-circle',
-          order: 12,
+          order: 13,
           authority: ['sys:platform_admin'],
         },
       },

@@ -41,6 +41,12 @@ const (
 	MqttTopicCommandAck    = MqttTopicPrefix + "agent/%s/command/ack"    // Agent -> Core (指令确认)
 	MqttTopicCommandResult = MqttTopicPrefix + "agent/%s/command/result" // Agent -> Core (执行结果)
 
+	// Web 终端双向流 (会话开关走 command 指令主题,字节流走这里;
+	// 通配订阅 + sessionId 路由,不经 $share——终端流是连接级点对点)
+
+	MqttTopicTerminalInput  = MqttTopicPrefix + "agent/%s/terminal/%s/input"  // Core -> Agent (键盘输入)
+	MqttTopicTerminalOutput = MqttTopicPrefix + "agent/%s/terminal/%s/output" // Agent -> Core (回显输出)
+
 	// 文件传输信令 (文件内容走 MinIO/S3 预签名 URL,不过 MQTT)
 
 	MqttTopicFileRequest  = MqttTopicPrefix + "agent/%s/file/request"  // Agent -> Core (请求上传/下载链接)
@@ -86,4 +92,14 @@ func MakeMqttTopicFileResponse(agentId string) string {
 
 func MakeMqttTopicFileComplete(agentId string) string {
 	return fmt.Sprintf(MqttTopicFileComplete, agentId)
+}
+
+// MakeMqttTopicTerminalInput 终端输入主题;通配订阅传 "+"。
+func MakeMqttTopicTerminalInput(agentId, sessionId string) string {
+	return fmt.Sprintf(MqttTopicTerminalInput, agentId, sessionId)
+}
+
+// MakeMqttTopicTerminalOutput 终端输出主题;通配订阅传 "+"。
+func MakeMqttTopicTerminalOutput(agentId, sessionId string) string {
+	return fmt.Sprintf(MqttTopicTerminalOutput, agentId, sessionId)
 }

@@ -119,6 +119,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	approvalServiceClient := data.NewApprovalServiceClient(ctx, discovery)
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
 	fileServiceClient := data.NewFileServiceClient(ctx, discovery)
+	terminalServiceClient := data.NewTerminalServiceClient(ctx, discovery)
 	repositoryServiceClient := data.NewRepositoryServiceClient(ctx, discovery)
 	buildServiceClient := data.NewBuildServiceClient(ctx, discovery)
 	buildHistoryServiceClient := data.NewBuildHistoryServiceClient(ctx, discovery)
@@ -186,6 +187,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
+	terminalWsHandler := server.NewTerminalWsHandler(ctx, accessTokenChecker, terminalServiceClient)
+
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
 		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,
 		menuService, apiService, permissionGroupService, permissionService,
@@ -198,6 +201,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		monitorService, alertService,
 		approvalService, notificationChannelService,
 		fileService,
+		terminalWsHandler,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,

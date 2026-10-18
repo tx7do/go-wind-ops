@@ -21,6 +21,7 @@ export function createProxy(list: ProxyList = []) {
         res[`^${prefix}`] = {
             target,
             changeOrigin: true,
+            ws: true,
         };
     }
 

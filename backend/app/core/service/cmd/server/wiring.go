@@ -198,6 +198,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)
 	approvalService := service.NewApprovalService(ctx, approvalRepo, agentService)
 	fileService := service.NewFileService(ctx, agentService, agentNodeRepo)
+	terminalService := service.NewTerminalService(ctx, agentService, agentNodeRepo)
 
 	// 定时调度(构建/脚本 cron + 监控检查)
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, agentService)
@@ -228,6 +229,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationChannelService,
 		approvalService,
 		fileService,
+		terminalService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

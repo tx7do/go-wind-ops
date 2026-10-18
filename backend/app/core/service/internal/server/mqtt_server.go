@@ -59,5 +59,13 @@ func NewCoreMqttServer(
 		agentService.HandleCommandResult,
 	)
 
+	// Web 终端输出:连接级点对点流,不经 $share(否则多副本组内分流会丢流)。
+	// 每副本都收全量输出,仅持有对应 gRPC 流的副本消费,其余按路由表丢弃。
+	_ = mqtt.RegisterSubscriber(srv,
+		ctx.Context(),
+		topic.MakeMqttTopicTerminalOutput("+", "+"),
+		agentService.HandleTerminalOutput,
+	)
+
 	return srv
 }

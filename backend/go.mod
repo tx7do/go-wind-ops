@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.14.6
 	github.com/alicebob/miniredis/v2 v2.38.0
 	github.com/dtm-labs/dtm v1.19.0
+	github.com/eclipse/paho.mqtt.golang v1.5.1
 	github.com/envoyproxy/protoc-gen-validate v1.3.3
 	github.com/getkin/kin-openapi v0.146.0
 	github.com/go-kratos/kratos/v2 v2.9.2
@@ -13,6 +14,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/gnostic v0.7.1
 	github.com/google/uuid v1.6.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/hibiken/asynq v0.26.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/jinzhu/copier v0.4.0
@@ -21,6 +23,7 @@ require (
 	github.com/mileusna/useragent v1.3.5
 	github.com/minio/minio-go/v7 v7.2.1
 	github.com/redis/go-redis/v9 v9.22.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil/v4 v4.26.9
 	github.com/stretchr/testify v1.12.1
 	github.com/tx7do/go-crud/api v0.0.7
@@ -94,7 +97,6 @@ require (
 	github.com/dtm-labs/logger v0.0.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ebitengine/purego v0.11.1 // indirect
-	github.com/eclipse/paho.mqtt.golang v1.5.1 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
@@ -118,7 +120,6 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
-	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
@@ -164,7 +165,6 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.17.2 // indirect
 	github.com/redis/go-redis/extra/redisotel/v9 v9.17.2 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect

@@ -2,6 +2,7 @@
   "dashboard": "Dashboard",
   "ops": "Operations",
   "agent-nodes": "Agent Nodes",
+  "terminal": "Terminal",
   "projects": "Projects",
   "scripts": "Scripts",
   "repositories": "Repositories",

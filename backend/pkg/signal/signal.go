@@ -286,6 +286,9 @@ type FileTransferComplete struct {
 const (
 	CommandActionDockerDeploy CommandAction = "docker_deploy"
 
+	CommandActionTerminalOpen  CommandAction = "terminal_open"  // 打开终端会话(同步等待回执)
+	CommandActionTerminalClose CommandAction = "terminal_close" // 关闭终端会话
+
 	CommandActionFileList   CommandAction = "file_list"
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
@@ -316,4 +319,33 @@ type DockerDeployResult struct {
 	ContainerName string `json:"container_name,omitempty"`
 	ContainerId   string `json:"container_id,omitempty"`
 	Output        string `json:"output,omitempty"`
+}
+
+// ============================================================================
+// Web 终端
+// ============================================================================
+
+// TerminalSessionMax 单 agent 并发终端会话上限。
+const TerminalSessionMax = 5
+
+// TerminalOpenPayload terminal_open 指令载荷;shell 由 agent 按平台默认
+// (Windows=cmd.exe,Unix=$SHELL 或 /bin/bash)。管道伪终端:不支持交互式
+// 全屏程序(vim/htop)与 Ctrl+C 控制台事件。
+type TerminalOpenPayload struct {
+	SessionId string `json:"session_id"`
+	Cols      uint32 `json:"cols,omitempty"`
+	Rows      uint32 `json:"rows,omitempty"`
+}
+
+// TerminalClosePayload terminal_close 指令载荷。
+type TerminalClosePayload struct {
+	SessionId string `json:"session_id"`
+}
+
+// TerminalIO 终端输入/输出字节(base64 承载,过 MQTT JSON codec);
+// Closed=true 表示会话已结束(空帧)。
+type TerminalIO struct {
+	SessionId string `json:"session_id"`
+	Data      string `json:"data"`  // base64
+	Closed    bool   `json:"closed,omitempty"`
 }

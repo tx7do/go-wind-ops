@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+// TerminalService Web 终端双向通道:
+// 浏览器 WS ↔ admin BFF ↔ 本服务(gRPC bidi 流) ↔ MQTT ↔ agent。
+// 首帧必须为 event=OPEN 携带 agent_id,此后 data 帧双向对传;
+// 会话开关经 command 主题(terminal_open/terminal_close,入指令台账审计)。
+service TerminalService {
+  // 终端字节流通道
+  rpc Channel (stream TerminalChunk) returns (stream TerminalChunk) {}
+}
+
+// 终端数据块
+message TerminalChunk {
+  optional string agent_id = 1 [
+    json_name = "agentId"
+  ]; // 机器唯一标识(仅首帧必填)
+
+  optional string session_id = 2 [
+    json_name = "sessionId"
+  ]; // 会话ID(仅首帧必填;后续帧可不带)
+
+  optional bytes data = 3 [
+    json_name = "data"
+  ]; // 字节流(输入/输出)
+
+  optional string event = 4 [
+    json_name = "event"
+  ]; // 控制事件: OPEN=发起(首帧) OPENED=会话就绪 CLOSED=会话结束
+
+  optional string error = 5 [
+    json_name = "error"
+  ]; // 错误信息(伴随 CLOSED/ERROR)
+}
