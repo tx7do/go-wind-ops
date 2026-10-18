@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/api_key.proto";
+
+// ApiKeyService OpenAPI 密钥管理门面(Validate 不对外暴露)。
+service ApiKeyService {
+  // 查询密钥列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListApiKeyResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/api-keys"
+    };
+  }
+
+  // 查询密钥详情
+  rpc Get (ops.service.v1.GetApiKeyRequest) returns (ops.service.v1.ApiKey) {
+    option (google.api.http) = {
+      get: "/admin/v1/api-keys/{id}"
+    };
+  }
+
+  // 创建密钥(响应含明文,仅此一次)
+  rpc Create (ops.service.v1.CreateApiKeyRequest) returns (ops.service.v1.CreateApiKeyResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/api-keys"
+      body: "*"
+    };
+  }
+
+  // 更新密钥
+  rpc Update (ops.service.v1.UpdateApiKeyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/api-keys/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除密钥
+  rpc Delete (ops.service.v1.DeleteApiKeyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/api-keys/{id}"
+    };
+  }
+}

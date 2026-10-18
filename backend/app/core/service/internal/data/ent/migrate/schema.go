@@ -239,6 +239,37 @@ var (
 			},
 		},
 	}
+	// OpsAPIKeysColumns holds the columns for the "ops_api_keys" table.
+	OpsAPIKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "密钥名(唯一)"},
+		{Name: "key_hash", Type: field.TypeString, Unique: true, Comment: "SHA-256(opsk_ 明文)"},
+		{Name: "prefix", Type: field.TypeString, Comment: "明文前 12 位(opsk_xxxxxxxx 识别用)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"ENABLED", "DISABLED"}, Default: "ENABLED"},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true, Comment: "最近使用时间(异步回写)"},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间(空=永不过期)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsAPIKeysTable holds the schema information for the "ops_api_keys" table.
+	OpsAPIKeysTable = &schema.Table{
+		Name:       "ops_api_keys",
+		Comment:    "OpenAPI 密钥表",
+		Columns:    OpsAPIKeysColumns,
+		PrimaryKey: []*schema.Column{OpsAPIKeysColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_api_key_hash",
+				Unique:  false,
+				Columns: []*schema.Column{OpsAPIKeysColumns[8]},
+			},
+		},
+	}
 	// OpsApprovalsColumns holds the columns for the "ops_approvals" table.
 	OpsApprovalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3199,6 +3230,7 @@ var (
 		OpsAlertsTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		OpsAPIKeysTable,
 		OpsApprovalsTable,
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
@@ -3267,6 +3299,11 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsAPIKeysTable.Annotation = &entsql.Annotation{
+		Table:     "ops_api_keys",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

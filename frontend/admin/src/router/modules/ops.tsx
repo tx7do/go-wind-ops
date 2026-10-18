@@ -170,6 +170,17 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'api-keys',
+        path: 'api-keys',
+        element: createLazyRoute(() => import('@/pages/app/ops/api-key')),
+        meta: {
+          title: 'routes:api-keys',
+          icon: 'lucide:key-round',
+          order: 15,
+          authority: ['sys:platform_admin'],
+        },
+      },
     ],
   },
 ];

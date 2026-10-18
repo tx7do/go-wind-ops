@@ -330,6 +330,15 @@ func NewPipelineServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV
 	return opsV1.NewPipelineServiceClient(cli)
 }
 
+func NewApiKeyServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ApiKeyServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewApiKeyServiceClient(cli)
+}
+
 func NewMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.MonitorServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

@@ -121,6 +121,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	fileServiceClient := data.NewFileServiceClient(ctx, discovery)
 	terminalServiceClient := data.NewTerminalServiceClient(ctx, discovery)
 	pipelineServiceClient := data.NewPipelineServiceClient(ctx, discovery)
+	apiKeyServiceClient := data.NewApiKeyServiceClient(ctx, discovery)
 	repositoryServiceClient := data.NewRepositoryServiceClient(ctx, discovery)
 	buildServiceClient := data.NewBuildServiceClient(ctx, discovery)
 	buildHistoryServiceClient := data.NewBuildHistoryServiceClient(ctx, discovery)
@@ -169,6 +170,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelServiceClient)
 	fileService := service.NewFileService(ctx, fileServiceClient)
 	pipelineService := service.NewPipelineService(ctx, pipelineServiceClient)
+	apiKeyService := service.NewApiKeyService(ctx, apiKeyServiceClient)
 
 	// 字典与多语言
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
@@ -190,6 +192,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
 	terminalWsHandler := server.NewTerminalWsHandler(ctx, accessTokenChecker, terminalServiceClient)
+	openApiGateway := server.NewOpenApiGateway(apiKeyServiceClient, buildServiceClient, distributionServiceClient, pipelineServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
 		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,
@@ -204,7 +207,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		approvalService, notificationChannelService,
 		fileService,
 		pipelineService,
+		apiKeyService,
 		terminalWsHandler,
+		openApiGateway,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,

@@ -20,6 +20,8 @@ type Tx struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// ApiKey is the client for interacting with the ApiKey builders.
+	ApiKey *ApiKeyClient
 	// Approval is the client for interacting with the Approval builders.
 	Approval *ApprovalClient
 	// Build is the client for interacting with the Build builders.
@@ -249,6 +251,7 @@ func (tx *Tx) init() {
 	tx.Alert = NewAlertClient(tx.config)
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
+	tx.ApiKey = NewApiKeyClient(tx.config)
 	tx.Approval = NewApprovalClient(tx.config)
 	tx.Build = NewBuildClient(tx.config)
 	tx.BuildHistory = NewBuildHistoryClient(tx.config)

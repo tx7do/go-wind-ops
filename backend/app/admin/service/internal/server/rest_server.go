@@ -130,7 +130,9 @@ func NewRestServer(
 	notificationChannelService *service.NotificationChannelService,
 	fileService *service.FileService,
 	pipelineService *service.PipelineService,
+	apiKeyService *service.ApiKeyService,
 	terminalWsHandler *TerminalWsHandler,
+	openApiGateway *OpenApiGateway,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -166,6 +168,11 @@ func NewRestServer(
 		srv.Handle(terminalWsHandler.Path(), terminalWsHandler)
 	}
 
+	// OpenAPI 网关:API Key 认证,不经过 JWT 中间件
+	if openApiGateway != nil {
+		srv.HandlePrefix(openApiGateway.Prefix(), openApiGateway)
+	}
+
 	adminV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
 	adminV1.RegisterLoginPolicyServiceHTTPServer(srv, loginPolicyService)
 
@@ -193,6 +200,7 @@ func NewRestServer(
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
 	adminV1.RegisterFileServiceHTTPServer(srv, fileService)
 	adminV1.RegisterPipelineServiceHTTPServer(srv, pipelineService)
+	adminV1.RegisterApiKeyServiceHTTPServer(srv, apiKeyService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

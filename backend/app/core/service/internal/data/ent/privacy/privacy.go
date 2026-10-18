@@ -207,6 +207,30 @@ func (f ApiAuditLogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApiAuditLogMutation", m)
 }
 
+// The ApiKeyQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ApiKeyQueryRuleFunc func(context.Context, *ent.ApiKeyQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ApiKeyQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ApiKeyQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ApiKeyQuery", q)
+}
+
+// The ApiKeyMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ApiKeyMutationRuleFunc func(context.Context, *ent.ApiKeyMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ApiKeyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ApiKeyMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApiKeyMutation", m)
+}
+
 // The ApprovalQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ApprovalQueryRuleFunc func(context.Context, *ent.ApprovalQuery) error
@@ -1378,6 +1402,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ApiAuditLogQuery:
 		return q.Filter(), nil
+	case *ent.ApiKeyQuery:
+		return q.Filter(), nil
 	case *ent.ApprovalQuery:
 		return q.Filter(), nil
 	case *ent.BuildQuery:
@@ -1486,6 +1512,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.APIMutation:
 		return m.Filter(), nil
 	case *ent.ApiAuditLogMutation:
+		return m.Filter(), nil
+	case *ent.ApiKeyMutation:
 		return m.Filter(), nil
 	case *ent.ApprovalMutation:
 		return m.Filter(), nil

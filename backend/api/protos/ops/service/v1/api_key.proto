@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// ApiKeyService OpenAPI 密钥管理:外部系统(CI/CD)经 OpenAPI 端点
+// 触发构建/分发/流水线时凭 API Key 认证。明文仅 Create 响应返回一次。
+// Validate 仅供 admin BFF 的 OpenAPI 网关内部调用,不对外暴露。
+service ApiKeyService {
+  // 查询密钥列表
+  rpc ListApiKeys (pagination.PagingRequest) returns (ListApiKeyResponse) {}
+
+  // 查询密钥详情
+  rpc GetApiKey (GetApiKeyRequest) returns (ApiKey) {}
+
+  // 创建密钥(响应含明文,仅此一次)
+  rpc CreateApiKey (CreateApiKeyRequest) returns (CreateApiKeyResponse) {}
+
+  // 更新密钥(状态/描述/过期时间)
+  rpc UpdateApiKey (UpdateApiKeyRequest) returns (google.protobuf.Empty) {}
+
+  // 删除密钥
+  rpc DeleteApiKey (DeleteApiKeyRequest) returns (google.protobuf.Empty) {}
+
+  // 校验密钥(内部接口:明文 → 有效密钥实体)
+  rpc ValidateApiKey (ValidateApiKeyRequest) returns (ApiKey) {}
+}
+
+// OpenAPI 密钥
+message ApiKey {
+  // 状态(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum Status {
+    API_KEY_STATUS_UNSPECIFIED = 0; // 未知
+
+    ENABLED = 1;  // 启用
+    DISABLED = 2; // 禁用
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 密钥ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 密钥名
+
+  optional string prefix = 3 [
+    json_name = "prefix",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 明文前缀(识别用)
+
+  optional Status status = 4 [json_name = "status"]; // 状态
+
+  optional google.protobuf.Timestamp last_used_at = 5 [
+    json_name = "lastUsedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 最近使用
+
+  optional google.protobuf.Timestamp expires_at = 6 [json_name = "expiresAt"]; // 过期时间
+
+  optional string description = 7 [json_name = "description"]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+message ListApiKeyResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated ApiKey items = 2 [json_name = "items"]; // 密钥列表
+}
+
+message GetApiKeyRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 密钥ID
+}
+
+message CreateApiKeyRequest {
+  optional ApiKey data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 创建数据(name/description/expiresAt/status)
+}
+
+message CreateApiKeyResponse {
+  optional ApiKey data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 密钥实体
+
+  optional string plain_key = 2 [
+    json_name = "plainKey",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 明文密钥(仅此一次,格式 opsk_<48hex>)
+}
+
+message UpdateApiKeyRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 密钥ID
+
+  optional ApiKey data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 更新数据(status/description/expiresAt)
+}
+
+message DeleteApiKeyRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 密钥ID
+}
+
+message ValidateApiKeyRequest {
+  optional string key = 1 [
+    json_name = "key",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 明文密钥
+}

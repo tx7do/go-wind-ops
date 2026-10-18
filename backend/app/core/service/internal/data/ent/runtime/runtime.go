@@ -9,6 +9,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
@@ -162,6 +163,27 @@ func init() {
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint32) error)
+	apikeyMixin := schema.ApiKey{}.Mixin()
+	apikeyMixinFields0 := apikeyMixin[0].Fields()
+	_ = apikeyMixinFields0
+	apikeyFields := schema.ApiKey{}.Fields()
+	_ = apikeyFields
+	// apikeyDescName is the schema descriptor for name field.
+	apikeyDescName := apikeyFields[0].Descriptor()
+	// apikey.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	apikey.NameValidator = apikeyDescName.Validators[0].(func(string) error)
+	// apikeyDescKeyHash is the schema descriptor for key_hash field.
+	apikeyDescKeyHash := apikeyFields[1].Descriptor()
+	// apikey.KeyHashValidator is a validator for the "key_hash" field. It is called by the builders before save.
+	apikey.KeyHashValidator = apikeyDescKeyHash.Validators[0].(func(string) error)
+	// apikeyDescPrefix is the schema descriptor for prefix field.
+	apikeyDescPrefix := apikeyFields[2].Descriptor()
+	// apikey.PrefixValidator is a validator for the "prefix" field. It is called by the builders before save.
+	apikey.PrefixValidator = apikeyDescPrefix.Validators[0].(func(string) error)
+	// apikeyDescID is the schema descriptor for id field.
+	apikeyDescID := apikeyMixinFields0[0].Descriptor()
+	// apikey.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	apikey.IDValidator = apikeyDescID.Validators[0].(func(uint32) error)
 	approvalMixin := schema.Approval{}.Mixin()
 	approvalMixinFields0 := approvalMixin[0].Fields()
 	_ = approvalMixinFields0

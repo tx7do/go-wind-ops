@@ -1532,6 +1532,260 @@ export type auditservicev1_GetApiAuditLogRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// ApiKeyService OpenAPI 密钥管理门面(Validate 不对外暴露)。
+export interface ApiKeyService {
+  // 查询密钥列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListApiKeyResponse>;
+  // 查询密钥详情
+  Get(
+    request: opsservicev1_GetApiKeyRequest,
+  ): Promise<opsservicev1_ApiKey>;
+  // 创建密钥(响应含明文,仅此一次)
+  Create(
+    request: opsservicev1_CreateApiKeyRequest,
+  ): Promise<opsservicev1_CreateApiKeyResponse>;
+  // 更新密钥
+  Update(
+    request: opsservicev1_UpdateApiKeyRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除密钥
+  Delete(
+    request: opsservicev1_DeleteApiKeyRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createApiKeyServiceClient(
+  transport: ClientTransport,
+): ApiKeyService {
+  return {
+    List(request) {
+      const path = `admin/v1/api-keys`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ApiKeyService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListApiKeyResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/api-keys/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ApiKeyService',
+        method: 'Get',
+      }) as Promise<opsservicev1_ApiKey>;
+    },
+    Create(request) {
+      const path = `admin/v1/api-keys`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ApiKeyService',
+        method: 'Create',
+      }) as Promise<opsservicev1_CreateApiKeyResponse>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/api-keys/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ApiKeyService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/api-keys/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ApiKeyService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListApiKeyResponse = {
+  items: opsservicev1_ApiKey[] | undefined;
+  total: number | undefined;
+};
+
+// OpenAPI 密钥
+export type opsservicev1_ApiKey = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  expiresAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastUsedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  prefix?: string;
+  status?: opsservicev1_ApiKey_Status;
+};
+
+// 状态(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_ApiKey_Status =
+  | 'API_KEY_STATUS_UNSPECIFIED'
+  | 'DISABLED'
+  | 'ENABLED';
+export type opsservicev1_GetApiKeyRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateApiKeyRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_ApiKey;
+};
+
+export type opsservicev1_CreateApiKeyResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  data?: opsservicev1_ApiKey;
+  //
+  // Behaviors: OUTPUT_ONLY
+  plainKey?: string;
+};
+
+export type opsservicev1_UpdateApiKeyRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_ApiKey;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_DeleteApiKeyRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
 // ApprovalService 操作审批
 export interface ApprovalService {
   // 查询审批单列表
@@ -10313,6 +10567,7 @@ export class ApiClient {
   private _agentNodeService?: AgentNodeService;
   private _alertService?: AlertService;
   private _apiAuditLogService?: ApiAuditLogService;
+  private _apiKeyService?: ApiKeyService;
   private _apiService?: ApiService;
   private _approvalService?: ApprovalService;
   private _authenticationService?: AuthenticationService;
@@ -10366,6 +10621,10 @@ export class ApiClient {
 
   get apiAuditLogService(): ApiAuditLogService {
     return this._apiAuditLogService ??= createApiAuditLogServiceClient(this._transport);
+  }
+
+  get apiKeyService(): ApiKeyService {
+    return this._apiKeyService ??= createApiKeyServiceClient(this._transport);
   }
 
   get apiService(): ApiService {

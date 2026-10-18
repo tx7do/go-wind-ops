@@ -1,0 +1,305 @@
+import { useRef, useState } from 'react';
+import type { ProColumns, ActionType } from '@ant-design/pro-components';
+import ListTable from '@/components/common/ListTable';
+import { App, Button, Descriptions, Input, Modal, Popconfirm, Space, Switch, Tag, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { opsservicev1_ApiKey as ApiKey } from '@/api/generated/admin/service/v1';
+import { PaginationQuery } from '@/core';
+import { TABLE } from '@/config/constants';
+import { fetchListApiKeys, useCreateApiKey, useDeleteApiKey, useUpdateApiKey } from '@/api/hooks/api-key';
+import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+
+const ApiKeyManagement = () => {
+  const { t } = useTranslation('api-key');
+  const actionRef = useRef<ActionType>(null);
+  const queryClient = useQueryClient();
+  const { message, modal } = App.useApp();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tableScrollY = useProTableScrollY(containerRef);
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createName, setCreateName] = useState('');
+  const [createDesc, setCreateDesc] = useState('');
+  const [createdPlainKey, setCreatedPlainKey] = useState<string>();
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [editing, setEditing] = useState<ApiKey | undefined>();
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listApiKeys'] });
+
+  const createMutation = useCreateApiKey({
+    onSuccess: (resp) => {
+      setCreateOpen(false);
+      setCreateName('');
+      setCreateDesc('');
+      setCreatedPlainKey(resp.plainKey || '');
+      invalidate();
+      actionRef.current?.reload();
+    },
+    onError: (e: Error) => message.error(e.message || t('createFailed')),
+  });
+  const updateMutation = useUpdateApiKey({
+    onSuccess: () => {
+      message.success(t('updateSuccess'));
+      setEditing(undefined);
+      invalidate();
+      actionRef.current?.reload();
+    },
+    onError: (e: Error) => message.error(e.message || t('updateFailed')),
+  });
+  const deleteMutation = useDeleteApiKey({
+    onSuccess: () => {
+      message.success(t('deleteSuccess'));
+      invalidate();
+      actionRef.current?.reload();
+    },
+    onError: (e: Error) => message.error(e.message || t('deleteFailed')),
+  });
+
+  const columns: ProColumns<ApiKey>[] = [
+    {
+      title: t('name'),
+      dataIndex: 'name',
+      width: 180,
+      render: (_, r) => <span style={{ fontWeight: 600 }}>{r.name || '-'}</span>,
+    },
+    {
+      title: t('prefix'),
+      dataIndex: 'prefix',
+      width: 160,
+      hideInSearch: true,
+      render: (v) => <Typography.Text code>{String(v)}…</Typography.Text>,
+    },
+    {
+      title: t('status'),
+      dataIndex: 'status',
+      width: 100,
+      hideInSearch: true,
+      render: (_, r) =>
+        r.status === 'DISABLED' ? <Tag color="error">{t('statusDisabled')}</Tag> : <Tag color="success">{t('statusEnabled')}</Tag>,
+    },
+    { title: t('description'), dataIndex: 'description', ellipsis: true, hideInSearch: true },
+    { title: t('lastUsedAt'), dataIndex: 'lastUsedAt', width: 165, hideInSearch: true, render: fmtTime },
+    { title: t('expiresAt'), dataIndex: 'expiresAt', width: 165, hideInSearch: true, render: fmtTime },
+    { title: t('createdAt'), dataIndex: 'createdAt', width: 165, hideInSearch: true, render: fmtTime },
+    {
+      title: t('action'),
+      valueType: 'option',
+      width: 170,
+      fixed: 'right',
+      render: (_, record) => [
+        <a
+          key="toggle"
+          onClick={() =>
+            record.id &&
+            updateMutation.mutate({
+              id: record.id,
+              data: { status: record.status === 'DISABLED' ? 'ENABLED' : 'DISABLED' },
+            })
+          }
+        >
+          {record.status === 'DISABLED' ? t('enable') : t('disable')}
+        </a>,
+        <a key="edit" onClick={() => setEditing(record)}>
+          <EditOutlined />
+        </a>,
+        <Popconfirm
+          key="delete"
+          title={t('deleteConfirmTitle')}
+          onConfirm={() => record.id && deleteMutation.mutate({ id: record.id })}
+          okText={t('common:button.ok')}
+          cancelText={t('common:button.cancel')}
+        >
+          <a style={{ color: 'var(--ant-color-error)' }}>
+            <DeleteOutlined />
+          </a>
+        </Popconfirm>,
+      ],
+    },
+  ];
+
+  const usageBase = `${location.origin}`;
+
+  return (
+    <>
+      <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
+        <div ref={containerRef} className="page-container-content">
+          <ListTable<ApiKey>
+            actionRef={actionRef}
+            columns={columns}
+            headerTitle={t('moduleName')}
+            request={async (params) => {
+              const query = new PaginationQuery({
+                paging: { page: params.current || 1, pageSize: params.pageSize || 10 },
+              });
+              const resp = await fetchListApiKeys(query);
+              return { data: resp.items || [], total: resp.total || 0, success: true };
+            }}
+            rowKey="id"
+            search={false}
+            pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
+            toolBarRender={() => [
+              <Button key="help" icon={<QuestionCircleOutlined />} onClick={() => setHelpOpen(true)}>
+                {t('usage')}
+              </Button>,
+              <Button
+                key="create"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setCreatedPlainKey(undefined);
+                  setCreateOpen(true);
+                }}
+              >
+                {t('create')}
+              </Button>,
+            ]}
+            size="middle"
+            bordered
+            scroll={{ y: tableScrollY, x: 1000 }}
+          />
+        </div>
+      </ContentContainer>
+
+      {/* 创建弹窗:名称 + 描述 → 成功后展示明文(仅一次) */}
+      <Modal
+        title={t('create')}
+        open={createOpen}
+        onCancel={() => setCreateOpen(false)}
+        onOk={() => {
+          if (!createName.trim()) {
+            message.warning(t('nameRequired'));
+            return;
+          }
+          createMutation.mutate({ data: { name: createName.trim(), description: createDesc || undefined } });
+        }}
+        confirmLoading={createMutation.isPending}
+        destroyOnClose
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Input placeholder={t('name')} value={createName} onChange={(e) => setCreateName(e.target.value)} />
+          <Input.TextArea
+            placeholder={t('description')}
+            rows={2}
+            value={createDesc}
+            onChange={(e) => setCreateDesc(e.target.value)}
+          />
+        </Space>
+      </Modal>
+
+      {/* 明文展示(仅一次) */}
+      <Modal
+        title={t('plainKeyTitle')}
+        open={!!createdPlainKey}
+        onCancel={() => setCreatedPlainKey(undefined)}
+        footer={<Button type="primary" onClick={() => setCreatedPlainKey(undefined)}>{t('common:button.ok')}</Button>}
+        width={560}
+      >
+        <Descriptions column={1} size="small">
+          <Descriptions.Item label={t('plainKeyWarning')}>
+            <Typography.Text type="danger">{t('plainKeyWarningText')}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="API Key">
+            <Space.Compact style={{ width: '100%' }}>
+              <Input readOnly value={createdPlainKey} style={{ fontFamily: 'monospace' }} />
+              <Button
+                type="primary"
+                onClick={() => {
+                  navigator.clipboard.writeText(createdPlainKey || '');
+                  message.success(t('copied'));
+                }}
+              >
+                {t('copy')}
+              </Button>
+            </Space.Compact>
+          </Descriptions.Item>
+        </Descriptions>
+      </Modal>
+
+      {/* 编辑:状态/描述 */}
+      <Modal
+        title={t('edit')}
+        open={!!editing}
+        onCancel={() => setEditing(undefined)}
+        onOk={() => {
+          if (!editing?.id) return;
+          updateMutation.mutate({
+            id: editing.id,
+            data: { status: editing.status, description: editing.description },
+          });
+        }}
+        confirmLoading={updateMutation.isPending}
+        destroyOnClose
+      >
+        {editing && (
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Space>
+              <span>{t('status')}:</span>
+              <Switch
+                checked={editing.status !== 'DISABLED'}
+                checkedChildren={t('statusEnabled')}
+                unCheckedChildren={t('statusDisabled')}
+                onChange={(v) => setEditing({ ...editing, status: v ? 'ENABLED' : 'DISABLED' })}
+              />
+            </Space>
+            <Input.TextArea
+              placeholder={t('description')}
+              rows={2}
+              value={editing.description}
+              onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+            />
+          </Space>
+        )}
+      </Modal>
+
+      {/* 用法示例 */}
+      <Modal title={t('usage')} open={helpOpen} onCancel={() => setHelpOpen(false)} footer={null} width={760}>
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <Typography.Text type="secondary">{t('usageIntro')}</Typography.Text>
+          {[
+            { label: t('usageTriggerBuild'), code: `curl -X POST "${usageBase}/openapi/v1/builds/1/trigger" -H "X-Api-Key: opsk_xxx"` },
+            { label: t('usageTriggerDist'), code: `curl -X POST "${usageBase}/openapi/v1/distributions/1/trigger" -H "X-Api-Key: opsk_xxx"` },
+            { label: t('usageTriggerPipeline'), code: `curl -X POST "${usageBase}/openapi/v1/pipelines/1/trigger" -H "X-Api-Key: opsk_xxx"` },
+            { label: t('usageWebhook'), code: `curl -X POST "${usageBase}/openapi/v1/webhooks/git/1?branch=main" -H "X-Api-Key: opsk_xxx" -d '{"ref":"refs/heads/main"}'` },
+          ].map((item) => (
+            <div key={item.label}>
+              <Typography.Text strong>{item.label}</Typography.Text>
+              <pre
+                style={{
+                  background: '#f6f6f6',
+                  border: '1px solid #e8e8e8',
+                  borderRadius: 8,
+                  padding: 10,
+                  fontSize: 12,
+                  overflow: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                  marginBottom: 0,
+                }}
+              >
+                {item.code}
+              </pre>
+            </div>
+          ))}
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {t('usageNote')}
+          </Typography.Text>
+        </Space>
+      </Modal>
+    </>
+  );
+};
+
+function fmtTime(v: any): string {
+  if (!v) return '-';
+  return String(v).replace('T', ' ').slice(0, 19);
+}
+
+export default ApiKeyManagement;

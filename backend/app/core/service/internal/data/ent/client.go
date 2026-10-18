@@ -15,6 +15,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/api"
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
@@ -82,6 +83,8 @@ type Client struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// ApiKey is the client for interacting with the ApiKey builders.
+	ApiKey *ApiKeyClient
 	// Approval is the client for interacting with the Approval builders.
 	Approval *ApprovalClient
 	// Build is the client for interacting with the Build builders.
@@ -191,6 +194,7 @@ func (c *Client) init() {
 	c.Alert = NewAlertClient(c.config)
 	c.Api = NewAPIClient(c.config)
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
+	c.ApiKey = NewApiKeyClient(c.config)
 	c.Approval = NewApprovalClient(c.config)
 	c.Build = NewBuildClient(c.config)
 	c.BuildHistory = NewBuildHistoryClient(c.config)
@@ -334,6 +338,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Alert:                NewAlertClient(cfg),
 		Api:                  NewAPIClient(cfg),
 		ApiAuditLog:          NewApiAuditLogClient(cfg),
+		ApiKey:               NewApiKeyClient(cfg),
 		Approval:             NewApprovalClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
@@ -404,6 +409,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Alert:                NewAlertClient(cfg),
 		Api:                  NewAPIClient(cfg),
 		ApiAuditLog:          NewApiAuditLogClient(cfg),
+		ApiKey:               NewApiKeyClient(cfg),
 		Approval:             NewApprovalClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
@@ -480,10 +486,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Approval, c.Build, c.BuildHistory,
-		c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog, c.DictEntry,
-		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
+		c.BuildHistory, c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
+		c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric,
 		c.NotificationChannel, c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit,
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
@@ -500,10 +506,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.Approval, c.Build, c.BuildHistory,
-		c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog, c.DictEntry,
-		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
+		c.BuildHistory, c.BuildPipeline, c.CommandRecord, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
+		c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric,
 		c.NotificationChannel, c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit,
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
@@ -527,6 +533,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Api.mutate(ctx, m)
 	case *ApiAuditLogMutation:
 		return c.ApiAuditLog.mutate(ctx, m)
+	case *ApiKeyMutation:
+		return c.ApiKey.mutate(ctx, m)
 	case *ApprovalMutation:
 		return c.Approval.mutate(ctx, m)
 	case *BuildMutation:
@@ -1157,6 +1165,139 @@ func (c *ApiAuditLogClient) mutate(ctx context.Context, m *ApiAuditLogMutation) 
 		return (&ApiAuditLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ApiAuditLog mutation op: %q", m.Op())
+	}
+}
+
+// ApiKeyClient is a client for the ApiKey schema.
+type ApiKeyClient struct {
+	config
+}
+
+// NewApiKeyClient returns a client for the ApiKey from the given config.
+func NewApiKeyClient(c config) *ApiKeyClient {
+	return &ApiKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apikey.Hooks(f(g(h())))`.
+func (c *ApiKeyClient) Use(hooks ...Hook) {
+	c.hooks.ApiKey = append(c.hooks.ApiKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apikey.Intercept(f(g(h())))`.
+func (c *ApiKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiKey = append(c.inters.ApiKey, interceptors...)
+}
+
+// Create returns a builder for creating a ApiKey entity.
+func (c *ApiKeyClient) Create() *ApiKeyCreate {
+	mutation := newApiKeyMutation(c.config, OpCreate)
+	return &ApiKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiKey entities.
+func (c *ApiKeyClient) CreateBulk(builders ...*ApiKeyCreate) *ApiKeyCreateBulk {
+	return &ApiKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ApiKeyClient) MapCreateBulk(slice any, setFunc func(*ApiKeyCreate, int)) *ApiKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ApiKeyCreateBulk{err: fmt.Errorf("calling to ApiKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ApiKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ApiKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiKey.
+func (c *ApiKeyClient) Update() *ApiKeyUpdate {
+	mutation := newApiKeyMutation(c.config, OpUpdate)
+	return &ApiKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiKeyClient) UpdateOne(_m *ApiKey) *ApiKeyUpdateOne {
+	mutation := newApiKeyMutation(c.config, OpUpdateOne, withApiKey(_m))
+	return &ApiKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiKeyClient) UpdateOneID(id uint32) *ApiKeyUpdateOne {
+	mutation := newApiKeyMutation(c.config, OpUpdateOne, withApiKeyID(id))
+	return &ApiKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiKey.
+func (c *ApiKeyClient) Delete() *ApiKeyDelete {
+	mutation := newApiKeyMutation(c.config, OpDelete)
+	return &ApiKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiKeyClient) DeleteOne(_m *ApiKey) *ApiKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiKeyClient) DeleteOneID(id uint32) *ApiKeyDeleteOne {
+	builder := c.Delete().Where(apikey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiKey.
+func (c *ApiKeyClient) Query() *ApiKeyQuery {
+	return &ApiKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiKey entity by its id.
+func (c *ApiKeyClient) Get(ctx context.Context, id uint32) (*ApiKey, error) {
+	return c.Query().Where(apikey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiKeyClient) GetX(ctx context.Context, id uint32) *ApiKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApiKeyClient) Hooks() []Hook {
+	return c.hooks.ApiKey
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiKeyClient) Interceptors() []Interceptor {
+	return c.inters.ApiKey
+}
+
+func (c *ApiKeyClient) mutate(ctx context.Context, m *ApiKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiKey mutation op: %q", m.Op())
 	}
 }
 
@@ -7604,7 +7745,7 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AgentNode, Alert, Api, ApiAuditLog, Approval, Build, BuildHistory,
+		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
 		BuildPipeline, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
 		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
@@ -7616,7 +7757,7 @@ type (
 		UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
-		AgentNode, Alert, Api, ApiAuditLog, Approval, Build, BuildHistory,
+		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
 		BuildPipeline, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
 		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
