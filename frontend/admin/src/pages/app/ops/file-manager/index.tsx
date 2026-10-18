@@ -1,0 +1,280 @@
+import { useCallback, useMemo, useState } from 'react';
+import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FolderOpenOutlined,
+  ReloadOutlined,
+  FileAddOutlined,
+} from '@ant-design/icons';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { opsservicev1_AgentFileEntry as FileEntry } from '@/api/generated/admin/service/v1';
+import { PaginationQuery } from '@/core';
+import { fetchListAgentNodes } from '@/api/hooks/agent-node';
+import { useDeleteAgentFile, useListAgentFiles, useReadAgentFile, useWriteAgentFile } from '@/api/hooks/file';
+
+/** Unicode 安全的 base64 编解码(TextEncoder/Decoder 中转)。 */
+function utf8ToBase64(s: string): string {
+  const bytes = new TextEncoder().encode(s);
+  let bin = '';
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+function base64ToUtf8(s: string): string {
+  const bin = atob(s);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+/** 按平台风格拼接路径段(纯展示用,实际路径由 agent 校验)。 */
+function joinPath(dir: string, name: string): string {
+  return dir.endsWith('/') || dir.endsWith('\\') ? dir + name : `${dir}/${name}`;
+}
+
+type EditorState = { path: string; content: string; truncated: boolean; loading: boolean };
+
+const FileManager = () => {
+  const { t } = useTranslation('file');
+  const { message } = App.useApp();
+  const queryClient = useQueryClient();
+
+  const [agentId, setAgentId] = useState<string>();
+  const [dirInput, setDirInput] = useState('');
+  const [currentDir, setCurrentDir] = useState('');
+  const [editor, setEditor] = useState<EditorState>();
+  const [newFile, setNewFile] = useState<{ open: boolean; path: string }>({ open: false, path: '' });
+
+  // agent 下拉(一次拉满,前端过滤)
+  const { data: nodesResp } = useQuery({
+    queryKey: ['listAgentNodesForFile', 'all'],
+    queryFn: () => fetchListAgentNodes(new PaginationQuery({ paging: { page: 1, pageSize: 200 } })),
+  });
+  const agentOptions = useMemo(
+    () => (nodesResp?.items || []).map((n) => ({ label: n.hostname ? `${n.hostname} (${n.agentId})` : n.agentId, value: n.agentId || '' })),
+    [nodesResp],
+  );
+
+  // 目录浏览:currentDir 仅在点击“浏览”/回车/点击面包屑时变化,不会边输入边触发 MQTT 往返
+  const listing = useListAgentFiles(
+    { agentId, dir: currentDir },
+    { enabled: Boolean(agentId && currentDir), placeholderData: (prev) => prev },
+  );
+  const entries: FileEntry[] = useMemo(() => listing.data?.entries || [], [listing.data]);
+
+  const refresh = useCallback(() => listing.refetch(), [listing]);
+
+  const readMutation = useReadAgentFile({
+    onSuccess: (resp) => {
+      setEditor({
+        path: resp.path || '',
+        content: resp.contentBase64 ? base64ToUtf8(resp.contentBase64) : '',
+        truncated: Boolean(resp.truncated),
+        loading: false,
+      });
+    },
+    onError: (e: Error) => message.error(e.message || t('readFailed')),
+  });
+  const writeMutation = useWriteAgentFile({
+    onSuccess: (resp) => {
+      message.success(t('writeSuccess', { size: resp.size ?? 0 }));
+      setEditor(undefined);
+      setNewFile({ open: false, path: '' });
+      refresh();
+    },
+    onError: (e: Error) => message.error(e.message || t('writeFailed')),
+  });
+  const deleteMutation = useDeleteAgentFile({
+    onSuccess: () => {
+      message.success(t('deleteSuccess'));
+      refresh();
+    },
+    onError: (e: Error) => message.error(e.message || t('deleteFailed')),
+  });
+
+  const openDir = (d: string) => { setCurrentDir(d); setDirInput(d); };
+
+  const breadcrumbs = useMemo(() => {
+    if (!currentDir) return [];
+    const parts = currentDir.split(/[\\/]+/).filter(Boolean);
+    const crumbs: { label: string; path: string }[] = [];
+    let acc = '';
+    parts.forEach((p, i) => {
+      acc = i === 0 ? p : `${acc}/${p}`;
+      crumbs.push({ label: p, path: acc });
+    });
+    return crumbs;
+  }, [currentDir]);
+
+  const columns = [
+    {
+      title: t('name'),
+      dataIndex: 'name',
+      render: (_: unknown, r: FileEntry) => (
+        <a onClick={() => (r.isDir ? openDir(joinPath(currentDir, r.name || '')) : readMutation.mutate({ agentId: agentId!, path: joinPath(currentDir, r.name || '') }))}>
+          {r.isDir ? <FolderOpenOutlined style={{ marginRight: 6, color: 'var(--ant-color-warning)' }} /> : <EyeOutlined style={{ marginRight: 6 }} />}
+          {r.name}
+        </a>
+      ),
+    },
+    {
+      title: t('type'),
+      dataIndex: 'isDir',
+      width: 100,
+      render: (_: unknown, r: FileEntry) => (r.isDir ? <Tag color="gold">{t('typeDir')}</Tag> : <Tag>{t('typeFile')}</Tag>),
+    },
+    {
+      title: t('size'),
+      dataIndex: 'size',
+      width: 130,
+      render: (_: unknown, r: FileEntry) => (r.isDir ? '-' : `${r.size ?? 0} B`),
+    },
+    {
+      title: t('action'),
+      key: 'action',
+      width: 160,
+      render: (_: unknown, r: FileEntry) => {
+        const p = joinPath(currentDir, r.name || '');
+        return (
+          <Space>
+            {r.isDir ? (
+              <a onClick={() => openDir(p)}><FolderOpenOutlined /> {t('open')}</a>
+            ) : (
+              <a onClick={() => readMutation.mutate({ agentId: agentId!, path: p })}><EditOutlined /> {t('edit')}</a>
+            )}
+            <Popconfirm
+              title={t('deleteConfirm')}
+              onConfirm={() => deleteMutation.mutate({ agentId: agentId!, path: p })}
+              okText={t('common:button.ok')}
+              cancelText={t('common:button.cancel')}
+            >
+              <a style={{ color: 'var(--ant-color-error)' }}><DeleteOutlined /> {t('delete')}</a>
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+  ];
+
+  const canBrowse = Boolean(agentId && currentDir);
+
+  return (
+    <div style={{ padding: 16 }}>
+      <Space direction="vertical" style={{ width: '100%' }} size="middle">
+        <Space wrap>
+          <Select
+            showSearch
+            optionFilterProp="label"
+            placeholder={t('selectAgent')}
+            style={{ minWidth: 260 }}
+            value={agentId}
+            options={agentOptions}
+            onChange={(v) => { setAgentId(v); setCurrentDir(''); setDirInput(''); setEditor(undefined); }}
+          />
+          <Input
+            style={{ width: 380 }}
+            placeholder={t('dirPlaceholder')}
+            value={dirInput}
+            onChange={(e) => setDirInput(e.target.value)}
+            onPressEnter={() => openDir(dirInput.trim())}
+            disabled={!agentId}
+          />
+          <Button type="primary" onClick={() => openDir(dirInput.trim())} disabled={!agentId || !dirInput.trim()}>
+            <FolderOpenOutlined /> {t('browse')}
+          </Button>
+          <Button onClick={refresh} disabled={!canBrowse} loading={listing.isFetching}>
+            <ReloadOutlined /> {t('refresh')}
+          </Button>
+          <Button type="primary" ghost disabled={!canBrowse} onClick={() => setNewFile({ open: true, path: currentDir.endsWith('/') ? currentDir : currentDir + '/' })}>
+            <FileAddOutlined /> {t('newFile')}
+          </Button>
+        </Space>
+
+        {canBrowse && (
+          <Breadcrumb
+            items={[
+              { title: <a onClick={() => openDir('')}>{t('root')}</a> },
+              ...breadcrumbs.map((c, i) => ({
+                title: i === breadcrumbs.length - 1
+                  ? c.label
+                  : <a onClick={() => openDir(c.path)}>{c.label}</a>,
+              })),
+            ]}
+          />
+        )}
+
+        <Table
+          rowKey="name"
+          size="small"
+          columns={columns as never}
+          dataSource={entries}
+          loading={listing.isFetching && !canBrowse ? false : listing.isFetching}
+          pagination={false}
+          locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : t('emptyDir')) : t('pickAgentFirst') }}
+        />
+      </Space>
+
+      <Drawer
+        title={<span>{t('editTitle')}: <Typography.Text code>{editor?.path}</Typography.Text></span>}
+        width={720}
+        open={Boolean(editor)}
+        onClose={() => setEditor(undefined)}
+        extra={
+          <Space>
+            {editor?.truncated && <Tooltip title={t('truncatedHint')}><Tag color="warning">{t('truncated')}</Tag></Tooltip>}
+            <Button onClick={() => setEditor(undefined)}>{t('common:button.cancel')}</Button>
+            <Button
+              type="primary"
+              loading={writeMutation.isPending}
+              disabled={editor?.truncated}
+              onClick={() => agentId && editor && writeMutation.mutate({ agentId, path: editor.path, contentBase64: utf8ToBase64(editor.content) })}
+            >
+              {t('save')}
+            </Button>
+          </Space>
+        }
+      >
+        {editor && (
+          <Input.TextArea
+            value={editor.content}
+            onChange={(e) => setEditor({ ...editor, content: e.target.value })}
+            rows={28}
+            styles={{ textarea: { fontFamily: 'monospace', fontSize: 13 } }}
+          />
+        )}
+      </Drawer>
+
+      <Drawer
+        title={t('newFileTitle')}
+        width={720}
+        open={newFile.open}
+        onClose={() => setNewFile({ open: false, path: '' })}
+        extra={
+          <Space>
+            <Button onClick={() => setNewFile({ open: false, path: '' })}>{t('common:button.cancel')}</Button>
+            <Button
+              type="primary"
+              loading={writeMutation.isPending}
+              disabled={!newFile.path.trim()}
+              onClick={() => agentId && writeMutation.mutate({ agentId, path: newFile.path.trim(), contentBase64: utf8ToBase64('') })}
+            >
+              {t('create')}
+            </Button>
+          </Space>
+        }
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Typography.Text type="secondary">{t('newFileHint')}</Typography.Text>
+          <Input value={newFile.path} onChange={(e) => setNewFile({ ...newFile, path: e.target.value })} />
+          <Descriptions size="small" column={1}>
+            <Descriptions.Item label={t('whitelistHint')}>{t('whitelistDesc')}</Descriptions.Item>
+          </Descriptions>
+        </Space>
+      </Drawer>
+    </div>
+  );
+};
+
+export default FileManager;

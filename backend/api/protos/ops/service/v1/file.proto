@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "google/api/field_behavior.proto";
+
+// FileService 远端文件管理:core 经 MQTT 同步指令代理 agent 侧的
+// 文件浏览/读写/删除。所有路径须落在 agent 授权目录白名单内。
+service FileService {
+  // 列出 agent 上某目录内容
+  rpc ListAgentFiles (ListAgentFilesRequest) returns (ListAgentFilesResponse) {}
+
+  // 读取 agent 上文件内容(base64,上限 1MB)
+  rpc ReadAgentFile (ReadAgentFileRequest) returns (ReadAgentFileResponse) {}
+
+  // 写入 agent 上文件(base64,自动建目录)
+  rpc WriteAgentFile (WriteAgentFileRequest) returns (WriteAgentFileResponse) {}
+
+  // 删除 agent 上文件或目录
+  rpc DeleteAgentFile (DeleteAgentFileRequest) returns (DeleteAgentFileResponse) {}
+}
+
+// 目录条目
+message AgentFileEntry {
+  optional string name = 1 [
+    json_name = "name",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 名称
+
+  optional int64 size = 2 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 字节大小
+
+  optional bool is_dir = 3 [
+    json_name = "isDir",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否目录
+}
+
+message ListAgentFilesRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string dir = 2 [
+    json_name = "dir",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目录绝对路径
+}
+
+message ListAgentFilesResponse {
+  optional string dir = 1 [
+    json_name = "dir",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 实际列出的目录
+
+  repeated AgentFileEntry entries = 2 [
+    json_name = "entries",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 条目列表(目录在前)
+}
+
+message ReadAgentFileRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 文件绝对路径
+}
+
+message ReadAgentFileResponse {
+  optional string path = 1 [
+    json_name = "path",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 文件路径
+
+  optional int64 size = 2 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 返回内容字节数
+
+  optional bool truncated = 3 [
+    json_name = "truncated",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 是否因超限被截断
+
+  optional string content_base64 = 4 [
+    json_name = "contentBase64",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 内容(base64)
+}
+
+message WriteAgentFileRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 文件绝对路径
+
+  optional string content_base64 = 3 [
+    json_name = "contentBase64",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 内容(base64)
+}
+
+message WriteAgentFileResponse {
+  optional string path = 1 [
+    json_name = "path",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 文件路径
+
+  optional int64 size = 2 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 写入字节数
+}
+
+message DeleteAgentFileRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string path = 2 [
+    json_name = "path",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 文件或目录绝对路径
+}
+
+message DeleteAgentFileResponse {
+  optional string deleted = 1 [
+    json_name = "deleted",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 已删除路径
+}

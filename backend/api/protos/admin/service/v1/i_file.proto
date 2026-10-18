@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "ops/service/v1/file.proto";
+
+// FileService 远端文件管理门面:透传 core 经 MQTT 代理的 agent 文件操作。
+service FileService {
+  // 列出目录内容
+  rpc ListAgentFiles (ops.service.v1.ListAgentFilesRequest) returns (ops.service.v1.ListAgentFilesResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/file/list"
+    };
+  }
+
+  // 读取文件内容
+  rpc ReadAgentFile (ops.service.v1.ReadAgentFileRequest) returns (ops.service.v1.ReadAgentFileResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/file/read"
+    };
+  }
+
+  // 写入文件
+  rpc WriteAgentFile (ops.service.v1.WriteAgentFileRequest) returns (ops.service.v1.WriteAgentFileResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/write"
+      body: "*"
+    };
+  }
+
+  // 删除文件或目录
+  rpc DeleteAgentFile (ops.service.v1.DeleteAgentFileRequest) returns (ops.service.v1.DeleteAgentFileResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/delete"
+      body: "*"
+    };
+  }
+}

@@ -312,6 +312,51 @@ func NewCommandRecordServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	return opsV1.NewCommandRecordServiceClient(cli)
 }
 
+func NewMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.MonitorServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewMonitorServiceClient(cli)
+}
+
+func NewAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.AlertServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewAlertServiceClient(cli)
+}
+
+func NewApprovalServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ApprovalServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewApprovalServiceClient(cli)
+}
+
+func NewNotificationChannelServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.NotificationChannelServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewNotificationChannelServiceClient(cli)
+}
+
+func NewFileServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.FileServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewFileServiceClient(cli)
+}
+
 func NewScriptServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ScriptServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

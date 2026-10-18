@@ -3863,6 +3863,185 @@ export type opsservicev1_GetDistributionRecordRequest = {
   id?: number;
 };
 
+// FileService 远端文件管理门面:透传 core 经 MQTT 代理的 agent 文件操作。
+export interface FileService {
+  // 列出目录内容
+  ListAgentFiles(
+    request: opsservicev1_ListAgentFilesRequest,
+  ): Promise<opsservicev1_ListAgentFilesResponse>;
+  // 读取文件内容
+  ReadAgentFile(
+    request: opsservicev1_ReadAgentFileRequest,
+  ): Promise<opsservicev1_ReadAgentFileResponse>;
+  // 写入文件
+  WriteAgentFile(
+    request: opsservicev1_WriteAgentFileRequest,
+  ): Promise<opsservicev1_WriteAgentFileResponse>;
+  // 删除文件或目录
+  DeleteAgentFile(
+    request: opsservicev1_DeleteAgentFileRequest,
+  ): Promise<opsservicev1_DeleteAgentFileResponse>;
+}
+
+export function createFileServiceClient(
+  transport: ClientTransport,
+): FileService {
+  return {
+    ListAgentFiles(request) {
+      const path = `admin/v1/file/list`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.agentId) {
+        queryParams.push(
+          `agentId=${encodeURIComponent(request.agentId.toString())}`,
+        );
+      }
+      if (request.dir) {
+        queryParams.push(
+          `dir=${encodeURIComponent(request.dir.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FileService',
+        method: 'ListAgentFiles',
+      }) as Promise<opsservicev1_ListAgentFilesResponse>;
+    },
+    ReadAgentFile(request) {
+      const path = `admin/v1/file/read`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.agentId) {
+        queryParams.push(
+          `agentId=${encodeURIComponent(request.agentId.toString())}`,
+        );
+      }
+      if (request.path) {
+        queryParams.push(
+          `path=${encodeURIComponent(request.path.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FileService',
+        method: 'ReadAgentFile',
+      }) as Promise<opsservicev1_ReadAgentFileResponse>;
+    },
+    WriteAgentFile(request) {
+      const path = `admin/v1/file/write`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FileService',
+        method: 'WriteAgentFile',
+      }) as Promise<opsservicev1_WriteAgentFileResponse>;
+    },
+    DeleteAgentFile(request) {
+      const path = `admin/v1/file/delete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FileService',
+        method: 'DeleteAgentFile',
+      }) as Promise<opsservicev1_DeleteAgentFileResponse>;
+    },
+  };
+}
+export type opsservicev1_ListAgentFilesRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  dir?: string;
+};
+
+export type opsservicev1_ListAgentFilesResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  dir?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  entries: opsservicev1_AgentFileEntry[] | undefined;
+};
+
+// 目录条目
+export type opsservicev1_AgentFileEntry = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  isDir?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  name?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
+};
+
+export type opsservicev1_ReadAgentFileRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_ReadAgentFileResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  contentBase64?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  path?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  truncated?: boolean;
+};
+
+export type opsservicev1_WriteAgentFileRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  contentBase64?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_WriteAgentFileResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  path?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
+};
+
+export type opsservicev1_DeleteAgentFileRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  //
+  // Behaviors: REQUIRED
+  path?: string;
+};
+
+export type opsservicev1_DeleteAgentFileResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  deleted?: string;
+};
+
 // 语言管理服务
 export interface LanguageService {
   // 分页查询语言列表
@@ -9552,6 +9731,7 @@ export class ApiClient {
   private _dictEntryService?: DictEntryService;
   private _dictTypeService?: DictTypeService;
   private _distributionService?: DistributionService;
+  private _fileService?: FileService;
   private _languageService?: LanguageService;
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
@@ -9633,6 +9813,10 @@ export class ApiClient {
 
   get distributionService(): DistributionService {
     return this._distributionService ??= createDistributionServiceClient(this._transport);
+  }
+
+  get fileService(): FileService {
+    return this._fileService ??= createFileServiceClient(this._transport);
   }
 
   get languageService(): LanguageService {

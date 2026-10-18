@@ -83,6 +83,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'file-manager',
+        path: 'file-manager',
+        element: createLazyRoute(() => import('@/pages/app/ops/file-manager')),
+        meta: {
+          title: 'routes:file-manager',
+          icon: 'lucide:folder-tree',
+          order: 8,
+          authority: ['ops:node_manage'],
+        },
+      },
+      {
         name: 'command-records',
         path: 'command-records',
         element: createLazyRoute(() => import('@/pages/app/ops/command-record')),
@@ -100,7 +111,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:monitors',
           icon: 'lucide:activity',
-          order: 8,
+          order: 9,
           authority: ['sys:platform_admin'],
         },
       },
@@ -111,7 +122,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:alerts',
           icon: 'lucide:bell',
-          order: 9,
+          order: 10,
           authority: ['sys:platform_admin'],
         },
       },
@@ -122,7 +133,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:notification-channels',
           icon: 'lucide:radio',
-          order: 10,
+          order: 11,
           authority: ['sys:platform_admin'],
         },
       },
@@ -133,7 +144,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:approvals',
           icon: 'lucide:check-circle',
-          order: 11,
+          order: 12,
           authority: ['sys:platform_admin'],
         },
       },

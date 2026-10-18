@@ -124,6 +124,11 @@ func NewRestServer(
 	buildService *service.BuildService,
 	buildHistoryService *service.BuildHistoryService,
 	distributionService *service.DistributionService,
+	monitorService *service.MonitorService,
+	alertService *service.AlertService,
+	approvalService *service.ApprovalService,
+	notificationChannelService *service.NotificationChannelService,
+	fileService *service.FileService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -174,6 +179,11 @@ func NewRestServer(
 	adminV1.RegisterBuildServiceHTTPServer(srv, buildService)
 	adminV1.RegisterBuildHistoryServiceHTTPServer(srv, buildHistoryService)
 	adminV1.RegisterDistributionServiceHTTPServer(srv, distributionService)
+	adminV1.RegisterMonitorServiceHTTPServer(srv, monitorService)
+	adminV1.RegisterAlertServiceHTTPServer(srv, alertService)
+	adminV1.RegisterApprovalServiceHTTPServer(srv, approvalService)
+	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
+	adminV1.RegisterFileServiceHTTPServer(srv, fileService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

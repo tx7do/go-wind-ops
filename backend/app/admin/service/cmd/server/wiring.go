@@ -114,6 +114,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	projectServiceClient := data.NewProjectServiceClient(ctx, discovery)
 	commandRecordServiceClient := data.NewCommandRecordServiceClient(ctx, discovery)
 	scriptServiceClient := data.NewScriptServiceClient(ctx, discovery)
+	monitorServiceClient := data.NewMonitorServiceClient(ctx, discovery)
+	alertServiceClient := data.NewAlertServiceClient(ctx, discovery)
+	approvalServiceClient := data.NewApprovalServiceClient(ctx, discovery)
+	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
+	fileServiceClient := data.NewFileServiceClient(ctx, discovery)
 	repositoryServiceClient := data.NewRepositoryServiceClient(ctx, discovery)
 	buildServiceClient := data.NewBuildServiceClient(ctx, discovery)
 	buildHistoryServiceClient := data.NewBuildHistoryServiceClient(ctx, discovery)
@@ -156,6 +161,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	buildService := service.NewBuildService(ctx, buildServiceClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryServiceClient)
 	distributionService := service.NewDistributionService(ctx, distributionServiceClient)
+	monitorService := service.NewMonitorService(ctx, monitorServiceClient)
+	alertService := service.NewAlertService(ctx, alertServiceClient)
+	approvalService := service.NewApprovalService(ctx, approvalServiceClient)
+	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelServiceClient)
+	fileService := service.NewFileService(ctx, fileServiceClient)
 
 	// 字典与多语言
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
@@ -185,6 +195,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		scriptService,
 		repositoryService, buildService, buildHistoryService,
 		distributionService,
+		monitorService, alertService,
+		approvalService, notificationChannelService,
+		fileService,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,
