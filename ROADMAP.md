@@ -80,10 +80,8 @@
 ### 5.1 OpenAPI 与 CI/CD 集成 ✅ 已完成
 **实现**：ops_api_keys 表（明文 opsk_<48hex> 仅创建时返一次，库存 SHA-256+前缀；状态/过期/最近使用）；core ApiKeyService CRUD+Validate（异步回写最近使用）。admin BFF `/openapi/` 直注册 mux（绕 JWT 中间件），handler 内验 `X-Api-Key`/`Authorization: Bearer` 后转发：`POST /openapi/v1/builds|distributions|pipelines/{id}/trigger` 与 `POST /openapi/v1/webhooks/git/{buildId}?branch=`（解析 GitHub/GitLab/Gitea 通用 ref 字段，按分支过滤命中即触发）。前端密钥管理页含明文一次性展示与 curl 用法模板。
 
-### 5.2 环境与工作空间
-**场景**：dev/staging/prod 环境隔离，同名项目在不同环境独立管理。
-**方案**：复用已有租户体系做环境隔离（每环境一个租户）；或引入轻量 `env` 标签字段（更简单，推荐 v1）。
-**工作量**：后端 1 天 + 前端半天。
+### 5.2 环境与工作空间 ✅ 已完成(v1 轻量方案)
+**实现**：agent_node/project 新增 `env` 标签（default/dev/staging/prod），节点页/项目页 env 列按环境着色 + 搜索筛选（走 PagingRequest 结构化 Filter 服务端生效）+ 表单选择；节点页顺带补了此前缺失的编辑入口（改名/改环境）。跨资源级联约束（如分发目标 env 匹配校验）留待 v2。
 
 ### 5.3 插件化指令扩展
 **场景**：业务团队自定义 agent 指令（如数据库备份、SSL 证书续期）。
