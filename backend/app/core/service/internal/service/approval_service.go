@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -9,22 +10,26 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/signal"
+
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
 
 // ApprovalService 操作审批:危险操作(生产分发/脚本执行)需审批人确认后才执行。
-// 发起方创建审批单并暂存操作载荷;审批通过后由发起方重新提交操作(带审批单 ID)。
+// 审批通过后由本服务重新下发 MQTT 指令(使用审批单存储的 agent_id + payload)。
 type ApprovalService struct {
 	opsV1.UnimplementedApprovalServiceServer
 
-	log  *log.Helper
-	repo *data.ApprovalRepo
+	log      *log.Helper
+	repo     *data.ApprovalRepo
+	agentSvc *AgentService
 }
 
-func NewApprovalService(ctx *bootstrap.Context, repo *data.ApprovalRepo) *ApprovalService {
+func NewApprovalService(ctx *bootstrap.Context, repo *data.ApprovalRepo, agentSvc *AgentService) *ApprovalService {
 	return &ApprovalService{
-		log:  ctx.NewLoggerHelper("approval/service/core-service"),
-		repo: repo,
+		log:      ctx.NewLoggerHelper("approval/service/core-service"),
+		repo:     repo,
+		agentSvc: agentSvc,
 	}
 }
 
@@ -36,15 +41,38 @@ func (s *ApprovalService) GetApproval(ctx context.Context, req *opsV1.GetApprova
 	return s.repo.Get(ctx, req)
 }
 
-// ApproveApproval 审批通过(状态流转 PENDING→APPROVED)。
-// 发起方收到审批通过通知后重新提交操作,并携带审批单 ID 证明已获批准。
+// ApproveApproval 审批通过:标记 APPROVED 并重新下发存储的 MQTT 指令。
 func (s *ApprovalService) ApproveApproval(ctx context.Context, req *opsV1.ApproveApprovalRequest) (*opsV1.OpApprovalResult, error) {
 	if req == nil || req.GetId() == 0 {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
-	if err := s.repo.Resolve(ctx, req.GetId(), true, operatorIDOf(ctx), ""); err != nil {
+
+	record, err := s.repo.GetEntity(ctx, req.GetId())
+	if err != nil {
+		return nil, opsV1.ErrorNotFound("approval not found")
+	}
+
+	// CAS 标记 APPROVED
+	if err = s.repo.Resolve(ctx, req.GetId(), true, operatorIDOf(ctx), ""); err != nil {
 		return nil, err
 	}
+
+	// 重新下发指令:用审批单存储的 agent_id 和 payload
+	var payload json.RawMessage
+	if record.Payload != nil && *record.Payload != "" {
+		payload = json.RawMessage(*record.Payload)
+	}
+
+	_, dispatchErr := s.agentSvc.PublishCommand(ctx, 0, record.AgentID,
+		signal.CommandAction(record.OperationType), payload, 0)
+	if dispatchErr != nil {
+		s.log.Errorf("approved operation dispatch failed (approval=%d agent=%s action=%s): %s",
+			req.GetId(), record.AgentID, record.OperationType, dispatchErr.Error())
+		return &opsV1.OpApprovalResult{}, nil
+	}
+
+	s.log.Infof("approved operation dispatched (approval=%d agent=%s action=%s)",
+		req.GetId(), record.AgentID, record.OperationType)
 	return &opsV1.OpApprovalResult{}, nil
 }
 

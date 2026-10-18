@@ -196,7 +196,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	monitorService := service.NewMonitorService(ctx, monitorRepo)
 	alertService := service.NewAlertService(ctx, alertRepo)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)
-	approvalService := service.NewApprovalService(ctx, approvalRepo)
+	approvalService := service.NewApprovalService(ctx, approvalRepo, agentService)
 
 	// 定时调度(构建/脚本 cron + 监控检查)
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildService, scriptService, agentService)
