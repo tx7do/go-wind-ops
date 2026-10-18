@@ -18,5 +18,10 @@
   "deleteSuccess": "Agent node deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete agent node",
-  "deleteConfirmDesc": "Delete {{moduleName}} \"{{name}}\"? If the agent is still online, it will re-enroll via TOFU on reconnect."
+  "deleteConfirmDesc": "Delete {{moduleName}} \"{{name}}\"? If the agent is still online, it will re-enroll via TOFU on reconnect.",
+  "env": "Env",
+  "edit": "Edit",
+  "updateSuccess": "Updated",
+  "updateFailed": "Update failed",
+  "envHint": "Environment tag for isolation (default/dev/staging/prod)"
 }

@@ -15,13 +15,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_Project as Project } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
-import { TABLE } from '@/config/constants';
+import { ENV_PRESETS, ENV_TAG_COLOR, TABLE } from '@/config/constants';
 import {
   fetchListProjects,
   useDeleteProject,
   useOperateProject,
 } from '@/api/hooks/project';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import ProjectDrawer from './components/ProjectDrawer';
 import ProjectLogDrawer from './components/ProjectLogDrawer';
@@ -82,6 +83,17 @@ const ProjectManagement = () => {
   };
 
   const columns: ProColumns<Project>[] = [
+    {
+      title: t('env'),
+      dataIndex: 'env',
+      width: 100,
+      valueType: 'select',
+      fieldProps: { options: ENV_PRESETS.map((v) => ({ label: v, value: v })) },
+      render: (_, record) => {
+        const env = record.env || 'default';
+        return <Tag color={ENV_TAG_COLOR[env] ?? 'default'}>{env}</Tag>;
+      },
+    },
     {
       title: t('name'),
       dataIndex: 'name',

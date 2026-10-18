@@ -87,6 +87,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			agentnode.FieldName:              {Type: field.TypeString, Column: agentnode.FieldName},
 			agentnode.FieldTokenHash:         {Type: field.TypeString, Column: agentnode.FieldTokenHash},
 			agentnode.FieldStatus:            {Type: field.TypeEnum, Column: agentnode.FieldStatus},
+			agentnode.FieldEnv:               {Type: field.TypeString, Column: agentnode.FieldEnv},
 			agentnode.FieldHostname:          {Type: field.TypeString, Column: agentnode.FieldHostname},
 			agentnode.FieldOs:                {Type: field.TypeString, Column: agentnode.FieldOs},
 			agentnode.FieldArch:              {Type: field.TypeString, Column: agentnode.FieldArch},
@@ -1202,6 +1203,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			project.FieldDeletedBy:     {Type: field.TypeUint32, Column: project.FieldDeletedBy},
 			project.FieldNodeID:        {Type: field.TypeUint32, Column: project.FieldNodeID},
 			project.FieldName:          {Type: field.TypeString, Column: project.FieldName},
+			project.FieldEnv:           {Type: field.TypeString, Column: project.FieldEnv},
 			project.FieldDescription:   {Type: field.TypeString, Column: project.FieldDescription},
 			project.FieldProjectDir:    {Type: field.TypeString, Column: project.FieldProjectDir},
 			project.FieldStartCommand:  {Type: field.TypeString, Column: project.FieldStartCommand},
@@ -1781,6 +1783,11 @@ func (f *AgentNodeFilter) WhereTokenHash(p entql.StringP) {
 // WhereStatus applies the entql string predicate on the status field.
 func (f *AgentNodeFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(agentnode.FieldStatus))
+}
+
+// WhereEnv applies the entql string predicate on the env field.
+func (f *AgentNodeFilter) WhereEnv(p entql.StringP) {
+	f.Where(p.Field(agentnode.FieldEnv))
 }
 
 // WhereHostname applies the entql string predicate on the hostname field.
@@ -6521,6 +6528,11 @@ func (f *ProjectFilter) WhereNodeID(p entql.Uint32P) {
 // WhereName applies the entql string predicate on the name field.
 func (f *ProjectFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(project.FieldName))
+}
+
+// WhereEnv applies the entql string predicate on the env field.
+func (f *ProjectFilter) WhereEnv(p entql.StringP) {
+	f.Where(p.Field(project.FieldEnv))
 }
 
 // WhereDescription applies the entql string predicate on the description field.

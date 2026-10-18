@@ -80,6 +80,10 @@ func init() {
 	agentnodeDescTokenHash := agentnodeFields[2].Descriptor()
 	// agentnode.TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
 	agentnode.TokenHashValidator = agentnodeDescTokenHash.Validators[0].(func(string) error)
+	// agentnodeDescEnv is the schema descriptor for env field.
+	agentnodeDescEnv := agentnodeFields[4].Descriptor()
+	// agentnode.DefaultEnv holds the default value on creation for the env field.
+	agentnode.DefaultEnv = agentnodeDescEnv.Default.(string)
 	// agentnodeDescID is the schema descriptor for id field.
 	agentnodeDescID := agentnodeMixinFields0[0].Descriptor()
 	// agentnode.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1210,12 +1214,16 @@ func init() {
 	projectDescName := projectFields[1].Descriptor()
 	// project.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	project.NameValidator = projectDescName.Validators[0].(func(string) error)
+	// projectDescEnv is the schema descriptor for env field.
+	projectDescEnv := projectFields[2].Descriptor()
+	// project.DefaultEnv holds the default value on creation for the env field.
+	project.DefaultEnv = projectDescEnv.Default.(string)
 	// projectDescProjectDir is the schema descriptor for project_dir field.
-	projectDescProjectDir := projectFields[3].Descriptor()
+	projectDescProjectDir := projectFields[4].Descriptor()
 	// project.ProjectDirValidator is a validator for the "project_dir" field. It is called by the builders before save.
 	project.ProjectDirValidator = projectDescProjectDir.Validators[0].(func(string) error)
 	// projectDescLastPid is the schema descriptor for last_pid field.
-	projectDescLastPid := projectFields[8].Descriptor()
+	projectDescLastPid := projectFields[9].Descriptor()
 	// project.DefaultLastPid holds the default value on creation for the last_pid field.
 	project.DefaultLastPid = projectDescLastPid.Default.(uint64)
 	// projectDescID is the schema descriptor for id field.

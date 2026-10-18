@@ -153,6 +153,7 @@ func (r *ProjectRepo) Create(ctx context.Context, req *opsV1.CreateProjectReques
 		SetNillableStartCommand(req.Data.StartCommand).
 		SetNillableStopCommand(req.Data.StopCommand).
 		SetNillableStatusCommand(req.Data.StatusCommand).
+		SetNillableEnv(req.Data.Env).
 		SetLabels(req.Data.Labels)
 
 	if operatorID > 0 {
@@ -185,7 +186,8 @@ func (r *ProjectRepo) Update(ctx context.Context, req *opsV1.UpdateProjectReques
 				SetNillableProjectDir(req.Data.ProjectDir).
 				SetNillableStartCommand(req.Data.StartCommand).
 				SetNillableStopCommand(req.Data.StopCommand).
-				SetNillableStatusCommand(req.Data.StatusCommand)
+				SetNillableStatusCommand(req.Data.StatusCommand).
+				SetNillableEnv(req.Data.Env)
 
 			if len(req.Data.Labels) > 0 {
 				builder.SetLabels(req.Data.Labels)

@@ -81,3 +81,12 @@ export const BUSINESS = {
   /** 密码最小长度 */
   PASSWORD_MIN_LENGTH: 8,
 } as const;
+
+/** 环境标签预设与展示色(节点/项目环境隔离)。 */
+export const ENV_PRESETS = ['default', 'dev', 'staging', 'prod'];
+export const ENV_TAG_COLOR: Record<string, string> = {
+  prod: 'volcano',
+  staging: 'orange',
+  dev: 'blue',
+  default: 'default',
+};

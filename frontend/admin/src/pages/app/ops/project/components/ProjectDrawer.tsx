@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import type { opsservicev1_Project as Project } from '@/api/generated/admin/service/v1';
 import { fetchListAgentNodes, useCreateProject, useUpdateProject } from '@/api/hooks';
 import { PaginationQuery } from '@/core';
+import { ENV_PRESETS } from '@/config/constants';
 
 interface ProjectDrawerProps {
   open: boolean;
@@ -120,6 +121,13 @@ const ProjectDrawer: React.FC<ProjectDrawerProps> = ({
               onChange: () => formRef.current?.validateFields(['name']),
             }}
             initialValue={data?.nodeId}
+          />
+          <ProFormSelect
+            name="env"
+            label={t('env')}
+            options={ENV_PRESETS.map((v) => ({ label: v, value: v }))}
+            initialValue={data?.env ?? 'default'}
+            extra={t('envHint')}
           />
           <ProFormText
             name="name"

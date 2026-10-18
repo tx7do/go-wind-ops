@@ -153,7 +153,8 @@ func (r *AgentNodeRepo) Update(ctx context.Context, req *opsV1.UpdateAgentNodeRe
 	_, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *opsV1.AgentNode) {
 			builder.
-				SetNillableName(req.Data.Name)
+				SetNillableName(req.Data.Name).
+				SetNillableEnv(req.Data.Env)
 
 			if len(req.Data.Labels) > 0 {
 				builder.SetLabels(req.Data.Labels)

@@ -219,6 +219,26 @@ func (_u *AgentNodeUpdate) ClearStatus() *AgentNodeUpdate {
 	return _u
 }
 
+// SetEnv sets the "env" field.
+func (_u *AgentNodeUpdate) SetEnv(v string) *AgentNodeUpdate {
+	_u.mutation.SetEnv(v)
+	return _u
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_u *AgentNodeUpdate) SetNillableEnv(v *string) *AgentNodeUpdate {
+	if v != nil {
+		_u.SetEnv(*v)
+	}
+	return _u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (_u *AgentNodeUpdate) ClearEnv() *AgentNodeUpdate {
+	_u.mutation.ClearEnv()
+	return _u
+}
+
 // SetHostname sets the "hostname" field.
 func (_u *AgentNodeUpdate) SetHostname(v string) *AgentNodeUpdate {
 	_u.mutation.SetHostname(v)
@@ -707,6 +727,12 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(agentnode.FieldStatus, field.TypeEnum)
 	}
+	if value, ok := _u.mutation.Env(); ok {
+		_spec.SetField(agentnode.FieldEnv, field.TypeString, value)
+	}
+	if _u.mutation.EnvCleared() {
+		_spec.ClearField(agentnode.FieldEnv, field.TypeString)
+	}
 	if value, ok := _u.mutation.Hostname(); ok {
 		_spec.SetField(agentnode.FieldHostname, field.TypeString, value)
 	}
@@ -1039,6 +1065,26 @@ func (_u *AgentNodeUpdateOne) SetNillableStatus(v *agentnode.Status) *AgentNodeU
 // ClearStatus clears the value of the "status" field.
 func (_u *AgentNodeUpdateOne) ClearStatus() *AgentNodeUpdateOne {
 	_u.mutation.ClearStatus()
+	return _u
+}
+
+// SetEnv sets the "env" field.
+func (_u *AgentNodeUpdateOne) SetEnv(v string) *AgentNodeUpdateOne {
+	_u.mutation.SetEnv(v)
+	return _u
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_u *AgentNodeUpdateOne) SetNillableEnv(v *string) *AgentNodeUpdateOne {
+	if v != nil {
+		_u.SetEnv(*v)
+	}
+	return _u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (_u *AgentNodeUpdateOne) ClearEnv() *AgentNodeUpdateOne {
+	_u.mutation.ClearEnv()
 	return _u
 }
 
@@ -1559,6 +1605,12 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(agentnode.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Env(); ok {
+		_spec.SetField(agentnode.FieldEnv, field.TypeString, value)
+	}
+	if _u.mutation.EnvCleared() {
+		_spec.ClearField(agentnode.FieldEnv, field.TypeString)
 	}
 	if value, ok := _u.mutation.Hostname(); ok {
 		_spec.SetField(agentnode.FieldHostname, field.TypeString, value)

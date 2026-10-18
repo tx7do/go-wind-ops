@@ -151,6 +151,7 @@ type AgentNodeMutation struct {
 	name                   *string
 	token_hash             *string
 	status                 *agentnode.Status
+	env                    *string
 	hostname               *string
 	os                     *string
 	arch                   *string
@@ -810,6 +811,55 @@ func (m *AgentNodeMutation) StatusCleared() bool {
 func (m *AgentNodeMutation) ResetStatus() {
 	m.status = nil
 	delete(m.clearedFields, agentnode.FieldStatus)
+}
+
+// SetEnv sets the "env" field.
+func (m *AgentNodeMutation) SetEnv(s string) {
+	m.env = &s
+}
+
+// Env returns the value of the "env" field in the mutation.
+func (m *AgentNodeMutation) Env() (r string, exists bool) {
+	v := m.env
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnv returns the old "env" field's value of the AgentNode entity.
+// If the AgentNode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgentNodeMutation) OldEnv(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnv is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnv requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnv: %w", err)
+	}
+	return oldValue.Env, nil
+}
+
+// ClearEnv clears the value of the "env" field.
+func (m *AgentNodeMutation) ClearEnv() {
+	m.env = nil
+	m.clearedFields[agentnode.FieldEnv] = struct{}{}
+}
+
+// EnvCleared returns if the "env" field was cleared in this mutation.
+func (m *AgentNodeMutation) EnvCleared() bool {
+	_, ok := m.clearedFields[agentnode.FieldEnv]
+	return ok
+}
+
+// ResetEnv resets all changes to the "env" field.
+func (m *AgentNodeMutation) ResetEnv() {
+	m.env = nil
+	delete(m.clearedFields, agentnode.FieldEnv)
 }
 
 // SetHostname sets the "hostname" field.
@@ -1788,7 +1838,7 @@ func (m *AgentNodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AgentNodeMutation) Fields() []string {
-	fields := make([]string, 0, 26)
+	fields := make([]string, 0, 27)
 	if m.created_at != nil {
 		fields = append(fields, agentnode.FieldCreatedAt)
 	}
@@ -1818,6 +1868,9 @@ func (m *AgentNodeMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, agentnode.FieldStatus)
+	}
+	if m.env != nil {
+		fields = append(fields, agentnode.FieldEnv)
 	}
 	if m.hostname != nil {
 		fields = append(fields, agentnode.FieldHostname)
@@ -1895,6 +1948,8 @@ func (m *AgentNodeMutation) Field(name string) (ent.Value, bool) {
 		return m.TokenHash()
 	case agentnode.FieldStatus:
 		return m.Status()
+	case agentnode.FieldEnv:
+		return m.Env()
 	case agentnode.FieldHostname:
 		return m.Hostname()
 	case agentnode.FieldOs:
@@ -1956,6 +2011,8 @@ func (m *AgentNodeMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldTokenHash(ctx)
 	case agentnode.FieldStatus:
 		return m.OldStatus(ctx)
+	case agentnode.FieldEnv:
+		return m.OldEnv(ctx)
 	case agentnode.FieldHostname:
 		return m.OldHostname(ctx)
 	case agentnode.FieldOs:
@@ -2066,6 +2123,13 @@ func (m *AgentNodeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case agentnode.FieldEnv:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnv(v)
 		return nil
 	case agentnode.FieldHostname:
 		v, ok := value.(string)
@@ -2344,6 +2408,9 @@ func (m *AgentNodeMutation) ClearedFields() []string {
 	if m.FieldCleared(agentnode.FieldStatus) {
 		fields = append(fields, agentnode.FieldStatus)
 	}
+	if m.FieldCleared(agentnode.FieldEnv) {
+		fields = append(fields, agentnode.FieldEnv)
+	}
 	if m.FieldCleared(agentnode.FieldHostname) {
 		fields = append(fields, agentnode.FieldHostname)
 	}
@@ -2430,6 +2497,9 @@ func (m *AgentNodeMutation) ClearField(name string) error {
 	case agentnode.FieldStatus:
 		m.ClearStatus()
 		return nil
+	case agentnode.FieldEnv:
+		m.ClearEnv()
+		return nil
 	case agentnode.FieldHostname:
 		m.ClearHostname()
 		return nil
@@ -2515,6 +2585,9 @@ func (m *AgentNodeMutation) ResetField(name string) error {
 		return nil
 	case agentnode.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case agentnode.FieldEnv:
+		m.ResetEnv()
 		return nil
 	case agentnode.FieldHostname:
 		m.ResetHostname()
@@ -61419,6 +61492,7 @@ type ProjectMutation struct {
 	node_id        *uint32
 	addnode_id     *int32
 	name           *string
+	env            *string
 	description    *string
 	project_dir    *string
 	start_command  *string
@@ -61989,6 +62063,55 @@ func (m *ProjectMutation) ResetName() {
 	m.name = nil
 }
 
+// SetEnv sets the "env" field.
+func (m *ProjectMutation) SetEnv(s string) {
+	m.env = &s
+}
+
+// Env returns the value of the "env" field in the mutation.
+func (m *ProjectMutation) Env() (r string, exists bool) {
+	v := m.env
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnv returns the old "env" field's value of the Project entity.
+// If the Project object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProjectMutation) OldEnv(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnv is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnv requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnv: %w", err)
+	}
+	return oldValue.Env, nil
+}
+
+// ClearEnv clears the value of the "env" field.
+func (m *ProjectMutation) ClearEnv() {
+	m.env = nil
+	m.clearedFields[project.FieldEnv] = struct{}{}
+}
+
+// EnvCleared returns if the "env" field was cleared in this mutation.
+func (m *ProjectMutation) EnvCleared() bool {
+	_, ok := m.clearedFields[project.FieldEnv]
+	return ok
+}
+
+// ResetEnv resets all changes to the "env" field.
+func (m *ProjectMutation) ResetEnv() {
+	m.env = nil
+	delete(m.clearedFields, project.FieldEnv)
+}
+
 // SetDescription sets the "description" field.
 func (m *ProjectMutation) SetDescription(s string) {
 	m.description = &s
@@ -62488,7 +62611,7 @@ func (m *ProjectMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProjectMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, project.FieldCreatedAt)
 	}
@@ -62512,6 +62635,9 @@ func (m *ProjectMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, project.FieldName)
+	}
+	if m.env != nil {
+		fields = append(fields, project.FieldEnv)
 	}
 	if m.description != nil {
 		fields = append(fields, project.FieldDescription)
@@ -62564,6 +62690,8 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 		return m.NodeID()
 	case project.FieldName:
 		return m.Name()
+	case project.FieldEnv:
+		return m.Env()
 	case project.FieldDescription:
 		return m.Description()
 	case project.FieldProjectDir:
@@ -62607,6 +62735,8 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldNodeID(ctx)
 	case project.FieldName:
 		return m.OldName(ctx)
+	case project.FieldEnv:
+		return m.OldEnv(ctx)
 	case project.FieldDescription:
 		return m.OldDescription(ctx)
 	case project.FieldProjectDir:
@@ -62689,6 +62819,13 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case project.FieldEnv:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnv(v)
 		return nil
 	case project.FieldDescription:
 		v, ok := value.(string)
@@ -62864,6 +63001,9 @@ func (m *ProjectMutation) ClearedFields() []string {
 	if m.FieldCleared(project.FieldDeletedBy) {
 		fields = append(fields, project.FieldDeletedBy)
 	}
+	if m.FieldCleared(project.FieldEnv) {
+		fields = append(fields, project.FieldEnv)
+	}
 	if m.FieldCleared(project.FieldDescription) {
 		fields = append(fields, project.FieldDescription)
 	}
@@ -62920,6 +63060,9 @@ func (m *ProjectMutation) ClearField(name string) error {
 	case project.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case project.FieldEnv:
+		m.ClearEnv()
+		return nil
 	case project.FieldDescription:
 		m.ClearDescription()
 		return nil
@@ -62975,6 +63118,9 @@ func (m *ProjectMutation) ResetField(name string) error {
 		return nil
 	case project.FieldName:
 		m.ResetName()
+		return nil
+	case project.FieldEnv:
+		m.ResetEnv()
 		return nil
 	case project.FieldDescription:
 		m.ResetDescription()

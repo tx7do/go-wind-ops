@@ -128,6 +128,13 @@ message AgentNode {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 物理内存总量(字节)
 
+  optional string env = 16 [
+    json_name = "env",
+    (gnostic.openapi.v3.property) = {
+      description: "环境标签(default/dev/staging/prod,用于环境隔离)"
+    }
+  ]; // 环境标签
+
   repeated string labels = 15 [
     json_name = "labels",
     (gnostic.openapi.v3.property) = {

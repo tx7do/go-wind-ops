@@ -29,6 +29,8 @@ const (
 	FieldNodeID = "node_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldEnv holds the string denoting the env field in the database.
+	FieldEnv = "env"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldProjectDir holds the string denoting the project_dir field in the database.
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldNodeID,
 	FieldName,
+	FieldEnv,
 	FieldDescription,
 	FieldProjectDir,
 	FieldStartCommand,
@@ -88,6 +91,8 @@ var (
 	NodeIDValidator func(uint32) error
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultEnv holds the default value on creation for the "env" field.
+	DefaultEnv string
 	// ProjectDirValidator is a validator for the "project_dir" field. It is called by the builders before save.
 	ProjectDirValidator func(string) error
 	// DefaultLastPid holds the default value on creation for the "last_pid" field.
@@ -169,6 +174,11 @@ func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByEnv orders the results by the env field.
+func ByEnv(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnv, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

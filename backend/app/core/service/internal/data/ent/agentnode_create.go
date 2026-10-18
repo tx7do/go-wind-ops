@@ -146,6 +146,20 @@ func (_c *AgentNodeCreate) SetNillableStatus(v *agentnode.Status) *AgentNodeCrea
 	return _c
 }
 
+// SetEnv sets the "env" field.
+func (_c *AgentNodeCreate) SetEnv(v string) *AgentNodeCreate {
+	_c.mutation.SetEnv(v)
+	return _c
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_c *AgentNodeCreate) SetNillableEnv(v *string) *AgentNodeCreate {
+	if v != nil {
+		_c.SetEnv(*v)
+	}
+	return _c
+}
+
 // SetHostname sets the "hostname" field.
 func (_c *AgentNodeCreate) SetHostname(v string) *AgentNodeCreate {
 	_c.mutation.SetHostname(v)
@@ -399,6 +413,10 @@ func (_c *AgentNodeCreate) defaults() {
 		v := agentnode.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	if _, ok := _c.mutation.Env(); !ok {
+		v := agentnode.DefaultEnv
+		_c.mutation.SetEnv(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -501,6 +519,10 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(agentnode.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.Env(); ok {
+		_spec.SetField(agentnode.FieldEnv, field.TypeString, value)
+		_node.Env = &value
 	}
 	if value, ok := _c.mutation.Hostname(); ok {
 		_spec.SetField(agentnode.FieldHostname, field.TypeString, value)
@@ -783,6 +805,24 @@ func (u *AgentNodeUpsert) UpdateStatus() *AgentNodeUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *AgentNodeUpsert) ClearStatus() *AgentNodeUpsert {
 	u.SetNull(agentnode.FieldStatus)
+	return u
+}
+
+// SetEnv sets the "env" field.
+func (u *AgentNodeUpsert) SetEnv(v string) *AgentNodeUpsert {
+	u.Set(agentnode.FieldEnv, v)
+	return u
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *AgentNodeUpsert) UpdateEnv() *AgentNodeUpsert {
+	u.SetExcluded(agentnode.FieldEnv)
+	return u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *AgentNodeUpsert) ClearEnv() *AgentNodeUpsert {
+	u.SetNull(agentnode.FieldEnv)
 	return u
 }
 
@@ -1354,6 +1394,27 @@ func (u *AgentNodeUpsertOne) UpdateStatus() *AgentNodeUpsertOne {
 func (u *AgentNodeUpsertOne) ClearStatus() *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetEnv sets the "env" field.
+func (u *AgentNodeUpsertOne) SetEnv(v string) *AgentNodeUpsertOne {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.SetEnv(v)
+	})
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *AgentNodeUpsertOne) UpdateEnv() *AgentNodeUpsertOne {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.UpdateEnv()
+	})
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *AgentNodeUpsertOne) ClearEnv() *AgentNodeUpsertOne {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.ClearEnv()
 	})
 }
 
@@ -2145,6 +2206,27 @@ func (u *AgentNodeUpsertBulk) UpdateStatus() *AgentNodeUpsertBulk {
 func (u *AgentNodeUpsertBulk) ClearStatus() *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetEnv sets the "env" field.
+func (u *AgentNodeUpsertBulk) SetEnv(v string) *AgentNodeUpsertBulk {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.SetEnv(v)
+	})
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *AgentNodeUpsertBulk) UpdateEnv() *AgentNodeUpsertBulk {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.UpdateEnv()
+	})
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *AgentNodeUpsertBulk) ClearEnv() *AgentNodeUpsertBulk {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.ClearEnv()
 	})
 }
 

@@ -118,6 +118,20 @@ func (_c *ProjectCreate) SetName(v string) *ProjectCreate {
 	return _c
 }
 
+// SetEnv sets the "env" field.
+func (_c *ProjectCreate) SetEnv(v string) *ProjectCreate {
+	_c.mutation.SetEnv(v)
+	return _c
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_c *ProjectCreate) SetNillableEnv(v *string) *ProjectCreate {
+	if v != nil {
+		_c.SetEnv(*v)
+	}
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *ProjectCreate) SetDescription(v string) *ProjectCreate {
 	_c.mutation.SetDescription(v)
@@ -269,6 +283,10 @@ func (_c *ProjectCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *ProjectCreate) defaults() {
+	if _, ok := _c.mutation.Env(); !ok {
+		v := project.DefaultEnv
+		_c.mutation.SetEnv(v)
+	}
 	if _, ok := _c.mutation.LastPid(); !ok {
 		v := project.DefaultLastPid
 		_c.mutation.SetLastPid(v)
@@ -379,6 +397,10 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.Env(); ok {
+		_spec.SetField(project.FieldEnv, field.TypeString, value)
+		_node.Env = &value
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)
@@ -603,6 +625,24 @@ func (u *ProjectUpsert) SetName(v string) *ProjectUpsert {
 // UpdateName sets the "name" field to the value that was provided on create.
 func (u *ProjectUpsert) UpdateName() *ProjectUpsert {
 	u.SetExcluded(project.FieldName)
+	return u
+}
+
+// SetEnv sets the "env" field.
+func (u *ProjectUpsert) SetEnv(v string) *ProjectUpsert {
+	u.Set(project.FieldEnv, v)
+	return u
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *ProjectUpsert) UpdateEnv() *ProjectUpsert {
+	u.SetExcluded(project.FieldEnv)
+	return u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *ProjectUpsert) ClearEnv() *ProjectUpsert {
+	u.SetNull(project.FieldEnv)
 	return u
 }
 
@@ -977,6 +1017,27 @@ func (u *ProjectUpsertOne) SetName(v string) *ProjectUpsertOne {
 func (u *ProjectUpsertOne) UpdateName() *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetEnv sets the "env" field.
+func (u *ProjectUpsertOne) SetEnv(v string) *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.SetEnv(v)
+	})
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *ProjectUpsertOne) UpdateEnv() *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.UpdateEnv()
+	})
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *ProjectUpsertOne) ClearEnv() *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.ClearEnv()
 	})
 }
 
@@ -1544,6 +1605,27 @@ func (u *ProjectUpsertBulk) SetName(v string) *ProjectUpsertBulk {
 func (u *ProjectUpsertBulk) UpdateName() *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetEnv sets the "env" field.
+func (u *ProjectUpsertBulk) SetEnv(v string) *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.SetEnv(v)
+	})
+}
+
+// UpdateEnv sets the "env" field to the value that was provided on create.
+func (u *ProjectUpsertBulk) UpdateEnv() *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.UpdateEnv()
+	})
+}
+
+// ClearEnv clears the value of the "env" field.
+func (u *ProjectUpsertBulk) ClearEnv() *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.ClearEnv()
 	})
 }
 

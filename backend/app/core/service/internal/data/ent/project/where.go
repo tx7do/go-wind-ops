@@ -94,6 +94,11 @@ func Name(v string) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldName, v))
 }
 
+// Env applies equality check predicate on the "env" field. It's identical to EnvEQ.
+func Env(v string) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldEnv, v))
+}
+
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldDescription, v))
@@ -532,6 +537,81 @@ func NameEqualFold(v string) predicate.Project {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Project {
 	return predicate.Project(sql.FieldContainsFold(FieldName, v))
+}
+
+// EnvEQ applies the EQ predicate on the "env" field.
+func EnvEQ(v string) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldEnv, v))
+}
+
+// EnvNEQ applies the NEQ predicate on the "env" field.
+func EnvNEQ(v string) predicate.Project {
+	return predicate.Project(sql.FieldNEQ(FieldEnv, v))
+}
+
+// EnvIn applies the In predicate on the "env" field.
+func EnvIn(vs ...string) predicate.Project {
+	return predicate.Project(sql.FieldIn(FieldEnv, vs...))
+}
+
+// EnvNotIn applies the NotIn predicate on the "env" field.
+func EnvNotIn(vs ...string) predicate.Project {
+	return predicate.Project(sql.FieldNotIn(FieldEnv, vs...))
+}
+
+// EnvGT applies the GT predicate on the "env" field.
+func EnvGT(v string) predicate.Project {
+	return predicate.Project(sql.FieldGT(FieldEnv, v))
+}
+
+// EnvGTE applies the GTE predicate on the "env" field.
+func EnvGTE(v string) predicate.Project {
+	return predicate.Project(sql.FieldGTE(FieldEnv, v))
+}
+
+// EnvLT applies the LT predicate on the "env" field.
+func EnvLT(v string) predicate.Project {
+	return predicate.Project(sql.FieldLT(FieldEnv, v))
+}
+
+// EnvLTE applies the LTE predicate on the "env" field.
+func EnvLTE(v string) predicate.Project {
+	return predicate.Project(sql.FieldLTE(FieldEnv, v))
+}
+
+// EnvContains applies the Contains predicate on the "env" field.
+func EnvContains(v string) predicate.Project {
+	return predicate.Project(sql.FieldContains(FieldEnv, v))
+}
+
+// EnvHasPrefix applies the HasPrefix predicate on the "env" field.
+func EnvHasPrefix(v string) predicate.Project {
+	return predicate.Project(sql.FieldHasPrefix(FieldEnv, v))
+}
+
+// EnvHasSuffix applies the HasSuffix predicate on the "env" field.
+func EnvHasSuffix(v string) predicate.Project {
+	return predicate.Project(sql.FieldHasSuffix(FieldEnv, v))
+}
+
+// EnvIsNil applies the IsNil predicate on the "env" field.
+func EnvIsNil() predicate.Project {
+	return predicate.Project(sql.FieldIsNull(FieldEnv))
+}
+
+// EnvNotNil applies the NotNil predicate on the "env" field.
+func EnvNotNil() predicate.Project {
+	return predicate.Project(sql.FieldNotNull(FieldEnv))
+}
+
+// EnvEqualFold applies the EqualFold predicate on the "env" field.
+func EnvEqualFold(v string) predicate.Project {
+	return predicate.Project(sql.FieldEqualFold(FieldEnv, v))
+}
+
+// EnvContainsFold applies the ContainsFold predicate on the "env" field.
+func EnvContainsFold(v string) predicate.Project {
+	return predicate.Project(sql.FieldContainsFold(FieldEnv, v))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.

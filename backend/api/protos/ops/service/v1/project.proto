@@ -122,6 +122,13 @@ message Project {
 
   repeated string labels = 9 [json_name = "labels"]; // 标签
 
+  optional string env = 13 [
+    json_name = "env",
+    (gnostic.openapi.v3.property) = {
+      description: "环境标签(default/dev/staging/prod,用于环境隔离)"
+    }
+  ]; // 环境标签
+
   optional uint64 last_pid = 10 [
     json_name = "lastPid",
     (google.api.field_behavior) = OUTPUT_ONLY

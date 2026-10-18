@@ -19,11 +19,11 @@
   "statusUnknown": "Unknown",
   "lastPid": "Last PID",
   "create": "New Project",
-  "edit": "Edit Project",
+  "edit": "Edit",
   "nameRequired": "Project name is required",
   "createSuccess": "Project created",
   "createFailed": "Create failed",
-  "updateSuccess": "Project updated",
+  "updateSuccess": "Updated",
   "updateFailed": "Update failed",
   "deleteSuccess": "Project deleted",
   "deleteFailed": "Delete failed",
@@ -43,5 +43,7 @@
   "logClearSuccess": "Log cleared",
   "logClearFailed": "Clear failed",
   "logAutoScroll": "Auto scroll to bottom",
-  "logEmpty": "No log output yet"
+  "logEmpty": "No log output yet",
+  "env": "Env",
+  "envHint": "Environment tag for isolation (default/dev/staging/prod)"
 }

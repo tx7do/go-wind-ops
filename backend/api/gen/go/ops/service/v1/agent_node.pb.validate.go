@@ -109,6 +109,10 @@ func (m *AgentNode) validate(all bool) error {
 		// no validation rules for MemTotalBytes
 	}
 
+	if m.Env != nil {
+		// no validation rules for Env
+	}
+
 	if m.CpuPercent != nil {
 		// no validation rules for CpuPercent
 	}

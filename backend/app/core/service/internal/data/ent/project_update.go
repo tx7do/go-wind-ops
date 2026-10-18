@@ -186,6 +186,26 @@ func (_u *ProjectUpdate) SetNillableName(v *string) *ProjectUpdate {
 	return _u
 }
 
+// SetEnv sets the "env" field.
+func (_u *ProjectUpdate) SetEnv(v string) *ProjectUpdate {
+	_u.mutation.SetEnv(v)
+	return _u
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_u *ProjectUpdate) SetNillableEnv(v *string) *ProjectUpdate {
+	if v != nil {
+		_u.SetEnv(*v)
+	}
+	return _u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (_u *ProjectUpdate) ClearEnv() *ProjectUpdate {
+	_u.mutation.ClearEnv()
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *ProjectUpdate) SetDescription(v string) *ProjectUpdate {
 	_u.mutation.SetDescription(v)
@@ -491,6 +511,12 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Env(); ok {
+		_spec.SetField(project.FieldEnv, field.TypeString, value)
+	}
+	if _u.mutation.EnvCleared() {
+		_spec.ClearField(project.FieldEnv, field.TypeString)
+	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)
 	}
@@ -725,6 +751,26 @@ func (_u *ProjectUpdateOne) SetNillableName(v *string) *ProjectUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
 	}
+	return _u
+}
+
+// SetEnv sets the "env" field.
+func (_u *ProjectUpdateOne) SetEnv(v string) *ProjectUpdateOne {
+	_u.mutation.SetEnv(v)
+	return _u
+}
+
+// SetNillableEnv sets the "env" field if the given value is not nil.
+func (_u *ProjectUpdateOne) SetNillableEnv(v *string) *ProjectUpdateOne {
+	if v != nil {
+		_u.SetEnv(*v)
+	}
+	return _u
+}
+
+// ClearEnv clears the value of the "env" field.
+func (_u *ProjectUpdateOne) ClearEnv() *ProjectUpdateOne {
+	_u.mutation.ClearEnv()
 	return _u
 }
 
@@ -1062,6 +1108,12 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Env(); ok {
+		_spec.SetField(project.FieldEnv, field.TypeString, value)
+	}
+	if _u.mutation.EnvCleared() {
+		_spec.ClearField(project.FieldEnv, field.TypeString)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)

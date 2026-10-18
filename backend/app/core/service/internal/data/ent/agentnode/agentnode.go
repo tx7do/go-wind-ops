@@ -33,6 +33,8 @@ const (
 	FieldTokenHash = "token_hash"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldEnv holds the string denoting the env field in the database.
+	FieldEnv = "env"
 	// FieldHostname holds the string denoting the hostname field in the database.
 	FieldHostname = "hostname"
 	// FieldOs holds the string denoting the os field in the database.
@@ -82,6 +84,7 @@ var Columns = []string{
 	FieldName,
 	FieldTokenHash,
 	FieldStatus,
+	FieldEnv,
 	FieldHostname,
 	FieldOs,
 	FieldArch,
@@ -115,6 +118,8 @@ var (
 	AgentIDValidator func(string) error
 	// TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
 	TokenHashValidator func(string) error
+	// DefaultEnv holds the default value on creation for the "env" field.
+	DefaultEnv string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -201,6 +206,11 @@ func ByTokenHash(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByEnv orders the results by the env field.
+func ByEnv(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnv, opts...).ToFunc()
 }
 
 // ByHostname orders the results by the hostname field.

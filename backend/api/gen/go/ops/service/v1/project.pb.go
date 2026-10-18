@@ -145,6 +145,7 @@ type Project struct {
 	StopCommand   *string                `protobuf:"bytes,7,opt,name=stop_command,json=stopCommand,proto3,oneof" json:"stop_command,omitempty"`                                  // 停止命令
 	StatusCommand *string                `protobuf:"bytes,8,opt,name=status_command,json=statusCommand,proto3,oneof" json:"status_command,omitempty"`                            // 状态命令
 	Labels        []string               `protobuf:"bytes,9,rep,name=labels,proto3" json:"labels,omitempty"`                                                                     // 标签
+	Env           *string                `protobuf:"bytes,13,opt,name=env,proto3,oneof" json:"env,omitempty"`                                                                    // 环境标签
 	LastPid       *uint64                `protobuf:"varint,10,opt,name=last_pid,json=lastPid,proto3,oneof" json:"last_pid,omitempty"`                                            // 最近一次启动的进程 pid
 	LastStatus    *ProjectStatus         `protobuf:"varint,11,opt,name=last_status,json=lastStatus,proto3,enum=ops.service.v1.ProjectStatus,oneof" json:"last_status,omitempty"` // 最近上报的运行状态
 	LastStatusAt  *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=last_status_at,json=lastStatusAt,proto3,oneof" json:"last_status_at,omitempty"`                            // 状态最近更新时间
@@ -245,6 +246,13 @@ func (x *Project) GetLabels() []string {
 		return x.Labels
 	}
 	return nil
+}
+
+func (x *Project) GetEnv() string {
+	if x != nil && x.Env != nil {
+		return *x.Env
+	}
+	return ""
 }
 
 func (x *Project) GetLastPid() uint64 {
@@ -782,7 +790,7 @@ var File_ops_service_v1_project_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/project.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xfa\b\n" +
+	"\x1cops/service/v1/project.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xda\t\n" +
 	"\aProject\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x125\n" +
 	"\anode_id\x18\x02 \x01(\rB\x17\xe0A\x02\xbaG\x11\x92\x02\x0e所属节点IDH\x01R\x06nodeId\x88\x01\x01\x12<\n" +
@@ -793,17 +801,18 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\rstart_command\x18\x06 \x01(\tB6\xbaG3\x92\x020启动命令(在项目目录内以 shell 执行)H\x05R\fstartCommand\x88\x01\x01\x12V\n" +
 	"\fstop_command\x18\a \x01(\tB.\xbaG+\x92\x02(停止命令(优先于 pid 终止执行)H\x06R\vstopCommand\x88\x01\x01\x12Z\n" +
 	"\x0estatus_command\x18\b \x01(\tB.\xbaG+\x92\x02(状态命令(缺省按 pid 存活判断)H\aR\rstatusCommand\x88\x01\x01\x12\x16\n" +
-	"\x06labels\x18\t \x03(\tR\x06labels\x12#\n" +
+	"\x06labels\x18\t \x03(\tR\x06labels\x12V\n" +
+	"\x03env\x18\r \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\bR\x03env\x88\x01\x01\x12#\n" +
 	"\blast_pid\x18\n" +
-	" \x01(\x04B\x03\xe0A\x03H\bR\alastPid\x88\x01\x01\x12H\n" +
-	"\vlast_status\x18\v \x01(\x0e2\x1d.ops.service.v1.ProjectStatusB\x03\xe0A\x03H\tR\n" +
+	" \x01(\x04B\x03\xe0A\x03H\tR\alastPid\x88\x01\x01\x12H\n" +
+	"\vlast_status\x18\v \x01(\x0e2\x1d.ops.service.v1.ProjectStatusB\x03\xe0A\x03H\n" +
+	"R\n" +
 	"lastStatus\x88\x01\x01\x12J\n" +
-	"\x0elast_status_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
-	"R\flastStatusAt\x88\x01\x01\x12C\n" +
+	"\x0elast_status_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\flastStatusAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\rR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
 	"\n" +
 	"\b_node_idB\a\n" +
@@ -812,7 +821,8 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\f_project_dirB\x10\n" +
 	"\x0e_start_commandB\x0f\n" +
 	"\r_stop_commandB\x11\n" +
-	"\x0f_status_commandB\v\n" +
+	"\x0f_status_commandB\x06\n" +
+	"\x04_envB\v\n" +
 	"\t_last_pidB\x0e\n" +
 	"\f_last_statusB\x11\n" +
 	"\x0f_last_status_atB\r\n" +

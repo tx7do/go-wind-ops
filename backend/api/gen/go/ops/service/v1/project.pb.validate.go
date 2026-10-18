@@ -88,6 +88,10 @@ func (m *Project) validate(all bool) error {
 		// no validation rules for StatusCommand
 	}
 
+	if m.Env != nil {
+		// no validation rules for Env
+	}
+
 	if m.LastPid != nil {
 		// no validation rules for LastPid
 	}

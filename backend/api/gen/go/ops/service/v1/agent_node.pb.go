@@ -94,6 +94,7 @@ type AgentNode struct {
 	Ips               []string               `protobuf:"bytes,12,rep,name=ips,proto3" json:"ips,omitempty"`                                                                // 非环回 IP 列表
 	CpuCores          *int32                 `protobuf:"varint,13,opt,name=cpu_cores,json=cpuCores,proto3,oneof" json:"cpu_cores,omitempty"`                               // 逻辑核数
 	MemTotalBytes     *uint64                `protobuf:"varint,14,opt,name=mem_total_bytes,json=memTotalBytes,proto3,oneof" json:"mem_total_bytes,omitempty"`              // 物理内存总量(字节)
+	Env               *string                `protobuf:"bytes,16,opt,name=env,proto3,oneof" json:"env,omitempty"`                                                          // 环境标签
 	Labels            []string               `protobuf:"bytes,15,rep,name=labels,proto3" json:"labels,omitempty"`                                                          // 人工标签
 	CpuPercent        *float64               `protobuf:"fixed64,20,opt,name=cpu_percent,json=cpuPercent,proto3,oneof" json:"cpu_percent,omitempty"`                        // CPU 占用百分比
 	MemoryUsedPercent *float64               `protobuf:"fixed64,21,opt,name=memory_used_percent,json=memoryUsedPercent,proto3,oneof" json:"memory_used_percent,omitempty"` // 内存占用百分比
@@ -232,6 +233,13 @@ func (x *AgentNode) GetMemTotalBytes() uint64 {
 		return *x.MemTotalBytes
 	}
 	return 0
+}
+
+func (x *AgentNode) GetEnv() string {
+	if x != nil && x.Env != nil {
+		return *x.Env
+	}
+	return ""
 }
 
 func (x *AgentNode) GetLabels() []string {
@@ -771,7 +779,7 @@ var File_ops_service_v1_agent_node_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\n" +
-	"\x1fops/service/v1/agent_node.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xfa\v\n" +
+	"\x1fops/service/v1/agent_node.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xda\f\n" +
 	"\tAgentNode\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x03\xbaG\v\x92\x02\b节点IDH\x00R\x02id\x88\x01\x01\x12e\n" +
 	"\bagent_id\x18\x02 \x01(\tBE\xe0A\x03\xbaG?\x92\x02<机器唯一标识(machine-id),MQTT 主题与准入的锚点H\x01R\aagentId\x88\x01\x01\x12R\n" +
@@ -788,18 +796,19 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"R\fagentVersion\x88\x01\x01\x12\x15\n" +
 	"\x03ips\x18\f \x03(\tB\x03\xe0A\x03R\x03ips\x12%\n" +
 	"\tcpu_cores\x18\r \x01(\x05B\x03\xe0A\x03H\vR\bcpuCores\x88\x01\x01\x120\n" +
-	"\x0fmem_total_bytes\x18\x0e \x01(\x04B\x03\xe0A\x03H\fR\rmemTotalBytes\x88\x01\x01\x129\n" +
+	"\x0fmem_total_bytes\x18\x0e \x01(\x04B\x03\xe0A\x03H\fR\rmemTotalBytes\x88\x01\x01\x12V\n" +
+	"\x03env\x18\x10 \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\rR\x03env\x88\x01\x01\x129\n" +
 	"\x06labels\x18\x0f \x03(\tB!\xbaG\x1e\x92\x02\x1b人工标签(分组/筛选)R\x06labels\x12)\n" +
-	"\vcpu_percent\x18\x14 \x01(\x01B\x03\xe0A\x03H\rR\n" +
+	"\vcpu_percent\x18\x14 \x01(\x01B\x03\xe0A\x03H\x0eR\n" +
 	"cpuPercent\x88\x01\x01\x128\n" +
-	"\x13memory_used_percent\x18\x15 \x01(\x01B\x03\xe0A\x03H\x0eR\x11memoryUsedPercent\x88\x01\x01\x124\n" +
-	"\x11disk_used_percent\x18\x16 \x01(\x01B\x03\xe0A\x03H\x0fR\x0fdiskUsedPercent\x88\x01\x01\x12/\n" +
-	"\x0euptime_seconds\x18\x17 \x01(\x04B\x03\xe0A\x03H\x10R\ruptimeSeconds\x88\x01\x01\x12h\n" +
-	"\x11last_heartbeat_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xe0A\x03\xbaG\x15\x92\x02\x12最后心跳时间H\x11R\x0flastHeartbeatAt\x88\x01\x01\x12C\n" +
+	"\x13memory_used_percent\x18\x15 \x01(\x01B\x03\xe0A\x03H\x0fR\x11memoryUsedPercent\x88\x01\x01\x124\n" +
+	"\x11disk_used_percent\x18\x16 \x01(\x01B\x03\xe0A\x03H\x10R\x0fdiskUsedPercent\x88\x01\x01\x12/\n" +
+	"\x0euptime_seconds\x18\x17 \x01(\x04B\x03\xe0A\x03H\x11R\ruptimeSeconds\x88\x01\x01\x12h\n" +
+	"\x11last_heartbeat_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xe0A\x03\xbaG\x15\x92\x02\x12最后心跳时间H\x12R\x0flastHeartbeatAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x12R\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x13R\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x13R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x14R\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\v\n" +
 	"\t_agent_idB\a\n" +
 	"\x05_nameB\t\n" +
@@ -813,7 +822,8 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\x0e_agent_versionB\f\n" +
 	"\n" +
 	"_cpu_coresB\x12\n" +
-	"\x10_mem_total_bytesB\x0e\n" +
+	"\x10_mem_total_bytesB\x06\n" +
+	"\x04_envB\x0e\n" +
 	"\f_cpu_percentB\x16\n" +
 	"\x14_memory_used_percentB\x14\n" +
 	"\x12_disk_used_percentB\x11\n" +

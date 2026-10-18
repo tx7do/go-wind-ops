@@ -18,5 +18,10 @@
   "deleteSuccess": "节点已删除",
   "deleteFailed": "删除失败",
   "deleteConfirmTitle": "确认删除节点",
-  "deleteConfirmDesc": "确定删除{{moduleName}}「{{name}}」？若对应 agent 仍在线，重连后将按 TOFU 重新注册。"
+  "deleteConfirmDesc": "确定删除{{moduleName}}「{{name}}」？若对应 agent 仍在线，重连后将按 TOFU 重新注册。",
+  "env": "环境",
+  "edit": "编辑",
+  "updateSuccess": "已更新",
+  "updateFailed": "更新失败",
+  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)"
 }

@@ -690,6 +690,7 @@ export type opsservicev1_AgentNode = {
   //
   // Behaviors: OUTPUT_ONLY
   diskUsedPercent?: number;
+  env?: string;
   //
   // Behaviors: OUTPUT_ONLY
   hostname?: string;
@@ -8363,6 +8364,7 @@ export type opsservicev1_Project = {
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
   description?: string;
+  env?: string;
   //
   // Behaviors: OUTPUT_ONLY
   id?: number;

@@ -57,6 +57,12 @@ func (AgentNode) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("env").
+			Comment("环境标签(default/dev/staging/prod,登记时指定,用于环境隔离)").
+			Default("default").
+			Optional().
+			Nillable(),
+
 		field.String("hostname").
 			Comment("主机名").
 			Optional().

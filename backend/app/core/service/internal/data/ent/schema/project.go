@@ -42,6 +42,12 @@ func (Project) Fields() []ent.Field {
 			Comment("项目名(节点内唯一)").
 			NotEmpty(),
 
+		field.String("env").
+			Comment("环境标签(default/dev/staging/prod,继承或独立指定,用于环境隔离)").
+			Default("default").
+			Optional().
+			Nillable(),
+
 		field.String("description").
 			Comment("项目描述").
 			Optional().

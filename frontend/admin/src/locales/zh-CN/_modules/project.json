@@ -19,12 +19,12 @@
   "statusUnknown": "Unknown",
   "lastPid": "Last PID",
   "create": "New Project",
-  "edit": "Edit Project",
+  "edit": "编辑",
   "nameRequired": "Project name is required",
   "createSuccess": "Project created",
   "createFailed": "Create failed",
-  "updateSuccess": "Project updated",
-  "updateFailed": "Update failed",
+  "updateSuccess": "已更新",
+  "updateFailed": "更新失败",
   "deleteSuccess": "Project deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete project",
@@ -43,5 +43,7 @@
   "logClearSuccess": "Log cleared",
   "logClearFailed": "Clear failed",
   "logAutoScroll": "Auto scroll to bottom",
-  "logEmpty": "No log output yet"
+  "logEmpty": "No log output yet",
+  "env": "环境",
+  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)"
 }

@@ -99,6 +99,11 @@ func TokenHash(v string) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldTokenHash, v))
 }
 
+// Env applies equality check predicate on the "env" field. It's identical to EnvEQ.
+func Env(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldEQ(FieldEnv, v))
+}
+
 // Hostname applies equality check predicate on the "hostname" field. It's identical to HostnameEQ.
 func Hostname(v string) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldHostname, v))
@@ -702,6 +707,81 @@ func StatusIsNil() predicate.AgentNode {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotNull(FieldStatus))
+}
+
+// EnvEQ applies the EQ predicate on the "env" field.
+func EnvEQ(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldEQ(FieldEnv, v))
+}
+
+// EnvNEQ applies the NEQ predicate on the "env" field.
+func EnvNEQ(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldNEQ(FieldEnv, v))
+}
+
+// EnvIn applies the In predicate on the "env" field.
+func EnvIn(vs ...string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldIn(FieldEnv, vs...))
+}
+
+// EnvNotIn applies the NotIn predicate on the "env" field.
+func EnvNotIn(vs ...string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldNotIn(FieldEnv, vs...))
+}
+
+// EnvGT applies the GT predicate on the "env" field.
+func EnvGT(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldGT(FieldEnv, v))
+}
+
+// EnvGTE applies the GTE predicate on the "env" field.
+func EnvGTE(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldGTE(FieldEnv, v))
+}
+
+// EnvLT applies the LT predicate on the "env" field.
+func EnvLT(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldLT(FieldEnv, v))
+}
+
+// EnvLTE applies the LTE predicate on the "env" field.
+func EnvLTE(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldLTE(FieldEnv, v))
+}
+
+// EnvContains applies the Contains predicate on the "env" field.
+func EnvContains(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldContains(FieldEnv, v))
+}
+
+// EnvHasPrefix applies the HasPrefix predicate on the "env" field.
+func EnvHasPrefix(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldHasPrefix(FieldEnv, v))
+}
+
+// EnvHasSuffix applies the HasSuffix predicate on the "env" field.
+func EnvHasSuffix(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldHasSuffix(FieldEnv, v))
+}
+
+// EnvIsNil applies the IsNil predicate on the "env" field.
+func EnvIsNil() predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldIsNull(FieldEnv))
+}
+
+// EnvNotNil applies the NotNil predicate on the "env" field.
+func EnvNotNil() predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldNotNull(FieldEnv))
+}
+
+// EnvEqualFold applies the EqualFold predicate on the "env" field.
+func EnvEqualFold(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldEqualFold(FieldEnv, v))
+}
+
+// EnvContainsFold applies the ContainsFold predicate on the "env" field.
+func EnvContainsFold(v string) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldContainsFold(FieldEnv, v))
 }
 
 // HostnameEQ applies the EQ predicate on the "hostname" field.

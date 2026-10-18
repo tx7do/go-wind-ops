@@ -35,6 +35,8 @@ type Project struct {
 	NodeID uint32 `json:"node_id,omitempty"`
 	// 项目名(节点内唯一)
 	Name string `json:"name,omitempty"`
+	// 环境标签(default/dev/staging/prod,继承或独立指定,用于环境隔离)
+	Env *string `json:"env,omitempty"`
 	// 项目描述
 	Description *string `json:"description,omitempty"`
 	// 项目目录(受管机器绝对路径,须在 agent 授权目录内)
@@ -65,7 +67,7 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case project.FieldID, project.FieldCreatedBy, project.FieldUpdatedBy, project.FieldDeletedBy, project.FieldNodeID, project.FieldLastPid:
 			values[i] = new(sql.NullInt64)
-		case project.FieldName, project.FieldDescription, project.FieldProjectDir, project.FieldStartCommand, project.FieldStopCommand, project.FieldStatusCommand, project.FieldLastStatus:
+		case project.FieldName, project.FieldEnv, project.FieldDescription, project.FieldProjectDir, project.FieldStartCommand, project.FieldStopCommand, project.FieldStatusCommand, project.FieldLastStatus:
 			values[i] = new(sql.NullString)
 		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt, project.FieldLastStatusAt:
 			values[i] = new(sql.NullTime)
@@ -143,6 +145,13 @@ func (_m *Project) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
+			}
+		case project.FieldEnv:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field env", values[i])
+			} else if value.Valid {
+				_m.Env = new(string)
+				*_m.Env = value.String
 			}
 		case project.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -278,6 +287,11 @@ func (_m *Project) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	if v := _m.Env; v != nil {
+		builder.WriteString("env=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := _m.Description; v != nil {
 		builder.WriteString("description=")

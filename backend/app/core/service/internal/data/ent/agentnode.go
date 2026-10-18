@@ -39,6 +39,8 @@ type AgentNode struct {
 	TokenHash string `json:"token_hash,omitempty"`
 	// 在线状态
 	Status *agentnode.Status `json:"status,omitempty"`
+	// 环境标签(default/dev/staging/prod,登记时指定,用于环境隔离)
+	Env *string `json:"env,omitempty"`
 	// 主机名
 	Hostname *string `json:"hostname,omitempty"`
 	// 操作系统(linux/windows/darwin)
@@ -85,7 +87,7 @@ func (*AgentNode) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case agentnode.FieldID, agentnode.FieldCreatedBy, agentnode.FieldUpdatedBy, agentnode.FieldDeletedBy, agentnode.FieldCPUCores, agentnode.FieldMemTotalBytes, agentnode.FieldUptimeSeconds:
 			values[i] = new(sql.NullInt64)
-		case agentnode.FieldAgentID, agentnode.FieldName, agentnode.FieldTokenHash, agentnode.FieldStatus, agentnode.FieldHostname, agentnode.FieldOs, agentnode.FieldArch, agentnode.FieldPlatform, agentnode.FieldPlatformVersion, agentnode.FieldKernelVersion, agentnode.FieldAgentVersion:
+		case agentnode.FieldAgentID, agentnode.FieldName, agentnode.FieldTokenHash, agentnode.FieldStatus, agentnode.FieldEnv, agentnode.FieldHostname, agentnode.FieldOs, agentnode.FieldArch, agentnode.FieldPlatform, agentnode.FieldPlatformVersion, agentnode.FieldKernelVersion, agentnode.FieldAgentVersion:
 			values[i] = new(sql.NullString)
 		case agentnode.FieldCreatedAt, agentnode.FieldUpdatedAt, agentnode.FieldDeletedAt, agentnode.FieldLastHeartbeatAt:
 			values[i] = new(sql.NullTime)
@@ -177,6 +179,13 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = new(agentnode.Status)
 				*_m.Status = agentnode.Status(value.String)
+			}
+		case agentnode.FieldEnv:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field env", values[i])
+			} else if value.Valid {
+				_m.Env = new(string)
+				*_m.Env = value.String
 			}
 		case agentnode.FieldHostname:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -372,6 +381,11 @@ func (_m *AgentNode) String() string {
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Env; v != nil {
+		builder.WriteString("env=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	if v := _m.Hostname; v != nil {
