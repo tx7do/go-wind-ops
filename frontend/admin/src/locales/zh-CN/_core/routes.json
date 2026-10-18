@@ -14,6 +14,7 @@
   "monitors": "监控规则",
   "alerts": "告警记录",
   "notification-channels": "通知渠道",
+  "plugins": "插件指令",
   "api-keys": "OpenAPI 密钥",
   "approvals": "操作审批",
   "tenant": "租户管理",

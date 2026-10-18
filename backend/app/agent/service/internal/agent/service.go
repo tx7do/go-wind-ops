@@ -57,6 +57,7 @@ type Service struct {
 	authed     atomic.Bool
 
 	terminal *terminalSessionManager
+	plugins  []pluginDef
 
 	stopCh chan struct{}
 }
@@ -89,6 +90,7 @@ func NewService(ctx *bootstrap.Context) *Service {
 	s.RegisterHandler(signal.CommandActionScriptExec, s.handleScriptExec)
 	s.RegisterHandler(signal.CommandActionDistApply, s.handleDistApply)
 	s.registerDockerHandlers()
+	s.registerPluginHandlers()
 
 	ctx.NewLoggerHelper("agent/service").Infof("agent initialized (agentId=%s version=%s tokenFile=%s)", s.agentID, s.version, tokenPath)
 	return s

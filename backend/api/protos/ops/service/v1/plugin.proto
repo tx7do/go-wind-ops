@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "google/api/field_behavior.proto";
+
+// PluginService 插件化指令:agent 启动时把 plugins/ 目录的脚本文件注册为
+// 自定义 action(plugin_<文件名主干>),本服务提供清单查询与远程执行。
+service PluginService {
+  // 列出 agent 的插件清单
+  rpc ListAgentPlugins (ListAgentPluginsRequest) returns (ListAgentPluginsResponse) {}
+
+  // 远程执行插件
+  rpc ExecAgentPlugin (ExecAgentPluginRequest) returns (ExecAgentPluginResponse) {}
+}
+
+// 插件脚本信息
+message AgentPlugin {
+  optional string action = 1 [
+    json_name = "action",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 完整 action 名(plugin_db_backup)
+
+  optional string file = 2 [
+    json_name = "file",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 脚本绝对路径
+
+  optional string kind = 3 [
+    json_name = "kind",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行方式(bat/ps1/sh/python/binary)
+
+  optional int64 size = 4 [
+    json_name = "size",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 字节
+
+  optional string modified = 5 [
+    json_name = "modified",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 修改时间(RFC3339)
+}
+
+message ListAgentPluginsRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+}
+
+message ListAgentPluginsResponse {
+  optional string dir = 1 [
+    json_name = "dir",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 插件目录
+
+  repeated AgentPlugin plugins = 2 [
+    json_name = "plugins",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 插件列表
+}
+
+message ExecAgentPluginRequest {
+  optional string agent_id = 1 [
+    json_name = "agentId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 机器唯一标识
+
+  optional string action = 2 [
+    json_name = "action",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 插件 action 名(完整,含 plugin_ 前缀)
+
+  repeated string args = 3 [json_name = "args"]; // 脚本参数
+
+  optional uint32 timeout_seconds = 4 [json_name = "timeoutSeconds"]; // 超时(秒,缺省 60,上限 600)
+}
+
+message ExecAgentPluginResponse {
+  optional string action = 1 [
+    json_name = "action",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 插件 action 名
+
+  optional int32 exit_code = 2 [
+    json_name = "exitCode",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 退出码
+
+  optional string output = 3 [
+    json_name = "output",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 标准输出+错误(截断 64KB)
+
+  optional string duration = 4 [
+    json_name = "duration",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 耗时
+}

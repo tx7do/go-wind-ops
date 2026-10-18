@@ -204,6 +204,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	terminalService := service.NewTerminalService(ctx, agentService, agentNodeRepo)
 	pipelineService := service.NewPipelineService(ctx, pipelineRepo, pipelineRunRepo, buildHistoryRepo, commandRecordRepo, distributionRecordRepo, buildService, scriptService, distributionService)
 	apiKeyService := service.NewApiKeyService(ctx, apiKeyRepo)
+	pluginService := service.NewPluginService(ctx, agentService, agentNodeRepo)
 
 	// 定时调度(构建/脚本 cron + 监控检查)
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, agentService)
@@ -237,6 +238,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		terminalService,
 		pipelineService,
 		apiKeyService,
+		pluginService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

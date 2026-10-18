@@ -1,0 +1,21 @@
+{
+  "moduleName": "Plugins",
+  "selectAgent": "Select machine",
+  "refresh": "Refresh",
+  "hint": "Agent scans AGENT_PLUGINS_DIR (default ./plugins) at startup; the file name stem is the action name. Restart the agent to pick up new plugins.",
+  "pickAgentFirst": "Select a machine first",
+  "emptyPlugins": "No plugin scripts found on this machine",
+  "action": "Action",
+  "kind": "Kind",
+  "file": "Script Path",
+  "size": "Size",
+  "modified": "Modified",
+  "actionCol": "Action",
+  "exec": "Run",
+  "execTitle": "Run Plugin",
+  "argsHint": "One argument per line (passed to the script in order)",
+  "timeout": "Timeout",
+  "execFailed": "Execution failed (machine offline / plugin missing / timeout)",
+  "resultTitle": "Result: {action}",
+  "emptyOutput": "(no output)"
+}

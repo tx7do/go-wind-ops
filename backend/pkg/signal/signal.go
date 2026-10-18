@@ -289,6 +289,12 @@ const (
 	CommandActionTerminalOpen  CommandAction = "terminal_open"  // 打开终端会话(同步等待回执)
 	CommandActionTerminalClose CommandAction = "terminal_close" // 关闭终端会话
 
+	CommandActionPluginList CommandAction = "plugin_list" // 插件清单(同步回执)
+
+	// CommandActionPluginPrefix 插件指令前缀:agent 启动时把 plugins/ 目录的
+	// 脚本文件注册为 plugin_<文件名主干> 的自定义 action。
+	CommandActionPluginPrefix CommandAction = "plugin_"
+
 	CommandActionFileList   CommandAction = "file_list"
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
@@ -348,4 +354,43 @@ type TerminalIO struct {
 	SessionId string `json:"session_id"`
 	Data      string `json:"data"`  // base64
 	Closed    bool   `json:"closed,omitempty"`
+}
+
+// ============================================================================
+// 插件化指令(agent plugins/ 目录脚本)
+// ============================================================================
+
+// PluginActionNameMax 插件 action 主干长度上限(不含 plugin_ 前缀)。
+const PluginActionNameMax = 40
+
+// PluginOutputMax 插件输出回执截断上限。
+const PluginOutputMax = 64 << 10
+
+// PluginInfo 插件脚本注册信息。
+type PluginInfo struct {
+	Action   string `json:"action"`   // 完整 action(plugin_db_backup)
+	File     string `json:"file"`     // 脚本绝对路径
+	Kind     string `json:"kind"`     // bat|ps1|sh|python|binary
+	Size     int64  `json:"size"`     // 字节
+	Modified string `json:"modified"` // RFC3339
+}
+
+// PluginListResult plugin_list 回执。
+type PluginListResult struct {
+	Dir     string       `json:"dir"`
+	Plugins []PluginInfo `json:"plugins"`
+}
+
+// PluginExecPayload 插件执行载荷。
+type PluginExecPayload struct {
+	Args       []string `json:"args,omitempty"`
+	TimeoutSec uint32   `json:"timeout_sec,omitempty"` // 缺省 60,上限 600
+}
+
+// PluginExecResult 插件执行回执。
+type PluginExecResult struct {
+	Action   string `json:"action"`
+	ExitCode int    `json:"exit_code"`
+	Output   string `json:"output"`
+	Duration string `json:"duration,omitempty"`
 }

@@ -181,6 +181,17 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'plugins',
+        path: 'plugins',
+        element: createLazyRoute(() => import('@/pages/app/ops/plugin')),
+        meta: {
+          title: 'routes:plugins',
+          icon: 'lucide:puzzle',
+          order: 16,
+          authority: ['ops:node_manage'],
+        },
+      },
     ],
   },
 ];

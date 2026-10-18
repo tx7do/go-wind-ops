@@ -131,6 +131,7 @@ func NewRestServer(
 	fileService *service.FileService,
 	pipelineService *service.PipelineService,
 	apiKeyService *service.ApiKeyService,
+	pluginService *service.PluginService,
 	terminalWsHandler *TerminalWsHandler,
 	openApiGateway *OpenApiGateway,
 
@@ -201,6 +202,7 @@ func NewRestServer(
 	adminV1.RegisterFileServiceHTTPServer(srv, fileService)
 	adminV1.RegisterPipelineServiceHTTPServer(srv, pipelineService)
 	adminV1.RegisterApiKeyServiceHTTPServer(srv, apiKeyService)
+	adminV1.RegisterPluginServiceHTTPServer(srv, pluginService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

@@ -1,0 +1,21 @@
+{
+  "moduleName": "插件指令",
+  "selectAgent": "选择机器",
+  "refresh": "刷新",
+  "hint": "agent 启动时扫描 AGENT_PLUGINS_DIR(缺省 ./plugins),脚本文件名主干即 action 名;新增插件需重启 agent 生效",
+  "pickAgentFirst": "请先选择机器",
+  "emptyPlugins": "该机器未发现插件脚本",
+  "action": "Action",
+  "kind": "类型",
+  "file": "脚本路径",
+  "size": "大小",
+  "modified": "修改时间",
+  "actionCol": "操作",
+  "exec": "执行",
+  "execTitle": "执行插件",
+  "argsHint": "每行一个参数(按顺序传给脚本)",
+  "timeout": "超时",
+  "execFailed": "执行失败(机器离线/插件不存在/超时)",
+  "resultTitle": "执行结果: {action}",
+  "emptyOutput": "(无输出)"
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "ops/service/v1/plugin.proto";
+
+// PluginService 插件化指令门面:清单查询 + 远程执行。
+service PluginService {
+  // 列出 agent 的插件清单
+  rpc ListAgentPlugins (ops.service.v1.ListAgentPluginsRequest) returns (ops.service.v1.ListAgentPluginsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/agent-plugins"
+    };
+  }
+
+  // 远程执行插件
+  rpc ExecAgentPlugin (ops.service.v1.ExecAgentPluginRequest) returns (ops.service.v1.ExecAgentPluginResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/agent-plugins/exec"
+      body: "*"
+    };
+  }
+}

@@ -7644,6 +7644,110 @@ export type opsservicev1_GetPipelineRunLogResponse = {
   status?: string;
 };
 
+// PluginService 插件化指令门面:清单查询 + 远程执行。
+export interface PluginService {
+  // 列出 agent 的插件清单
+  ListAgentPlugins(
+    request: opsservicev1_ListAgentPluginsRequest,
+  ): Promise<opsservicev1_ListAgentPluginsResponse>;
+  // 远程执行插件
+  ExecAgentPlugin(
+    request: opsservicev1_ExecAgentPluginRequest,
+  ): Promise<opsservicev1_ExecAgentPluginResponse>;
+}
+
+export function createPluginServiceClient(
+  transport: ClientTransport,
+): PluginService {
+  return {
+    ListAgentPlugins(request) {
+      const path = `admin/v1/agent-plugins`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.agentId) {
+        queryParams.push(
+          `agentId=${encodeURIComponent(request.agentId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PluginService',
+        method: 'ListAgentPlugins',
+      }) as Promise<opsservicev1_ListAgentPluginsResponse>;
+    },
+    ExecAgentPlugin(request) {
+      const path = `admin/v1/agent-plugins/exec`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PluginService',
+        method: 'ExecAgentPlugin',
+      }) as Promise<opsservicev1_ExecAgentPluginResponse>;
+    },
+  };
+}
+export type opsservicev1_ListAgentPluginsRequest = {
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+};
+
+export type opsservicev1_ListAgentPluginsResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  dir?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  plugins: opsservicev1_AgentPlugin[] | undefined;
+};
+
+// 插件脚本信息
+export type opsservicev1_AgentPlugin = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  action?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  file?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  kind?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  modified?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  size?: number;
+};
+
+export type opsservicev1_ExecAgentPluginRequest = {
+  //
+  // Behaviors: REQUIRED
+  action?: string;
+  //
+  // Behaviors: REQUIRED
+  agentId?: string;
+  args: string[] | undefined;
+  timeoutSeconds?: number;
+};
+
+export type opsservicev1_ExecAgentPluginResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  action?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  duration?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  exitCode?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  output?: string;
+};
+
 // 策略评估日志服务
 export interface PolicyEvaluationLogService {
   // 查询策略评估日志列表
@@ -10593,6 +10697,7 @@ export class ApiClient {
   private _permissionGroupService?: PermissionGroupService;
   private _permissionService?: PermissionService;
   private _pipelineService?: PipelineService;
+  private _pluginService?: PluginService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _projectService?: ProjectService;
@@ -10719,6 +10824,10 @@ export class ApiClient {
 
   get pipelineService(): PipelineService {
     return this._pipelineService ??= createPipelineServiceClient(this._transport);
+  }
+
+  get pluginService(): PluginService {
+    return this._pluginService ??= createPluginServiceClient(this._transport);
   }
 
   get policyEvaluationLogService(): PolicyEvaluationLogService {

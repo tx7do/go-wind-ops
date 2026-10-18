@@ -77,6 +77,7 @@ func NewGrpcServer(
 	terminalService *service.TerminalService,
 	pipelineService *service.PipelineService,
 	apiKeyService *service.ApiKeyService,
+	pluginService *service.PluginService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -136,6 +137,7 @@ func NewGrpcServer(
 	opsV1.RegisterTerminalServiceServer(srv, terminalService)
 	opsV1.RegisterPipelineServiceServer(srv, pipelineService)
 	opsV1.RegisterApiKeyServiceServer(srv, apiKeyService)
+	opsV1.RegisterPluginServiceServer(srv, pluginService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 
