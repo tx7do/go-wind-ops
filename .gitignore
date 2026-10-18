@@ -34,3 +34,15 @@ go.work.sum
 
 # ZCode 会话产物
 .zcode/
+
+# CMS 残留文件(防止误拷贝)
+AGENTS.md
+CHANGELOG.md
+CLAUDE.md
+CONTRIBUTING.md
+README.en-US.md
+README.ja-JP.md
+SECURITY.md
+PHASE0.md
+.windsurfrules
+dist.zip
