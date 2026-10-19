@@ -218,3 +218,27 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 ### 环境注意
 - 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
 - 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。
+
+## Phase 11 · 即席批量操作与文件管理器打磨(2026-10-19)✅ 已完成
+
+### 11.1 批量命令与批量上传 ✅
+**实现**:ExecuteScriptBatchRequest 加 command/agent_ids/timeout_seconds,与 script_id+node_ids **二选一**——即席命令模式 core 跳过脚本档案直发 content,目标支持 agent_ids 免 node 换算;agent script_exec 放宽 script_id=0(名称兜底便于台账辨识),批次台账/逐机结果/轮询全复用。前端新页"批量命令"(机器多选+命令+单台超时,执行后轮询批次详情展示逐机状态/退出码/耗时/输出)。文件管理器加"批量上传":同一批文件发到多台机器同一目录,**每文件仅 prepare+PUT 一次**(objectKey 不绑机器,仅校验前缀),各目标机分别 Complete 拉取落盘——省 N-1 倍上传带宽。ops_script_batches.script_id 去 Positive 校验(0=即席命令批次)。
+
+### 11.2 文件管理器体验打磨 ✅
+**实现**:目录树视图 + 滚动修复 + 操作列防挤压;选中机器自动进入默认工作目录(与在线终端一致);路径规范化——裸盘符(如 `D:`)报错/静默失败可见。
+
+## Phase 12 · 可观测与交付增强三件套(2026-10-19)✅ 已完成
+
+### 12.1 节点失联告警 ✅
+**实现**:告警新增 source=NODE_OFFLINE(复用"monitor_id=域对象 ID"的去重恢复惯例,此处为节点 ID)。离线扫描从批量 MarkStaleOffline 改为逐节点抢占式翻转(ListStaleOnline + MarkOfflineIfStale,多副本恰一方获得翻转权→告警不重复),失联落 WARNING 告警并走统一渠道外呼(投递台账);心跳/准入恢复在线时解除未恢复告警,落 RECOVERY 记录并通知(首次上线静默——无未恢复告警不产生恢复噪音)。AgentService 注入 alert/notificationChannel/notificationDelivery 三仓库;告警页新增"节点失联"来源标签(红色)。
+
+### 12.2 进程守护(PROCESS 监控目标)✅
+**实现**:agent 新增 `process_list` 只读指令(Windows tasklist CSV / Unix ps,关键字"大小写不敏感包含"过滤在 agent 侧完成,回执压缩;不涉文件系统故无需授权目录);monitor 新增 PROCESS 目标类型 + process_name 字段,经同步指令探测:匹配 0 个=异常命中(防抖 consecutive_count 与节点指标规则同款),重新发现进程=恢复(RECOVERY+通知),探测失败(节点离线/超时)不告警——失联归 12.1。重复间隔/恢复通知/渠道外呼全量复用既有监控语义;监控表单三分支重构(项目/节点指标/进程)。
+
+### 12.3 分批灰度发布 ✅
+**实现**:分发配置新增 batch_size(0=一次性全量,兼容既有行为)。触发时全部目标先建记录(后批 command_request_id 为 `pending:dist:batch:project` 占位键——批次视图完整,后续批次可见可查),首批立即投递;AdvanceBatches 事件驱动推进(回执终态与超时定案双路径经 SetDistributionAdvanceHook 钩子触发,wiring 处注入避免构造循环依赖):前批全部成功才投下一批,任一失败把后续占位记录置 SKIPPED。多副本安全:投递="占位键→真实 UUID"条件更新抢占,恰一方获得投递权;FILE 部署推进时重签产物 URL。重新触发取代旧 rollout(遗留占位记录置 SKIPPED,防永久滞留 PENDING);超时扫描只定案已投递记录(排除 pending: 前缀),不再误杀待投批次。pipeline 分发步骤把 SKIPPED 视为失败性终态快速失败。
+
+### 门禁补记
+- 存量治理:vet 非常量格式串 2 处(tier3_service)、file-manager typecheck 2 处(Tree loadData 签名/批量上传 setState 缺 files)+ eslint 渲染期 ref 赋值/exhaustive-deps 顺手清零。
+- 批量命令功能(11.1)漏提交的生成产物(openapi.yaml/index.ts 的 agentIds/command/timeoutSeconds)经本轮 make api/ts 补齐同步。
+- 本机 `pnpm lint` 因 Node 20.10 缺 util.styleText 崩溃(eslint 10 要求 ≥20.12):PATH 前置 scoop nodejs 26.8.1 可跑;全仓 eslint 630 errors / golangci-lint 85 issues 均为存量债务(`--new-from-rev=HEAD` 口径本轮 0 issues)。
