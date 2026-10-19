@@ -35,5 +35,5 @@
   "fetch": "Fetch from Cloud",
   "fetchDone": "Fetched and written to ledger",
   "fetchFailed": "Fetch failed",
-  "fetchHint": "Calls the provider billing API for the month total and writes it into the ledger (overwrites same account+month); supports Alibaba/Tencent/AWS, enter Huawei manually"
+  "fetchHint": "Calls the provider billing API for the month total and writes it into the ledger (overwrites same account+month); supports Alibaba/Tencent/Huawei/AWS"
 }

@@ -15,7 +15,7 @@ type MonthBill struct {
 }
 
 // GetMonthBill 拉取指定月份的账号账单总额(直接 upsert 进成本台账用)。
-// month 形如 2026-09。华为云不支持(需 HWS 签名/SDK),显式报错。
+// month 形如 2026-09。四家均支持(华为走 HWS 签名)。
 func GetMonthBill(ctx context.Context, provider, ak, sk, month string) (*MonthBill, error) {
 	switch provider {
 	case "ALIYUN":
@@ -25,7 +25,7 @@ func GetMonthBill(ctx context.Context, provider, ak, sk, month string) (*MonthBi
 	case "AWS":
 		return monthBillAWS(ctx, ak, sk, month)
 	case "HUAWEI_CLOUD":
-		return nil, fmt.Errorf("华为云暂不支持账单拉取,请手工录入")
+		return monthBillHuawei(ctx, ak, sk, month)
 	default:
 		return nil, fmt.Errorf("未知的云厂商: %s", provider)
 	}
@@ -195,6 +195,84 @@ func awsSigV4Post(ctx context.Context, ak, sk, region, service, target, payload 
 		"Content-Type":  "application/x-amz-json-1.1",
 		"X-Amz-Date":    amzDate,
 		"X-Amz-Target":  target,
+		"Authorization": authorization,
+	})
+}
+
+// ---------- 华为云 ----------
+
+// monthBillHuawei BSS v2 查询汇总账单(ShowCustomerMonthlySum)。
+// GET /v2/bills/customer-bills/monthly-sum?bill_cycle=YYYY-MM,
+// 按条目 consume_amount(应付) 求和;多币种并存时要求手工录入。
+func monthBillHuawei(ctx context.Context, ak, sk, month string) (*MonthBill, error) {
+	const host = "bss.myhuaweicloud.com"
+	const path = "/v2/bills/customer-bills/monthly-sum"
+	query := "bill_cycle=" + month + "&limit=1000"
+
+	body, status, err := hwsSignedGet(ctx, ak, sk, host, path, query)
+	if err != nil {
+		return nil, fmt.Errorf("monthly-sum 请求失败: %w", err)
+	}
+
+	var resp struct {
+		TotalCount int `json:"total_count"`
+		BillSums   []struct {
+			ConsumeAmount float64 `json:"consume_amount"`
+			Currency      string  `json:"currency"`
+			BillCycle     string  `json:"bill_cycle"`
+		} `json:"bill_sums"`
+		ErrorCode string `json:"error_code"`
+		ErrorMsg  string `json:"error_msg"`
+	}
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("账单响应解析失败(HTTP %d): %s", status, truncate(body))
+	}
+	if resp.ErrorCode != "" {
+		return nil, fmt.Errorf("华为云拒绝: %s(%s)", resp.ErrorMsg, resp.ErrorCode)
+	}
+	if len(resp.BillSums) == 0 {
+		return nil, fmt.Errorf("华为云账单为空(月份 %s 可能未出账或无消费)", month)
+	}
+
+	byCurrency := map[string]float64{}
+	for _, it := range resp.BillSums {
+		c := it.Currency
+		if c == "" {
+			c = "CNY"
+		}
+		byCurrency[c] += it.ConsumeAmount
+	}
+	if len(byCurrency) > 1 {
+		parts := ""
+		for c, v := range byCurrency {
+			parts += fmt.Sprintf("%s:%.2f ", c, v)
+		}
+		return nil, fmt.Errorf("华为云该月存在多币种账单,请手工录入(%s)", parts)
+	}
+	currency := "CNY"
+	for c := range byCurrency {
+		currency = c
+	}
+	return &MonthBill{Amount: byCurrency[currency], Currency: currency}, nil
+}
+
+// hwsSignedGet 华为云 SDK-HMAC-SHA256 签名 GET。
+// 与 AWS SigV4 的关键差异:签名密钥就是 SK 原文(无日期/区域/服务派生链),
+// Authorization 头为 "SDK-HMAC-SHA256 Access=AK, SignedHeaders=..., Signature=..."。
+func hwsSignedGet(ctx context.Context, ak, sk, host, path, query string) ([]byte, int, error) {
+	xSdkDate := nowUTC().Format("20060102T150405Z")
+
+	// GET 无 body,签 host;x-sdk-date 两个头(canonical headers 每行带 \n,后接空行)
+	canonicalHeaders := "host:" + host + "\nx-sdk-date:" + xSdkDate + "\n"
+	signedHeaders := "host;x-sdk-date"
+	canonicalRequest := "GET\n" + path + "\n" + query + "\n" + canonicalHeaders + "\n" + signedHeaders + "\n" + sha256Hex(nil)
+	stringToSign := "SDK-HMAC-SHA256\n" + xSdkDate + "\n" + sha256Hex([]byte(canonicalRequest))
+	signature := hex.EncodeToString(hmacSHA256([]byte(sk), []byte(stringToSign)))
+
+	authorization := "SDK-HMAC-SHA256 Access=" + ak + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature
+
+	return httpDo(ctx, "GET", "https://"+host+path+"?"+query, "", map[string]string{
+		"X-Sdk-Date":    xSdkDate,
 		"Authorization": authorization,
 	})
 }
