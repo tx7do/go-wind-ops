@@ -151,11 +151,12 @@ export default function DashboardPage() {
         style={{
           border: '1px solid var(--ant-color-border-secondary)',
           borderRadius: 12,
-          padding: '12px 16px 4px',
-          marginBottom: 10,
+          padding: '10px 14px 4px',
+          flex: '1 1 300px',
+          minWidth: 280,
         }}
       >
-        <Space size={8} style={{ marginBottom: 6, width: '100%' }}>
+        <Space size={6} style={{ marginBottom: 6, width: '100%' }}>
           <span
             style={{
               width: 8,
@@ -192,7 +193,7 @@ export default function DashboardPage() {
                 size={80}
                 strokeColor={percentColor(v as number)}
                 format={(p) => (
-                  <span style={{ fontSize: 17, fontWeight: 600, color: percentColor(v as number) }}>{p}%</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: percentColor(v as number) }}>{p}%</span>
                 )}
               />
               <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 2 }}>{t(label as string)}</div>
@@ -276,7 +277,9 @@ export default function DashboardPage() {
             {nodeList.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
             ) : (
-              nodeList.map(nodeCard)
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {nodeList.map(nodeCard)}
+              </div>
             )}
           </Card>
         </Col>
