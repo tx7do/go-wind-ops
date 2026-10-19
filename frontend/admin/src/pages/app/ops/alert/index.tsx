@@ -32,6 +32,7 @@ const AlertManagement = () => {
           MONITOR: { color: 'blue', label: t('sourceMonitor') },
           BUDGET: { color: 'orange', label: t('sourceBudget') },
           CERT: { color: 'purple', label: t('sourceCert') },
+          NODE_OFFLINE: { color: 'red', label: t('sourceNodeOffline') },
         };
         const it = map[r.source || 'MONITOR'] || map.MONITOR;
         return <Tag color={it.color}>{it.label}</Tag>;

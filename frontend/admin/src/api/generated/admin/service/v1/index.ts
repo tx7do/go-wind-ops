@@ -12361,10 +12361,11 @@ export type opsservicev1_ScriptBatchItem = {
 };
 
 export type opsservicev1_ExecuteScriptBatchRequest = {
+  agentIds: string[] | undefined;
+  command?: string;
   nodeIds: number[] | undefined;
-  //
-  // Behaviors: REQUIRED
   scriptId?: number;
+  timeoutSeconds?: number;
 };
 
 export type opsservicev1_ExecuteScriptBatchResponse = {

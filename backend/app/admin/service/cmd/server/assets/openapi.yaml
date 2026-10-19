@@ -11209,8 +11209,6 @@ components:
                     readOnly: true
                     type: string
         ops.service.v1.ExecuteScriptBatchRequest:
-            required:
-                - scriptId
             type: object
             properties:
                 scriptId:
@@ -11221,6 +11219,15 @@ components:
                     items:
                         type: integer
                         format: uint32
+                command:
+                    type: string
+                agentIds:
+                    type: array
+                    items:
+                        type: string
+                timeoutSeconds:
+                    type: integer
+                    format: uint32
         ops.service.v1.ExecuteScriptBatchResponse:
             type: object
             properties:

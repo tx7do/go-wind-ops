@@ -61,7 +61,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
 		{Name: "monitor_id", Type: field.TypeUint32, Nullable: true, Comment: "来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)", Default: 0},
-		{Name: "source", Type: field.TypeString, Comment: "告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期", Default: "MONITOR"},
+		{Name: "source", Type: field.TypeString, Comment: "告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期 / NODE_OFFLINE=节点失联", Default: "MONITOR"},
 		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "关联项目(节点指标/预算/证书告警为 0)", Default: 0},
 		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)", Default: 0},
 		{Name: "level", Type: field.TypeEnum, Comment: "告警级别", Enums: []string{"WARNING", "ERROR", "RECOVERY"}, Default: "ERROR"},

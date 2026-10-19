@@ -19,6 +19,7 @@
   "sourceBudget": "预算",
   "sourceCert": "证书",
   "deliveries": "投递记录",
+  "sourceNodeOffline": "节点失联",
   "deliveriesTitle": "通知投递记录 #{{id}}",
   "deliveryTime": "时间",
   "deliveryChannel": "渠道",

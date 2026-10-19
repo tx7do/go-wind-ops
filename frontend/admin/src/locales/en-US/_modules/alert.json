@@ -19,6 +19,7 @@
   "sourceBudget": "Budget",
   "sourceCert": "Cert",
   "deliveries": "Deliveries",
+  "sourceNodeOffline": "Node Offline",
   "deliveriesTitle": "Notification Deliveries #{{id}}",
   "deliveryTime": "Time",
   "deliveryChannel": "Channel",

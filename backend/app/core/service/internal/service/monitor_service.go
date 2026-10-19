@@ -201,7 +201,8 @@ func ptrFloatOrZero(v *float64) float64 {
 
 // CheckNodeMetricMonitor 节点指标阈值检查:心跳快照(在线节点才有新鲜
 // 指标)读 CPU/内存/磁盘百分比,连续 N 个周期 ≥ 阈值才告警(防抖),恢复时
-// 自动落 RECOVERY 记录并通知。节点离线跳过(离线告警属准入域,本轮不做)。
+// 自动落 RECOVERY 记录并通知。节点离线跳过(离线告警由 AgentService
+// 离线扫描的 NODE_OFFLINE 告警负责)。
 func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, monitor *ent.Monitor) {
 	nodeID := monitor.NodeID
 	if nodeID == 0 {

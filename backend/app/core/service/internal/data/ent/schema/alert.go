@@ -37,7 +37,7 @@ func (Alert) Fields() []ent.Field {
 			Optional(),
 
 		field.String("source").
-			Comment("告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期").
+			Comment("告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期 / NODE_OFFLINE=节点失联").
 			Default("MONITOR"),
 
 		field.Uint32("project_id").

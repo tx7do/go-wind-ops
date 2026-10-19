@@ -26,7 +26,7 @@ type Alert struct {
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)
 	MonitorID uint32 `json:"monitor_id,omitempty"`
-	// 告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期
+	// 告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期 / NODE_OFFLINE=节点失联
 	Source string `json:"source,omitempty"`
 	// 关联项目(节点指标/预算/证书告警为 0)
 	ProjectID uint32 `json:"project_id,omitempty"`

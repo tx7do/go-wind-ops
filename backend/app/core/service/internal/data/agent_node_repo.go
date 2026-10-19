@@ -267,22 +267,40 @@ func (r *AgentNodeRepo) TouchHeartbeat(ctx context.Context, agentID string, metr
 	return nil
 }
 
-// MarkStaleOffline 把最后心跳早于 before 的在线节点标记离线,返回影响行数。
-// 幂等,可多副本并发执行。
-func (r *AgentNodeRepo) MarkStaleOffline(ctx context.Context, before time.Time) (int, error) {
+// ListStaleOnline 列出最后心跳早于 before 的在线节点(离线扫描/失联告警用)。
+func (r *AgentNodeRepo) ListStaleOnline(ctx context.Context, before time.Time) ([]*ent.AgentNode, error) {
+	nodes, err := r.entClient.Client().AgentNode.
+		Query().
+		Where(
+			agentnode.StatusEQ(agentnode.StatusOnline),
+			agentnode.LastHeartbeatAtLT(before),
+		).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list stale online agents: %s", err.Error())
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// MarkOfflineIfStale 单节点抢占式离线翻转:仅当该节点仍在线且心跳仍过期时
+// 置离线,返回是否由本次调用完成翻转(多副本并发扫描恰一方为 true,
+// 失联告警据此不重复落)。
+func (r *AgentNodeRepo) MarkOfflineIfStale(ctx context.Context, nodeID uint32, before time.Time) (bool, error) {
 	n, err := r.entClient.Client().AgentNode.
 		Update().
 		Where(
+			agentnode.ID(nodeID),
 			agentnode.StatusEQ(agentnode.StatusOnline),
 			agentnode.LastHeartbeatAtLT(before),
 		).
 		SetStatus(agentnode.StatusOffline).
 		Save(ctx)
 	if err != nil {
-		r.log.Errorf("mark stale agents offline: %s", err.Error())
-		return 0, err
+		r.log.Errorf("mark agent [%d] offline: %s", nodeID, err.Error())
+		return false, err
 	}
-	return n, nil
+	return n > 0, nil
 }
 
 // CountByStatus 返回在线/离线节点数(运维概览用)。

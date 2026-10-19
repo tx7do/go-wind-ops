@@ -19,6 +19,8 @@ import (
 	"github.com/tx7do/kratos-transport/broker"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/app/core/service/internal/data/ent"
+	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/signal"
 	"go-wind-ops/pkg/topic"
@@ -50,6 +52,9 @@ type AgentService struct {
 	backupTaskRepo   *data.BackupTaskRepo
 	configDistRepo   *data.ConfigDistributionRepo
 	metricRepo       *data.NodeMetricRepo
+	alertRepo        *data.AlertRepo
+	notifChannelRepo *data.NotificationChannelRepo
+	deliveryRepo     *data.NotificationDeliveryRepo
 	ossClient        *oss.MinIOClient
 	log              *log.Helper
 
@@ -63,7 +68,7 @@ type AgentService struct {
 	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
 		ctx:              ctx,
 		repo:             repo,
@@ -75,6 +80,9 @@ func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRep
 		backupTaskRepo:   backupTaskRepo,
 		configDistRepo:   configDistRepo,
 		metricRepo:       metricRepo,
+		alertRepo:        alertRepo,
+		notifChannelRepo: notifChannelRepo,
+		deliveryRepo:     deliveryRepo,
 		ossClient:        ossClient,
 		log:              ctx.NewLoggerHelper("agent/service/core-service"),
 
@@ -98,10 +106,21 @@ func (s *AgentService) Start(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				if n, err := s.repo.MarkStaleOffline(ctx, time.Now().Add(-offlineAfter)); err != nil {
+				cutoff := time.Now().Add(-offlineAfter)
+				if stale, err := s.repo.ListStaleOnline(ctx, cutoff); err != nil {
 					s.log.Warnf("offline sweep: %s", err.Error())
-				} else if n > 0 {
-					s.log.Infof("offline sweep: marked %d agent(s) offline", n)
+				} else {
+					for _, node := range stale {
+						flipped, err := s.repo.MarkOfflineIfStale(ctx, node.ID, cutoff)
+						if err != nil {
+							s.log.Warnf("offline sweep mark [%d]: %s", node.ID, err.Error())
+							continue
+						}
+						if flipped {
+							s.log.Infof("offline sweep: agent [%s] marked offline", node.AgentID)
+							s.fireNodeOfflineAlert(node)
+						}
+					}
 				}
 				if n, err := s.recordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
 					s.log.Warnf("command timeout sweep: %s", err.Error())
@@ -180,6 +199,7 @@ func (s *AgentService) HandleAgentAuth(ctx context.Context, topicStr string, _ b
 			req.AgentId, req.Info.Hostname, req.Info.OS, req.Info.Arch, req.Info.AgentVersion)
 
 	case node.TokenHash == tokenHash:
+		wasOffline := node.Status != nil && *node.Status == agentnode.StatusOffline
 		if err = s.repo.UpdateAuthSuccess(ctx, node.ID, &req.Info); err != nil {
 			resp.Reason = "internal error"
 			s.replyAuth(req.AgentId, resp)
@@ -187,6 +207,9 @@ func (s *AgentService) HandleAgentAuth(ctx context.Context, topicStr string, _ b
 		}
 		resp.OK = true
 		s.log.Infof("agent [%s] authenticated", req.AgentId)
+		if wasOffline {
+			go s.fireNodeOnlineRecovery(req.AgentId)
+		}
 
 	default:
 		resp.Reason = "token mismatch"
@@ -197,13 +220,23 @@ func (s *AgentService) HandleAgentAuth(ctx context.Context, topicStr string, _ b
 }
 
 // HandleHeartbeat 处理心跳:刷新在线状态/最后心跳时间/指标快照。
-// 未准入节点的心跳忽略(保持其离线态)。
+// 未准入节点的心跳忽略(保持其离线态);离线节点重新上报心跳时触发恢复
+// 通知(失联告警解除)。
 func (s *AgentService) HandleHeartbeat(ctx context.Context, topicStr string, _ broker.Headers, hb *signal.Heartbeat) error {
 	if hb == nil || hb.AgentId == "" {
 		return nil
 	}
+	prevOffline := false
+	if node, err := s.repo.GetByAgentID(ctx, hb.AgentId); err != nil {
+		s.log.Warnf("heartbeat lookup [%s]: %s", hb.AgentId, err.Error())
+	} else if node != nil && node.Status != nil && *node.Status == agentnode.StatusOffline {
+		prevOffline = true
+	}
 	if err := s.repo.TouchHeartbeat(ctx, hb.AgentId, &hb.Metrics); err != nil {
 		return err
+	}
+	if prevOffline {
+		go s.fireNodeOnlineRecovery(hb.AgentId)
 	}
 
 	// 指标历史入库(异步,不阻塞心跳处理)
@@ -512,6 +545,75 @@ func (s *AgentService) IssueUploadPresignedUrl(ctx context.Context, fileName, fi
 // ============================================================================
 // 内部实现
 // ============================================================================
+
+// fireNodeOfflineAlert 节点失联告警:source=NODE_OFFLINE,monitor_id 复用为
+// 节点 ID(与预算/证书来源"存域对象 ID"的去重/恢复惯例一致),node_id 同填。
+// 已有未恢复失联告警则跳过;通知走统一渠道外呼(投递台账)。
+func (s *AgentService) fireNodeOfflineAlert(node *ent.AgentNode) {
+	if s.alertRepo == nil {
+		return
+	}
+	ctx := context.Background()
+	if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID); already {
+		return
+	}
+	msg := fmt.Sprintf("节点 [%s] 心跳超时已判离线(最后心跳 %s)",
+		agentDisplayName(node), formatTimeOrUnknown(node.LastHeartbeatAt))
+	a, err := s.alertRepo.Create(ctx, node.ID, 0, node.ID, "NODE_OFFLINE", "WARNING", msg, false)
+	if err != nil {
+		s.log.Errorf("create node offline alert [%d]: %s", node.ID, err.Error())
+		return
+	}
+	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "告警: 节点离线", msg)
+	s.log.Warnf("ALERT: %s", msg)
+}
+
+// fireNodeOnlineRecovery 节点恢复在线(心跳/准入到达):解除未恢复失联告警,
+// 可选落 RECOVERY 记录并通知(有未恢复告警才通知,首次上线静默)。
+func (s *AgentService) fireNodeOnlineRecovery(agentID string) {
+	if s.alertRepo == nil {
+		return
+	}
+	ctx := context.Background()
+	node, err := s.repo.GetByAgentID(ctx, agentID)
+	if err != nil || node == nil {
+		return
+	}
+	unresolved, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID)
+	if !unresolved {
+		return
+	}
+	if _, err = s.alertRepo.ResolveAllByMonitor(ctx, node.ID); err != nil {
+		s.log.Warnf("resolve node offline alerts [%d]: %s", node.ID, err.Error())
+		return
+	}
+	msg := fmt.Sprintf("节点 [%s] 已恢复在线,失联告警解除", agentDisplayName(node))
+	if a, err := s.alertRepo.CreateRecovery(ctx, node.ID, 0, node.ID, "NODE_OFFLINE", msg); err != nil {
+		s.log.Errorf("create node online recovery alert [%d]: %s", node.ID, err.Error())
+		return
+	} else {
+		SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "恢复: 节点上线", msg)
+	}
+	s.log.Infof("RECOVERED: %s", msg)
+}
+
+// agentDisplayName 节点展示名:显示名 → 主机名 → agentId 兜底。
+func agentDisplayName(node *ent.AgentNode) string {
+	if node.Name != nil && *node.Name != "" {
+		return *node.Name
+	}
+	if node.Hostname != nil && *node.Hostname != "" {
+		return *node.Hostname
+	}
+	return node.AgentID
+}
+
+func formatTimeOrUnknown(t *time.Time) string {
+	if t == nil {
+		return "未知"
+	}
+	return t.Format("2006-01-02 15:04:05")
+}
 
 func (s *AgentService) replyAuth(agentId string, resp *signal.AgentAuthResponse) error {
 	b, ok := s.mqttBroker.Load().(broker.Broker)

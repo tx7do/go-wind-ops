@@ -30,14 +30,14 @@ const (
 type Alert struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                   // 告警ID
-	MonitorId     *uint32                `protobuf:"varint,2,opt,name=monitor_id,json=monitorId,proto3,oneof" json:"monitor_id,omitempty"`    // 来源监控规则
+	MonitorId     *uint32                `protobuf:"varint,2,opt,name=monitor_id,json=monitorId,proto3,oneof" json:"monitor_id,omitempty"`    // 来源规则/域对象(非 MONITOR 来源存域对象 ID:预算 ID/证书 ID/失联节点 ID)
 	ProjectId     *uint32                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`    // 关联项目
 	Level         *string                `protobuf:"bytes,4,opt,name=level,proto3,oneof" json:"level,omitempty"`                              // 级别(WARNING/ERROR/RECOVERY)
 	Message       *string                `protobuf:"bytes,5,opt,name=message,proto3,oneof" json:"message,omitempty"`                          // 告警内容
 	Resolved      *bool                  `protobuf:"varint,6,opt,name=resolved,proto3,oneof" json:"resolved,omitempty"`                       // 是否已恢复
 	Notified      *bool                  `protobuf:"varint,7,opt,name=notified,proto3,oneof" json:"notified,omitempty"`                       // 是否已外呼 webhook
-	NodeId        *uint32                `protobuf:"varint,8,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`             // 关联节点(节点指标告警;项目状态告警为 0)
-	Source        *string                `protobuf:"bytes,9,opt,name=source,proto3,oneof" json:"source,omitempty"`                            // 告警来源(MONITOR/BUDGET/CERT)
+	NodeId        *uint32                `protobuf:"varint,8,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`             // 关联节点(节点指标/节点失联告警;项目状态/预算/证书告警为 0)
+	Source        *string                `protobuf:"bytes,9,opt,name=source,proto3,oneof" json:"source,omitempty"`                            // 告警来源(MONITOR/BUDGET/CERT/NODE_OFFLINE)
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`    // 告警时间
 	ResolvedAt    *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=resolved_at,json=resolvedAt,proto3,oneof" json:"resolved_at,omitempty"` // 恢复时间
 	unknownFields protoimpl.UnknownFields

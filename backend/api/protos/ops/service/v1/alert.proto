@@ -34,7 +34,7 @@ message Alert {
   optional uint32 monitor_id = 2 [
     json_name = "monitorId",
     (google.api.field_behavior) = OUTPUT_ONLY
-  ]; // 来源监控规则
+  ]; // 来源规则/域对象(非 MONITOR 来源存域对象 ID:预算 ID/证书 ID/失联节点 ID)
 
   optional uint32 project_id = 3 [
     json_name = "projectId",
@@ -64,12 +64,12 @@ message Alert {
   optional uint32 node_id = 8 [
     json_name = "nodeId",
     (google.api.field_behavior) = OUTPUT_ONLY
-  ]; // 关联节点(节点指标告警;项目状态告警为 0)
+  ]; // 关联节点(节点指标/节点失联告警;项目状态/预算/证书告警为 0)
 
   optional string source = 9 [
     json_name = "source",
     (google.api.field_behavior) = OUTPUT_ONLY
-  ]; // 告警来源(MONITOR/BUDGET/CERT)
+  ]; // 告警来源(MONITOR/BUDGET/CERT/NODE_OFFLINE)
 
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
