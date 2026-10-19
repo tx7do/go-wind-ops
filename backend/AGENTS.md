@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-**go-wind-ops** 是一个多节点运维平台（参考 Jpom 的业务领域模型），以 go-wind-cms 为基座精简而来。受管机器上运行 **agent**，经 **MQTT（EMQX）** 与 core 保持信令长连接；大文件经 **MinIO/S3 预签名 URL** 直传直拉，不经过 MQTT。
+**go-wind-ops** 是一个多节点运维平台，以 go-wind-cms 为基座精简而来。受管机器上运行 **agent**，经 **MQTT（EMQX）** 与 core 保持信令长连接；大文件经 **MinIO/S3 预签名 URL** 直传直拉，不经过 MQTT。
 
 **核心技术栈**：
 - **框架**: go-kratos v2.9.2（HTTP + gRPC）
@@ -61,7 +61,7 @@
 
 约定：QoS 1 + JSON 序列化；`request_id`（UUID）为幂等键，回执原样带回；core 上行订阅全部走 `$share/core/` 共享订阅（多副本负载均衡）；指令 action 用小写下划线枚举（现有 `ping`），新增动作在 agent 侧 `RegisterHandler` 注册。agent 未认证前每 5 秒重发准入请求（规避与 core 的启动顺序竞争）。
 
-准入模型（当前）：SHA-256(token) 与 `ops_agent_nodes.token_hash` 一致放行；agent 首次出现按 TOFU 落库。**预留升级位**：EMQX webhook 认证/ACL 独立组件 + STS 短令牌轮换（参考 D:\GoProject\cloud-system 的 edge_auth 实现）。
+准入模型（当前）：SHA-256(token) 与 `ops_agent_nodes.token_hash` 一致放行；agent 首次出现按 TOFU 落库。**预留升级位**：EMQX webhook 认证/ACL 独立组件 + STS 短令牌轮换。
 
 大文件传输：core 经 `pkg/oss.MinIOClient` 签发预签名 URL → 信令下发 → agent 经 `pkg/filetransfer`（`UploadFileToPresignedURL`/`DownloadToFile`，流式+SHA-256 对账）直传直拉。
 
