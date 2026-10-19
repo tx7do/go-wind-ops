@@ -240,27 +240,31 @@ export default function DashboardPage() {
           </div>
         </Col>
 
-        {/* ── 统计瓷砖 ── */}
-        {stats.map((s) => (
-          <Col xs={12} md={8} xl={Math.floor(24 / stats.length)} key={s.key}>
-            <Card size="small" hoverable styles={{ body: { padding: '16px 18px' } }}>
-              <Space size={14} align="center">
-                <IconChip color={s.color}>{s.icon}</IconChip>
-                <div>
-                  <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-                    {t(`stat.${s.key}`)}
-                  </Typography.Text>
-                  <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, color: s.color }}>
-                    {s.value}
-                    {s.suffix ? (
-                      <span style={{ fontSize: 13, fontWeight: 400, color: '#8c8c8c', marginLeft: 6 }}>{s.suffix}</span>
-                    ) : null}
-                  </div>
-                </div>
-              </Space>
-            </Card>
-          </Col>
-        ))}
+        {/* ── 统计瓷砖(flex 均分撑满一行,窄屏自动换行) ── */}
+        <Col span={24}>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {stats.map((s) => (
+              <div key={s.key} style={{ flex: '1 1 190px', minWidth: 190 }}>
+                <Card size="small" hoverable styles={{ body: { padding: '16px 18px' } }}>
+                  <Space size={14} align="center">
+                    <IconChip color={s.color}>{s.icon}</IconChip>
+                    <div>
+                      <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+                        {t(`stat.${s.key}`)}
+                      </Typography.Text>
+                      <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, color: s.color }}>
+                        {s.value}
+                        {s.suffix ? (
+                          <span style={{ fontSize: 13, fontWeight: 400, color: '#8c8c8c', marginLeft: 6 }}>{s.suffix}</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </Space>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </Col>
 
         {/* ── 节点资源 ── */}
         <Col xs={24} xl={14}>
