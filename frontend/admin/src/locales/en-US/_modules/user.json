@@ -68,5 +68,22 @@
   "resetMfaConfirmTitle": "Reset MFA for this user?",
   "resetMfaConfirmDesc": "This will remove their TOTP binding. Next login will skip MFA until re-enrolled.",
   "resetMfaSuccess": "MFA reset successfully",
-  "resetMfaFailed": "Failed to reset MFA"
+  "resetMfaFailed": "Failed to reset MFA",
+  "desc": {
+    "username": "Username",
+    "realname": "Real Name",
+    "nickname": "Nickname",
+    "gender": "Gender",
+    "roleNames": "Roles",
+    "mobile": "Mobile",
+    "email": "Email",
+    "region": "Region",
+    "address": "Address",
+    "tenantName": "Tenant",
+    "orgUnitName": "Organization",
+    "positionName": "Position",
+    "createdAt": "Created At",
+    "lastLoginAt": "Last Login",
+    "lastLoginIp": "Last Login IP"
+  }
 }

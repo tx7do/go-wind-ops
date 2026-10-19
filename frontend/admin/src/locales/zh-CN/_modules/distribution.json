@@ -56,5 +56,6 @@
   "dockerEnvs": "环境变量",
   "dockerVolumes": "卷挂载",
   "dockerRestart": "重启策略",
-  "dockerNetwork": "网络"
+  "dockerNetwork": "网络",
+  "action": "操作"
 }

@@ -23,5 +23,8 @@
   "edit": "编辑",
   "updateSuccess": "已更新",
   "updateFailed": "更新失败",
-  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)"
+  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)",
+  "metricsTrend": "指标趋势",
+  "metricsNoData": "暂无指标数据",
+  "trendTooltip": "查看节点指标趋势"
 }

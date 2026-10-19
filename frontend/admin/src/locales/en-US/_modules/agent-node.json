@@ -23,5 +23,8 @@
   "edit": "Edit",
   "updateSuccess": "Updated",
   "updateFailed": "Update failed",
-  "envHint": "Environment tag for isolation (default/dev/staging/prod)"
+  "envHint": "Environment tag for isolation (default/dev/staging/prod)",
+  "metricsTrend": "Metrics Trend",
+  "metricsNoData": "No metrics data yet",
+  "trendTooltip": "View node metrics trend"
 }

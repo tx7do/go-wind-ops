@@ -32,5 +32,13 @@
   "resolve": "恢复",
   "resolveConfirm": "确认恢复该告警？",
   "noData": "暂无数据",
-  "heartbeat": "心跳 {{time}}"
+  "heartbeat": "心跳 {{time}}",
+  "projectsPanel": "项目状态",
+  "noProjects": "暂无项目",
+  "projStatus": {
+    "RUNNING": "运行中",
+    "STOPPED": "已停止",
+    "STARTING": "启动中",
+    "FAILED": "异常"
+  }
 }

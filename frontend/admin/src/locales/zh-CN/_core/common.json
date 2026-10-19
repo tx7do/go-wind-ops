@@ -278,7 +278,10 @@
     "csv": "CSV (逗号分隔)",
     "xlsx": "Excel 工作簿",
     "success": "已导出 {count} 行",
-    "failed": "导出失败"
+    "failed": "导出失败",
+    "serverXlsx": "服务端全量 (XLSX)",
+    "serverSuccess": "已开始下载",
+    "serverFailed": "服务端导出失败"
   },
   "uploadFeedback": {
     "uploading": "图片上传中",

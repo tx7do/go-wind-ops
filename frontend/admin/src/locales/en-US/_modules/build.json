@@ -28,5 +28,9 @@
   "triggerFailed": "Trigger failed",
   "history": "History",
   "artifactRetention": "Artifact Retention",
-  "artifactRetentionHint": "Keep only the most recent N successful build artifacts; older ones are cleaned hourly. 0 = unlimited\\nDocker image deploys are not affected"
+  "artifactRetentionHint": "Keep only the most recent N successful build artifacts; older ones are cleaned hourly. 0 = unlimited\\nDocker image deploys are not affected",
+  "cron": "Schedule (Cron)",
+  "cronHint": "Standard 5-field cron; leave empty to disable scheduling",
+  "description": "Description",
+  "action": "Actions"
 }

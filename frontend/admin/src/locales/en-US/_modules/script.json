@@ -26,5 +26,10 @@
   "executeSent": "Dispatched (request_id: {{requestId}}), see command records",
   "executeFailed": "Failed to dispatch",
   "nodeRequired": "Please select target node",
-  "updatedAt": "Updated At"
+  "updatedAt": "Updated At",
+  "cron": "Schedule (Cron)",
+  "cronHint": "Standard 5-field cron; leave empty to disable scheduling",
+  "cronNode": "Scheduled Node",
+  "cronNodePlaceholder": "Select the node that runs the schedule",
+  "action": "Actions"
 }

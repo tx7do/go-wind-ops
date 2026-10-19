@@ -32,5 +32,13 @@
   "resolve": "Resolve",
   "resolveConfirm": "Resolve this alert?",
   "noData": "No data",
-  "heartbeat": "Heartbeat {{time}}"
+  "heartbeat": "Heartbeat {{time}}",
+  "projectsPanel": "Projects",
+  "noProjects": "No projects",
+  "projStatus": {
+    "RUNNING": "Running",
+    "STOPPED": "Stopped",
+    "STARTING": "Starting",
+    "FAILED": "Failed"
+  }
 }

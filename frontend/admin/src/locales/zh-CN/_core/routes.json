@@ -27,7 +27,6 @@
   "internal-message-categories": "消息分类",
   "inbox": "收件中心",
   "notification": "通知管理",
-  "notification-channels": "通知渠道",
   "notification-rules": "通知规则",
   "notification-deliveries": "投递记录",
   "notification-templates": "通知模板",
@@ -101,7 +100,27 @@
   "webhooks": "Webhook 订阅",
   "content-form-submissions": "表单提交",
   "redirects": "重定向管理",
-    "content-experiments": "内容实验",
-    "flow-rule": "自动化 Flow",
-  "content-components": "组件定义"
+  "content-experiments": "内容实验",
+  "flow-rule": "自动化 Flow",
+  "content-components": "组件定义",
+  "tabs": {
+    "close": "关闭",
+    "unpin": "取消固定",
+    "pin": "固定",
+    "maximize": "最大化",
+    "exitMaximize": "退出最大化",
+    "reload": "重新加载",
+    "openInNewWindow": "在新窗口打开",
+    "closeLeft": "关闭左侧标签页",
+    "closeRight": "关闭右侧标签页",
+    "closeOthers": "关闭其它标签页",
+    "closeAll": "关闭全部标签页"
+  },
+  "unknownPage": "未知页面",
+  "pageContainer": {
+    "defaultTitle": "页面"
+  },
+  "app": {
+    "defaultName": "GoWind Ops 运维管理平台"
+  }
 }

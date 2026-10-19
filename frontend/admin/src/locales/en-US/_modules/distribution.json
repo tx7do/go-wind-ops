@@ -56,5 +56,6 @@
   "dockerEnvs": "Environment Variables",
   "dockerVolumes": "Volume Mounts",
   "dockerRestart": "Restart Policy",
-  "dockerNetwork": "Network"
+  "dockerNetwork": "Network",
+  "action": "Actions"
 }

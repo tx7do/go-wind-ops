@@ -65,5 +65,6 @@
     "saveSuccess": "Notification preferences saved",
     "saveFailed": "Save failed",
     "transactionalNote": "Transactional emails such as verification codes bypass preference settings and are unaffected by this page."
-  }
+  },
+  "passwordChangedReLogin": "Password changed, please sign in again"
 }

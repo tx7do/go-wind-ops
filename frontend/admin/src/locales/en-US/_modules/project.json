@@ -45,5 +45,6 @@
   "logAutoScroll": "Auto scroll to bottom",
   "logEmpty": "No log output yet",
   "env": "Env",
-  "envHint": "Environment tag for isolation (default/dev/staging/prod)"
+  "envHint": "Environment tag for isolation (default/dev/staging/prod)",
+  "action": "Actions"
 }

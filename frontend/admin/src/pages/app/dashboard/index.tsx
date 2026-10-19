@@ -267,25 +267,8 @@ export default function DashboardPage() {
           </div>
         </Col>
 
-        {/* ── 节点资源 ── */}
-        <Col xs={24} xl={14}>
-          <Card
-            size="small"
-            title={<PanelTitle color="#52c41a" text={t('nodesPanel')} />}
-            extra={<CloudServerOutlined style={{ color: '#8c8c8c' }} />}
-          >
-            {nodeList.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
-            ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {nodeList.map(nodeCard)}
-              </div>
-            )}
-          </Card>
-        </Col>
-
         {/* ── 待办审批 ── */}
-        <Col xs={24} xl={10}>
+        <Col xs={24} xl={12}>
           <Card
             size="small"
             title={<PanelTitle color="#faad14" text={t('pendingPanel')} />}
@@ -323,41 +306,8 @@ export default function DashboardPage() {
           </Card>
         </Col>
 
-        {/* ── 最近构建 ── */}
-        <Col xs={24} xl={14}>
-          <Card
-            size="small"
-            title={<PanelTitle color="#722ed1" text={t('recentBuilds')} />}
-            extra={<CheckCircleOutlined style={{ color: '#8c8c8c' }} />}
-          >
-            {buildList.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
-            ) : (
-              buildList.slice(0, 6).map((b) => (
-                <div key={b.id} className="dash-row" style={rowShell}>
-                  <Space size={10} wrap style={{ width: '100%' }}>
-                    <span
-                      style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(b.status), flexShrink: 0 }}
-                    />
-                    <span style={{ fontWeight: 600 }}>#{b.buildNo}</span>
-                    <span>{b.branch}</span>
-                    {b.status === 'SUCCESS' && b.artifactObjectKey && (
-                      <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                        {Math.ceil((b.artifactSize ?? 0) / 1024)} KB
-                      </Typography.Text>
-                    )}
-                    <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
-                      {relTime(b.createdAt)}
-                    </Typography.Text>
-                  </Space>
-                </div>
-              ))
-            )}
-          </Card>
-        </Col>
-
         {/* ── 活跃告警 ── */}
-        <Col xs={24} xl={10}>
+        <Col xs={24} xl={12}>
           <Card
             size="small"
             title={<PanelTitle color="#ff4d4f" text={t('alertsPanel')} />}
@@ -389,6 +339,93 @@ export default function DashboardPage() {
             )}
           </Card>
         </Col>
+
+        {/* ── 最近构建 ── */}
+        <Col xs={24} xl={12}>
+          <Card
+            size="small"
+            title={<PanelTitle color="#722ed1" text={t('recentBuilds')} />}
+            extra={<CheckCircleOutlined style={{ color: '#8c8c8c' }} />}
+          >
+            {buildList.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
+            ) : (
+              buildList.slice(0, 6).map((b) => (
+                <div key={b.id} className="dash-row" style={rowShell}>
+                  <Space size={10} wrap style={{ width: '100%' }}>
+                    <span
+                      style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(b.status), flexShrink: 0 }}
+                    />
+                    <span style={{ fontWeight: 600 }}>#{b.buildNo}</span>
+                    <span>{b.branch}</span>
+                    {b.status === 'SUCCESS' && b.artifactObjectKey && (
+                      <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                        {Math.ceil((b.artifactSize ?? 0) / 1024)} KB
+                      </Typography.Text>
+                    )}
+                    <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
+                      {relTime(b.createdAt)}
+                    </Typography.Text>
+                  </Space>
+                </div>
+              ))
+            )}
+          </Card>
+        </Col>
+
+        {/* ── 项目状态 ── */}
+        <Col xs={24} xl={12}>
+          <Card
+            size="small"
+            title={<PanelTitle color="#1677ff" text={t('projectsPanel')} />}
+            extra={<RocketOutlined style={{ color: '#8c8c8c' }} />}
+          >
+            {projectList.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noProjects')} style={{ margin: '12px 0' }} />
+            ) : (
+              projectList.slice(0, 6).map((pj) => (
+                <div key={pj.id} className="dash-row" style={rowShell}>
+                  <Space size={10} wrap style={{ width: '100%' }}>
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        background: pj.lastStatus === 'RUNNING' ? '#52c41a' : '#8c8c8c',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontWeight: 600 }}>{pj.name}</span>
+                    <Tag color={pj.lastStatus === 'RUNNING' ? 'processing' : 'default'} style={{ margin: 0 }}>
+                      {t(`projStatus.${pj.lastStatus}`, pj.lastStatus)}
+                    </Tag>
+                    <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
+                      {relTime(pj.lastStatusAt)}
+                    </Typography.Text>
+                  </Space>
+                </div>
+              ))
+            )}
+          </Card>
+        </Col>
+
+        {/* ── 节点资源 ── */}
+        <Col span={24}>
+          <Card
+            size="small"
+            title={<PanelTitle color="#52c41a" text={t('nodesPanel')} />}
+            extra={<CloudServerOutlined style={{ color: '#8c8c8c' }} />}
+          >
+            {nodeList.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {nodeList.map(nodeCard)}
+              </div>
+            )}
+          </Card>
+        </Col>
+
       </Row>
     </ContentContainer>
   );

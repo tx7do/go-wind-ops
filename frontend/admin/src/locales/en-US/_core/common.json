@@ -278,7 +278,10 @@
     "csv": "CSV (Comma Separated)",
     "xlsx": "Excel Workbook",
     "success": "Exported {count} rows",
-    "failed": "Export failed"
+    "failed": "Export failed",
+    "serverXlsx": "Server-side full (XLSX)",
+    "serverSuccess": "Download started",
+    "serverFailed": "Server-side export failed"
   },
   "uploadFeedback": {
     "uploading": "Uploading image",

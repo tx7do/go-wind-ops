@@ -20,5 +20,6 @@
   "deleteSuccess": "仓库已删除",
   "deleteFailed": "删除失败",
   "deleteConfirmTitle": "确认删除仓库",
-  "deleteConfirmDesc": "确定删除{{moduleName}}「{{name}}」？"
+  "deleteConfirmDesc": "确定删除{{moduleName}}「{{name}}」？",
+  "action": "操作"
 }

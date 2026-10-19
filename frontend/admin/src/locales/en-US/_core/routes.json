@@ -27,7 +27,6 @@
   "internal-message-categories": "Message Categories",
   "inbox": "Inbox",
   "notification": "Notifications",
-  "notification-channels": "Notification Channels",
   "notification-rules": "Notification Rules",
   "notification-deliveries": "Delivery Records",
   "notification-templates": "Notification Templates",
@@ -101,8 +100,28 @@
   "webhooks": "Webhooks",
   "content-form-submissions": "Form Submissions",
   "redirects": "Redirects",
-    "content-experiments": "Content Experiments",
+  "content-experiments": "Content Experiments",
   "email-template": "Email Templates",
   "flow-rule": "Automation Flows",
-  "content-components": "Components"
+  "content-components": "Components",
+  "tabs": {
+    "close": "Close",
+    "unpin": "Unpin",
+    "pin": "Pin",
+    "maximize": "Maximize",
+    "exitMaximize": "Exit Maximize",
+    "reload": "Reload",
+    "openInNewWindow": "Open in new window",
+    "closeLeft": "Close tabs to the left",
+    "closeRight": "Close tabs to the right",
+    "closeOthers": "Close other tabs",
+    "closeAll": "Close all tabs"
+  },
+  "unknownPage": "Unknown Page",
+  "pageContainer": {
+    "defaultTitle": "Page"
+  },
+  "app": {
+    "defaultName": "GoWind Ops Admin"
+  }
 }

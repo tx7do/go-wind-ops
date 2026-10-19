@@ -28,5 +28,9 @@
   "triggerFailed": "触发失败",
   "history": "历史",
   "artifactRetention": "产物保留数量",
-  "artifactRetentionHint": "仅保留最近 N 个成功构建的产物,超出的每小时定时清理;0=不限\\nDocker 镜像部署不受此策略影响"
+  "artifactRetentionHint": "仅保留最近 N 个成功构建的产物,超出的每小时定时清理;0=不限\\nDocker 镜像部署不受此策略影响",
+  "cron": "定时构建 (Cron)",
+  "cronHint": "5 段标准 cron 语法；留空则不启用定时",
+  "description": "描述",
+  "action": "操作"
 }

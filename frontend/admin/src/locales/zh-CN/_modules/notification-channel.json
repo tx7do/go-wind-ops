@@ -25,5 +25,6 @@
   "updateFailed": "更新失败",
   "deleteSuccess": "渠道已删除",
   "deleteFailed": "删除失败",
-  "deleteConfirmTitle": "确认删除渠道"
+  "deleteConfirmTitle": "确认删除渠道",
+  "action": "操作"
 }

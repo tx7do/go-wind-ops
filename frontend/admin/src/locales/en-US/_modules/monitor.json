@@ -18,5 +18,6 @@
   "updateFailed": "Update failed",
   "deleteSuccess": "Monitor deleted",
   "deleteFailed": "Delete failed",
-  "deleteConfirmTitle": "Delete monitor"
+  "deleteConfirmTitle": "Delete monitor",
+  "action": "Actions"
 }

@@ -18,5 +18,6 @@
   "updateFailed": "更新失败",
   "deleteSuccess": "监控规则已删除",
   "deleteFailed": "删除失败",
-  "deleteConfirmTitle": "确认删除监控规则"
+  "deleteConfirmTitle": "确认删除监控规则",
+  "action": "操作"
 }

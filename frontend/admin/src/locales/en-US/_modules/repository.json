@@ -20,5 +20,6 @@
   "deleteSuccess": "Repository deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete repository",
-  "deleteConfirmDesc": "Delete {{moduleName}} \"{{name}}\"?"
+  "deleteConfirmDesc": "Delete {{moduleName}} \"{{name}}\"?",
+  "action": "Actions"
 }

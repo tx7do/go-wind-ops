@@ -25,5 +25,6 @@
   "updateFailed": "Update failed",
   "deleteSuccess": "Channel deleted",
   "deleteFailed": "Delete failed",
-  "deleteConfirmTitle": "Delete channel"
+  "deleteConfirmTitle": "Delete channel",
+  "action": "Actions"
 }

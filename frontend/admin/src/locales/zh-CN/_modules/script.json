@@ -26,5 +26,10 @@
   "executeSent": "已下发执行（request_id: {{requestId}}），结果见指令台账",
   "executeFailed": "执行下发失败",
   "nodeRequired": "请选择目标节点",
-  "updatedAt": "更新时间"
+  "updatedAt": "更新时间",
+  "cron": "定时执行 (Cron)",
+  "cronHint": "5 段标准 cron 语法；留空则不启用定时",
+  "cronNode": "定时执行节点",
+  "cronNodePlaceholder": "选择执行该定时任务的节点",
+  "action": "操作"
 }

@@ -68,5 +68,22 @@
   "resetMfaConfirmTitle": "重置该用户的 MFA？",
   "resetMfaConfirmDesc": "将清空其 TOTP 认证器绑定，用户下次登录无需二次验证，需重新绑定。",
   "resetMfaSuccess": "MFA 已重置",
-  "resetMfaFailed": "MFA 重置失败"
+  "resetMfaFailed": "MFA 重置失败",
+  "desc": {
+    "username": "用户名",
+    "realname": "真实姓名",
+    "nickname": "昵称",
+    "gender": "性别",
+    "roleNames": "角色",
+    "mobile": "手机号",
+    "email": "邮箱",
+    "region": "地区",
+    "address": "地址",
+    "tenantName": "所属租户",
+    "orgUnitName": "组织",
+    "positionName": "职位",
+    "createdAt": "创建时间",
+    "lastLoginAt": "最后登录",
+    "lastLoginIp": "最后登录IP"
+  }
 }
