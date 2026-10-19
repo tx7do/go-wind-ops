@@ -387,7 +387,19 @@ func (s *PermissionService) ListPermissionCodesByIds(ctx context.Context, req *p
 func (s *PermissionService) createDefaultPermissions(ctx context.Context) error {
 	var err error
 
+	// 先查已存在的 code:core 与 admin 两端都会触发种子,显式 ID 相撞时
+	// 以先到者为准,后到者按 code 跳过,避免主键冲突中断整批。
+	existing := make(map[string]struct{})
+	if resp, listErr := s.permissionRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: boolPtr(true)}, nil); listErr == nil {
+		for _, item := range resp.GetItems() {
+			existing[item.GetCode()] = struct{}{}
+		}
+	}
+
 	for _, d := range constants.DefaultPermissions {
+		if _, dup := existing[d.GetCode()]; dup {
+			continue
+		}
 		if err = s.permissionRepo.Create(ctx, &permissionV1.CreatePermissionRequest{
 			Data: d,
 		}); err != nil {

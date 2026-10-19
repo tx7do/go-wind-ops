@@ -17,7 +17,7 @@ const (
 // ============================================================================
 
 const (
-	MqttShareGroupCore = "core" // core 服务共享订阅组
+	MqttShareGroupCore = "gwo" // core 服务共享订阅组
 )
 
 // SharedSubscription 把主题过滤器包装为共享订阅形式。

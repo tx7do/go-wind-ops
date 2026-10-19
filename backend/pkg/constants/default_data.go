@@ -273,6 +273,29 @@ var DefaultLanguages = []*dictV1.Language{
 	{LanguageCode: trans.Ptr("fr-FR"), LanguageName: trans.Ptr("法语"), NativeName: trans.Ptr("Français"), IsDefault: trans.Ptr(false), IsEnabled: trans.Ptr(true), SortOrder: trans.Uint32(100)},
 }
 
+// DefaultOpsPermissions 运维域权限码(id 5-12,组 6 运维管理)。
+// 全部挂到运维菜单(id 80-96);平台管理员角色默认绑定。
+var DefaultOpsPermissions = []*permissionV1.Permission{
+	{Id: trans.Ptr(uint32(10)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("节点管理"), Description: trans.Ptr("节点查看/指令台账/文件管理/终端/插件"), Code: trans.Ptr(OpsNodeManagePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(11)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("项目管理"), Description: trans.Ptr("受管项目管理"), Code: trans.Ptr(OpsProjectManagePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(12)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("项目部署"), Description: trans.Ptr("项目启停/重启"), Code: trans.Ptr(OpsProjectDeployPermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(13)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("脚本管理"), Description: trans.Ptr("运维脚本管理"), Code: trans.Ptr(OpsScriptManagePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(14)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("脚本执行"), Description: trans.Ptr("远程脚本执行"), Code: trans.Ptr(OpsScriptExecutePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(15)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("构建管理"), Description: trans.Ptr("仓库/构建/流水线管理"), Code: trans.Ptr(OpsBuildManagePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(16)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("构建触发"), Description: trans.Ptr("触发构建/流水线"), Code: trans.Ptr(OpsBuildTriggerPermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+	{Id: trans.Ptr(uint32(17)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("产物分发"), Description: trans.Ptr("构建产物分发"), Code: trans.Ptr(OpsDistributePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
+}
+
+// opsMenuIds 运维菜单 ID 集合(80 目录 + 81-96 子项)。
+func opsMenuIds() []uint32 {
+	ids := make([]uint32, 0, 17)
+	for i := uint32(80); i <= 96; i++ {
+		ids = append(ids, i)
+	}
+	return ids
+}
+
+// DefaultMenus 系统初始化默认菜单数据
 // DefaultMenus 系统初始化默认菜单数据
 var DefaultMenus = []*permissionV1.Menu{
 	{
@@ -682,3 +705,86 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 }
 
+// init 把运维域种子数据并入默认集,并给平台管理员角色绑定全部运维权限。
+// 独立成切片便于维护;init 保证在所有包级变量就绪后执行。
+func init() {
+	DefaultPermissions = append(DefaultPermissions, DefaultOpsPermissions...)
+	DefaultMenus = append(DefaultMenus, defaultOpsMenus()...)
+
+	for _, r := range DefaultRoles {
+		if r.Code != nil && *r.Code == PlatformAdminRoleCode {
+			existing := r.Permissions
+			merged := make([]uint32, 0, len(existing)+len(DefaultOpsPermissions))
+			merged = append(merged, existing...)
+			for i := range DefaultOpsPermissions {
+				if id := DefaultOpsPermissions[i].Id; id != nil {
+					merged = append(merged, *id)
+				}
+			}
+			r.Permissions = merged
+		}
+	}
+}
+
+// defaultOpsMenus 运维域菜单树(id 80 目录 + 81-96 子项),
+// Name/Path/Authority 与前端 ops.tsx 静态路由一一对应。
+func defaultOpsMenus() []*permissionV1.Menu {
+	now := timeutil.TimeToTimestamppb(trans.Ptr(time.Now()))
+	op := func(id uint32, name, path, title, icon, authority string) *permissionV1.Menu {
+		m := &permissionV1.Menu{
+			Id:        trans.Ptr(id),
+			ParentId:  trans.Ptr(uint32(80)),
+			Type:      permissionV1.Menu_MENU.Enum(),
+			Name:      trans.Ptr(name),
+			Path:      trans.Ptr(path),
+			Component: trans.Ptr("BasicLayout"),
+			Status:    permissionV1.Menu_ON.Enum(),
+			CreatedAt: now,
+			Meta: &permissionV1.MenuMeta{
+				Title:     trans.Ptr(title),
+				Icon:      trans.Ptr(icon),
+				Order:     trans.Ptr(int32(id - 80)),
+				Authority: []string{authority},
+			},
+		}
+		return m
+	}
+
+	menu := func(items ...*permissionV1.Menu) []*permissionV1.Menu { return items }
+
+	catalog := &permissionV1.Menu{
+		Id:        trans.Ptr(uint32(80)),
+		ParentId:  nil,
+		Type:      permissionV1.Menu_CATALOG.Enum(),
+		Name:      trans.Ptr("ops"),
+		Path:      trans.Ptr("/ops"),
+		Component: trans.Ptr("BasicLayout"),
+		Status:    permissionV1.Menu_ON.Enum(),
+		CreatedAt: now,
+		Meta: &permissionV1.MenuMeta{
+			Title:     trans.Ptr("routes:ops"),
+			Icon:      trans.Ptr("lucide:server"),
+			Order:     trans.Ptr(int32(2004)),
+			Authority: []string{OpsNodeManagePermissionCode, OpsProjectManagePermissionCode, OpsBuildManagePermissionCode, OpsDistributePermissionCode},
+		},
+	}
+
+	return menu(catalog,
+		op(81, "agent-nodes", "/ops/agent-nodes", "routes:agent-nodes", "lucide:monitor-dot", OpsNodeManagePermissionCode),
+		op(82, "terminal", "/ops/terminal", "routes:terminal", "lucide:terminal", OpsNodeManagePermissionCode),
+		op(83, "projects", "/ops/projects", "routes:projects", "lucide:folder-open", OpsProjectManagePermissionCode),
+		op(84, "scripts", "/ops/scripts", "routes:scripts", "lucide:file-code", OpsScriptManagePermissionCode),
+		op(85, "repositories", "/ops/repositories", "routes:repositories", "lucide:git-branch", OpsBuildManagePermissionCode),
+		op(86, "builds", "/ops/builds", "routes:builds", "lucide:hammer", OpsBuildManagePermissionCode),
+		op(87, "pipelines", "/ops/pipelines", "routes:pipelines", "lucide:workflow", OpsBuildManagePermissionCode),
+		op(88, "distributions", "/ops/distributions", "routes:distributions", "lucide:send", OpsDistributePermissionCode),
+		op(89, "command-records", "/ops/command-records", "routes:command-records", "lucide:scroll-text", OpsNodeManagePermissionCode),
+		op(90, "file-manager", "/ops/file-manager", "routes:file-manager", "lucide:folder-tree", OpsNodeManagePermissionCode),
+		op(91, "monitors", "/ops/monitors", "routes:monitors", "lucide:activity", SystemPlatformAdminPermissionCode),
+		op(92, "alerts", "/ops/alerts", "routes:alerts", "lucide:bell", SystemPlatformAdminPermissionCode),
+		op(93, "notification-channels", "/ops/notification-channels", "routes:notification-channels", "lucide:radio", SystemPlatformAdminPermissionCode),
+		op(94, "approvals", "/ops/approvals", "routes:approvals", "lucide:check-circle", SystemPlatformAdminPermissionCode),
+		op(95, "api-keys", "/ops/api-keys", "routes:api-keys", "lucide:key-round", SystemPlatformAdminPermissionCode),
+		op(96, "plugins", "/ops/plugins", "routes:plugins", "lucide:puzzle", OpsNodeManagePermissionCode),
+	)
+}

@@ -44,6 +44,9 @@ const (
 	// SystemPermissionModule 系统权限模块标识
 	SystemPermissionModule = "sys"
 
+	// OpsPermissionModule 运维权限模块标识
+	OpsPermissionModule = "ops"
+
 	// DefaultBizPermissionModule 业务权限模块标识
 	DefaultBizPermissionModule = "biz"
 

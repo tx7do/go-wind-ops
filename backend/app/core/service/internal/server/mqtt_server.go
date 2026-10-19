@@ -1,6 +1,8 @@
 package server
 
 import (
+	"os"
+
 	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	mqttBootstrap "github.com/tx7do/kratos-bootstrap/transport/mqtt"
@@ -27,7 +29,12 @@ func NewCoreMqttServer(
 	}
 
 	machineID, _ := id.UnifyMachineID()
-	clientID := "core-" + machineID
+	// clientID 默认按机器派生;同机多平台(或同机多套环境)会与其它服务撞车
+	// 导致 EMQX 会话互踢,可用 MQTT_CLIENT_ID 显式错开。
+	clientID := os.Getenv("MQTT_CLIENT_ID")
+	if clientID == "" {
+		clientID = "core-" + machineID
+	}
 
 	srv := mqttBootstrap.NewMqttServer(
 		cfg.Server.Mqtt,

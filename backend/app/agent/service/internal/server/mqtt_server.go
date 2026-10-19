@@ -3,6 +3,8 @@
 package server
 
 import (
+	"os"
+
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	mqttBootstrap "github.com/tx7do/kratos-bootstrap/transport/mqtt"
 	"github.com/tx7do/kratos-transport/transport/mqtt"
@@ -26,7 +28,10 @@ func NewAgentMqttServer(
 		return nil
 	}
 
-	clientID := "agent-" + agentService.AgentID()
+	clientID := os.Getenv("AGENT_MQTT_CLIENT_ID")
+	if clientID == "" {
+		clientID = "agent-" + agentService.AgentID()
+	}
 
 	opts := []mqtt.ServerOption{
 		mqtt.WithEnableKeepAlive(false),
