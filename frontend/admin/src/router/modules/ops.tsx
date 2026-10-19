@@ -255,6 +255,17 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'cloud-resources',
+        path: '/ops/cloud-resources',
+        element: createLazyRoute(() => import('@/pages/app/ops/cloud-resource')),
+        meta: {
+          title: 'routes:cloud-resources',
+          icon: 'lucide:server',
+          order: 5,
+          authority: ['sys:platform_admin'],
+        },
+      },
     ],
   },
 ];

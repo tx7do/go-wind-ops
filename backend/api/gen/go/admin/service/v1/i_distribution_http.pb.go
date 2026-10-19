@@ -52,7 +52,7 @@ type DistributionServiceHTTPServer interface {
 
 func RegisterDistributionServiceHTTPServer(s *http.Server, srv DistributionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/distributions", _DistributionService_List13_HTTP_Handler(srv))
+	r.GET("/admin/v1/distributions", _DistributionService_List14_HTTP_Handler(srv))
 	r.GET("/admin/v1/distributions/{id}", _DistributionService_Get13_HTTP_Handler(srv))
 	r.POST("/admin/v1/distributions", _DistributionService_Create6_HTTP_Handler(srv))
 	r.PUT("/admin/v1/distributions/{id}", _DistributionService_Update7_HTTP_Handler(srv))
@@ -62,7 +62,7 @@ func RegisterDistributionServiceHTTPServer(s *http.Server, srv DistributionServi
 	r.GET("/admin/v1/distribution-records/{id}", _DistributionService_GetRecord0_HTTP_Handler(srv))
 }
 
-func _DistributionService_List13_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_List14_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

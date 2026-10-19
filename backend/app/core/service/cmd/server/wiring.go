@@ -148,6 +148,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
+	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -215,6 +216,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mqttAuthServer := server.NewMqttAuthServer(ctx, agentNodeRepo)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceRepo, cloudAccountRepo)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountRepo)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -242,6 +244,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		apiKeyService,
 		pluginService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
+		cloudInstanceService,
 		cloudAccountService,
 	)
 	if err != nil {

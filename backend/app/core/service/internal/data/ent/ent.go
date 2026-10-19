@@ -16,6 +16,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -135,6 +136,7 @@ func checkColumn(t, c string) error {
 			buildhistory.Table:         buildhistory.ValidColumn,
 			buildpipeline.Table:        buildpipeline.ValidColumn,
 			cloudaccount.Table:         cloudaccount.ValidColumn,
+			cloudinstance.Table:        cloudinstance.ValidColumn,
 			commandrecord.Table:        commandrecord.ValidColumn,
 			dataaccessauditlog.Table:   dataaccessauditlog.ValidColumn,
 			dictentry.Table:            dictentry.ValidColumn,

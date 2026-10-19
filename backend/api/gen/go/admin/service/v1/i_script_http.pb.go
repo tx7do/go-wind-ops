@@ -46,7 +46,7 @@ type ScriptServiceHTTPServer interface {
 
 func RegisterScriptServiceHTTPServer(s *http.Server, srv ScriptServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/scripts", _ScriptService_List31_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts", _ScriptService_List32_HTTP_Handler(srv))
 	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get31_HTTP_Handler(srv))
 	r.POST("/admin/v1/scripts", _ScriptService_Create20_HTTP_Handler(srv))
 	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update21_HTTP_Handler(srv))
@@ -54,7 +54,7 @@ func RegisterScriptServiceHTTPServer(s *http.Server, srv ScriptServiceHTTPServer
 	r.POST("/admin/v1/scripts/{id}/executions:send", _ScriptService_Execute0_HTTP_Handler(srv))
 }
 
-func _ScriptService_List31_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_List32_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

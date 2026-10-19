@@ -437,6 +437,48 @@ var (
 		Columns:    OpsCloudAccountsColumns,
 		PrimaryKey: []*schema.Column{OpsCloudAccountsColumns[0]},
 	}
+	// OpsCloudInstancesColumns holds the columns for the "ops_cloud_instances" table.
+	OpsCloudInstancesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "cloud_account_id", Type: field.TypeUint32, Comment: "云账号ID"},
+		{Name: "cloud_account_name", Type: field.TypeString, Nullable: true, Comment: "云账号名(快照,账号改名不回溯)"},
+		{Name: "provider", Type: field.TypeEnum, Nullable: true, Comment: "云厂商(冗余自账号,便于过滤)", Enums: []string{"ALIYUN", "TENCENT_CLOUD", "HUAWEI_CLOUD", "AWS"}},
+		{Name: "region", Type: field.TypeString, Comment: "地域"},
+		{Name: "zone", Type: field.TypeString, Nullable: true, Comment: "可用区"},
+		{Name: "instance_id", Type: field.TypeString, Comment: "云实例ID"},
+		{Name: "instance_name", Type: field.TypeString, Nullable: true, Comment: "实例名称"},
+		{Name: "status", Type: field.TypeString, Nullable: true, Comment: "实例状态(Running/Stopped/...原样存厂商值)"},
+		{Name: "instance_type", Type: field.TypeString, Nullable: true, Comment: "机型"},
+		{Name: "private_ip", Type: field.TypeString, Nullable: true, Comment: "内网IP"},
+		{Name: "public_ip", Type: field.TypeString, Nullable: true, Comment: "公网IP"},
+		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "包年包月到期时间(AWS 按量无此概念为空)"},
+		{Name: "matched", Type: field.TypeBool, Comment: "是否匹配到 agent 节点", Default: false},
+		{Name: "agent_node_id", Type: field.TypeUint32, Nullable: true, Comment: "匹配到的节点ID(快照,节点删除后不回填)"},
+		{Name: "agent_node_name", Type: field.TypeString, Nullable: true, Comment: "匹配到的节点名(快照)"},
+		{Name: "synced_at", Type: field.TypeTime, Comment: "同步批次时间"},
+	}
+	// OpsCloudInstancesTable holds the schema information for the "ops_cloud_instances" table.
+	OpsCloudInstancesTable = &schema.Table{
+		Name:       "ops_cloud_instances",
+		Comment:    "云资源实例清单表",
+		Columns:    OpsCloudInstancesColumns,
+		PrimaryKey: []*schema.Column{OpsCloudInstancesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_cloud_instance_key",
+				Unique:  true,
+				Columns: []*schema.Column{OpsCloudInstancesColumns[4], OpsCloudInstancesColumns[7], OpsCloudInstancesColumns[9]},
+			},
+			{
+				Name:    "idx_ops_cloud_instance_account",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCloudInstancesColumns[4]},
+			},
+		},
+	}
 	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
 	OpsCommandRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3265,6 +3307,7 @@ var (
 		OpsBuildHistoriesTable,
 		OpsBuildPipelinesTable,
 		OpsCloudAccountsTable,
+		OpsCloudInstancesTable,
 		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
@@ -3359,6 +3402,11 @@ func init() {
 	}
 	OpsCloudAccountsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_cloud_accounts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsCloudInstancesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_cloud_instances",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

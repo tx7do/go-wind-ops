@@ -17,33 +17,8 @@ import (
 // verifyAliyun 阿里云:RPC 签名(HMAC-SHA1)调 STS GetCallerIdentity。
 // 签名串 = GET&%2F&percentEncode(排序后 query);密钥 = SK + "&"。
 func verifyAliyun(ctx context.Context, ak, sk string) (*VerifyResult, error) {
-	params := map[string]string{
-		"AccessKeyId":      ak,
-		"Action":           "GetCallerIdentity",
-		"Format":           "JSON",
-		"SignatureMethod":  "HMAC-SHA1",
-		"SignatureNonce":   randomNonce(),
-		"SignatureVersion": "1.0",
-		"Timestamp":        nowUTC().Format("2006-01-02T15:04:05Z"),
-		"Version":          "2015-04-01",
-	}
-
-	// 按 key 排序拼接 canonical query(percentEncode 后排序,两者此处一致)
-	keys := make([]string, 0, len(params))
-	for k := range params {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	pairs := make([]string, 0, len(keys))
-	for _, k := range keys {
-		pairs = append(pairs, percentEncode(k)+"="+percentEncode(params[k]))
-	}
-	canonicalQuery := strings.Join(pairs, "&")
-
-	stringToSign := "GET&%2F&" + percentEncode(canonicalQuery)
-	signature := hmacSHA1Base64([]byte(sk+"&"), []byte(stringToSign))
-
-	reqURL := "https://sts.aliyuncs.com/?" + canonicalQuery + "&Signature=" + percentEncode(signature)
+	query := aliyunSignedQuery(sk, aliyunSignedParams(ak, "GetCallerIdentity", "2015-04-01", nil))
+	reqURL := "https://sts.aliyuncs.com/?" + query
 
 	body, status, err := httpGet(ctx, reqURL)
 	if err != nil {
@@ -79,49 +54,16 @@ func percentEncode(s string) string {
 
 // verifyTencentCloud 腾讯云:TC3-HMAC-SHA256 签名调 STS GetCallerIdentity。
 func verifyTencentCloud(ctx context.Context, ak, sk string) (*VerifyResult, error) {
-	const (
-		host    = "sts.tencentcloudapi.com"
-		service = "sts"
-		version = "2018-08-13"
-	)
-
-	ts := nowUTC().Unix()
-	// TC3 的 Credential 日期段为 ISO 格式(带横杠,如 2026-10-19),与 AWS 的 YYYYMMDD 不同
-	date := nowUTC().Format("2006-01-02")
-	payload := "{}"
-
-	canonicalHeaders := "content-type:application/json; charset=utf-8\nhost:" + host +
-		"\nx-tc-action:getcalleridentity\n"
-	canonicalRequest := "POST\n/\n\n" + canonicalHeaders + "\ncontent-type;host;x-tc-action\n" + sha256Hex([]byte(payload))
-	stringToSign := "TC3-HMAC-SHA256\n" + strconv.FormatInt(ts, 10) + "\n" + date + "/" + service + "/tc3_request\n" + sha256Hex([]byte(canonicalRequest))
-
-	kDate := hmacSHA256([]byte("TC3"+sk), []byte(date))
-	kService := hmacSHA256(kDate, []byte(service))
-	kSigning := hmacSHA256(kService, []byte("tc3_request"))
-	signature := hex.EncodeToString(hmacSHA256(kSigning, []byte(stringToSign)))
-
-	authorization := "TC3-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + service + "/tc3_request" +
-		", SignedHeaders=content-type;host;x-tc-action" + ", Signature=" + signature
-
-	body, status, err := httpDo(ctx, "POST", "https://"+host+"/", payload, map[string]string{
-		"Content-Type":   "application/json; charset=utf-8",
-		"X-TC-Action":    "GetCallerIdentity",
-		"X-TC-Version":   version,
-		"X-TC-Timestamp": strconv.FormatInt(ts, 10),
-		"Authorization":  authorization,
-	})
+	body, status, err := tc3Post(ctx, "sts.tencentcloudapi.com", ak, sk, "", "GetCallerIdentity", "2018-08-13", "{}")
 	if err != nil {
 		return nil, fmt.Errorf("腾讯云校验请求失败: %w", err)
 	}
 
 	var resp struct {
 		Response struct {
-			AccountID any    `json:"AccountId"`
-			Arn       string `json:"Arn"`
-			Error     *struct {
-				Code    string `json:"Code"`
-				Message string `json:"Message"`
-			} `json:"Error"`
+			AccountID any           `json:"AccountId"`
+			Arn       string        `json:"Arn"`
+			Error     *tencentError `json:"Error"`
 		} `json:"Response"`
 	}
 	if err := json.Unmarshal(body, &resp); err != nil {
@@ -137,47 +79,88 @@ func verifyTencentCloud(ctx context.Context, ak, sk string) (*VerifyResult, erro
 	return &VerifyResult{AccountID: accountID, AccountName: arnTail(resp.Response.Arn)}, nil
 }
 
+// tc3Post TC3-HMAC-SHA256 签名 POST(region 为空表示全局 API)。
+// scopeService 由 host 推断:sts 域名→sts,cvm 域名→cvm。
+func tc3Post(ctx context.Context, host, ak, sk, region, action, version, payload string) ([]byte, int, error) {
+	scopeService := "sts"
+	if host == "cvm.tencentcloudapi.com" {
+		scopeService = "cvm"
+	}
+
+	ts := nowUTC().Unix()
+	// TC3 的 Credential 日期段为 ISO 格式(带横杠,如 2026-10-19),与 AWS 的 YYYYMMDD 不同
+	date := nowUTC().Format("2006-01-02")
+
+	canonicalHeaders := "content-type:application/json; charset=utf-8\nhost:" + host +
+		"\nx-tc-action:" + strings.ToLower(action) + "\n"
+	signedHeaders := "content-type;host;x-tc-action"
+	canonicalRequest := "POST\n/\n\n" + canonicalHeaders + "\n" + signedHeaders + "\n" + sha256Hex([]byte(payload))
+	stringToSign := "TC3-HMAC-SHA256\n" + strconv.FormatInt(ts, 10) + "\n" + date + "/" + scopeService + "/tc3_request\n" + sha256Hex([]byte(canonicalRequest))
+
+	kDate := hmacSHA256([]byte("TC3"+sk), []byte(date))
+	kService := hmacSHA256(kDate, []byte(scopeService))
+	kSigning := hmacSHA256(kService, []byte("tc3_request"))
+	signature := hex.EncodeToString(hmacSHA256(kSigning, []byte(stringToSign)))
+
+	authorization := "TC3-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + scopeService + "/tc3_request" +
+		", SignedHeaders=" + signedHeaders + ", Signature=" + signature
+
+	headers := map[string]string{
+		"Content-Type":   "application/json; charset=utf-8",
+		"X-TC-Action":    action,
+		"X-TC-Version":   version,
+		"X-TC-Timestamp": strconv.FormatInt(ts, 10),
+		"Authorization":  authorization,
+	}
+	if region != "" {
+		headers["X-TC-Region"] = region
+	}
+	return httpDo(ctx, "POST", "https://"+host+"/", payload, headers)
+}
+
 // verifyAWS 亚马逊云:SigV4 签名调 STS GetCallerIdentity(query 协议,XML 响应)。
 func verifyAWS(ctx context.Context, ak, sk, region string) (*VerifyResult, error) {
 	if region == "" {
 		region = "us-east-1"
 	}
-	host := "sts." + region + ".amazonaws.com"
-
-	amzDate := nowUTC().Format("20060102T150405Z")
-	date := amzDate[:8]
-	query := "Action=GetCallerIdentity&Version=2011-06-15"
-
-	canonicalRequest := "GET\n/\n" + query + "\nhost:" + host + "\nx-amz-date:" + amzDate + "\n\nhost;x-amz-date\n" + sha256Hex(nil)
-	stringToSign := "AWS4-HMAC-SHA256\n" + amzDate + "\n" + date + "/" + region + "/sts/aws4_request\n" + sha256Hex([]byte(canonicalRequest))
-
-	kDate := hmacSHA256([]byte("AWS4"+sk), []byte(date))
-	kRegion := hmacSHA256(kDate, []byte(region))
-	kService := hmacSHA256(kRegion, []byte("sts"))
-	kSigning := hmacSHA256(kService, []byte("aws4_request"))
-	signature := hex.EncodeToString(hmacSHA256(kSigning, []byte(stringToSign)))
-
-	authorization := "AWS4-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + region + "/sts/aws4_request" +
-		", SignedHeaders=host;x-amz-date" + ", Signature=" + signature
-
-	body, status, err := httpDo(ctx, "GET", "https://"+host+"/?"+query, "", map[string]string{
-		"X-Amz-Date":    amzDate,
-		"Authorization": authorization,
-	})
+	body, status, err := awsSigV4Get(ctx, ak, sk, region, "sts", "Action=GetCallerIdentity&Version=2011-06-15")
 	if err != nil {
 		return nil, fmt.Errorf("AWS 校验请求失败: %w", err)
 	}
 
 	accountID := xmlTagValue(body, "Account")
-	arn := xmlTagValue(body, "Arn")
-	code := xmlTagValue(body, "Code")
-	if code != "" {
+	if code := xmlTagValue(body, "Code"); code != "" {
 		return nil, fmt.Errorf("AWS 拒绝: %s(%s)", xmlTagValue(body, "Message"), code)
 	}
 	if accountID == "" {
 		return nil, fmt.Errorf("AWS 校验未返回账号ID(HTTP %d): %s", status, truncate(body))
 	}
-	return &VerifyResult{AccountID: accountID, AccountName: arnTail(arn)}, nil
+	return &VerifyResult{AccountID: accountID, AccountName: arnTail(xmlTagValue(body, "Arn"))}, nil
+}
+
+// awsSigV4Get SigV4 签名 GET(query 协议,XML 响应)。
+func awsSigV4Get(ctx context.Context, ak, sk, region, service, query string) ([]byte, int, error) {
+	host := service + "." + region + ".amazonaws.com"
+
+	amzDate := nowUTC().Format("20060102T150405Z")
+	date := amzDate[:8]
+
+	canonicalRequest := "GET\n/\n" + query + "\nhost:" + host + "\nx-amz-date:" + amzDate + "\n\nhost;x-amz-date\n" + sha256Hex(nil)
+	stringToSign := "AWS4-HMAC-SHA256\n" + amzDate + "\n" + date + "/" + region + "/" + service + "/aws4_request\n" + sha256Hex([]byte(canonicalRequest))
+
+	kDate := hmacSHA256([]byte("AWS4"+sk), []byte(date))
+	kRegion := hmacSHA256(kDate, []byte(region))
+	kService := hmacSHA256(kRegion, []byte(service))
+	kSigning := hmacSHA256(kService, []byte("aws4_request"))
+	signature := hex.EncodeToString(hmacSHA256(kSigning, []byte(stringToSign)))
+
+	authorization := "AWS4-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + region + "/" + service + "/aws4_request" +
+		", SignedHeaders=host;x-amz-date" + ", Signature=" + signature
+
+	return httpDo(ctx, "GET", "https://"+host+"/?"+query, "", map[string]string{
+		"X-Amz-Date":    amzDate,
+		"Authorization": authorization,
+	})
 }
 
 // ---------- 小工具 ----------
@@ -243,4 +226,9 @@ func truncate(data []byte) string {
 		s = s[:200]
 	}
 	return s
+}
+
+// sortStrings 原地排序(签名 canonical query 用)。
+func sortStrings(s []string) {
+	sort.Strings(s)
 }

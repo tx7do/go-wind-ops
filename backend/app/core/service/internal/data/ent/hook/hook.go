@@ -128,6 +128,18 @@ func (f CloudAccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CloudAccountMutation", m)
 }
 
+// The CloudInstanceFunc type is an adapter to allow the use of ordinary
+// function as CloudInstance mutator.
+type CloudInstanceFunc func(context.Context, *ent.CloudInstanceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CloudInstanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CloudInstanceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CloudInstanceMutation", m)
+}
+
 // The CommandRecordFunc type is an adapter to allow the use of ordinary
 // function as CommandRecord mutator.
 type CommandRecordFunc func(context.Context, *ent.CommandRecordMutation) (ent.Value, error)

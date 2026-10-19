@@ -129,5 +129,6 @@
   "opsAuto": "Automation",
   "opsObserve": "Observability",
   "opsGovern": "Governance",
-  "cloud-accounts": "Cloud Accounts"
+  "cloud-accounts": "Cloud Accounts",
+  "cloud-resources": "Cloud Resources"
 }

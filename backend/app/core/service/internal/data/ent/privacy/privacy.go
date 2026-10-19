@@ -351,6 +351,30 @@ func (f CloudAccountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CloudAccountMutation", m)
 }
 
+// The CloudInstanceQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CloudInstanceQueryRuleFunc func(context.Context, *ent.CloudInstanceQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CloudInstanceQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CloudInstanceQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CloudInstanceQuery", q)
+}
+
+// The CloudInstanceMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CloudInstanceMutationRuleFunc func(context.Context, *ent.CloudInstanceMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CloudInstanceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CloudInstanceMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CloudInstanceMutation", m)
+}
+
 // The CommandRecordQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommandRecordQueryRuleFunc func(context.Context, *ent.CommandRecordQuery) error
@@ -1438,6 +1462,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CloudAccountQuery:
 		return q.Filter(), nil
+	case *ent.CloudInstanceQuery:
+		return q.Filter(), nil
 	case *ent.CommandRecordQuery:
 		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
@@ -1550,6 +1576,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.BuildPipelineMutation:
 		return m.Filter(), nil
 	case *ent.CloudAccountMutation:
+		return m.Filter(), nil
+	case *ent.CloudInstanceMutation:
 		return m.Filter(), nil
 	case *ent.CommandRecordMutation:
 		return m.Filter(), nil

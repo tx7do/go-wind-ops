@@ -37,5 +37,12 @@
   "deleteSuccess": "已删除",
   "deleteFailed": "删除失败",
   "deleteConfirmTitle": "确认删除该云账号?删除后需重新录入才能继续使用其密钥。",
-  "copy": "复制"
+  "copy": "复制",
+  "syncResource": "同步资源",
+  "syncing": "同步中…",
+  "syncDone": "同步完成",
+  "syncPartial": "部分地域失败,已同步 ",
+  "syncUnits": " 台,",
+  "matchedCol": "匹配",
+  "syncFailed": "同步失败"
 }

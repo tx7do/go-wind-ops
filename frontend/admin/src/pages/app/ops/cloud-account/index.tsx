@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { App, Button, Popconfirm, Tag, Typography } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { CloudDownloadOutlined, DeleteOutlined, EditOutlined, PlusOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_CloudAccount as CloudAccount } from '@/api/generated/admin/service/v1';
@@ -13,6 +13,7 @@ import {
   useDeleteCloudAccount,
   useVerifyCloudAccount,
 } from '@/api/hooks/cloud-account';
+import { useSyncCloudAccountInstances } from '@/api/hooks/cloud-instance';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import CloudAccountDrawer from './components/CloudAccountDrawer';
@@ -28,8 +29,25 @@ const CloudAccountManagement = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<CloudAccount | undefined>();
   const [verifyingId, setVerifyingId] = useState<number>();
+  const [syncingId, setSyncingId] = useState<number>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listCloudAccounts'] });
+
+  const syncMutation = useSyncCloudAccountInstances({
+    onSuccess: (resp) => {
+      setSyncingId(undefined);
+      if (resp.errors?.length) {
+        message.warning(`${t('syncPartial')}${resp.total || 0}${t('syncUnits')} ${resp.errors[0]}`);
+      } else {
+        message.success(`${t('syncDone')}: ${resp.total || 0}${t('syncUnits')}${t('matchedCol')} ${resp.matched || 0}`);
+      }
+      queryClient.invalidateQueries({ queryKey: ['listCloudInstances'] });
+    },
+    onError: (e: Error) => {
+      setSyncingId(undefined);
+      message.error(e.message || t('syncFailed'));
+    },
+  });
 
   const deleteMutation = useDeleteCloudAccount({
     onSuccess: () => {
@@ -89,9 +107,20 @@ const CloudAccountManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 190,
+      width: 260,
       fixed: 'right',
       render: (_, record) => [
+        <a
+          key="sync"
+          style={syncingId === record.id ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
+          onClick={() => {
+            if (!record.id || syncingId === record.id) return;
+            setSyncingId(record.id);
+            syncMutation.mutate({ cloudAccountId: record.id });
+          }}
+        >
+          <CloudDownloadOutlined /> {syncingId === record.id ? t('syncing') : t('syncResource')}
+        </a>,
         <a
           key="verify"
           style={verifyingId === record.id ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
@@ -154,7 +183,7 @@ const CloudAccountManagement = () => {
             ]}
             size="middle"
             bordered
-            scroll={{ y: tableScrollY, x: 1500 }}
+            scroll={{ y: tableScrollY, x: 1600 }}
           />
         </div>
       </ContentContainer>

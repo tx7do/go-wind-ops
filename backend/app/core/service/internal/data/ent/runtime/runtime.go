@@ -15,6 +15,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -310,6 +311,31 @@ func init() {
 	cloudaccountDescID := cloudaccountMixinFields0[0].Descriptor()
 	// cloudaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	cloudaccount.IDValidator = cloudaccountDescID.Validators[0].(func(uint32) error)
+	cloudinstanceMixin := schema.CloudInstance{}.Mixin()
+	cloudinstanceMixinFields0 := cloudinstanceMixin[0].Fields()
+	_ = cloudinstanceMixinFields0
+	cloudinstanceFields := schema.CloudInstance{}.Fields()
+	_ = cloudinstanceFields
+	// cloudinstanceDescCloudAccountID is the schema descriptor for cloud_account_id field.
+	cloudinstanceDescCloudAccountID := cloudinstanceFields[0].Descriptor()
+	// cloudinstance.CloudAccountIDValidator is a validator for the "cloud_account_id" field. It is called by the builders before save.
+	cloudinstance.CloudAccountIDValidator = cloudinstanceDescCloudAccountID.Validators[0].(func(uint32) error)
+	// cloudinstanceDescRegion is the schema descriptor for region field.
+	cloudinstanceDescRegion := cloudinstanceFields[3].Descriptor()
+	// cloudinstance.RegionValidator is a validator for the "region" field. It is called by the builders before save.
+	cloudinstance.RegionValidator = cloudinstanceDescRegion.Validators[0].(func(string) error)
+	// cloudinstanceDescInstanceID is the schema descriptor for instance_id field.
+	cloudinstanceDescInstanceID := cloudinstanceFields[5].Descriptor()
+	// cloudinstance.InstanceIDValidator is a validator for the "instance_id" field. It is called by the builders before save.
+	cloudinstance.InstanceIDValidator = cloudinstanceDescInstanceID.Validators[0].(func(string) error)
+	// cloudinstanceDescMatched is the schema descriptor for matched field.
+	cloudinstanceDescMatched := cloudinstanceFields[12].Descriptor()
+	// cloudinstance.DefaultMatched holds the default value on creation for the matched field.
+	cloudinstance.DefaultMatched = cloudinstanceDescMatched.Default.(bool)
+	// cloudinstanceDescID is the schema descriptor for id field.
+	cloudinstanceDescID := cloudinstanceMixinFields0[0].Descriptor()
+	// cloudinstance.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cloudinstance.IDValidator = cloudinstanceDescID.Validators[0].(func(uint32) error)
 	commandrecordMixin := schema.CommandRecord{}.Mixin()
 	commandrecordMixinFields0 := commandrecordMixin[0].Fields()
 	_ = commandrecordMixinFields0

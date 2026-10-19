@@ -52,7 +52,7 @@ type ProjectServiceHTTPServer interface {
 
 func RegisterProjectServiceHTTPServer(s *http.Server, srv ProjectServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/projects", _ProjectService_List28_HTTP_Handler(srv))
+	r.GET("/admin/v1/projects", _ProjectService_List29_HTTP_Handler(srv))
 	r.GET("/admin/v1/projects/{id}", _ProjectService_Get28_HTTP_Handler(srv))
 	r.POST("/admin/v1/projects", _ProjectService_Create17_HTTP_Handler(srv))
 	r.PUT("/admin/v1/projects/{id}", _ProjectService_Update18_HTTP_Handler(srv))
@@ -62,7 +62,7 @@ func RegisterProjectServiceHTTPServer(s *http.Server, srv ProjectServiceHTTPServ
 	r.DELETE("/admin/v1/projects/{id}/log", _ProjectService_ClearLog0_HTTP_Handler(srv))
 }
 
-func _ProjectService_List28_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
+func _ProjectService_List29_HTTP_Handler(srv ProjectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

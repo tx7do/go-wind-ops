@@ -43,14 +43,14 @@ type MonitorServiceHTTPServer interface {
 
 func RegisterMonitorServiceHTTPServer(s *http.Server, srv MonitorServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/monitors", _MonitorService_List18_HTTP_Handler(srv))
+	r.GET("/admin/v1/monitors", _MonitorService_List19_HTTP_Handler(srv))
 	r.GET("/admin/v1/monitors/{id}", _MonitorService_Get18_HTTP_Handler(srv))
 	r.POST("/admin/v1/monitors", _MonitorService_Create10_HTTP_Handler(srv))
 	r.PUT("/admin/v1/monitors/{id}", _MonitorService_Update11_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/monitors/{id}", _MonitorService_Delete11_HTTP_Handler(srv))
 }
 
-func _MonitorService_List18_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_List19_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

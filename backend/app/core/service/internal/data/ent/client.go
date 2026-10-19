@@ -21,6 +21,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -96,6 +97,8 @@ type Client struct {
 	BuildPipeline *BuildPipelineClient
 	// CloudAccount is the client for interacting with the CloudAccount builders.
 	CloudAccount *CloudAccountClient
+	// CloudInstance is the client for interacting with the CloudInstance builders.
+	CloudInstance *CloudInstanceClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -203,6 +206,7 @@ func (c *Client) init() {
 	c.BuildHistory = NewBuildHistoryClient(c.config)
 	c.BuildPipeline = NewBuildPipelineClient(c.config)
 	c.CloudAccount = NewCloudAccountClient(c.config)
+	c.CloudInstance = NewCloudInstanceClient(c.config)
 	c.CommandRecord = NewCommandRecordClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
@@ -348,6 +352,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
 		CloudAccount:         NewCloudAccountClient(cfg),
+		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
@@ -420,6 +425,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
 		CloudAccount:         NewCloudAccountClient(cfg),
+		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
@@ -493,16 +499,17 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
-		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
-		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CloudInstance,
+		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
+		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -513,16 +520,17 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
-		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
-		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CloudInstance,
+		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
+		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -551,6 +559,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.BuildPipeline.mutate(ctx, m)
 	case *CloudAccountMutation:
 		return c.CloudAccount.mutate(ctx, m)
+	case *CloudInstanceMutation:
+		return c.CloudInstance.mutate(ctx, m)
 	case *CommandRecordMutation:
 		return c.CommandRecord.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
@@ -1971,6 +1981,139 @@ func (c *CloudAccountClient) mutate(ctx context.Context, m *CloudAccountMutation
 		return (&CloudAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CloudAccount mutation op: %q", m.Op())
+	}
+}
+
+// CloudInstanceClient is a client for the CloudInstance schema.
+type CloudInstanceClient struct {
+	config
+}
+
+// NewCloudInstanceClient returns a client for the CloudInstance from the given config.
+func NewCloudInstanceClient(c config) *CloudInstanceClient {
+	return &CloudInstanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cloudinstance.Hooks(f(g(h())))`.
+func (c *CloudInstanceClient) Use(hooks ...Hook) {
+	c.hooks.CloudInstance = append(c.hooks.CloudInstance, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cloudinstance.Intercept(f(g(h())))`.
+func (c *CloudInstanceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CloudInstance = append(c.inters.CloudInstance, interceptors...)
+}
+
+// Create returns a builder for creating a CloudInstance entity.
+func (c *CloudInstanceClient) Create() *CloudInstanceCreate {
+	mutation := newCloudInstanceMutation(c.config, OpCreate)
+	return &CloudInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CloudInstance entities.
+func (c *CloudInstanceClient) CreateBulk(builders ...*CloudInstanceCreate) *CloudInstanceCreateBulk {
+	return &CloudInstanceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CloudInstanceClient) MapCreateBulk(slice any, setFunc func(*CloudInstanceCreate, int)) *CloudInstanceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CloudInstanceCreateBulk{err: fmt.Errorf("calling to CloudInstanceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CloudInstanceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CloudInstanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CloudInstance.
+func (c *CloudInstanceClient) Update() *CloudInstanceUpdate {
+	mutation := newCloudInstanceMutation(c.config, OpUpdate)
+	return &CloudInstanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CloudInstanceClient) UpdateOne(_m *CloudInstance) *CloudInstanceUpdateOne {
+	mutation := newCloudInstanceMutation(c.config, OpUpdateOne, withCloudInstance(_m))
+	return &CloudInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CloudInstanceClient) UpdateOneID(id uint32) *CloudInstanceUpdateOne {
+	mutation := newCloudInstanceMutation(c.config, OpUpdateOne, withCloudInstanceID(id))
+	return &CloudInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CloudInstance.
+func (c *CloudInstanceClient) Delete() *CloudInstanceDelete {
+	mutation := newCloudInstanceMutation(c.config, OpDelete)
+	return &CloudInstanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CloudInstanceClient) DeleteOne(_m *CloudInstance) *CloudInstanceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CloudInstanceClient) DeleteOneID(id uint32) *CloudInstanceDeleteOne {
+	builder := c.Delete().Where(cloudinstance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CloudInstanceDeleteOne{builder}
+}
+
+// Query returns a query builder for CloudInstance.
+func (c *CloudInstanceClient) Query() *CloudInstanceQuery {
+	return &CloudInstanceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCloudInstance},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CloudInstance entity by its id.
+func (c *CloudInstanceClient) Get(ctx context.Context, id uint32) (*CloudInstance, error) {
+	return c.Query().Where(cloudinstance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CloudInstanceClient) GetX(ctx context.Context, id uint32) *CloudInstance {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CloudInstanceClient) Hooks() []Hook {
+	return c.hooks.CloudInstance
+}
+
+// Interceptors returns the client interceptors.
+func (c *CloudInstanceClient) Interceptors() []Interceptor {
+	return c.inters.CloudInstance
+}
+
+func (c *CloudInstanceClient) mutate(ctx context.Context, m *CloudInstanceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CloudInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CloudInstanceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CloudInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CloudInstanceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CloudInstance mutation op: %q", m.Op())
 	}
 }
 
@@ -7887,8 +8030,8 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
-		BuildPipeline, CloudAccount, CommandRecord, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, Distribution, DistributionRecord, Language,
+		BuildPipeline, CloudAccount, CloudInstance, CommandRecord, DataAccessAuditLog,
+		DictEntry, DictEntryI18n, DictType, Distribution, DistributionRecord, Language,
 		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
 		MembershipRole, Menu, Monitor, NodeMetric, NotificationChannel,
 		NotificationDelivery, OperationAuditLog, OrgUnit, Permission, PermissionApi,
@@ -7899,8 +8042,8 @@ type (
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
-		BuildPipeline, CloudAccount, CommandRecord, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, Distribution, DistributionRecord, Language,
+		BuildPipeline, CloudAccount, CloudInstance, CommandRecord, DataAccessAuditLog,
+		DictEntry, DictEntryI18n, DictType, Distribution, DistributionRecord, Language,
 		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
 		MembershipRole, Menu, Monitor, NodeMetric, NotificationChannel,
 		NotificationDelivery, OperationAuditLog, OrgUnit, Permission, PermissionApi,

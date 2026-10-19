@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "ops/service/v1/cloud_instance.proto";
+
+// CloudInstanceService 云资源实例清单门面。
+service CloudInstanceService {
+  // 查询实例清单
+  rpc List (ops.service.v1.ListCloudInstancesRequest) returns (ops.service.v1.ListCloudInstancesResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-instances"
+    };
+  }
+
+  // 同步指定云账号的实例清单(全地域)
+  rpc Sync (ops.service.v1.SyncCloudAccountInstancesRequest) returns (ops.service.v1.SyncCloudAccountInstancesResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-instances/sync"
+      body: "*"
+    };
+  }
+}

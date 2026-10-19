@@ -37,5 +37,12 @@
   "deleteSuccess": "Deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete this cloud account? Its credentials must be re-entered before further use.",
-  "copy": "Copy"
+  "copy": "Copy",
+  "syncResource": "Sync Resources",
+  "syncing": "Syncing…",
+  "syncDone": "Sync completed",
+  "syncPartial": "Some regions failed, synced ",
+  "syncUnits": " instances, ",
+  "matchedCol": "matched",
+  "syncFailed": "Sync failed"
 }

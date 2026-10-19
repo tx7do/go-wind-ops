@@ -3049,6 +3049,151 @@ export type opsservicev1_VerifyCloudAccountResponse = {
   verifiedAt?: wellKnownTimestamp;
 };
 
+// CloudInstanceService 云资源实例清单门面。
+export interface CloudInstanceService {
+  // 查询实例清单
+  List(
+    request: opsservicev1_ListCloudInstancesRequest,
+  ): Promise<opsservicev1_ListCloudInstancesResponse>;
+  // 同步指定云账号的实例清单(全地域)
+  Sync(
+    request: opsservicev1_SyncCloudAccountInstancesRequest,
+  ): Promise<opsservicev1_SyncCloudAccountInstancesResponse>;
+}
+
+export function createCloudInstanceServiceClient(
+  transport: ClientTransport,
+): CloudInstanceService {
+  return {
+    List(request) {
+      const path = `admin/v1/cloud-instances`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.cloudAccountId) {
+        queryParams.push(
+          `cloudAccountId=${encodeURIComponent(request.cloudAccountId.toString())}`,
+        );
+      }
+      if (request.provider) {
+        queryParams.push(
+          `provider=${encodeURIComponent(request.provider.toString())}`,
+        );
+      }
+      if (request.region) {
+        queryParams.push(
+          `region=${encodeURIComponent(request.region.toString())}`,
+        );
+      }
+      if (request.matched) {
+        queryParams.push(
+          `matched=${encodeURIComponent(request.matched.toString())}`,
+        );
+      }
+      if (request.keyword) {
+        queryParams.push(
+          `keyword=${encodeURIComponent(request.keyword.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CloudInstanceService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListCloudInstancesResponse>;
+    },
+    Sync(request) {
+      const path = `admin/v1/cloud-instances/sync`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudInstanceService',
+        method: 'Sync',
+      }) as Promise<opsservicev1_SyncCloudAccountInstancesResponse>;
+    },
+  };
+}
+// 实例清单查询(过滤字段随 GET query 传递)
+export type opsservicev1_ListCloudInstancesRequest = {
+  cloudAccountId?: number;
+  keyword?: string;
+  matched?: boolean;
+  page: number | undefined;
+  pageSize: number | undefined;
+  provider?: string;
+  region?: string;
+};
+
+export type opsservicev1_ListCloudInstancesResponse = {
+  items: opsservicev1_CloudInstance[] | undefined;
+  total: number | undefined;
+};
+
+// 云资源实例
+export type opsservicev1_CloudInstance = {
+  agentNodeId?: number;
+  agentNodeName?: string;
+  cloudAccountId?: number;
+  cloudAccountName?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  expiredAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  instanceId?: string;
+  instanceName?: string;
+  instanceType?: string;
+  matched?: boolean;
+  privateIp?: string;
+  provider?: opsservicev1_CloudInstance_Provider;
+  publicIp?: string;
+  region?: string;
+  status?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  syncedAt?: wellKnownTimestamp;
+  zone?: string;
+};
+
+// 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_CloudInstance_Provider =
+  | 'ALIYUN'
+  | 'AWS'
+  | 'HUAWEI_CLOUD'
+  | 'PROVIDER_UNSPECIFIED'
+  | 'TENCENT_CLOUD';
+// 与 agent 节点的匹配状态(零值命名避开 Provider 的 UNSPECIFIED 占用)
+export type opsservicev1_CloudInstance_MatchState =
+  | 'MATCH_STATE_UNSPECIFIED'
+  | 'MATCHED'
+  | 'UNMATCHED';
+export type opsservicev1_SyncCloudAccountInstancesRequest = {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
+  //
+  // Behaviors: REQUIRED
+  cloudAccountId: number | undefined;
+};
+
+export type opsservicev1_SyncCloudAccountInstancesResponse = {
+  cloudAccountId: number | undefined;
+  errors: string[] | undefined;
+  matched: number | undefined;
+  regions: number | undefined;
+  total: number | undefined;
+};
+
 // CommandRecordService agent 指令台账查询
 export interface CommandRecordService {
   // 查询指令台账
@@ -11071,6 +11216,7 @@ export class ApiClient {
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
   private _cloudAccountService?: CloudAccountService;
+  private _cloudInstanceService?: CloudInstanceService;
   private _commandRecordService?: CommandRecordService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
@@ -11148,6 +11294,10 @@ export class ApiClient {
 
   get cloudAccountService(): CloudAccountService {
     return this._cloudAccountService ??= createCloudAccountServiceClient(this._transport);
+  }
+
+  get cloudInstanceService(): CloudInstanceService {
+    return this._cloudInstanceService ??= createCloudInstanceServiceClient(this._transport);
   }
 
   get commandRecordService(): CommandRecordService {

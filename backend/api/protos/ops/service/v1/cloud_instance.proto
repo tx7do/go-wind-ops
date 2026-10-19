@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/timestamp.proto";
+
+// CloudInstanceService 云资源实例清单:按云账号同步的全地域实例快照,
+// 与 agent_node 按 IP 对账。同步为整账号全量替换(先删后插)。
+service CloudInstanceService {
+  // 查询实例清单(支持账号/厂商/地域/匹配状态/关键字过滤)
+  rpc ListCloudInstances (ListCloudInstancesRequest) returns (ListCloudInstancesResponse) {}
+
+  // 同步指定云账号的实例清单(全地域,同步阻塞返回摘要)
+  rpc SyncCloudAccountInstances (SyncCloudAccountInstancesRequest) returns (SyncCloudAccountInstancesResponse) {}
+}
+
+// 云资源实例
+message CloudInstance {
+  // 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum Provider {
+    PROVIDER_UNSPECIFIED = 0; // 未知
+
+    ALIYUN = 1;         // 阿里云
+    TENCENT_CLOUD = 2;  // 腾讯云
+    HUAWEI_CLOUD = 3;   // 华为云
+    AWS = 4;            // 亚马逊云
+  }
+
+  // 与 agent 节点的匹配状态(零值命名避开 Provider 的 UNSPECIFIED 占用)
+  enum MatchState {
+    MATCH_STATE_UNSPECIFIED = 0; // 全部
+
+    MATCHED = 1;    // 已匹配节点
+    UNMATCHED = 2;  // 未匹配(账号里有机器但没装 agent)
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional uint32 cloud_account_id = 2 [json_name = "cloudAccountId"]; // 云账号ID
+
+  optional string cloud_account_name = 3 [json_name = "cloudAccountName"]; // 云账号名(快照)
+
+  optional Provider provider = 4 [json_name = "provider"]; // 云厂商
+
+  optional string region = 5 [json_name = "region"]; // 地域
+
+  optional string zone = 6 [json_name = "zone"]; // 可用区
+
+  optional string instance_id = 7 [json_name = "instanceId"]; // 云实例ID
+
+  optional string instance_name = 8 [json_name = "instanceName"]; // 实例名称
+
+  optional string status = 9 [json_name = "status"]; // 实例状态(厂商原值)
+
+  optional string instance_type = 10 [json_name = "instanceType"]; // 机型
+
+  optional string private_ip = 11 [json_name = "privateIp"]; // 内网IP
+
+  optional string public_ip = 12 [json_name = "publicIp"]; // 公网IP
+
+  optional google.protobuf.Timestamp expired_at = 13 [json_name = "expiredAt"]; // 到期时间(按量/AWS 为空)
+
+  optional bool matched = 14 [json_name = "matched"]; // 是否匹配到节点
+
+  optional uint32 agent_node_id = 15 [json_name = "agentNodeId"]; // 匹配节点ID
+
+  optional string agent_node_name = 16 [json_name = "agentNodeName"]; // 匹配节点名(快照)
+
+  optional google.protobuf.Timestamp synced_at = 17 [
+    json_name = "syncedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 同步批次时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+// 实例清单查询(过滤字段随 GET query 传递)
+message ListCloudInstancesRequest {
+  uint32 page = 1 [json_name = "page"]; // 页码(1 起)
+  uint32 page_size = 2 [json_name = "pageSize"]; // 页大小
+
+  optional uint32 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
+  optional string provider = 11 [json_name = "provider"]; // 按厂商(ALIYUN/...)
+  optional string region = 12 [json_name = "region"]; // 按地域
+  optional bool matched = 13 [json_name = "matched"]; // 按匹配状态(空=全部)
+  optional string keyword = 14 [json_name = "keyword"]; // 实例ID/名称/IP 模糊
+}
+
+message ListCloudInstancesResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated CloudInstance items = 2 [json_name = "items"]; // 实例列表
+}
+
+message SyncCloudAccountInstancesRequest {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
+  uint32 cloud_account_id = 1 [
+    json_name = "cloudAccountId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 云账号ID
+}
+
+message SyncCloudAccountInstancesResponse {
+  uint32 cloud_account_id = 1 [json_name = "cloudAccountId"]; // 云账号ID
+
+  uint32 total = 2 [json_name = "total"]; // 同步实例数
+
+  uint32 matched = 3 [json_name = "matched"]; // 匹配节点数
+
+  uint32 regions = 4 [json_name = "regions"]; // 同步地域数
+
+  repeated string errors = 5 [json_name = "errors"]; // 各地域失败信息(部分失败时非空)
+}

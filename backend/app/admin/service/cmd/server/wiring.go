@@ -129,6 +129,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	distributionServiceClient := data.NewDistributionServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
+	cloudInstanceServiceClient := data.NewCloudInstanceServiceClient(ctx, discovery)
 	cloudAccountServiceClient := data.NewCloudAccountServiceClient(ctx, discovery)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -189,6 +190,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionAuditLogService := service.NewPermissionAuditLogService(ctx, permissionAuditLogServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceServiceClient)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountServiceClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -219,6 +221,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
+		cloudInstanceService,
 		cloudAccountService,
 	)
 
