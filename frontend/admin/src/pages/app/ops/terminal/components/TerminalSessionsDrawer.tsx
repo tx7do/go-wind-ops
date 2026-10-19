@@ -22,7 +22,8 @@ const TerminalSessionsDrawer = ({ open, onClose, onReplay }: Props) => {
   const { t } = useTranslation('terminal-audit');
   const actionRef = useRef<ActionType>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const tableScrollY = useProTableScrollY(containerRef);
+  // open 传入 hook:destroyOnHidden 下容器随 open 挂载,须在 open 翻转时补挂观察者
+  const tableScrollY = useProTableScrollY(containerRef, open);
 
   useEffect(() => {
     if (open) actionRef.current?.reload();
