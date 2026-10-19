@@ -16,6 +16,7 @@
   "reportTitle": "Inspection Report #{{id}}",
   "nodeDetail": "Node Details",
   "nodeName": "Node",
+  "nodeId": "Node ID",
   "env": "Env",
   "mem": "Memory",
   "disk": "Disk",

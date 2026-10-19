@@ -12,6 +12,7 @@
   "traffic": "录入流量",
   "chunks": "分块",
   "truncated": "截断",
+  "action": "操作",
   "replay": "回放",
   "replayTitle": "会话回放 #{{id}}",
   "replayBanner": "── 回放: {{node}} @ {{time}} ──",

@@ -12,6 +12,7 @@
   "traffic": "Recorded",
   "chunks": "Chunks",
   "truncated": "Truncated",
+  "action": "Actions",
   "replay": "Replay",
   "replayTitle": "Session Replay #{{id}}",
   "replayBanner": "── Replay: {{node}} @ {{time}} ──",

@@ -8,6 +8,7 @@
     "build": "vite build --mode production",
     "build:check": "tsc && vite build --mode production",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "check:i18n": "node scripts/check-i18n-keys.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

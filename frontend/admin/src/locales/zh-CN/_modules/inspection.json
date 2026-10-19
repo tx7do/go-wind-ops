@@ -16,6 +16,7 @@
   "reportTitle": "巡检报告 #{{id}}",
   "nodeDetail": "节点明细",
   "nodeName": "节点",
+  "nodeId": "节点 ID",
   "env": "环境",
   "mem": "内存",
   "disk": "磁盘",
