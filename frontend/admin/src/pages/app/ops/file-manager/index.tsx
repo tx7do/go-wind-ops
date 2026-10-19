@@ -75,6 +75,13 @@ const FileManager = () => {
   );
   const entries: FileEntry[] = useMemo(() => listing.data?.entries || [], [listing.data]);
 
+  // 列表失败必须可见(query 默认静默):agent 离线/路径在授权目录外等直接透出
+  useEffect(() => {
+    if (listing.isError) {
+      message.error((listing.error as Error)?.message || t('listFailed'));
+    }
+  }, [listing.isError, listing.error, message, t]);
+
   const refresh = useCallback(() => listing.refetch(), [listing]);
 
   const readMutation = useReadAgentFile({
@@ -191,7 +198,13 @@ const FileManager = () => {
     onError: (e: Error) => message.error(e.message || t('deleteFailed')),
   });
 
-  const openDir = (d: string) => { setCurrentDir(d); setDirInput(d); };
+  const openDir = (d: string) => {
+    // 裸盘符补卷根(D: → D:\),与 agent 端 normalizeFilePath 同语义;
+    // 不补全时白名单比对失败报"outside allowed directories"且列不出盘根
+    const v = /^[A-Za-z]:$/.test(d.trim()) ? `${d.trim()[0].toUpperCase()}:\\` : d.trim();
+    setCurrentDir(v);
+    setDirInput(v);
+  };
 
   const breadcrumbs = useMemo(() => {
     if (!currentDir) return [];
@@ -344,7 +357,7 @@ const FileManager = () => {
           dataSource={entries}
           loading={listing.isFetching && !canBrowse ? false : listing.isFetching}
           pagination={false}
-          locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : t('emptyDir')) : t('pickAgentFirst') }}
+          locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : listing.isError ? <Typography.Text type="danger" style={{ fontSize: 12 }}>{(listing.error as Error)?.message || t('listFailed')}</Typography.Text> : t('emptyDir')) : t('pickAgentFirst') }}
         />
       </Space>
 

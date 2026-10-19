@@ -38,6 +38,7 @@
   "pullFailed": "Pull failed (machine offline / path not allowed / timeout)",
   "uploadDone": "Uploaded ({size} bytes)",
   "uploadFailed": "Upload failed",
+  "listFailed": "Failed to list directory",
   "dropHere": "Drop to upload to current directory",
   "dropBatchDone": "Drop upload finished {{ok}}/{{total}}"
 }

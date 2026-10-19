@@ -38,6 +38,7 @@
   "pullFailed": "拉取失败(机器离线/路径未授权/超时)",
   "uploadDone": "已上传({size} 字节)",
   "uploadFailed": "上传失败",
+  "listFailed": "目录获取失败",
   "dropHere": "释放以上传到当前目录",
   "dropBatchDone": "拖拽上传完成 {{ok}}/{{total}}"
 }
