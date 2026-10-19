@@ -167,6 +167,27 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 - 手动 API 冒烟建了 smoke-account/baidu-www/预算 #1 等 smoke 数据;webhook 渠道 smoke-webhook 指向必失败地址用于验证投递 FAILED 落库。
 - 登录接口 access_token 字段是 access_token(snake),前端 axios 封装已适配;冒烟脚本直调时注意。
 
+## Phase 8 · 第三梯队(2026-10-19)✅ 已完成
+
+### 8.1 终端会话审计回放 ✅
+**实现**:ops_terminal_sessions+ops_terminal_chunks(base64 保真存储,GBK 回显不错字);TerminalRecorder 每会话一实例,输入/输出经 1024 深队列异步批量落库(800ms 冲刷,单会话 8MB 上限超出置 truncated),录制失败只记日志绝不影响终端;审计 RPC 挂 TerminalService(ListSessions/GetSession/ListChunks,分块以原始字节返回);BFF 新增 i_terminal_audit.proto(REST /admin/v1/terminal-sessions*);前端终端页"会话审计"抽屉(时长/流量/分块统计)+xterm 只读回放(OUTPUT 原字节回灌、INPUT 以灰显 [cmd] 行标注)。**注意:生成 TS 客户端把 proto bytes 产出为 base64 字符串,回放/消费侧必须 atob 解码后再喂字节型 API**。本提交一并入库同文件的终端 resize 通道 WIP(WS RESIZE 帧/mqtt resize 主题/agent 处理/真 PTY 提示)。
+
+### 8.2 巡检报告 ✅
+**实现**:ops_inspections,RUN→异步聚合(节点在线/CPU/内存/磁盘/版本、项目运行态、未恢复告警、30 天内到期证书)生成 JSON 快照存 summary,概览数字冗余成列便于列表展示;前端治理组"巡检报告"页(发起+报告抽屉渲染三张明细表)。
+
+### 8.3 日志快照检索 ✅
+**实现**:ops_log_snapshots,同步指令(project_log,256KB)拉项目日志尾部落库;跨项目 ILIKE 关键字检索返回命中摘要(首命中行 ±1 上下文,400 字符截断)+命中行数;前端可观测组"日志快照"页(采集/查看/检索/删除)。v1 仅手动采集,定时采集留待后续。
+
+### 8.4 配置文件中心 ✅
+**实现**:ops_config_templates(按 env)+ops_config_distributions(回执终态);下发=内容 minio PutObject 直传 config-templates/ 前缀 → 预签名 GET → file_push 指令(agent 复用,授权目录校验),file_push 回执钩子对账下发记录(文件管理器的 file_push 无记录静默跳过);前端持续交付组"配置中心"页(模板编辑抽屉/下发弹窗/下发记录抽屉)。
+
+### 冒烟实录
+- 终端:WS 会话敲 echo/dir → 19 分块/30B↑/3.8KB↓ → 回放含命令回显与 dir 真实输出(字节级保真)。
+- 巡检:RUN→FINISHED(1/1 节点、0/1 项目、告警 1)。
+- 日志快照:项目补 startCommand(ping)启动产生日志 → 采集 435B → 检索 'ping' 命中。
+- 配置:模板下发 smoke 库 repo-demo/app.conf → 记录 SUCCESS。
+- 三新页 + 终端审计抽屉 UI 走查全通过。
+
 ### 环境注意
 - 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
 - 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。
