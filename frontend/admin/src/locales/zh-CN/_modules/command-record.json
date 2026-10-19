@@ -1,7 +1,7 @@
 {
   "moduleName": "指令台账",
   "detailTitle": "指令详情",
-  "requestId": "request_id",
+  "requestId": "请求 ID",
   "nodeId": "目标节点",
   "agentId": "机器标识",
   "action": "指令动作",

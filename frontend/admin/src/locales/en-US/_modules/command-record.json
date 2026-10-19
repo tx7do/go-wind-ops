@@ -1,7 +1,7 @@
 {
   "moduleName": "Command Records",
   "detailTitle": "Command Detail",
-  "requestId": "request_id",
+  "requestId": "Request ID",
   "nodeId": "Target Node",
   "agentId": "Agent ID",
   "action": "Action",
