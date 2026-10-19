@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
+import dayjs, { type Dayjs } from 'dayjs';
 import ListTable from '@/components/common/ListTable';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Tag, App } from 'antd';
@@ -8,8 +9,8 @@ import type { auditservicev1_DataAccessAuditLog as DataAccessAuditLog } from '@/
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import { fetchListDataAccessAuditLogs } from '@/api/hooks/data-access-audit-log';
-import { exportAuditLogsServer } from '@/api/hooks/audit-export';
 import { exportAuditLogs, type AuditExportFormat } from '@/utils/csv';
+import { exportAuditLogsServer } from '@/api/hooks/audit-export';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import {
@@ -58,6 +59,61 @@ const DataAccessAuditLogPage = () => {
       valueType: 'dateTime',
       hideInSearch: true,
       sorter: true,
+    },
+
+    {
+      title: t('createdAt'),
+      dataIndex: 'createdAt',
+      valueType: 'dateTimeRange',
+      hideInTable: true,
+      search: {
+        transform: (values?: Array<string | Dayjs>) => {
+          const fmt = (v?: string | Dayjs) =>
+            typeof v === 'string' ? v : v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : undefined;
+          return {
+            created_at__gte: fmt(values?.[0]),
+            created_at__lte: fmt(values?.[1]),
+          };
+        },
+      },
+      fieldProps: {
+        showTime: true,
+        presets: [
+          {
+            label: t('common:dateRange.today'),
+            value: [dayjs().startOf('day'), dayjs().endOf('day')],
+          },
+          {
+            label: t('common:dateRange.yesterday'),
+            value: [
+              dayjs().subtract(1, 'day').startOf('day'),
+              dayjs().subtract(1, 'day').endOf('day'),
+            ],
+          },
+          {
+            label: t('common:dateRange.thisWeek'),
+            value: [dayjs().startOf('week'), dayjs().endOf('week')],
+          },
+          {
+            label: t('common:dateRange.lastWeek'),
+            value: [
+              dayjs().subtract(1, 'week').startOf('week'),
+              dayjs().subtract(1, 'week').endOf('week'),
+            ],
+          },
+          {
+            label: t('common:dateRange.thisMonth'),
+            value: [dayjs().startOf('month'), dayjs().endOf('month')],
+          },
+          {
+            label: t('common:dateRange.lastMonth'),
+            value: [
+              dayjs().subtract(1, 'month').startOf('month'),
+              dayjs().subtract(1, 'month').endOf('month'),
+            ],
+          },
+        ],
+      },
     },
     {
       title: t('success'),
@@ -127,6 +183,30 @@ const DataAccessAuditLogPage = () => {
   ];
 
   // 按当前搜索条件导出 CSV（客户端分页聚合，上限 1 万行；全量归档走后端 JSONL 任务）
+  // 服务端全量导出（XLSX，上限 50 万行）：当前搜索条件透传给后端，
+  // 突破客户端聚合导出的 1 万行上限
+  const handleServerExport = async () => {
+    try {
+      await exportAuditLogsServer(
+        'data_access',
+        // 与列表请求同构的搜索条件（剔除 ProTable params 里的分页键：后端
+        // repo 对非表列字段直接报错），经 PaginationQuery 同源序列化
+        // （contains 转换/空值清理），导出的即当前搜索看到的。
+        new PaginationQuery({
+          formValues: Object.fromEntries(
+            Object.entries(latestParamsRef.current ?? {}).filter(
+              ([k]) => !['current', 'pageSize'].includes(k),
+            ),
+          ),
+        }),
+      );
+      message.success(t('exportServerSuccess'));
+    } catch (error: any) {
+      console.error('server-side audit export failed', error);
+      message.error(error?.message || t('exportServerFailed'));
+    }
+  };
+
   const handleExport = async (format: AuditExportFormat) => {
     const exportColumns = columns
       .filter((c) => c.dataIndex && !c.hideInTable)
@@ -153,6 +233,7 @@ const DataAccessAuditLogPage = () => {
           actionRef={actionRef}
           columns={columns}
           request={async (params, sorter) => {
+            latestParamsRef.current = params;
             const query = new PaginationQuery({
               paging: {
                 page: params.current || 1,
@@ -176,8 +257,7 @@ const DataAccessAuditLogPage = () => {
               total: response.total || 0,
               success: true,
             };
-          
-}}
+          }}
           rowKey="id"
           search={{
             labelWidth: 'auto',
@@ -189,26 +269,21 @@ const DataAccessAuditLogPage = () => {
             showQuickJumper: true,
           }}
           toolBarRender={() => [
-				<Button
-					key="server-export"
-					type="default"
-					onClick={() => {
-						// 服务端全量导出（XLSX，上限 50 万行）；不携带搜索条件=全量归档语义
-						exportAuditLogsServer('data_access', new PaginationQuery({}))
-							.then(() => undefined)
-							.catch((error: Error) => console.error('server export failed:', error));
-					}}
-				>
-					服务端全量
-				</Button>,
             <Dropdown
               key="export"
               menu={{
                 items: [
                   { key: 'csv', label: t('exportCsv') },
                   { key: 'xlsx', label: t('exportXlsx') },
+                  { key: 'server-xlsx', label: t('exportServerXlsx') },
                 ],
-                onClick: ({ key }) => handleExport(key as AuditExportFormat),
+                onClick: ({ key }) => {
+                  if (key === 'server-xlsx') {
+                    handleServerExport();
+                    return;
+                  }
+                  handleExport(key as AuditExportFormat);
+                },
               }}
             >
               <Button icon={<DownloadOutlined />}>{t('export')}</Button>

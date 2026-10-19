@@ -1,52 +1,35 @@
 {
-  "title": "Overview",
-  "analytics": {
-    "userCountTotal": "Total Users",
-    "postCountTotal": "Total Posts",
-    "commentCountTotal": "Total Comments",
-    "interactionCountTotal": "Total Interactions",
-    "weeklyNew": "New in 7 Days",
-    "contentTrend": "Content Growth Trend",
-    "newUsers": "New Users",
-    "newPosts": "New Posts",
-    "newComments": "New Comments",
-    "interactionTop": "Interaction Top",
-    "viewTop": "View Top",
-    "interactionDistribution": "Interaction Distribution",
-    "totalLikes": "Likes",
-    "totalWatches": "Favorites",
-    "totalViews": "Views",
-    "loginActivity": "Login Activity",
-    "loginSuccess": "Login Success",
-    "loginFailed": "Login Failed",
-    "titleFallback": "(Untitled)"
+  "greeting": "Hello, ",
+  "autoRefresh": "Auto refresh 15s",
+  "stat": {
+    "onlineNodes": "Online Nodes",
+    "runningProjects": "Running Projects",
+    "buildSuccess": "Builds OK",
+    "pendingApprovals": "Pending Approvals",
+    "activeAlerts": "Active Alerts"
   },
-  "aiInsights": {
-    "title": "Security & Anomaly Insights",
-    "subtitle": "24h audit trail · behavior pattern mining",
-    "generate": "Scan now",
-    "regenerate": "Rescan",
-    "empty": "Click \"Scan now\" to mine the last 24h of audit details for anomalies.",
-    "noAnomaly": "No anomalous behavior patterns detected in the last 24 hours.",
-    "failed": "Scan failed",
-    "assessment": "AI Assessment",
-    "generatedAt": "Generated at {{time}}",
-    "alerts": {
-      "bruteForce": {
-        "title": "Possible credential guessing: {{count}} failed logins for account {{username}} in 24h",
-        "detail": "Last failure from IP {{ip}}. Verify whether it was the account owner; reset the password and temporarily block the source if needed."
-      },
-      "nightOps": {
-        "title": "Off-hours activity: account {{username}} ran {{count}} operations between 00:00-06:00 local time",
-        "detail": "Late-night activity deviates from normal patterns. If this was not a planned change window, check with the account owner."
-      },
-      "failedOps": {
-        "title": "Clustered failures: account {{username}} had {{count}} failed operations ({{total}} total) in 24h",
-        "detail": "Repeated failures may indicate missing permissions or probing. Review the failed resources and reasons in the operation log."
-      },
-      "sensitiveOps": {
-        "title": "{{count}} sensitive operations detected (delete/export/authorization changes)"
-      }
-    }
-  }
+  "nodesPanel": "Node Resources",
+  "online": "Online",
+  "offline": "Offline",
+  "cpu": "CPU",
+  "mem": "MEM",
+  "disk": "DISK",
+  "pendingPanel": "Pending Approvals",
+  "noPending": "Nothing pending",
+  "approve": "Approve",
+  "reject": "Reject",
+  "approveConfirm": "Approve this request? The stored operation will be re-dispatched automatically.",
+  "rejectConfirm": "Reject this request?",
+  "recentBuilds": "Recent Builds",
+  "status": {
+    "SUCCESS": "Success",
+    "FAILED": "Failed",
+    "RUNNING": "Running",
+    "PENDING": "Queued"
+  },
+  "alertsPanel": "Active Alerts",
+  "noAlerts": "No alerts",
+  "resolve": "Resolve",
+  "resolveConfirm": "Resolve this alert?",
+  "noData": "No data"
 }

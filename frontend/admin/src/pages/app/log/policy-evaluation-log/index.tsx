@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
+import dayjs, { type Dayjs } from 'dayjs';
 import ListTable from '@/components/common/ListTable';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Tag, App } from 'antd';
@@ -8,8 +9,8 @@ import type { permissionservicev1_PolicyEvaluationLog as PolicyEvaluationLog } f
 import { PaginationQuery } from '@/core';
 import { TABLE, METHOD_LIST } from '@/config/constants';
 import { fetchListPolicyEvaluationLogs } from '@/api/hooks/policy-evaluation-log';
-import { exportAuditLogsServer } from '@/api/hooks/audit-export';
 import { exportAuditLogs, type AuditExportFormat } from '@/utils/csv';
+import { exportAuditLogsServer } from '@/api/hooks/audit-export';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 
@@ -73,6 +74,61 @@ const PolicyEvaluationLog = () => {
       hideInSearch: true,
       sorter: true,
     },
+
+    {
+      title: t('createdAt'),
+      dataIndex: 'createdAt',
+      valueType: 'dateTimeRange',
+      hideInTable: true,
+      search: {
+        transform: (values?: Array<string | Dayjs>) => {
+          const fmt = (v?: string | Dayjs) =>
+            typeof v === 'string' ? v : v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : undefined;
+          return {
+            created_at__gte: fmt(values?.[0]),
+            created_at__lte: fmt(values?.[1]),
+          };
+        },
+      },
+      fieldProps: {
+        showTime: true,
+        presets: [
+          {
+            label: t('common:dateRange.today'),
+            value: [dayjs().startOf('day'), dayjs().endOf('day')],
+          },
+          {
+            label: t('common:dateRange.yesterday'),
+            value: [
+              dayjs().subtract(1, 'day').startOf('day'),
+              dayjs().subtract(1, 'day').endOf('day'),
+            ],
+          },
+          {
+            label: t('common:dateRange.thisWeek'),
+            value: [dayjs().startOf('week'), dayjs().endOf('week')],
+          },
+          {
+            label: t('common:dateRange.lastWeek'),
+            value: [
+              dayjs().subtract(1, 'week').startOf('week'),
+              dayjs().subtract(1, 'week').endOf('week'),
+            ],
+          },
+          {
+            label: t('common:dateRange.thisMonth'),
+            value: [dayjs().startOf('month'), dayjs().endOf('month')],
+          },
+          {
+            label: t('common:dateRange.lastMonth'),
+            value: [
+              dayjs().subtract(1, 'month').startOf('month'),
+              dayjs().subtract(1, 'month').endOf('month'),
+            ],
+          },
+        ],
+      },
+    },
     {
       title: t('result'),
       dataIndex: 'result',
@@ -109,8 +165,8 @@ const PolicyEvaluationLog = () => {
           OPTIONS: 'default',
         };
 
-  // Tag 预设色名不能当 CSS color 用：'success' 这类不是 <color>，整条声明被浏览器丢弃
-  return (
+        // Tag 预设色名不能当 CSS color 用：'success' 这类不是 <color>，整条声明被浏览器丢弃
+        return (
           <Tag color={colorMap[record.requestMethod || ''] || 'default'}>
             {record.requestMethod}
           </Tag>
@@ -187,6 +243,30 @@ const PolicyEvaluationLog = () => {
   ];
 
         // 按当前搜索条件导出 CSV（客户端分页聚合，上限 1 万行；全量归档走后端 JSONL 任务）
+  // 服务端全量导出（XLSX，上限 50 万行）：当前搜索条件透传给后端，
+  // 突破客户端聚合导出的 1 万行上限
+  const handleServerExport = async () => {
+    try {
+      await exportAuditLogsServer(
+        'policy_evaluation',
+        // 与列表请求同构的搜索条件（剔除 ProTable params 里的分页键：后端
+        // repo 对非表列字段直接报错），经 PaginationQuery 同源序列化
+        // （contains 转换/空值清理），导出的即当前搜索看到的。
+        new PaginationQuery({
+          formValues: Object.fromEntries(
+            Object.entries(latestParamsRef.current ?? {}).filter(
+              ([k]) => !['current', 'pageSize'].includes(k),
+            ),
+          ),
+        }),
+      );
+      message.success(t('exportServerSuccess'));
+    } catch (error: any) {
+      console.error('server-side audit export failed', error);
+      message.error(error?.message || t('exportServerFailed'));
+    }
+  };
+
   const handleExport = async (format: AuditExportFormat) => {
     const exportColumns = columns
       .filter((c) => c.dataIndex && !c.hideInTable)
@@ -212,6 +292,7 @@ const PolicyEvaluationLog = () => {
           actionRef={actionRef}
           columns={columns}
           request={async (params, sorter) => {
+            latestParamsRef.current = params;
             const query = new PaginationQuery({
               paging: {
                 page: params.current || 1,
@@ -237,8 +318,7 @@ const PolicyEvaluationLog = () => {
               total: response.total || 0,
               success: true,
             };
-          
-}}
+          }}
           rowKey="id"
           search={{
             labelWidth: 'auto',
@@ -250,26 +330,21 @@ const PolicyEvaluationLog = () => {
             showQuickJumper: true,
           }}
           toolBarRender={() => [
-				<Button
-					key="server-export"
-					type="default"
-					onClick={() => {
-						// 服务端全量导出（XLSX，上限 50 万行）；不携带搜索条件=全量归档语义
-						exportAuditLogsServer('policy_evaluation', new PaginationQuery({}))
-							.then(() => undefined)
-							.catch((error: Error) => console.error('server export failed:', error));
-					}}
-				>
-					服务端全量
-				</Button>,
             <Dropdown
               key="export"
               menu={{
                 items: [
                   { key: 'csv', label: t('exportCsv') },
                   { key: 'xlsx', label: t('exportXlsx') },
+                  { key: 'server-xlsx', label: t('exportServerXlsx') },
                 ],
-                onClick: ({ key }) => handleExport(key as AuditExportFormat),
+                onClick: ({ key }) => {
+                  if (key === 'server-xlsx') {
+                    handleServerExport();
+                    return;
+                  }
+                  handleExport(key as AuditExportFormat);
+                },
               }}
             >
               <Button icon={<DownloadOutlined />}>{t('export')}</Button>
