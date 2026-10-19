@@ -798,6 +798,7 @@ func defaultOpsMenus() []*permissionV1.Menu {
 		page(101, 85, "api-keys", "routes:api-keys", "lucide:key-round", SystemPlatformAdminPermissionCode),
 		page(102, 85, "cloud-accounts", "routes:cloud-accounts", "lucide:cloud", SystemPlatformAdminPermissionCode),
 		page(103, 85, "cloud-resources", "routes:cloud-resources", "lucide:server", SystemPlatformAdminPermissionCode),
+		page(104, 85, "cloud-costs", "routes:cloud-costs", "lucide:coins", SystemPlatformAdminPermissionCode),
 	}
 
 	return append([]*permissionV1.Menu{g81, g82, g83, g84, g85}, pages...)

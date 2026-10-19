@@ -3049,6 +3049,215 @@ export type opsservicev1_VerifyCloudAccountResponse = {
   verifiedAt?: wellKnownTimestamp;
 };
 
+// CloudCostService 云成本月账单门面。
+export interface CloudCostService {
+  // 查询成本记录
+  List(
+    request: opsservicev1_ListCloudCostsRequest,
+  ): Promise<opsservicev1_ListCloudCostsResponse>;
+  // 录入/更新一条成本(按账号+月份 upsert)
+  Upsert(
+    request: opsservicev1_UpsertCloudCostRequest,
+  ): Promise<opsservicev1_CloudCost>;
+  // 删除成本记录
+  Delete(
+    request: opsservicev1_DeleteCloudCostRequest,
+  ): Promise<wellKnownEmpty>;
+  // 批量导入(按账号名匹配)
+  Import(
+    request: opsservicev1_ImportCloudCostsRequest,
+  ): Promise<opsservicev1_ImportCloudCostsResponse>;
+  // 月度汇总(趋势图)
+  Summary(
+    request: opsservicev1_GetCloudCostSummaryRequest,
+  ): Promise<opsservicev1_GetCloudCostSummaryResponse>;
+}
+
+export function createCloudCostServiceClient(
+  transport: ClientTransport,
+): CloudCostService {
+  return {
+    List(request) {
+      const path = `admin/v1/cloud-costs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.cloudAccountId) {
+        queryParams.push(
+          `cloudAccountId=${encodeURIComponent(request.cloudAccountId.toString())}`,
+        );
+      }
+      if (request.year) {
+        queryParams.push(
+          `year=${encodeURIComponent(request.year.toString())}`,
+        );
+      }
+      if (request.provider) {
+        queryParams.push(
+          `provider=${encodeURIComponent(request.provider.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CloudCostService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListCloudCostsResponse>;
+    },
+    Upsert(request) {
+      const path = `admin/v1/cloud-costs`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudCostService',
+        method: 'Upsert',
+      }) as Promise<opsservicev1_CloudCost>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-costs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'CloudCostService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Import(request) {
+      const path = `admin/v1/cloud-costs/import`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudCostService',
+        method: 'Import',
+      }) as Promise<opsservicev1_ImportCloudCostsResponse>;
+    },
+    Summary(request) {
+      const path = `admin/v1/cloud-costs/summary`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.year) {
+        queryParams.push(
+          `year=${encodeURIComponent(request.year.toString())}`,
+        );
+      }
+      if (request.provider) {
+        queryParams.push(
+          `provider=${encodeURIComponent(request.provider.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CloudCostService',
+        method: 'Summary',
+      }) as Promise<opsservicev1_GetCloudCostSummaryResponse>;
+    },
+  };
+}
+export type opsservicev1_ListCloudCostsRequest = {
+  cloudAccountId?: number;
+  page: number | undefined;
+  pageSize: number | undefined;
+  provider?: string;
+  year?: string;
+};
+
+export type opsservicev1_ListCloudCostsResponse = {
+  items: opsservicev1_CloudCost[] | undefined;
+  total: number | undefined;
+};
+
+// 云成本月账单
+export type opsservicev1_CloudCost = {
+  //
+  // Behaviors: REQUIRED
+  amount?: number;
+  //
+  // Behaviors: REQUIRED
+  cloudAccountId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  cloudAccountName?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  currency?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  month?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  provider?: opsservicev1_CloudCost_Provider;
+  remark?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+};
+
+// 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_CloudCost_Provider =
+  | 'ALIYUN'
+  | 'AWS'
+  | 'HUAWEI_CLOUD'
+  | 'PROVIDER_UNSPECIFIED'
+  | 'TENCENT_CLOUD';
+export type opsservicev1_UpsertCloudCostRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_CloudCost;
+};
+
+export type opsservicev1_DeleteCloudCostRequest = {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
+  //
+  // Behaviors: REQUIRED
+  id: number | undefined;
+};
+
+export type opsservicev1_ImportCloudCostsRequest = {
+  //
+  // Behaviors: REQUIRED
+  rows: opsservicev1_CloudCost[] | undefined;
+};
+
+export type opsservicev1_ImportCloudCostsResponse = {
+  errors: string[] | undefined;
+  imported: number | undefined;
+};
+
+export type opsservicev1_GetCloudCostSummaryRequest = {
+  provider?: string;
+  year?: string;
+};
+
+export type opsservicev1_GetCloudCostSummaryResponse = {
+  items: opsservicev1_CloudCostSummaryItem[] | undefined;
+};
+
+// 汇总行:月 × 厂商 × 币种 合计(不换汇,多币种并行展示)
+export type opsservicev1_CloudCostSummaryItem = {
+  currency: string | undefined;
+  month: string | undefined;
+  provider: string | undefined;
+  total: number | undefined;
+};
+
 // CloudInstanceService 云资源实例清单门面。
 export interface CloudInstanceService {
   // 查询实例清单
@@ -11216,6 +11425,7 @@ export class ApiClient {
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
   private _cloudAccountService?: CloudAccountService;
+  private _cloudCostService?: CloudCostService;
   private _cloudInstanceService?: CloudInstanceService;
   private _commandRecordService?: CommandRecordService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
@@ -11294,6 +11504,10 @@ export class ApiClient {
 
   get cloudAccountService(): CloudAccountService {
     return this._cloudAccountService ??= createCloudAccountServiceClient(this._transport);
+  }
+
+  get cloudCostService(): CloudCostService {
+    return this._cloudCostService ??= createCloudCostServiceClient(this._transport);
   }
 
   get cloudInstanceService(): CloudInstanceService {

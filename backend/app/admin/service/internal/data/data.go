@@ -357,6 +357,15 @@ func NewCloudInstanceServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	return opsV1.NewCloudInstanceServiceClient(cli)
 }
 
+func NewCloudCostServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.CloudCostServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewCloudCostServiceClient(cli)
+}
+
 func NewPluginServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.PluginServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

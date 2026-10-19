@@ -129,5 +129,6 @@
   "opsObserve": "监控告警",
   "opsGovern": "平台治理",
   "cloud-accounts": "云账号",
-  "cloud-resources": "云资源"
+  "cloud-resources": "云资源",
+  "cloud-costs": "云成本"
 }

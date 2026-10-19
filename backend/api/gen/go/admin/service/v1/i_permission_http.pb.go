@@ -46,15 +46,15 @@ type PermissionServiceHTTPServer interface {
 
 func RegisterPermissionServiceHTTPServer(s *http.Server, srv PermissionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/permissions", _PermissionService_List23_HTTP_Handler(srv))
+	r.GET("/admin/v1/permissions", _PermissionService_List24_HTTP_Handler(srv))
 	r.GET("/admin/v1/permissions/{id}", _PermissionService_Get22_HTTP_Handler(srv))
 	r.POST("/admin/v1/permissions", _PermissionService_Create13_HTTP_Handler(srv))
 	r.PUT("/admin/v1/permissions/{id}", _PermissionService_Update14_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/permissions/{id}", _PermissionService_Delete14_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/permissions/{id}", _PermissionService_Delete15_HTTP_Handler(srv))
 	r.POST("/admin/v1/permissions/sync:perms", _PermissionService_SyncPermissions0_HTTP_Handler(srv))
 }
 
-func _PermissionService_List23_HTTP_Handler(srv PermissionServiceHTTPServer) func(ctx http.Context) error {
+func _PermissionService_List24_HTTP_Handler(srv PermissionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -142,7 +142,7 @@ func _PermissionService_Update14_HTTP_Handler(srv PermissionServiceHTTPServer) f
 	}
 }
 
-func _PermissionService_Delete14_HTTP_Handler(srv PermissionServiceHTTPServer) func(ctx http.Context) error {
+func _PermissionService_Delete15_HTTP_Handler(srv PermissionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePermissionRequest
 		if err := ctx.BindQuery(&in); err != nil {

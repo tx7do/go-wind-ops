@@ -437,6 +437,42 @@ var (
 		Columns:    OpsCloudAccountsColumns,
 		PrimaryKey: []*schema.Column{OpsCloudAccountsColumns[0]},
 	}
+	// OpsCloudCostsColumns holds the columns for the "ops_cloud_costs" table.
+	OpsCloudCostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "cloud_account_id", Type: field.TypeUint32, Comment: "云账号ID"},
+		{Name: "cloud_account_name", Type: field.TypeString, Nullable: true, Comment: "云账号名(快照)"},
+		{Name: "provider", Type: field.TypeEnum, Nullable: true, Comment: "云厂商(录入时快照,汇总按此分组)", Enums: []string{"ALIYUN", "TENCENT_CLOUD", "HUAWEI_CLOUD", "AWS"}},
+		{Name: "month", Type: field.TypeString, Comment: "账单月份 YYYY-MM"},
+		{Name: "amount", Type: field.TypeFloat64, Comment: "月度成本金额"},
+		{Name: "currency", Type: field.TypeString, Comment: "币种(默认 CNY;汇总不换汇,多币种各自展示)", Default: "CNY"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+	}
+	// OpsCloudCostsTable holds the schema information for the "ops_cloud_costs" table.
+	OpsCloudCostsTable = &schema.Table{
+		Name:       "ops_cloud_costs",
+		Comment:    "云成本月账单表",
+		Columns:    OpsCloudCostsColumns,
+		PrimaryKey: []*schema.Column{OpsCloudCostsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_cloud_cost_key",
+				Unique:  true,
+				Columns: []*schema.Column{OpsCloudCostsColumns[7], OpsCloudCostsColumns[10]},
+			},
+			{
+				Name:    "idx_ops_cloud_cost_month",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCloudCostsColumns[10]},
+			},
+		},
+	}
 	// OpsCloudInstancesColumns holds the columns for the "ops_cloud_instances" table.
 	OpsCloudInstancesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3307,6 +3343,7 @@ var (
 		OpsBuildHistoriesTable,
 		OpsBuildPipelinesTable,
 		OpsCloudAccountsTable,
+		OpsCloudCostsTable,
 		OpsCloudInstancesTable,
 		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
@@ -3402,6 +3439,11 @@ func init() {
 	}
 	OpsCloudAccountsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_cloud_accounts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsCloudCostsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_cloud_costs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

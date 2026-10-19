@@ -130,5 +130,6 @@
   "opsObserve": "Observability",
   "opsGovern": "Governance",
   "cloud-accounts": "Cloud Accounts",
-  "cloud-resources": "Cloud Resources"
+  "cloud-resources": "Cloud Resources",
+  "cloud-costs": "Cloud Costs"
 }

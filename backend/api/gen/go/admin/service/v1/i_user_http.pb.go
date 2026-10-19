@@ -49,18 +49,18 @@ type UserServiceHTTPServer interface {
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/users", _UserService_List35_HTTP_Handler(srv))
+	r.GET("/admin/v1/users", _UserService_List36_HTTP_Handler(srv))
 	r.GET("/admin/v1/users/username/{username}", _UserService_Get35_HTTP_Handler(srv))
 	r.GET("/admin/v1/users/{id}", _UserService_Get36_HTTP_Handler(srv))
 	r.POST("/admin/v1/users", _UserService_Create23_HTTP_Handler(srv))
 	r.PUT("/admin/v1/users/{id}", _UserService_Update24_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/users/username/{username}", _UserService_Delete24_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/users/{id}", _UserService_Delete25_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/users/username/{username}", _UserService_Delete25_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/users/{id}", _UserService_Delete26_HTTP_Handler(srv))
 	r.GET("/admin/v1/users:exists", _UserService_UserExists0_HTTP_Handler(srv))
 	r.POST("/admin/v1/users/{user_id}/password", _UserService_EditUserPassword0_HTTP_Handler(srv))
 }
 
-func _UserService_List35_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_List36_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -170,7 +170,7 @@ func _UserService_Update24_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http
 	}
 }
 
-func _UserService_Delete24_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_Delete25_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteUserRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -192,7 +192,7 @@ func _UserService_Delete24_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http
 	}
 }
 
-func _UserService_Delete25_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_Delete26_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteUserRequest
 		if err := ctx.BindQuery(&in); err != nil {

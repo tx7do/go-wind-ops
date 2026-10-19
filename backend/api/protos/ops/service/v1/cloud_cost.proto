@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// CloudCostService 云成本月账单:账号 × 月份,手工录入或 CSV 导入。
+// 轻量台账定位——不对接计费 API、不换汇,多币种各自展示。
+service CloudCostService {
+  // 查询成本记录(按年/账号/厂商过滤)
+  rpc ListCloudCosts (ListCloudCostsRequest) returns (ListCloudCostsResponse) {}
+
+  // 录入/更新一条成本(按账号+月份 upsert)
+  rpc UpsertCloudCost (UpsertCloudCostRequest) returns (CloudCost) {}
+
+  // 删除成本记录
+  rpc DeleteCloudCost (DeleteCloudCostRequest) returns (google.protobuf.Empty) {}
+
+  // 批量导入(CSV 解析后按账号名匹配;逐行报错不中断)
+  rpc ImportCloudCosts (ImportCloudCostsRequest) returns (ImportCloudCostsResponse) {}
+
+  // 月度汇总(趋势图:月 × 厂商 × 币种 合计)
+  rpc GetCloudCostSummary (GetCloudCostSummaryRequest) returns (GetCloudCostSummaryResponse) {}
+}
+
+// 云成本月账单
+message CloudCost {
+  // 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum Provider {
+    PROVIDER_UNSPECIFIED = 0; // 未知
+
+    ALIYUN = 1;         // 阿里云
+    TENCENT_CLOUD = 2;  // 腾讯云
+    HUAWEI_CLOUD = 3;   // 华为云
+    AWS = 4;            // 亚马逊云
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional uint32 cloud_account_id = 2 [
+    json_name = "cloudAccountId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 云账号ID
+
+  optional string cloud_account_name = 3 [
+    json_name = "cloudAccountName",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 云账号名(快照)
+
+  optional Provider provider = 4 [
+    json_name = "provider",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 云厂商(录入时快照)
+
+  optional string month = 5 [
+    json_name = "month",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账单月份 YYYY-MM
+
+  optional double amount = 6 [
+    json_name = "amount",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 金额
+
+  optional string currency = 7 [json_name = "currency"]; // 币种(默认 CNY)
+
+  optional string remark = 8 [json_name = "remark"]; // 备注
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListCloudCostsRequest {
+  uint32 page = 1 [json_name = "page"]; // 页码(1 起)
+  uint32 page_size = 2 [json_name = "pageSize"]; // 页大小
+
+  optional uint32 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
+  optional string year = 11 [json_name = "year"]; // 按年份(YYYY,空=全部)
+  optional string provider = 12 [json_name = "provider"]; // 按厂商
+}
+
+message ListCloudCostsResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated CloudCost items = 2 [json_name = "items"]; // 记录列表
+}
+
+message UpsertCloudCostRequest {
+  optional CloudCost data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 成本数据(按账号+月份定位)
+}
+
+message DeleteCloudCostRequest {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 记录ID
+}
+
+message ImportCloudCostsRequest {
+  repeated CloudCost rows = 1 [
+    json_name = "rows",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 导入行(按账号名 cloudAccountName 匹配账号)
+}
+
+message ImportCloudCostsResponse {
+  uint32 imported = 1 [json_name = "imported"]; // 成功行数
+
+  repeated string errors = 2 [json_name = "errors"]; // 失败行信息(行号+原因)
+}
+
+message GetCloudCostSummaryRequest {
+  optional string year = 10 [json_name = "year"]; // 年份(YYYY,空=全部)
+  optional string provider = 11 [json_name = "provider"]; // 按厂商(空=全部)
+}
+
+// 汇总行:月 × 厂商 × 币种 合计(不换汇,多币种并行展示)
+message CloudCostSummaryItem {
+  string month = 1 [json_name = "month"]; // 月份 YYYY-MM
+  string provider = 2 [json_name = "provider"]; // 厂商标识
+  string currency = 3 [json_name = "currency"]; // 币种
+  double total = 4 [json_name = "total"]; // 合计金额
+}
+
+message GetCloudCostSummaryResponse {
+  repeated CloudCostSummaryItem items = 1 [json_name = "items"]; // 汇总列表
+}

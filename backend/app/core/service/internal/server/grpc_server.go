@@ -80,6 +80,7 @@ func NewGrpcServer(
 	pluginService *service.PluginService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
+	cloudCostService *service.CloudCostService,
 	cloudInstanceService *service.CloudInstanceService,
 	cloudAccountService *service.CloudAccountService,
 ) (*grpc.Server, error) {
@@ -142,6 +143,7 @@ func NewGrpcServer(
 	opsV1.RegisterPluginServiceServer(srv, pluginService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
+	opsV1.RegisterCloudCostServiceServer(srv, cloudCostService)
 	opsV1.RegisterCloudInstanceServiceServer(srv, cloudInstanceService)
 	opsV1.RegisterCloudAccountServiceServer(srv, cloudAccountService)
 

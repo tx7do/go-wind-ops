@@ -266,6 +266,17 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'cloud-costs',
+        path: '/ops/cloud-costs',
+        element: createLazyRoute(() => import('@/pages/app/ops/cloud-cost')),
+        meta: {
+          title: 'routes:cloud-costs',
+          icon: 'lucide:coins',
+          order: 6,
+          authority: ['sys:platform_admin'],
+        },
+      },
     ],
   },
 ];

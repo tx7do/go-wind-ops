@@ -151,6 +151,7 @@ func NewRestServer(
 	permissionAuditLogService *service.PermissionAuditLogService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
+	cloudCostService *service.CloudCostService,
 	cloudInstanceService *service.CloudInstanceService,
 	cloudAccountService *service.CloudAccountService,
 ) *http.Server {
@@ -224,6 +225,7 @@ func NewRestServer(
 
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
+	adminV1.RegisterCloudCostServiceHTTPServer(srv, cloudCostService)
 	adminV1.RegisterCloudInstanceServiceHTTPServer(srv, cloudInstanceService)
 	adminV1.RegisterCloudAccountServiceHTTPServer(srv, cloudAccountService)
 

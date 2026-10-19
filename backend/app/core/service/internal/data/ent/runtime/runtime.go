@@ -15,6 +15,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
@@ -311,6 +312,29 @@ func init() {
 	cloudaccountDescID := cloudaccountMixinFields0[0].Descriptor()
 	// cloudaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	cloudaccount.IDValidator = cloudaccountDescID.Validators[0].(func(uint32) error)
+	cloudcostMixin := schema.CloudCost{}.Mixin()
+	cloudcostMixinFields0 := cloudcostMixin[0].Fields()
+	_ = cloudcostMixinFields0
+	cloudcostFields := schema.CloudCost{}.Fields()
+	_ = cloudcostFields
+	// cloudcostDescCloudAccountID is the schema descriptor for cloud_account_id field.
+	cloudcostDescCloudAccountID := cloudcostFields[0].Descriptor()
+	// cloudcost.CloudAccountIDValidator is a validator for the "cloud_account_id" field. It is called by the builders before save.
+	cloudcost.CloudAccountIDValidator = cloudcostDescCloudAccountID.Validators[0].(func(uint32) error)
+	// cloudcostDescMonth is the schema descriptor for month field.
+	cloudcostDescMonth := cloudcostFields[3].Descriptor()
+	// cloudcost.MonthValidator is a validator for the "month" field. It is called by the builders before save.
+	cloudcost.MonthValidator = cloudcostDescMonth.Validators[0].(func(string) error)
+	// cloudcostDescCurrency is the schema descriptor for currency field.
+	cloudcostDescCurrency := cloudcostFields[5].Descriptor()
+	// cloudcost.DefaultCurrency holds the default value on creation for the currency field.
+	cloudcost.DefaultCurrency = cloudcostDescCurrency.Default.(string)
+	// cloudcost.CurrencyValidator is a validator for the "currency" field. It is called by the builders before save.
+	cloudcost.CurrencyValidator = cloudcostDescCurrency.Validators[0].(func(string) error)
+	// cloudcostDescID is the schema descriptor for id field.
+	cloudcostDescID := cloudcostMixinFields0[0].Descriptor()
+	// cloudcost.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cloudcost.IDValidator = cloudcostDescID.Validators[0].(func(uint32) error)
 	cloudinstanceMixin := schema.CloudInstance{}.Mixin()
 	cloudinstanceMixinFields0 := cloudinstanceMixin[0].Fields()
 	_ = cloudinstanceMixinFields0

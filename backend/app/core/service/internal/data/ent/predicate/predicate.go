@@ -36,6 +36,9 @@ type BuildPipeline func(*sql.Selector)
 // CloudAccount is the predicate function for cloudaccount builders.
 type CloudAccount func(*sql.Selector)
 
+// CloudCost is the predicate function for cloudcost builders.
+type CloudCost func(*sql.Selector)
+
 // CloudInstance is the predicate function for cloudinstance builders.
 type CloudInstance func(*sql.Selector)
 

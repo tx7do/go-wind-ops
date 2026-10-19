@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "ops/service/v1/cloud_cost.proto";
+
+// CloudCostService 云成本月账单门面。
+service CloudCostService {
+  // 查询成本记录
+  rpc List (ops.service.v1.ListCloudCostsRequest) returns (ops.service.v1.ListCloudCostsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-costs"
+    };
+  }
+
+  // 录入/更新一条成本(按账号+月份 upsert)
+  rpc Upsert (ops.service.v1.UpsertCloudCostRequest) returns (ops.service.v1.CloudCost) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-costs"
+      body: "*"
+    };
+  }
+
+  // 删除成本记录
+  rpc Delete (ops.service.v1.DeleteCloudCostRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/cloud-costs/{id}"
+    };
+  }
+
+  // 批量导入(按账号名匹配)
+  rpc Import (ops.service.v1.ImportCloudCostsRequest) returns (ops.service.v1.ImportCloudCostsResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-costs/import"
+      body: "*"
+    };
+  }
+
+  // 月度汇总(趋势图)
+  rpc Summary (ops.service.v1.GetCloudCostSummaryRequest) returns (ops.service.v1.GetCloudCostSummaryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-costs/summary"
+    };
+  }
+}

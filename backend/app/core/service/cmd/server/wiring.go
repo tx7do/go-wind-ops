@@ -148,6 +148,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
+	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
 
@@ -216,6 +217,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mqttAuthServer := server.NewMqttAuthServer(ctx, agentNodeRepo)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	cloudCostService := service.NewCloudCostService(ctx, cloudCostRepo, cloudAccountRepo)
 	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceRepo, cloudAccountRepo)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountRepo)
 
@@ -244,6 +246,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		apiKeyService,
 		pluginService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
+		cloudCostService,
 		cloudInstanceService,
 		cloudAccountService,
 	)

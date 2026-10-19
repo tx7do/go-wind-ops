@@ -19,6 +19,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
@@ -90,6 +91,7 @@ const (
 	TypeBuildHistory         = "BuildHistory"
 	TypeBuildPipeline        = "BuildPipeline"
 	TypeCloudAccount         = "CloudAccount"
+	TypeCloudCost            = "CloudCost"
 	TypeCloudInstance        = "CloudInstance"
 	TypeCommandRecord        = "CommandRecord"
 	TypeDataAccessAuditLog   = "DataAccessAuditLog"
@@ -15995,6 +15997,1331 @@ func (m *CloudAccountMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CloudAccountMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CloudAccount edge %s", name)
+}
+
+// CloudCostMutation represents an operation that mutates the CloudCost nodes in the graph.
+type CloudCostMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *uint32
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	created_by          *uint32
+	addcreated_by       *int32
+	updated_by          *uint32
+	addupdated_by       *int32
+	deleted_by          *uint32
+	adddeleted_by       *int32
+	cloud_account_id    *uint32
+	addcloud_account_id *int32
+	cloud_account_name  *string
+	provider            *cloudcost.Provider
+	month               *string
+	amount              *float64
+	addamount           *float64
+	currency            *string
+	remark              *string
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*CloudCost, error)
+	predicates          []predicate.CloudCost
+}
+
+var _ ent.Mutation = (*CloudCostMutation)(nil)
+
+// cloudcostOption allows management of the mutation configuration using functional options.
+type cloudcostOption func(*CloudCostMutation)
+
+// newCloudCostMutation creates new mutation for the CloudCost entity.
+func newCloudCostMutation(c config, op Op, opts ...cloudcostOption) *CloudCostMutation {
+	m := &CloudCostMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCloudCost,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCloudCostID sets the ID field of the mutation.
+func withCloudCostID(id uint32) cloudcostOption {
+	return func(m *CloudCostMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CloudCost
+		)
+		m.oldValue = func(ctx context.Context) (*CloudCost, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CloudCost.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCloudCost sets the old CloudCost of the mutation.
+func withCloudCost(node *CloudCost) cloudcostOption {
+	return func(m *CloudCostMutation) {
+		m.oldValue = func(context.Context) (*CloudCost, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CloudCostMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CloudCostMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CloudCost entities.
+func (m *CloudCostMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CloudCostMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CloudCostMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CloudCost.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CloudCostMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CloudCostMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *CloudCostMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[cloudcost.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *CloudCostMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CloudCostMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, cloudcost.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CloudCostMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CloudCostMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *CloudCostMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[cloudcost.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *CloudCostMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CloudCostMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, cloudcost.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CloudCostMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CloudCostMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *CloudCostMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[cloudcost.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *CloudCostMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CloudCostMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, cloudcost.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CloudCostMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CloudCostMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *CloudCostMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CloudCostMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *CloudCostMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[cloudcost.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *CloudCostMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CloudCostMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, cloudcost.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CloudCostMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CloudCostMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *CloudCostMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CloudCostMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *CloudCostMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[cloudcost.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *CloudCostMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CloudCostMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, cloudcost.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *CloudCostMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *CloudCostMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *CloudCostMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *CloudCostMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *CloudCostMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[cloudcost.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *CloudCostMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *CloudCostMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, cloudcost.FieldDeletedBy)
+}
+
+// SetCloudAccountID sets the "cloud_account_id" field.
+func (m *CloudCostMutation) SetCloudAccountID(u uint32) {
+	m.cloud_account_id = &u
+	m.addcloud_account_id = nil
+}
+
+// CloudAccountID returns the value of the "cloud_account_id" field in the mutation.
+func (m *CloudCostMutation) CloudAccountID() (r uint32, exists bool) {
+	v := m.cloud_account_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCloudAccountID returns the old "cloud_account_id" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldCloudAccountID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCloudAccountID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCloudAccountID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCloudAccountID: %w", err)
+	}
+	return oldValue.CloudAccountID, nil
+}
+
+// AddCloudAccountID adds u to the "cloud_account_id" field.
+func (m *CloudCostMutation) AddCloudAccountID(u int32) {
+	if m.addcloud_account_id != nil {
+		*m.addcloud_account_id += u
+	} else {
+		m.addcloud_account_id = &u
+	}
+}
+
+// AddedCloudAccountID returns the value that was added to the "cloud_account_id" field in this mutation.
+func (m *CloudCostMutation) AddedCloudAccountID() (r int32, exists bool) {
+	v := m.addcloud_account_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCloudAccountID resets all changes to the "cloud_account_id" field.
+func (m *CloudCostMutation) ResetCloudAccountID() {
+	m.cloud_account_id = nil
+	m.addcloud_account_id = nil
+}
+
+// SetCloudAccountName sets the "cloud_account_name" field.
+func (m *CloudCostMutation) SetCloudAccountName(s string) {
+	m.cloud_account_name = &s
+}
+
+// CloudAccountName returns the value of the "cloud_account_name" field in the mutation.
+func (m *CloudCostMutation) CloudAccountName() (r string, exists bool) {
+	v := m.cloud_account_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCloudAccountName returns the old "cloud_account_name" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldCloudAccountName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCloudAccountName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCloudAccountName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCloudAccountName: %w", err)
+	}
+	return oldValue.CloudAccountName, nil
+}
+
+// ClearCloudAccountName clears the value of the "cloud_account_name" field.
+func (m *CloudCostMutation) ClearCloudAccountName() {
+	m.cloud_account_name = nil
+	m.clearedFields[cloudcost.FieldCloudAccountName] = struct{}{}
+}
+
+// CloudAccountNameCleared returns if the "cloud_account_name" field was cleared in this mutation.
+func (m *CloudCostMutation) CloudAccountNameCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldCloudAccountName]
+	return ok
+}
+
+// ResetCloudAccountName resets all changes to the "cloud_account_name" field.
+func (m *CloudCostMutation) ResetCloudAccountName() {
+	m.cloud_account_name = nil
+	delete(m.clearedFields, cloudcost.FieldCloudAccountName)
+}
+
+// SetProvider sets the "provider" field.
+func (m *CloudCostMutation) SetProvider(c cloudcost.Provider) {
+	m.provider = &c
+}
+
+// Provider returns the value of the "provider" field in the mutation.
+func (m *CloudCostMutation) Provider() (r cloudcost.Provider, exists bool) {
+	v := m.provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProvider returns the old "provider" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldProvider(ctx context.Context) (v *cloudcost.Provider, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProvider: %w", err)
+	}
+	return oldValue.Provider, nil
+}
+
+// ClearProvider clears the value of the "provider" field.
+func (m *CloudCostMutation) ClearProvider() {
+	m.provider = nil
+	m.clearedFields[cloudcost.FieldProvider] = struct{}{}
+}
+
+// ProviderCleared returns if the "provider" field was cleared in this mutation.
+func (m *CloudCostMutation) ProviderCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldProvider]
+	return ok
+}
+
+// ResetProvider resets all changes to the "provider" field.
+func (m *CloudCostMutation) ResetProvider() {
+	m.provider = nil
+	delete(m.clearedFields, cloudcost.FieldProvider)
+}
+
+// SetMonth sets the "month" field.
+func (m *CloudCostMutation) SetMonth(s string) {
+	m.month = &s
+}
+
+// Month returns the value of the "month" field in the mutation.
+func (m *CloudCostMutation) Month() (r string, exists bool) {
+	v := m.month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMonth returns the old "month" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldMonth(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMonth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMonth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMonth: %w", err)
+	}
+	return oldValue.Month, nil
+}
+
+// ResetMonth resets all changes to the "month" field.
+func (m *CloudCostMutation) ResetMonth() {
+	m.month = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *CloudCostMutation) SetAmount(f float64) {
+	m.amount = &f
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *CloudCostMutation) Amount() (r float64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldAmount(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds f to the "amount" field.
+func (m *CloudCostMutation) AddAmount(f float64) {
+	if m.addamount != nil {
+		*m.addamount += f
+	} else {
+		m.addamount = &f
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *CloudCostMutation) AddedAmount() (r float64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *CloudCostMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetCurrency sets the "currency" field.
+func (m *CloudCostMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *CloudCostMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *CloudCostMutation) ResetCurrency() {
+	m.currency = nil
+}
+
+// SetRemark sets the "remark" field.
+func (m *CloudCostMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *CloudCostMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *CloudCostMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[cloudcost.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *CloudCostMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *CloudCostMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, cloudcost.FieldRemark)
+}
+
+// Where appends a list predicates to the CloudCostMutation builder.
+func (m *CloudCostMutation) Where(ps ...predicate.CloudCost) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CloudCostMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CloudCostMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CloudCost, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CloudCostMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CloudCostMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CloudCost).
+func (m *CloudCostMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CloudCostMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, cloudcost.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cloudcost.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cloudcost.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, cloudcost.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, cloudcost.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, cloudcost.FieldDeletedBy)
+	}
+	if m.cloud_account_id != nil {
+		fields = append(fields, cloudcost.FieldCloudAccountID)
+	}
+	if m.cloud_account_name != nil {
+		fields = append(fields, cloudcost.FieldCloudAccountName)
+	}
+	if m.provider != nil {
+		fields = append(fields, cloudcost.FieldProvider)
+	}
+	if m.month != nil {
+		fields = append(fields, cloudcost.FieldMonth)
+	}
+	if m.amount != nil {
+		fields = append(fields, cloudcost.FieldAmount)
+	}
+	if m.currency != nil {
+		fields = append(fields, cloudcost.FieldCurrency)
+	}
+	if m.remark != nil {
+		fields = append(fields, cloudcost.FieldRemark)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CloudCostMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cloudcost.FieldCreatedAt:
+		return m.CreatedAt()
+	case cloudcost.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cloudcost.FieldDeletedAt:
+		return m.DeletedAt()
+	case cloudcost.FieldCreatedBy:
+		return m.CreatedBy()
+	case cloudcost.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case cloudcost.FieldDeletedBy:
+		return m.DeletedBy()
+	case cloudcost.FieldCloudAccountID:
+		return m.CloudAccountID()
+	case cloudcost.FieldCloudAccountName:
+		return m.CloudAccountName()
+	case cloudcost.FieldProvider:
+		return m.Provider()
+	case cloudcost.FieldMonth:
+		return m.Month()
+	case cloudcost.FieldAmount:
+		return m.Amount()
+	case cloudcost.FieldCurrency:
+		return m.Currency()
+	case cloudcost.FieldRemark:
+		return m.Remark()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CloudCostMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cloudcost.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cloudcost.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cloudcost.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cloudcost.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case cloudcost.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case cloudcost.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case cloudcost.FieldCloudAccountID:
+		return m.OldCloudAccountID(ctx)
+	case cloudcost.FieldCloudAccountName:
+		return m.OldCloudAccountName(ctx)
+	case cloudcost.FieldProvider:
+		return m.OldProvider(ctx)
+	case cloudcost.FieldMonth:
+		return m.OldMonth(ctx)
+	case cloudcost.FieldAmount:
+		return m.OldAmount(ctx)
+	case cloudcost.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case cloudcost.FieldRemark:
+		return m.OldRemark(ctx)
+	}
+	return nil, fmt.Errorf("unknown CloudCost field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CloudCostMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cloudcost.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cloudcost.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cloudcost.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cloudcost.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case cloudcost.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case cloudcost.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case cloudcost.FieldCloudAccountID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCloudAccountID(v)
+		return nil
+	case cloudcost.FieldCloudAccountName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCloudAccountName(v)
+		return nil
+	case cloudcost.FieldProvider:
+		v, ok := value.(cloudcost.Provider)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProvider(v)
+		return nil
+	case cloudcost.FieldMonth:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMonth(v)
+		return nil
+	case cloudcost.FieldAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case cloudcost.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case cloudcost.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CloudCost field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CloudCostMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, cloudcost.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, cloudcost.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, cloudcost.FieldDeletedBy)
+	}
+	if m.addcloud_account_id != nil {
+		fields = append(fields, cloudcost.FieldCloudAccountID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, cloudcost.FieldAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CloudCostMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cloudcost.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case cloudcost.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case cloudcost.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case cloudcost.FieldCloudAccountID:
+		return m.AddedCloudAccountID()
+	case cloudcost.FieldAmount:
+		return m.AddedAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CloudCostMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cloudcost.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case cloudcost.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case cloudcost.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case cloudcost.FieldCloudAccountID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCloudAccountID(v)
+		return nil
+	case cloudcost.FieldAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CloudCost numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CloudCostMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(cloudcost.FieldCreatedAt) {
+		fields = append(fields, cloudcost.FieldCreatedAt)
+	}
+	if m.FieldCleared(cloudcost.FieldUpdatedAt) {
+		fields = append(fields, cloudcost.FieldUpdatedAt)
+	}
+	if m.FieldCleared(cloudcost.FieldDeletedAt) {
+		fields = append(fields, cloudcost.FieldDeletedAt)
+	}
+	if m.FieldCleared(cloudcost.FieldCreatedBy) {
+		fields = append(fields, cloudcost.FieldCreatedBy)
+	}
+	if m.FieldCleared(cloudcost.FieldUpdatedBy) {
+		fields = append(fields, cloudcost.FieldUpdatedBy)
+	}
+	if m.FieldCleared(cloudcost.FieldDeletedBy) {
+		fields = append(fields, cloudcost.FieldDeletedBy)
+	}
+	if m.FieldCleared(cloudcost.FieldCloudAccountName) {
+		fields = append(fields, cloudcost.FieldCloudAccountName)
+	}
+	if m.FieldCleared(cloudcost.FieldProvider) {
+		fields = append(fields, cloudcost.FieldProvider)
+	}
+	if m.FieldCleared(cloudcost.FieldRemark) {
+		fields = append(fields, cloudcost.FieldRemark)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CloudCostMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CloudCostMutation) ClearField(name string) error {
+	switch name {
+	case cloudcost.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case cloudcost.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case cloudcost.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case cloudcost.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case cloudcost.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case cloudcost.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case cloudcost.FieldCloudAccountName:
+		m.ClearCloudAccountName()
+		return nil
+	case cloudcost.FieldProvider:
+		m.ClearProvider()
+		return nil
+	case cloudcost.FieldRemark:
+		m.ClearRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown CloudCost nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CloudCostMutation) ResetField(name string) error {
+	switch name {
+	case cloudcost.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cloudcost.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cloudcost.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cloudcost.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case cloudcost.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case cloudcost.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case cloudcost.FieldCloudAccountID:
+		m.ResetCloudAccountID()
+		return nil
+	case cloudcost.FieldCloudAccountName:
+		m.ResetCloudAccountName()
+		return nil
+	case cloudcost.FieldProvider:
+		m.ResetProvider()
+		return nil
+	case cloudcost.FieldMonth:
+		m.ResetMonth()
+		return nil
+	case cloudcost.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case cloudcost.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case cloudcost.FieldRemark:
+		m.ResetRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown CloudCost field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CloudCostMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CloudCostMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CloudCostMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CloudCostMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CloudCostMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CloudCostMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CloudCostMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CloudCost unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CloudCostMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CloudCost edge %s", name)
 }
 
 // CloudInstanceMutation represents an operation that mutates the CloudInstance nodes in the graph.
