@@ -1105,6 +1105,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			monitor.FieldProjectID:             {Type: field.TypeUint32, Column: monitor.FieldProjectID},
 			monitor.FieldTargetType:            {Type: field.TypeEnum, Column: monitor.FieldTargetType},
 			monitor.FieldNodeID:                {Type: field.TypeUint32, Column: monitor.FieldNodeID},
+			monitor.FieldProcessName:           {Type: field.TypeString, Column: monitor.FieldProcessName},
 			monitor.FieldMetricType:            {Type: field.TypeEnum, Column: monitor.FieldMetricType},
 			monitor.FieldThresholdPercent:      {Type: field.TypeFloat64, Column: monitor.FieldThresholdPercent},
 			monitor.FieldConsecutiveCount:      {Type: field.TypeInt, Column: monitor.FieldConsecutiveCount},
@@ -6416,6 +6417,11 @@ func (f *MonitorFilter) WhereTargetType(p entql.StringP) {
 // WhereNodeID applies the entql uint32 predicate on the node_id field.
 func (f *MonitorFilter) WhereNodeID(p entql.Uint32P) {
 	f.Where(p.Field(monitor.FieldNodeID))
+}
+
+// WhereProcessName applies the entql string predicate on the process_name field.
+func (f *MonitorFilter) WhereProcessName(p entql.StringP) {
+	f.Where(p.Field(monitor.FieldProcessName))
 }
 
 // WhereMetricType applies the entql string predicate on the metric_type field.

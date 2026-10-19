@@ -154,6 +154,20 @@ func (_c *MonitorCreate) SetNillableNodeID(v *uint32) *MonitorCreate {
 	return _c
 }
 
+// SetProcessName sets the "process_name" field.
+func (_c *MonitorCreate) SetProcessName(v string) *MonitorCreate {
+	_c.mutation.SetProcessName(v)
+	return _c
+}
+
+// SetNillableProcessName sets the "process_name" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableProcessName(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetProcessName(*v)
+	}
+	return _c
+}
+
 // SetMetricType sets the "metric_type" field.
 func (_c *MonitorCreate) SetMetricType(v monitor.MetricType) *MonitorCreate {
 	_c.mutation.SetMetricType(v)
@@ -353,6 +367,10 @@ func (_c *MonitorCreate) defaults() {
 		v := monitor.DefaultNodeID
 		_c.mutation.SetNodeID(v)
 	}
+	if _, ok := _c.mutation.ProcessName(); !ok {
+		v := monitor.DefaultProcessName
+		_c.mutation.SetProcessName(v)
+	}
 	if _, ok := _c.mutation.MetricType(); !ok {
 		v := monitor.DefaultMetricType
 		_c.mutation.SetMetricType(v)
@@ -519,6 +537,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.NodeID(); ok {
 		_spec.SetField(monitor.FieldNodeID, field.TypeUint32, value)
 		_node.NodeID = value
+	}
+	if value, ok := _c.mutation.ProcessName(); ok {
+		_spec.SetField(monitor.FieldProcessName, field.TypeString, value)
+		_node.ProcessName = value
 	}
 	if value, ok := _c.mutation.MetricType(); ok {
 		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)
@@ -793,6 +815,24 @@ func (u *MonitorUpsert) AddNodeID(v uint32) *MonitorUpsert {
 // ClearNodeID clears the value of the "node_id" field.
 func (u *MonitorUpsert) ClearNodeID() *MonitorUpsert {
 	u.SetNull(monitor.FieldNodeID)
+	return u
+}
+
+// SetProcessName sets the "process_name" field.
+func (u *MonitorUpsert) SetProcessName(v string) *MonitorUpsert {
+	u.Set(monitor.FieldProcessName, v)
+	return u
+}
+
+// UpdateProcessName sets the "process_name" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateProcessName() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldProcessName)
+	return u
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (u *MonitorUpsert) ClearProcessName() *MonitorUpsert {
+	u.SetNull(monitor.FieldProcessName)
 	return u
 }
 
@@ -1222,6 +1262,27 @@ func (u *MonitorUpsertOne) UpdateNodeID() *MonitorUpsertOne {
 func (u *MonitorUpsertOne) ClearNodeID() *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.ClearNodeID()
+	})
+}
+
+// SetProcessName sets the "process_name" field.
+func (u *MonitorUpsertOne) SetProcessName(v string) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetProcessName(v)
+	})
+}
+
+// UpdateProcessName sets the "process_name" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateProcessName() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateProcessName()
+	})
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (u *MonitorUpsertOne) ClearProcessName() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearProcessName()
 	})
 }
 
@@ -1845,6 +1906,27 @@ func (u *MonitorUpsertBulk) UpdateNodeID() *MonitorUpsertBulk {
 func (u *MonitorUpsertBulk) ClearNodeID() *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.ClearNodeID()
+	})
+}
+
+// SetProcessName sets the "process_name" field.
+func (u *MonitorUpsertBulk) SetProcessName(v string) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetProcessName(v)
+	})
+}
+
+// UpdateProcessName sets the "process_name" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateProcessName() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateProcessName()
+	})
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (u *MonitorUpsertBulk) ClearProcessName() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearProcessName()
 	})
 }
 

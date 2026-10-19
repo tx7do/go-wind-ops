@@ -89,16 +89,23 @@ message Monitor {
   optional string target_type = 9 [
     json_name = "targetType",
     (gnostic.openapi.v3.property) = {
-      description: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标"
+      description: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性"
     }
-  ]; // 规则目标类型(PROJECT/NODE_METRIC)
+  ]; // 规则目标类型(PROJECT/NODE_METRIC/PROCESS)
 
   optional uint32 node_id = 10 [
     json_name = "nodeId",
     (gnostic.openapi.v3.property) = {
-      description: "被监控节点(节点指标规则必填,项目状态规则为 0)"
+      description: "被监控节点(节点指标/进程规则必填,项目状态规则为 0)"
     }
   ]; // 被监控节点
+
+  optional string process_name = 16 [
+    json_name = "processName",
+    (gnostic.openapi.v3.property) = {
+      description: "被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)"
+    }
+  ]; // 被监控进程名(进程规则用)
 
   optional string metric_type = 11 [
     json_name = "metricType",

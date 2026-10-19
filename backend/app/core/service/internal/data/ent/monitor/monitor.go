@@ -33,6 +33,8 @@ const (
 	FieldTargetType = "target_type"
 	// FieldNodeID holds the string denoting the node_id field in the database.
 	FieldNodeID = "node_id"
+	// FieldProcessName holds the string denoting the process_name field in the database.
+	FieldProcessName = "process_name"
 	// FieldMetricType holds the string denoting the metric_type field in the database.
 	FieldMetricType = "metric_type"
 	// FieldThresholdPercent holds the string denoting the threshold_percent field in the database.
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldProjectID,
 	FieldTargetType,
 	FieldNodeID,
+	FieldProcessName,
 	FieldMetricType,
 	FieldThresholdPercent,
 	FieldConsecutiveCount,
@@ -102,6 +105,8 @@ var (
 	DefaultProjectID uint32
 	// DefaultNodeID holds the default value on creation for the "node_id" field.
 	DefaultNodeID uint32
+	// DefaultProcessName holds the default value on creation for the "process_name" field.
+	DefaultProcessName string
 	// DefaultThresholdPercent holds the default value on creation for the "threshold_percent" field.
 	DefaultThresholdPercent float64
 	// DefaultConsecutiveCount holds the default value on creation for the "consecutive_count" field.
@@ -132,6 +137,7 @@ const DefaultTargetType = TargetTypeProject
 const (
 	TargetTypeProject    TargetType = "PROJECT"
 	TargetTypeNodeMetric TargetType = "NODE_METRIC"
+	TargetTypeProcess    TargetType = "PROCESS"
 )
 
 func (tt TargetType) String() string {
@@ -141,7 +147,7 @@ func (tt TargetType) String() string {
 // TargetTypeValidator is a validator for the "target_type" field enum values. It is called by the builders before save.
 func TargetTypeValidator(tt TargetType) error {
 	switch tt {
-	case TargetTypeProject, TargetTypeNodeMetric:
+	case TargetTypeProject, TargetTypeNodeMetric, TargetTypeProcess:
 		return nil
 	default:
 		return fmt.Errorf("monitor: invalid enum value for target_type field: %q", tt)
@@ -231,6 +237,11 @@ func ByTargetType(opts ...sql.OrderTermOption) OrderOption {
 // ByNodeID orders the results by the node_id field.
 func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNodeID, opts...).ToFunc()
+}
+
+// ByProcessName orders the results by the process_name field.
+func ByProcessName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProcessName, opts...).ToFunc()
 }
 
 // ByMetricType orders the results by the metric_type field.

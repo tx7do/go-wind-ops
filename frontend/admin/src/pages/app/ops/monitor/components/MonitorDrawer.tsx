@@ -39,6 +39,9 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
   });
 
   const isNode = targetType === 'NODE_METRIC';
+  const isProcess = targetType === 'PROCESS';
+  const isProject = !isNode && !isProcess;
+  const isNodeOrProcess = isNode || isProcess;
 
   return (
     <DrawerForm title={mode === 'create' ? t('create') : t('edit')} formRef={formRef} open={open}
@@ -47,10 +50,12 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
         const payload = {
           ...values,
           targetType: values.targetType || 'PROJECT',
-          metricType: values.targetType === 'NODE_METRIC' ? (values.metricType || 'CPU') : undefined,
-          thresholdPercent: values.targetType === 'NODE_METRIC' ? values.thresholdPercent : undefined,
-          consecutiveCount: values.targetType === 'NODE_METRIC' ? (values.consecutiveCount ?? 1) : undefined,
-          notifyOnRecovery: values.targetType === 'NODE_METRIC' ? (values.notifyOnRecovery ?? true) : undefined,
+          nodeId: isNodeOrProcess ? values.nodeId : undefined,
+          metricType: isNode ? (values.metricType || 'CPU') : undefined,
+          thresholdPercent: isNode ? values.thresholdPercent : undefined,
+          processName: isProcess ? values.processName : undefined,
+          consecutiveCount: isNodeOrProcess ? (values.consecutiveCount ?? 1) : undefined,
+          notifyOnRecovery: isNodeOrProcess ? (values.notifyOnRecovery ?? true) : undefined,
         };
         if (mode === 'create') await createMutation.mutateAsync(payload);
         else if (data?.id) await updateMutation.mutateAsync({ id: data.id, values: payload });
@@ -65,12 +70,18 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
           options={[
             { label: t('targetProject'), value: 'PROJECT' },
             { label: t('targetNodeMetric'), value: 'NODE_METRIC' },
+            { label: t('targetProcess'), value: 'PROCESS' },
           ]}
           initialValue={data?.targetType || 'PROJECT'}
           fieldProps={{ onChange: (v: string) => setTargetType(v) }}
         />
-        {isNode ? (<>
+        {isNodeOrProcess && (
           <ProFormSelect name="nodeId" label={t('nodeId')} options={nodeOptions} rules={[{ required: true }]} initialValue={data?.nodeId} />
+        )}
+        {isProject && (
+          <ProFormSelect name="projectId" label={t('projectId')} options={projectOptions} rules={[{ required: true }]} initialValue={data?.projectId} />
+        )}
+        {isNode && (
           <ProFormSelect
             name="metricType"
             label={t('metricType')}
@@ -82,6 +93,8 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
             initialValue={data?.metricType || 'CPU'}
             rules={[{ required: true }]}
           />
+        )}
+        {isNode && (
           <ProFormDigit
             name="thresholdPercent"
             label={t('thresholdPercent')}
@@ -92,6 +105,18 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
             extra={t('thresholdHint')}
             initialValue={data?.thresholdPercent ?? 80}
           />
+        )}
+        {isProcess && (
+          <ProFormText
+            name="processName"
+            label={t('processName')}
+            rules={[{ required: true }]}
+            placeholder="nginx / mysqld / java"
+            extra={t('processNameHint')}
+            initialValue={data?.processName}
+          />
+        )}
+        {isNodeOrProcess && (
           <ProFormDigit
             name="consecutiveCount"
             label={t('consecutiveCount')}
@@ -101,14 +126,13 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
             extra={t('consecutiveHint')}
             initialValue={data?.consecutiveCount ?? 1}
           />
+        )}
+        {isNodeOrProcess && (
           <ProFormSwitch name="notifyOnRecovery" label={t('notifyOnRecovery')} initialValue={data?.notifyOnRecovery ?? true} />
-          <ProFormDigit name="repeatIntervalMinutes" label={t('repeatInterval')} min={0} fieldProps={{ precision: 0 }} extra={t('repeatIntervalHint')} initialValue={data?.repeatIntervalMinutes ?? 0} addonAfter="min" />
-        </>) : (
-          <ProFormSelect name="projectId" label={t('projectId')} options={projectOptions} rules={[{ required: true }]} initialValue={data?.projectId} />
         )}
         <ProFormText name="cron" label={t('cron')} rules={[{ required: true }]} placeholder="*/5 * * * *" extra={t('cronHint')} initialValue={data?.cron} />
         <ProFormDigit name="repeatIntervalMinutes" label={t('repeatInterval')} min={0} fieldProps={{ precision: 0 }} extra={t('repeatIntervalHint')} initialValue={data?.repeatIntervalMinutes ?? 0} addonAfter="min" />
-        {!isNode && <ProFormSwitch name="autoRestart" label={t('autoRestart')} initialValue={data?.autoRestart ?? false} />}
+        {isProject && <ProFormSwitch name="autoRestart" label={t('autoRestart')} initialValue={data?.autoRestart ?? false} />}
         <ProFormSwitch name="enabled" label={t('enabled')} initialValue={data?.enabled ?? true} />
         <ProFormText name="webhookUrl" label={t('webhookUrl')} placeholder="https://..." initialValue={data?.webhookUrl} />
         <ProFormTextArea name="description" label={t('description')} fieldProps={{ rows: 2 }} initialValue={data?.description} />

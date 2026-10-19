@@ -8182,6 +8182,7 @@ export type opsservicev1_Monitor = {
   name?: string;
   nodeId?: number;
   notifyOnRecovery?: boolean;
+  processName?: string;
   //
   // Behaviors: REQUIRED
   projectId?: number;

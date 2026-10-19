@@ -11,9 +11,11 @@ import (
 )
 
 // Monitor 监控规则(对齐 jpom MonitorModel 简化版):周期检查某个项目的
-// 运行状态或某台节点的资源指标,异常时产生告警并可自动重启。
+// 运行状态、某台节点的资源指标或某台节点上的进程存在性,异常时产生告警
+// 并可自动重启。
 // 检查由 core 的调度器按 cron 周期驱动:项目规则经 MQTT 同步指令探测,
-// 节点规则直接读心跳指标快照(ops_agent_nodes 行上字段)。
+// 节点规则直接读心跳指标快照(ops_agent_nodes 行上字段),进程规则经
+// process_list 同步指令探测。
 type Monitor struct {
 	ent.Schema
 }
@@ -44,16 +46,22 @@ func (Monitor) Fields() []ent.Field {
 			Optional(),
 
 		field.Enum("target_type").
-			Comment("规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标").
+			Comment("规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性").
 			NamedValues(
 				"Project", "PROJECT",
 				"NodeMetric", "NODE_METRIC",
+				"Process", "PROCESS",
 			).
 			Default("PROJECT"),
 
 		field.Uint32("node_id").
 			Comment("被监控节点(ops_agent_nodes.id;项目状态规则为 0)").
 			Default(0).
+			Optional(),
+
+		field.String("process_name").
+			Comment("被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)").
+			Default("").
 			Optional(),
 
 		field.Enum("metric_type").

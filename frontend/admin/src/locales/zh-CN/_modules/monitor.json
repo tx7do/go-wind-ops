@@ -35,5 +35,8 @@
   "consecutiveHint": "连续 N 个检查周期超阈值才告警(防抖)",
   "notifyOnRecovery": "恢复时通知",
   "repeatInterval": "重复告警间隔",
-  "repeatIntervalHint": "距上次告警不足该间隔则不重复报(0=每次异常都报,恢复后重新告警同样受限)"
+  "repeatIntervalHint": "距上次告警不足该间隔则不重复报(0=每次异常都报,恢复后重新告警同样受限)",
+  "targetProcess": "进程存在",
+  "processName": "进程名/关键字",
+  "processNameHint": "按进程名\"大小写不敏感包含\"匹配,如 nginx、mysqld"
 }

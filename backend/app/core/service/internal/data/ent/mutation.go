@@ -54646,6 +54646,7 @@ type MonitorMutation struct {
 	target_type                *monitor.TargetType
 	node_id                    *uint32
 	addnode_id                 *int32
+	process_name               *string
 	metric_type                *monitor.MetricType
 	threshold_percent          *float64
 	addthreshold_percent       *float64
@@ -55340,6 +55341,55 @@ func (m *MonitorMutation) ResetNodeID() {
 	delete(m.clearedFields, monitor.FieldNodeID)
 }
 
+// SetProcessName sets the "process_name" field.
+func (m *MonitorMutation) SetProcessName(s string) {
+	m.process_name = &s
+}
+
+// ProcessName returns the value of the "process_name" field in the mutation.
+func (m *MonitorMutation) ProcessName() (r string, exists bool) {
+	v := m.process_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProcessName returns the old "process_name" field's value of the Monitor entity.
+// If the Monitor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorMutation) OldProcessName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProcessName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProcessName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProcessName: %w", err)
+	}
+	return oldValue.ProcessName, nil
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (m *MonitorMutation) ClearProcessName() {
+	m.process_name = nil
+	m.clearedFields[monitor.FieldProcessName] = struct{}{}
+}
+
+// ProcessNameCleared returns if the "process_name" field was cleared in this mutation.
+func (m *MonitorMutation) ProcessNameCleared() bool {
+	_, ok := m.clearedFields[monitor.FieldProcessName]
+	return ok
+}
+
+// ResetProcessName resets all changes to the "process_name" field.
+func (m *MonitorMutation) ResetProcessName() {
+	m.process_name = nil
+	delete(m.clearedFields, monitor.FieldProcessName)
+}
+
 // SetMetricType sets the "metric_type" field.
 func (m *MonitorMutation) SetMetricType(mt monitor.MetricType) {
 	m.metric_type = &mt
@@ -55876,7 +55926,7 @@ func (m *MonitorMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MonitorMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, monitor.FieldCreatedAt)
 	}
@@ -55906,6 +55956,9 @@ func (m *MonitorMutation) Fields() []string {
 	}
 	if m.node_id != nil {
 		fields = append(fields, monitor.FieldNodeID)
+	}
+	if m.process_name != nil {
+		fields = append(fields, monitor.FieldProcessName)
 	}
 	if m.metric_type != nil {
 		fields = append(fields, monitor.FieldMetricType)
@@ -55968,6 +56021,8 @@ func (m *MonitorMutation) Field(name string) (ent.Value, bool) {
 		return m.TargetType()
 	case monitor.FieldNodeID:
 		return m.NodeID()
+	case monitor.FieldProcessName:
+		return m.ProcessName()
 	case monitor.FieldMetricType:
 		return m.MetricType()
 	case monitor.FieldThresholdPercent:
@@ -56019,6 +56074,8 @@ func (m *MonitorMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldTargetType(ctx)
 	case monitor.FieldNodeID:
 		return m.OldNodeID(ctx)
+	case monitor.FieldProcessName:
+		return m.OldProcessName(ctx)
 	case monitor.FieldMetricType:
 		return m.OldMetricType(ctx)
 	case monitor.FieldThresholdPercent:
@@ -56119,6 +56176,13 @@ func (m *MonitorMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNodeID(v)
+		return nil
+	case monitor.FieldProcessName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProcessName(v)
 		return nil
 	case monitor.FieldMetricType:
 		v, ok := value.(monitor.MetricType)
@@ -56362,6 +56426,9 @@ func (m *MonitorMutation) ClearedFields() []string {
 	if m.FieldCleared(monitor.FieldNodeID) {
 		fields = append(fields, monitor.FieldNodeID)
 	}
+	if m.FieldCleared(monitor.FieldProcessName) {
+		fields = append(fields, monitor.FieldProcessName)
+	}
 	if m.FieldCleared(monitor.FieldWebhookURL) {
 		fields = append(fields, monitor.FieldWebhookURL)
 	}
@@ -56406,6 +56473,9 @@ func (m *MonitorMutation) ClearField(name string) error {
 	case monitor.FieldNodeID:
 		m.ClearNodeID()
 		return nil
+	case monitor.FieldProcessName:
+		m.ClearProcessName()
+		return nil
 	case monitor.FieldWebhookURL:
 		m.ClearWebhookURL()
 		return nil
@@ -56449,6 +56519,9 @@ func (m *MonitorMutation) ResetField(name string) error {
 		return nil
 	case monitor.FieldNodeID:
 		m.ResetNodeID()
+		return nil
+	case monitor.FieldProcessName:
+		m.ResetProcessName()
 		return nil
 	case monitor.FieldMetricType:
 		m.ResetMetricType()

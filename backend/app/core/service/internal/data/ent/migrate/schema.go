@@ -1883,8 +1883,9 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "name", Type: field.TypeString, Unique: true, Comment: "规则名(全局唯一)"},
 		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "被监控项目(ops_projects.id;节点指标规则为 0)", Default: 0},
-		{Name: "target_type", Type: field.TypeEnum, Comment: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标", Enums: []string{"PROJECT", "NODE_METRIC"}, Default: "PROJECT"},
+		{Name: "target_type", Type: field.TypeEnum, Comment: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性", Enums: []string{"PROJECT", "NODE_METRIC", "PROCESS"}, Default: "PROJECT"},
 		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "被监控节点(ops_agent_nodes.id;项目状态规则为 0)", Default: 0},
+		{Name: "process_name", Type: field.TypeString, Nullable: true, Comment: "被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)", Default: ""},
 		{Name: "metric_type", Type: field.TypeEnum, Comment: "指标类型(节点指标规则用):CPU/MEMORY/DISK", Enums: []string{"CPU", "MEMORY", "DISK"}, Default: "CPU"},
 		{Name: "threshold_percent", Type: field.TypeFloat64, Comment: "告警阈值(百分比,指标 ≥ 阈值即命中)", Default: 0},
 		{Name: "consecutive_count", Type: field.TypeInt, Comment: "连续命中多少个检查周期才告警(防抖)", Default: 1},
@@ -1917,7 +1918,7 @@ var (
 			{
 				Name:    "idx_ops_monitor_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[20]},
+				Columns: []*schema.Column{OpsMonitorsColumns[21]},
 			},
 		},
 	}

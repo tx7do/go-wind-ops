@@ -161,17 +161,22 @@ func (r *MonitorRepo) Create(ctx context.Context, req *opsV1.CreateMonitorReques
 		SetEnabled(req.Data.GetEnabled()).
 		SetNillableDescription(req.Data.Description)
 
-	// 目标类型分支:项目状态规则(默认)/节点指标规则
+	// 目标类型分支:项目状态规则(默认)/节点指标规则/进程规则
 	targetType := req.Data.GetTargetType()
 	if targetType == "" {
 		targetType = "PROJECT"
 	}
 	builder.SetTargetType(monitor.TargetType(targetType))
 	builder.SetRepeatIntervalMinutes(int(req.Data.GetRepeatIntervalMinutes()))
-	if targetType == "NODE_METRIC" {
+	switch targetType {
+	case "NODE_METRIC":
 		builder.SetNodeID(req.Data.GetNodeId()).
 			SetMetricType(monitor.MetricType(req.Data.GetMetricType())).
 			SetThresholdPercent(req.Data.GetThresholdPercent()).
+			SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
+	case "PROCESS":
+		builder.SetNodeID(req.Data.GetNodeId()).
+			SetProcessName(req.Data.GetProcessName()).
 			SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
 	}
 	builder.SetNotifyOnRecovery(req.Data.GetNotifyOnRecovery())
@@ -213,31 +218,37 @@ func (r *MonitorRepo) Update(ctx context.Context, req *opsV1.UpdateMonitorReques
 				SetRepeatIntervalMinutes(int(req.Data.GetRepeatIntervalMinutes()))
 
 			if req.Data.TargetType != nil && req.Data.GetTargetType() != "" {
-				builder.SetTargetType(monitor.TargetType(req.Data.GetTargetType()))
-			}
-			if req.Data.ProjectId != nil && req.Data.GetProjectId() > 0 {
-				builder.SetProjectID(req.Data.GetProjectId())
-			}
-			if req.Data.NodeId != nil && req.Data.GetNodeId() > 0 {
-				builder.SetNodeID(req.Data.GetNodeId())
-			}
-			if req.Data.MetricType != nil && req.Data.GetMetricType() != "" {
-				builder.SetMetricType(monitor.MetricType(req.Data.GetMetricType()))
-			}
-			if req.Data.ThresholdPercent != nil {
-				builder.SetThresholdPercent(req.Data.GetThresholdPercent())
-			}
-			if req.Data.ConsecutiveCount != nil && req.Data.GetConsecutiveCount() > 0 {
-				builder.SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
-			}
-			// 目标类型切换时清掉另一侧的关联,避免残留脏数据
-			if req.Data.TargetType != nil {
-				if req.Data.GetTargetType() == "NODE_METRIC" {
-					builder.SetProjectID(0)
-				} else {
-					builder.SetNodeID(0)
+					builder.SetTargetType(monitor.TargetType(req.Data.GetTargetType()))
 				}
-			}
+				if req.Data.ProjectId != nil && req.Data.GetProjectId() > 0 {
+					builder.SetProjectID(req.Data.GetProjectId())
+				}
+				if req.Data.NodeId != nil && req.Data.GetNodeId() > 0 {
+					builder.SetNodeID(req.Data.GetNodeId())
+				}
+				if req.Data.MetricType != nil && req.Data.GetMetricType() != "" {
+					builder.SetMetricType(monitor.MetricType(req.Data.GetMetricType()))
+				}
+				if req.Data.ProcessName != nil {
+					builder.SetProcessName(req.Data.GetProcessName())
+				}
+				if req.Data.ThresholdPercent != nil {
+					builder.SetThresholdPercent(req.Data.GetThresholdPercent())
+				}
+				if req.Data.ConsecutiveCount != nil && req.Data.GetConsecutiveCount() > 0 {
+					builder.SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
+				}
+				// 目标类型切换时清掉另一侧的关联,避免残留脏数据
+				if req.Data.TargetType != nil {
+					switch req.Data.GetTargetType() {
+					case "NODE_METRIC":
+						builder.SetProjectID(0).SetProcessName("")
+					case "PROCESS":
+						builder.SetProjectID(0)
+					default:
+						builder.SetNodeID(0).SetProcessName("")
+					}
+				}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(monitor.FieldID, req.GetId()))

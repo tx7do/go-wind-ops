@@ -232,6 +232,26 @@ func (_u *MonitorUpdate) ClearNodeID() *MonitorUpdate {
 	return _u
 }
 
+// SetProcessName sets the "process_name" field.
+func (_u *MonitorUpdate) SetProcessName(v string) *MonitorUpdate {
+	_u.mutation.SetProcessName(v)
+	return _u
+}
+
+// SetNillableProcessName sets the "process_name" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableProcessName(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetProcessName(*v)
+	}
+	return _u
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (_u *MonitorUpdate) ClearProcessName() *MonitorUpdate {
+	_u.mutation.ClearProcessName()
+	return _u
+}
+
 // SetMetricType sets the "metric_type" field.
 func (_u *MonitorUpdate) SetMetricType(v monitor.MetricType) *MonitorUpdate {
 	_u.mutation.SetMetricType(v)
@@ -567,6 +587,12 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.NodeIDCleared() {
 		_spec.ClearField(monitor.FieldNodeID, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.ProcessName(); ok {
+		_spec.SetField(monitor.FieldProcessName, field.TypeString, value)
+	}
+	if _u.mutation.ProcessNameCleared() {
+		_spec.ClearField(monitor.FieldProcessName, field.TypeString)
+	}
 	if value, ok := _u.mutation.MetricType(); ok {
 		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)
 	}
@@ -840,6 +866,26 @@ func (_u *MonitorUpdateOne) AddNodeID(v int32) *MonitorUpdateOne {
 // ClearNodeID clears the value of the "node_id" field.
 func (_u *MonitorUpdateOne) ClearNodeID() *MonitorUpdateOne {
 	_u.mutation.ClearNodeID()
+	return _u
+}
+
+// SetProcessName sets the "process_name" field.
+func (_u *MonitorUpdateOne) SetProcessName(v string) *MonitorUpdateOne {
+	_u.mutation.SetProcessName(v)
+	return _u
+}
+
+// SetNillableProcessName sets the "process_name" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableProcessName(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetProcessName(*v)
+	}
+	return _u
+}
+
+// ClearProcessName clears the value of the "process_name" field.
+func (_u *MonitorUpdateOne) ClearProcessName() *MonitorUpdateOne {
+	_u.mutation.ClearProcessName()
 	return _u
 }
 
@@ -1207,6 +1253,12 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	}
 	if _u.mutation.NodeIDCleared() {
 		_spec.ClearField(monitor.FieldNodeID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ProcessName(); ok {
+		_spec.SetField(monitor.FieldProcessName, field.TypeString, value)
+	}
+	if _u.mutation.ProcessNameCleared() {
+		_spec.ClearField(monitor.FieldProcessName, field.TypeString)
 	}
 	if value, ok := _u.mutation.MetricType(); ok {
 		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)

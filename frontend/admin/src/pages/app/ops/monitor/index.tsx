@@ -37,7 +37,9 @@ const MonitorManagement = () => {
       title: t('targetType'), width: 110, hideInSearch: true,
       render: (_, r) => r.targetType === 'NODE_METRIC'
         ? <Tag color="purple">{t('targetNodeMetric')}</Tag>
-        : <Tag color="blue">{t('targetProject')}</Tag>,
+        : r.targetType === 'PROCESS'
+          ? <Tag color="red">{t('targetProcess')}</Tag>
+          : <Tag color="blue">{t('targetProject')}</Tag>,
     },
     {
       title: t('target'), width: 180, hideInSearch: true, ellipsis: true,
@@ -45,6 +47,9 @@ const MonitorManagement = () => {
         if (r.targetType === 'NODE_METRIC') {
           const metric = r.metricType === 'MEMORY' ? t('metricMemory') : r.metricType === 'DISK' ? t('metricDisk') : t('metricCpu');
           return `#${r.nodeId} · ${metric} ≥ ${r.thresholdPercent ?? 0}%`;
+        }
+        if (r.targetType === 'PROCESS') {
+          return r.processName ? `#${r.nodeId} · ${r.processName}` : `#${r.nodeId}`;
         }
         return r.projectId ? `#${r.projectId}` : '-';
       },

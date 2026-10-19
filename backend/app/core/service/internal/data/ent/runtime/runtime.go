@@ -1132,36 +1132,40 @@ func init() {
 	monitorDescNodeID := monitorFields[3].Descriptor()
 	// monitor.DefaultNodeID holds the default value on creation for the node_id field.
 	monitor.DefaultNodeID = monitorDescNodeID.Default.(uint32)
+	// monitorDescProcessName is the schema descriptor for process_name field.
+	monitorDescProcessName := monitorFields[4].Descriptor()
+	// monitor.DefaultProcessName holds the default value on creation for the process_name field.
+	monitor.DefaultProcessName = monitorDescProcessName.Default.(string)
 	// monitorDescThresholdPercent is the schema descriptor for threshold_percent field.
-	monitorDescThresholdPercent := monitorFields[5].Descriptor()
+	monitorDescThresholdPercent := monitorFields[6].Descriptor()
 	// monitor.DefaultThresholdPercent holds the default value on creation for the threshold_percent field.
 	monitor.DefaultThresholdPercent = monitorDescThresholdPercent.Default.(float64)
 	// monitorDescConsecutiveCount is the schema descriptor for consecutive_count field.
-	monitorDescConsecutiveCount := monitorFields[6].Descriptor()
+	monitorDescConsecutiveCount := monitorFields[7].Descriptor()
 	// monitor.DefaultConsecutiveCount holds the default value on creation for the consecutive_count field.
 	monitor.DefaultConsecutiveCount = monitorDescConsecutiveCount.Default.(int)
 	// monitorDescConsecutiveHits is the schema descriptor for consecutive_hits field.
-	monitorDescConsecutiveHits := monitorFields[7].Descriptor()
+	monitorDescConsecutiveHits := monitorFields[8].Descriptor()
 	// monitor.DefaultConsecutiveHits holds the default value on creation for the consecutive_hits field.
 	monitor.DefaultConsecutiveHits = monitorDescConsecutiveHits.Default.(int)
 	// monitorDescNotifyOnRecovery is the schema descriptor for notify_on_recovery field.
-	monitorDescNotifyOnRecovery := monitorFields[8].Descriptor()
+	monitorDescNotifyOnRecovery := monitorFields[9].Descriptor()
 	// monitor.DefaultNotifyOnRecovery holds the default value on creation for the notify_on_recovery field.
 	monitor.DefaultNotifyOnRecovery = monitorDescNotifyOnRecovery.Default.(bool)
 	// monitorDescRepeatIntervalMinutes is the schema descriptor for repeat_interval_minutes field.
-	monitorDescRepeatIntervalMinutes := monitorFields[9].Descriptor()
+	monitorDescRepeatIntervalMinutes := monitorFields[10].Descriptor()
 	// monitor.DefaultRepeatIntervalMinutes holds the default value on creation for the repeat_interval_minutes field.
 	monitor.DefaultRepeatIntervalMinutes = monitorDescRepeatIntervalMinutes.Default.(int)
 	// monitorDescCron is the schema descriptor for cron field.
-	monitorDescCron := monitorFields[10].Descriptor()
+	monitorDescCron := monitorFields[11].Descriptor()
 	// monitor.CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	monitor.CronValidator = monitorDescCron.Validators[0].(func(string) error)
 	// monitorDescAutoRestart is the schema descriptor for auto_restart field.
-	monitorDescAutoRestart := monitorFields[11].Descriptor()
+	monitorDescAutoRestart := monitorFields[12].Descriptor()
 	// monitor.DefaultAutoRestart holds the default value on creation for the auto_restart field.
 	monitor.DefaultAutoRestart = monitorDescAutoRestart.Default.(bool)
 	// monitorDescEnabled is the schema descriptor for enabled field.
-	monitorDescEnabled := monitorFields[13].Descriptor()
+	monitorDescEnabled := monitorFields[14].Descriptor()
 	// monitor.DefaultEnabled holds the default value on creation for the enabled field.
 	monitor.DefaultEnabled = monitorDescEnabled.Default.(bool)
 	// monitorDescID is the schema descriptor for id field.

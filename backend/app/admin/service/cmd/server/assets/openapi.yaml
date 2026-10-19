@@ -11839,11 +11839,14 @@ components:
                     description: 描述
                 targetType:
                     type: string
-                    description: 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标
+                    description: 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性
                 nodeId:
                     type: integer
-                    description: 被监控节点(节点指标规则必填,项目状态规则为 0)
+                    description: 被监控节点(节点指标/进程规则必填,项目状态规则为 0)
                     format: uint32
+                processName:
+                    type: string
+                    description: 被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)
                 metricType:
                     type: string
                     description: 指标类型(节点指标规则用):CPU/MEMORY/DISK

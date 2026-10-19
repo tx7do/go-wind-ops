@@ -35,5 +35,8 @@
   "consecutiveHint": "Alert only after N consecutive hits (debounce)",
   "notifyOnRecovery": "Notify on Recovery",
   "repeatInterval": "Repeat Interval",
-  "repeatIntervalHint": "Skip duplicate alerts within this many minutes (0 = every check); also applies after recovery"
+  "repeatIntervalHint": "Skip duplicate alerts within this many minutes (0 = every check); also applies after recovery",
+  "targetProcess": "Process",
+  "processName": "Process Name",
+  "processNameHint": "Case-insensitive substring match, e.g. nginx, mysqld"
 }

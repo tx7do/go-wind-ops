@@ -96,6 +96,10 @@ func (m *Monitor) validate(all bool) error {
 		// no validation rules for NodeId
 	}
 
+	if m.ProcessName != nil {
+		// no validation rules for ProcessName
+	}
+
 	if m.MetricType != nil {
 		// no validation rules for MetricType
 	}

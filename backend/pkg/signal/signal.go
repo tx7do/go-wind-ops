@@ -310,9 +310,36 @@ const (
 	// 目录备份:agent 打包 zip 后经预签名 URL 直传对象存储。
 	CommandActionBackupRun CommandAction = "backup_run"
 
+	// 进程清单查询(进程守护监控用,同步回执)。
+	CommandActionProcessList CommandAction = "process_list"
+
 	// Agent 远程升级:agent 下载新二进制后自替换重启(回执先发,替换随后)。
 	CommandActionAgentUpgrade CommandAction = "agent_upgrade"
 )
+
+// ============================================================================
+// 进程守护
+// ============================================================================
+
+// ProcessListPayload process_list 指令载荷:Name 为空列出全部(截断至 Limit),
+// 否则按"大小写不敏感包含"过滤进程名。
+type ProcessListPayload struct {
+	Name  string `json:"name,omitempty"`
+	Limit int    `json:"limit,omitempty"`
+}
+
+// ProcessInfo 单个进程快照(存在性监控用,CPU 不采集——需要两次采样)。
+type ProcessInfo struct {
+	Name  string  `json:"name"`
+	PID   uint32  `json:"pid"`
+	MemMB float64 `json:"mem_mb,omitempty"`
+}
+
+// ProcessListResult process_list 回执。
+type ProcessListResult struct {
+	Total     int           `json:"total"`
+	Processes []ProcessInfo `json:"processes"`
+}
 
 // ============================================================================
 // Agent 远程升级

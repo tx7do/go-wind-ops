@@ -38,8 +38,9 @@ type Monitor struct {
 	WebhookUrl            *string                `protobuf:"bytes,6,opt,name=webhook_url,json=webhookUrl,proto3,oneof" json:"webhook_url,omitempty"`                                      // 告警 webhook
 	Enabled               *bool                  `protobuf:"varint,7,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                                             // 是否启用
 	Description           *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                      // 描述
-	TargetType            *string                `protobuf:"bytes,9,opt,name=target_type,json=targetType,proto3,oneof" json:"target_type,omitempty"`                                      // 规则目标类型(PROJECT/NODE_METRIC)
+	TargetType            *string                `protobuf:"bytes,9,opt,name=target_type,json=targetType,proto3,oneof" json:"target_type,omitempty"`                                      // 规则目标类型(PROJECT/NODE_METRIC/PROCESS)
 	NodeId                *uint32                `protobuf:"varint,10,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                                // 被监控节点
+	ProcessName           *string                `protobuf:"bytes,16,opt,name=process_name,json=processName,proto3,oneof" json:"process_name,omitempty"`                                  // 被监控进程名(进程规则用)
 	MetricType            *string                `protobuf:"bytes,11,opt,name=metric_type,json=metricType,proto3,oneof" json:"metric_type,omitempty"`                                     // 指标类型(CPU/MEMORY/DISK)
 	ThresholdPercent      *float64               `protobuf:"fixed64,12,opt,name=threshold_percent,json=thresholdPercent,proto3,oneof" json:"threshold_percent,omitempty"`                 // 告警阈值
 	ConsecutiveCount      *uint32                `protobuf:"varint,13,opt,name=consecutive_count,json=consecutiveCount,proto3,oneof" json:"consecutive_count,omitempty"`                  // 连续命中次数
@@ -149,6 +150,13 @@ func (x *Monitor) GetNodeId() uint32 {
 		return *x.NodeId
 	}
 	return 0
+}
+
+func (x *Monitor) GetProcessName() string {
+	if x != nil && x.ProcessName != nil {
+		return *x.ProcessName
+	}
+	return ""
 }
 
 func (x *Monitor) GetMetricType() string {
@@ -448,7 +456,7 @@ var File_ops_service_v1_monitor_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/monitor.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x83\r\n" +
+	"\x1cops/service/v1/monitor.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xb2\x0e\n" +
 	"\aMonitor\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17规则名(全局唯一)H\x01R\x04name\x88\x01\x01\x12>\n" +
@@ -459,22 +467,23 @@ const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\vwebhook_url\x18\x06 \x01(\tB,\xbaG)\x92\x02&告警通知 webhook 地址(POST JSON)H\x05R\n" +
 	"webhookUrl\x88\x01\x01\x12\x1d\n" +
 	"\aenabled\x18\a \x01(\bH\x06R\aenabled\x88\x01\x01\x123\n" +
-	"\vdescription\x18\b \x01(\tB\f\xbaG\t\x92\x02\x06描述H\aR\vdescription\x88\x01\x01\x12t\n" +
-	"\vtarget_type\x18\t \x01(\tBN\xbaGK\x92\x02H规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标H\bR\n" +
-	"targetType\x88\x01\x01\x12e\n" +
+	"\vdescription\x18\b \x01(\tB\f\xbaG\t\x92\x02\x06描述H\aR\vdescription\x88\x01\x01\x12\x8e\x01\n" +
+	"\vtarget_type\x18\t \x01(\tBh\xbaGe\x92\x02b规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性H\bR\n" +
+	"targetType\x88\x01\x01\x12l\n" +
 	"\anode_id\x18\n" +
-	" \x01(\rBG\xbaGD\x92\x02A被监控节点(节点指标规则必填,项目状态规则为 0)H\tR\x06nodeId\x88\x01\x01\x12_\n" +
-	"\vmetric_type\x18\v \x01(\tB9\xbaG6\x92\x023指标类型(节点指标规则用):CPU/MEMORY/DISKH\n" +
-	"R\n" +
+	" \x01(\rBN\xbaGK\x92\x02H被监控节点(节点指标/进程规则必填,项目状态规则为 0)H\tR\x06nodeId\x88\x01\x01\x12z\n" +
+	"\fprocess_name\x18\x10 \x01(\tBR\xbaGO\x92\x02L被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)H\n" +
+	"R\vprocessName\x88\x01\x01\x12_\n" +
+	"\vmetric_type\x18\v \x01(\tB9\xbaG6\x92\x023指标类型(节点指标规则用):CPU/MEMORY/DISKH\vR\n" +
 	"metricType\x88\x01\x01\x12j\n" +
-	"\x11threshold_percent\x18\f \x01(\x01B8\xbaG5\x92\x022告警阈值(百分比,指标 ≥ 阈值即命中)H\vR\x10thresholdPercent\x88\x01\x01\x12s\n" +
-	"\x11consecutive_count\x18\r \x01(\rBA\xbaG>\x92\x02;连续命中多少个检查周期才告警(防抖,默认 1)H\fR\x10consecutiveCount\x88\x01\x01\x12g\n" +
-	"\x12notify_on_recovery\x18\x0e \x01(\bB4\xbaG1\x92\x02.恢复时是否产生 RECOVERY 告警并通知H\rR\x10notifyOnRecovery\x88\x01\x01\x12~\n" +
-	"\x17repeat_interval_minutes\x18\x0f \x01(\x05BA\xbaG>\x92\x02;重复告警最小间隔(分钟,0=每次异常检查都报)H\x0eR\x15repeatIntervalMinutes\x88\x01\x01\x12C\n" +
+	"\x11threshold_percent\x18\f \x01(\x01B8\xbaG5\x92\x022告警阈值(百分比,指标 ≥ 阈值即命中)H\fR\x10thresholdPercent\x88\x01\x01\x12s\n" +
+	"\x11consecutive_count\x18\r \x01(\rBA\xbaG>\x92\x02;连续命中多少个检查周期才告警(防抖,默认 1)H\rR\x10consecutiveCount\x88\x01\x01\x12g\n" +
+	"\x12notify_on_recovery\x18\x0e \x01(\bB4\xbaG1\x92\x02.恢复时是否产生 RECOVERY 告警并通知H\x0eR\x10notifyOnRecovery\x88\x01\x01\x12~\n" +
+	"\x17repeat_interval_minutes\x18\x0f \x01(\x05BA\xbaG>\x92\x02;重复告警最小间隔(分钟,0=每次异常检查都报)H\x0fR\x15repeatIntervalMinutes\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0fR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x10R\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x10R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x11R\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\r\n" +
 	"\v_project_idB\a\n" +
@@ -486,7 +495,8 @@ const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\f_descriptionB\x0e\n" +
 	"\f_target_typeB\n" +
 	"\n" +
-	"\b_node_idB\x0e\n" +
+	"\b_node_idB\x0f\n" +
+	"\r_process_nameB\x0e\n" +
 	"\f_metric_typeB\x14\n" +
 	"\x12_threshold_percentB\x14\n" +
 	"\x12_consecutive_countB\x15\n" +

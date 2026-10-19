@@ -99,6 +99,11 @@ func NodeID(v uint32) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldNodeID, v))
 }
 
+// ProcessName applies equality check predicate on the "process_name" field. It's identical to ProcessNameEQ.
+func ProcessName(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldProcessName, v))
+}
+
 // ThresholdPercent applies equality check predicate on the "threshold_percent" field. It's identical to ThresholdPercentEQ.
 func ThresholdPercent(v float64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldThresholdPercent, v))
@@ -632,6 +637,81 @@ func NodeIDIsNil() predicate.Monitor {
 // NodeIDNotNil applies the NotNil predicate on the "node_id" field.
 func NodeIDNotNil() predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotNull(FieldNodeID))
+}
+
+// ProcessNameEQ applies the EQ predicate on the "process_name" field.
+func ProcessNameEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldProcessName, v))
+}
+
+// ProcessNameNEQ applies the NEQ predicate on the "process_name" field.
+func ProcessNameNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldProcessName, v))
+}
+
+// ProcessNameIn applies the In predicate on the "process_name" field.
+func ProcessNameIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldProcessName, vs...))
+}
+
+// ProcessNameNotIn applies the NotIn predicate on the "process_name" field.
+func ProcessNameNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldProcessName, vs...))
+}
+
+// ProcessNameGT applies the GT predicate on the "process_name" field.
+func ProcessNameGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldProcessName, v))
+}
+
+// ProcessNameGTE applies the GTE predicate on the "process_name" field.
+func ProcessNameGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldProcessName, v))
+}
+
+// ProcessNameLT applies the LT predicate on the "process_name" field.
+func ProcessNameLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldProcessName, v))
+}
+
+// ProcessNameLTE applies the LTE predicate on the "process_name" field.
+func ProcessNameLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldProcessName, v))
+}
+
+// ProcessNameContains applies the Contains predicate on the "process_name" field.
+func ProcessNameContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldProcessName, v))
+}
+
+// ProcessNameHasPrefix applies the HasPrefix predicate on the "process_name" field.
+func ProcessNameHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldProcessName, v))
+}
+
+// ProcessNameHasSuffix applies the HasSuffix predicate on the "process_name" field.
+func ProcessNameHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldProcessName, v))
+}
+
+// ProcessNameIsNil applies the IsNil predicate on the "process_name" field.
+func ProcessNameIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldProcessName))
+}
+
+// ProcessNameNotNil applies the NotNil predicate on the "process_name" field.
+func ProcessNameNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldProcessName))
+}
+
+// ProcessNameEqualFold applies the EqualFold predicate on the "process_name" field.
+func ProcessNameEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldProcessName, v))
+}
+
+// ProcessNameContainsFold applies the ContainsFold predicate on the "process_name" field.
+func ProcessNameContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldProcessName, v))
 }
 
 // MetricTypeEQ applies the EQ predicate on the "metric_type" field.

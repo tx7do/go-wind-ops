@@ -34,10 +34,12 @@ type Monitor struct {
 	Name string `json:"name,omitempty"`
 	// 被监控项目(ops_projects.id;节点指标规则为 0)
 	ProjectID uint32 `json:"project_id,omitempty"`
-	// 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标
+	// 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性
 	TargetType monitor.TargetType `json:"target_type,omitempty"`
 	// 被监控节点(ops_agent_nodes.id;项目状态规则为 0)
 	NodeID uint32 `json:"node_id,omitempty"`
+	// 被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)
+	ProcessName string `json:"process_name,omitempty"`
 	// 指标类型(节点指标规则用):CPU/MEMORY/DISK
 	MetricType monitor.MetricType `json:"metric_type,omitempty"`
 	// 告警阈值(百分比,指标 ≥ 阈值即命中)
@@ -74,7 +76,7 @@ func (*Monitor) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case monitor.FieldID, monitor.FieldCreatedBy, monitor.FieldUpdatedBy, monitor.FieldDeletedBy, monitor.FieldProjectID, monitor.FieldNodeID, monitor.FieldConsecutiveCount, monitor.FieldConsecutiveHits, monitor.FieldRepeatIntervalMinutes:
 			values[i] = new(sql.NullInt64)
-		case monitor.FieldName, monitor.FieldTargetType, monitor.FieldMetricType, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
+		case monitor.FieldName, monitor.FieldTargetType, monitor.FieldProcessName, monitor.FieldMetricType, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
 			values[i] = new(sql.NullString)
 		case monitor.FieldCreatedAt, monitor.FieldUpdatedAt, monitor.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -164,6 +166,12 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
 				_m.NodeID = uint32(value.Int64)
+			}
+		case monitor.FieldProcessName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field process_name", values[i])
+			} else if value.Valid {
+				_m.ProcessName = value.String
 			}
 		case monitor.FieldMetricType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -310,6 +318,9 @@ func (_m *Monitor) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("node_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.NodeID))
+	builder.WriteString(", ")
+	builder.WriteString("process_name=")
+	builder.WriteString(_m.ProcessName)
 	builder.WriteString(", ")
 	builder.WriteString("metric_type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MetricType))

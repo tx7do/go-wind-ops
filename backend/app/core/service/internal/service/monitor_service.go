@@ -17,6 +17,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/signal"
 )
 
 // MonitorService 监控规则 CRUD 门面;检查调度逻辑在 CronScheduler.tickMonitors。
@@ -54,7 +55,7 @@ func (s *MonitorService) CreateMonitor(ctx context.Context, req *opsV1.CreateMon
 	}
 
 	// 目标类型分支:项目状态规则要求 projectId;节点指标规则要求
-	// nodeId + 有效阈值(0-100]
+	// nodeId + 有效阈值(0-100];进程规则要求 nodeId + 进程名关键字
 	switch req.Data.GetTargetType() {
 	case "NODE_METRIC":
 		if req.Data.GetNodeId() == 0 {
@@ -65,6 +66,13 @@ func (s *MonitorService) CreateMonitor(ctx context.Context, req *opsV1.CreateMon
 		}
 		if mt := req.Data.GetMetricType(); mt != "" && mt != "CPU" && mt != "MEMORY" && mt != "DISK" {
 			return nil, opsV1.ErrorBadRequest("invalid metricType")
+		}
+	case "PROCESS":
+		if req.Data.GetNodeId() == 0 {
+			return nil, opsV1.ErrorBadRequest("nodeId is required for process monitor")
+		}
+		if req.Data.GetProcessName() == "" {
+			return nil, opsV1.ErrorBadRequest("processName is required for process monitor")
 		}
 	default:
 		if req.Data.GetProjectId() == 0 {
@@ -157,11 +165,14 @@ func (s *AlertService) ResolveAlert(ctx context.Context, req *opsV1.ResolveAlert
 // 项目状态规则走同步指令探测;节点指标规则直接读心跳快照判阈值。
 // 由 CronScheduler 在规则 cron 命中时调用。
 func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
-	if string(monitor.TargetType) == "NODE_METRIC" {
+	switch string(monitor.TargetType) {
+	case "NODE_METRIC":
 		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, monitor)
-		return
+	case "PROCESS":
+		CheckProcessMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, agentSvc, monitor)
+	default:
+		checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, projectRepo, nodeRepo, agentSvc, monitor)
 	}
-	checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, projectRepo, nodeRepo, agentSvc, monitor)
 }
 
 // alertIntervalAllowed 重复告警间隔判断:repeat_interval>0 时,距该规则
@@ -295,6 +306,107 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		metricName := metricDisplayName(string(monitor.MetricType))
 		msg := fmt.Sprintf("节点 [%s] %s使用率已回落至 %.1f%%,低于阈值 %.1f%%,告警恢复",
 			nodeName, metricName, ptrFloatOrZero(value), monitor.ThresholdPercent)
+		if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, "MONITOR", msg); err != nil {
+			log.Errorf("create recovery alert failed: %s", err.Error())
+		} else {
+			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
+		}
+		log.Infof("RECOVERED: %s", msg)
+	}
+}
+
+// CheckProcessMonitor 进程存在性检查:经 process_list 同步指令在目标节点
+// 按关键字(大小写不敏感包含)找进程,找不到视为异常命中(防抖与节点指标
+// 规则同款);重新发现进程时统一 resolve + RECOVERY 记录 + 通知。探测失败
+// (节点离线/超时)不告警——节点失联由 NODE_OFFLINE 告警负责。
+func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+	nodeID := monitor.NodeID
+	if nodeID == 0 || monitor.ProcessName == "" {
+		return
+	}
+	node, err := nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+	if err != nil {
+		log.Warnf("process monitor [%d] node [%d] not found, skip", monitor.ID, nodeID)
+		return
+	}
+	nodeName := node.GetName()
+	if nodeName == "" {
+		nodeName = node.GetHostname()
+	}
+
+	res, err := agentSvc.PublishCommandSync(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionProcessList,
+		&signal.ProcessListPayload{Name: monitor.ProcessName, Limit: 50},
+		0, 15*time.Second)
+	if err != nil {
+		log.Warnf("process monitor [%d] probe failed: %s", monitor.ID, err.Error())
+		return
+	}
+	if !res.Success {
+		log.Warnf("process monitor [%d] probe returned failure: %s", monitor.ID, res.Error)
+		return
+	}
+	var out signal.ProcessListResult
+	_ = json.Unmarshal(res.Data, &out)
+	found := len(out.Processes) > 0
+
+	if !found {
+		hits := monitor.ConsecutiveHits + 1
+		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, hits); err != nil {
+			log.Warnf("update monitor hits [%d]: %s", monitor.ID, err.Error())
+		}
+		if hits < monitor.ConsecutiveCount {
+			return
+		}
+
+		already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
+		if already {
+			return
+		}
+		if !alertIntervalAllowed(ctx, alertRepo, monitor) {
+			return
+		}
+
+		msg := fmt.Sprintf("节点 [%s] 未发现进程 [%s](匹配 0 个,可能已退出)", nodeName, monitor.ProcessName)
+		alertID := uint32(0)
+		if a, err := alertRepo.Create(ctx, monitor.ID, 0, nodeID, "MONITOR", "ERROR", msg, false); err != nil {
+			log.Errorf("create process alert failed: %s", err.Error())
+		} else {
+			alertID = a.ID
+			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
+				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+					"alert_id":    a.ID,
+					"monitor":     monitor.Name,
+					"node":        nodeName,
+					"node_id":     nodeID,
+					"process":     monitor.ProcessName,
+					"level":       "ERROR",
+					"message":     msg,
+					"occurred_at": time.Now().Format(time.RFC3339),
+				})
+				_ = alertRepo.MarkNotified(ctx, a.ID)
+			}
+		}
+		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
+		log.Warnf("ALERT: %s", msg)
+		return
+	}
+
+	// 进程在:计数归零;有未恢复告警则恢复 + RECOVERY 记录 + 通知
+	if monitor.ConsecutiveHits != 0 {
+		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, 0); err != nil {
+			log.Warnf("reset monitor hits [%d]: %s", monitor.ID, err.Error())
+		}
+	}
+	unresolved, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
+	if !unresolved {
+		return
+	}
+	if _, err = alertRepo.ResolveAllByMonitor(ctx, monitor.ID); err != nil {
+		log.Warnf("resolve process alerts [%d]: %s", monitor.ID, err.Error())
+	}
+	if monitor.NotifyOnRecovery {
+		msg := fmt.Sprintf("节点 [%s] 重新发现进程 [%s](匹配 %d 个),告警恢复", nodeName, monitor.ProcessName, out.Total)
 		if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, "MONITOR", msg); err != nil {
 			log.Errorf("create recovery alert failed: %s", err.Error())
 		} else {
