@@ -12,6 +12,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
+	"go-wind-ops/app/core/service/internal/data/ent/backuprecord"
+	"go-wind-ops/app/core/service/internal/data/ent/backuptask"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
@@ -54,6 +56,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
@@ -133,6 +136,8 @@ func checkColumn(t, c string) error {
 			apiauditlog.Table:          apiauditlog.ValidColumn,
 			apikey.Table:               apikey.ValidColumn,
 			approval.Table:             approval.ValidColumn,
+			backuprecord.Table:         backuprecord.ValidColumn,
+			backuptask.Table:           backuptask.ValidColumn,
 			build.Table:                build.ValidColumn,
 			buildhistory.Table:         buildhistory.ValidColumn,
 			buildpipeline.Table:        buildpipeline.ValidColumn,
@@ -175,6 +180,7 @@ func checkColumn(t, c string) error {
 			rolemetadata.Table:         rolemetadata.ValidColumn,
 			rolepermission.Table:       rolepermission.ValidColumn,
 			script.Table:               script.ValidColumn,
+			scriptbatch.Table:          scriptbatch.ValidColumn,
 			task.Table:                 task.ValidColumn,
 			tenant.Table:               tenant.ValidColumn,
 			user.Table:                 user.ValidColumn,

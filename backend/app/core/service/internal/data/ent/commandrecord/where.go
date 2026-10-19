@@ -109,6 +109,11 @@ func OperatorID(v uint32) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
+// BatchID applies equality check predicate on the "batch_id" field. It's identical to BatchIDEQ.
+func BatchID(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldEQ(FieldBatchID, v))
+}
+
 // FinishedAt applies equality check predicate on the "finished_at" field. It's identical to FinishedAtEQ.
 func FinishedAt(v time.Time) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldFinishedAt, v))
@@ -812,6 +817,56 @@ func OperatorIDIsNil() predicate.CommandRecord {
 // OperatorIDNotNil applies the NotNil predicate on the "operator_id" field.
 func OperatorIDNotNil() predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotNull(FieldOperatorID))
+}
+
+// BatchIDEQ applies the EQ predicate on the "batch_id" field.
+func BatchIDEQ(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldEQ(FieldBatchID, v))
+}
+
+// BatchIDNEQ applies the NEQ predicate on the "batch_id" field.
+func BatchIDNEQ(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldNEQ(FieldBatchID, v))
+}
+
+// BatchIDIn applies the In predicate on the "batch_id" field.
+func BatchIDIn(vs ...uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldIn(FieldBatchID, vs...))
+}
+
+// BatchIDNotIn applies the NotIn predicate on the "batch_id" field.
+func BatchIDNotIn(vs ...uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldNotIn(FieldBatchID, vs...))
+}
+
+// BatchIDGT applies the GT predicate on the "batch_id" field.
+func BatchIDGT(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldGT(FieldBatchID, v))
+}
+
+// BatchIDGTE applies the GTE predicate on the "batch_id" field.
+func BatchIDGTE(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldGTE(FieldBatchID, v))
+}
+
+// BatchIDLT applies the LT predicate on the "batch_id" field.
+func BatchIDLT(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldLT(FieldBatchID, v))
+}
+
+// BatchIDLTE applies the LTE predicate on the "batch_id" field.
+func BatchIDLTE(v uint32) predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldLTE(FieldBatchID, v))
+}
+
+// BatchIDIsNil applies the IsNil predicate on the "batch_id" field.
+func BatchIDIsNil() predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldIsNull(FieldBatchID))
+}
+
+// BatchIDNotNil applies the NotNil predicate on the "batch_id" field.
+func BatchIDNotNil() predicate.CommandRecord {
+	return predicate.CommandRecord(sql.FieldNotNull(FieldBatchID))
 }
 
 // FinishedAtEQ applies the EQ predicate on the "finished_at" field.

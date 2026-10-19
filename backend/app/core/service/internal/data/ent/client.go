@@ -17,6 +17,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
+	"go-wind-ops/app/core/service/internal/data/ent/backuprecord"
+	"go-wind-ops/app/core/service/internal/data/ent/backuptask"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
@@ -59,6 +61,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
@@ -90,6 +93,10 @@ type Client struct {
 	ApiKey *ApiKeyClient
 	// Approval is the client for interacting with the Approval builders.
 	Approval *ApprovalClient
+	// BackupRecord is the client for interacting with the BackupRecord builders.
+	BackupRecord *BackupRecordClient
+	// BackupTask is the client for interacting with the BackupTask builders.
+	BackupTask *BackupTaskClient
 	// Build is the client for interacting with the Build builders.
 	Build *BuildClient
 	// BuildHistory is the client for interacting with the BuildHistory builders.
@@ -174,6 +181,8 @@ type Client struct {
 	RolePermission *RolePermissionClient
 	// Script is the client for interacting with the Script builders.
 	Script *ScriptClient
+	// ScriptBatch is the client for interacting with the ScriptBatch builders.
+	ScriptBatch *ScriptBatchClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -205,6 +214,8 @@ func (c *Client) init() {
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.ApiKey = NewApiKeyClient(c.config)
 	c.Approval = NewApprovalClient(c.config)
+	c.BackupRecord = NewBackupRecordClient(c.config)
+	c.BackupTask = NewBackupTaskClient(c.config)
 	c.Build = NewBuildClient(c.config)
 	c.BuildHistory = NewBuildHistoryClient(c.config)
 	c.BuildPipeline = NewBuildPipelineClient(c.config)
@@ -247,6 +258,7 @@ func (c *Client) init() {
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
 	c.Script = NewScriptClient(c.config)
+	c.ScriptBatch = NewScriptBatchClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -352,6 +364,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiAuditLog:          NewApiAuditLogClient(cfg),
 		ApiKey:               NewApiKeyClient(cfg),
 		Approval:             NewApprovalClient(cfg),
+		BackupRecord:         NewBackupRecordClient(cfg),
+		BackupTask:           NewBackupTaskClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
@@ -394,6 +408,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RoleMetadata:         NewRoleMetadataClient(cfg),
 		RolePermission:       NewRolePermissionClient(cfg),
 		Script:               NewScriptClient(cfg),
+		ScriptBatch:          NewScriptBatchClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -426,6 +441,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiAuditLog:          NewApiAuditLogClient(cfg),
 		ApiKey:               NewApiKeyClient(cfg),
 		Approval:             NewApprovalClient(cfg),
+		BackupRecord:         NewBackupRecordClient(cfg),
+		BackupTask:           NewBackupTaskClient(cfg),
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
@@ -468,6 +485,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RoleMetadata:         NewRoleMetadataClient(cfg),
 		RolePermission:       NewRolePermissionClient(cfg),
 		Script:               NewScriptClient(cfg),
+		ScriptBatch:          NewScriptBatchClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -504,18 +522,18 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
-		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CloudCost, c.CloudInstance,
-		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
-		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
+		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline,
+		c.CloudAccount, c.CloudCost, c.CloudInstance, c.CommandRecord,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
+		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
+		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
+		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -525,18 +543,18 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval, c.Build,
-		c.BuildHistory, c.BuildPipeline, c.CloudAccount, c.CloudCost, c.CloudInstance,
-		c.CommandRecord, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Distribution, c.DistributionRecord, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
-		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
+		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline,
+		c.CloudAccount, c.CloudCost, c.CloudInstance, c.CommandRecord,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
+		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
+		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
+		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -557,6 +575,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ApiKey.mutate(ctx, m)
 	case *ApprovalMutation:
 		return c.Approval.mutate(ctx, m)
+	case *BackupRecordMutation:
+		return c.BackupRecord.mutate(ctx, m)
+	case *BackupTaskMutation:
+		return c.BackupTask.mutate(ctx, m)
 	case *BuildMutation:
 		return c.Build.mutate(ctx, m)
 	case *BuildHistoryMutation:
@@ -641,6 +663,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RolePermission.mutate(ctx, m)
 	case *ScriptMutation:
 		return c.Script.mutate(ctx, m)
+	case *ScriptBatchMutation:
+		return c.ScriptBatch.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TenantMutation:
@@ -1457,6 +1481,272 @@ func (c *ApprovalClient) mutate(ctx context.Context, m *ApprovalMutation) (Value
 		return (&ApprovalDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Approval mutation op: %q", m.Op())
+	}
+}
+
+// BackupRecordClient is a client for the BackupRecord schema.
+type BackupRecordClient struct {
+	config
+}
+
+// NewBackupRecordClient returns a client for the BackupRecord from the given config.
+func NewBackupRecordClient(c config) *BackupRecordClient {
+	return &BackupRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `backuprecord.Hooks(f(g(h())))`.
+func (c *BackupRecordClient) Use(hooks ...Hook) {
+	c.hooks.BackupRecord = append(c.hooks.BackupRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `backuprecord.Intercept(f(g(h())))`.
+func (c *BackupRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BackupRecord = append(c.inters.BackupRecord, interceptors...)
+}
+
+// Create returns a builder for creating a BackupRecord entity.
+func (c *BackupRecordClient) Create() *BackupRecordCreate {
+	mutation := newBackupRecordMutation(c.config, OpCreate)
+	return &BackupRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of BackupRecord entities.
+func (c *BackupRecordClient) CreateBulk(builders ...*BackupRecordCreate) *BackupRecordCreateBulk {
+	return &BackupRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BackupRecordClient) MapCreateBulk(slice any, setFunc func(*BackupRecordCreate, int)) *BackupRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BackupRecordCreateBulk{err: fmt.Errorf("calling to BackupRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BackupRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BackupRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BackupRecord.
+func (c *BackupRecordClient) Update() *BackupRecordUpdate {
+	mutation := newBackupRecordMutation(c.config, OpUpdate)
+	return &BackupRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BackupRecordClient) UpdateOne(_m *BackupRecord) *BackupRecordUpdateOne {
+	mutation := newBackupRecordMutation(c.config, OpUpdateOne, withBackupRecord(_m))
+	return &BackupRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BackupRecordClient) UpdateOneID(id uint32) *BackupRecordUpdateOne {
+	mutation := newBackupRecordMutation(c.config, OpUpdateOne, withBackupRecordID(id))
+	return &BackupRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BackupRecord.
+func (c *BackupRecordClient) Delete() *BackupRecordDelete {
+	mutation := newBackupRecordMutation(c.config, OpDelete)
+	return &BackupRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BackupRecordClient) DeleteOne(_m *BackupRecord) *BackupRecordDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BackupRecordClient) DeleteOneID(id uint32) *BackupRecordDeleteOne {
+	builder := c.Delete().Where(backuprecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BackupRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for BackupRecord.
+func (c *BackupRecordClient) Query() *BackupRecordQuery {
+	return &BackupRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBackupRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a BackupRecord entity by its id.
+func (c *BackupRecordClient) Get(ctx context.Context, id uint32) (*BackupRecord, error) {
+	return c.Query().Where(backuprecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BackupRecordClient) GetX(ctx context.Context, id uint32) *BackupRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BackupRecordClient) Hooks() []Hook {
+	return c.hooks.BackupRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *BackupRecordClient) Interceptors() []Interceptor {
+	return c.inters.BackupRecord
+}
+
+func (c *BackupRecordClient) mutate(ctx context.Context, m *BackupRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BackupRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BackupRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BackupRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BackupRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown BackupRecord mutation op: %q", m.Op())
+	}
+}
+
+// BackupTaskClient is a client for the BackupTask schema.
+type BackupTaskClient struct {
+	config
+}
+
+// NewBackupTaskClient returns a client for the BackupTask from the given config.
+func NewBackupTaskClient(c config) *BackupTaskClient {
+	return &BackupTaskClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `backuptask.Hooks(f(g(h())))`.
+func (c *BackupTaskClient) Use(hooks ...Hook) {
+	c.hooks.BackupTask = append(c.hooks.BackupTask, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `backuptask.Intercept(f(g(h())))`.
+func (c *BackupTaskClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BackupTask = append(c.inters.BackupTask, interceptors...)
+}
+
+// Create returns a builder for creating a BackupTask entity.
+func (c *BackupTaskClient) Create() *BackupTaskCreate {
+	mutation := newBackupTaskMutation(c.config, OpCreate)
+	return &BackupTaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of BackupTask entities.
+func (c *BackupTaskClient) CreateBulk(builders ...*BackupTaskCreate) *BackupTaskCreateBulk {
+	return &BackupTaskCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BackupTaskClient) MapCreateBulk(slice any, setFunc func(*BackupTaskCreate, int)) *BackupTaskCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BackupTaskCreateBulk{err: fmt.Errorf("calling to BackupTaskClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BackupTaskCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BackupTaskCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BackupTask.
+func (c *BackupTaskClient) Update() *BackupTaskUpdate {
+	mutation := newBackupTaskMutation(c.config, OpUpdate)
+	return &BackupTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BackupTaskClient) UpdateOne(_m *BackupTask) *BackupTaskUpdateOne {
+	mutation := newBackupTaskMutation(c.config, OpUpdateOne, withBackupTask(_m))
+	return &BackupTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BackupTaskClient) UpdateOneID(id uint32) *BackupTaskUpdateOne {
+	mutation := newBackupTaskMutation(c.config, OpUpdateOne, withBackupTaskID(id))
+	return &BackupTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BackupTask.
+func (c *BackupTaskClient) Delete() *BackupTaskDelete {
+	mutation := newBackupTaskMutation(c.config, OpDelete)
+	return &BackupTaskDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BackupTaskClient) DeleteOne(_m *BackupTask) *BackupTaskDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BackupTaskClient) DeleteOneID(id uint32) *BackupTaskDeleteOne {
+	builder := c.Delete().Where(backuptask.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BackupTaskDeleteOne{builder}
+}
+
+// Query returns a query builder for BackupTask.
+func (c *BackupTaskClient) Query() *BackupTaskQuery {
+	return &BackupTaskQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBackupTask},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a BackupTask entity by its id.
+func (c *BackupTaskClient) Get(ctx context.Context, id uint32) (*BackupTask, error) {
+	return c.Query().Where(backuptask.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BackupTaskClient) GetX(ctx context.Context, id uint32) *BackupTask {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BackupTaskClient) Hooks() []Hook {
+	return c.hooks.BackupTask
+}
+
+// Interceptors returns the client interceptors.
+func (c *BackupTaskClient) Interceptors() []Interceptor {
+	return c.inters.BackupTask
+}
+
+func (c *BackupTaskClient) mutate(ctx context.Context, m *BackupTaskMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BackupTaskCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BackupTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BackupTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BackupTaskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown BackupTask mutation op: %q", m.Op())
 	}
 }
 
@@ -7230,6 +7520,139 @@ func (c *ScriptClient) mutate(ctx context.Context, m *ScriptMutation) (Value, er
 	}
 }
 
+// ScriptBatchClient is a client for the ScriptBatch schema.
+type ScriptBatchClient struct {
+	config
+}
+
+// NewScriptBatchClient returns a client for the ScriptBatch from the given config.
+func NewScriptBatchClient(c config) *ScriptBatchClient {
+	return &ScriptBatchClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scriptbatch.Hooks(f(g(h())))`.
+func (c *ScriptBatchClient) Use(hooks ...Hook) {
+	c.hooks.ScriptBatch = append(c.hooks.ScriptBatch, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scriptbatch.Intercept(f(g(h())))`.
+func (c *ScriptBatchClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScriptBatch = append(c.inters.ScriptBatch, interceptors...)
+}
+
+// Create returns a builder for creating a ScriptBatch entity.
+func (c *ScriptBatchClient) Create() *ScriptBatchCreate {
+	mutation := newScriptBatchMutation(c.config, OpCreate)
+	return &ScriptBatchCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScriptBatch entities.
+func (c *ScriptBatchClient) CreateBulk(builders ...*ScriptBatchCreate) *ScriptBatchCreateBulk {
+	return &ScriptBatchCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScriptBatchClient) MapCreateBulk(slice any, setFunc func(*ScriptBatchCreate, int)) *ScriptBatchCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScriptBatchCreateBulk{err: fmt.Errorf("calling to ScriptBatchClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScriptBatchCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScriptBatchCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScriptBatch.
+func (c *ScriptBatchClient) Update() *ScriptBatchUpdate {
+	mutation := newScriptBatchMutation(c.config, OpUpdate)
+	return &ScriptBatchUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScriptBatchClient) UpdateOne(_m *ScriptBatch) *ScriptBatchUpdateOne {
+	mutation := newScriptBatchMutation(c.config, OpUpdateOne, withScriptBatch(_m))
+	return &ScriptBatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScriptBatchClient) UpdateOneID(id uint32) *ScriptBatchUpdateOne {
+	mutation := newScriptBatchMutation(c.config, OpUpdateOne, withScriptBatchID(id))
+	return &ScriptBatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScriptBatch.
+func (c *ScriptBatchClient) Delete() *ScriptBatchDelete {
+	mutation := newScriptBatchMutation(c.config, OpDelete)
+	return &ScriptBatchDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScriptBatchClient) DeleteOne(_m *ScriptBatch) *ScriptBatchDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScriptBatchClient) DeleteOneID(id uint32) *ScriptBatchDeleteOne {
+	builder := c.Delete().Where(scriptbatch.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScriptBatchDeleteOne{builder}
+}
+
+// Query returns a query builder for ScriptBatch.
+func (c *ScriptBatchClient) Query() *ScriptBatchQuery {
+	return &ScriptBatchQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScriptBatch},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScriptBatch entity by its id.
+func (c *ScriptBatchClient) Get(ctx context.Context, id uint32) (*ScriptBatch, error) {
+	return c.Query().Where(scriptbatch.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScriptBatchClient) GetX(ctx context.Context, id uint32) *ScriptBatch {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScriptBatchClient) Hooks() []Hook {
+	return c.hooks.ScriptBatch
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScriptBatchClient) Interceptors() []Interceptor {
+	return c.inters.ScriptBatch
+}
+
+func (c *ScriptBatchClient) mutate(ctx context.Context, m *ScriptBatchMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScriptBatchCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScriptBatchUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScriptBatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScriptBatchDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScriptBatch mutation op: %q", m.Op())
+	}
+}
+
 // TaskClient is a client for the Task schema.
 type TaskClient struct {
 	config
@@ -8170,27 +8593,29 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
-		BuildPipeline, CloudAccount, CloudCost, CloudInstance, CommandRecord,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
-		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
-		NodeMetric, NotificationChannel, NotificationDelivery, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position,
-		Project, Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant,
-		User, UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
+		Build, BuildHistory, BuildPipeline, CloudAccount, CloudCost, CloudInstance,
+		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
+		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, ScriptBatch, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
-		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, Build, BuildHistory,
-		BuildPipeline, CloudAccount, CloudCost, CloudInstance, CommandRecord,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
-		DistributionRecord, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Monitor,
-		NodeMetric, NotificationChannel, NotificationDelivery, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position,
-		Project, Repository, Role, RoleMetadata, RolePermission, Script, Task, Tenant,
-		User, UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
+		Build, BuildHistory, BuildPipeline, CloudAccount, CloudCost, CloudInstance,
+		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
+		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
+		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
+		RolePermission, Script, ScriptBatch, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

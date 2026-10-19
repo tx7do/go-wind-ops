@@ -31,5 +31,13 @@
   "cronHint": "5 段标准 cron 语法；留空则不启用定时",
   "cronNode": "定时执行节点",
   "cronNodePlaceholder": "选择执行该定时任务的节点",
-  "action": "操作"
+  "action": "操作",
+  "batchExec": "批量执行",
+  "batchTitle": "批量执行: {{name}}",
+  "batchNodeLabel": "目标节点(可多选)",
+  "batchNodePlaceholder": "选择要执行的节点",
+  "batchNodeRequired": "请至少选择一个节点",
+  "batchHint": "逐节点下发执行,结果在批量执行页查看;离线节点会执行失败",
+  "batchSent": "批量执行已触发: 成功下发 {{dispatched}} 台,失败 {{failed}} 台",
+  "nodeOffline": "离线"
 }

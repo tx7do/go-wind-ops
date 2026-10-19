@@ -46,15 +46,15 @@ type CloudAccountServiceHTTPServer interface {
 
 func RegisterCloudAccountServiceHTTPServer(s *http.Server, srv CloudAccountServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/cloud-accounts", _CloudAccountService_List8_HTTP_Handler(srv))
-	r.GET("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Get8_HTTP_Handler(srv))
-	r.POST("/admin/v1/cloud-accounts", _CloudAccountService_Create3_HTTP_Handler(srv))
-	r.PUT("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Update4_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Delete4_HTTP_Handler(srv))
+	r.GET("/admin/v1/cloud-accounts", _CloudAccountService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Get9_HTTP_Handler(srv))
+	r.POST("/admin/v1/cloud-accounts", _CloudAccountService_Create4_HTTP_Handler(srv))
+	r.PUT("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Update5_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/cloud-accounts/{id}", _CloudAccountService_Delete5_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-accounts/{id}/verify", _CloudAccountService_Verify0_HTTP_Handler(srv))
 }
 
-func _CloudAccountService_List8_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
+func _CloudAccountService_List9_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _CloudAccountService_List8_HTTP_Handler(srv CloudAccountServiceHTTPServer) 
 	}
 }
 
-func _CloudAccountService_Get8_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
+func _CloudAccountService_Get9_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCloudAccountRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _CloudAccountService_Get8_HTTP_Handler(srv CloudAccountServiceHTTPServer) f
 	}
 }
 
-func _CloudAccountService_Create3_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
+func _CloudAccountService_Create4_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateCloudAccountRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _CloudAccountService_Create3_HTTP_Handler(srv CloudAccountServiceHTTPServer
 	}
 }
 
-func _CloudAccountService_Update4_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
+func _CloudAccountService_Update5_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateCloudAccountRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _CloudAccountService_Update4_HTTP_Handler(srv CloudAccountServiceHTTPServer
 	}
 }
 
-func _CloudAccountService_Delete4_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
+func _CloudAccountService_Delete5_HTTP_Handler(srv CloudAccountServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteCloudAccountRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -76,6 +76,28 @@ func (_c *AlertCreate) SetProjectID(v uint32) *AlertCreate {
 	return _c
 }
 
+// SetNillableProjectID sets the "project_id" field if the given value is not nil.
+func (_c *AlertCreate) SetNillableProjectID(v *uint32) *AlertCreate {
+	if v != nil {
+		_c.SetProjectID(*v)
+	}
+	return _c
+}
+
+// SetNodeID sets the "node_id" field.
+func (_c *AlertCreate) SetNodeID(v uint32) *AlertCreate {
+	_c.mutation.SetNodeID(v)
+	return _c
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_c *AlertCreate) SetNillableNodeID(v *uint32) *AlertCreate {
+	if v != nil {
+		_c.SetNodeID(*v)
+	}
+	return _c
+}
+
 // SetLevel sets the "level" field.
 func (_c *AlertCreate) SetLevel(v alert.Level) *AlertCreate {
 	_c.mutation.SetLevel(v)
@@ -179,6 +201,14 @@ func (_c *AlertCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *AlertCreate) defaults() {
+	if _, ok := _c.mutation.ProjectID(); !ok {
+		v := alert.DefaultProjectID
+		_c.mutation.SetProjectID(v)
+	}
+	if _, ok := _c.mutation.NodeID(); !ok {
+		v := alert.DefaultNodeID
+		_c.mutation.SetNodeID(v)
+	}
 	if _, ok := _c.mutation.Level(); !ok {
 		v := alert.DefaultLevel
 		_c.mutation.SetLevel(v)
@@ -201,14 +231,6 @@ func (_c *AlertCreate) check() error {
 	if v, ok := _c.mutation.MonitorID(); ok {
 		if err := alert.MonitorIDValidator(v); err != nil {
 			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.ProjectID(); !ok {
-		return &ValidationError{Name: "project_id", err: errors.New(`ent: missing required field "Alert.project_id"`)}
-	}
-	if v, ok := _c.mutation.ProjectID(); ok {
-		if err := alert.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Alert.project_id": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Level(); !ok {
@@ -290,6 +312,10 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ProjectID(); ok {
 		_spec.SetField(alert.FieldProjectID, field.TypeUint32, value)
 		_node.ProjectID = value
+	}
+	if value, ok := _c.mutation.NodeID(); ok {
+		_spec.SetField(alert.FieldNodeID, field.TypeUint32, value)
+		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.Level(); ok {
 		_spec.SetField(alert.FieldLevel, field.TypeEnum, value)
@@ -432,6 +458,36 @@ func (u *AlertUpsert) UpdateProjectID() *AlertUpsert {
 // AddProjectID adds v to the "project_id" field.
 func (u *AlertUpsert) AddProjectID(v uint32) *AlertUpsert {
 	u.Add(alert.FieldProjectID, v)
+	return u
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *AlertUpsert) ClearProjectID() *AlertUpsert {
+	u.SetNull(alert.FieldProjectID)
+	return u
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *AlertUpsert) SetNodeID(v uint32) *AlertUpsert {
+	u.Set(alert.FieldNodeID, v)
+	return u
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *AlertUpsert) UpdateNodeID() *AlertUpsert {
+	u.SetExcluded(alert.FieldNodeID)
+	return u
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *AlertUpsert) AddNodeID(v uint32) *AlertUpsert {
+	u.Add(alert.FieldNodeID, v)
+	return u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *AlertUpsert) ClearNodeID() *AlertUpsert {
+	u.SetNull(alert.FieldNodeID)
 	return u
 }
 
@@ -633,6 +689,41 @@ func (u *AlertUpsertOne) AddProjectID(v uint32) *AlertUpsertOne {
 func (u *AlertUpsertOne) UpdateProjectID() *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.UpdateProjectID()
+	})
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *AlertUpsertOne) ClearProjectID() *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearProjectID()
+	})
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *AlertUpsertOne) SetNodeID(v uint32) *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.SetNodeID(v)
+	})
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *AlertUpsertOne) AddNodeID(v uint32) *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.AddNodeID(v)
+	})
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *AlertUpsertOne) UpdateNodeID() *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.UpdateNodeID()
+	})
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *AlertUpsertOne) ClearNodeID() *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearNodeID()
 	})
 }
 
@@ -1011,6 +1102,41 @@ func (u *AlertUpsertBulk) AddProjectID(v uint32) *AlertUpsertBulk {
 func (u *AlertUpsertBulk) UpdateProjectID() *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.UpdateProjectID()
+	})
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *AlertUpsertBulk) ClearProjectID() *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearProjectID()
+	})
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *AlertUpsertBulk) SetNodeID(v uint32) *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.SetNodeID(v)
+	})
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *AlertUpsertBulk) AddNodeID(v uint32) *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.AddNodeID(v)
+	})
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *AlertUpsertBulk) UpdateNodeID() *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.UpdateNodeID()
+	})
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *AlertUpsertBulk) ClearNodeID() *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearNodeID()
 	})
 }
 

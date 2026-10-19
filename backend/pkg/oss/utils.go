@@ -25,11 +25,12 @@ const (
 )
 
 const (
-	BucketImages = "images"
-	BucketVideos = "videos"
-	BucketAudios = "audios"
-	BucketDocs   = "docs"
-	BucketFiles  = "files"
+	BucketImages  = "images"
+	BucketVideos  = "videos"
+	BucketAudios  = "audios"
+	BucketDocs    = "docs"
+	BucketFiles   = "files"
+	BucketBackups = "backups"
 )
 
 var staticHMACSecret = []byte("0123456789abcdef0123456789abcdef") // 32 bytes secret for HMAC

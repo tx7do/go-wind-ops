@@ -10,7 +10,8 @@ import (
 	"github.com/tx7do/go-crud/entgo/mixin"
 )
 
-// Alert 告警记录:监控检查异常时产生,人工确认后标记已恢复。
+// Alert 告警记录:监控检查异常时产生(项目状态/节点指标两类规则),
+// 恢复时可自动产生 RECOVERY 记录,人工确认后标记已恢复。
 type Alert struct {
 	ent.Schema
 }
@@ -35,8 +36,14 @@ func (Alert) Fields() []ent.Field {
 			Positive(),
 
 		field.Uint32("project_id").
-			Comment("关联项目").
-			Positive(),
+			Comment("关联项目(节点指标告警为 0)").
+			Default(0).
+			Optional(),
+
+		field.Uint32("node_id").
+			Comment("关联节点(ops_agent_nodes.id;项目状态告警为 0)").
+			Default(0).
+			Optional(),
 
 		field.Enum("level").
 			Comment("告警级别").
@@ -78,6 +85,7 @@ func (Alert) Mixin() []ent.Mixin {
 func (Alert) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("monitor_id").StorageKey("idx_ops_alert_monitor"),
+		index.Fields("node_id").StorageKey("idx_ops_alert_node"),
 		index.Fields("resolved").StorageKey("idx_ops_alert_resolved"),
 	}
 }

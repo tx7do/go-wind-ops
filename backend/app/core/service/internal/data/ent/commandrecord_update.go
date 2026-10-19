@@ -245,6 +245,33 @@ func (_u *CommandRecordUpdate) ClearOperatorID() *CommandRecordUpdate {
 	return _u
 }
 
+// SetBatchID sets the "batch_id" field.
+func (_u *CommandRecordUpdate) SetBatchID(v uint32) *CommandRecordUpdate {
+	_u.mutation.ResetBatchID()
+	_u.mutation.SetBatchID(v)
+	return _u
+}
+
+// SetNillableBatchID sets the "batch_id" field if the given value is not nil.
+func (_u *CommandRecordUpdate) SetNillableBatchID(v *uint32) *CommandRecordUpdate {
+	if v != nil {
+		_u.SetBatchID(*v)
+	}
+	return _u
+}
+
+// AddBatchID adds value to the "batch_id" field.
+func (_u *CommandRecordUpdate) AddBatchID(v int32) *CommandRecordUpdate {
+	_u.mutation.AddBatchID(v)
+	return _u
+}
+
+// ClearBatchID clears the value of the "batch_id" field.
+func (_u *CommandRecordUpdate) ClearBatchID() *CommandRecordUpdate {
+	_u.mutation.ClearBatchID()
+	return _u
+}
+
 // SetFinishedAt sets the "finished_at" field.
 func (_u *CommandRecordUpdate) SetFinishedAt(v time.Time) *CommandRecordUpdate {
 	_u.mutation.SetFinishedAt(v)
@@ -405,6 +432,15 @@ func (_u *CommandRecordUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.BatchID(); ok {
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchID(); ok {
+		_spec.AddField(commandrecord.FieldBatchID, field.TypeUint32, value)
+	}
+	if _u.mutation.BatchIDCleared() {
+		_spec.ClearField(commandrecord.FieldBatchID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(commandrecord.FieldFinishedAt, field.TypeTime, value)
@@ -650,6 +686,33 @@ func (_u *CommandRecordUpdateOne) ClearOperatorID() *CommandRecordUpdateOne {
 	return _u
 }
 
+// SetBatchID sets the "batch_id" field.
+func (_u *CommandRecordUpdateOne) SetBatchID(v uint32) *CommandRecordUpdateOne {
+	_u.mutation.ResetBatchID()
+	_u.mutation.SetBatchID(v)
+	return _u
+}
+
+// SetNillableBatchID sets the "batch_id" field if the given value is not nil.
+func (_u *CommandRecordUpdateOne) SetNillableBatchID(v *uint32) *CommandRecordUpdateOne {
+	if v != nil {
+		_u.SetBatchID(*v)
+	}
+	return _u
+}
+
+// AddBatchID adds value to the "batch_id" field.
+func (_u *CommandRecordUpdateOne) AddBatchID(v int32) *CommandRecordUpdateOne {
+	_u.mutation.AddBatchID(v)
+	return _u
+}
+
+// ClearBatchID clears the value of the "batch_id" field.
+func (_u *CommandRecordUpdateOne) ClearBatchID() *CommandRecordUpdateOne {
+	_u.mutation.ClearBatchID()
+	return _u
+}
+
 // SetFinishedAt sets the "finished_at" field.
 func (_u *CommandRecordUpdateOne) SetFinishedAt(v time.Time) *CommandRecordUpdateOne {
 	_u.mutation.SetFinishedAt(v)
@@ -840,6 +903,15 @@ func (_u *CommandRecordUpdateOne) sqlSave(ctx context.Context) (_node *CommandRe
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.BatchID(); ok {
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchID(); ok {
+		_spec.AddField(commandrecord.FieldBatchID, field.TypeUint32, value)
+	}
+	if _u.mutation.BatchIDCleared() {
+		_spec.ClearField(commandrecord.FieldBatchID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(commandrecord.FieldFinishedAt, field.TypeTime, value)

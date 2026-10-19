@@ -161,6 +161,20 @@ func (r *MonitorRepo) Create(ctx context.Context, req *opsV1.CreateMonitorReques
 		SetEnabled(req.Data.GetEnabled()).
 		SetNillableDescription(req.Data.Description)
 
+	// 目标类型分支:项目状态规则(默认)/节点指标规则
+	targetType := req.Data.GetTargetType()
+	if targetType == "" {
+		targetType = "PROJECT"
+	}
+	builder.SetTargetType(monitor.TargetType(targetType))
+	if targetType == "NODE_METRIC" {
+		builder.SetNodeID(req.Data.GetNodeId()).
+			SetMetricType(monitor.MetricType(req.Data.GetMetricType())).
+			SetThresholdPercent(req.Data.GetThresholdPercent()).
+			SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
+	}
+	builder.SetNotifyOnRecovery(req.Data.GetNotifyOnRecovery())
+
 	if req.Data.WebhookUrl != nil {
 		builder.SetWebhookURL(req.Data.GetWebhookUrl())
 	}
@@ -193,10 +207,34 @@ func (r *MonitorRepo) Update(ctx context.Context, req *opsV1.UpdateMonitorReques
 				SetNillableWebhookURL(req.Data.WebhookUrl).
 				SetNillableDescription(req.Data.Description).
 				SetAutoRestart(req.Data.GetAutoRestart()).
-				SetEnabled(req.Data.GetEnabled())
+				SetEnabled(req.Data.GetEnabled()).
+				SetNotifyOnRecovery(req.Data.GetNotifyOnRecovery())
 
+			if req.Data.TargetType != nil && req.Data.GetTargetType() != "" {
+				builder.SetTargetType(monitor.TargetType(req.Data.GetTargetType()))
+			}
 			if req.Data.ProjectId != nil && req.Data.GetProjectId() > 0 {
 				builder.SetProjectID(req.Data.GetProjectId())
+			}
+			if req.Data.NodeId != nil && req.Data.GetNodeId() > 0 {
+				builder.SetNodeID(req.Data.GetNodeId())
+			}
+			if req.Data.MetricType != nil && req.Data.GetMetricType() != "" {
+				builder.SetMetricType(monitor.MetricType(req.Data.GetMetricType()))
+			}
+			if req.Data.ThresholdPercent != nil {
+				builder.SetThresholdPercent(req.Data.GetThresholdPercent())
+			}
+			if req.Data.ConsecutiveCount != nil && req.Data.GetConsecutiveCount() > 0 {
+				builder.SetConsecutiveCount(int(req.Data.GetConsecutiveCount()))
+			}
+			// 目标类型切换时清掉另一侧的关联,避免残留脏数据
+			if req.Data.TargetType != nil {
+				if req.Data.GetTargetType() == "NODE_METRIC" {
+					builder.SetProjectID(0)
+				} else {
+					builder.SetNodeID(0)
+				}
 			}
 		},
 		func(s *sql.Selector) {
@@ -223,6 +261,15 @@ func (r *MonitorRepo) Delete(ctx context.Context, req *opsV1.DeleteMonitorReques
 	}
 
 	return nil
+}
+
+// UpdateConsecutiveHits 更新节点指标规则的连续命中计数(调度器防抖状态)。
+func (r *MonitorRepo) UpdateConsecutiveHits(ctx context.Context, id uint32, hits int) error {
+	_, err := r.entClient.Client().Monitor.
+		UpdateOneID(id).
+		SetConsecutiveHits(hits).
+		Save(ctx)
+	return err
 }
 
 var _ = time.Now

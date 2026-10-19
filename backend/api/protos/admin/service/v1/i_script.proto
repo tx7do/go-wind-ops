@@ -55,3 +55,28 @@ service ScriptService {
     };
   }
 }
+
+// ScriptBatchService 脚本批量执行
+service ScriptBatchService {
+  // 查询批次列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListScriptBatchResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/script-batches"
+    };
+  }
+
+  // 查询批次详情(含逐节点执行结果矩阵)
+  rpc Get (ops.service.v1.GetScriptBatchRequest) returns (ops.service.v1.ScriptBatchDetail) {
+    option (google.api.http) = {
+      get: "/admin/v1/script-batches/{id}"
+    };
+  }
+
+  // 批量执行脚本
+  rpc BatchExec (ops.service.v1.ExecuteScriptBatchRequest) returns (ops.service.v1.ExecuteScriptBatchResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/scripts/batch-exec:send"
+      body: "*"
+    };
+  }
+}

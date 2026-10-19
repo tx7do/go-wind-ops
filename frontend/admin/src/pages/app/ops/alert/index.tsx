@@ -25,7 +25,8 @@ const AlertManagement = () => {
 
   const columns: ProColumns<Alert>[] = [
     { title: t('monitorId'), dataIndex: 'monitorId', width: 90, hideInSearch: true },
-    { title: t('projectId'), dataIndex: 'projectId', width: 90, hideInSearch: true },
+    { title: t('projectId'), dataIndex: 'projectId', width: 90, hideInSearch: true, render: (_, r) => (r.projectId ? r.projectId : '-') },
+    { title: t('nodeId'), dataIndex: 'nodeId', width: 90, hideInSearch: true, render: (_, r) => (r.nodeId ? r.nodeId : '-') },
     {
       title: t('level'), dataIndex: 'level', width: 100,
       render: (_, r) => r.level === 'ERROR' ? <Tag color="error">{r.level}</Tag> : r.level === 'RECOVERY' ? <Tag color="success">{r.level}</Tag> : <Tag color="warning">{r.level}</Tag>,

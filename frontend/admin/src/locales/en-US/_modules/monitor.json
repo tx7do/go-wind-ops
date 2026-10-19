@@ -19,5 +19,19 @@
   "deleteSuccess": "Monitor deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete monitor",
-  "action": "Actions"
+  "action": "Actions",
+  "targetType": "Rule Type",
+  "target": "Target",
+  "targetProject": "Project Status",
+  "targetNodeMetric": "Node Metric",
+  "nodeId": "Target Node",
+  "metricType": "Metric",
+  "metricCpu": "CPU Usage",
+  "metricMemory": "Memory Usage",
+  "metricDisk": "Disk Usage",
+  "thresholdPercent": "Threshold",
+  "thresholdHint": "Alert when usage >= threshold (0-100)",
+  "consecutiveCount": "Consecutive Hits",
+  "consecutiveHint": "Alert only after N consecutive hits (debounce)",
+  "notifyOnRecovery": "Notify on Recovery"
 }

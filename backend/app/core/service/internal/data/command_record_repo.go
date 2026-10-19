@@ -188,6 +188,41 @@ func ptrOrNil(s string) *string {
 	return &s
 }
 
+// AttachBatch 给指令台账打上批量执行批次标记(批次先建、指令后发,事后回填)。
+func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, batchID uint32) error {
+	_, err := r.entClient.Client().CommandRecord.
+		Update().
+		Where(
+			commandrecord.RequestIDEQ(requestID),
+			commandrecord.BatchIDEQ(0),
+		).
+		SetBatchID(batchID).
+		Save(ctx)
+	return err
+}
+
+// ListStalePendingBatchItems 取超时未回执且带批次标记的 PENDING 台账
+// (批次计数对账用;定案由调用方逐条执行)。
+func (r *CommandRecordRepo) ListStalePendingBatchItems(ctx context.Context, before time.Time) ([]*ent.CommandRecord, error) {
+	return r.entClient.Client().CommandRecord.
+		Query().
+		Where(
+			commandrecord.StatusEQ(commandrecord.StatusPending),
+			commandrecord.BatchIDGT(0),
+			commandrecord.CreatedAtLT(before),
+		).
+		All(ctx)
+}
+
+// ListByBatch 取批次内全部指令台账(按下发顺序)。
+func (r *CommandRecordRepo) ListByBatch(ctx context.Context, batchID uint32) ([]*ent.CommandRecord, error) {
+	return r.entClient.Client().CommandRecord.
+		Query().
+		Where(commandrecord.BatchIDEQ(batchID)).
+		Order(ent.Asc(commandrecord.FieldID)).
+		All(ctx)
+}
+
 // FinalizeStalePending 把超时未回执的 PENDING 台账定案 FAILED,返回行数。
 // 幂等,可多副本并发执行。
 func (r *CommandRecordRepo) FinalizeStalePending(ctx context.Context, before time.Time) (int, error) {

@@ -61,6 +61,11 @@ message Alert {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 是否已外呼 webhook
 
+  optional uint32 node_id = 8 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 关联节点(节点指标告警;项目状态告警为 0)
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

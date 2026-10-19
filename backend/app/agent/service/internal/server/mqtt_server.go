@@ -68,5 +68,12 @@ func NewAgentMqttServer(
 		agentService.HandleTerminalInput,
 	)
 
+	// Web 终端尺寸(通配所有会话,payload.session_id 路由)
+	_ = mqtt.RegisterSubscriber(srv,
+		ctx.Context(),
+		topic.MakeMqttTopicTerminalResize(agentService.AgentID(), "+"),
+		agentService.HandleTerminalResize,
+	)
+
 	return srv
 }

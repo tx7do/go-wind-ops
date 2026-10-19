@@ -118,6 +118,112 @@ func (_c *MonitorCreate) SetProjectID(v uint32) *MonitorCreate {
 	return _c
 }
 
+// SetNillableProjectID sets the "project_id" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableProjectID(v *uint32) *MonitorCreate {
+	if v != nil {
+		_c.SetProjectID(*v)
+	}
+	return _c
+}
+
+// SetTargetType sets the "target_type" field.
+func (_c *MonitorCreate) SetTargetType(v monitor.TargetType) *MonitorCreate {
+	_c.mutation.SetTargetType(v)
+	return _c
+}
+
+// SetNillableTargetType sets the "target_type" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableTargetType(v *monitor.TargetType) *MonitorCreate {
+	if v != nil {
+		_c.SetTargetType(*v)
+	}
+	return _c
+}
+
+// SetNodeID sets the "node_id" field.
+func (_c *MonitorCreate) SetNodeID(v uint32) *MonitorCreate {
+	_c.mutation.SetNodeID(v)
+	return _c
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableNodeID(v *uint32) *MonitorCreate {
+	if v != nil {
+		_c.SetNodeID(*v)
+	}
+	return _c
+}
+
+// SetMetricType sets the "metric_type" field.
+func (_c *MonitorCreate) SetMetricType(v monitor.MetricType) *MonitorCreate {
+	_c.mutation.SetMetricType(v)
+	return _c
+}
+
+// SetNillableMetricType sets the "metric_type" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableMetricType(v *monitor.MetricType) *MonitorCreate {
+	if v != nil {
+		_c.SetMetricType(*v)
+	}
+	return _c
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (_c *MonitorCreate) SetThresholdPercent(v float64) *MonitorCreate {
+	_c.mutation.SetThresholdPercent(v)
+	return _c
+}
+
+// SetNillableThresholdPercent sets the "threshold_percent" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableThresholdPercent(v *float64) *MonitorCreate {
+	if v != nil {
+		_c.SetThresholdPercent(*v)
+	}
+	return _c
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (_c *MonitorCreate) SetConsecutiveCount(v int) *MonitorCreate {
+	_c.mutation.SetConsecutiveCount(v)
+	return _c
+}
+
+// SetNillableConsecutiveCount sets the "consecutive_count" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableConsecutiveCount(v *int) *MonitorCreate {
+	if v != nil {
+		_c.SetConsecutiveCount(*v)
+	}
+	return _c
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (_c *MonitorCreate) SetConsecutiveHits(v int) *MonitorCreate {
+	_c.mutation.SetConsecutiveHits(v)
+	return _c
+}
+
+// SetNillableConsecutiveHits sets the "consecutive_hits" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableConsecutiveHits(v *int) *MonitorCreate {
+	if v != nil {
+		_c.SetConsecutiveHits(*v)
+	}
+	return _c
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (_c *MonitorCreate) SetNotifyOnRecovery(v bool) *MonitorCreate {
+	_c.mutation.SetNotifyOnRecovery(v)
+	return _c
+}
+
+// SetNillableNotifyOnRecovery sets the "notify_on_recovery" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableNotifyOnRecovery(v *bool) *MonitorCreate {
+	if v != nil {
+		_c.SetNotifyOnRecovery(*v)
+	}
+	return _c
+}
+
 // SetCron sets the "cron" field.
 func (_c *MonitorCreate) SetCron(v string) *MonitorCreate {
 	_c.mutation.SetCron(v)
@@ -221,6 +327,38 @@ func (_c *MonitorCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *MonitorCreate) defaults() {
+	if _, ok := _c.mutation.ProjectID(); !ok {
+		v := monitor.DefaultProjectID
+		_c.mutation.SetProjectID(v)
+	}
+	if _, ok := _c.mutation.TargetType(); !ok {
+		v := monitor.DefaultTargetType
+		_c.mutation.SetTargetType(v)
+	}
+	if _, ok := _c.mutation.NodeID(); !ok {
+		v := monitor.DefaultNodeID
+		_c.mutation.SetNodeID(v)
+	}
+	if _, ok := _c.mutation.MetricType(); !ok {
+		v := monitor.DefaultMetricType
+		_c.mutation.SetMetricType(v)
+	}
+	if _, ok := _c.mutation.ThresholdPercent(); !ok {
+		v := monitor.DefaultThresholdPercent
+		_c.mutation.SetThresholdPercent(v)
+	}
+	if _, ok := _c.mutation.ConsecutiveCount(); !ok {
+		v := monitor.DefaultConsecutiveCount
+		_c.mutation.SetConsecutiveCount(v)
+	}
+	if _, ok := _c.mutation.ConsecutiveHits(); !ok {
+		v := monitor.DefaultConsecutiveHits
+		_c.mutation.SetConsecutiveHits(v)
+	}
+	if _, ok := _c.mutation.NotifyOnRecovery(); !ok {
+		v := monitor.DefaultNotifyOnRecovery
+		_c.mutation.SetNotifyOnRecovery(v)
+	}
 	if _, ok := _c.mutation.AutoRestart(); !ok {
 		v := monitor.DefaultAutoRestart
 		_c.mutation.SetAutoRestart(v)
@@ -241,13 +379,33 @@ func (_c *MonitorCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Monitor.name": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.ProjectID(); !ok {
-		return &ValidationError{Name: "project_id", err: errors.New(`ent: missing required field "Monitor.project_id"`)}
+	if _, ok := _c.mutation.TargetType(); !ok {
+		return &ValidationError{Name: "target_type", err: errors.New(`ent: missing required field "Monitor.target_type"`)}
 	}
-	if v, ok := _c.mutation.ProjectID(); ok {
-		if err := monitor.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Monitor.project_id": %w`, err)}
+	if v, ok := _c.mutation.TargetType(); ok {
+		if err := monitor.TargetTypeValidator(v); err != nil {
+			return &ValidationError{Name: "target_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.target_type": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.MetricType(); !ok {
+		return &ValidationError{Name: "metric_type", err: errors.New(`ent: missing required field "Monitor.metric_type"`)}
+	}
+	if v, ok := _c.mutation.MetricType(); ok {
+		if err := monitor.MetricTypeValidator(v); err != nil {
+			return &ValidationError{Name: "metric_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.metric_type": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.ThresholdPercent(); !ok {
+		return &ValidationError{Name: "threshold_percent", err: errors.New(`ent: missing required field "Monitor.threshold_percent"`)}
+	}
+	if _, ok := _c.mutation.ConsecutiveCount(); !ok {
+		return &ValidationError{Name: "consecutive_count", err: errors.New(`ent: missing required field "Monitor.consecutive_count"`)}
+	}
+	if _, ok := _c.mutation.ConsecutiveHits(); !ok {
+		return &ValidationError{Name: "consecutive_hits", err: errors.New(`ent: missing required field "Monitor.consecutive_hits"`)}
+	}
+	if _, ok := _c.mutation.NotifyOnRecovery(); !ok {
+		return &ValidationError{Name: "notify_on_recovery", err: errors.New(`ent: missing required field "Monitor.notify_on_recovery"`)}
 	}
 	if _, ok := _c.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Monitor.cron"`)}
@@ -332,6 +490,34 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ProjectID(); ok {
 		_spec.SetField(monitor.FieldProjectID, field.TypeUint32, value)
 		_node.ProjectID = value
+	}
+	if value, ok := _c.mutation.TargetType(); ok {
+		_spec.SetField(monitor.FieldTargetType, field.TypeEnum, value)
+		_node.TargetType = value
+	}
+	if value, ok := _c.mutation.NodeID(); ok {
+		_spec.SetField(monitor.FieldNodeID, field.TypeUint32, value)
+		_node.NodeID = value
+	}
+	if value, ok := _c.mutation.MetricType(); ok {
+		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)
+		_node.MetricType = value
+	}
+	if value, ok := _c.mutation.ThresholdPercent(); ok {
+		_spec.SetField(monitor.FieldThresholdPercent, field.TypeFloat64, value)
+		_node.ThresholdPercent = value
+	}
+	if value, ok := _c.mutation.ConsecutiveCount(); ok {
+		_spec.SetField(monitor.FieldConsecutiveCount, field.TypeInt, value)
+		_node.ConsecutiveCount = value
+	}
+	if value, ok := _c.mutation.ConsecutiveHits(); ok {
+		_spec.SetField(monitor.FieldConsecutiveHits, field.TypeInt, value)
+		_node.ConsecutiveHits = value
+	}
+	if value, ok := _c.mutation.NotifyOnRecovery(); ok {
+		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
+		_node.NotifyOnRecovery = value
 	}
 	if value, ok := _c.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
@@ -540,6 +726,126 @@ func (u *MonitorUpsert) UpdateProjectID() *MonitorUpsert {
 // AddProjectID adds v to the "project_id" field.
 func (u *MonitorUpsert) AddProjectID(v uint32) *MonitorUpsert {
 	u.Add(monitor.FieldProjectID, v)
+	return u
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *MonitorUpsert) ClearProjectID() *MonitorUpsert {
+	u.SetNull(monitor.FieldProjectID)
+	return u
+}
+
+// SetTargetType sets the "target_type" field.
+func (u *MonitorUpsert) SetTargetType(v monitor.TargetType) *MonitorUpsert {
+	u.Set(monitor.FieldTargetType, v)
+	return u
+}
+
+// UpdateTargetType sets the "target_type" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateTargetType() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldTargetType)
+	return u
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *MonitorUpsert) SetNodeID(v uint32) *MonitorUpsert {
+	u.Set(monitor.FieldNodeID, v)
+	return u
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateNodeID() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldNodeID)
+	return u
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *MonitorUpsert) AddNodeID(v uint32) *MonitorUpsert {
+	u.Add(monitor.FieldNodeID, v)
+	return u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *MonitorUpsert) ClearNodeID() *MonitorUpsert {
+	u.SetNull(monitor.FieldNodeID)
+	return u
+}
+
+// SetMetricType sets the "metric_type" field.
+func (u *MonitorUpsert) SetMetricType(v monitor.MetricType) *MonitorUpsert {
+	u.Set(monitor.FieldMetricType, v)
+	return u
+}
+
+// UpdateMetricType sets the "metric_type" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateMetricType() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldMetricType)
+	return u
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (u *MonitorUpsert) SetThresholdPercent(v float64) *MonitorUpsert {
+	u.Set(monitor.FieldThresholdPercent, v)
+	return u
+}
+
+// UpdateThresholdPercent sets the "threshold_percent" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateThresholdPercent() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldThresholdPercent)
+	return u
+}
+
+// AddThresholdPercent adds v to the "threshold_percent" field.
+func (u *MonitorUpsert) AddThresholdPercent(v float64) *MonitorUpsert {
+	u.Add(monitor.FieldThresholdPercent, v)
+	return u
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (u *MonitorUpsert) SetConsecutiveCount(v int) *MonitorUpsert {
+	u.Set(monitor.FieldConsecutiveCount, v)
+	return u
+}
+
+// UpdateConsecutiveCount sets the "consecutive_count" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateConsecutiveCount() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldConsecutiveCount)
+	return u
+}
+
+// AddConsecutiveCount adds v to the "consecutive_count" field.
+func (u *MonitorUpsert) AddConsecutiveCount(v int) *MonitorUpsert {
+	u.Add(monitor.FieldConsecutiveCount, v)
+	return u
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (u *MonitorUpsert) SetConsecutiveHits(v int) *MonitorUpsert {
+	u.Set(monitor.FieldConsecutiveHits, v)
+	return u
+}
+
+// UpdateConsecutiveHits sets the "consecutive_hits" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateConsecutiveHits() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldConsecutiveHits)
+	return u
+}
+
+// AddConsecutiveHits adds v to the "consecutive_hits" field.
+func (u *MonitorUpsert) AddConsecutiveHits(v int) *MonitorUpsert {
+	u.Add(monitor.FieldConsecutiveHits, v)
+	return u
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (u *MonitorUpsert) SetNotifyOnRecovery(v bool) *MonitorUpsert {
+	u.Set(monitor.FieldNotifyOnRecovery, v)
+	return u
+}
+
+// UpdateNotifyOnRecovery sets the "notify_on_recovery" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateNotifyOnRecovery() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldNotifyOnRecovery)
 	return u
 }
 
@@ -824,6 +1130,146 @@ func (u *MonitorUpsertOne) AddProjectID(v uint32) *MonitorUpsertOne {
 func (u *MonitorUpsertOne) UpdateProjectID() *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateProjectID()
+	})
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *MonitorUpsertOne) ClearProjectID() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearProjectID()
+	})
+}
+
+// SetTargetType sets the "target_type" field.
+func (u *MonitorUpsertOne) SetTargetType(v monitor.TargetType) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetTargetType(v)
+	})
+}
+
+// UpdateTargetType sets the "target_type" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateTargetType() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateTargetType()
+	})
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *MonitorUpsertOne) SetNodeID(v uint32) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetNodeID(v)
+	})
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *MonitorUpsertOne) AddNodeID(v uint32) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddNodeID(v)
+	})
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateNodeID() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateNodeID()
+	})
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *MonitorUpsertOne) ClearNodeID() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearNodeID()
+	})
+}
+
+// SetMetricType sets the "metric_type" field.
+func (u *MonitorUpsertOne) SetMetricType(v monitor.MetricType) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetMetricType(v)
+	})
+}
+
+// UpdateMetricType sets the "metric_type" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateMetricType() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateMetricType()
+	})
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (u *MonitorUpsertOne) SetThresholdPercent(v float64) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetThresholdPercent(v)
+	})
+}
+
+// AddThresholdPercent adds v to the "threshold_percent" field.
+func (u *MonitorUpsertOne) AddThresholdPercent(v float64) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddThresholdPercent(v)
+	})
+}
+
+// UpdateThresholdPercent sets the "threshold_percent" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateThresholdPercent() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateThresholdPercent()
+	})
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (u *MonitorUpsertOne) SetConsecutiveCount(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetConsecutiveCount(v)
+	})
+}
+
+// AddConsecutiveCount adds v to the "consecutive_count" field.
+func (u *MonitorUpsertOne) AddConsecutiveCount(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddConsecutiveCount(v)
+	})
+}
+
+// UpdateConsecutiveCount sets the "consecutive_count" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateConsecutiveCount() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateConsecutiveCount()
+	})
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (u *MonitorUpsertOne) SetConsecutiveHits(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetConsecutiveHits(v)
+	})
+}
+
+// AddConsecutiveHits adds v to the "consecutive_hits" field.
+func (u *MonitorUpsertOne) AddConsecutiveHits(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddConsecutiveHits(v)
+	})
+}
+
+// UpdateConsecutiveHits sets the "consecutive_hits" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateConsecutiveHits() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateConsecutiveHits()
+	})
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (u *MonitorUpsertOne) SetNotifyOnRecovery(v bool) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetNotifyOnRecovery(v)
+	})
+}
+
+// UpdateNotifyOnRecovery sets the "notify_on_recovery" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateNotifyOnRecovery() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateNotifyOnRecovery()
 	})
 }
 
@@ -1286,6 +1732,146 @@ func (u *MonitorUpsertBulk) AddProjectID(v uint32) *MonitorUpsertBulk {
 func (u *MonitorUpsertBulk) UpdateProjectID() *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateProjectID()
+	})
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (u *MonitorUpsertBulk) ClearProjectID() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearProjectID()
+	})
+}
+
+// SetTargetType sets the "target_type" field.
+func (u *MonitorUpsertBulk) SetTargetType(v monitor.TargetType) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetTargetType(v)
+	})
+}
+
+// UpdateTargetType sets the "target_type" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateTargetType() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateTargetType()
+	})
+}
+
+// SetNodeID sets the "node_id" field.
+func (u *MonitorUpsertBulk) SetNodeID(v uint32) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetNodeID(v)
+	})
+}
+
+// AddNodeID adds v to the "node_id" field.
+func (u *MonitorUpsertBulk) AddNodeID(v uint32) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddNodeID(v)
+	})
+}
+
+// UpdateNodeID sets the "node_id" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateNodeID() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateNodeID()
+	})
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (u *MonitorUpsertBulk) ClearNodeID() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearNodeID()
+	})
+}
+
+// SetMetricType sets the "metric_type" field.
+func (u *MonitorUpsertBulk) SetMetricType(v monitor.MetricType) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetMetricType(v)
+	})
+}
+
+// UpdateMetricType sets the "metric_type" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateMetricType() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateMetricType()
+	})
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (u *MonitorUpsertBulk) SetThresholdPercent(v float64) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetThresholdPercent(v)
+	})
+}
+
+// AddThresholdPercent adds v to the "threshold_percent" field.
+func (u *MonitorUpsertBulk) AddThresholdPercent(v float64) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddThresholdPercent(v)
+	})
+}
+
+// UpdateThresholdPercent sets the "threshold_percent" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateThresholdPercent() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateThresholdPercent()
+	})
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (u *MonitorUpsertBulk) SetConsecutiveCount(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetConsecutiveCount(v)
+	})
+}
+
+// AddConsecutiveCount adds v to the "consecutive_count" field.
+func (u *MonitorUpsertBulk) AddConsecutiveCount(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddConsecutiveCount(v)
+	})
+}
+
+// UpdateConsecutiveCount sets the "consecutive_count" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateConsecutiveCount() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateConsecutiveCount()
+	})
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (u *MonitorUpsertBulk) SetConsecutiveHits(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetConsecutiveHits(v)
+	})
+}
+
+// AddConsecutiveHits adds v to the "consecutive_hits" field.
+func (u *MonitorUpsertBulk) AddConsecutiveHits(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddConsecutiveHits(v)
+	})
+}
+
+// UpdateConsecutiveHits sets the "consecutive_hits" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateConsecutiveHits() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateConsecutiveHits()
+	})
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (u *MonitorUpsertBulk) SetNotifyOnRecovery(v bool) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetNotifyOnRecovery(v)
+	})
+}
+
+// UpdateNotifyOnRecovery sets the "notify_on_recovery" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateNotifyOnRecovery() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateNotifyOnRecovery()
 	})
 }
 

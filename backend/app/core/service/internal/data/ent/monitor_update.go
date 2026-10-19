@@ -185,6 +185,144 @@ func (_u *MonitorUpdate) AddProjectID(v int32) *MonitorUpdate {
 	return _u
 }
 
+// ClearProjectID clears the value of the "project_id" field.
+func (_u *MonitorUpdate) ClearProjectID() *MonitorUpdate {
+	_u.mutation.ClearProjectID()
+	return _u
+}
+
+// SetTargetType sets the "target_type" field.
+func (_u *MonitorUpdate) SetTargetType(v monitor.TargetType) *MonitorUpdate {
+	_u.mutation.SetTargetType(v)
+	return _u
+}
+
+// SetNillableTargetType sets the "target_type" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableTargetType(v *monitor.TargetType) *MonitorUpdate {
+	if v != nil {
+		_u.SetTargetType(*v)
+	}
+	return _u
+}
+
+// SetNodeID sets the "node_id" field.
+func (_u *MonitorUpdate) SetNodeID(v uint32) *MonitorUpdate {
+	_u.mutation.ResetNodeID()
+	_u.mutation.SetNodeID(v)
+	return _u
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableNodeID(v *uint32) *MonitorUpdate {
+	if v != nil {
+		_u.SetNodeID(*v)
+	}
+	return _u
+}
+
+// AddNodeID adds value to the "node_id" field.
+func (_u *MonitorUpdate) AddNodeID(v int32) *MonitorUpdate {
+	_u.mutation.AddNodeID(v)
+	return _u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (_u *MonitorUpdate) ClearNodeID() *MonitorUpdate {
+	_u.mutation.ClearNodeID()
+	return _u
+}
+
+// SetMetricType sets the "metric_type" field.
+func (_u *MonitorUpdate) SetMetricType(v monitor.MetricType) *MonitorUpdate {
+	_u.mutation.SetMetricType(v)
+	return _u
+}
+
+// SetNillableMetricType sets the "metric_type" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableMetricType(v *monitor.MetricType) *MonitorUpdate {
+	if v != nil {
+		_u.SetMetricType(*v)
+	}
+	return _u
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (_u *MonitorUpdate) SetThresholdPercent(v float64) *MonitorUpdate {
+	_u.mutation.ResetThresholdPercent()
+	_u.mutation.SetThresholdPercent(v)
+	return _u
+}
+
+// SetNillableThresholdPercent sets the "threshold_percent" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableThresholdPercent(v *float64) *MonitorUpdate {
+	if v != nil {
+		_u.SetThresholdPercent(*v)
+	}
+	return _u
+}
+
+// AddThresholdPercent adds value to the "threshold_percent" field.
+func (_u *MonitorUpdate) AddThresholdPercent(v float64) *MonitorUpdate {
+	_u.mutation.AddThresholdPercent(v)
+	return _u
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (_u *MonitorUpdate) SetConsecutiveCount(v int) *MonitorUpdate {
+	_u.mutation.ResetConsecutiveCount()
+	_u.mutation.SetConsecutiveCount(v)
+	return _u
+}
+
+// SetNillableConsecutiveCount sets the "consecutive_count" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableConsecutiveCount(v *int) *MonitorUpdate {
+	if v != nil {
+		_u.SetConsecutiveCount(*v)
+	}
+	return _u
+}
+
+// AddConsecutiveCount adds value to the "consecutive_count" field.
+func (_u *MonitorUpdate) AddConsecutiveCount(v int) *MonitorUpdate {
+	_u.mutation.AddConsecutiveCount(v)
+	return _u
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (_u *MonitorUpdate) SetConsecutiveHits(v int) *MonitorUpdate {
+	_u.mutation.ResetConsecutiveHits()
+	_u.mutation.SetConsecutiveHits(v)
+	return _u
+}
+
+// SetNillableConsecutiveHits sets the "consecutive_hits" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableConsecutiveHits(v *int) *MonitorUpdate {
+	if v != nil {
+		_u.SetConsecutiveHits(*v)
+	}
+	return _u
+}
+
+// AddConsecutiveHits adds value to the "consecutive_hits" field.
+func (_u *MonitorUpdate) AddConsecutiveHits(v int) *MonitorUpdate {
+	_u.mutation.AddConsecutiveHits(v)
+	return _u
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (_u *MonitorUpdate) SetNotifyOnRecovery(v bool) *MonitorUpdate {
+	_u.mutation.SetNotifyOnRecovery(v)
+	return _u
+}
+
+// SetNillableNotifyOnRecovery sets the "notify_on_recovery" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableNotifyOnRecovery(v *bool) *MonitorUpdate {
+	if v != nil {
+		_u.SetNotifyOnRecovery(*v)
+	}
+	return _u
+}
+
 // SetCron sets the "cron" field.
 func (_u *MonitorUpdate) SetCron(v string) *MonitorUpdate {
 	_u.mutation.SetCron(v)
@@ -306,9 +444,14 @@ func (_u *MonitorUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Monitor.name": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := monitor.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Monitor.project_id": %w`, err)}
+	if v, ok := _u.mutation.TargetType(); ok {
+		if err := monitor.TargetTypeValidator(v); err != nil {
+			return &ValidationError{Name: "target_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.target_type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.MetricType(); ok {
+		if err := monitor.MetricTypeValidator(v); err != nil {
+			return &ValidationError{Name: "metric_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.metric_type": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Cron(); ok {
@@ -387,6 +530,45 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
 		_spec.AddField(monitor.FieldProjectID, field.TypeUint32, value)
+	}
+	if _u.mutation.ProjectIDCleared() {
+		_spec.ClearField(monitor.FieldProjectID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.TargetType(); ok {
+		_spec.SetField(monitor.FieldTargetType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.NodeID(); ok {
+		_spec.SetField(monitor.FieldNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedNodeID(); ok {
+		_spec.AddField(monitor.FieldNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.NodeIDCleared() {
+		_spec.ClearField(monitor.FieldNodeID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.MetricType(); ok {
+		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.ThresholdPercent(); ok {
+		_spec.SetField(monitor.FieldThresholdPercent, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedThresholdPercent(); ok {
+		_spec.AddField(monitor.FieldThresholdPercent, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.ConsecutiveCount(); ok {
+		_spec.SetField(monitor.FieldConsecutiveCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedConsecutiveCount(); ok {
+		_spec.AddField(monitor.FieldConsecutiveCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.ConsecutiveHits(); ok {
+		_spec.SetField(monitor.FieldConsecutiveHits, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedConsecutiveHits(); ok {
+		_spec.AddField(monitor.FieldConsecutiveHits, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.NotifyOnRecovery(); ok {
+		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
@@ -587,6 +769,144 @@ func (_u *MonitorUpdateOne) AddProjectID(v int32) *MonitorUpdateOne {
 	return _u
 }
 
+// ClearProjectID clears the value of the "project_id" field.
+func (_u *MonitorUpdateOne) ClearProjectID() *MonitorUpdateOne {
+	_u.mutation.ClearProjectID()
+	return _u
+}
+
+// SetTargetType sets the "target_type" field.
+func (_u *MonitorUpdateOne) SetTargetType(v monitor.TargetType) *MonitorUpdateOne {
+	_u.mutation.SetTargetType(v)
+	return _u
+}
+
+// SetNillableTargetType sets the "target_type" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableTargetType(v *monitor.TargetType) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetTargetType(*v)
+	}
+	return _u
+}
+
+// SetNodeID sets the "node_id" field.
+func (_u *MonitorUpdateOne) SetNodeID(v uint32) *MonitorUpdateOne {
+	_u.mutation.ResetNodeID()
+	_u.mutation.SetNodeID(v)
+	return _u
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableNodeID(v *uint32) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetNodeID(*v)
+	}
+	return _u
+}
+
+// AddNodeID adds value to the "node_id" field.
+func (_u *MonitorUpdateOne) AddNodeID(v int32) *MonitorUpdateOne {
+	_u.mutation.AddNodeID(v)
+	return _u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (_u *MonitorUpdateOne) ClearNodeID() *MonitorUpdateOne {
+	_u.mutation.ClearNodeID()
+	return _u
+}
+
+// SetMetricType sets the "metric_type" field.
+func (_u *MonitorUpdateOne) SetMetricType(v monitor.MetricType) *MonitorUpdateOne {
+	_u.mutation.SetMetricType(v)
+	return _u
+}
+
+// SetNillableMetricType sets the "metric_type" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableMetricType(v *monitor.MetricType) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetMetricType(*v)
+	}
+	return _u
+}
+
+// SetThresholdPercent sets the "threshold_percent" field.
+func (_u *MonitorUpdateOne) SetThresholdPercent(v float64) *MonitorUpdateOne {
+	_u.mutation.ResetThresholdPercent()
+	_u.mutation.SetThresholdPercent(v)
+	return _u
+}
+
+// SetNillableThresholdPercent sets the "threshold_percent" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableThresholdPercent(v *float64) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetThresholdPercent(*v)
+	}
+	return _u
+}
+
+// AddThresholdPercent adds value to the "threshold_percent" field.
+func (_u *MonitorUpdateOne) AddThresholdPercent(v float64) *MonitorUpdateOne {
+	_u.mutation.AddThresholdPercent(v)
+	return _u
+}
+
+// SetConsecutiveCount sets the "consecutive_count" field.
+func (_u *MonitorUpdateOne) SetConsecutiveCount(v int) *MonitorUpdateOne {
+	_u.mutation.ResetConsecutiveCount()
+	_u.mutation.SetConsecutiveCount(v)
+	return _u
+}
+
+// SetNillableConsecutiveCount sets the "consecutive_count" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableConsecutiveCount(v *int) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetConsecutiveCount(*v)
+	}
+	return _u
+}
+
+// AddConsecutiveCount adds value to the "consecutive_count" field.
+func (_u *MonitorUpdateOne) AddConsecutiveCount(v int) *MonitorUpdateOne {
+	_u.mutation.AddConsecutiveCount(v)
+	return _u
+}
+
+// SetConsecutiveHits sets the "consecutive_hits" field.
+func (_u *MonitorUpdateOne) SetConsecutiveHits(v int) *MonitorUpdateOne {
+	_u.mutation.ResetConsecutiveHits()
+	_u.mutation.SetConsecutiveHits(v)
+	return _u
+}
+
+// SetNillableConsecutiveHits sets the "consecutive_hits" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableConsecutiveHits(v *int) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetConsecutiveHits(*v)
+	}
+	return _u
+}
+
+// AddConsecutiveHits adds value to the "consecutive_hits" field.
+func (_u *MonitorUpdateOne) AddConsecutiveHits(v int) *MonitorUpdateOne {
+	_u.mutation.AddConsecutiveHits(v)
+	return _u
+}
+
+// SetNotifyOnRecovery sets the "notify_on_recovery" field.
+func (_u *MonitorUpdateOne) SetNotifyOnRecovery(v bool) *MonitorUpdateOne {
+	_u.mutation.SetNotifyOnRecovery(v)
+	return _u
+}
+
+// SetNillableNotifyOnRecovery sets the "notify_on_recovery" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableNotifyOnRecovery(v *bool) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetNotifyOnRecovery(*v)
+	}
+	return _u
+}
+
 // SetCron sets the "cron" field.
 func (_u *MonitorUpdateOne) SetCron(v string) *MonitorUpdateOne {
 	_u.mutation.SetCron(v)
@@ -721,9 +1041,14 @@ func (_u *MonitorUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Monitor.name": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := monitor.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Monitor.project_id": %w`, err)}
+	if v, ok := _u.mutation.TargetType(); ok {
+		if err := monitor.TargetTypeValidator(v); err != nil {
+			return &ValidationError{Name: "target_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.target_type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.MetricType(); ok {
+		if err := monitor.MetricTypeValidator(v); err != nil {
+			return &ValidationError{Name: "metric_type", err: fmt.Errorf(`ent: validator failed for field "Monitor.metric_type": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Cron(); ok {
@@ -819,6 +1144,45 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
 		_spec.AddField(monitor.FieldProjectID, field.TypeUint32, value)
+	}
+	if _u.mutation.ProjectIDCleared() {
+		_spec.ClearField(monitor.FieldProjectID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.TargetType(); ok {
+		_spec.SetField(monitor.FieldTargetType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.NodeID(); ok {
+		_spec.SetField(monitor.FieldNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedNodeID(); ok {
+		_spec.AddField(monitor.FieldNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.NodeIDCleared() {
+		_spec.ClearField(monitor.FieldNodeID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.MetricType(); ok {
+		_spec.SetField(monitor.FieldMetricType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.ThresholdPercent(); ok {
+		_spec.SetField(monitor.FieldThresholdPercent, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedThresholdPercent(); ok {
+		_spec.AddField(monitor.FieldThresholdPercent, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.ConsecutiveCount(); ok {
+		_spec.SetField(monitor.FieldConsecutiveCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedConsecutiveCount(); ok {
+		_spec.AddField(monitor.FieldConsecutiveCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.ConsecutiveHits(); ok {
+		_spec.SetField(monitor.FieldConsecutiveHits, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedConsecutiveHits(); ok {
+		_spec.AddField(monitor.FieldConsecutiveHits, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.NotifyOnRecovery(); ok {
+		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)

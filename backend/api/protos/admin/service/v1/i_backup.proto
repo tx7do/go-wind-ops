@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/backup.proto";
+
+// BackupService 备份任务管理
+service BackupService {
+  // 查询备份任务列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListBackupTaskResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/backup-tasks"
+    };
+  }
+
+  // 查询备份任务详情
+  rpc Get (ops.service.v1.GetBackupTaskRequest) returns (ops.service.v1.BackupTask) {
+    option (google.api.http) = {
+      get: "/admin/v1/backup-tasks/{id}"
+    };
+  }
+
+  // 创建备份任务
+  rpc Create (ops.service.v1.CreateBackupTaskRequest) returns (ops.service.v1.BackupTask) {
+    option (google.api.http) = {
+      post: "/admin/v1/backup-tasks"
+      body: "*"
+    };
+  }
+
+  // 更新备份任务
+  rpc Update (ops.service.v1.UpdateBackupTaskRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/backup-tasks/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除备份任务
+  rpc Delete (ops.service.v1.DeleteBackupTaskRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/backup-tasks/{id}"
+    };
+  }
+
+  // 立即触发一次备份
+  rpc Trigger (ops.service.v1.TriggerBackupRequest) returns (ops.service.v1.TriggerBackupResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/backup-tasks/trigger:send"
+      body: "*"
+    };
+  }
+
+  // 查询备份记录列表(按 taskId 过滤)
+  rpc ListRecords (pagination.PagingRequest) returns (ops.service.v1.ListBackupRecordResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/backup-records"
+    };
+  }
+
+  // 获取备份包下载预签名 URL
+  rpc GetRecordDownloadUrl (ops.service.v1.GetBackupRecordDownloadUrlRequest) returns (ops.service.v1.GetBackupRecordDownloadUrlResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/backup-records/{id}/download-url"
+    };
+  }
+}

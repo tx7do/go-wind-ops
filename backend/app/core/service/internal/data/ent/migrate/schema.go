@@ -61,7 +61,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
 		{Name: "monitor_id", Type: field.TypeUint32, Comment: "来源监控规则(ops_monitors.id)"},
-		{Name: "project_id", Type: field.TypeUint32, Comment: "关联项目"},
+		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "关联项目(节点指标告警为 0)", Default: 0},
+		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "关联节点(ops_agent_nodes.id;项目状态告警为 0)", Default: 0},
 		{Name: "level", Type: field.TypeEnum, Comment: "告警级别", Enums: []string{"WARNING", "ERROR", "RECOVERY"}, Default: "ERROR"},
 		{Name: "message", Type: field.TypeString, Comment: "告警内容"},
 		{Name: "resolved", Type: field.TypeBool, Comment: "是否已恢复/确认", Default: false},
@@ -81,9 +82,14 @@ var (
 				Columns: []*schema.Column{OpsAlertsColumns[4]},
 			},
 			{
+				Name:    "idx_ops_alert_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsAlertsColumns[6]},
+			},
+			{
 				Name:    "idx_ops_alert_resolved",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[8]},
+				Columns: []*schema.Column{OpsAlertsColumns[9]},
 			},
 		},
 	}
@@ -305,6 +311,85 @@ var (
 				Name:    "idx_ops_approval_requester",
 				Unique:  false,
 				Columns: []*schema.Column{OpsApprovalsColumns[9]},
+			},
+		},
+	}
+	// OpsBackupRecordsColumns holds the columns for the "ops_backup_records" table.
+	OpsBackupRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "task_id", Type: field.TypeUint32, Comment: "来源备份任务(ops_backup_tasks.id)"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "执行节点(ops_agent_nodes.id)"},
+		{Name: "bucket", Type: field.TypeString, Comment: "对象存储桶"},
+		{Name: "object_key", Type: field.TypeString, Comment: "对象键(backups/{taskId}/{uuid}.zip)"},
+		{Name: "size_bytes", Type: field.TypeInt64, Comment: "备份包大小(字节,回执回填)", Default: 0},
+		{Name: "sha256", Type: field.TypeString, Nullable: true, Comment: "备份包 SHA-256(回执回填)"},
+		{Name: "status", Type: field.TypeEnum, Comment: "执行状态", Enums: []string{"PENDING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "command_request_id", Type: field.TypeString, Comment: "指令幂等键(与 ops_command_records.request_id 对应)"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发备份的用户(定时触发为 0)", Default: 0},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "终态时间"},
+	}
+	// OpsBackupRecordsTable holds the schema information for the "ops_backup_records" table.
+	OpsBackupRecordsTable = &schema.Table{
+		Name:       "ops_backup_records",
+		Comment:    "备份执行记录表",
+		Columns:    OpsBackupRecordsColumns,
+		PrimaryKey: []*schema.Column{OpsBackupRecordsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_backup_record_task",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBackupRecordsColumns[4]},
+			},
+			{
+				Name:    "idx_ops_backup_record_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBackupRecordsColumns[10]},
+			},
+			{
+				Name:    "uidx_ops_backup_record_req",
+				Unique:  true,
+				Columns: []*schema.Column{OpsBackupRecordsColumns[12]},
+			},
+		},
+	}
+	// OpsBackupTasksColumns holds the columns for the "ops_backup_tasks" table.
+	OpsBackupTasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "任务名(全局唯一)"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "目标节点(ops_agent_nodes.id)"},
+		{Name: "source_dir", Type: field.TypeString, Comment: "备份源目录(须在 agent 授权目录 AGENT_ALLOWED_DIRS 内)"},
+		{Name: "cron", Type: field.TypeString, Nullable: true, Comment: "定时备份 cron 表达式(5 段标准语法,空为仅手动触发)", Default: ""},
+		{Name: "retention", Type: field.TypeInt, Comment: "保留最近 N 份成功备份(0=全部保留)", Default: 0},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用(停用后不再参与定时调度,手动触发不受限)", Default: true},
+		{Name: "last_cron_at", Type: field.TypeTime, Nullable: true, Comment: "上次定时调度锚点(调度器去重用)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsBackupTasksTable holds the schema information for the "ops_backup_tasks" table.
+	OpsBackupTasksTable = &schema.Table{
+		Name:       "ops_backup_tasks",
+		Comment:    "备份任务表",
+		Columns:    OpsBackupTasksColumns,
+		PrimaryKey: []*schema.Column{OpsBackupTasksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_backup_task_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBackupTasksColumns[8]},
+			},
+			{
+				Name:    "idx_ops_backup_task_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{OpsBackupTasksColumns[12]},
 			},
 		},
 	}
@@ -530,6 +615,7 @@ var (
 		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON)"},
 		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
 		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发指令的用户", Default: 0},
+		{Name: "batch_id", Type: field.TypeUint32, Nullable: true, Comment: "所属脚本批量执行批次(ops_script_batches.id;非批量指令为 0)", Default: 0},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结果回执时间"},
 	}
 	// OpsCommandRecordsTable holds the schema information for the "ops_command_records" table.
@@ -548,6 +634,11 @@ var (
 				Name:    "idx_ops_cmd_status",
 				Unique:  false,
 				Columns: []*schema.Column{OpsCommandRecordsColumns[9]},
+			},
+			{
+				Name:    "idx_ops_cmd_batch",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCommandRecordsColumns[13]},
 			},
 			{
 				Name:    "idx_ops_cmd_agent_action",
@@ -1581,9 +1672,16 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "name", Type: field.TypeString, Unique: true, Comment: "规则名(全局唯一)"},
-		{Name: "project_id", Type: field.TypeUint32, Comment: "被监控项目(ops_projects.id)"},
+		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "被监控项目(ops_projects.id;节点指标规则为 0)", Default: 0},
+		{Name: "target_type", Type: field.TypeEnum, Comment: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标", Enums: []string{"PROJECT", "NODE_METRIC"}, Default: "PROJECT"},
+		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "被监控节点(ops_agent_nodes.id;项目状态规则为 0)", Default: 0},
+		{Name: "metric_type", Type: field.TypeEnum, Comment: "指标类型(节点指标规则用):CPU/MEMORY/DISK", Enums: []string{"CPU", "MEMORY", "DISK"}, Default: "CPU"},
+		{Name: "threshold_percent", Type: field.TypeFloat64, Comment: "告警阈值(百分比,指标 ≥ 阈值即命中)", Default: 0},
+		{Name: "consecutive_count", Type: field.TypeInt, Comment: "连续命中多少个检查周期才告警(防抖)", Default: 1},
+		{Name: "consecutive_hits", Type: field.TypeInt, Comment: "运行态:当前连续命中次数(调度器维护,非用户配置)", Default: 0},
+		{Name: "notify_on_recovery", Type: field.TypeBool, Comment: "恢复时是否产生 RECOVERY 告警并通知", Default: true},
 		{Name: "cron", Type: field.TypeString, Comment: "检查周期 cron 表达式(5 段标准语法)"},
-		{Name: "auto_restart", Type: field.TypeBool, Comment: "异常时自动重启项目", Default: false},
+		{Name: "auto_restart", Type: field.TypeBool, Comment: "异常时自动重启项目(仅项目状态规则生效)", Default: false},
 		{Name: "webhook_url", Type: field.TypeString, Nullable: true, Comment: "告警通知 webhook 地址(空则只落告警不外呼)"},
 		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
@@ -1601,9 +1699,14 @@ var (
 				Columns: []*schema.Column{OpsMonitorsColumns[8]},
 			},
 			{
+				Name:    "idx_ops_monitor_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsMonitorsColumns[10]},
+			},
+			{
 				Name:    "idx_ops_monitor_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[12]},
+				Columns: []*schema.Column{OpsMonitorsColumns[19]},
 			},
 		},
 	}
@@ -2775,6 +2878,42 @@ var (
 			},
 		},
 	}
+	// OpsScriptBatchesColumns holds the columns for the "ops_script_batches" table.
+	OpsScriptBatchesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "script_id", Type: field.TypeUint32, Comment: "脚本(ops_scripts.id)"},
+		{Name: "script_name", Type: field.TypeString, Comment: "脚本名快照(脚本改名/删除不影响批次展示)"},
+		{Name: "node_ids", Type: field.TypeJSON, Nullable: true, Comment: "目标节点 ID 列表"},
+		{Name: "total", Type: field.TypeUint32, Comment: "目标节点总数", Default: 0},
+		{Name: "success_count", Type: field.TypeUint32, Comment: "已成功节点数(回执驱动累加)", Default: 0},
+		{Name: "failed_count", Type: field.TypeUint32, Comment: "已失败节点数(回执/下发失败/超时定案累加)", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "批次状态:RUNNING=进行中 / FINISHED=全部终态", Enums: []string{"RUNNING", "FINISHED"}, Default: "RUNNING"},
+	}
+	// OpsScriptBatchesTable holds the schema information for the "ops_script_batches" table.
+	OpsScriptBatchesTable = &schema.Table{
+		Name:       "ops_script_batches",
+		Comment:    "脚本批量执行批次表",
+		Columns:    OpsScriptBatchesColumns,
+		PrimaryKey: []*schema.Column{OpsScriptBatchesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_script_batch_script",
+				Unique:  false,
+				Columns: []*schema.Column{OpsScriptBatchesColumns[7]},
+			},
+			{
+				Name:    "idx_ops_script_batch_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsScriptBatchesColumns[13]},
+			},
+		},
+	}
 	// SysTasksColumns holds the columns for the "sys_tasks" table.
 	SysTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3339,6 +3478,8 @@ var (
 		SysAPIAuditLogsTable,
 		OpsAPIKeysTable,
 		OpsApprovalsTable,
+		OpsBackupRecordsTable,
+		OpsBackupTasksTable,
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
 		OpsBuildPipelinesTable,
@@ -3381,6 +3522,7 @@ var (
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
 		OpsScriptsTable,
+		OpsScriptBatchesTable,
 		SysTasksTable,
 		SysTenantsTable,
 		SysUsersTable,
@@ -3419,6 +3561,16 @@ func init() {
 	}
 	OpsApprovalsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_approvals",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsBackupRecordsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_backup_records",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsBackupTasksTable.Annotation = &entsql.Annotation{
+		Table:     "ops_backup_tasks",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3634,6 +3786,11 @@ func init() {
 	}
 	OpsScriptsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_scripts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsScriptBatchesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_script_batches",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

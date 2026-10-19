@@ -35,39 +35,54 @@ const file_admin_service_v1_i_script_proto_rawDesc = "" +
 	"\x06Create\x12#.ops.service.v1.CreateScriptRequest\x1a\x16.ops.service.v1.Script\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/admin/v1/scripts\x12h\n" +
 	"\x06Update\x12#.ops.service.v1.UpdateScriptRequest\x1a\x16.google.protobuf.Empty\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\x1a\x16/admin/v1/scripts/{id}\x12e\n" +
 	"\x06Delete\x12#.ops.service.v1.DeleteScriptRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18*\x16/admin/v1/scripts/{id}\x12\x89\x01\n" +
-	"\aExecute\x12$.ops.service.v1.ExecuteScriptRequest\x1a%.ops.service.v1.ExecuteScriptResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/admin/v1/scripts/{id}/executions:sendB\xb7\x01\n" +
+	"\aExecute\x12$.ops.service.v1.ExecuteScriptRequest\x1a%.ops.service.v1.ExecuteScriptResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/admin/v1/scripts/{id}/executions:send2\x8d\x03\n" +
+	"\x12ScriptBatchService\x12l\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a'.ops.service.v1.ListScriptBatchResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/script-batches\x12v\n" +
+	"\x03Get\x12%.ops.service.v1.GetScriptBatchRequest\x1a!.ops.service.v1.ScriptBatchDetail\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/script-batches/{id}\x12\x90\x01\n" +
+	"\tBatchExec\x12).ops.service.v1.ExecuteScriptBatchRequest\x1a*.ops.service.v1.ExecuteScriptBatchResponse\",\x82\xd3\xe4\x93\x02&:\x01*\"!/admin/v1/scripts/batch-exec:sendB\xb7\x01\n" +
 	"\x14com.admin.service.v1B\fIScriptProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_script_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),          // 0: pagination.PagingRequest
-	(*v11.GetScriptRequest)(nil),      // 1: ops.service.v1.GetScriptRequest
-	(*v11.CreateScriptRequest)(nil),   // 2: ops.service.v1.CreateScriptRequest
-	(*v11.UpdateScriptRequest)(nil),   // 3: ops.service.v1.UpdateScriptRequest
-	(*v11.DeleteScriptRequest)(nil),   // 4: ops.service.v1.DeleteScriptRequest
-	(*v11.ExecuteScriptRequest)(nil),  // 5: ops.service.v1.ExecuteScriptRequest
-	(*v11.ListScriptResponse)(nil),    // 6: ops.service.v1.ListScriptResponse
-	(*v11.Script)(nil),                // 7: ops.service.v1.Script
-	(*emptypb.Empty)(nil),             // 8: google.protobuf.Empty
-	(*v11.ExecuteScriptResponse)(nil), // 9: ops.service.v1.ExecuteScriptResponse
+	(*v1.PagingRequest)(nil),               // 0: pagination.PagingRequest
+	(*v11.GetScriptRequest)(nil),           // 1: ops.service.v1.GetScriptRequest
+	(*v11.CreateScriptRequest)(nil),        // 2: ops.service.v1.CreateScriptRequest
+	(*v11.UpdateScriptRequest)(nil),        // 3: ops.service.v1.UpdateScriptRequest
+	(*v11.DeleteScriptRequest)(nil),        // 4: ops.service.v1.DeleteScriptRequest
+	(*v11.ExecuteScriptRequest)(nil),       // 5: ops.service.v1.ExecuteScriptRequest
+	(*v11.GetScriptBatchRequest)(nil),      // 6: ops.service.v1.GetScriptBatchRequest
+	(*v11.ExecuteScriptBatchRequest)(nil),  // 7: ops.service.v1.ExecuteScriptBatchRequest
+	(*v11.ListScriptResponse)(nil),         // 8: ops.service.v1.ListScriptResponse
+	(*v11.Script)(nil),                     // 9: ops.service.v1.Script
+	(*emptypb.Empty)(nil),                  // 10: google.protobuf.Empty
+	(*v11.ExecuteScriptResponse)(nil),      // 11: ops.service.v1.ExecuteScriptResponse
+	(*v11.ListScriptBatchResponse)(nil),    // 12: ops.service.v1.ListScriptBatchResponse
+	(*v11.ScriptBatchDetail)(nil),          // 13: ops.service.v1.ScriptBatchDetail
+	(*v11.ExecuteScriptBatchResponse)(nil), // 14: ops.service.v1.ExecuteScriptBatchResponse
 }
 var file_admin_service_v1_i_script_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.ScriptService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.ScriptService.Get:input_type -> ops.service.v1.GetScriptRequest
-	2, // 2: admin.service.v1.ScriptService.Create:input_type -> ops.service.v1.CreateScriptRequest
-	3, // 3: admin.service.v1.ScriptService.Update:input_type -> ops.service.v1.UpdateScriptRequest
-	4, // 4: admin.service.v1.ScriptService.Delete:input_type -> ops.service.v1.DeleteScriptRequest
-	5, // 5: admin.service.v1.ScriptService.Execute:input_type -> ops.service.v1.ExecuteScriptRequest
-	6, // 6: admin.service.v1.ScriptService.List:output_type -> ops.service.v1.ListScriptResponse
-	7, // 7: admin.service.v1.ScriptService.Get:output_type -> ops.service.v1.Script
-	7, // 8: admin.service.v1.ScriptService.Create:output_type -> ops.service.v1.Script
-	8, // 9: admin.service.v1.ScriptService.Update:output_type -> google.protobuf.Empty
-	8, // 10: admin.service.v1.ScriptService.Delete:output_type -> google.protobuf.Empty
-	9, // 11: admin.service.v1.ScriptService.Execute:output_type -> ops.service.v1.ExecuteScriptResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.ScriptService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.ScriptService.Get:input_type -> ops.service.v1.GetScriptRequest
+	2,  // 2: admin.service.v1.ScriptService.Create:input_type -> ops.service.v1.CreateScriptRequest
+	3,  // 3: admin.service.v1.ScriptService.Update:input_type -> ops.service.v1.UpdateScriptRequest
+	4,  // 4: admin.service.v1.ScriptService.Delete:input_type -> ops.service.v1.DeleteScriptRequest
+	5,  // 5: admin.service.v1.ScriptService.Execute:input_type -> ops.service.v1.ExecuteScriptRequest
+	0,  // 6: admin.service.v1.ScriptBatchService.List:input_type -> pagination.PagingRequest
+	6,  // 7: admin.service.v1.ScriptBatchService.Get:input_type -> ops.service.v1.GetScriptBatchRequest
+	7,  // 8: admin.service.v1.ScriptBatchService.BatchExec:input_type -> ops.service.v1.ExecuteScriptBatchRequest
+	8,  // 9: admin.service.v1.ScriptService.List:output_type -> ops.service.v1.ListScriptResponse
+	9,  // 10: admin.service.v1.ScriptService.Get:output_type -> ops.service.v1.Script
+	9,  // 11: admin.service.v1.ScriptService.Create:output_type -> ops.service.v1.Script
+	10, // 12: admin.service.v1.ScriptService.Update:output_type -> google.protobuf.Empty
+	10, // 13: admin.service.v1.ScriptService.Delete:output_type -> google.protobuf.Empty
+	11, // 14: admin.service.v1.ScriptService.Execute:output_type -> ops.service.v1.ExecuteScriptResponse
+	12, // 15: admin.service.v1.ScriptBatchService.List:output_type -> ops.service.v1.ListScriptBatchResponse
+	13, // 16: admin.service.v1.ScriptBatchService.Get:output_type -> ops.service.v1.ScriptBatchDetail
+	14, // 17: admin.service.v1.ScriptBatchService.BatchExec:output_type -> ops.service.v1.ExecuteScriptBatchResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_script_proto_init() }
@@ -83,7 +98,7 @@ func file_admin_service_v1_i_script_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_admin_service_v1_i_script_proto_goTypes,
 		DependencyIndexes: file_admin_service_v1_i_script_proto_depIdxs,

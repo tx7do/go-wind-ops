@@ -86,6 +86,48 @@ message Monitor {
     }
   ]; // 描述
 
+  optional string target_type = 9 [
+    json_name = "targetType",
+    (gnostic.openapi.v3.property) = {
+      description: "规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标"
+    }
+  ]; // 规则目标类型(PROJECT/NODE_METRIC)
+
+  optional uint32 node_id = 10 [
+    json_name = "nodeId",
+    (gnostic.openapi.v3.property) = {
+      description: "被监控节点(节点指标规则必填,项目状态规则为 0)"
+    }
+  ]; // 被监控节点
+
+  optional string metric_type = 11 [
+    json_name = "metricType",
+    (gnostic.openapi.v3.property) = {
+      description: "指标类型(节点指标规则用):CPU/MEMORY/DISK"
+    }
+  ]; // 指标类型(CPU/MEMORY/DISK)
+
+  optional double threshold_percent = 12 [
+    json_name = "thresholdPercent",
+    (gnostic.openapi.v3.property) = {
+      description: "告警阈值(百分比,指标 ≥ 阈值即命中)"
+    }
+  ]; // 告警阈值
+
+  optional uint32 consecutive_count = 13 [
+    json_name = "consecutiveCount",
+    (gnostic.openapi.v3.property) = {
+      description: "连续命中多少个检查周期才告警(防抖,默认 1)"
+    }
+  ]; // 连续命中次数
+
+  optional bool notify_on_recovery = 14 [
+    json_name = "notifyOnRecovery",
+    (gnostic.openapi.v3.property) = {
+      description: "恢复时是否产生 RECOVERY 告警并通知"
+    }
+  ]; // 恢复通知
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

@@ -26,8 +26,10 @@ type Alert struct {
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 来源监控规则(ops_monitors.id)
 	MonitorID uint32 `json:"monitor_id,omitempty"`
-	// 关联项目
+	// 关联项目(节点指标告警为 0)
 	ProjectID uint32 `json:"project_id,omitempty"`
+	// 关联节点(ops_agent_nodes.id;项目状态告警为 0)
+	NodeID uint32 `json:"node_id,omitempty"`
 	// 告警级别
 	Level alert.Level `json:"level,omitempty"`
 	// 告警内容
@@ -48,7 +50,7 @@ func (*Alert) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case alert.FieldResolved, alert.FieldNotified:
 			values[i] = new(sql.NullBool)
-		case alert.FieldID, alert.FieldMonitorID, alert.FieldProjectID:
+		case alert.FieldID, alert.FieldMonitorID, alert.FieldProjectID, alert.FieldNodeID:
 			values[i] = new(sql.NullInt64)
 		case alert.FieldLevel, alert.FieldMessage:
 			values[i] = new(sql.NullString)
@@ -107,6 +109,12 @@ func (_m *Alert) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
 				_m.ProjectID = uint32(value.Int64)
+			}
+		case alert.FieldNodeID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field node_id", values[i])
+			} else if value.Valid {
+				_m.NodeID = uint32(value.Int64)
 			}
 		case alert.FieldLevel:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -195,6 +203,9 @@ func (_m *Alert) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("project_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ProjectID))
+	builder.WriteString(", ")
+	builder.WriteString("node_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.NodeID))
 	builder.WriteString(", ")
 	builder.WriteString("level=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Level))

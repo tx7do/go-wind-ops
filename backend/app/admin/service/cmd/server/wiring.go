@@ -132,6 +132,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudCostServiceClient := data.NewCloudCostServiceClient(ctx, discovery)
 	cloudInstanceServiceClient := data.NewCloudInstanceServiceClient(ctx, discovery)
 	cloudAccountServiceClient := data.NewCloudAccountServiceClient(ctx, discovery)
+	scriptBatchServiceClient := data.NewScriptBatchServiceClient(ctx, discovery)
+	backupServiceClient := data.NewBackupServiceClient(ctx, discovery)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -194,6 +196,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudCostService := service.NewCloudCostService(ctx, cloudCostServiceClient)
 	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceServiceClient)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountServiceClient)
+	scriptBatchService := service.NewScriptBatchService(ctx, scriptBatchServiceClient)
+	backupService := service.NewBackupService(ctx, backupServiceClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
 
@@ -226,6 +230,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		cloudCostService,
 		cloudInstanceService,
 		cloudAccountService,
+		scriptBatchService,
+		backupService,
 	)
 
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)

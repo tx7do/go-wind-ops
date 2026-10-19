@@ -11,8 +11,9 @@ import (
 )
 
 // Monitor 监控规则(对齐 jpom MonitorModel 简化版):周期检查某个项目的
-// 运行状态,异常时产生告警并可自动重启。
-// 检查由 core 的调度器按 cron 周期经 MQTT 同步指令探测。
+// 运行状态或某台节点的资源指标,异常时产生告警并可自动重启。
+// 检查由 core 的调度器按 cron 周期驱动:项目规则经 MQTT 同步指令探测,
+// 节点规则直接读心跳指标快照(ops_agent_nodes 行上字段)。
 type Monitor struct {
 	ent.Schema
 }
@@ -38,15 +39,54 @@ func (Monitor) Fields() []ent.Field {
 			NotEmpty(),
 
 		field.Uint32("project_id").
-			Comment("被监控项目(ops_projects.id)").
-			Positive(),
+			Comment("被监控项目(ops_projects.id;节点指标规则为 0)").
+			Default(0).
+			Optional(),
+
+		field.Enum("target_type").
+			Comment("规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标").
+			NamedValues(
+				"Project", "PROJECT",
+				"NodeMetric", "NODE_METRIC",
+			).
+			Default("PROJECT"),
+
+		field.Uint32("node_id").
+			Comment("被监控节点(ops_agent_nodes.id;项目状态规则为 0)").
+			Default(0).
+			Optional(),
+
+		field.Enum("metric_type").
+			Comment("指标类型(节点指标规则用):CPU/MEMORY/DISK").
+			NamedValues(
+				"Cpu", "CPU",
+				"Memory", "MEMORY",
+				"Disk", "DISK",
+			).
+			Default("CPU"),
+
+		field.Float("threshold_percent").
+			Comment("告警阈值(百分比,指标 ≥ 阈值即命中)").
+			Default(0),
+
+		field.Int("consecutive_count").
+			Comment("连续命中多少个检查周期才告警(防抖)").
+			Default(1),
+
+		field.Int("consecutive_hits").
+			Comment("运行态:当前连续命中次数(调度器维护,非用户配置)").
+			Default(0),
+
+		field.Bool("notify_on_recovery").
+			Comment("恢复时是否产生 RECOVERY 告警并通知").
+			Default(true),
 
 		field.String("cron").
 			Comment("检查周期 cron 表达式(5 段标准语法)").
 			NotEmpty(),
 
 		field.Bool("auto_restart").
-			Comment("异常时自动重启项目").
+			Comment("异常时自动重启项目(仅项目状态规则生效)").
 			Default(false),
 
 		field.String("webhook_url").
@@ -78,6 +118,7 @@ func (Monitor) Mixin() []ent.Mixin {
 func (Monitor) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("project_id").StorageKey("idx_ops_monitor_project"),
+		index.Fields("node_id").StorageKey("idx_ops_monitor_node"),
 		index.Fields("enabled").StorageKey("idx_ops_monitor_enabled"),
 	}
 }

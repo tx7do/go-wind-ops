@@ -37,6 +37,8 @@ const (
 	FieldError = "error"
 	// FieldOperatorID holds the string denoting the operator_id field in the database.
 	FieldOperatorID = "operator_id"
+	// FieldBatchID holds the string denoting the batch_id field in the database.
+	FieldBatchID = "batch_id"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
 	FieldFinishedAt = "finished_at"
 	// Table holds the table name of the commandrecord in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldResult,
 	FieldError,
 	FieldOperatorID,
+	FieldBatchID,
 	FieldFinishedAt,
 }
 
@@ -82,6 +85,8 @@ var (
 	ActionValidator func(string) error
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
 	DefaultOperatorID uint32
+	// DefaultBatchID holds the default value on creation for the "batch_id" field.
+	DefaultBatchID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -179,6 +184,11 @@ func ByError(opts ...sql.OrderTermOption) OrderOption {
 // ByOperatorID orders the results by the operator_id field.
 func ByOperatorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOperatorID, opts...).ToFunc()
+}
+
+// ByBatchID orders the results by the batch_id field.
+func ByBatchID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBatchID, opts...).ToFunc()
 }
 
 // ByFinishedAt orders the results by the finished_at field.

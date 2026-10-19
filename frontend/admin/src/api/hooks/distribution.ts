@@ -104,6 +104,14 @@ export function useListDistributionRecords(
   });
 }
 
+export async function fetchListDistributionRecords(params: PaginationQuery) {
+  return queryClient.fetchQuery({
+    queryKey: ['listDistributionRecords', params],
+    queryFn: () => apiClient.distributionService.ListRecords(params.toRawParams()),
+    retry: 0,
+  });
+}
+
 export function useGetDistributionRecord(
   req: opsservicev1_GetDistributionRecordRequest,
   options?: Partial<UseQueryOptions<opsservicev1_DistributionRecord, Error, opsservicev1_DistributionRecord, readonly unknown[]>>,

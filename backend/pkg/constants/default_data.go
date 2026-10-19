@@ -286,10 +286,10 @@ var DefaultOpsPermissions = []*permissionV1.Permission{
 	{Id: trans.Ptr(uint32(17)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("产物分发"), Description: trans.Ptr("构建产物分发"), Code: trans.Ptr(OpsDistributePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
 }
 
-// opsMenuIds 运维菜单 ID 集合(81-85 一级分组 + 86-101 页面)。
+// opsMenuIds 运维菜单 ID 集合(81-85 一级分组 + 86-106 页面)。
 func opsMenuIds() []uint32 {
-	ids := make([]uint32, 0, 21)
-	for i := uint32(81); i <= 101; i++ {
+	ids := make([]uint32, 0, 26)
+	for i := uint32(81); i <= 106; i++ {
 		ids = append(ids, i)
 	}
 	return ids
@@ -799,6 +799,8 @@ func defaultOpsMenus() []*permissionV1.Menu {
 		page(102, 85, "cloud-accounts", "routes:cloud-accounts", "lucide:cloud", SystemPlatformAdminPermissionCode),
 		page(103, 85, "cloud-resources", "routes:cloud-resources", "lucide:server", SystemPlatformAdminPermissionCode),
 		page(104, 85, "cloud-costs", "routes:cloud-costs", "lucide:coins", SystemPlatformAdminPermissionCode),
+		page(105, 83, "script-batches", "routes:script-batches", "lucide:layers", OpsScriptManagePermissionCode),
+		page(106, 83, "backups", "routes:backups", "lucide:archive", OpsScriptManagePermissionCode),
 	}
 
 	return append([]*permissionV1.Menu{g81, g82, g83, g84, g85}, pages...)

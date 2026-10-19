@@ -393,6 +393,24 @@ func NewAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.A
 	return opsV1.NewAlertServiceClient(cli)
 }
 
+func NewScriptBatchServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ScriptBatchServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewScriptBatchServiceClient(cli)
+}
+
+func NewBackupServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.BackupServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewBackupServiceClient(cli)
+}
+
 func NewApprovalServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ApprovalServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

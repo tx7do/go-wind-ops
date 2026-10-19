@@ -151,6 +151,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
+	scriptBatchRepo := data.NewScriptBatchRepo(ctx, entClient)
+	backupTaskRepo := data.NewBackupTaskRepo(ctx, entClient)
+	backupRecordRepo := data.NewBackupRecordRepo(ctx, entClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -190,11 +193,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
 	metricRepo := data.NewNodeMetricRepo(ctx, entClient)
-	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, metricRepo, minIOClient)
+	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, scriptBatchRepo, backupRecordRepo, backupTaskRepo, metricRepo, minIOClient)
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, metricRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
 	scriptService := service.NewScriptService(ctx, scriptRepo, agentNodeRepo, agentService)
+	scriptBatchService := service.NewScriptBatchService(ctx, scriptBatchRepo, commandRecordRepo, scriptRepo, agentNodeRepo, agentService)
 	repositoryService := service.NewRepositoryService(ctx, repositoryRepo)
 	buildService := service.NewBuildService(ctx, buildRepo, repositoryRepo, buildHistoryRepo, minIOClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryRepo, buildRepo, repositoryRepo, minIOClient)
@@ -208,9 +212,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	pipelineService := service.NewPipelineService(ctx, pipelineRepo, pipelineRunRepo, buildHistoryRepo, commandRecordRepo, distributionRecordRepo, buildService, scriptService, distributionService)
 	apiKeyService := service.NewApiKeyService(ctx, apiKeyRepo)
 	pluginService := service.NewPluginService(ctx, agentService, agentNodeRepo)
+	backupService := service.NewBackupService(ctx, backupTaskRepo, backupRecordRepo, agentNodeRepo, minIOClient, agentService)
 
-	// 定时调度(构建/脚本 cron + 监控检查)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, agentService)
+	// 定时调度(构建/脚本/备份 cron + 监控检查)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
 	cronScheduler.Start(ctx.Context())
 
 	// EMQX broker 认证 webhook(最小 HTTP listener, :9500)
@@ -249,6 +254,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		cloudCostService,
 		cloudInstanceService,
 		cloudAccountService,
+		scriptBatchService,
+		backupService,
 	)
 	if err != nil {
 		rollback()

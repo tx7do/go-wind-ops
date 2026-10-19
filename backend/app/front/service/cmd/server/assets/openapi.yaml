@@ -1,8 +1,590 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
 openapi: 3.0.3
 info:
-  title: GoWind Ops Front API
-  description: |
-    go-wind-ops 前台 BFF 接口。本文档为占位:完整 OpenAPI 需在恢复 protoc/buf
-    工具链后由 `make openapi` 从 api/protos 重新生成。
-  version: "0.1.0"
-paths: {}
+    title: GoWind Content Hub App API
+    description: GoWind Content Hub App API
+    contact:
+        name: tx7do
+        url: https://github.com/tx7do/go-wind-ops
+        email: yanglinbo@gmail.com
+    license:
+        name: MIT License
+        url: https://github.com/tx7do/go-wind-ops/blob/master/LICENSE
+    version: "1.0"
+paths:
+    /app/v1/login:
+        post:
+            tags:
+                - AuthenticationService
+            description: 登录
+            operationId: AuthenticationService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+            security:
+                - {}
+    /app/v1/logout:
+        post:
+            tags:
+                - AuthenticationService
+            description: 登出
+            operationId: AuthenticationService_Logout
+            requestBody:
+                content:
+                    application/json: {}
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/me:
+        get:
+            tags:
+                - UserProfileService
+            description: 获取用户资料
+            operationId: UserProfileService_GetUser
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.User'
+        put:
+            tags:
+                - UserProfileService
+            description: 更新用户资料
+            operationId: UserProfileService_UpdateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.UpdateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/me/contact:
+        post:
+            tags:
+                - UserProfileService
+            description: 绑定手机号码/邮箱
+            operationId: UserProfileService_BindContact
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.BindContactRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/me/contact/verify:
+        post:
+            tags:
+                - UserProfileService
+            description: 验证手机号码/邮箱
+            operationId: UserProfileService_VerifyContact
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.VerifyContactRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/me/password:
+        post:
+            tags:
+                - UserProfileService
+            description: 修改用户密码
+            operationId: UserProfileService_ChangePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.ChangePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/oidc/authorize-url:
+        post:
+            tags:
+                - AuthenticationService
+            description: 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+            operationId: AuthenticationService_GetOidcAuthorizeUrl
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlResponse'
+            security:
+                - {}
+    /app/v1/refresh-token:
+        post:
+            tags:
+                - AuthenticationService
+            description: 刷新认证令牌
+            operationId: AuthenticationService_RefreshToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+components:
+    schemas:
+        KratosStatus:
+            type: object
+            properties:
+                code:
+                    type: number
+                    description: 错误码
+                    format: int32
+                message:
+                    type: string
+                    description: 错误消息
+                reason:
+                    type: string
+                    description: 错误原因
+                metadata:
+                    type: object
+                    description: 元数据
+            description: Kratos错误返回
+        authentication.service.v1.GetOidcAuthorizeUrlRequest:
+            type: object
+            properties:
+                redirect_uri:
+                    type: string
+                    description: 授权完成后的回调地址（须与 IdP 注册的 redirect_uri 一致）
+            description: OIDC 授权跳转地址 - 请求
+        authentication.service.v1.GetOidcAuthorizeUrlResponse:
+            type: object
+            properties:
+                authorizeUrl:
+                    type: string
+                    description: IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转
+            description: OIDC 授权跳转地址 - 响应
+        authentication.service.v1.LoginRequest:
+            required:
+                - grant_type
+            type: object
+            properties:
+                grant_type:
+                    enum:
+                        - password
+                        - client_credentials
+                        - authorization_code
+                        - refresh_token
+                        - implicit
+                    type: string
+                    default: password
+                    description: 授权类型，此处的值固定为"password"，必选项。
+                    format: enum
+                client_id:
+                    type: string
+                    description: 客户端ID
+                client_secret:
+                    type: string
+                    description: 客户端密钥
+                scope:
+                    type: string
+                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+                redirect_uri:
+                    type: string
+                    description: 跳转链接
+                user_id:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                username:
+                    type: string
+                    description: 用户名
+                email:
+                    type: string
+                    description: 电子邮件地址
+                mobile:
+                    type: string
+                    description: 手机号
+                password:
+                    type: string
+                    description: 用户的密码
+                refresh_token:
+                    type: string
+                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
+                code:
+                    type: string
+                    description: 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+                oidc_state:
+                    type: string
+                    description: OIDC 授权码模式的 state（防 CSRF；须与授权跳转时生成并暂存的 state 一致）
+                oidcIssuer:
+                    type: string
+                    description: OIDC Issuer 标识（多 IdP 时区分来源；单 IdP 可留空）
+                client_type:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                device_id:
+                    type: string
+                    description: 设备唯一标识（可选），用于设备绑定、推送、风控等
+                jti:
+                    type: string
+                    description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
+                tenant_code:
+                    type: string
+                    description: 租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户
+            description: 用户登录 - 请求
+        authentication.service.v1.LoginResponse:
+            type: object
+            properties:
+                token_type:
+                    enum:
+                        - bearer
+                        - mac
+                    type: string
+                    default: Bearer
+                    description: 令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。
+                    format: enum
+                access_token:
+                    type: string
+                    description: 访问令牌，必选项。授权服务器颁发的访问令牌字符串。
+                expires_in:
+                    type: string
+                    description: 访问令牌过期时间（秒）
+                refresh_token:
+                    type: string
+                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
+                scope:
+                    type: string
+                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+                refresh_expires_in:
+                    type: string
+                    description: 刷新令牌过期时间（秒）
+                id_token:
+                    type: string
+                    description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+            description: 用户登录 - 回应
+        identity.service.v1.BindContactRequest:
+            type: object
+            properties:
+                phone:
+                    $ref: '#/components/schemas/identity.service.v1.BindPhoneRequest'
+                email:
+                    $ref: '#/components/schemas/identity.service.v1.BindEmailRequest'
+        identity.service.v1.BindEmailRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 邮箱地址
+                verificationCode:
+                    type: string
+                    description: 邮箱验证码（可选）
+        identity.service.v1.BindPhoneRequest:
+            type: object
+            properties:
+                phone:
+                    type: string
+                    description: 手机号码
+                code:
+                    type: string
+                    description: 验证码
+        identity.service.v1.ChangePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                    description: 旧密码
+                newPassword:
+                    type: string
+                    description: 新密码
+            description: 修改用户密码（需要验证旧密码） - 请求
+        identity.service.v1.EmailVerification:
+            required:
+                - code
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 邮箱地址
+                code:
+                    type: string
+                    description: 邮箱验证码
+            description: 邮箱验证
+        identity.service.v1.PhoneVerification:
+            required:
+                - code
+            type: object
+            properties:
+                phone:
+                    type: string
+                    description: 手机号码，带国家码
+                code:
+                    type: string
+                    description: 短信验证码
+            description: 手机验证
+        identity.service.v1.UpdateUserRequest:
+            required:
+                - data
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/identity.service.v1.User'
+                password:
+                    readOnly: true
+                    type: string
+                    description: 用户登录密码
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新用户 - 请求
+        identity.service.v1.User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                tenantName:
+                    type: string
+                    description: 租户名称
+                orgUnitId:
+                    type: integer
+                    description: 组织ID
+                    format: uint32
+                orgUnitIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 归属组织ID列表
+                orgUnitName:
+                    type: string
+                    description: 组织名称
+                orgUnitNames:
+                    type: array
+                    items:
+                        type: string
+                    description: 组织名称列表
+                positionId:
+                    type: integer
+                    description: 职位ID
+                    format: uint32
+                positionIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 职位列表
+                positionName:
+                    type: string
+                    description: 职位名称
+                positionNames:
+                    type: array
+                    items:
+                        type: string
+                    description: 职位名称列表
+                roleId:
+                    type: integer
+                    description: 角色ID
+                    format: uint32
+                roleIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 角色ID列表
+                roles:
+                    type: array
+                    items:
+                        type: string
+                    description: 角色码列表
+                roleNames:
+                    type: array
+                    items:
+                        type: string
+                    description: 角色名称列表
+                username:
+                    type: string
+                    description: 用户名
+                nickname:
+                    type: string
+                    description: 昵称
+                realname:
+                    type: string
+                    description: 真实姓名
+                avatar:
+                    type: string
+                    description: 头像
+                email:
+                    type: string
+                    description: 邮箱
+                mobile:
+                    type: string
+                    description: 手机号
+                telephone:
+                    type: string
+                    description: 座机号
+                gender:
+                    enum:
+                        - SECRET
+                        - MALE
+                        - FEMALE
+                    type: string
+                    description: 性别
+                    format: enum
+                address:
+                    type: string
+                    description: 住址
+                region:
+                    type: string
+                    description: 国家地区
+                description:
+                    type: string
+                    description: 个人描述
+                remark:
+                    type: string
+                    description: 备注
+                lastLoginAt:
+                    type: string
+                    description: 最后登录时间
+                    format: date-time
+                lastLoginIp:
+                    type: string
+                    description: 最后登录IP
+                status:
+                    enum:
+                        - DISABLED
+                        - NORMAL
+                        - PENDING
+                        - LOCKED
+                        - EXPIRED
+                        - CLOSED
+                    type: string
+                    description: 状态
+                    format: enum
+                lockedUntil:
+                    type: string
+                    description: 锁定截止时间
+                    format: date-time
+                followers:
+                    type: string
+                    description: 粉丝数
+                following:
+                    type: string
+                    description: 关注数
+                postCount:
+                    type: string
+                    description: 发帖数
+                commentCount:
+                    type: string
+                    description: 评论数
+                likeCount:
+                    type: string
+                    description: 获赞数
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 用户
+        identity.service.v1.VerifyContactRequest:
+            type: object
+            properties:
+                phone:
+                    $ref: '#/components/schemas/identity.service.v1.PhoneVerification'
+                email:
+                    $ref: '#/components/schemas/identity.service.v1.EmailVerification'
+                verificationId:
+                    type: string
+                    description: 服务端生成的验证码会话ID（可选）
+    responses:
+        default:
+            description: default kratos response
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/KratosStatus'
+    securitySchemes:
+        OAuth2PasswordBearer:
+            type: oauth2
+            flows:
+                password:
+                    tokenUrl: /admin/v1/login
+                    refreshUrl: /admin/v1/refresh-token
+                    scopes: {}
+security:
+    - OAuth2PasswordBearer: []
+tags:
+    - name: AuthenticationService
+      description: 用户前台登录认证服务
+    - name: UserProfileService
+      description: 用户个人资料服务

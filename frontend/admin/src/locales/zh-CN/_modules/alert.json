@@ -12,5 +12,6 @@
   "resolve": "确认恢复",
   "resolveConfirm": "确认恢复该告警？",
   "resolveSuccess": "告警已确认恢复",
-  "resolveFailed": "操作失败"
+  "resolveFailed": "操作失败",
+  "nodeId": "节点"
 }

@@ -24,6 +24,12 @@ type ApiKey func(*sql.Selector)
 // Approval is the predicate function for approval builders.
 type Approval func(*sql.Selector)
 
+// BackupRecord is the predicate function for backuprecord builders.
+type BackupRecord func(*sql.Selector)
+
+// BackupTask is the predicate function for backuptask builders.
+type BackupTask func(*sql.Selector)
+
 // Build is the predicate function for build builders.
 type Build func(*sql.Selector)
 
@@ -149,6 +155,9 @@ type RolePermission func(*sql.Selector)
 
 // Script is the predicate function for script builders.
 type Script func(*sql.Selector)
+
+// ScriptBatch is the predicate function for scriptbatch builders.
+type ScriptBatch func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

@@ -32,11 +32,26 @@ const MonitorManagement = () => {
   });
 
   const columns: ProColumns<Monitor>[] = [
-    { title: t('name'), dataIndex: 'name', width: 160, render: (_, r) => <span style={{ fontWeight: 600 }}>{r.name}</span> },
-    { title: t('projectId'), dataIndex: 'projectId', width: 90, hideInSearch: true },
-    { title: t('cron'), dataIndex: 'cron', width: 140, hideInSearch: true },
-    { title: t('autoRestart'), width: 100, hideInSearch: true, render: (_, r) => r.autoRestart ? <Tag color="processing">{t('yes')}</Tag> : <Tag>{t('no')}</Tag> },
-    { title: t('enabled'), width: 90, hideInSearch: true, render: (_, r) => <Switch checked={r.enabled} disabled size="small" /> },
+    { title: t('name'), dataIndex: 'name', width: 150, render: (_, r) => <span style={{ fontWeight: 600 }}>{r.name}</span> },
+    {
+      title: t('targetType'), width: 110, hideInSearch: true,
+      render: (_, r) => r.targetType === 'NODE_METRIC'
+        ? <Tag color="purple">{t('targetNodeMetric')}</Tag>
+        : <Tag color="blue">{t('targetProject')}</Tag>,
+    },
+    {
+      title: t('target'), width: 180, hideInSearch: true, ellipsis: true,
+      render: (_, r) => {
+        if (r.targetType === 'NODE_METRIC') {
+          const metric = r.metricType === 'MEMORY' ? t('metricMemory') : r.metricType === 'DISK' ? t('metricDisk') : t('metricCpu');
+          return `#${r.nodeId} · ${metric} ≥ ${r.thresholdPercent ?? 0}%`;
+        }
+        return r.projectId ? `#${r.projectId}` : '-';
+      },
+    },
+    { title: t('cron'), dataIndex: 'cron', width: 130, hideInSearch: true },
+    { title: t('autoRestart'), width: 90, hideInSearch: true, render: (_, r) => r.autoRestart ? <Tag color="processing">{t('yes')}</Tag> : <Tag>{t('no')}</Tag> },
+    { title: t('enabled'), width: 80, hideInSearch: true, render: (_, r) => <Switch checked={r.enabled} disabled size="small" /> },
     { title: t('description'), dataIndex: 'description', hideInSearch: true, ellipsis: true },
     {
       title: t('action'), valueType: 'option', width: 100,

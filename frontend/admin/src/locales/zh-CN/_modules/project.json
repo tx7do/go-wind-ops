@@ -46,5 +46,12 @@
   "logAutoScroll": "自动滚动到底部",
   "logEmpty": "暂无日志输出",
   "env": "环境",
-  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)"
+  "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)",
+  "opTimeline": "变更时间线",
+  "timelineTitle": "变更时间线: {{name}}",
+  "timelineEmpty": "暂无分发或告警记录",
+  "timelineDistribution": "分发",
+  "timelineAlert": "告警",
+  "timelineDistTarget": "分发到项目",
+  "timelineResolved": "已恢复"
 }

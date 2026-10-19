@@ -31,5 +31,13 @@
   "cronHint": "Standard 5-field cron; leave empty to disable scheduling",
   "cronNode": "Scheduled Node",
   "cronNodePlaceholder": "Select the node that runs the schedule",
-  "action": "Actions"
+  "action": "Actions",
+  "batchExec": "Batch Execute",
+  "batchTitle": "Batch Execute: {{name}}",
+  "batchNodeLabel": "Target nodes (multi-select)",
+  "batchNodePlaceholder": "Select nodes to execute",
+  "batchNodeRequired": "Select at least one node",
+  "batchHint": "Dispatched per node; check results on the Script Batches page. Offline nodes will fail",
+  "batchSent": "Batch triggered: {{dispatched}} dispatched, {{failed}} failed",
+  "nodeOffline": "offline"
 }

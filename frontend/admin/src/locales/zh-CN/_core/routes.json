@@ -127,8 +127,11 @@
   "opsCicd": "持续交付",
   "opsAuto": "自动作业",
   "opsObserve": "监控告警",
+  "opsCloud": "云管理",
   "opsGovern": "平台治理",
   "cloud-accounts": "云账号",
   "cloud-resources": "云资源",
-  "cloud-costs": "云成本"
+  "cloud-costs": "云成本",
+  "script-batches": "批量执行",
+  "backups": "备份任务"
 }

@@ -20,9 +20,9 @@ import (
 // 不会跨过触发点太久,也不会重复触发(锚点 CAS 去重)。
 const cronSweepInterval = 30 * time.Second
 
-// CronScheduler 定时调度器:每 30s 扫描定时构建/脚本/监控规则,命中即触发。
+// CronScheduler 定时调度器:每 30s 扫描定时构建/脚本/监控/备份任务,命中即触发。
 //
-// 去重:构建/脚本用 last_cron_at 锚点 + CAS 推进(多副本安全);
+// 去重:构建/脚本/备份用 last_cron_at 锚点 + CAS 推进(多副本安全);
 // 监控检查只读幂等,重复无害。
 type CronScheduler struct {
 	ctx           *bootstrap.Context
@@ -32,9 +32,11 @@ type CronScheduler struct {
 	alertRepo     *data.AlertRepo
 	projectRepo   *data.ProjectRepo
 	nodeRepo      *data.AgentNodeRepo
-	buildService  *BuildService
-	scriptService *ScriptService
-	agentService  *AgentService
+	backupTaskRepo   *data.BackupTaskRepo
+	buildService     *BuildService
+	scriptService    *ScriptService
+	backupService    *BackupService
+	agentService     *AgentService
 	notifChannelRepo *data.NotificationChannelRepo
 	historyRepo      *data.BuildHistoryRepo
 	ossClient        *oss.MinIOClient
@@ -43,7 +45,7 @@ type CronScheduler struct {
 	log                *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, notifChannelRepo *data.NotificationChannelRepo, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
 		ctx:              ctx,
 		buildRepo:        buildRepo,
@@ -52,11 +54,13 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		alertRepo:        alertRepo,
 		projectRepo:      projectRepo,
 		nodeRepo:         nodeRepo,
+		backupTaskRepo:   backupTaskRepo,
 		notifChannelRepo: notifChannelRepo,
 		historyRepo:      historyRepo,
 		ossClient:        ossClient,
 		buildService:     buildService,
 		scriptService:    scriptService,
+		backupService:    backupService,
 		agentService:     agentService,
 		log:              ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
 	}
@@ -75,6 +79,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.tickBuilds(ctx)
 				s.tickScripts(ctx)
 				s.tickMonitors(ctx)
+				s.tickBackups(ctx)
 				s.tickRetention(ctx)
 			}
 		}
@@ -171,7 +176,7 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 		if !cronHitMinute(schedule, now) {
 			continue
 		}
-		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.projectRepo, s.nodeRepo, s.agentService, m)
+		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, m)
 	}
 }
 
@@ -179,6 +184,49 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 func cronHitMinute(schedule cron.Schedule, now time.Time) bool {
 	next := schedule.Next(now.Add(-time.Minute))
 	return !next.After(now)
+}
+
+// tickBackups 扫描定时备份任务(锚点 CAS 去重)。新建任务的空锚点先落
+// 当前时间(不补跑),从下一个 cron 周期起正常触发。
+func (s *CronScheduler) tickBackups(ctx context.Context) {
+	if s.backupTaskRepo == nil || s.backupService == nil {
+		return
+	}
+	tasks, err := s.backupTaskRepo.ListEnabledWithCron(ctx)
+	if err != nil {
+		return
+	}
+	now := time.Now()
+	for _, task := range tasks {
+		spec := task.Cron
+		if spec == "" {
+			continue
+		}
+		schedule, err := cron.ParseStandard(spec)
+		if err != nil {
+			continue
+		}
+		if task.LastCronAt == nil {
+			// 首次发现:仅落锚,等到下一个周期再触发
+			if ok, _ := s.backupTaskRepo.AdvanceCronAnchorFromNull(ctx, task.ID, now); ok {
+				s.log.Infof("cron backup anchor initialized (task=%d spec=%s)", task.ID, spec)
+			}
+			continue
+		}
+		last := task.LastCronAt.In(time.Local)
+		next := schedule.Next(last)
+		if next.After(now) {
+			continue
+		}
+		ok, err := s.backupTaskRepo.AdvanceCronAnchor(ctx, task.ID, last, now)
+		if err != nil || !ok {
+			continue
+		}
+		s.log.Infof("cron backup triggered (task=%d spec=%s)", task.ID, spec)
+		if _, err = s.backupService.TriggerBackup(ctx, &opsV1.TriggerBackupRequest{Id: &task.ID}); err != nil {
+			s.log.Errorf("cron backup trigger failed (task=%d): %s", task.ID, err.Error())
+		}
+	}
 }
 
 func allPaging() *paginationV1.PagingRequest {

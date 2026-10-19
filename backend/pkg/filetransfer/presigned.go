@@ -28,6 +28,11 @@ func UploadFileToPresignedURL(ctx context.Context, filePath, url string, headers
 	}
 	defer f.Close()
 
+	info, err := f.Stat()
+	if err != nil {
+		return 0, "", fmt.Errorf("stat file: %w", err)
+	}
+
 	hasher := sha256.New()
 	reader := io.TeeReader(f, hasher)
 
@@ -38,6 +43,9 @@ func UploadFileToPresignedURL(ctx context.Context, filePath, url string, headers
 	if err != nil {
 		return 0, "", fmt.Errorf("new request: %w", err)
 	}
+	// body 经 TeeReader 包装后 http 层探测不到长度,会走 chunked 编码,
+	// MinIO/S3 对 PUT 要求 Content-Length(否则 411),必须显式声明。
+	req.ContentLength = info.Size()
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/kratos-transport/broker"
@@ -31,19 +32,24 @@ const (
 	offlineSweepInterval = 30 * time.Second
 	// commandTimeout 指令回执超时:超时未回执的 PENDING 台账由扫描定案 FAILED。
 	commandTimeout = 10 * time.Minute
+	// backupCommandTimeout 备份回执超时:打包大目录+上传耗时显著高于普通指令。
+	backupCommandTimeout = 30 * time.Minute
 )
 
 // AgentService core 侧 agent 信令处理服务:准入认证、心跳落库、指令下发
 // 与结果回执。指令台账落库(ops_command_records),按 request_id 幂等。
 type AgentService struct {
-	ctx            *bootstrap.Context
-	repo           *data.AgentNodeRepo
-	recordRepo     *data.CommandRecordRepo
-	projectRepo    *data.ProjectRepo
-	distRecordRepo *data.DistributionRecordRepo
-	metricRepo     *data.NodeMetricRepo
-	ossClient      *oss.MinIOClient
-	log            *log.Helper
+	ctx              *bootstrap.Context
+	repo             *data.AgentNodeRepo
+	recordRepo       *data.CommandRecordRepo
+	projectRepo      *data.ProjectRepo
+	distRecordRepo   *data.DistributionRecordRepo
+	batchRepo        *data.ScriptBatchRepo
+	backupRecordRepo *data.BackupRecordRepo
+	backupTaskRepo   *data.BackupTaskRepo
+	metricRepo       *data.NodeMetricRepo
+	ossClient        *oss.MinIOClient
+	log              *log.Helper
 
 	mqttBroker atomic.Value // broker.Broker
 
@@ -55,16 +61,19 @@ type AgentService struct {
 	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
-		ctx:            ctx,
-		repo:           repo,
-		recordRepo:     recordRepo,
-		projectRepo:    projectRepo,
-		distRecordRepo: distRecordRepo,
-		metricRepo:     metricRepo,
-		ossClient:      ossClient,
-		log:            ctx.NewLoggerHelper("agent/service/core-service"),
+		ctx:              ctx,
+		repo:             repo,
+		recordRepo:       recordRepo,
+		projectRepo:      projectRepo,
+		distRecordRepo:   distRecordRepo,
+		batchRepo:        batchRepo,
+		backupRecordRepo: backupRecordRepo,
+		backupTaskRepo:   backupTaskRepo,
+		metricRepo:       metricRepo,
+		ossClient:        ossClient,
+		log:              ctx.NewLoggerHelper("agent/service/core-service"),
 
 		terminalRoutes: make(map[string]chan *signal.TerminalIO),
 	}
@@ -100,6 +109,24 @@ func (s *AgentService) Start(ctx context.Context) {
 					s.log.Warnf("distribution timeout sweep: %s", err.Error())
 				} else if n > 0 {
 					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", n)
+				}
+				// 批次内超时未回执的指令逐条定案并对账批次计数
+				if stale, err := s.recordRepo.ListStalePendingBatchItems(ctx, time.Now().Add(-commandTimeout)); err != nil {
+					s.log.Warnf("batch item timeout sweep: %s", err.Error())
+				} else {
+					for _, rec := range stale {
+						_ = s.recordRepo.FinalizeByRequestID(ctx, rec.RequestID, "FAILED", "command timeout without result", "")
+						if err = s.batchRepo.ApplyItemResult(ctx, rec.BatchID, false); err != nil {
+							s.log.Warnf("batch item timeout apply (batch=%d): %s", rec.BatchID, err.Error())
+						}
+					}
+				}
+				if s.backupRecordRepo != nil {
+					if n, err := s.backupRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-backupCommandTimeout)); err != nil {
+						s.log.Warnf("backup timeout sweep: %s", err.Error())
+					} else if n > 0 {
+						s.log.Infof("backup timeout sweep: finalized %d stale record(s)", n)
+					}
 				}
 				// 节点指标保留 7 天
 				if s.metricRepo != nil {
@@ -226,6 +253,14 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 	if res.Action == signal.CommandActionDistApply || res.Action == signal.CommandActionDockerDeploy {
 		s.applyDistributionResult(ctx, res)
 	}
+	// backup_run:终态化备份记录(大小/校验和),成功后执行保留策略清扫
+	if res.Action == signal.CommandActionBackupRun {
+		s.applyBackupResult(ctx, res)
+	}
+	// script_exec 且带批次标记:对账批次成败计数(幂等依赖台账仅首次定案)
+	if res.Action == signal.CommandActionScriptExec && s.batchRepo != nil {
+		s.applyBatchResult(ctx, res)
+	}
 
 	// 同步指令等待者投递(查询类指令经此返回调用方)
 	if w, ok := s.waiters.LoadAndDelete(res.RequestId); ok {
@@ -252,6 +287,66 @@ func (s *AgentService) applyDistributionResult(ctx context.Context, res *signal.
 	if err := s.distRecordRepo.FinalizeByCommandRequestID(ctx, res.RequestId,
 		toRecordStatus(res.Success), strings.TrimSpace(res.Error), string(res.Data)); err != nil {
 		s.log.Warnf("finalize distribution record [%s]: %s", res.RequestId, err.Error())
+	}
+}
+
+// applyBackupResult 把备份回执回写到备份记录(大小/校验和/终态),成功后
+// 按任务保留策略清理超额历史备份。
+func (s *AgentService) applyBackupResult(ctx context.Context, res *signal.CommandResult) {
+	if s.backupRecordRepo == nil {
+		return
+	}
+	var out signal.BackupRunResult
+	if len(res.Data) > 0 {
+		_ = json.Unmarshal(res.Data, &out)
+	}
+	if err := s.backupRecordRepo.FinalizeByCommandRequestID(ctx, res.RequestId,
+		toRecordStatus(res.Success), strings.TrimSpace(res.Error), out.SizeBytes, out.SHA256); err != nil {
+		s.log.Warnf("finalize backup record [%s]: %s", res.RequestId, err.Error())
+	}
+	if res.Success && out.TaskID > 0 {
+		s.trimBackupRetention(ctx, out.TaskID)
+	}
+}
+
+// trimBackupRetention 保留策略:删除保留份数之外的成功备份(MinIO 对象 + 记录)。
+func (s *AgentService) trimBackupRetention(ctx context.Context, taskID uint32) {
+	if s.backupTaskRepo == nil || s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return
+	}
+	task, err := s.backupTaskRepo.GetEntity(ctx, taskID)
+	if err != nil {
+		s.log.Warnf("backup retention load task [%d]: %s", taskID, err.Error())
+		return
+	}
+	keep := task.Retention
+	if keep <= 0 {
+		return
+	}
+	excess, err := s.backupRecordRepo.ListSuccessHoldersByTask(ctx, taskID, keep)
+	if err != nil {
+		s.log.Warnf("backup retention list (task=%d): %s", taskID, err.Error())
+		return
+	}
+	for _, rec := range excess {
+		if err = s.ossClient.GetClient().RemoveObject(ctx, rec.Bucket, rec.ObjectKey, minio.RemoveObjectOptions{}); err != nil {
+			s.log.Warnf("backup retention remove object (record=%d): %s", rec.ID, err.Error())
+			continue
+		}
+		if err = s.backupRecordRepo.DeleteEntity(ctx, rec.ID); err != nil {
+			s.log.Warnf("backup retention delete record (record=%d): %s", rec.ID, err.Error())
+		}
+	}
+}
+
+// applyBatchResult 批量执行回执对账:脚本指令带批次标记时累加批次计数。
+func (s *AgentService) applyBatchResult(ctx context.Context, res *signal.CommandResult) {
+	rec, err := s.recordRepo.GetByRequestID(ctx, res.RequestId)
+	if err != nil || rec == nil || rec.BatchID == 0 {
+		return
+	}
+	if err = s.batchRepo.ApplyItemResult(ctx, rec.BatchID, res.Success); err != nil {
+		s.log.Warnf("apply batch result (request_id=%s batch=%d): %s", res.RequestId, rec.BatchID, err.Error())
 	}
 }
 

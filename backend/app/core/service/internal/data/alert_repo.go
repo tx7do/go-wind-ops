@@ -130,17 +130,42 @@ func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint32) (b
 }
 
 // Create 创建告警记录。
-func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID uint32, level, message string, notified bool) (*ent.Alert, error) {
-	record, err := r.entClient.Client().Alert.
+func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uint32, level, message string, notified bool) (*ent.Alert, error) {
+	builder := r.entClient.Client().Alert.
 		Create().
 		SetMonitorID(monitorID).
 		SetProjectID(projectID).
 		SetLevel(alert.Level(level)).
 		SetMessage(message).
-		SetNotified(notified).
-		Save(ctx)
+		SetNotified(notified)
+	if nodeID > 0 {
+		builder.SetNodeID(nodeID)
+	}
+	record, err := builder.Save(ctx)
 	if err != nil {
 		r.log.Errorf("create alert: %s", err.Error())
+		return nil, err
+	}
+	return record, nil
+}
+
+// CreateRecovery 创建已恢复的 RECOVERY 告警记录(条件消除通知用,直接终态)。
+func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, nodeID uint32, message string) (*ent.Alert, error) {
+	now := time.Now()
+	builder := r.entClient.Client().Alert.
+		Create().
+		SetMonitorID(monitorID).
+		SetProjectID(projectID).
+		SetLevel(alert.LevelRecovery).
+		SetMessage(message).
+		SetResolved(true).
+		SetNillableResolvedAt(&now)
+	if nodeID > 0 {
+		builder.SetNodeID(nodeID)
+	}
+	record, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create recovery alert: %s", err.Error())
 		return nil, err
 	}
 	return record, nil

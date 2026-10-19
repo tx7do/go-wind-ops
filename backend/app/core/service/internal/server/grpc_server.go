@@ -83,6 +83,8 @@ func NewGrpcServer(
 	cloudCostService *service.CloudCostService,
 	cloudInstanceService *service.CloudInstanceService,
 	cloudAccountService *service.CloudAccountService,
+	scriptBatchService *service.ScriptBatchService,
+	backupService *service.BackupService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -146,6 +148,8 @@ func NewGrpcServer(
 	opsV1.RegisterCloudCostServiceServer(srv, cloudCostService)
 	opsV1.RegisterCloudInstanceServiceServer(srv, cloudInstanceService)
 	opsV1.RegisterCloudAccountServiceServer(srv, cloudAccountService)
+	opsV1.RegisterScriptBatchServiceServer(srv, scriptBatchService)
+	opsV1.RegisterBackupServiceServer(srv, backupService)
 
 	return srv, nil
 }

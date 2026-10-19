@@ -24,6 +24,10 @@ type Tx struct {
 	ApiKey *ApiKeyClient
 	// Approval is the client for interacting with the Approval builders.
 	Approval *ApprovalClient
+	// BackupRecord is the client for interacting with the BackupRecord builders.
+	BackupRecord *BackupRecordClient
+	// BackupTask is the client for interacting with the BackupTask builders.
+	BackupTask *BackupTaskClient
 	// Build is the client for interacting with the Build builders.
 	Build *BuildClient
 	// BuildHistory is the client for interacting with the BuildHistory builders.
@@ -108,6 +112,8 @@ type Tx struct {
 	RolePermission *RolePermissionClient
 	// Script is the client for interacting with the Script builders.
 	Script *ScriptClient
+	// ScriptBatch is the client for interacting with the ScriptBatch builders.
+	ScriptBatch *ScriptBatchClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -259,6 +265,8 @@ func (tx *Tx) init() {
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.ApiKey = NewApiKeyClient(tx.config)
 	tx.Approval = NewApprovalClient(tx.config)
+	tx.BackupRecord = NewBackupRecordClient(tx.config)
+	tx.BackupTask = NewBackupTaskClient(tx.config)
 	tx.Build = NewBuildClient(tx.config)
 	tx.BuildHistory = NewBuildHistoryClient(tx.config)
 	tx.BuildPipeline = NewBuildPipelineClient(tx.config)
@@ -301,6 +309,7 @@ func (tx *Tx) init() {
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Script = NewScriptClient(tx.config)
+	tx.ScriptBatch = NewScriptBatchClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)

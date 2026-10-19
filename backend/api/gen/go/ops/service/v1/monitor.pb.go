@@ -29,19 +29,25 @@ const (
 
 // 监控规则
 type Monitor struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                      // 规则ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                   // 规则名
-	ProjectId     *uint32                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`       // 被监控项目
-	Cron          *string                `protobuf:"bytes,4,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                   // 检查周期
-	AutoRestart   *bool                  `protobuf:"varint,5,opt,name=auto_restart,json=autoRestart,proto3,oneof" json:"auto_restart,omitempty"` // 自动重启
-	WebhookUrl    *string                `protobuf:"bytes,6,opt,name=webhook_url,json=webhookUrl,proto3,oneof" json:"webhook_url,omitempty"`     // 告警 webhook
-	Enabled       *bool                  `protobuf:"varint,7,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                            // 是否启用
-	Description   *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`                     // 描述
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`       // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`       // 更新时间
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                        // 规则ID
+	Name             *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                     // 规则名
+	ProjectId        *uint32                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                         // 被监控项目
+	Cron             *string                `protobuf:"bytes,4,opt,name=cron,proto3,oneof" json:"cron,omitempty"`                                                     // 检查周期
+	AutoRestart      *bool                  `protobuf:"varint,5,opt,name=auto_restart,json=autoRestart,proto3,oneof" json:"auto_restart,omitempty"`                   // 自动重启
+	WebhookUrl       *string                `protobuf:"bytes,6,opt,name=webhook_url,json=webhookUrl,proto3,oneof" json:"webhook_url,omitempty"`                       // 告警 webhook
+	Enabled          *bool                  `protobuf:"varint,7,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                              // 是否启用
+	Description      *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`                                       // 描述
+	TargetType       *string                `protobuf:"bytes,9,opt,name=target_type,json=targetType,proto3,oneof" json:"target_type,omitempty"`                       // 规则目标类型(PROJECT/NODE_METRIC)
+	NodeId           *uint32                `protobuf:"varint,10,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                 // 被监控节点
+	MetricType       *string                `protobuf:"bytes,11,opt,name=metric_type,json=metricType,proto3,oneof" json:"metric_type,omitempty"`                      // 指标类型(CPU/MEMORY/DISK)
+	ThresholdPercent *float64               `protobuf:"fixed64,12,opt,name=threshold_percent,json=thresholdPercent,proto3,oneof" json:"threshold_percent,omitempty"`  // 告警阈值
+	ConsecutiveCount *uint32                `protobuf:"varint,13,opt,name=consecutive_count,json=consecutiveCount,proto3,oneof" json:"consecutive_count,omitempty"`   // 连续命中次数
+	NotifyOnRecovery *bool                  `protobuf:"varint,14,opt,name=notify_on_recovery,json=notifyOnRecovery,proto3,oneof" json:"notify_on_recovery,omitempty"` // 恢复通知
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                         // 创建时间
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                         // 更新时间
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Monitor) Reset() {
@@ -128,6 +134,48 @@ func (x *Monitor) GetDescription() string {
 		return *x.Description
 	}
 	return ""
+}
+
+func (x *Monitor) GetTargetType() string {
+	if x != nil && x.TargetType != nil {
+		return *x.TargetType
+	}
+	return ""
+}
+
+func (x *Monitor) GetNodeId() uint32 {
+	if x != nil && x.NodeId != nil {
+		return *x.NodeId
+	}
+	return 0
+}
+
+func (x *Monitor) GetMetricType() string {
+	if x != nil && x.MetricType != nil {
+		return *x.MetricType
+	}
+	return ""
+}
+
+func (x *Monitor) GetThresholdPercent() float64 {
+	if x != nil && x.ThresholdPercent != nil {
+		return *x.ThresholdPercent
+	}
+	return 0
+}
+
+func (x *Monitor) GetConsecutiveCount() uint32 {
+	if x != nil && x.ConsecutiveCount != nil {
+		return *x.ConsecutiveCount
+	}
+	return 0
+}
+
+func (x *Monitor) GetNotifyOnRecovery() bool {
+	if x != nil && x.NotifyOnRecovery != nil {
+		return *x.NotifyOnRecovery
+	}
+	return false
 }
 
 func (x *Monitor) GetCreatedAt() *timestamppb.Timestamp {
@@ -392,7 +440,7 @@ var File_ops_service_v1_monitor_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/monitor.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf0\x05\n" +
+	"\x1cops/service/v1/monitor.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xe7\v\n" +
 	"\aMonitor\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17规则名(全局唯一)H\x01R\x04name\x88\x01\x01\x12>\n" +
@@ -403,11 +451,21 @@ const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\vwebhook_url\x18\x06 \x01(\tB,\xbaG)\x92\x02&告警通知 webhook 地址(POST JSON)H\x05R\n" +
 	"webhookUrl\x88\x01\x01\x12\x1d\n" +
 	"\aenabled\x18\a \x01(\bH\x06R\aenabled\x88\x01\x01\x123\n" +
-	"\vdescription\x18\b \x01(\tB\f\xbaG\t\x92\x02\x06描述H\aR\vdescription\x88\x01\x01\x12C\n" +
+	"\vdescription\x18\b \x01(\tB\f\xbaG\t\x92\x02\x06描述H\aR\vdescription\x88\x01\x01\x12t\n" +
+	"\vtarget_type\x18\t \x01(\tBN\xbaGK\x92\x02H规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标H\bR\n" +
+	"targetType\x88\x01\x01\x12e\n" +
+	"\anode_id\x18\n" +
+	" \x01(\rBG\xbaGD\x92\x02A被监控节点(节点指标规则必填,项目状态规则为 0)H\tR\x06nodeId\x88\x01\x01\x12_\n" +
+	"\vmetric_type\x18\v \x01(\tB9\xbaG6\x92\x023指标类型(节点指标规则用):CPU/MEMORY/DISKH\n" +
+	"R\n" +
+	"metricType\x88\x01\x01\x12j\n" +
+	"\x11threshold_percent\x18\f \x01(\x01B8\xbaG5\x92\x022告警阈值(百分比,指标 ≥ 阈值即命中)H\vR\x10thresholdPercent\x88\x01\x01\x12s\n" +
+	"\x11consecutive_count\x18\r \x01(\rBA\xbaG>\x92\x02;连续命中多少个检查周期才告警(防抖,默认 1)H\fR\x10consecutiveCount\x88\x01\x01\x12g\n" +
+	"\x12notify_on_recovery\x18\x0e \x01(\bB4\xbaG1\x92\x02.恢复时是否产生 RECOVERY 告警并通知H\rR\x10notifyOnRecovery\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0eR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0fR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\r\n" +
 	"\v_project_idB\a\n" +
@@ -416,7 +474,14 @@ const file_ops_service_v1_monitor_proto_rawDesc = "" +
 	"\f_webhook_urlB\n" +
 	"\n" +
 	"\b_enabledB\x0e\n" +
-	"\f_descriptionB\r\n" +
+	"\f_descriptionB\x0e\n" +
+	"\f_target_typeB\n" +
+	"\n" +
+	"\b_node_idB\x0e\n" +
+	"\f_metric_typeB\x14\n" +
+	"\x12_threshold_percentB\x14\n" +
+	"\x12_consecutive_countB\x15\n" +
+	"\x13_notify_on_recoveryB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"Z\n" +
 	"\x13ListMonitorResponse\x12\x14\n" +

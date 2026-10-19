@@ -32,11 +32,25 @@ type Monitor struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 规则名(全局唯一)
 	Name string `json:"name,omitempty"`
-	// 被监控项目(ops_projects.id)
+	// 被监控项目(ops_projects.id;节点指标规则为 0)
 	ProjectID uint32 `json:"project_id,omitempty"`
+	// 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标
+	TargetType monitor.TargetType `json:"target_type,omitempty"`
+	// 被监控节点(ops_agent_nodes.id;项目状态规则为 0)
+	NodeID uint32 `json:"node_id,omitempty"`
+	// 指标类型(节点指标规则用):CPU/MEMORY/DISK
+	MetricType monitor.MetricType `json:"metric_type,omitempty"`
+	// 告警阈值(百分比,指标 ≥ 阈值即命中)
+	ThresholdPercent float64 `json:"threshold_percent,omitempty"`
+	// 连续命中多少个检查周期才告警(防抖)
+	ConsecutiveCount int `json:"consecutive_count,omitempty"`
+	// 运行态:当前连续命中次数(调度器维护,非用户配置)
+	ConsecutiveHits int `json:"consecutive_hits,omitempty"`
+	// 恢复时是否产生 RECOVERY 告警并通知
+	NotifyOnRecovery bool `json:"notify_on_recovery,omitempty"`
 	// 检查周期 cron 表达式(5 段标准语法)
 	Cron string `json:"cron,omitempty"`
-	// 异常时自动重启项目
+	// 异常时自动重启项目(仅项目状态规则生效)
 	AutoRestart bool `json:"auto_restart,omitempty"`
 	// 告警通知 webhook 地址(空则只落告警不外呼)
 	WebhookURL *string `json:"webhook_url,omitempty"`
@@ -52,11 +66,13 @@ func (*Monitor) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case monitor.FieldAutoRestart, monitor.FieldEnabled:
+		case monitor.FieldNotifyOnRecovery, monitor.FieldAutoRestart, monitor.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case monitor.FieldID, monitor.FieldCreatedBy, monitor.FieldUpdatedBy, monitor.FieldDeletedBy, monitor.FieldProjectID:
+		case monitor.FieldThresholdPercent:
+			values[i] = new(sql.NullFloat64)
+		case monitor.FieldID, monitor.FieldCreatedBy, monitor.FieldUpdatedBy, monitor.FieldDeletedBy, monitor.FieldProjectID, monitor.FieldNodeID, monitor.FieldConsecutiveCount, monitor.FieldConsecutiveHits:
 			values[i] = new(sql.NullInt64)
-		case monitor.FieldName, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
+		case monitor.FieldName, monitor.FieldTargetType, monitor.FieldMetricType, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
 			values[i] = new(sql.NullString)
 		case monitor.FieldCreatedAt, monitor.FieldUpdatedAt, monitor.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -134,6 +150,48 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
 				_m.ProjectID = uint32(value.Int64)
+			}
+		case monitor.FieldTargetType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field target_type", values[i])
+			} else if value.Valid {
+				_m.TargetType = monitor.TargetType(value.String)
+			}
+		case monitor.FieldNodeID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field node_id", values[i])
+			} else if value.Valid {
+				_m.NodeID = uint32(value.Int64)
+			}
+		case monitor.FieldMetricType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field metric_type", values[i])
+			} else if value.Valid {
+				_m.MetricType = monitor.MetricType(value.String)
+			}
+		case monitor.FieldThresholdPercent:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field threshold_percent", values[i])
+			} else if value.Valid {
+				_m.ThresholdPercent = value.Float64
+			}
+		case monitor.FieldConsecutiveCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field consecutive_count", values[i])
+			} else if value.Valid {
+				_m.ConsecutiveCount = int(value.Int64)
+			}
+		case monitor.FieldConsecutiveHits:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field consecutive_hits", values[i])
+			} else if value.Valid {
+				_m.ConsecutiveHits = int(value.Int64)
+			}
+		case monitor.FieldNotifyOnRecovery:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field notify_on_recovery", values[i])
+			} else if value.Valid {
+				_m.NotifyOnRecovery = value.Bool
 			}
 		case monitor.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -238,6 +296,27 @@ func (_m *Monitor) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("project_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ProjectID))
+	builder.WriteString(", ")
+	builder.WriteString("target_type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TargetType))
+	builder.WriteString(", ")
+	builder.WriteString("node_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.NodeID))
+	builder.WriteString(", ")
+	builder.WriteString("metric_type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MetricType))
+	builder.WriteString(", ")
+	builder.WriteString("threshold_percent=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ThresholdPercent))
+	builder.WriteString(", ")
+	builder.WriteString("consecutive_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ConsecutiveCount))
+	builder.WriteString(", ")
+	builder.WriteString("consecutive_hits=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ConsecutiveHits))
+	builder.WriteString(", ")
+	builder.WriteString("notify_on_recovery=")
+	builder.WriteString(fmt.Sprintf("%v", _m.NotifyOnRecovery))
 	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(_m.Cron)

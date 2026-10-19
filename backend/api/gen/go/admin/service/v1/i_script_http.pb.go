@@ -46,15 +46,15 @@ type ScriptServiceHTTPServer interface {
 
 func RegisterScriptServiceHTTPServer(s *http.Server, srv ScriptServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/scripts", _ScriptService_List33_HTTP_Handler(srv))
-	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get31_HTTP_Handler(srv))
-	r.POST("/admin/v1/scripts", _ScriptService_Create20_HTTP_Handler(srv))
-	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update21_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/scripts/{id}", _ScriptService_Delete22_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts", _ScriptService_List34_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get32_HTTP_Handler(srv))
+	r.POST("/admin/v1/scripts", _ScriptService_Create21_HTTP_Handler(srv))
+	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update22_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/scripts/{id}", _ScriptService_Delete23_HTTP_Handler(srv))
 	r.POST("/admin/v1/scripts/{id}/executions:send", _ScriptService_Execute0_HTTP_Handler(srv))
 }
 
-func _ScriptService_List33_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_List34_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _ScriptService_List33_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _ScriptService_Get31_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Get32_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetScriptRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _ScriptService_Get31_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _ScriptService_Create20_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Create21_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateScriptRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _ScriptService_Create20_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ScriptService_Update21_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Update22_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateScriptRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _ScriptService_Update21_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ScriptService_Delete22_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptService_Delete23_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteScriptRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -290,6 +290,148 @@ func (c *ScriptServiceHTTPClientImpl) Update(ctx context.Context, in *v11.Update
 	opts = append(opts, http.Operation(OperationScriptServiceUpdate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+const OperationScriptBatchServiceBatchExec = "/admin.service.v1.ScriptBatchService/BatchExec"
+const OperationScriptBatchServiceGet = "/admin.service.v1.ScriptBatchService/Get"
+const OperationScriptBatchServiceList = "/admin.service.v1.ScriptBatchService/List"
+
+type ScriptBatchServiceHTTPServer interface {
+	// BatchExec 批量执行脚本
+	BatchExec(context.Context, *v11.ExecuteScriptBatchRequest) (*v11.ExecuteScriptBatchResponse, error)
+	// Get 查询批次详情(含逐节点执行结果矩阵)
+	Get(context.Context, *v11.GetScriptBatchRequest) (*v11.ScriptBatchDetail, error)
+	// List 查询批次列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListScriptBatchResponse, error)
+}
+
+func RegisterScriptBatchServiceHTTPServer(s *http.Server, srv ScriptBatchServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/script-batches", _ScriptBatchService_List35_HTTP_Handler(srv))
+	r.GET("/admin/v1/script-batches/{id}", _ScriptBatchService_Get33_HTTP_Handler(srv))
+	r.POST("/admin/v1/scripts/batch-exec:send", _ScriptBatchService_BatchExec0_HTTP_Handler(srv))
+}
+
+func _ScriptBatchService_List35_HTTP_Handler(srv ScriptBatchServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationScriptBatchServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListScriptBatchResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ScriptBatchService_Get33_HTTP_Handler(srv ScriptBatchServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetScriptBatchRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationScriptBatchServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetScriptBatchRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ScriptBatchDetail)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ScriptBatchService_BatchExec0_HTTP_Handler(srv ScriptBatchServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ExecuteScriptBatchRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationScriptBatchServiceBatchExec)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.BatchExec(ctx, req.(*v11.ExecuteScriptBatchRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ExecuteScriptBatchResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type ScriptBatchServiceHTTPClient interface {
+	// BatchExec 批量执行脚本
+	BatchExec(ctx context.Context, req *v11.ExecuteScriptBatchRequest, opts ...http.CallOption) (rsp *v11.ExecuteScriptBatchResponse, err error)
+	// Get 查询批次详情(含逐节点执行结果矩阵)
+	Get(ctx context.Context, req *v11.GetScriptBatchRequest, opts ...http.CallOption) (rsp *v11.ScriptBatchDetail, err error)
+	// List 查询批次列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListScriptBatchResponse, err error)
+}
+
+type ScriptBatchServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewScriptBatchServiceHTTPClient(client *http.Client) ScriptBatchServiceHTTPClient {
+	return &ScriptBatchServiceHTTPClientImpl{client}
+}
+
+// BatchExec 批量执行脚本
+func (c *ScriptBatchServiceHTTPClientImpl) BatchExec(ctx context.Context, in *v11.ExecuteScriptBatchRequest, opts ...http.CallOption) (*v11.ExecuteScriptBatchResponse, error) {
+	var out v11.ExecuteScriptBatchResponse
+	pattern := "/admin/v1/scripts/batch-exec:send"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationScriptBatchServiceBatchExec))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get 查询批次详情(含逐节点执行结果矩阵)
+func (c *ScriptBatchServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetScriptBatchRequest, opts ...http.CallOption) (*v11.ScriptBatchDetail, error) {
+	var out v11.ScriptBatchDetail
+	pattern := "/admin/v1/script-batches/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationScriptBatchServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// List 查询批次列表
+func (c *ScriptBatchServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListScriptBatchResponse, error) {
+	var out v11.ListScriptBatchResponse
+	pattern := "/admin/v1/script-batches"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationScriptBatchServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

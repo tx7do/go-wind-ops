@@ -7,9 +7,11 @@ import {
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import type {
   opsservicev1_AgentNode as AgentNode,
   opsservicev1_Script as Script,
@@ -21,6 +23,7 @@ import {
   useDeleteScript,
   useExecuteScript,
 } from '@/api/hooks/script';
+import { useBatchExecScript } from '@/api/hooks/script-batch';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -34,6 +37,7 @@ const ScriptManagement = () => {
   const actionRef = useRef<ActionType>(null);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
+  const navigate = useNavigate();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
@@ -47,6 +51,12 @@ const ScriptManagement = () => {
   const [execNodeId, setExecNodeId] = useState<number | undefined>();
   const [execLoading, setExecLoading] = useState(false);
   const [nodeOptions, setNodeOptions] = useState<{ label: string; value: number }[]>([]);
+
+  // 批量执行弹窗:多选节点
+  const [batchScript, setBatchScript] = useState<Script | undefined>();
+  const [batchNodeIds, setBatchNodeIds] = useState<number[]>([]);
+  const [batchNodeOptions, setBatchNodeOptions] = useState<{ label: string; value: number }[]>([]);
+  const [batchLoading, setBatchLoading] = useState(false);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listScripts'] });
 
@@ -63,6 +73,15 @@ const ScriptManagement = () => {
     onSuccess: (resp) => {
       message.success(t('executeSent', { requestId: resp.requestId }));
       setExecScript(undefined);
+    },
+    onError: (error: Error) => message.error(error.message || t('executeFailed')),
+  });
+
+  const batchExecMutation = useBatchExecScript({
+    onSuccess: (resp) => {
+      message.success(t('batchSent', { dispatched: resp.dispatched ?? 0, failed: resp.failed ?? 0 }));
+      setBatchScript(undefined);
+      navigate('/ops/script-batches');
     },
     onError: (error: Error) => message.error(error.message || t('executeFailed')),
   });
@@ -101,6 +120,39 @@ const ScriptManagement = () => {
     }
   };
 
+  // 批量执行:展示全部节点(离线标注),由用户自选目标集
+  const openBatchExec = async (script: Script) => {
+    setBatchScript(script);
+    setBatchNodeIds([]);
+    try {
+      const resp = await fetchListAgentNodes(
+        new PaginationQuery({ paging: { page: 1, pageSize: 100 } }),
+      );
+      setBatchNodeOptions(
+        (resp.items ?? []).map((n: AgentNode) => ({
+          label:
+            (n.name || n.hostname || n.agentId || String(n.id)) +
+            (n.status === 'ONLINE' ? '' : ` (${t('nodeOffline')})`),
+          value: n.id ?? 0,
+        })),
+      );
+    } catch {
+      setBatchNodeOptions([]);
+    }
+  };
+
+  const confirmBatchExec = () => {
+    if (!batchScript?.id || batchNodeIds.length === 0) {
+      message.warning(t('batchNodeRequired'));
+      return;
+    }
+    setBatchLoading(true);
+    batchExecMutation.mutate(
+      { scriptId: batchScript.id, nodeIds: batchNodeIds },
+      { onSettled: () => setBatchLoading(false) },
+    );
+  };
+
   const columns: ProColumns<Script>[] = [
     {
       title: t('name'),
@@ -134,12 +186,17 @@ const ScriptManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 130,
+      width: 160,
       fixed: 'right',
       render: (_, record) => [
         <Tooltip key="exec" title={t('execute')}>
           <a onClick={() => openExecute(record)}>
             <PlayCircleOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip key="batch" title={t('batchExec')}>
+          <a onClick={() => openBatchExec(record)}>
+            <TeamOutlined />
           </a>
         </Tooltip>,
         <Tooltip key="edit" title={t('edit')}>
@@ -279,6 +336,32 @@ const ScriptManagement = () => {
         />
         <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ant-color-text-secondary)' }}>
           {t('executeHint')}
+        </div>
+      </Modal>
+
+      {/* 批量执行弹窗:多选目标节点 */}
+      <Modal
+        title={t('batchTitle', { name: batchScript?.name })}
+        open={!!batchScript}
+        onCancel={() => setBatchScript(undefined)}
+        onOk={confirmBatchExec}
+        okText={t('batchExec')}
+        confirmLoading={batchLoading}
+        width={480}
+        destroyOnClose
+      >
+        <div style={{ marginBottom: 8 }}>{t('batchNodeLabel')}</div>
+        <Select
+          style={{ width: '100%' }}
+          mode="multiple"
+          placeholder={t('batchNodePlaceholder')}
+          value={batchNodeIds}
+          onChange={setBatchNodeIds}
+          options={batchNodeOptions}
+          maxTagCount="responsive"
+        />
+        <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ant-color-text-secondary)' }}>
+          {t('batchHint')}
         </div>
       </Modal>
     </>

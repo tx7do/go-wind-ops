@@ -985,6 +985,9 @@ export type opsservicev1_Alert = {
   monitorId?: number;
   //
   // Behaviors: OUTPUT_ONLY
+  nodeId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
   notified?: boolean;
   //
   // Behaviors: OUTPUT_ONLY
@@ -2184,6 +2187,457 @@ export type authenticationservicev1_VerifyCaptchaRequest = {
 
 export type authenticationservicev1_VerifyCaptchaResponse = {
   valid: boolean | undefined;
+};
+
+// BackupService 备份任务管理
+export interface BackupService {
+  // 查询备份任务列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListBackupTaskResponse>;
+  // 查询备份任务详情
+  Get(
+    request: opsservicev1_GetBackupTaskRequest,
+  ): Promise<opsservicev1_BackupTask>;
+  // 创建备份任务
+  Create(
+    request: opsservicev1_CreateBackupTaskRequest,
+  ): Promise<opsservicev1_BackupTask>;
+  // 更新备份任务
+  Update(
+    request: opsservicev1_UpdateBackupTaskRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除备份任务
+  Delete(
+    request: opsservicev1_DeleteBackupTaskRequest,
+  ): Promise<wellKnownEmpty>;
+  // 立即触发一次备份
+  Trigger(
+    request: opsservicev1_TriggerBackupRequest,
+  ): Promise<opsservicev1_TriggerBackupResponse>;
+  // 查询备份记录列表(按 taskId 过滤)
+  ListRecords(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListBackupRecordResponse>;
+  // 获取备份包下载预签名 URL
+  GetRecordDownloadUrl(
+    request: opsservicev1_GetBackupRecordDownloadUrlRequest,
+  ): Promise<opsservicev1_GetBackupRecordDownloadUrlResponse>;
+}
+
+export function createBackupServiceClient(
+  transport: ClientTransport,
+): BackupService {
+  return {
+    List(request) {
+      const path = `admin/v1/backup-tasks`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'BackupService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListBackupTaskResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/backup-tasks/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'BackupService',
+        method: 'Get',
+      }) as Promise<opsservicev1_BackupTask>;
+    },
+    Create(request) {
+      const path = `admin/v1/backup-tasks`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BackupService',
+        method: 'Create',
+      }) as Promise<opsservicev1_BackupTask>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/backup-tasks/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'BackupService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/backup-tasks/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'BackupService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Trigger(request) {
+      const path = `admin/v1/backup-tasks/trigger:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BackupService',
+        method: 'Trigger',
+      }) as Promise<opsservicev1_TriggerBackupResponse>;
+    },
+    ListRecords(request) {
+      const path = `admin/v1/backup-records`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'BackupService',
+        method: 'ListRecords',
+      }) as Promise<opsservicev1_ListBackupRecordResponse>;
+    },
+    GetRecordDownloadUrl(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/backup-records/${request.id}/download-url`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'BackupService',
+        method: 'GetRecordDownloadUrl',
+      }) as Promise<opsservicev1_GetBackupRecordDownloadUrlResponse>;
+    },
+  };
+}
+export type opsservicev1_ListBackupTaskResponse = {
+  items: opsservicev1_BackupTask[] | undefined;
+  total: number | undefined;
+};
+
+// 备份任务
+export type opsservicev1_BackupTask = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  cron?: string;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastCronAt?: wellKnownTimestamp;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: REQUIRED
+  nodeId?: number;
+  retention?: number;
+  //
+  // Behaviors: REQUIRED
+  sourceDir?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+};
+
+export type opsservicev1_GetBackupTaskRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateBackupTaskRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_BackupTask | undefined;
+};
+
+export type opsservicev1_UpdateBackupTaskRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_BackupTask | undefined;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteBackupTaskRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_TriggerBackupRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_TriggerBackupResponse = {
+  commandRequestId?: string;
+  recordId?: number;
+};
+
+export type opsservicev1_ListBackupRecordResponse = {
+  items: opsservicev1_BackupRecord[] | undefined;
+  total: number | undefined;
+};
+
+// 备份执行记录
+export type opsservicev1_BackupRecord = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  bucket?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  error?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  finishedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  nodeId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  objectKey?: string;
+  sha256?: string;
+  sizeBytes?: number;
+  status?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  taskId?: number;
+};
+
+export type opsservicev1_GetBackupRecordDownloadUrlRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_GetBackupRecordDownloadUrlResponse = {
+  objectKey?: string;
+  sizeBytes?: number;
+  url?: string;
 };
 
 // BuildService 构建配置管理与触发
@@ -6365,6 +6819,7 @@ export type opsservicev1_ListMonitorResponse = {
 // 监控规则
 export type opsservicev1_Monitor = {
   autoRestart?: boolean;
+  consecutiveCount?: number;
   //
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
@@ -6376,12 +6831,17 @@ export type opsservicev1_Monitor = {
   //
   // Behaviors: OUTPUT_ONLY
   id?: number;
+  metricType?: string;
   //
   // Behaviors: REQUIRED
   name?: string;
+  nodeId?: number;
+  notifyOnRecovery?: boolean;
   //
   // Behaviors: REQUIRED
   projectId?: number;
+  targetType?: string;
+  thresholdPercent?: number;
   //
   // Behaviors: OUTPUT_ONLY
   updatedAt?: wellKnownTimestamp;
@@ -10152,6 +10612,228 @@ export type opsservicev1_ExecuteScriptResponse = {
   requestId: string | undefined;
 };
 
+// ScriptBatchService 脚本批量执行
+export interface ScriptBatchService {
+  // 查询批次列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListScriptBatchResponse>;
+  // 查询批次详情(含逐节点执行结果矩阵)
+  Get(
+    request: opsservicev1_GetScriptBatchRequest,
+  ): Promise<opsservicev1_ScriptBatchDetail>;
+  // 批量执行脚本
+  BatchExec(
+    request: opsservicev1_ExecuteScriptBatchRequest,
+  ): Promise<opsservicev1_ExecuteScriptBatchResponse>;
+}
+
+export function createScriptBatchServiceClient(
+  transport: ClientTransport,
+): ScriptBatchService {
+  return {
+    List(request) {
+      const path = `admin/v1/script-batches`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptBatchService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListScriptBatchResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/script-batches/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ScriptBatchService',
+        method: 'Get',
+      }) as Promise<opsservicev1_ScriptBatchDetail>;
+    },
+    BatchExec(request) {
+      const path = `admin/v1/scripts/batch-exec:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ScriptBatchService',
+        method: 'BatchExec',
+      }) as Promise<opsservicev1_ExecuteScriptBatchResponse>;
+    },
+  };
+}
+export type opsservicev1_ListScriptBatchResponse = {
+  items: opsservicev1_ScriptBatch[] | undefined;
+  total: number | undefined;
+};
+
+// 脚本批量执行批次
+export type opsservicev1_ScriptBatch = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  failedCount?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  nodeIds: number[] | undefined;
+  //
+  // Behaviors: OUTPUT_ONLY
+  scriptId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  scriptName?: string;
+  status?: string;
+  successCount?: number;
+  total?: number;
+};
+
+export type opsservicev1_GetScriptBatchRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_ScriptBatchDetail = {
+  batch?: opsservicev1_ScriptBatch;
+  items: opsservicev1_ScriptBatchItem[] | undefined;
+};
+
+// 批次内单节点执行结果
+export type opsservicev1_ScriptBatchItem = {
+  agentId?: string;
+  duration?: string;
+  error?: string;
+  exitCode?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  finishedAt?: wellKnownTimestamp;
+  nodeId?: number;
+  output?: string;
+  requestId?: string;
+  status?: string;
+};
+
+export type opsservicev1_ExecuteScriptBatchRequest = {
+  nodeIds: number[] | undefined;
+  //
+  // Behaviors: REQUIRED
+  scriptId?: number;
+};
+
+export type opsservicev1_ExecuteScriptBatchResponse = {
+  batchId?: number;
+  dispatched?: number;
+  failed?: number;
+  requestIds: string[] | undefined;
+};
+
 // 调度任务管理服务
 export interface TaskService {
   // 查询调度任务列表
@@ -11450,6 +12132,7 @@ export class ApiClient {
   private _apiService?: ApiService;
   private _approvalService?: ApprovalService;
   private _authenticationService?: AuthenticationService;
+  private _backupService?: BackupService;
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
   private _cloudAccountService?: CloudAccountService;
@@ -11479,6 +12162,7 @@ export class ApiClient {
   private _projectService?: ProjectService;
   private _repositoryService?: RepositoryService;
   private _roleService?: RoleService;
+  private _scriptBatchService?: ScriptBatchService;
   private _scriptService?: ScriptService;
   private _taskService?: TaskService;
   private _tenantService?: TenantService;
@@ -11520,6 +12204,10 @@ export class ApiClient {
 
   get authenticationService(): AuthenticationService {
     return this._authenticationService ??= createAuthenticationServiceClient(this._transport);
+  }
+
+  get backupService(): BackupService {
+    return this._backupService ??= createBackupServiceClient(this._transport);
   }
 
   get buildHistoryService(): BuildHistoryService {
@@ -11636,6 +12324,10 @@ export class ApiClient {
 
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get scriptBatchService(): ScriptBatchService {
+    return this._scriptBatchService ??= createScriptBatchServiceClient(this._transport);
   }
 
   get scriptService(): ScriptService {

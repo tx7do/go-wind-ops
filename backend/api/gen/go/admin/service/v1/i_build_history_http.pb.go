@@ -39,14 +39,14 @@ type BuildHistoryServiceHTTPServer interface {
 
 func RegisterBuildHistoryServiceHTTPServer(s *http.Server, srv BuildHistoryServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/build-histories", _BuildHistoryService_List7_HTTP_Handler(srv))
-	r.GET("/admin/v1/build-histories/{id}", _BuildHistoryService_Get7_HTTP_Handler(srv))
+	r.GET("/admin/v1/build-histories", _BuildHistoryService_List8_HTTP_Handler(srv))
+	r.GET("/admin/v1/build-histories/{id}", _BuildHistoryService_Get8_HTTP_Handler(srv))
 	r.GET("/admin/v1/build-histories/{id}/artifact-url", _BuildHistoryService_GetArtifactUrl0_HTTP_Handler(srv))
 	r.GET("/admin/v1/build-histories/{id}/log/{offset}", _BuildHistoryService_GetLog0_HTTP_Handler(srv))
 	r.GET("/admin/v1/build-histories/{id}/log", _BuildHistoryService_GetLog1_HTTP_Handler(srv))
 }
 
-func _BuildHistoryService_List7_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
+func _BuildHistoryService_List8_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -65,7 +65,7 @@ func _BuildHistoryService_List7_HTTP_Handler(srv BuildHistoryServiceHTTPServer) 
 	}
 }
 
-func _BuildHistoryService_Get7_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
+func _BuildHistoryService_Get8_HTTP_Handler(srv BuildHistoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetBuildHistoryRequest
 		if err := ctx.BindQuery(&in); err != nil {

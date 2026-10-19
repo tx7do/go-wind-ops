@@ -111,6 +111,39 @@ func (_u *AlertUpdate) AddProjectID(v int32) *AlertUpdate {
 	return _u
 }
 
+// ClearProjectID clears the value of the "project_id" field.
+func (_u *AlertUpdate) ClearProjectID() *AlertUpdate {
+	_u.mutation.ClearProjectID()
+	return _u
+}
+
+// SetNodeID sets the "node_id" field.
+func (_u *AlertUpdate) SetNodeID(v uint32) *AlertUpdate {
+	_u.mutation.ResetNodeID()
+	_u.mutation.SetNodeID(v)
+	return _u
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_u *AlertUpdate) SetNillableNodeID(v *uint32) *AlertUpdate {
+	if v != nil {
+		_u.SetNodeID(*v)
+	}
+	return _u
+}
+
+// AddNodeID adds value to the "node_id" field.
+func (_u *AlertUpdate) AddNodeID(v int32) *AlertUpdate {
+	_u.mutation.AddNodeID(v)
+	return _u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (_u *AlertUpdate) ClearNodeID() *AlertUpdate {
+	_u.mutation.ClearNodeID()
+	return _u
+}
+
 // SetLevel sets the "level" field.
 func (_u *AlertUpdate) SetLevel(v alert.Level) *AlertUpdate {
 	_u.mutation.SetLevel(v)
@@ -226,11 +259,6 @@ func (_u *AlertUpdate) check() error {
 			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := alert.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Alert.project_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Level(); ok {
 		if err := alert.LevelValidator(v); err != nil {
 			return &ValidationError{Name: "level", err: fmt.Errorf(`ent: validator failed for field "Alert.level": %w`, err)}
@@ -288,6 +316,18 @@ func (_u *AlertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
 		_spec.AddField(alert.FieldProjectID, field.TypeUint32, value)
+	}
+	if _u.mutation.ProjectIDCleared() {
+		_spec.ClearField(alert.FieldProjectID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.NodeID(); ok {
+		_spec.SetField(alert.FieldNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedNodeID(); ok {
+		_spec.AddField(alert.FieldNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.NodeIDCleared() {
+		_spec.ClearField(alert.FieldNodeID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Level(); ok {
 		_spec.SetField(alert.FieldLevel, field.TypeEnum, value)
@@ -408,6 +448,39 @@ func (_u *AlertUpdateOne) SetNillableProjectID(v *uint32) *AlertUpdateOne {
 // AddProjectID adds value to the "project_id" field.
 func (_u *AlertUpdateOne) AddProjectID(v int32) *AlertUpdateOne {
 	_u.mutation.AddProjectID(v)
+	return _u
+}
+
+// ClearProjectID clears the value of the "project_id" field.
+func (_u *AlertUpdateOne) ClearProjectID() *AlertUpdateOne {
+	_u.mutation.ClearProjectID()
+	return _u
+}
+
+// SetNodeID sets the "node_id" field.
+func (_u *AlertUpdateOne) SetNodeID(v uint32) *AlertUpdateOne {
+	_u.mutation.ResetNodeID()
+	_u.mutation.SetNodeID(v)
+	return _u
+}
+
+// SetNillableNodeID sets the "node_id" field if the given value is not nil.
+func (_u *AlertUpdateOne) SetNillableNodeID(v *uint32) *AlertUpdateOne {
+	if v != nil {
+		_u.SetNodeID(*v)
+	}
+	return _u
+}
+
+// AddNodeID adds value to the "node_id" field.
+func (_u *AlertUpdateOne) AddNodeID(v int32) *AlertUpdateOne {
+	_u.mutation.AddNodeID(v)
+	return _u
+}
+
+// ClearNodeID clears the value of the "node_id" field.
+func (_u *AlertUpdateOne) ClearNodeID() *AlertUpdateOne {
+	_u.mutation.ClearNodeID()
 	return _u
 }
 
@@ -539,11 +612,6 @@ func (_u *AlertUpdateOne) check() error {
 			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProjectID(); ok {
-		if err := alert.ProjectIDValidator(v); err != nil {
-			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "Alert.project_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Level(); ok {
 		if err := alert.LevelValidator(v); err != nil {
 			return &ValidationError{Name: "level", err: fmt.Errorf(`ent: validator failed for field "Alert.level": %w`, err)}
@@ -618,6 +686,18 @@ func (_u *AlertUpdateOne) sqlSave(ctx context.Context) (_node *Alert, err error)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
 		_spec.AddField(alert.FieldProjectID, field.TypeUint32, value)
+	}
+	if _u.mutation.ProjectIDCleared() {
+		_spec.ClearField(alert.FieldProjectID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.NodeID(); ok {
+		_spec.SetField(alert.FieldNodeID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedNodeID(); ok {
+		_spec.AddField(alert.FieldNodeID, field.TypeUint32, value)
+	}
+	if _u.mutation.NodeIDCleared() {
+		_spec.ClearField(alert.FieldNodeID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Level(); ok {
 		_spec.SetField(alert.FieldLevel, field.TypeEnum, value)

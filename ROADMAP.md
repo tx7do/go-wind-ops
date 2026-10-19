@@ -127,3 +127,28 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 | 脚本执行 | 临时文件 + 平台 shell | 最通用;后续可加 Docker 容器执行隔离 |
 | 枚举映射 | ent/proto 值名必须一致 | EnumTypeConverter 按名映射;冲突时嵌套进 message |
 | Windows 超时 | killTree 杀整棵进程树 | exec.CommandContext 只杀外壳;孙进程继承管道致 EOF 永不到来 |
+
+---
+
+## Phase 6 · 第一梯队增强(2026-10-19)✅ 已完成
+
+### 6.1 节点指标阈值告警 ✅
+**实现**:Monitor 扩展 target_type(PROJECT/NODE_METRIC)+ node_id/metric_type(CPU/MEMORY/DISK)/threshold_percent/consecutive_count(防抖)/notify_on_recovery;告警判定直接读心跳快照(ops_agent_nodes 行上字段),连续 N 周期 ≥ 阈值才告警(consecutive_hits 运行态计数),恢复自动 resolve + 落 RECOVERY 记录并通知;Alert 增加 node_id。告警级别节点规则为 WARNING、项目规则 ERROR。
+
+### 6.2 多节点批量脚本执行 ✅
+**实现**:ops_script_batches 批次表(script 名快照/目标集/成败计数/RUNNING→FINISHED)+ command_record.batch_id 关联;ExecuteScriptBatch 先建批次再逐节点下发(PublishCommand 后 AttachBatch 回填),单节点失败计 failed 不影响其余;回执路径(HANDLE 回执 + 超时扫描)双路对账批次计数,全部终态推 FINISHED;BFF `POST /admin/v1/scripts/batch-exec:send` + `GET /admin/v1/script-batches/{id}`(详情含逐节点结果矩阵:退出码/时长/输出截断 4KB);脚本页"批量执行"多选节点入口 + 独立批次列表页(RUNNING 3s 轮询)。
+
+### 6.3 备份任务 ✅
+**实现**:ops_backup_tasks(name/node/source_dir/cron/retention)+ ops_backup_records(bucket/object_key/size/sha256/PENDING→SUCCESS/FAILED,command_request_id 唯一);新指令 backup_run:agent 校验授权目录 → zipDir 递归打包(跳过非常规文件)→ 预签名 PUT 直传 MinIO backups 桶 → 回执带大小/SHA-256/文件数;对象键 backups/{taskId}/{uuid}.zip;保留策略回执后即清(保留最近 N 份成功,删对象+删记录);定时走 CAS 锚点(空锚点先落锚不补跑);BFF 全套 REST(trigger 路由**不带 path 参数**——body 与 path 双写同一字段会触发 kratos oneof CODEC 400);下载走预签名 GET。
+
+### 6.4 项目变更时间线 ✅(纯前端)
+**实现**:项目页时间线抽屉聚合 ListDistributionRecords + ListAlerts(按 projectId EQ 过滤,各取 50 条倒序合并),AntD Timeline 按状态着色;指令台账暂无 project 关联,不参与聚合(后续如需可在 command_record 加 project_id)。
+
+### 冒烟修复的三个通用 bug
+- `pkg/filetransfer.UploadFileToPresignedURL`:body 经 TeeReader 包装后 Go http 探测不到长度走 chunked,MinIO 411 Length Required → 显式 `req.ContentLength`(顺带修复既有 file_pull 大文件通道)。
+- proto int64 经 JSON 是字符串(sizeBytes 等),前端展示需 `Number()` 归一。
+- BFF REST `post: .../{id}/...` + `body: "*"`:生成客户端会把 id 同时塞 path 和 body,kratos 报 `field already set for oneof "_id"`;新路由触发类 POST 不要带 path 参数。
+
+### 环境注意
+- 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
+- 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。

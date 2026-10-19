@@ -1,0 +1,236 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// BackupService 备份任务管理:把节点上授权目录打包 zip 经 MinIO 预签名
+// URL 直传对象存储;记录由 agent 回执驱动终态,支持 cron 定时与保留策略。
+service BackupService {
+  // 查询备份任务列表
+  rpc ListBackupTasks (pagination.PagingRequest) returns (ListBackupTaskResponse) {}
+
+  // 查询备份任务详情
+  rpc GetBackupTask (GetBackupTaskRequest) returns (BackupTask) {}
+
+  // 创建备份任务
+  rpc CreateBackupTask (CreateBackupTaskRequest) returns (BackupTask) {}
+
+  // 更新备份任务
+  rpc UpdateBackupTask (UpdateBackupTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 删除备份任务
+  rpc DeleteBackupTask (DeleteBackupTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 立即触发一次备份(异步,回执驱动记录终态)
+  rpc TriggerBackup (TriggerBackupRequest) returns (TriggerBackupResponse) {}
+
+  // 查询备份记录列表(按 taskId 过滤)
+  rpc ListBackupRecords (pagination.PagingRequest) returns (ListBackupRecordResponse) {}
+
+  // 获取备份包下载预签名 URL
+  rpc GetBackupRecordDownloadUrl (GetBackupRecordDownloadUrlRequest) returns (GetBackupRecordDownloadUrlResponse) {}
+}
+
+// 备份任务
+message BackupTask {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 任务ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "任务名(全局唯一)"
+    }
+  ]; // 任务名
+
+  optional uint32 node_id = 3 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "目标节点ID"
+    }
+  ]; // 目标节点
+
+  optional string source_dir = 4 [
+    json_name = "sourceDir",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "备份源目录(须在 agent 授权目录 AGENT_ALLOWED_DIRS 内)"
+    }
+  ]; // 备份源目录
+
+  optional string cron = 5 [
+    json_name = "cron",
+    (gnostic.openapi.v3.property) = {
+      description: "定时备份 cron 表达式(5 段标准语法,空为仅手动触发)"
+    }
+  ]; // 定时备份
+
+  optional int32 retention = 6 [
+    json_name = "retention",
+    (gnostic.openapi.v3.property) = {
+      description: "保留最近 N 份成功备份(0=全部保留)"
+    }
+  ]; // 保留份数
+
+  optional bool enabled = 7 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 8 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  optional google.protobuf.Timestamp last_cron_at = 9 [
+    json_name = "lastCronAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 上次调度锚点
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListBackupTaskResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated BackupTask items = 2 [json_name = "items"]; // 任务列表
+}
+
+message GetBackupTaskRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 任务ID
+}
+
+message CreateBackupTaskRequest {
+  BackupTask data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 任务数据
+}
+
+message UpdateBackupTaskRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 任务ID
+
+  BackupTask data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteBackupTaskRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 任务ID
+}
+
+message TriggerBackupRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 任务ID
+}
+
+message TriggerBackupResponse {
+  optional uint32 record_id = 1 [json_name = "recordId"]; // 备份记录ID
+
+  optional string command_request_id = 2 [json_name = "commandRequestId"]; // 指令幂等键
+}
+
+// 备份执行记录
+message BackupRecord {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional uint32 task_id = 2 [
+    json_name = "taskId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 来源任务
+
+  optional uint32 node_id = 3 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 执行节点
+
+  optional string bucket = 4 [
+    json_name = "bucket",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 对象存储桶
+
+  optional string object_key = 5 [
+    json_name = "objectKey",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 对象键
+
+  optional int64 size_bytes = 6 [json_name = "sizeBytes"]; // 备份包大小(字节)
+
+  optional string sha256 = 7 [json_name = "sha256"]; // 备份包 SHA-256
+
+  optional string status = 8 [json_name = "status"]; // 状态(PENDING/SUCCESS/FAILED)
+
+  optional string error = 9 [json_name = "error"]; // 失败原因
+
+  optional google.protobuf.Timestamp finished_at = 10 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 终态时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 开始时间
+}
+
+message ListBackupRecordResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated BackupRecord items = 2 [json_name = "items"]; // 记录列表
+}
+
+message GetBackupRecordDownloadUrlRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 记录ID
+}
+
+message GetBackupRecordDownloadUrlResponse {
+  optional string url = 1 [json_name = "url"]; // 预签名下载 URL
+
+  optional string object_key = 2 [json_name = "objectKey"]; // 对象键
+
+  optional int64 size_bytes = 3 [json_name = "sizeBytes"]; // 备份包大小
+}

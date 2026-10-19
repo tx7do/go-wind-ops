@@ -36,6 +36,19 @@ service ScriptService {
   rpc ExecuteScript (ExecuteScriptRequest) returns (ExecuteScriptResponse) {}
 }
 
+// ScriptBatchService 脚本批量执行:一次把脚本下发到多台节点,逐节点
+// 生成指令台账(batch_id 关联),回执驱动批次计数与终态。
+service ScriptBatchService {
+  // 查询批次列表
+  rpc ListScriptBatches (pagination.PagingRequest) returns (ListScriptBatchResponse) {}
+
+  // 查询批次详情(含逐节点执行结果矩阵)
+  rpc GetScriptBatch (GetScriptBatchRequest) returns (ScriptBatchDetail) {}
+
+  // 批量执行脚本
+  rpc ExecuteScriptBatch (ExecuteScriptBatchRequest) returns (ExecuteScriptBatchResponse) {}
+}
+
 // 运维脚本
 message Script {
   optional uint32 id = 1 [
@@ -171,4 +184,98 @@ message ExecuteScriptRequest {
 
 message ExecuteScriptResponse {
   string request_id = 1 [json_name = "requestId"]; // 幂等键,结果见指令台账
+}
+
+message ExecuteScriptBatchRequest {
+  optional uint32 script_id = 1 [
+    json_name = "scriptId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+
+  repeated uint32 node_ids = 2 [json_name = "nodeIds"]; // 目标节点ID列表
+}
+
+message ExecuteScriptBatchResponse {
+  optional uint32 batch_id = 1 [json_name = "batchId"]; // 批次ID
+
+  repeated string request_ids = 2 [json_name = "requestIds"]; // 已下发节点的幂等键
+
+  optional uint32 dispatched = 3 [json_name = "dispatched"]; // 成功下发节点数
+
+  optional uint32 failed = 4 [json_name = "failed"]; // 下发失败节点数
+}
+
+// 脚本批量执行批次
+message ScriptBatch {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 批次ID
+
+  optional uint32 script_id = 2 [
+    json_name = "scriptId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 脚本ID
+
+  optional string script_name = 3 [
+    json_name = "scriptName",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 脚本名快照
+
+  repeated uint32 node_ids = 4 [json_name = "nodeIds"]; // 目标节点ID列表
+
+  optional uint32 total = 5 [json_name = "total"]; // 目标节点总数
+
+  optional uint32 success_count = 6 [json_name = "successCount"]; // 已成功数
+
+  optional uint32 failed_count = 7 [json_name = "failedCount"]; // 已失败数
+
+  optional string status = 8 [json_name = "status"]; // 状态(RUNNING/FINISHED)
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+message ListScriptBatchResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated ScriptBatch items = 2 [json_name = "items"]; // 批次列表
+}
+
+message GetScriptBatchRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 批次ID
+}
+
+// 批次内单节点执行结果
+message ScriptBatchItem {
+  optional string request_id = 1 [json_name = "requestId"]; // 指令幂等键
+
+  optional uint32 node_id = 2 [json_name = "nodeId"]; // 节点ID
+
+  optional string agent_id = 3 [json_name = "agentId"]; // 机器标识
+
+  optional string status = 4 [json_name = "status"]; // 状态(PENDING/SUCCESS/FAILED)
+
+  optional string error = 5 [json_name = "error"]; // 失败原因
+
+  optional int32 exit_code = 6 [json_name = "exitCode"]; // 退出码
+
+  optional string duration = 7 [json_name = "duration"]; // 执行时长
+
+  optional string output = 8 [json_name = "output"]; // 输出(截断至 4KB)
+
+  optional google.protobuf.Timestamp finished_at = 9 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 终态时间
+}
+
+message ScriptBatchDetail {
+  optional ScriptBatch batch = 1 [json_name = "batch"]; // 批次
+
+  repeated ScriptBatchItem items = 2 [json_name = "items"]; // 逐节点结果
 }

@@ -23,6 +23,8 @@ const (
 	FieldMonitorID = "monitor_id"
 	// FieldProjectID holds the string denoting the project_id field in the database.
 	FieldProjectID = "project_id"
+	// FieldNodeID holds the string denoting the node_id field in the database.
+	FieldNodeID = "node_id"
 	// FieldLevel holds the string denoting the level field in the database.
 	FieldLevel = "level"
 	// FieldMessage holds the string denoting the message field in the database.
@@ -45,6 +47,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldMonitorID,
 	FieldProjectID,
+	FieldNodeID,
 	FieldLevel,
 	FieldMessage,
 	FieldResolved,
@@ -65,8 +68,10 @@ func ValidColumn(column string) bool {
 var (
 	// MonitorIDValidator is a validator for the "monitor_id" field. It is called by the builders before save.
 	MonitorIDValidator func(uint32) error
-	// ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	ProjectIDValidator func(uint32) error
+	// DefaultProjectID holds the default value on creation for the "project_id" field.
+	DefaultProjectID uint32
+	// DefaultNodeID holds the default value on creation for the "node_id" field.
+	DefaultNodeID uint32
 	// MessageValidator is a validator for the "message" field. It is called by the builders before save.
 	MessageValidator func(string) error
 	// DefaultResolved holds the default value on creation for the "resolved" field.
@@ -135,6 +140,11 @@ func ByMonitorID(opts ...sql.OrderTermOption) OrderOption {
 // ByProjectID orders the results by the project_id field.
 func ByProjectID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProjectID, opts...).ToFunc()
+}
+
+// ByNodeID orders the results by the node_id field.
+func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNodeID, opts...).ToFunc()
 }
 
 // ByLevel orders the results by the level field.

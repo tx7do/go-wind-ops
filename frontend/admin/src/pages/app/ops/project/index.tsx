@@ -9,6 +9,7 @@ import {
   PauseCircleOutlined,
   ReloadOutlined,
   FileTextOutlined,
+  HistoryOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,6 +27,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import ProjectDrawer from './components/ProjectDrawer';
 import ProjectLogDrawer from './components/ProjectLogDrawer';
+import ProjectTimelineDrawer from './components/ProjectTimelineDrawer';
 
 /**
  * 项目管理页面
@@ -43,6 +45,7 @@ const ProjectManagement = () => {
   const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
   const [logProject, setLogProject] = useState<Project | undefined>();
+  const [timelineProject, setTimelineProject] = useState<Project | undefined>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listProjects'] });
 
@@ -138,7 +141,7 @@ const ProjectManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 230,
+      width: 260,
       fixed: 'right',
       render: (_, record) => [
         <Tooltip key="start" title={t('opStart')}>
@@ -159,6 +162,11 @@ const ProjectManagement = () => {
         <Tooltip key="log" title={t('opLog')}>
           <a onClick={() => setLogProject(record)}>
             <FileTextOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip key="timeline" title={t('opTimeline')}>
+          <a onClick={() => setTimelineProject(record)}>
+            <HistoryOutlined />
           </a>
         </Tooltip>,
         <Tooltip key="edit" title={t('edit')}>
@@ -280,6 +288,12 @@ const ProjectManagement = () => {
       <ProjectLogDrawer
         data={logProject}
         onClose={() => setLogProject(undefined)}
+      />
+
+      <ProjectTimelineDrawer
+        projectId={timelineProject?.id}
+        projectName={timelineProject?.name}
+        onClose={() => setTimelineProject(undefined)}
       />
     </>
   );

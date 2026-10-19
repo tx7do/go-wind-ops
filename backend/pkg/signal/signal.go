@@ -301,7 +301,33 @@ const (
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
 	CommandActionFileDelete CommandAction = "file_delete"
+
+	// 目录备份:agent 打包 zip 后经预签名 URL 直传对象存储。
+	CommandActionBackupRun CommandAction = "backup_run"
 )
+
+// ============================================================================
+// 目录备份
+// ============================================================================
+
+// BackupRunPayload backup_run 指令载荷:agent 打包 SourceDir 为 zip 后
+// 流式上传到 UploadURL(预签名 PUT),回执带大小/校验和/文件数。
+type BackupRunPayload struct {
+	TaskID    uint32 `json:"task_id"`
+	RecordID  uint32 `json:"record_id,omitempty"`
+	SourceDir string `json:"source_dir"`
+	UploadURL string `json:"upload_url"`
+}
+
+// BackupRunResult backup_run 回执。
+type BackupRunResult struct {
+	TaskID    uint32 `json:"task_id"`
+	RecordID  uint32 `json:"record_id,omitempty"`
+	SizeBytes int64  `json:"size_bytes"`
+	SHA256    string `json:"sha256"`
+	FileCount int    `json:"file_count"`
+	Duration  string `json:"duration,omitempty"`
+}
 
 // ============================================================================
 // Docker 镜像部署
@@ -337,8 +363,8 @@ type DockerDeployResult struct {
 const TerminalSessionMax = 5
 
 // TerminalOpenPayload terminal_open 指令载荷;shell 由 agent 按平台默认
-// (Windows=cmd.exe,Unix=$SHELL 或 /bin/bash)。管道伪终端:不支持交互式
-// 全屏程序(vim/htop)与 Ctrl+C 控制台事件。
+// (Windows=cmd.exe,Unix=$SHELL 或 /bin/bash)。真 PTY(Windows=ConPTY,
+// Unix=内核 pty):支持 Ctrl+C、行编辑与交互式程序。
 type TerminalOpenPayload struct {
 	SessionId string `json:"session_id"`
 	Cols      uint32 `json:"cols,omitempty"`
@@ -348,6 +374,13 @@ type TerminalOpenPayload struct {
 // TerminalClosePayload terminal_close 指令载荷。
 type TerminalClosePayload struct {
 	SessionId string `json:"session_id"`
+}
+
+// TerminalResizePayload 终端尺寸变更载荷(terminal/+/resize 主题)。
+type TerminalResizePayload struct {
+	SessionId string `json:"session_id"`
+	Cols      uint32 `json:"cols"`
+	Rows      uint32 `json:"rows"`
 }
 
 // TerminalIO 终端输入/输出字节(base64 承载,过 MQTT JSON codec);

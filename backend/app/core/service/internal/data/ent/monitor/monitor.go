@@ -3,6 +3,8 @@
 package monitor
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -27,6 +29,20 @@ const (
 	FieldName = "name"
 	// FieldProjectID holds the string denoting the project_id field in the database.
 	FieldProjectID = "project_id"
+	// FieldTargetType holds the string denoting the target_type field in the database.
+	FieldTargetType = "target_type"
+	// FieldNodeID holds the string denoting the node_id field in the database.
+	FieldNodeID = "node_id"
+	// FieldMetricType holds the string denoting the metric_type field in the database.
+	FieldMetricType = "metric_type"
+	// FieldThresholdPercent holds the string denoting the threshold_percent field in the database.
+	FieldThresholdPercent = "threshold_percent"
+	// FieldConsecutiveCount holds the string denoting the consecutive_count field in the database.
+	FieldConsecutiveCount = "consecutive_count"
+	// FieldConsecutiveHits holds the string denoting the consecutive_hits field in the database.
+	FieldConsecutiveHits = "consecutive_hits"
+	// FieldNotifyOnRecovery holds the string denoting the notify_on_recovery field in the database.
+	FieldNotifyOnRecovery = "notify_on_recovery"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldAutoRestart holds the string denoting the auto_restart field in the database.
@@ -52,6 +68,13 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldName,
 	FieldProjectID,
+	FieldTargetType,
+	FieldNodeID,
+	FieldMetricType,
+	FieldThresholdPercent,
+	FieldConsecutiveCount,
+	FieldConsecutiveHits,
+	FieldNotifyOnRecovery,
 	FieldCron,
 	FieldAutoRestart,
 	FieldWebhookURL,
@@ -72,8 +95,18 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	ProjectIDValidator func(uint32) error
+	// DefaultProjectID holds the default value on creation for the "project_id" field.
+	DefaultProjectID uint32
+	// DefaultNodeID holds the default value on creation for the "node_id" field.
+	DefaultNodeID uint32
+	// DefaultThresholdPercent holds the default value on creation for the "threshold_percent" field.
+	DefaultThresholdPercent float64
+	// DefaultConsecutiveCount holds the default value on creation for the "consecutive_count" field.
+	DefaultConsecutiveCount int
+	// DefaultConsecutiveHits holds the default value on creation for the "consecutive_hits" field.
+	DefaultConsecutiveHits int
+	// DefaultNotifyOnRecovery holds the default value on creation for the "notify_on_recovery" field.
+	DefaultNotifyOnRecovery bool
 	// CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	CronValidator func(string) error
 	// DefaultAutoRestart holds the default value on creation for the "auto_restart" field.
@@ -83,6 +116,59 @@ var (
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// TargetType defines the type for the "target_type" enum field.
+type TargetType string
+
+// TargetTypeProject is the default value of the TargetType enum.
+const DefaultTargetType = TargetTypeProject
+
+// TargetType values.
+const (
+	TargetTypeProject    TargetType = "PROJECT"
+	TargetTypeNodeMetric TargetType = "NODE_METRIC"
+)
+
+func (tt TargetType) String() string {
+	return string(tt)
+}
+
+// TargetTypeValidator is a validator for the "target_type" field enum values. It is called by the builders before save.
+func TargetTypeValidator(tt TargetType) error {
+	switch tt {
+	case TargetTypeProject, TargetTypeNodeMetric:
+		return nil
+	default:
+		return fmt.Errorf("monitor: invalid enum value for target_type field: %q", tt)
+	}
+}
+
+// MetricType defines the type for the "metric_type" enum field.
+type MetricType string
+
+// MetricTypeCpu is the default value of the MetricType enum.
+const DefaultMetricType = MetricTypeCpu
+
+// MetricType values.
+const (
+	MetricTypeCpu    MetricType = "CPU"
+	MetricTypeMemory MetricType = "MEMORY"
+	MetricTypeDisk   MetricType = "DISK"
+)
+
+func (mt MetricType) String() string {
+	return string(mt)
+}
+
+// MetricTypeValidator is a validator for the "metric_type" field enum values. It is called by the builders before save.
+func MetricTypeValidator(mt MetricType) error {
+	switch mt {
+	case MetricTypeCpu, MetricTypeMemory, MetricTypeDisk:
+		return nil
+	default:
+		return fmt.Errorf("monitor: invalid enum value for metric_type field: %q", mt)
+	}
+}
 
 // OrderOption defines the ordering options for the Monitor queries.
 type OrderOption func(*sql.Selector)
@@ -130,6 +216,41 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByProjectID orders the results by the project_id field.
 func ByProjectID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProjectID, opts...).ToFunc()
+}
+
+// ByTargetType orders the results by the target_type field.
+func ByTargetType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTargetType, opts...).ToFunc()
+}
+
+// ByNodeID orders the results by the node_id field.
+func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNodeID, opts...).ToFunc()
+}
+
+// ByMetricType orders the results by the metric_type field.
+func ByMetricType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMetricType, opts...).ToFunc()
+}
+
+// ByThresholdPercent orders the results by the threshold_percent field.
+func ByThresholdPercent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldThresholdPercent, opts...).ToFunc()
+}
+
+// ByConsecutiveCount orders the results by the consecutive_count field.
+func ByConsecutiveCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConsecutiveCount, opts...).ToFunc()
+}
+
+// ByConsecutiveHits orders the results by the consecutive_hits field.
+func ByConsecutiveHits(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConsecutiveHits, opts...).ToFunc()
+}
+
+// ByNotifyOnRecovery orders the results by the notify_on_recovery field.
+func ByNotifyOnRecovery(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNotifyOnRecovery, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

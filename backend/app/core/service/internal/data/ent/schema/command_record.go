@@ -82,6 +82,11 @@ func (CommandRecord) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Uint32("batch_id").
+			Comment("所属脚本批量执行批次(ops_script_batches.id;非批量指令为 0)").
+			Default(0).
+			Optional(),
+
 		field.Time("finished_at").
 			Comment("结果回执时间").
 			Optional().
@@ -102,6 +107,7 @@ func (CommandRecord) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("node_id").StorageKey("idx_ops_cmd_node"),
 		index.Fields("status").StorageKey("idx_ops_cmd_status"),
+		index.Fields("batch_id").StorageKey("idx_ops_cmd_batch"),
 		index.Fields("agent_id", "action").StorageKey("idx_ops_cmd_agent_action"),
 	}
 }

@@ -2,7 +2,7 @@ import type { AppRouteObject } from '@/core/router/types';
 import { createLazyRoute } from '@/core/router';
 
 /**
- * 运维域路由:五个功能组直接作为一级菜单(资源管理/持续交付/自动化/可观测/治理)。
+ * 运维域路由:六个功能组直接作为一级菜单(资源管理/持续交付/自动化/可观测/云管理/治理)。
  * 分组节点不带 path,叶子使用绝对路径 /ops/<page>,URL 与拆分前保持一致。
  */
 export const opsRoutes: AppRouteObject[] = [
@@ -69,7 +69,7 @@ export const opsRoutes: AppRouteObject[] = [
     meta: {
       title: 'routes:opsCicd',
       icon: 'lucide:package',
-      order: 2,
+      order: 3,
       authority: ['ops:build_manage', 'ops:distribute'],
     },
     children: [
@@ -126,7 +126,7 @@ export const opsRoutes: AppRouteObject[] = [
     meta: {
       title: 'routes:opsAuto',
       icon: 'lucide:bot',
-      order: 3,
+      order: 4,
       authority: ['ops:script_manage', 'ops:node_manage'],
     },
     children: [
@@ -142,13 +142,35 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'script-batches',
+        path: '/ops/script-batches',
+        element: createLazyRoute(() => import('@/pages/app/ops/script-batch')),
+        meta: {
+          title: 'routes:script-batches',
+          icon: 'lucide:layers',
+          order: 2,
+          authority: ['ops:script_manage'],
+        },
+      },
+      {
+        name: 'backups',
+        path: '/ops/backups',
+        element: createLazyRoute(() => import('@/pages/app/ops/backup')),
+        meta: {
+          title: 'routes:backups',
+          icon: 'lucide:archive',
+          order: 3,
+          authority: ['ops:script_manage'],
+        },
+      },
+      {
         name: 'plugins',
         path: '/ops/plugins',
         element: createLazyRoute(() => import('@/pages/app/ops/plugin')),
         meta: {
           title: 'routes:plugins',
           icon: 'lucide:puzzle',
-          order: 2,
+          order: 4,
           authority: ['ops:node_manage'],
         },
       },
@@ -161,7 +183,7 @@ export const opsRoutes: AppRouteObject[] = [
     meta: {
       title: 'routes:opsObserve',
       icon: 'lucide:gauge',
-      order: 4,
+      order: 5,
       authority: ['sys:platform_admin'],
     },
     children: [
@@ -207,7 +229,7 @@ export const opsRoutes: AppRouteObject[] = [
     meta: {
       title: 'routes:opsGovern',
       icon: 'lucide:shield-check',
-      order: 5,
+      order: 6,
       authority: ['sys:platform_admin', 'ops:node_manage'],
     },
     children: [
@@ -244,6 +266,19 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+    ],
+  },
+
+  // ── 云管理 ──
+  {
+    name: 'ops-cloud',
+    meta: {
+      title: 'routes:opsCloud',
+      icon: 'lucide:cloudy',
+      order: 2,
+      authority: ['sys:platform_admin'],
+    },
+    children: [
       {
         name: 'cloud-accounts',
         path: '/ops/cloud-accounts',
@@ -251,7 +286,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:cloud-accounts',
           icon: 'lucide:cloud',
-          order: 4,
+          order: 1,
           authority: ['sys:platform_admin'],
         },
       },
@@ -262,7 +297,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:cloud-resources',
           icon: 'lucide:server',
-          order: 5,
+          order: 2,
           authority: ['sys:platform_admin'],
         },
       },
@@ -273,7 +308,7 @@ export const opsRoutes: AppRouteObject[] = [
         meta: {
           title: 'routes:cloud-costs',
           icon: 'lucide:coins',
-          order: 6,
+          order: 3,
           authority: ['sys:platform_admin'],
         },
       },

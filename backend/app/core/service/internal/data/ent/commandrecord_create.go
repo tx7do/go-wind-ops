@@ -166,6 +166,20 @@ func (_c *CommandRecordCreate) SetNillableOperatorID(v *uint32) *CommandRecordCr
 	return _c
 }
 
+// SetBatchID sets the "batch_id" field.
+func (_c *CommandRecordCreate) SetBatchID(v uint32) *CommandRecordCreate {
+	_c.mutation.SetBatchID(v)
+	return _c
+}
+
+// SetNillableBatchID sets the "batch_id" field if the given value is not nil.
+func (_c *CommandRecordCreate) SetNillableBatchID(v *uint32) *CommandRecordCreate {
+	if v != nil {
+		_c.SetBatchID(*v)
+	}
+	return _c
+}
+
 // SetFinishedAt sets the "finished_at" field.
 func (_c *CommandRecordCreate) SetFinishedAt(v time.Time) *CommandRecordCreate {
 	_c.mutation.SetFinishedAt(v)
@@ -232,6 +246,10 @@ func (_c *CommandRecordCreate) defaults() {
 	if _, ok := _c.mutation.OperatorID(); !ok {
 		v := commandrecord.DefaultOperatorID
 		_c.mutation.SetOperatorID(v)
+	}
+	if _, ok := _c.mutation.BatchID(); !ok {
+		v := commandrecord.DefaultBatchID
+		_c.mutation.SetBatchID(v)
 	}
 }
 
@@ -351,6 +369,10 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.OperatorID(); ok {
 		_spec.SetField(commandrecord.FieldOperatorID, field.TypeUint32, value)
 		_node.OperatorID = &value
+	}
+	if value, ok := _c.mutation.BatchID(); ok {
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint32, value)
+		_node.BatchID = value
 	}
 	if value, ok := _c.mutation.FinishedAt(); ok {
 		_spec.SetField(commandrecord.FieldFinishedAt, field.TypeTime, value)
@@ -597,6 +619,30 @@ func (u *CommandRecordUpsert) AddOperatorID(v uint32) *CommandRecordUpsert {
 // ClearOperatorID clears the value of the "operator_id" field.
 func (u *CommandRecordUpsert) ClearOperatorID() *CommandRecordUpsert {
 	u.SetNull(commandrecord.FieldOperatorID)
+	return u
+}
+
+// SetBatchID sets the "batch_id" field.
+func (u *CommandRecordUpsert) SetBatchID(v uint32) *CommandRecordUpsert {
+	u.Set(commandrecord.FieldBatchID, v)
+	return u
+}
+
+// UpdateBatchID sets the "batch_id" field to the value that was provided on create.
+func (u *CommandRecordUpsert) UpdateBatchID() *CommandRecordUpsert {
+	u.SetExcluded(commandrecord.FieldBatchID)
+	return u
+}
+
+// AddBatchID adds v to the "batch_id" field.
+func (u *CommandRecordUpsert) AddBatchID(v uint32) *CommandRecordUpsert {
+	u.Add(commandrecord.FieldBatchID, v)
+	return u
+}
+
+// ClearBatchID clears the value of the "batch_id" field.
+func (u *CommandRecordUpsert) ClearBatchID() *CommandRecordUpsert {
+	u.SetNull(commandrecord.FieldBatchID)
 	return u
 }
 
@@ -890,6 +936,34 @@ func (u *CommandRecordUpsertOne) UpdateOperatorID() *CommandRecordUpsertOne {
 func (u *CommandRecordUpsertOne) ClearOperatorID() *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetBatchID sets the "batch_id" field.
+func (u *CommandRecordUpsertOne) SetBatchID(v uint32) *CommandRecordUpsertOne {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.SetBatchID(v)
+	})
+}
+
+// AddBatchID adds v to the "batch_id" field.
+func (u *CommandRecordUpsertOne) AddBatchID(v uint32) *CommandRecordUpsertOne {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.AddBatchID(v)
+	})
+}
+
+// UpdateBatchID sets the "batch_id" field to the value that was provided on create.
+func (u *CommandRecordUpsertOne) UpdateBatchID() *CommandRecordUpsertOne {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.UpdateBatchID()
+	})
+}
+
+// ClearBatchID clears the value of the "batch_id" field.
+func (u *CommandRecordUpsertOne) ClearBatchID() *CommandRecordUpsertOne {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.ClearBatchID()
 	})
 }
 
@@ -1352,6 +1426,34 @@ func (u *CommandRecordUpsertBulk) UpdateOperatorID() *CommandRecordUpsertBulk {
 func (u *CommandRecordUpsertBulk) ClearOperatorID() *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetBatchID sets the "batch_id" field.
+func (u *CommandRecordUpsertBulk) SetBatchID(v uint32) *CommandRecordUpsertBulk {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.SetBatchID(v)
+	})
+}
+
+// AddBatchID adds v to the "batch_id" field.
+func (u *CommandRecordUpsertBulk) AddBatchID(v uint32) *CommandRecordUpsertBulk {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.AddBatchID(v)
+	})
+}
+
+// UpdateBatchID sets the "batch_id" field to the value that was provided on create.
+func (u *CommandRecordUpsertBulk) UpdateBatchID() *CommandRecordUpsertBulk {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.UpdateBatchID()
+	})
+}
+
+// ClearBatchID clears the value of the "batch_id" field.
+func (u *CommandRecordUpsertBulk) ClearBatchID() *CommandRecordUpsertBulk {
+	return u.Update(func(s *CommandRecordUpsert) {
+		s.ClearBatchID()
 	})
 }
 

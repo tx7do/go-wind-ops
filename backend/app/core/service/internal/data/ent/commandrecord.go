@@ -42,6 +42,8 @@ type CommandRecord struct {
 	Error *string `json:"error,omitempty"`
 	// 触发指令的用户
 	OperatorID *uint32 `json:"operator_id,omitempty"`
+	// 所属脚本批量执行批次(ops_script_batches.id;非批量指令为 0)
+	BatchID uint32 `json:"batch_id,omitempty"`
 	// 结果回执时间
 	FinishedAt   *time.Time `json:"finished_at,omitempty"`
 	selectValues sql.SelectValues
@@ -52,7 +54,7 @@ func (*CommandRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case commandrecord.FieldID, commandrecord.FieldNodeID, commandrecord.FieldOperatorID:
+		case commandrecord.FieldID, commandrecord.FieldNodeID, commandrecord.FieldOperatorID, commandrecord.FieldBatchID:
 			values[i] = new(sql.NullInt64)
 		case commandrecord.FieldRequestID, commandrecord.FieldAgentID, commandrecord.FieldAction, commandrecord.FieldPayload, commandrecord.FieldStatus, commandrecord.FieldResult, commandrecord.FieldError:
 			values[i] = new(sql.NullString)
@@ -160,6 +162,12 @@ func (_m *CommandRecord) assignValues(columns []string, values []any) error {
 				_m.OperatorID = new(uint32)
 				*_m.OperatorID = uint32(value.Int64)
 			}
+		case commandrecord.FieldBatchID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field batch_id", values[i])
+			} else if value.Valid {
+				_m.BatchID = uint32(value.Int64)
+			}
 		case commandrecord.FieldFinishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
@@ -256,6 +264,9 @@ func (_m *CommandRecord) String() string {
 		builder.WriteString("operator_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("batch_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BatchID))
 	builder.WriteString(", ")
 	if v := _m.FinishedAt; v != nil {
 		builder.WriteString("finished_at=")

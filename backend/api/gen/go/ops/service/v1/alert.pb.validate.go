@@ -84,6 +84,10 @@ func (m *Alert) validate(all bool) error {
 		// no validation rules for Notified
 	}
 
+	if m.NodeId != nil {
+		// no validation rules for NodeId
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

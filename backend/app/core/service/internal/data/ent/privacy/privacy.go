@@ -255,6 +255,54 @@ func (f ApprovalMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApprovalMutation", m)
 }
 
+// The BackupRecordQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BackupRecordQueryRuleFunc func(context.Context, *ent.BackupRecordQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BackupRecordQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BackupRecordQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BackupRecordQuery", q)
+}
+
+// The BackupRecordMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BackupRecordMutationRuleFunc func(context.Context, *ent.BackupRecordMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BackupRecordMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BackupRecordMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BackupRecordMutation", m)
+}
+
+// The BackupTaskQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BackupTaskQueryRuleFunc func(context.Context, *ent.BackupTaskQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BackupTaskQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BackupTaskQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BackupTaskQuery", q)
+}
+
+// The BackupTaskMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BackupTaskMutationRuleFunc func(context.Context, *ent.BackupTaskMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BackupTaskMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BackupTaskMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BackupTaskMutation", m)
+}
+
 // The BuildQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type BuildQueryRuleFunc func(context.Context, *ent.BuildQuery) error
@@ -1263,6 +1311,30 @@ func (f ScriptMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptMutation", m)
 }
 
+// The ScriptBatchQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScriptBatchQueryRuleFunc func(context.Context, *ent.ScriptBatchQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScriptBatchQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScriptBatchQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScriptBatchQuery", q)
+}
+
+// The ScriptBatchMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScriptBatchMutationRuleFunc func(context.Context, *ent.ScriptBatchMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScriptBatchMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScriptBatchMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptBatchMutation", m)
+}
+
 // The TaskQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TaskQueryRuleFunc func(context.Context, *ent.TaskQuery) error
@@ -1478,6 +1550,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ApprovalQuery:
 		return q.Filter(), nil
+	case *ent.BackupRecordQuery:
+		return q.Filter(), nil
+	case *ent.BackupTaskQuery:
+		return q.Filter(), nil
 	case *ent.BuildQuery:
 		return q.Filter(), nil
 	case *ent.BuildHistoryQuery:
@@ -1562,6 +1638,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ScriptQuery:
 		return q.Filter(), nil
+	case *ent.ScriptBatchQuery:
+		return q.Filter(), nil
 	case *ent.TaskQuery:
 		return q.Filter(), nil
 	case *ent.TenantQuery:
@@ -1594,6 +1672,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ApiKeyMutation:
 		return m.Filter(), nil
 	case *ent.ApprovalMutation:
+		return m.Filter(), nil
+	case *ent.BackupRecordMutation:
+		return m.Filter(), nil
+	case *ent.BackupTaskMutation:
 		return m.Filter(), nil
 	case *ent.BuildMutation:
 		return m.Filter(), nil
@@ -1678,6 +1760,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RolePermissionMutation:
 		return m.Filter(), nil
 	case *ent.ScriptMutation:
+		return m.Filter(), nil
+	case *ent.ScriptBatchMutation:
 		return m.Filter(), nil
 	case *ent.TaskMutation:
 		return m.Filter(), nil

@@ -501,6 +501,492 @@ func (x *ExecuteScriptResponse) GetRequestId() string {
 	return ""
 }
 
+type ExecuteScriptBatchRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ScriptId      *uint32                `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"` // 脚本ID
+	NodeIds       []uint32               `protobuf:"varint,2,rep,packed,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`   // 目标节点ID列表
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExecuteScriptBatchRequest) Reset() {
+	*x = ExecuteScriptBatchRequest{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExecuteScriptBatchRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExecuteScriptBatchRequest) ProtoMessage() {}
+
+func (x *ExecuteScriptBatchRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExecuteScriptBatchRequest.ProtoReflect.Descriptor instead.
+func (*ExecuteScriptBatchRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ExecuteScriptBatchRequest) GetScriptId() uint32 {
+	if x != nil && x.ScriptId != nil {
+		return *x.ScriptId
+	}
+	return 0
+}
+
+func (x *ExecuteScriptBatchRequest) GetNodeIds() []uint32 {
+	if x != nil {
+		return x.NodeIds
+	}
+	return nil
+}
+
+type ExecuteScriptBatchResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BatchId       *uint32                `protobuf:"varint,1,opt,name=batch_id,json=batchId,proto3,oneof" json:"batch_id,omitempty"`   // 批次ID
+	RequestIds    []string               `protobuf:"bytes,2,rep,name=request_ids,json=requestIds,proto3" json:"request_ids,omitempty"` // 已下发节点的幂等键
+	Dispatched    *uint32                `protobuf:"varint,3,opt,name=dispatched,proto3,oneof" json:"dispatched,omitempty"`            // 成功下发节点数
+	Failed        *uint32                `protobuf:"varint,4,opt,name=failed,proto3,oneof" json:"failed,omitempty"`                    // 下发失败节点数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExecuteScriptBatchResponse) Reset() {
+	*x = ExecuteScriptBatchResponse{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExecuteScriptBatchResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExecuteScriptBatchResponse) ProtoMessage() {}
+
+func (x *ExecuteScriptBatchResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExecuteScriptBatchResponse.ProtoReflect.Descriptor instead.
+func (*ExecuteScriptBatchResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ExecuteScriptBatchResponse) GetBatchId() uint32 {
+	if x != nil && x.BatchId != nil {
+		return *x.BatchId
+	}
+	return 0
+}
+
+func (x *ExecuteScriptBatchResponse) GetRequestIds() []string {
+	if x != nil {
+		return x.RequestIds
+	}
+	return nil
+}
+
+func (x *ExecuteScriptBatchResponse) GetDispatched() uint32 {
+	if x != nil && x.Dispatched != nil {
+		return *x.Dispatched
+	}
+	return 0
+}
+
+func (x *ExecuteScriptBatchResponse) GetFailed() uint32 {
+	if x != nil && x.Failed != nil {
+		return *x.Failed
+	}
+	return 0
+}
+
+// 脚本批量执行批次
+type ScriptBatch struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                         // 批次ID
+	ScriptId      *uint32                `protobuf:"varint,2,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"`             // 脚本ID
+	ScriptName    *string                `protobuf:"bytes,3,opt,name=script_name,json=scriptName,proto3,oneof" json:"script_name,omitempty"`        // 脚本名快照
+	NodeIds       []uint32               `protobuf:"varint,4,rep,packed,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`               // 目标节点ID列表
+	Total         *uint32                `protobuf:"varint,5,opt,name=total,proto3,oneof" json:"total,omitempty"`                                   // 目标节点总数
+	SuccessCount  *uint32                `protobuf:"varint,6,opt,name=success_count,json=successCount,proto3,oneof" json:"success_count,omitempty"` // 已成功数
+	FailedCount   *uint32                `protobuf:"varint,7,opt,name=failed_count,json=failedCount,proto3,oneof" json:"failed_count,omitempty"`    // 已失败数
+	Status        *string                `protobuf:"bytes,8,opt,name=status,proto3,oneof" json:"status,omitempty"`                                  // 状态(RUNNING/FINISHED)
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`          // 创建时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScriptBatch) Reset() {
+	*x = ScriptBatch{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScriptBatch) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScriptBatch) ProtoMessage() {}
+
+func (x *ScriptBatch) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScriptBatch.ProtoReflect.Descriptor instead.
+func (*ScriptBatch) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ScriptBatch) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *ScriptBatch) GetScriptId() uint32 {
+	if x != nil && x.ScriptId != nil {
+		return *x.ScriptId
+	}
+	return 0
+}
+
+func (x *ScriptBatch) GetScriptName() string {
+	if x != nil && x.ScriptName != nil {
+		return *x.ScriptName
+	}
+	return ""
+}
+
+func (x *ScriptBatch) GetNodeIds() []uint32 {
+	if x != nil {
+		return x.NodeIds
+	}
+	return nil
+}
+
+func (x *ScriptBatch) GetTotal() uint32 {
+	if x != nil && x.Total != nil {
+		return *x.Total
+	}
+	return 0
+}
+
+func (x *ScriptBatch) GetSuccessCount() uint32 {
+	if x != nil && x.SuccessCount != nil {
+		return *x.SuccessCount
+	}
+	return 0
+}
+
+func (x *ScriptBatch) GetFailedCount() uint32 {
+	if x != nil && x.FailedCount != nil {
+		return *x.FailedCount
+	}
+	return 0
+}
+
+func (x *ScriptBatch) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+func (x *ScriptBatch) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ListScriptBatchResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Items         []*ScriptBatch         `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 批次列表
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListScriptBatchResponse) Reset() {
+	*x = ListScriptBatchResponse{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListScriptBatchResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListScriptBatchResponse) ProtoMessage() {}
+
+func (x *ListScriptBatchResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListScriptBatchResponse.ProtoReflect.Descriptor instead.
+func (*ListScriptBatchResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListScriptBatchResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListScriptBatchResponse) GetItems() []*ScriptBatch {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type GetScriptBatchRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 批次ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetScriptBatchRequest) Reset() {
+	*x = GetScriptBatchRequest{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetScriptBatchRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetScriptBatchRequest) ProtoMessage() {}
+
+func (x *GetScriptBatchRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetScriptBatchRequest.ProtoReflect.Descriptor instead.
+func (*GetScriptBatchRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetScriptBatchRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+// 批次内单节点执行结果
+type ScriptBatchItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     *string                `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3,oneof" json:"request_id,omitempty"`    // 指令幂等键
+	NodeId        *uint32                `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`            // 节点ID
+	AgentId       *string                `protobuf:"bytes,3,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`          // 机器标识
+	Status        *string                `protobuf:"bytes,4,opt,name=status,proto3,oneof" json:"status,omitempty"`                           // 状态(PENDING/SUCCESS/FAILED)
+	Error         *string                `protobuf:"bytes,5,opt,name=error,proto3,oneof" json:"error,omitempty"`                             // 失败原因
+	ExitCode      *int32                 `protobuf:"varint,6,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`      // 退出码
+	Duration      *string                `protobuf:"bytes,7,opt,name=duration,proto3,oneof" json:"duration,omitempty"`                       // 执行时长
+	Output        *string                `protobuf:"bytes,8,opt,name=output,proto3,oneof" json:"output,omitempty"`                           // 输出(截断至 4KB)
+	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at,omitempty"` // 终态时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScriptBatchItem) Reset() {
+	*x = ScriptBatchItem{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScriptBatchItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScriptBatchItem) ProtoMessage() {}
+
+func (x *ScriptBatchItem) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScriptBatchItem.ProtoReflect.Descriptor instead.
+func (*ScriptBatchItem) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ScriptBatchItem) GetRequestId() string {
+	if x != nil && x.RequestId != nil {
+		return *x.RequestId
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetNodeId() uint32 {
+	if x != nil && x.NodeId != nil {
+		return *x.NodeId
+	}
+	return 0
+}
+
+func (x *ScriptBatchItem) GetAgentId() string {
+	if x != nil && x.AgentId != nil {
+		return *x.AgentId
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetExitCode() int32 {
+	if x != nil && x.ExitCode != nil {
+		return *x.ExitCode
+	}
+	return 0
+}
+
+func (x *ScriptBatchItem) GetDuration() string {
+	if x != nil && x.Duration != nil {
+		return *x.Duration
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetOutput() string {
+	if x != nil && x.Output != nil {
+		return *x.Output
+	}
+	return ""
+}
+
+func (x *ScriptBatchItem) GetFinishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return nil
+}
+
+type ScriptBatchDetail struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Batch         *ScriptBatch           `protobuf:"bytes,1,opt,name=batch,proto3,oneof" json:"batch,omitempty"` // 批次
+	Items         []*ScriptBatchItem     `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`       // 逐节点结果
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScriptBatchDetail) Reset() {
+	*x = ScriptBatchDetail{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScriptBatchDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScriptBatchDetail) ProtoMessage() {}
+
+func (x *ScriptBatchDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScriptBatchDetail.ProtoReflect.Descriptor instead.
+func (*ScriptBatchDetail) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ScriptBatchDetail) GetBatch() *ScriptBatch {
+	if x != nil {
+		return x.Batch
+	}
+	return nil
+}
+
+func (x *ScriptBatchDetail) GetItems() []*ScriptBatchItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 var File_ops_service_v1_script_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_script_proto_rawDesc = "" +
@@ -561,14 +1047,88 @@ const file_ops_service_v1_script_proto_rawDesc = "" +
 	"\t_agent_id\"6\n" +
 	"\x15ExecuteScriptResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId2\xf5\x03\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"k\n" +
+	"\x19ExecuteScriptBatchRequest\x12%\n" +
+	"\tscript_id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\bscriptId\x88\x01\x01\x12\x19\n" +
+	"\bnode_ids\x18\x02 \x03(\rR\anodeIdsB\f\n" +
+	"\n" +
+	"_script_id\"\xc6\x01\n" +
+	"\x1aExecuteScriptBatchResponse\x12\x1e\n" +
+	"\bbatch_id\x18\x01 \x01(\rH\x00R\abatchId\x88\x01\x01\x12\x1f\n" +
+	"\vrequest_ids\x18\x02 \x03(\tR\n" +
+	"requestIds\x12#\n" +
+	"\n" +
+	"dispatched\x18\x03 \x01(\rH\x01R\n" +
+	"dispatched\x88\x01\x01\x12\x1b\n" +
+	"\x06failed\x18\x04 \x01(\rH\x02R\x06failed\x88\x01\x01B\v\n" +
+	"\t_batch_idB\r\n" +
+	"\v_dispatchedB\t\n" +
+	"\a_failed\"\xcf\x03\n" +
+	"\vScriptBatch\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12%\n" +
+	"\tscript_id\x18\x02 \x01(\rB\x03\xe0A\x03H\x01R\bscriptId\x88\x01\x01\x12)\n" +
+	"\vscript_name\x18\x03 \x01(\tB\x03\xe0A\x03H\x02R\n" +
+	"scriptName\x88\x01\x01\x12\x19\n" +
+	"\bnode_ids\x18\x04 \x03(\rR\anodeIds\x12\x19\n" +
+	"\x05total\x18\x05 \x01(\rH\x03R\x05total\x88\x01\x01\x12(\n" +
+	"\rsuccess_count\x18\x06 \x01(\rH\x04R\fsuccessCount\x88\x01\x01\x12&\n" +
+	"\ffailed_count\x18\a \x01(\rH\x05R\vfailedCount\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\b \x01(\tH\x06R\x06status\x88\x01\x01\x12C\n" +
+	"\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\f\n" +
+	"\n" +
+	"_script_idB\x0e\n" +
+	"\f_script_nameB\b\n" +
+	"\x06_totalB\x10\n" +
+	"\x0e_success_countB\x0f\n" +
+	"\r_failed_countB\t\n" +
+	"\a_statusB\r\n" +
+	"\v_created_at\"b\n" +
+	"\x17ListScriptBatchResponse\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x04R\x05total\x121\n" +
+	"\x05items\x18\x02 \x03(\v2\x1b.ops.service.v1.ScriptBatchR\x05items\"8\n" +
+	"\x15GetScriptBatchRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x03_id\"\xc5\x03\n" +
+	"\x0fScriptBatchItem\x12\"\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tH\x00R\trequestId\x88\x01\x01\x12\x1c\n" +
+	"\anode_id\x18\x02 \x01(\rH\x01R\x06nodeId\x88\x01\x01\x12\x1e\n" +
+	"\bagent_id\x18\x03 \x01(\tH\x02R\aagentId\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\x04 \x01(\tH\x03R\x06status\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x05 \x01(\tH\x04R\x05error\x88\x01\x01\x12 \n" +
+	"\texit_code\x18\x06 \x01(\x05H\x05R\bexitCode\x88\x01\x01\x12\x1f\n" +
+	"\bduration\x18\a \x01(\tH\x06R\bduration\x88\x01\x01\x12\x1b\n" +
+	"\x06output\x18\b \x01(\tH\aR\x06output\x88\x01\x01\x12E\n" +
+	"\vfinished_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\n" +
+	"finishedAt\x88\x01\x01B\r\n" +
+	"\v_request_idB\n" +
+	"\n" +
+	"\b_node_idB\v\n" +
+	"\t_agent_idB\t\n" +
+	"\a_statusB\b\n" +
+	"\x06_errorB\f\n" +
+	"\n" +
+	"_exit_codeB\v\n" +
+	"\t_durationB\t\n" +
+	"\a_outputB\x0e\n" +
+	"\f_finished_at\"\x8c\x01\n" +
+	"\x11ScriptBatchDetail\x126\n" +
+	"\x05batch\x18\x01 \x01(\v2\x1b.ops.service.v1.ScriptBatchH\x00R\x05batch\x88\x01\x01\x125\n" +
+	"\x05items\x18\x02 \x03(\v2\x1f.ops.service.v1.ScriptBatchItemR\x05itemsB\b\n" +
+	"\x06_batch2\xf5\x03\n" +
 	"\rScriptService\x12N\n" +
 	"\vListScripts\x12\x19.pagination.PagingRequest\x1a\".ops.service.v1.ListScriptResponse\"\x00\x12G\n" +
 	"\tGetScript\x12 .ops.service.v1.GetScriptRequest\x1a\x16.ops.service.v1.Script\"\x00\x12M\n" +
 	"\fCreateScript\x12#.ops.service.v1.CreateScriptRequest\x1a\x16.ops.service.v1.Script\"\x00\x12M\n" +
 	"\fUpdateScript\x12#.ops.service.v1.UpdateScriptRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n" +
 	"\fDeleteScript\x12#.ops.service.v1.DeleteScriptRequest\x1a\x16.google.protobuf.Empty\"\x00\x12^\n" +
-	"\rExecuteScript\x12$.ops.service.v1.ExecuteScriptRequest\x1a%.ops.service.v1.ExecuteScriptResponse\"\x00B\xa8\x01\n" +
+	"\rExecuteScript\x12$.ops.service.v1.ExecuteScriptRequest\x1a%.ops.service.v1.ExecuteScriptResponse\"\x002\xbc\x02\n" +
+	"\x12ScriptBatchService\x12Y\n" +
+	"\x11ListScriptBatches\x12\x19.pagination.PagingRequest\x1a'.ops.service.v1.ListScriptBatchResponse\"\x00\x12\\\n" +
+	"\x0eGetScriptBatch\x12%.ops.service.v1.GetScriptBatchRequest\x1a!.ops.service.v1.ScriptBatchDetail\"\x00\x12m\n" +
+	"\x12ExecuteScriptBatch\x12).ops.service.v1.ExecuteScriptBatchRequest\x1a*.ops.service.v1.ExecuteScriptBatchResponse\"\x00B\xa8\x01\n" +
 	"\x12com.ops.service.v1B\vScriptProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -583,46 +1143,64 @@ func file_ops_service_v1_script_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_script_proto_rawDescData
 }
 
-var file_ops_service_v1_script_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_ops_service_v1_script_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_ops_service_v1_script_proto_goTypes = []any{
-	(*Script)(nil),                // 0: ops.service.v1.Script
-	(*ListScriptResponse)(nil),    // 1: ops.service.v1.ListScriptResponse
-	(*GetScriptRequest)(nil),      // 2: ops.service.v1.GetScriptRequest
-	(*CreateScriptRequest)(nil),   // 3: ops.service.v1.CreateScriptRequest
-	(*UpdateScriptRequest)(nil),   // 4: ops.service.v1.UpdateScriptRequest
-	(*DeleteScriptRequest)(nil),   // 5: ops.service.v1.DeleteScriptRequest
-	(*ExecuteScriptRequest)(nil),  // 6: ops.service.v1.ExecuteScriptRequest
-	(*ExecuteScriptResponse)(nil), // 7: ops.service.v1.ExecuteScriptResponse
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 9: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 10: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 11: google.protobuf.Empty
+	(*Script)(nil),                     // 0: ops.service.v1.Script
+	(*ListScriptResponse)(nil),         // 1: ops.service.v1.ListScriptResponse
+	(*GetScriptRequest)(nil),           // 2: ops.service.v1.GetScriptRequest
+	(*CreateScriptRequest)(nil),        // 3: ops.service.v1.CreateScriptRequest
+	(*UpdateScriptRequest)(nil),        // 4: ops.service.v1.UpdateScriptRequest
+	(*DeleteScriptRequest)(nil),        // 5: ops.service.v1.DeleteScriptRequest
+	(*ExecuteScriptRequest)(nil),       // 6: ops.service.v1.ExecuteScriptRequest
+	(*ExecuteScriptResponse)(nil),      // 7: ops.service.v1.ExecuteScriptResponse
+	(*ExecuteScriptBatchRequest)(nil),  // 8: ops.service.v1.ExecuteScriptBatchRequest
+	(*ExecuteScriptBatchResponse)(nil), // 9: ops.service.v1.ExecuteScriptBatchResponse
+	(*ScriptBatch)(nil),                // 10: ops.service.v1.ScriptBatch
+	(*ListScriptBatchResponse)(nil),    // 11: ops.service.v1.ListScriptBatchResponse
+	(*GetScriptBatchRequest)(nil),      // 12: ops.service.v1.GetScriptBatchRequest
+	(*ScriptBatchItem)(nil),            // 13: ops.service.v1.ScriptBatchItem
+	(*ScriptBatchDetail)(nil),          // 14: ops.service.v1.ScriptBatchDetail
+	(*timestamppb.Timestamp)(nil),      // 15: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),      // 16: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),           // 17: pagination.PagingRequest
+	(*emptypb.Empty)(nil),              // 18: google.protobuf.Empty
 }
 var file_ops_service_v1_script_proto_depIdxs = []int32{
-	8,  // 0: ops.service.v1.Script.last_cron_at:type_name -> google.protobuf.Timestamp
-	8,  // 1: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 0: ops.service.v1.Script.last_cron_at:type_name -> google.protobuf.Timestamp
+	15, // 1: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
+	15, // 2: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: ops.service.v1.ListScriptResponse.items:type_name -> ops.service.v1.Script
 	0,  // 4: ops.service.v1.CreateScriptRequest.data:type_name -> ops.service.v1.Script
 	0,  // 5: ops.service.v1.UpdateScriptRequest.data:type_name -> ops.service.v1.Script
-	9,  // 6: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 7: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
-	2,  // 8: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
-	3,  // 9: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
-	4,  // 10: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
-	5,  // 11: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
-	6,  // 12: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
-	1,  // 13: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
-	0,  // 14: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
-	0,  // 15: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
-	11, // 16: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
-	11, // 17: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
-	7,  // 18: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
-	13, // [13:19] is the sub-list for method output_type
-	7,  // [7:13] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	16, // 6: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
+	15, // 7: ops.service.v1.ScriptBatch.created_at:type_name -> google.protobuf.Timestamp
+	10, // 8: ops.service.v1.ListScriptBatchResponse.items:type_name -> ops.service.v1.ScriptBatch
+	15, // 9: ops.service.v1.ScriptBatchItem.finished_at:type_name -> google.protobuf.Timestamp
+	10, // 10: ops.service.v1.ScriptBatchDetail.batch:type_name -> ops.service.v1.ScriptBatch
+	13, // 11: ops.service.v1.ScriptBatchDetail.items:type_name -> ops.service.v1.ScriptBatchItem
+	17, // 12: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
+	2,  // 13: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
+	3,  // 14: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
+	4,  // 15: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
+	5,  // 16: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
+	6,  // 17: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
+	17, // 18: ops.service.v1.ScriptBatchService.ListScriptBatches:input_type -> pagination.PagingRequest
+	12, // 19: ops.service.v1.ScriptBatchService.GetScriptBatch:input_type -> ops.service.v1.GetScriptBatchRequest
+	8,  // 20: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:input_type -> ops.service.v1.ExecuteScriptBatchRequest
+	1,  // 21: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
+	0,  // 22: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
+	0,  // 23: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
+	18, // 24: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
+	18, // 25: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
+	7,  // 26: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
+	11, // 27: ops.service.v1.ScriptBatchService.ListScriptBatches:output_type -> ops.service.v1.ListScriptBatchResponse
+	14, // 28: ops.service.v1.ScriptBatchService.GetScriptBatch:output_type -> ops.service.v1.ScriptBatchDetail
+	9,  // 29: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:output_type -> ops.service.v1.ExecuteScriptBatchResponse
+	21, // [21:30] is the sub-list for method output_type
+	12, // [12:21] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_script_proto_init() }
@@ -635,15 +1213,21 @@ func file_ops_service_v1_script_proto_init() {
 	file_ops_service_v1_script_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[6].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[8].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[9].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[10].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[12].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[13].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_script_proto_rawDesc), len(file_ops_service_v1_script_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   15,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_ops_service_v1_script_proto_goTypes,
 		DependencyIndexes: file_ops_service_v1_script_proto_depIdxs,

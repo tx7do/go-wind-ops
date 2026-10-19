@@ -12,5 +12,6 @@
   "resolve": "Resolve",
   "resolveConfirm": "Mark this alert as resolved?",
   "resolveSuccess": "Alert resolved",
-  "resolveFailed": "Operation failed"
+  "resolveFailed": "Operation failed",
+  "nodeId": "Node"
 }

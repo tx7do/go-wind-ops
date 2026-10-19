@@ -88,6 +88,30 @@ func (m *Monitor) validate(all bool) error {
 		// no validation rules for Description
 	}
 
+	if m.TargetType != nil {
+		// no validation rules for TargetType
+	}
+
+	if m.NodeId != nil {
+		// no validation rules for NodeId
+	}
+
+	if m.MetricType != nil {
+		// no validation rules for MetricType
+	}
+
+	if m.ThresholdPercent != nil {
+		// no validation rules for ThresholdPercent
+	}
+
+	if m.ConsecutiveCount != nil {
+		// no validation rules for ConsecutiveCount
+	}
+
+	if m.NotifyOnRecovery != nil {
+		// no validation rules for NotifyOnRecovery
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

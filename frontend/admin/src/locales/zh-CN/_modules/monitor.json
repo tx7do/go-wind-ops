@@ -19,5 +19,19 @@
   "deleteSuccess": "监控规则已删除",
   "deleteFailed": "删除失败",
   "deleteConfirmTitle": "确认删除监控规则",
-  "action": "操作"
+  "action": "操作",
+  "targetType": "规则类型",
+  "target": "监控目标",
+  "targetProject": "项目状态",
+  "targetNodeMetric": "节点指标",
+  "nodeId": "目标节点",
+  "metricType": "指标类型",
+  "metricCpu": "CPU 使用率",
+  "metricMemory": "内存使用率",
+  "metricDisk": "磁盘使用率",
+  "thresholdPercent": "告警阈值",
+  "thresholdHint": "指标使用率 ≥ 阈值即命中(0-100)",
+  "consecutiveCount": "连续命中次数",
+  "consecutiveHint": "连续 N 个检查周期超阈值才告警(防抖)",
+  "notifyOnRecovery": "恢复时通知"
 }

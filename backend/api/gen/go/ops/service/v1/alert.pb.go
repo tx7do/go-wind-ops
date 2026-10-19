@@ -36,6 +36,7 @@ type Alert struct {
 	Message       *string                `protobuf:"bytes,5,opt,name=message,proto3,oneof" json:"message,omitempty"`                          // 告警内容
 	Resolved      *bool                  `protobuf:"varint,6,opt,name=resolved,proto3,oneof" json:"resolved,omitempty"`                       // 是否已恢复
 	Notified      *bool                  `protobuf:"varint,7,opt,name=notified,proto3,oneof" json:"notified,omitempty"`                       // 是否已外呼 webhook
+	NodeId        *uint32                `protobuf:"varint,8,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`             // 关联节点(节点指标告警;项目状态告警为 0)
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`    // 告警时间
 	ResolvedAt    *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=resolved_at,json=resolvedAt,proto3,oneof" json:"resolved_at,omitempty"` // 恢复时间
 	unknownFields protoimpl.UnknownFields
@@ -119,6 +120,13 @@ func (x *Alert) GetNotified() bool {
 		return *x.Notified
 	}
 	return false
+}
+
+func (x *Alert) GetNodeId() uint32 {
+	if x != nil && x.NodeId != nil {
+		return *x.NodeId
+	}
+	return 0
 }
 
 func (x *Alert) GetCreatedAt() *timestamppb.Timestamp {
@@ -279,7 +287,7 @@ var File_ops_service_v1_alert_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_alert_proto_rawDesc = "" +
 	"\n" +
-	"\x1aops/service/v1/alert.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\x83\x04\n" +
+	"\x1aops/service/v1/alert.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xb2\x04\n" +
 	"\x05Alert\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12'\n" +
 	"\n" +
@@ -289,10 +297,11 @@ const file_ops_service_v1_alert_proto_rawDesc = "" +
 	"\x05level\x18\x04 \x01(\tB\x03\xe0A\x03H\x03R\x05level\x88\x01\x01\x12\"\n" +
 	"\amessage\x18\x05 \x01(\tB\x03\xe0A\x03H\x04R\amessage\x88\x01\x01\x12$\n" +
 	"\bresolved\x18\x06 \x01(\bB\x03\xe0A\x03H\x05R\bresolved\x88\x01\x01\x12$\n" +
-	"\bnotified\x18\a \x01(\bB\x03\xe0A\x03H\x06R\bnotified\x88\x01\x01\x12C\n" +
+	"\bnotified\x18\a \x01(\bB\x03\xe0A\x03H\x06R\bnotified\x88\x01\x01\x12!\n" +
+	"\anode_id\x18\b \x01(\rB\x03\xe0A\x03H\aR\x06nodeId\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01\x12E\n" +
-	"\vresolved_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\tcreatedAt\x88\x01\x01\x12E\n" +
+	"\vresolved_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\n" +
 	"resolvedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_monitor_idB\r\n" +
@@ -301,7 +310,9 @@ const file_ops_service_v1_alert_proto_rawDesc = "" +
 	"\n" +
 	"\b_messageB\v\n" +
 	"\t_resolvedB\v\n" +
-	"\t_notifiedB\r\n" +
+	"\t_notifiedB\n" +
+	"\n" +
+	"\b_node_idB\r\n" +
 	"\v_created_atB\x0e\n" +
 	"\f_resolved_at\"V\n" +
 	"\x11ListAlertResponse\x12\x14\n" +

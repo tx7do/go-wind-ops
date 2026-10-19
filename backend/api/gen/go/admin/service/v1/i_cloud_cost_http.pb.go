@@ -45,15 +45,15 @@ type CloudCostServiceHTTPServer interface {
 
 func RegisterCloudCostServiceHTTPServer(s *http.Server, srv CloudCostServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/cloud-costs", _CloudCostService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/cloud-costs", _CloudCostService_List10_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-costs", _CloudCostService_Upsert0_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/cloud-costs/{id}", _CloudCostService_Delete5_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/cloud-costs/{id}", _CloudCostService_Delete6_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-costs/import", _CloudCostService_Import0_HTTP_Handler(srv))
 	r.GET("/admin/v1/cloud-costs/summary", _CloudCostService_Summary0_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-costs/fetch", _CloudCostService_Fetch0_HTTP_Handler(srv))
 }
 
-func _CloudCostService_List9_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
+func _CloudCostService_List10_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.ListCloudCostsRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -94,7 +94,7 @@ func _CloudCostService_Upsert0_HTTP_Handler(srv CloudCostServiceHTTPServer) func
 	}
 }
 
-func _CloudCostService_Delete5_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
+func _CloudCostService_Delete6_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.DeleteCloudCostRequest
 		if err := ctx.BindQuery(&in); err != nil {

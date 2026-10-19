@@ -94,6 +94,31 @@ func ProjectID(v uint32) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldProjectID, v))
 }
 
+// NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
+func NodeID(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldNodeID, v))
+}
+
+// ThresholdPercent applies equality check predicate on the "threshold_percent" field. It's identical to ThresholdPercentEQ.
+func ThresholdPercent(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldThresholdPercent, v))
+}
+
+// ConsecutiveCount applies equality check predicate on the "consecutive_count" field. It's identical to ConsecutiveCountEQ.
+func ConsecutiveCount(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveHits applies equality check predicate on the "consecutive_hits" field. It's identical to ConsecutiveHitsEQ.
+func ConsecutiveHits(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldConsecutiveHits, v))
+}
+
+// NotifyOnRecovery applies equality check predicate on the "notify_on_recovery" field. It's identical to NotifyOnRecoveryEQ.
+func NotifyOnRecovery(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldNotifyOnRecovery, v))
+}
+
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
 func Cron(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldCron, v))
@@ -522,6 +547,236 @@ func ProjectIDLT(v uint32) predicate.Monitor {
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
 func ProjectIDLTE(v uint32) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldProjectID, v))
+}
+
+// ProjectIDIsNil applies the IsNil predicate on the "project_id" field.
+func ProjectIDIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldProjectID))
+}
+
+// ProjectIDNotNil applies the NotNil predicate on the "project_id" field.
+func ProjectIDNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldProjectID))
+}
+
+// TargetTypeEQ applies the EQ predicate on the "target_type" field.
+func TargetTypeEQ(v TargetType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldTargetType, v))
+}
+
+// TargetTypeNEQ applies the NEQ predicate on the "target_type" field.
+func TargetTypeNEQ(v TargetType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldTargetType, v))
+}
+
+// TargetTypeIn applies the In predicate on the "target_type" field.
+func TargetTypeIn(vs ...TargetType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldTargetType, vs...))
+}
+
+// TargetTypeNotIn applies the NotIn predicate on the "target_type" field.
+func TargetTypeNotIn(vs ...TargetType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldTargetType, vs...))
+}
+
+// NodeIDEQ applies the EQ predicate on the "node_id" field.
+func NodeIDEQ(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldNodeID, v))
+}
+
+// NodeIDNEQ applies the NEQ predicate on the "node_id" field.
+func NodeIDNEQ(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldNodeID, v))
+}
+
+// NodeIDIn applies the In predicate on the "node_id" field.
+func NodeIDIn(vs ...uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldNodeID, vs...))
+}
+
+// NodeIDNotIn applies the NotIn predicate on the "node_id" field.
+func NodeIDNotIn(vs ...uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldNodeID, vs...))
+}
+
+// NodeIDGT applies the GT predicate on the "node_id" field.
+func NodeIDGT(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldNodeID, v))
+}
+
+// NodeIDGTE applies the GTE predicate on the "node_id" field.
+func NodeIDGTE(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldNodeID, v))
+}
+
+// NodeIDLT applies the LT predicate on the "node_id" field.
+func NodeIDLT(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldNodeID, v))
+}
+
+// NodeIDLTE applies the LTE predicate on the "node_id" field.
+func NodeIDLTE(v uint32) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldNodeID, v))
+}
+
+// NodeIDIsNil applies the IsNil predicate on the "node_id" field.
+func NodeIDIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldNodeID))
+}
+
+// NodeIDNotNil applies the NotNil predicate on the "node_id" field.
+func NodeIDNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldNodeID))
+}
+
+// MetricTypeEQ applies the EQ predicate on the "metric_type" field.
+func MetricTypeEQ(v MetricType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldMetricType, v))
+}
+
+// MetricTypeNEQ applies the NEQ predicate on the "metric_type" field.
+func MetricTypeNEQ(v MetricType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldMetricType, v))
+}
+
+// MetricTypeIn applies the In predicate on the "metric_type" field.
+func MetricTypeIn(vs ...MetricType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldMetricType, vs...))
+}
+
+// MetricTypeNotIn applies the NotIn predicate on the "metric_type" field.
+func MetricTypeNotIn(vs ...MetricType) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldMetricType, vs...))
+}
+
+// ThresholdPercentEQ applies the EQ predicate on the "threshold_percent" field.
+func ThresholdPercentEQ(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldThresholdPercent, v))
+}
+
+// ThresholdPercentNEQ applies the NEQ predicate on the "threshold_percent" field.
+func ThresholdPercentNEQ(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldThresholdPercent, v))
+}
+
+// ThresholdPercentIn applies the In predicate on the "threshold_percent" field.
+func ThresholdPercentIn(vs ...float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldThresholdPercent, vs...))
+}
+
+// ThresholdPercentNotIn applies the NotIn predicate on the "threshold_percent" field.
+func ThresholdPercentNotIn(vs ...float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldThresholdPercent, vs...))
+}
+
+// ThresholdPercentGT applies the GT predicate on the "threshold_percent" field.
+func ThresholdPercentGT(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldThresholdPercent, v))
+}
+
+// ThresholdPercentGTE applies the GTE predicate on the "threshold_percent" field.
+func ThresholdPercentGTE(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldThresholdPercent, v))
+}
+
+// ThresholdPercentLT applies the LT predicate on the "threshold_percent" field.
+func ThresholdPercentLT(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldThresholdPercent, v))
+}
+
+// ThresholdPercentLTE applies the LTE predicate on the "threshold_percent" field.
+func ThresholdPercentLTE(v float64) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldThresholdPercent, v))
+}
+
+// ConsecutiveCountEQ applies the EQ predicate on the "consecutive_count" field.
+func ConsecutiveCountEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveCountNEQ applies the NEQ predicate on the "consecutive_count" field.
+func ConsecutiveCountNEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveCountIn applies the In predicate on the "consecutive_count" field.
+func ConsecutiveCountIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldConsecutiveCount, vs...))
+}
+
+// ConsecutiveCountNotIn applies the NotIn predicate on the "consecutive_count" field.
+func ConsecutiveCountNotIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldConsecutiveCount, vs...))
+}
+
+// ConsecutiveCountGT applies the GT predicate on the "consecutive_count" field.
+func ConsecutiveCountGT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveCountGTE applies the GTE predicate on the "consecutive_count" field.
+func ConsecutiveCountGTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveCountLT applies the LT predicate on the "consecutive_count" field.
+func ConsecutiveCountLT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveCountLTE applies the LTE predicate on the "consecutive_count" field.
+func ConsecutiveCountLTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldConsecutiveCount, v))
+}
+
+// ConsecutiveHitsEQ applies the EQ predicate on the "consecutive_hits" field.
+func ConsecutiveHitsEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldConsecutiveHits, v))
+}
+
+// ConsecutiveHitsNEQ applies the NEQ predicate on the "consecutive_hits" field.
+func ConsecutiveHitsNEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldConsecutiveHits, v))
+}
+
+// ConsecutiveHitsIn applies the In predicate on the "consecutive_hits" field.
+func ConsecutiveHitsIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldConsecutiveHits, vs...))
+}
+
+// ConsecutiveHitsNotIn applies the NotIn predicate on the "consecutive_hits" field.
+func ConsecutiveHitsNotIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldConsecutiveHits, vs...))
+}
+
+// ConsecutiveHitsGT applies the GT predicate on the "consecutive_hits" field.
+func ConsecutiveHitsGT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldConsecutiveHits, v))
+}
+
+// ConsecutiveHitsGTE applies the GTE predicate on the "consecutive_hits" field.
+func ConsecutiveHitsGTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldConsecutiveHits, v))
+}
+
+// ConsecutiveHitsLT applies the LT predicate on the "consecutive_hits" field.
+func ConsecutiveHitsLT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldConsecutiveHits, v))
+}
+
+// ConsecutiveHitsLTE applies the LTE predicate on the "consecutive_hits" field.
+func ConsecutiveHitsLTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldConsecutiveHits, v))
+}
+
+// NotifyOnRecoveryEQ applies the EQ predicate on the "notify_on_recovery" field.
+func NotifyOnRecoveryEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldNotifyOnRecovery, v))
+}
+
+// NotifyOnRecoveryNEQ applies the NEQ predicate on the "notify_on_recovery" field.
+func NotifyOnRecoveryNEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldNotifyOnRecovery, v))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.

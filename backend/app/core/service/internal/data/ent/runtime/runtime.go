@@ -11,6 +11,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"go-wind-ops/app/core/service/internal/data/ent/approval"
+	"go-wind-ops/app/core/service/internal/data/ent/backuprecord"
+	"go-wind-ops/app/core/service/internal/data/ent/backuptask"
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
@@ -54,6 +56,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/schema"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
@@ -102,18 +105,22 @@ func init() {
 	alert.MonitorIDValidator = alertDescMonitorID.Validators[0].(func(uint32) error)
 	// alertDescProjectID is the schema descriptor for project_id field.
 	alertDescProjectID := alertFields[1].Descriptor()
-	// alert.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	alert.ProjectIDValidator = alertDescProjectID.Validators[0].(func(uint32) error)
+	// alert.DefaultProjectID holds the default value on creation for the project_id field.
+	alert.DefaultProjectID = alertDescProjectID.Default.(uint32)
+	// alertDescNodeID is the schema descriptor for node_id field.
+	alertDescNodeID := alertFields[2].Descriptor()
+	// alert.DefaultNodeID holds the default value on creation for the node_id field.
+	alert.DefaultNodeID = alertDescNodeID.Default.(uint32)
 	// alertDescMessage is the schema descriptor for message field.
-	alertDescMessage := alertFields[3].Descriptor()
+	alertDescMessage := alertFields[4].Descriptor()
 	// alert.MessageValidator is a validator for the "message" field. It is called by the builders before save.
 	alert.MessageValidator = alertDescMessage.Validators[0].(func(string) error)
 	// alertDescResolved is the schema descriptor for resolved field.
-	alertDescResolved := alertFields[4].Descriptor()
+	alertDescResolved := alertFields[5].Descriptor()
 	// alert.DefaultResolved holds the default value on creation for the resolved field.
 	alert.DefaultResolved = alertDescResolved.Default.(bool)
 	// alertDescNotified is the schema descriptor for notified field.
-	alertDescNotified := alertFields[6].Descriptor()
+	alertDescNotified := alertFields[7].Descriptor()
 	// alert.DefaultNotified holds the default value on creation for the notified field.
 	alert.DefaultNotified = alertDescNotified.Default.(bool)
 	// alertDescID is the schema descriptor for id field.
@@ -224,6 +231,76 @@ func init() {
 	approvalDescID := approvalMixinFields0[0].Descriptor()
 	// approval.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	approval.IDValidator = approvalDescID.Validators[0].(func(uint32) error)
+	backuprecordMixin := schema.BackupRecord{}.Mixin()
+	backuprecordMixinFields0 := backuprecordMixin[0].Fields()
+	_ = backuprecordMixinFields0
+	backuprecordFields := schema.BackupRecord{}.Fields()
+	_ = backuprecordFields
+	// backuprecordDescTaskID is the schema descriptor for task_id field.
+	backuprecordDescTaskID := backuprecordFields[0].Descriptor()
+	// backuprecord.TaskIDValidator is a validator for the "task_id" field. It is called by the builders before save.
+	backuprecord.TaskIDValidator = backuprecordDescTaskID.Validators[0].(func(uint32) error)
+	// backuprecordDescNodeID is the schema descriptor for node_id field.
+	backuprecordDescNodeID := backuprecordFields[1].Descriptor()
+	// backuprecord.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	backuprecord.NodeIDValidator = backuprecordDescNodeID.Validators[0].(func(uint32) error)
+	// backuprecordDescBucket is the schema descriptor for bucket field.
+	backuprecordDescBucket := backuprecordFields[2].Descriptor()
+	// backuprecord.BucketValidator is a validator for the "bucket" field. It is called by the builders before save.
+	backuprecord.BucketValidator = backuprecordDescBucket.Validators[0].(func(string) error)
+	// backuprecordDescObjectKey is the schema descriptor for object_key field.
+	backuprecordDescObjectKey := backuprecordFields[3].Descriptor()
+	// backuprecord.ObjectKeyValidator is a validator for the "object_key" field. It is called by the builders before save.
+	backuprecord.ObjectKeyValidator = backuprecordDescObjectKey.Validators[0].(func(string) error)
+	// backuprecordDescSizeBytes is the schema descriptor for size_bytes field.
+	backuprecordDescSizeBytes := backuprecordFields[4].Descriptor()
+	// backuprecord.DefaultSizeBytes holds the default value on creation for the size_bytes field.
+	backuprecord.DefaultSizeBytes = backuprecordDescSizeBytes.Default.(int64)
+	// backuprecordDescCommandRequestID is the schema descriptor for command_request_id field.
+	backuprecordDescCommandRequestID := backuprecordFields[8].Descriptor()
+	// backuprecord.CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
+	backuprecord.CommandRequestIDValidator = backuprecordDescCommandRequestID.Validators[0].(func(string) error)
+	// backuprecordDescOperatorID is the schema descriptor for operator_id field.
+	backuprecordDescOperatorID := backuprecordFields[9].Descriptor()
+	// backuprecord.DefaultOperatorID holds the default value on creation for the operator_id field.
+	backuprecord.DefaultOperatorID = backuprecordDescOperatorID.Default.(uint32)
+	// backuprecordDescID is the schema descriptor for id field.
+	backuprecordDescID := backuprecordMixinFields0[0].Descriptor()
+	// backuprecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	backuprecord.IDValidator = backuprecordDescID.Validators[0].(func(uint32) error)
+	backuptaskMixin := schema.BackupTask{}.Mixin()
+	backuptaskMixinFields0 := backuptaskMixin[0].Fields()
+	_ = backuptaskMixinFields0
+	backuptaskFields := schema.BackupTask{}.Fields()
+	_ = backuptaskFields
+	// backuptaskDescName is the schema descriptor for name field.
+	backuptaskDescName := backuptaskFields[0].Descriptor()
+	// backuptask.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	backuptask.NameValidator = backuptaskDescName.Validators[0].(func(string) error)
+	// backuptaskDescNodeID is the schema descriptor for node_id field.
+	backuptaskDescNodeID := backuptaskFields[1].Descriptor()
+	// backuptask.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	backuptask.NodeIDValidator = backuptaskDescNodeID.Validators[0].(func(uint32) error)
+	// backuptaskDescSourceDir is the schema descriptor for source_dir field.
+	backuptaskDescSourceDir := backuptaskFields[2].Descriptor()
+	// backuptask.SourceDirValidator is a validator for the "source_dir" field. It is called by the builders before save.
+	backuptask.SourceDirValidator = backuptaskDescSourceDir.Validators[0].(func(string) error)
+	// backuptaskDescCron is the schema descriptor for cron field.
+	backuptaskDescCron := backuptaskFields[3].Descriptor()
+	// backuptask.DefaultCron holds the default value on creation for the cron field.
+	backuptask.DefaultCron = backuptaskDescCron.Default.(string)
+	// backuptaskDescRetention is the schema descriptor for retention field.
+	backuptaskDescRetention := backuptaskFields[4].Descriptor()
+	// backuptask.DefaultRetention holds the default value on creation for the retention field.
+	backuptask.DefaultRetention = backuptaskDescRetention.Default.(int)
+	// backuptaskDescEnabled is the schema descriptor for enabled field.
+	backuptaskDescEnabled := backuptaskFields[5].Descriptor()
+	// backuptask.DefaultEnabled holds the default value on creation for the enabled field.
+	backuptask.DefaultEnabled = backuptaskDescEnabled.Default.(bool)
+	// backuptaskDescID is the schema descriptor for id field.
+	backuptaskDescID := backuptaskMixinFields0[0].Descriptor()
+	// backuptask.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	backuptask.IDValidator = backuptaskDescID.Validators[0].(func(uint32) error)
 	buildMixin := schema.Build{}.Mixin()
 	buildMixinFields0 := buildMixin[0].Fields()
 	_ = buildMixinFields0
@@ -385,6 +462,10 @@ func init() {
 	commandrecordDescOperatorID := commandrecordFields[8].Descriptor()
 	// commandrecord.DefaultOperatorID holds the default value on creation for the operator_id field.
 	commandrecord.DefaultOperatorID = commandrecordDescOperatorID.Default.(uint32)
+	// commandrecordDescBatchID is the schema descriptor for batch_id field.
+	commandrecordDescBatchID := commandrecordFields[9].Descriptor()
+	// commandrecord.DefaultBatchID holds the default value on creation for the batch_id field.
+	commandrecord.DefaultBatchID = commandrecordDescBatchID.Default.(uint32)
 	// commandrecordDescID is the schema descriptor for id field.
 	commandrecordDescID := commandrecordMixinFields0[0].Descriptor()
 	// commandrecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -835,18 +916,38 @@ func init() {
 	monitor.NameValidator = monitorDescName.Validators[0].(func(string) error)
 	// monitorDescProjectID is the schema descriptor for project_id field.
 	monitorDescProjectID := monitorFields[1].Descriptor()
-	// monitor.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	monitor.ProjectIDValidator = monitorDescProjectID.Validators[0].(func(uint32) error)
+	// monitor.DefaultProjectID holds the default value on creation for the project_id field.
+	monitor.DefaultProjectID = monitorDescProjectID.Default.(uint32)
+	// monitorDescNodeID is the schema descriptor for node_id field.
+	monitorDescNodeID := monitorFields[3].Descriptor()
+	// monitor.DefaultNodeID holds the default value on creation for the node_id field.
+	monitor.DefaultNodeID = monitorDescNodeID.Default.(uint32)
+	// monitorDescThresholdPercent is the schema descriptor for threshold_percent field.
+	monitorDescThresholdPercent := monitorFields[5].Descriptor()
+	// monitor.DefaultThresholdPercent holds the default value on creation for the threshold_percent field.
+	monitor.DefaultThresholdPercent = monitorDescThresholdPercent.Default.(float64)
+	// monitorDescConsecutiveCount is the schema descriptor for consecutive_count field.
+	monitorDescConsecutiveCount := monitorFields[6].Descriptor()
+	// monitor.DefaultConsecutiveCount holds the default value on creation for the consecutive_count field.
+	monitor.DefaultConsecutiveCount = monitorDescConsecutiveCount.Default.(int)
+	// monitorDescConsecutiveHits is the schema descriptor for consecutive_hits field.
+	monitorDescConsecutiveHits := monitorFields[7].Descriptor()
+	// monitor.DefaultConsecutiveHits holds the default value on creation for the consecutive_hits field.
+	monitor.DefaultConsecutiveHits = monitorDescConsecutiveHits.Default.(int)
+	// monitorDescNotifyOnRecovery is the schema descriptor for notify_on_recovery field.
+	monitorDescNotifyOnRecovery := monitorFields[8].Descriptor()
+	// monitor.DefaultNotifyOnRecovery holds the default value on creation for the notify_on_recovery field.
+	monitor.DefaultNotifyOnRecovery = monitorDescNotifyOnRecovery.Default.(bool)
 	// monitorDescCron is the schema descriptor for cron field.
-	monitorDescCron := monitorFields[2].Descriptor()
+	monitorDescCron := monitorFields[9].Descriptor()
 	// monitor.CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	monitor.CronValidator = monitorDescCron.Validators[0].(func(string) error)
 	// monitorDescAutoRestart is the schema descriptor for auto_restart field.
-	monitorDescAutoRestart := monitorFields[3].Descriptor()
+	monitorDescAutoRestart := monitorFields[10].Descriptor()
 	// monitor.DefaultAutoRestart holds the default value on creation for the auto_restart field.
 	monitor.DefaultAutoRestart = monitorDescAutoRestart.Default.(bool)
 	// monitorDescEnabled is the schema descriptor for enabled field.
-	monitorDescEnabled := monitorFields[5].Descriptor()
+	monitorDescEnabled := monitorFields[12].Descriptor()
 	// monitor.DefaultEnabled holds the default value on creation for the enabled field.
 	monitor.DefaultEnabled = monitorDescEnabled.Default.(bool)
 	// monitorDescID is the schema descriptor for id field.
@@ -1446,6 +1547,35 @@ func init() {
 	scriptDescID := scriptMixinFields0[0].Descriptor()
 	// script.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	script.IDValidator = scriptDescID.Validators[0].(func(uint32) error)
+	scriptbatchMixin := schema.ScriptBatch{}.Mixin()
+	scriptbatchMixinFields0 := scriptbatchMixin[0].Fields()
+	_ = scriptbatchMixinFields0
+	scriptbatchFields := schema.ScriptBatch{}.Fields()
+	_ = scriptbatchFields
+	// scriptbatchDescScriptID is the schema descriptor for script_id field.
+	scriptbatchDescScriptID := scriptbatchFields[0].Descriptor()
+	// scriptbatch.ScriptIDValidator is a validator for the "script_id" field. It is called by the builders before save.
+	scriptbatch.ScriptIDValidator = scriptbatchDescScriptID.Validators[0].(func(uint32) error)
+	// scriptbatchDescScriptName is the schema descriptor for script_name field.
+	scriptbatchDescScriptName := scriptbatchFields[1].Descriptor()
+	// scriptbatch.ScriptNameValidator is a validator for the "script_name" field. It is called by the builders before save.
+	scriptbatch.ScriptNameValidator = scriptbatchDescScriptName.Validators[0].(func(string) error)
+	// scriptbatchDescTotal is the schema descriptor for total field.
+	scriptbatchDescTotal := scriptbatchFields[3].Descriptor()
+	// scriptbatch.DefaultTotal holds the default value on creation for the total field.
+	scriptbatch.DefaultTotal = scriptbatchDescTotal.Default.(uint32)
+	// scriptbatchDescSuccessCount is the schema descriptor for success_count field.
+	scriptbatchDescSuccessCount := scriptbatchFields[4].Descriptor()
+	// scriptbatch.DefaultSuccessCount holds the default value on creation for the success_count field.
+	scriptbatch.DefaultSuccessCount = scriptbatchDescSuccessCount.Default.(uint32)
+	// scriptbatchDescFailedCount is the schema descriptor for failed_count field.
+	scriptbatchDescFailedCount := scriptbatchFields[5].Descriptor()
+	// scriptbatch.DefaultFailedCount holds the default value on creation for the failed_count field.
+	scriptbatch.DefaultFailedCount = scriptbatchDescFailedCount.Default.(uint32)
+	// scriptbatchDescID is the schema descriptor for id field.
+	scriptbatchDescID := scriptbatchMixinFields0[0].Descriptor()
+	// scriptbatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	scriptbatch.IDValidator = scriptbatchDescID.Validators[0].(func(uint32) error)
 	taskMixin := schema.Task{}.Mixin()
 	task.Policy = privacy.NewPolicies(taskMixin[4], schema.Task{})
 	task.Hooks[0] = func(next ent.Mutator) ent.Mutator {

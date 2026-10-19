@@ -331,3 +331,193 @@ var ScriptService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ops/service/v1/script.proto",
 }
+
+const (
+	ScriptBatchService_ListScriptBatches_FullMethodName  = "/ops.service.v1.ScriptBatchService/ListScriptBatches"
+	ScriptBatchService_GetScriptBatch_FullMethodName     = "/ops.service.v1.ScriptBatchService/GetScriptBatch"
+	ScriptBatchService_ExecuteScriptBatch_FullMethodName = "/ops.service.v1.ScriptBatchService/ExecuteScriptBatch"
+)
+
+// ScriptBatchServiceClient is the client API for ScriptBatchService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ScriptBatchService 脚本批量执行:一次把脚本下发到多台节点,逐节点
+// 生成指令台账(batch_id 关联),回执驱动批次计数与终态。
+type ScriptBatchServiceClient interface {
+	// 查询批次列表
+	ListScriptBatches(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListScriptBatchResponse, error)
+	// 查询批次详情(含逐节点执行结果矩阵)
+	GetScriptBatch(ctx context.Context, in *GetScriptBatchRequest, opts ...grpc.CallOption) (*ScriptBatchDetail, error)
+	// 批量执行脚本
+	ExecuteScriptBatch(ctx context.Context, in *ExecuteScriptBatchRequest, opts ...grpc.CallOption) (*ExecuteScriptBatchResponse, error)
+}
+
+type scriptBatchServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewScriptBatchServiceClient(cc grpc.ClientConnInterface) ScriptBatchServiceClient {
+	return &scriptBatchServiceClient{cc}
+}
+
+func (c *scriptBatchServiceClient) ListScriptBatches(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListScriptBatchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListScriptBatchResponse)
+	err := c.cc.Invoke(ctx, ScriptBatchService_ListScriptBatches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scriptBatchServiceClient) GetScriptBatch(ctx context.Context, in *GetScriptBatchRequest, opts ...grpc.CallOption) (*ScriptBatchDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ScriptBatchDetail)
+	err := c.cc.Invoke(ctx, ScriptBatchService_GetScriptBatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scriptBatchServiceClient) ExecuteScriptBatch(ctx context.Context, in *ExecuteScriptBatchRequest, opts ...grpc.CallOption) (*ExecuteScriptBatchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExecuteScriptBatchResponse)
+	err := c.cc.Invoke(ctx, ScriptBatchService_ExecuteScriptBatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ScriptBatchServiceServer is the server API for ScriptBatchService service.
+// All implementations must embed UnimplementedScriptBatchServiceServer
+// for forward compatibility.
+//
+// ScriptBatchService 脚本批量执行:一次把脚本下发到多台节点,逐节点
+// 生成指令台账(batch_id 关联),回执驱动批次计数与终态。
+type ScriptBatchServiceServer interface {
+	// 查询批次列表
+	ListScriptBatches(context.Context, *v1.PagingRequest) (*ListScriptBatchResponse, error)
+	// 查询批次详情(含逐节点执行结果矩阵)
+	GetScriptBatch(context.Context, *GetScriptBatchRequest) (*ScriptBatchDetail, error)
+	// 批量执行脚本
+	ExecuteScriptBatch(context.Context, *ExecuteScriptBatchRequest) (*ExecuteScriptBatchResponse, error)
+	mustEmbedUnimplementedScriptBatchServiceServer()
+}
+
+// UnimplementedScriptBatchServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedScriptBatchServiceServer struct{}
+
+func (UnimplementedScriptBatchServiceServer) ListScriptBatches(context.Context, *v1.PagingRequest) (*ListScriptBatchResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListScriptBatches not implemented")
+}
+func (UnimplementedScriptBatchServiceServer) GetScriptBatch(context.Context, *GetScriptBatchRequest) (*ScriptBatchDetail, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetScriptBatch not implemented")
+}
+func (UnimplementedScriptBatchServiceServer) ExecuteScriptBatch(context.Context, *ExecuteScriptBatchRequest) (*ExecuteScriptBatchResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExecuteScriptBatch not implemented")
+}
+func (UnimplementedScriptBatchServiceServer) mustEmbedUnimplementedScriptBatchServiceServer() {}
+func (UnimplementedScriptBatchServiceServer) testEmbeddedByValue()                            {}
+
+// UnsafeScriptBatchServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ScriptBatchServiceServer will
+// result in compilation errors.
+type UnsafeScriptBatchServiceServer interface {
+	mustEmbedUnimplementedScriptBatchServiceServer()
+}
+
+func RegisterScriptBatchServiceServer(s grpc.ServiceRegistrar, srv ScriptBatchServiceServer) {
+	// If the following call panics, it indicates UnimplementedScriptBatchServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ScriptBatchService_ServiceDesc, srv)
+}
+
+func _ScriptBatchService_ListScriptBatches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScriptBatchServiceServer).ListScriptBatches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScriptBatchService_ListScriptBatches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScriptBatchServiceServer).ListScriptBatches(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScriptBatchService_GetScriptBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetScriptBatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScriptBatchServiceServer).GetScriptBatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScriptBatchService_GetScriptBatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScriptBatchServiceServer).GetScriptBatch(ctx, req.(*GetScriptBatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScriptBatchService_ExecuteScriptBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteScriptBatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScriptBatchServiceServer).ExecuteScriptBatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScriptBatchService_ExecuteScriptBatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScriptBatchServiceServer).ExecuteScriptBatch(ctx, req.(*ExecuteScriptBatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ScriptBatchService_ServiceDesc is the grpc.ServiceDesc for ScriptBatchService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ScriptBatchService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ops.service.v1.ScriptBatchService",
+	HandlerType: (*ScriptBatchServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListScriptBatches",
+			Handler:    _ScriptBatchService_ListScriptBatches_Handler,
+		},
+		{
+			MethodName: "GetScriptBatch",
+			Handler:    _ScriptBatchService_GetScriptBatch_Handler,
+		},
+		{
+			MethodName: "ExecuteScriptBatch",
+			Handler:    _ScriptBatchService_ExecuteScriptBatch_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "ops/service/v1/script.proto",
+}

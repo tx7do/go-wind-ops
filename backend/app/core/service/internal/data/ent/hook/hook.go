@@ -80,6 +80,30 @@ func (f ApprovalFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApprovalMutation", m)
 }
 
+// The BackupRecordFunc type is an adapter to allow the use of ordinary
+// function as BackupRecord mutator.
+type BackupRecordFunc func(context.Context, *ent.BackupRecordMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BackupRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BackupRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BackupRecordMutation", m)
+}
+
+// The BackupTaskFunc type is an adapter to allow the use of ordinary
+// function as BackupTask mutator.
+type BackupTaskFunc func(context.Context, *ent.BackupTaskMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BackupTaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BackupTaskMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BackupTaskMutation", m)
+}
+
 // The BuildFunc type is an adapter to allow the use of ordinary
 // function as Build mutator.
 type BuildFunc func(context.Context, *ent.BuildMutation) (ent.Value, error)
@@ -582,6 +606,18 @@ func (f ScriptFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, erro
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScriptMutation", m)
+}
+
+// The ScriptBatchFunc type is an adapter to allow the use of ordinary
+// function as ScriptBatch mutator.
+type ScriptBatchFunc func(context.Context, *ent.ScriptBatchMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScriptBatchFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScriptBatchMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScriptBatchMutation", m)
 }
 
 // The TaskFunc type is an adapter to allow the use of ordinary

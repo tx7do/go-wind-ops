@@ -1120,3 +1120,961 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ExecuteScriptResponseValidationError{}
+
+// Validate checks the field values on ExecuteScriptBatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExecuteScriptBatchRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExecuteScriptBatchRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExecuteScriptBatchRequestMultiError, or nil if none found.
+func (m *ExecuteScriptBatchRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExecuteScriptBatchRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.ScriptId != nil {
+		// no validation rules for ScriptId
+	}
+
+	if len(errors) > 0 {
+		return ExecuteScriptBatchRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExecuteScriptBatchRequestMultiError is an error wrapping multiple validation
+// errors returned by ExecuteScriptBatchRequest.ValidateAll() if the
+// designated constraints aren't met.
+type ExecuteScriptBatchRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExecuteScriptBatchRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExecuteScriptBatchRequestMultiError) AllErrors() []error { return m }
+
+// ExecuteScriptBatchRequestValidationError is the validation error returned by
+// ExecuteScriptBatchRequest.Validate if the designated constraints aren't met.
+type ExecuteScriptBatchRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExecuteScriptBatchRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExecuteScriptBatchRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExecuteScriptBatchRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExecuteScriptBatchRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExecuteScriptBatchRequestValidationError) ErrorName() string {
+	return "ExecuteScriptBatchRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExecuteScriptBatchRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExecuteScriptBatchRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExecuteScriptBatchRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExecuteScriptBatchRequestValidationError{}
+
+// Validate checks the field values on ExecuteScriptBatchResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExecuteScriptBatchResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExecuteScriptBatchResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExecuteScriptBatchResponseMultiError, or nil if none found.
+func (m *ExecuteScriptBatchResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExecuteScriptBatchResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.BatchId != nil {
+		// no validation rules for BatchId
+	}
+
+	if m.Dispatched != nil {
+		// no validation rules for Dispatched
+	}
+
+	if m.Failed != nil {
+		// no validation rules for Failed
+	}
+
+	if len(errors) > 0 {
+		return ExecuteScriptBatchResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExecuteScriptBatchResponseMultiError is an error wrapping multiple
+// validation errors returned by ExecuteScriptBatchResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ExecuteScriptBatchResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExecuteScriptBatchResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExecuteScriptBatchResponseMultiError) AllErrors() []error { return m }
+
+// ExecuteScriptBatchResponseValidationError is the validation error returned
+// by ExecuteScriptBatchResponse.Validate if the designated constraints aren't met.
+type ExecuteScriptBatchResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExecuteScriptBatchResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExecuteScriptBatchResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExecuteScriptBatchResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExecuteScriptBatchResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExecuteScriptBatchResponseValidationError) ErrorName() string {
+	return "ExecuteScriptBatchResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExecuteScriptBatchResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExecuteScriptBatchResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExecuteScriptBatchResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExecuteScriptBatchResponseValidationError{}
+
+// Validate checks the field values on ScriptBatch with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ScriptBatch) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScriptBatch with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ScriptBatchMultiError, or
+// nil if none found.
+func (m *ScriptBatch) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScriptBatch) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.ScriptId != nil {
+		// no validation rules for ScriptId
+	}
+
+	if m.ScriptName != nil {
+		// no validation rules for ScriptName
+	}
+
+	if m.Total != nil {
+		// no validation rules for Total
+	}
+
+	if m.SuccessCount != nil {
+		// no validation rules for SuccessCount
+	}
+
+	if m.FailedCount != nil {
+		// no validation rules for FailedCount
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScriptBatchValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScriptBatchValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScriptBatchValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ScriptBatchMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScriptBatchMultiError is an error wrapping multiple validation errors
+// returned by ScriptBatch.ValidateAll() if the designated constraints aren't met.
+type ScriptBatchMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScriptBatchMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScriptBatchMultiError) AllErrors() []error { return m }
+
+// ScriptBatchValidationError is the validation error returned by
+// ScriptBatch.Validate if the designated constraints aren't met.
+type ScriptBatchValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScriptBatchValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScriptBatchValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScriptBatchValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScriptBatchValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScriptBatchValidationError) ErrorName() string { return "ScriptBatchValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ScriptBatchValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScriptBatch.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScriptBatchValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScriptBatchValidationError{}
+
+// Validate checks the field values on ListScriptBatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListScriptBatchResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListScriptBatchResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListScriptBatchResponseMultiError, or nil if none found.
+func (m *ListScriptBatchResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListScriptBatchResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListScriptBatchResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListScriptBatchResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListScriptBatchResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListScriptBatchResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListScriptBatchResponseMultiError is an error wrapping multiple validation
+// errors returned by ListScriptBatchResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListScriptBatchResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListScriptBatchResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListScriptBatchResponseMultiError) AllErrors() []error { return m }
+
+// ListScriptBatchResponseValidationError is the validation error returned by
+// ListScriptBatchResponse.Validate if the designated constraints aren't met.
+type ListScriptBatchResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListScriptBatchResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListScriptBatchResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListScriptBatchResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListScriptBatchResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListScriptBatchResponseValidationError) ErrorName() string {
+	return "ListScriptBatchResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListScriptBatchResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListScriptBatchResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListScriptBatchResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListScriptBatchResponseValidationError{}
+
+// Validate checks the field values on GetScriptBatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetScriptBatchRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetScriptBatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetScriptBatchRequestMultiError, or nil if none found.
+func (m *GetScriptBatchRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetScriptBatchRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if len(errors) > 0 {
+		return GetScriptBatchRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetScriptBatchRequestMultiError is an error wrapping multiple validation
+// errors returned by GetScriptBatchRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetScriptBatchRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetScriptBatchRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetScriptBatchRequestMultiError) AllErrors() []error { return m }
+
+// GetScriptBatchRequestValidationError is the validation error returned by
+// GetScriptBatchRequest.Validate if the designated constraints aren't met.
+type GetScriptBatchRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetScriptBatchRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetScriptBatchRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetScriptBatchRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetScriptBatchRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetScriptBatchRequestValidationError) ErrorName() string {
+	return "GetScriptBatchRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetScriptBatchRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetScriptBatchRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetScriptBatchRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetScriptBatchRequestValidationError{}
+
+// Validate checks the field values on ScriptBatchItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ScriptBatchItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScriptBatchItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ScriptBatchItemMultiError, or nil if none found.
+func (m *ScriptBatchItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScriptBatchItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.RequestId != nil {
+		// no validation rules for RequestId
+	}
+
+	if m.NodeId != nil {
+		// no validation rules for NodeId
+	}
+
+	if m.AgentId != nil {
+		// no validation rules for AgentId
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.Error != nil {
+		// no validation rules for Error
+	}
+
+	if m.ExitCode != nil {
+		// no validation rules for ExitCode
+	}
+
+	if m.Duration != nil {
+		// no validation rules for Duration
+	}
+
+	if m.Output != nil {
+		// no validation rules for Output
+	}
+
+	if m.FinishedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetFinishedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScriptBatchItemValidationError{
+						field:  "FinishedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScriptBatchItemValidationError{
+						field:  "FinishedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFinishedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScriptBatchItemValidationError{
+					field:  "FinishedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ScriptBatchItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScriptBatchItemMultiError is an error wrapping multiple validation errors
+// returned by ScriptBatchItem.ValidateAll() if the designated constraints
+// aren't met.
+type ScriptBatchItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScriptBatchItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScriptBatchItemMultiError) AllErrors() []error { return m }
+
+// ScriptBatchItemValidationError is the validation error returned by
+// ScriptBatchItem.Validate if the designated constraints aren't met.
+type ScriptBatchItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScriptBatchItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScriptBatchItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScriptBatchItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScriptBatchItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScriptBatchItemValidationError) ErrorName() string { return "ScriptBatchItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ScriptBatchItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScriptBatchItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScriptBatchItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScriptBatchItemValidationError{}
+
+// Validate checks the field values on ScriptBatchDetail with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ScriptBatchDetail) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScriptBatchDetail with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ScriptBatchDetailMultiError, or nil if none found.
+func (m *ScriptBatchDetail) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScriptBatchDetail) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScriptBatchDetailValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScriptBatchDetailValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScriptBatchDetailValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Batch != nil {
+
+		if all {
+			switch v := interface{}(m.GetBatch()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScriptBatchDetailValidationError{
+						field:  "Batch",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScriptBatchDetailValidationError{
+						field:  "Batch",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetBatch()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScriptBatchDetailValidationError{
+					field:  "Batch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ScriptBatchDetailMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScriptBatchDetailMultiError is an error wrapping multiple validation errors
+// returned by ScriptBatchDetail.ValidateAll() if the designated constraints
+// aren't met.
+type ScriptBatchDetailMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScriptBatchDetailMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScriptBatchDetailMultiError) AllErrors() []error { return m }
+
+// ScriptBatchDetailValidationError is the validation error returned by
+// ScriptBatchDetail.Validate if the designated constraints aren't met.
+type ScriptBatchDetailValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScriptBatchDetailValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScriptBatchDetailValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScriptBatchDetailValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScriptBatchDetailValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScriptBatchDetailValidationError) ErrorName() string {
+	return "ScriptBatchDetailValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ScriptBatchDetailValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScriptBatchDetail.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScriptBatchDetailValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScriptBatchDetailValidationError{}
