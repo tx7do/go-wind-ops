@@ -31,5 +31,6 @@
   "noAlerts": "暂无告警",
   "resolve": "恢复",
   "resolveConfirm": "确认恢复该告警？",
-  "noData": "暂无数据"
+  "noData": "暂无数据",
+  "heartbeat": "心跳 {{time}}"
 }

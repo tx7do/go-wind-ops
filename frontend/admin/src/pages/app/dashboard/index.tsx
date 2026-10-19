@@ -1,12 +1,13 @@
-import { Card, Col, Popconfirm, Progress, Row, Space, Spin, Tag, Typography } from 'antd';
+import { Card, Col, Empty, Popconfirm, Progress, Row, Space, Tag, Typography } from 'antd';
 import {
   BellOutlined,
   CheckCircleOutlined,
   CloudServerOutlined,
+  ReloadOutlined,
   RocketOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PaginationQuery } from '@/core';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -27,11 +28,57 @@ const dashQuery = () =>
   });
 
 const statusColor = (s?: string) =>
-  s === 'SUCCESS' ? 'success' : s === 'FAILED' ? 'error' : s === 'RUNNING' || s === 'PENDING' ? 'processing' : 'default';
+  s === 'SUCCESS' ? '#52c41a' : s === 'FAILED' ? '#ff4d4f' : s === 'RUNNING' || s === 'PENDING' ? '#1677ff' : '#8c8c8c';
 
 const fmtTime = (v?: string) => (v ? String(v).replace('T', ' ').slice(0, 19) : '-');
 
+/** 相对时间:刚刚/N 分钟前/N 小时前,更早退化绝对日期。 */
+function relTime(v?: string): string {
+  if (!v) return '-';
+  const t = new Date(v).getTime();
+  if (Number.isNaN(t)) return fmtTime(v);
+  const diff = Date.now() - t;
+  const m = Math.floor(diff / 60_000);
+  if (m < 1) return '-';
+  if (m < 60) return `${m} 分钟前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} 小时前`;
+  return String(v).slice(0, 10);
+}
+
 const percentColor = (p: number) => (p >= 90 ? '#ff4d4f' : p >= 70 ? '#faad14' : '#52c41a');
+
+/** 软色块图标芯片。 */
+function IconChip({ color, children }: { color: string; children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        background: `${color}1f`,
+        color,
+        fontSize: 20,
+        flexShrink: 0,
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** 卡片小节标题:竖条强调 + 文案。 */
+function PanelTitle({ color, text }: { color: string; text: string }) {
+  return (
+    <Space size={8}>
+      <span style={{ display: 'inline-block', width: 3, height: 14, borderRadius: 2, background: color }} />
+      <span style={{ fontWeight: 600 }}>{text}</span>
+    </Space>
+  );
+}
 
 /**
  * 运维大盘:节点资源 / 待办审批 / 活跃告警 / 最近构建,15s 自动刷新。
@@ -72,39 +119,11 @@ export default function DashboardPage() {
   });
 
   const stats = [
-    {
-      key: 'onlineNodes',
-      value: onlineNodes.length,
-      suffix: `/ ${nodeList.length}`,
-      color: '#52c41a',
-      icon: <CloudServerOutlined />,
-    },
-    {
-      key: 'runningProjects',
-      value: runningProjects.length,
-      suffix: `/ ${projectList.length}`,
-      color: '#1890ff',
-      icon: <RocketOutlined />,
-    },
-    {
-      key: 'buildSuccess',
-      value: successBuilds.length,
-      suffix: `/ ${buildList.length}`,
-      color: '#722ed1',
-      icon: <CheckCircleOutlined />,
-    },
-    {
-      key: 'pendingApprovals',
-      value: pendingApprovals.length,
-      color: pendingApprovals.length > 0 ? '#faad14' : '#8c8c8c',
-      icon: <ThunderboltOutlined />,
-    },
-    {
-      key: 'activeAlerts',
-      value: activeAlerts.length,
-      color: activeAlerts.length > 0 ? '#ff4d4f' : '#8c8c8c',
-      icon: <BellOutlined />,
-    },
+    { key: 'onlineNodes', value: onlineNodes.length, suffix: `/ ${nodeList.length}`, color: '#52c41a', icon: <CloudServerOutlined /> },
+    { key: 'runningProjects', value: runningProjects.length, suffix: `/ ${projectList.length}`, color: '#1677ff', icon: <RocketOutlined /> },
+    { key: 'buildSuccess', value: successBuilds.length, suffix: `/ ${buildList.length}`, color: '#722ed1', icon: <CheckCircleOutlined /> },
+    { key: 'pendingApprovals', value: pendingApprovals.length, color: pendingApprovals.length > 0 ? '#faad14' : '#8c8c8c', icon: <ThunderboltOutlined /> },
+    { key: 'activeAlerts', value: activeAlerts.length, color: activeAlerts.length > 0 ? '#ff4d4f' : '#8c8c8c', icon: <BellOutlined /> },
   ];
 
   const today = new Date().toLocaleDateString('zh-CN', {
@@ -117,92 +136,143 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <ContentContainer>
-        <Spin style={{ display: 'block', margin: '80px auto' }} />
+        <Card loading style={{ minHeight: 400 }} />
       </ContentContainer>
     );
   }
 
+  const nodeCard = (n: any) => {
+    const cpu = Math.round(n.cpuPercent ?? 0);
+    const mem = Math.round(n.memoryUsedPercent ?? 0);
+    const disk = Math.round(n.diskUsedPercent ?? 0);
+    return (
+      <div
+        key={n.id}
+        style={{
+          border: '1px solid var(--ant-color-border-secondary)',
+          borderRadius: 12,
+          padding: '12px 16px 4px',
+          marginBottom: 10,
+        }}
+      >
+        <Space size={8} style={{ marginBottom: 6, width: '100%' }}>
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: n.status === 'ONLINE' ? '#52c41a' : '#8c8c8c',
+              boxShadow: n.status === 'ONLINE' ? '0 0 6px #52c41a88' : undefined,
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ fontWeight: 600 }}>{n.name || n.hostname}</span>
+          {n.env ? <Tag style={{ margin: 0 }}>{n.env}</Tag> : null}
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {n.platform}
+          </Typography.Text>
+          <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
+            {n.status === 'ONLINE'
+              ? relTime(n.lastHeartbeatAt) === '-'
+                ? t('online')
+                : t('heartbeat', { time: relTime(n.lastHeartbeatAt) })
+              : t('offline')}
+          </Typography.Text>
+        </Space>
+        <Row gutter={8}>
+          {[
+            ['cpu', cpu],
+            ['mem', mem],
+            ['disk', disk],
+          ].map(([label, v]) => (
+            <Col span={8} key={label as string} style={{ textAlign: 'center' }}>
+              <Progress
+                type="dashboard"
+                percent={v as number}
+                size={80}
+                strokeColor={percentColor(v as number)}
+                format={(p) => (
+                  <span style={{ fontSize: 17, fontWeight: 600, color: percentColor(v as number) }}>{p}%</span>
+                )}
+              />
+              <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 2 }}>{t(label as string)}</div>
+            </Col>
+          ))}
+        </Row>
+      </div>
+    );
+  };
+
+  const rowShell = { padding: '8px 10px', marginBottom: 4 };
+
   return (
     <ContentContainer>
+      <style>{`
+        .dash-row { transition: background .2s; border-radius: 8px; }
+        .dash-row:hover { background: var(--ant-color-fill-tertiary); }
+      `}</style>
       <Row gutter={[16, 16]}>
-        {/* ── 问候 + 自动刷新说明 ── */}
+        {/* ── 问候横幅 ── */}
         <Col span={24}>
-          <Space align="baseline" size={12}>
-            <Typography.Title level={4} style={{ marginBottom: 0 }}>
-              {t('greeting')}
-              {userInfo?.nickname || userInfo?.username || ''}
-            </Typography.Title>
-            <Typography.Text type="secondary">{today}</Typography.Text>
-            <Tag style={{ marginLeft: 'auto' }}>{t('autoRefresh')}</Tag>
-          </Space>
+          <div
+            style={{
+              borderRadius: 14,
+              padding: '18px 22px',
+              background:
+                'linear-gradient(120deg, rgba(22,119,255,.16) 0%, rgba(114,46,209,.14) 55%, rgba(82,196,26,.10) 100%)',
+            }}
+          >
+            <Space size={12} align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+              <Space size={12} align="baseline">
+                <Typography.Title level={4} style={{ marginBottom: 0 }}>
+                  {t('greeting')}
+                  {userInfo?.nickname || userInfo?.username || 'GoWind Ops'}
+                </Typography.Title>
+                <Typography.Text type="secondary">{today}</Typography.Text>
+              </Space>
+              <Space size={6}>
+                <ReloadOutlined style={{ color: 'var(--ant-color-text-tertiary)', fontSize: 12 }} />
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  {t('autoRefresh')}
+                </Typography.Text>
+              </Space>
+            </Space>
+          </div>
         </Col>
 
-        {/* ── 统计卡片 ── */}
+        {/* ── 统计瓷砖 ── */}
         {stats.map((s) => (
-          <Col xs={12} lg={Math.floor(24 / stats.length)} key={s.key}>
-            <Card size="small">
-              <Card.Meta
-                avatar={
-                  <span style={{ fontSize: 28, color: s.color }}>
-                    {s.icon}
-                  </span>
-                }
-                title={<Typography.Text type="secondary">{t(`stat.${s.key}`)}</Typography.Text>}
-                description={
-                  <span style={{ fontSize: 24, fontWeight: 600, color: s.color }}>
+          <Col xs={12} md={8} xl={Math.floor(24 / stats.length)} key={s.key}>
+            <Card size="small" hoverable styles={{ body: { padding: '16px 18px' } }}>
+              <Space size={14} align="center">
+                <IconChip color={s.color}>{s.icon}</IconChip>
+                <div>
+                  <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+                    {t(`stat.${s.key}`)}
+                  </Typography.Text>
+                  <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, color: s.color }}>
                     {s.value}
                     {s.suffix ? (
-                      <span style={{ fontSize: 14, color: '#8c8c8c', marginLeft: 6 }}>{s.suffix}</span>
+                      <span style={{ fontSize: 13, fontWeight: 400, color: '#8c8c8c', marginLeft: 6 }}>{s.suffix}</span>
                     ) : null}
-                  </span>
-                }
-              />
+                  </div>
+                </div>
+              </Space>
             </Card>
           </Col>
         ))}
 
         {/* ── 节点资源 ── */}
         <Col xs={24} xl={14}>
-          <Card size="small" title={t('nodesPanel')} extra={<CloudServerOutlined />}>
+          <Card
+            size="small"
+            title={<PanelTitle color="#52c41a" text={t('nodesPanel')} />}
+            extra={<CloudServerOutlined style={{ color: '#8c8c8c' }} />}
+          >
             {nodeList.length === 0 ? (
-              <Typography.Text type="secondary">{t('noData')}</Typography.Text>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
             ) : (
-              nodeList.map((n) => {
-                const cpu = Math.round(n.cpuPercent ?? 0);
-                const mem = Math.round(n.memoryUsedPercent ?? 0);
-                const disk = Math.round(n.diskUsedPercent ?? 0);
-                return (
-                  <div key={n.id} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
-                    <Space size={8} style={{ marginBottom: 4 }}>
-                      <Tag color={n.status === 'ONLINE' ? 'success' : 'default'}>
-                        {n.status === 'ONLINE' ? t('online') : t('offline')}
-                      </Tag>
-                      <span style={{ fontWeight: 600 }}>{n.name || n.hostname}</span>
-                      {n.env ? <Tag>{n.env}</Tag> : null}
-                      <span style={{ color: '#8c8c8c', fontSize: 12 }}>{n.platform}</span>
-                    </Space>
-                    <Row gutter={16}>
-                      {[
-                        ['cpu', cpu],
-                        ['mem', mem],
-                        ['disk', disk],
-                      ].map(([label, v]) => (
-                        <Col span={8} key={label as string}>
-                          <Space size={6}>
-                            <span style={{ fontSize: 12, color: '#8c8c8c' }}>{t(label as string)}</span>
-                            <Progress
-                              percent={v as number}
-                              size="small"
-                              strokeColor={percentColor(v as number)}
-                              style={{ width: 120, marginBottom: 0 }}
-                            />
-                          </Space>
-                        </Col>
-                      ))}
-                    </Row>
-                  </div>
-                );
-              })
+              nodeList.map(nodeCard)
             )}
           </Card>
         </Col>
@@ -211,26 +281,27 @@ export default function DashboardPage() {
         <Col xs={24} xl={10}>
           <Card
             size="small"
-            title={
-              <Space>
-                {t('pendingPanel')}
-                {pendingApprovals.length > 0 && <Tag color="warning">{pendingApprovals.length}</Tag>}
-              </Space>
+            title={<PanelTitle color="#faad14" text={t('pendingPanel')} />}
+            extra={
+              pendingApprovals.length > 0 ? (
+                <Tag color="warning" style={{ margin: 0 }}>{pendingApprovals.length}</Tag>
+              ) : (
+                <ThunderboltOutlined style={{ color: '#8c8c8c' }} />
+              )
             }
-            extra={<ThunderboltOutlined />}
           >
             {pendingApprovals.length === 0 ? (
-              <Typography.Text type="secondary">{t('noPending')}</Typography.Text>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noPending')} style={{ margin: '12px 0' }} />
             ) : (
               pendingApprovals.slice(0, 6).map((a) => (
-                <div key={a.id} style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-                  <Space size={6} wrap>
-                    <Tag color="warning">{a.operationType}</Tag>
+                <div key={a.id} className="dash-row" style={rowShell}>
+                  <Space size={8} wrap style={{ width: '100%' }}>
+                    <Tag color="warning" style={{ margin: 0 }}>{a.operationType}</Tag>
                     <span>{a.operationName || `#${a.operationRefId}`}</span>
                     <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                      {fmtTime(a.createdAt)}
+                      {relTime(a.createdAt)}
                     </Typography.Text>
-                    <Space size={4} style={{ marginLeft: 'auto' }}>
+                    <Space size={10} style={{ marginLeft: 'auto' }}>
                       <Popconfirm title={t('approveConfirm')} onConfirm={() => a.id && approveMutation.mutate({ id: a.id })}>
                         <a style={{ color: '#52c41a', fontSize: 12 }}>{t('approve')}</a>
                       </Popconfirm>
@@ -247,23 +318,29 @@ export default function DashboardPage() {
 
         {/* ── 最近构建 ── */}
         <Col xs={24} xl={14}>
-          <Card size="small" title={t('recentBuilds')} extra={<CheckCircleOutlined />}>
+          <Card
+            size="small"
+            title={<PanelTitle color="#722ed1" text={t('recentBuilds')} />}
+            extra={<CheckCircleOutlined style={{ color: '#8c8c8c' }} />}
+          >
             {buildList.length === 0 ? (
-              <Typography.Text type="secondary">{t('noData')}</Typography.Text>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
             ) : (
               buildList.slice(0, 6).map((b) => (
-                <div key={b.id} style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-                  <Space size={8}>
-                    <Tag color={statusColor(b.status)}>#{b.buildNo}</Tag>
-                    <Tag color={statusColor(b.status)}>{t(`status.${b.status}`, b.status)}</Tag>
+                <div key={b.id} className="dash-row" style={rowShell}>
+                  <Space size={10} wrap style={{ width: '100%' }}>
+                    <span
+                      style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(b.status), flexShrink: 0 }}
+                    />
+                    <span style={{ fontWeight: 600 }}>#{b.buildNo}</span>
                     <span>{b.branch}</span>
-                    {b.artifactObjectKey && b.status === 'SUCCESS' && (
+                    {b.status === 'SUCCESS' && b.artifactObjectKey && (
                       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                         {Math.ceil((b.artifactSize ?? 0) / 1024)} KB
                       </Typography.Text>
                     )}
                     <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
-                      {fmtTime(b.createdAt)}
+                      {relTime(b.createdAt)}
                     </Typography.Text>
                   </Space>
                 </div>
@@ -276,24 +353,25 @@ export default function DashboardPage() {
         <Col xs={24} xl={10}>
           <Card
             size="small"
-            title={
-              <Space>
-                {t('alertsPanel')}
-                {activeAlerts.length > 0 && <Tag color="error">{activeAlerts.length}</Tag>}
-              </Space>
+            title={<PanelTitle color="#ff4d4f" text={t('alertsPanel')} />}
+            extra={
+              activeAlerts.length > 0 ? (
+                <Tag color="error" style={{ margin: 0 }}>{activeAlerts.length}</Tag>
+              ) : (
+                <BellOutlined style={{ color: '#8c8c8c' }} />
+              )
             }
-            extra={<BellOutlined />}
           >
             {activeAlerts.length === 0 ? (
-              <Typography.Text type="secondary">{t('noAlerts')}</Typography.Text>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAlerts')} style={{ margin: '12px 0' }} />
             ) : (
               activeAlerts.slice(0, 6).map((a) => (
-                <div key={a.id} style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-                  <Space size={6} wrap>
+                <div key={a.id} className="dash-row" style={rowShell}>
+                  <Space size={8} wrap style={{ width: '100%' }}>
                     <BellOutlined style={{ color: '#ff4d4f' }} />
                     <span>{a.message}</span>
                     <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                      {fmtTime(a.createdAt)}
+                      {relTime(a.createdAt)}
                     </Typography.Text>
                     <Popconfirm title={t('resolveConfirm')} onConfirm={() => a.id && resolveMutation.mutate({ id: a.id })}>
                       <a style={{ fontSize: 12, marginLeft: 'auto' }}>{t('resolve')}</a>

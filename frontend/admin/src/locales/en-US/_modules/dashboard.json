@@ -31,5 +31,6 @@
   "noAlerts": "No alerts",
   "resolve": "Resolve",
   "resolveConfirm": "Resolve this alert?",
-  "noData": "No data"
+  "noData": "No data",
+  "heartbeat": "Heartbeat {{time}}"
 }

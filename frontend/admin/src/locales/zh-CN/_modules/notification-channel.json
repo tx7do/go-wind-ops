@@ -4,7 +4,7 @@
   "type": "渠道类型",
   "typeWebhook": "Webhook",
   "typeEmail": "邮件",
-  "webhookUrl": "Webhook URL",
+  "webhookUrl": "Webhook 地址",
   "webhookSecret": "签名密钥",
   "webhookSecretPlaceholder": "钉钉/飞书/企微群机器人签名密钥",
   "webhookSignStyle": "签名风格",
