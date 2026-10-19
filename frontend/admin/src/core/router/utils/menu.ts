@@ -41,10 +41,14 @@ export const transformRoutesToMenu = (
       return meta?.menuVisibleWithForbidden === true;
     })
     .map((route) => {
-      // 处理路径：将相对路径转换为绝对路径
-      const fullPath = route.path?.startsWith('/')
-        ? route.path
-        : `${parentPath}/${route.path}`.replace(/\/+/g, '/');
+      // 处理路径：绝对路径原样保留，相对路径拼接父路径。
+      // 无 path 的分组节点（pathless 布局路由，前后端模式分别表现为
+      // undefined / 空串）没有真实 URL，用 name 作菜单 key 保证唯一稳定；
+      // 子项路径解析仍沿用父级真实前缀，不受伪 key 影响
+      const resolvePath = (path: string | undefined): string =>
+        path?.startsWith('/') ? path : `${parentPath}/${path}`.replace(/\/+/g, '/');
+
+      const fullPath = route.path ? resolvePath(route.path) : route.name || parentPath;
 
       const menuItem: any = {
         path: fullPath, // 使用完整路径作为 key
@@ -54,7 +58,11 @@ export const transformRoutesToMenu = (
       };
 
       if (route.children) {
-        menuItem.children = transformRoutesToMenu(route.children, permissions, fullPath);
+        menuItem.children = transformRoutesToMenu(
+          route.children,
+          permissions,
+          route.path ? fullPath : parentPath,
+        );
       }
 
       return menuItem;

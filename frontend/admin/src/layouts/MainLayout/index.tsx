@@ -162,13 +162,11 @@ export const MainLayout = ({ routes: dynamicRoutes }: MainLayoutProps) => {
       menuItems: any[],
       targetPath: string,
       parentKeys: string[] = [],
-      parentPath: string = '',
     ): string[] => {
       for (const item of menuItems) {
-        // 处理相对路径：拼接父路径
-        const itemPath = item.path?.startsWith('/')
-          ? item.path
-          : `${parentPath}/${item.path}`.replace(/\/+/g, '/');
+        // 菜单数据(transformRoutesToMenu)的 path 已解析成绝对路径,
+        // 无 path 分组节点则是 name 伪 key —— 都可直接当菜单 key 匹配
+        const itemPath = item.path;
         const itemKey = item.key || itemPath;
 
         // 如果当前项就是目标路径，返回所有父级 key
@@ -177,24 +175,12 @@ export const MainLayout = ({ routes: dynamicRoutes }: MainLayoutProps) => {
         }
         // 如果有子菜单，递归查找
         if (item.children && item.children.length > 0) {
-          const found = calculateOpenKeys(
-            item.children,
-            targetPath,
-            [...parentKeys, itemPath],
-            itemPath,
-          );
+          const found = calculateOpenKeys(item.children, targetPath, [...parentKeys, itemPath]);
           if (found.length > 0) {
             return found;
           }
           // 如果子项中直接匹配到目标路径，也要展开当前项
-          if (
-            item.children.some((child: any) => {
-              const childPath = child.path?.startsWith('/')
-                ? child.path
-                : `${itemPath}/${child.path}`.replace(/\/+/g, '/');
-              return childPath === targetPath || child.key === targetPath;
-            })
-          ) {
+          if (item.children.some((child: any) => (child.key || child.path) === targetPath)) {
             return [...parentKeys, itemPath];
           }
         }

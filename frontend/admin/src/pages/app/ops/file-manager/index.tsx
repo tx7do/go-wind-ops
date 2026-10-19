@@ -285,7 +285,7 @@ const FileManager = () => {
 
       <Drawer
         title={<span>{t('editTitle')}: <Typography.Text code>{editor?.path}</Typography.Text></span>}
-        width={720}
+        size={720}
         open={Boolean(editor)}
         onClose={() => setEditor(undefined)}
         extra={
@@ -315,7 +315,7 @@ const FileManager = () => {
 
       <Drawer
         title={t('newFileTitle')}
-        width={720}
+        size={720}
         open={newFile.open}
         onClose={() => setNewFile({ open: false, path: '' })}
         extra={

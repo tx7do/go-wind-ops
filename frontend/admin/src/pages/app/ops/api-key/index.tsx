@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { App, Button, Descriptions, Input, Modal, Popconfirm, Space, Switch, Tag, Typography } from 'antd';
+import { App, Button, Descriptions, Input, Modal, Popconfirm, Space, Tag, Typography } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -13,42 +13,31 @@ import { useTranslation } from 'react-i18next';
 import type { opsservicev1_ApiKey as ApiKey } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
-import { fetchListApiKeys, useCreateApiKey, useDeleteApiKey, useUpdateApiKey } from '@/api/hooks/api-key';
+import { fetchListApiKeys, useDeleteApiKey, useUpdateApiKey } from '@/api/hooks/api-key';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+import ApiKeyDrawer from './components/ApiKeyDrawer';
 
 const ApiKeyManagement = () => {
   const { t } = useTranslation('api-key');
   const actionRef = useRef<ActionType>(null);
   const queryClient = useQueryClient();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
 
-  const [createOpen, setCreateOpen] = useState(false);
-  const [createName, setCreateName] = useState('');
-  const [createDesc, setCreateDesc] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [createdPlainKey, setCreatedPlainKey] = useState<string>();
   const [helpOpen, setHelpOpen] = useState(false);
   const [editing, setEditing] = useState<ApiKey | undefined>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listApiKeys'] });
 
-  const createMutation = useCreateApiKey({
-    onSuccess: (resp) => {
-      setCreateOpen(false);
-      setCreateName('');
-      setCreateDesc('');
-      setCreatedPlainKey(resp.plainKey || '');
-      invalidate();
-      actionRef.current?.reload();
-    },
-    onError: (e: Error) => message.error(e.message || t('createFailed')),
-  });
+  // 行内启用/禁用
   const updateMutation = useUpdateApiKey({
     onSuccess: () => {
       message.success(t('updateSuccess'));
-      setEditing(undefined);
       invalidate();
       actionRef.current?.reload();
     },
@@ -107,7 +96,14 @@ const ApiKeyManagement = () => {
         >
           {record.status === 'DISABLED' ? t('enable') : t('disable')}
         </a>,
-        <a key="edit" onClick={() => setEditing(record)}>
+        <a
+          key="edit"
+          onClick={() => {
+            setDrawerMode('edit');
+            setEditing(record);
+            setDrawerOpen(true);
+          }}
+        >
           <EditOutlined />
         </a>,
         <Popconfirm
@@ -155,7 +151,9 @@ const ApiKeyManagement = () => {
                 icon={<PlusOutlined />}
                 onClick={() => {
                   setCreatedPlainKey(undefined);
-                  setCreateOpen(true);
+                  setDrawerMode('create');
+                  setEditing(undefined);
+                  setDrawerOpen(true);
                 }}
               >
                 {t('create')}
@@ -168,31 +166,21 @@ const ApiKeyManagement = () => {
         </div>
       </ContentContainer>
 
-      {/* 创建弹窗:名称 + 描述 → 成功后展示明文(仅一次) */}
-      <Modal
-        title={t('create')}
-        open={createOpen}
-        onCancel={() => setCreateOpen(false)}
-        onOk={() => {
-          if (!createName.trim()) {
-            message.warning(t('nameRequired'));
-            return;
-          }
-          createMutation.mutate({ data: { name: createName.trim(), description: createDesc || undefined } });
+      {/* 创建/编辑抽屉:创建成功后经 onSuccess 展示明文(仅一次) */}
+      <ApiKeyDrawer
+        open={drawerOpen}
+        mode={drawerMode}
+        data={editing}
+        onClose={() => {
+          setDrawerOpen(false);
+          setEditing(undefined);
         }}
-        confirmLoading={createMutation.isPending}
-        destroyOnClose
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Input placeholder={t('name')} value={createName} onChange={(e) => setCreateName(e.target.value)} />
-          <Input.TextArea
-            placeholder={t('description')}
-            rows={2}
-            value={createDesc}
-            onChange={(e) => setCreateDesc(e.target.value)}
-          />
-        </Space>
-      </Modal>
+        onSuccess={(plainKey) => {
+          if (plainKey) setCreatedPlainKey(plainKey);
+          invalidate();
+          actionRef.current?.reload();
+        }}
+      />
 
       {/* 明文展示(仅一次) */}
       <Modal
@@ -221,42 +209,6 @@ const ApiKeyManagement = () => {
             </Space.Compact>
           </Descriptions.Item>
         </Descriptions>
-      </Modal>
-
-      {/* 编辑:状态/描述 */}
-      <Modal
-        title={t('edit')}
-        open={!!editing}
-        onCancel={() => setEditing(undefined)}
-        onOk={() => {
-          if (!editing?.id) return;
-          updateMutation.mutate({
-            id: editing.id,
-            data: { status: editing.status, description: editing.description },
-          });
-        }}
-        confirmLoading={updateMutation.isPending}
-        destroyOnClose
-      >
-        {editing && (
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Space>
-              <span>{t('status')}:</span>
-              <Switch
-                checked={editing.status !== 'DISABLED'}
-                checkedChildren={t('statusEnabled')}
-                unCheckedChildren={t('statusDisabled')}
-                onChange={(v) => setEditing({ ...editing, status: v ? 'ENABLED' : 'DISABLED' })}
-              />
-            </Space>
-            <Input.TextArea
-              placeholder={t('description')}
-              rows={2}
-              value={editing.description}
-              onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-            />
-          </Space>
-        )}
       </Modal>
 
       {/* 用法示例 */}

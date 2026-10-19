@@ -9,7 +9,7 @@ export const dashboardRoutes: AppRouteObject[] = [
     meta: {
       title: 'routes:dashboard',
       icon: 'lucide:layout-dashboard', // Iconify 格式
-      order: 1,
+      order: 0, // 总览固定最前;避开 ops 组从 1 起的编号段
       hideInMenu: false,
     },
   },

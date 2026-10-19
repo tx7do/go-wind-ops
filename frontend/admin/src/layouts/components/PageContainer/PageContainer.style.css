@@ -27,3 +27,17 @@
 .page-container-content > .ant-pro-table {
   height: 100%;
 }
+
+/* 表格上方另有内容块时（如趋势图）：容器转 flex 列布局，表格改占剩余高度。
+   上面的 height: 100% 只对表格是唯一子元素的页面成立，叠了内容块后会把
+   表格拉到容器全高导致整体溢出，须用此修饰类覆盖。 */
+.page-container-content--block-above {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-container-content--block-above > .ant-pro-table {
+  height: auto;
+  flex: 1;
+  min-height: 0;
+}

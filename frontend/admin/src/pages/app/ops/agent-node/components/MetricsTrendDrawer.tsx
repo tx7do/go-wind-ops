@@ -53,7 +53,7 @@ const MetricsTrendDrawer: React.FC<MetricsDrawerProps> = ({ data, onClose }) => 
       title={<span>{t('metricsTrend')} <Tag style={{ marginLeft: 8 }}>{data?.name}</Tag></span>}
       open={!!data}
       onClose={onClose}
-      width={720}
+      size={720}
       destroyOnClose
     >
       {loading ? (

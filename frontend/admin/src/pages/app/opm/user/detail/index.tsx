@@ -9,7 +9,7 @@ import ContentContainer from '@/layouts/components/PageContainer/ContentContaine
 import { TabEnum } from './types';
 import BasicInfoPage from './BasicInfoPage';
 import ApiLogPage from './ApiLogPage';
-import EditPasswordModal from './EditPasswordModal';
+import EditPasswordDrawer from './EditPasswordDrawer';
 
 /**
  * 用户详情页面
@@ -26,7 +26,7 @@ const UserDetail = () => {
   }, [id]);
 
   const [activeTab, setActiveTab] = useState<string>(TabEnum.BASIC_INFO);
-  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [passwordDrawerOpen, setPasswordDrawerOpen] = useState(false);
 
   // 禁用账户
   const banMutation = useUpdateUser({
@@ -92,7 +92,7 @@ const UserDetail = () => {
             >
               <Button danger>{t('button.banAccount')}</Button>
             </Popconfirm>
-            <Button type="primary" onClick={() => setPasswordModalOpen(true)}>
+            <Button type="primary" onClick={() => setPasswordDrawerOpen(true)}>
               {t('button.editPassword')}
             </Button>
           </div>
@@ -118,11 +118,11 @@ const UserDetail = () => {
         </div>
       </div>
 
-      {/* 修改密码弹窗 */}
-      <EditPasswordModal
-        open={passwordModalOpen}
+      {/* 修改密码抽屉 */}
+      <EditPasswordDrawer
+        open={passwordDrawerOpen}
         userId={userId}
-        onClose={() => setPasswordModalOpen(false)}
+        onClose={() => setPasswordDrawerOpen(false)}
       />
     </ContentContainer>
   );

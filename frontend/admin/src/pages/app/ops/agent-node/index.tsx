@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Input, Modal, Popconfirm, Progress, Select, Space, Tag, Tooltip, App } from 'antd';
+import { Input, Popconfirm, Progress, Select, Space, Tag, Tooltip, App } from 'antd';
 import { DeleteOutlined, EditOutlined, GlobalOutlined, LineChartOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';

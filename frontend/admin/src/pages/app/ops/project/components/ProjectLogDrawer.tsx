@@ -60,7 +60,7 @@ const ProjectLogDrawer: React.FC<ProjectLogDrawerProps> = ({ data, onClose }) =>
       }
       open={!!data}
       onClose={onClose}
-      width={820}
+      size={820}
       destroyOnClose
       extra={
         <span>

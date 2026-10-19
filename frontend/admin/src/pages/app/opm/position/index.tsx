@@ -16,7 +16,7 @@ import { PaginationQuery } from '@/core';
 import { fetchListPositions, useCreatePosition, useDeletePosition } from '@/api/hooks/position';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
-import ImportModal from '@/components/common/ImportModal';
+import ImportDrawer from '@/components/common/ImportDrawer';
 import type { ImportField } from '@/utils/import';
 import {
   getStatusMap,
@@ -266,7 +266,7 @@ const PositionManagement = () => {
       />
 
       {/* Excel 导入 */}
-      <ImportModal
+      <ImportDrawer
         open={importOpen}
         fields={importFields}
         createRow={(values) => createMutation.mutateAsync({ data: values })}

@@ -55,6 +55,11 @@ func (s *AgentNodeService) Delete(ctx context.Context, req *opsV1.DeleteAgentNod
 	return &emptypb.Empty{}, nil
 }
 
+// GetMetrics 查询节点心跳指标历史(透传 core 时间序列查询)。
+func (s *AgentNodeService) GetMetrics(ctx context.Context, req *opsV1.GetNodeMetricsHistoryRequest) (*opsV1.GetNodeMetricsHistoryResponse, error) {
+	return s.agentNodeServiceClient.GetNodeMetricsHistory(ctx, req)
+}
+
 func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendCommandRequest) (*opsV1.SendCommandResponse, error) {
 	if req == nil || req.GetAction() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: action required")

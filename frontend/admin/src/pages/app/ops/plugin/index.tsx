@@ -111,7 +111,7 @@ const PluginPage = () => {
 
       <Drawer
         title={`${t('execTitle')}: ${execTarget?.action || ''}`}
-        width={520}
+        size={520}
         open={!!execTarget}
         onClose={() => setExecTarget(undefined)}
         extra={

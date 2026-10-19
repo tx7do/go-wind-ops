@@ -51,7 +51,7 @@ declare global {
   const GlobalSearch: typeof import('../src/components/common/GlobalSearch/index').default
   const I18n: typeof import('../src/components/common/I18n/index').default
   const IframeModal: typeof import('../src/components/common/Editor/src/TiptapEditor/modals').IframeModal
-  const ImportModal: typeof import('../src/components/common/ImportModal/index').default
+  const ImportDrawer: typeof import('../src/components/common/ImportDrawer/index').default
   const JsonEditor: typeof import('../src/components/common/Editor/src/JsonEditor').default
   const Link: typeof import('react-router-dom').Link
   const LinkModal: typeof import('../src/components/common/Editor/src/TiptapEditor/index').LinkModal
@@ -194,6 +194,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { ImportDrawerProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

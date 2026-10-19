@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { App, Button, Modal, Upload } from 'antd';
+import { App, Button, Drawer, Upload } from 'antd';
 import { DownloadOutlined, InboxOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { runImportFile, generateImportTemplate, type ImportField } from '@/utils/import';
 
 /**
- * 通用 Excel 导入弹窗：客户端模板下载 + xlsx 解析 + 逐行落库。
+ * 通用 Excel 导入抽屉：客户端模板下载 + xlsx 解析 + 逐行落库。
  * 落库经调用方注入的 createRow（页面既有 create 变体），
  * { data } 包裹/校验/租户隔离/审计全走既有链路。
  */
-export interface ImportModalProps {
+export interface ImportDrawerProps {
   open: boolean;
   /** 可导入字段（label 即模板表头） */
   fields: ImportField[];
@@ -19,13 +19,13 @@ export interface ImportModalProps {
   onSuccess?: (imported: number) => void;
 }
 
-export default function ImportModal({
+export default function ImportDrawer({
   open,
   fields,
   createRow,
   onClose,
   onSuccess,
-}: ImportModalProps) {
+}: ImportDrawerProps) {
   const { t } = useTranslation('common');
   const { message } = App.useApp();
   const [file, setFile] = useState<File | null>(null);
@@ -70,16 +70,20 @@ export default function ImportModal({
   };
 
   return (
-    <Modal
+    <Drawer
       title={t('import.title')}
       open={open}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      okButtonProps={{ disabled: !file, loading: submitting }}
-      okText={t('button.ok')}
-      cancelText={t('button.cancel')}
+      onClose={handleCancel}
       destroyOnHidden
-      width={520}
+      size={520}
+      footer={
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+          <Button onClick={handleCancel}>{t('button.cancel')}</Button>
+          <Button type="primary" disabled={!file} loading={submitting} onClick={handleOk}>
+            {t('button.ok')}
+          </Button>
+        </div>
+      }
     >
       <Upload.Dragger
         accept=".xlsx"
@@ -102,6 +106,6 @@ export default function ImportModal({
           {t('import.downloadTemplate')}
         </Button>
       </div>
-    </Modal>
+    </Drawer>
   );
 }
