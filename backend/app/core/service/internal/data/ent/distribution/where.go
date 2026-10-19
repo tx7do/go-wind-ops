@@ -119,6 +119,11 @@ func DockerNetwork(v string) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldDockerNetwork, v))
 }
 
+// BatchSize applies equality check predicate on the "batch_size" field. It's identical to BatchSizeEQ.
+func BatchSize(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldBatchSize, v))
+}
+
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Distribution {
 	return predicate.Distribution(sql.FieldEQ(FieldDescription, v))
@@ -937,6 +942,46 @@ func AfterOptIsNil() predicate.Distribution {
 // AfterOptNotNil applies the NotNil predicate on the "after_opt" field.
 func AfterOptNotNil() predicate.Distribution {
 	return predicate.Distribution(sql.FieldNotNull(FieldAfterOpt))
+}
+
+// BatchSizeEQ applies the EQ predicate on the "batch_size" field.
+func BatchSizeEQ(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldEQ(FieldBatchSize, v))
+}
+
+// BatchSizeNEQ applies the NEQ predicate on the "batch_size" field.
+func BatchSizeNEQ(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNEQ(FieldBatchSize, v))
+}
+
+// BatchSizeIn applies the In predicate on the "batch_size" field.
+func BatchSizeIn(vs ...uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldIn(FieldBatchSize, vs...))
+}
+
+// BatchSizeNotIn applies the NotIn predicate on the "batch_size" field.
+func BatchSizeNotIn(vs ...uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldNotIn(FieldBatchSize, vs...))
+}
+
+// BatchSizeGT applies the GT predicate on the "batch_size" field.
+func BatchSizeGT(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGT(FieldBatchSize, v))
+}
+
+// BatchSizeGTE applies the GTE predicate on the "batch_size" field.
+func BatchSizeGTE(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldGTE(FieldBatchSize, v))
+}
+
+// BatchSizeLT applies the LT predicate on the "batch_size" field.
+func BatchSizeLT(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLT(FieldBatchSize, v))
+}
+
+// BatchSizeLTE applies the LTE predicate on the "batch_size" field.
+func BatchSizeLTE(v uint32) predicate.Distribution {
+	return predicate.Distribution(sql.FieldLTE(FieldBatchSize, v))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.

@@ -240,6 +240,20 @@ func (_c *DistributionCreate) SetNillableAfterOpt(v *distribution.AfterOpt) *Dis
 	return _c
 }
 
+// SetBatchSize sets the "batch_size" field.
+func (_c *DistributionCreate) SetBatchSize(v uint32) *DistributionCreate {
+	_c.mutation.SetBatchSize(v)
+	return _c
+}
+
+// SetNillableBatchSize sets the "batch_size" field if the given value is not nil.
+func (_c *DistributionCreate) SetNillableBatchSize(v *uint32) *DistributionCreate {
+	if v != nil {
+		_c.SetBatchSize(*v)
+	}
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *DistributionCreate) SetDescription(v string) *DistributionCreate {
 	_c.mutation.SetDescription(v)
@@ -317,6 +331,10 @@ func (_c *DistributionCreate) defaults() {
 		v := distribution.DefaultAfterOpt
 		_c.mutation.SetAfterOpt(v)
 	}
+	if _, ok := _c.mutation.BatchSize(); !ok {
+		v := distribution.DefaultBatchSize
+		_c.mutation.SetBatchSize(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -349,6 +367,9 @@ func (_c *DistributionCreate) check() error {
 		if err := distribution.AfterOptValidator(v); err != nil {
 			return &ValidationError{Name: "after_opt", err: fmt.Errorf(`ent: validator failed for field "Distribution.after_opt": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.BatchSize(); !ok {
+		return &ValidationError{Name: "batch_size", err: errors.New(`ent: missing required field "Distribution.batch_size"`)}
 	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := distribution.IDValidator(v); err != nil {
@@ -463,6 +484,10 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.AfterOpt(); ok {
 		_spec.SetField(distribution.FieldAfterOpt, field.TypeEnum, value)
 		_node.AfterOpt = &value
+	}
+	if value, ok := _c.mutation.BatchSize(); ok {
+		_spec.SetField(distribution.FieldBatchSize, field.TypeUint32, value)
+		_node.BatchSize = value
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(distribution.FieldDescription, field.TypeString, value)
@@ -851,6 +876,24 @@ func (u *DistributionUpsert) UpdateAfterOpt() *DistributionUpsert {
 // ClearAfterOpt clears the value of the "after_opt" field.
 func (u *DistributionUpsert) ClearAfterOpt() *DistributionUpsert {
 	u.SetNull(distribution.FieldAfterOpt)
+	return u
+}
+
+// SetBatchSize sets the "batch_size" field.
+func (u *DistributionUpsert) SetBatchSize(v uint32) *DistributionUpsert {
+	u.Set(distribution.FieldBatchSize, v)
+	return u
+}
+
+// UpdateBatchSize sets the "batch_size" field to the value that was provided on create.
+func (u *DistributionUpsert) UpdateBatchSize() *DistributionUpsert {
+	u.SetExcluded(distribution.FieldBatchSize)
+	return u
+}
+
+// AddBatchSize adds v to the "batch_size" field.
+func (u *DistributionUpsert) AddBatchSize(v uint32) *DistributionUpsert {
+	u.Add(distribution.FieldBatchSize, v)
 	return u
 }
 
@@ -1323,6 +1366,27 @@ func (u *DistributionUpsertOne) UpdateAfterOpt() *DistributionUpsertOne {
 func (u *DistributionUpsertOne) ClearAfterOpt() *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.ClearAfterOpt()
+	})
+}
+
+// SetBatchSize sets the "batch_size" field.
+func (u *DistributionUpsertOne) SetBatchSize(v uint32) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetBatchSize(v)
+	})
+}
+
+// AddBatchSize adds v to the "batch_size" field.
+func (u *DistributionUpsertOne) AddBatchSize(v uint32) *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.AddBatchSize(v)
+	})
+}
+
+// UpdateBatchSize sets the "batch_size" field to the value that was provided on create.
+func (u *DistributionUpsertOne) UpdateBatchSize() *DistributionUpsertOne {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateBatchSize()
 	})
 }
 
@@ -1967,6 +2031,27 @@ func (u *DistributionUpsertBulk) UpdateAfterOpt() *DistributionUpsertBulk {
 func (u *DistributionUpsertBulk) ClearAfterOpt() *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.ClearAfterOpt()
+	})
+}
+
+// SetBatchSize sets the "batch_size" field.
+func (u *DistributionUpsertBulk) SetBatchSize(v uint32) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.SetBatchSize(v)
+	})
+}
+
+// AddBatchSize adds v to the "batch_size" field.
+func (u *DistributionUpsertBulk) AddBatchSize(v uint32) *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.AddBatchSize(v)
+	})
+}
+
+// UpdateBatchSize sets the "batch_size" field to the value that was provided on create.
+func (u *DistributionUpsertBulk) UpdateBatchSize() *DistributionUpsertBulk {
+	return u.Update(func(s *DistributionUpsert) {
+		s.UpdateBatchSize()
 	})
 }
 

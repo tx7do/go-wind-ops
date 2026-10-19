@@ -767,6 +767,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			distribution.FieldDockerRestart: {Type: field.TypeString, Column: distribution.FieldDockerRestart},
 			distribution.FieldDockerNetwork: {Type: field.TypeString, Column: distribution.FieldDockerNetwork},
 			distribution.FieldAfterOpt:      {Type: field.TypeEnum, Column: distribution.FieldAfterOpt},
+			distribution.FieldBatchSize:     {Type: field.TypeUint32, Column: distribution.FieldBatchSize},
 			distribution.FieldDescription:   {Type: field.TypeString, Column: distribution.FieldDescription},
 			distribution.FieldLabels:        {Type: field.TypeJSON, Column: distribution.FieldLabels},
 		},
@@ -790,6 +791,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			distributionrecord.FieldProjectID:        {Type: field.TypeUint32, Column: distributionrecord.FieldProjectID},
 			distributionrecord.FieldNodeID:           {Type: field.TypeUint32, Column: distributionrecord.FieldNodeID},
 			distributionrecord.FieldCommandRequestID: {Type: field.TypeString, Column: distributionrecord.FieldCommandRequestID},
+			distributionrecord.FieldBatchNo:          {Type: field.TypeUint32, Column: distributionrecord.FieldBatchNo},
 			distributionrecord.FieldStatus:           {Type: field.TypeEnum, Column: distributionrecord.FieldStatus},
 			distributionrecord.FieldError:            {Type: field.TypeString, Column: distributionrecord.FieldError},
 			distributionrecord.FieldResult:           {Type: field.TypeString, Column: distributionrecord.FieldResult},
@@ -5001,6 +5003,11 @@ func (f *DistributionFilter) WhereAfterOpt(p entql.StringP) {
 	f.Where(p.Field(distribution.FieldAfterOpt))
 }
 
+// WhereBatchSize applies the entql uint32 predicate on the batch_size field.
+func (f *DistributionFilter) WhereBatchSize(p entql.Uint32P) {
+	f.Where(p.Field(distribution.FieldBatchSize))
+}
+
 // WhereDescription applies the entql string predicate on the description field.
 func (f *DistributionFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(distribution.FieldDescription))
@@ -5089,6 +5096,11 @@ func (f *DistributionRecordFilter) WhereNodeID(p entql.Uint32P) {
 // WhereCommandRequestID applies the entql string predicate on the command_request_id field.
 func (f *DistributionRecordFilter) WhereCommandRequestID(p entql.StringP) {
 	f.Where(p.Field(distributionrecord.FieldCommandRequestID))
+}
+
+// WhereBatchNo applies the entql uint32 predicate on the batch_no field.
+func (f *DistributionRecordFilter) WhereBatchNo(p entql.Uint32P) {
+	f.Where(p.Field(distributionrecord.FieldBatchNo))
 }
 
 // WhereStatus applies the entql string predicate on the status field.

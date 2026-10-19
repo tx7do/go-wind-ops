@@ -392,6 +392,27 @@ func (_u *DistributionUpdate) ClearAfterOpt() *DistributionUpdate {
 	return _u
 }
 
+// SetBatchSize sets the "batch_size" field.
+func (_u *DistributionUpdate) SetBatchSize(v uint32) *DistributionUpdate {
+	_u.mutation.ResetBatchSize()
+	_u.mutation.SetBatchSize(v)
+	return _u
+}
+
+// SetNillableBatchSize sets the "batch_size" field if the given value is not nil.
+func (_u *DistributionUpdate) SetNillableBatchSize(v *uint32) *DistributionUpdate {
+	if v != nil {
+		_u.SetBatchSize(*v)
+	}
+	return _u
+}
+
+// AddBatchSize adds value to the "batch_size" field.
+func (_u *DistributionUpdate) AddBatchSize(v int32) *DistributionUpdate {
+	_u.mutation.AddBatchSize(v)
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *DistributionUpdate) SetDescription(v string) *DistributionUpdate {
 	_u.mutation.SetDescription(v)
@@ -638,6 +659,12 @@ func (_u *DistributionUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if _u.mutation.AfterOptCleared() {
 		_spec.ClearField(distribution.FieldAfterOpt, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.BatchSize(); ok {
+		_spec.SetField(distribution.FieldBatchSize, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchSize(); ok {
+		_spec.AddField(distribution.FieldBatchSize, field.TypeUint32, value)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(distribution.FieldDescription, field.TypeString, value)
@@ -1040,6 +1067,27 @@ func (_u *DistributionUpdateOne) ClearAfterOpt() *DistributionUpdateOne {
 	return _u
 }
 
+// SetBatchSize sets the "batch_size" field.
+func (_u *DistributionUpdateOne) SetBatchSize(v uint32) *DistributionUpdateOne {
+	_u.mutation.ResetBatchSize()
+	_u.mutation.SetBatchSize(v)
+	return _u
+}
+
+// SetNillableBatchSize sets the "batch_size" field if the given value is not nil.
+func (_u *DistributionUpdateOne) SetNillableBatchSize(v *uint32) *DistributionUpdateOne {
+	if v != nil {
+		_u.SetBatchSize(*v)
+	}
+	return _u
+}
+
+// AddBatchSize adds value to the "batch_size" field.
+func (_u *DistributionUpdateOne) AddBatchSize(v int32) *DistributionUpdateOne {
+	_u.mutation.AddBatchSize(v)
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *DistributionUpdateOne) SetDescription(v string) *DistributionUpdateOne {
 	_u.mutation.SetDescription(v)
@@ -1316,6 +1364,12 @@ func (_u *DistributionUpdateOne) sqlSave(ctx context.Context) (_node *Distributi
 	}
 	if _u.mutation.AfterOptCleared() {
 		_spec.ClearField(distribution.FieldAfterOpt, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.BatchSize(); ok {
+		_spec.SetField(distribution.FieldBatchSize, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchSize(); ok {
+		_spec.AddField(distribution.FieldBatchSize, field.TypeUint32, value)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(distribution.FieldDescription, field.TypeString, value)

@@ -35266,6 +35266,8 @@ type DistributionMutation struct {
 	docker_restart       *string
 	docker_network       *string
 	after_opt            *distribution.AfterOpt
+	batch_size           *uint32
+	addbatch_size        *int32
 	description          *string
 	labels               *[]string
 	appendlabels         []string
@@ -36418,6 +36420,62 @@ func (m *DistributionMutation) ResetAfterOpt() {
 	delete(m.clearedFields, distribution.FieldAfterOpt)
 }
 
+// SetBatchSize sets the "batch_size" field.
+func (m *DistributionMutation) SetBatchSize(u uint32) {
+	m.batch_size = &u
+	m.addbatch_size = nil
+}
+
+// BatchSize returns the value of the "batch_size" field in the mutation.
+func (m *DistributionMutation) BatchSize() (r uint32, exists bool) {
+	v := m.batch_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBatchSize returns the old "batch_size" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldBatchSize(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBatchSize is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBatchSize requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBatchSize: %w", err)
+	}
+	return oldValue.BatchSize, nil
+}
+
+// AddBatchSize adds u to the "batch_size" field.
+func (m *DistributionMutation) AddBatchSize(u int32) {
+	if m.addbatch_size != nil {
+		*m.addbatch_size += u
+	} else {
+		m.addbatch_size = &u
+	}
+}
+
+// AddedBatchSize returns the value that was added to the "batch_size" field in this mutation.
+func (m *DistributionMutation) AddedBatchSize() (r int32, exists bool) {
+	v := m.addbatch_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBatchSize resets all changes to the "batch_size" field.
+func (m *DistributionMutation) ResetBatchSize() {
+	m.batch_size = nil
+	m.addbatch_size = nil
+}
+
 // SetDescription sets the "description" field.
 func (m *DistributionMutation) SetDescription(s string) {
 	m.description = &s
@@ -36566,7 +36624,7 @@ func (m *DistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DistributionMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, distribution.FieldCreatedAt)
 	}
@@ -36624,6 +36682,9 @@ func (m *DistributionMutation) Fields() []string {
 	if m.after_opt != nil {
 		fields = append(fields, distribution.FieldAfterOpt)
 	}
+	if m.batch_size != nil {
+		fields = append(fields, distribution.FieldBatchSize)
+	}
 	if m.description != nil {
 		fields = append(fields, distribution.FieldDescription)
 	}
@@ -36676,6 +36737,8 @@ func (m *DistributionMutation) Field(name string) (ent.Value, bool) {
 		return m.DockerNetwork()
 	case distribution.FieldAfterOpt:
 		return m.AfterOpt()
+	case distribution.FieldBatchSize:
+		return m.BatchSize()
 	case distribution.FieldDescription:
 		return m.Description()
 	case distribution.FieldLabels:
@@ -36727,6 +36790,8 @@ func (m *DistributionMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDockerNetwork(ctx)
 	case distribution.FieldAfterOpt:
 		return m.OldAfterOpt(ctx)
+	case distribution.FieldBatchSize:
+		return m.OldBatchSize(ctx)
 	case distribution.FieldDescription:
 		return m.OldDescription(ctx)
 	case distribution.FieldLabels:
@@ -36873,6 +36938,13 @@ func (m *DistributionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAfterOpt(v)
 		return nil
+	case distribution.FieldBatchSize:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBatchSize(v)
+		return nil
 	case distribution.FieldDescription:
 		v, ok := value.(string)
 		if !ok {
@@ -36907,6 +36979,9 @@ func (m *DistributionMutation) AddedFields() []string {
 	if m.addbuild_id != nil {
 		fields = append(fields, distribution.FieldBuildID)
 	}
+	if m.addbatch_size != nil {
+		fields = append(fields, distribution.FieldBatchSize)
+	}
 	return fields
 }
 
@@ -36923,6 +36998,8 @@ func (m *DistributionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedBy()
 	case distribution.FieldBuildID:
 		return m.AddedBuildID()
+	case distribution.FieldBatchSize:
+		return m.AddedBatchSize()
 	}
 	return nil, false
 }
@@ -36959,6 +37036,13 @@ func (m *DistributionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBuildID(v)
+		return nil
+	case distribution.FieldBatchSize:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBatchSize(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Distribution numeric field %s", name)
@@ -37155,6 +37239,9 @@ func (m *DistributionMutation) ResetField(name string) error {
 	case distribution.FieldAfterOpt:
 		m.ResetAfterOpt()
 		return nil
+	case distribution.FieldBatchSize:
+		m.ResetBatchSize()
+		return nil
 	case distribution.FieldDescription:
 		m.ResetDescription()
 		return nil
@@ -37231,6 +37318,8 @@ type DistributionRecordMutation struct {
 	node_id             *uint32
 	addnode_id          *int32
 	command_request_id  *string
+	batch_no            *uint32
+	addbatch_no         *int32
 	status              *distributionrecord.Status
 	error               *string
 	result              *string
@@ -37754,6 +37843,62 @@ func (m *DistributionRecordMutation) ResetCommandRequestID() {
 	m.command_request_id = nil
 }
 
+// SetBatchNo sets the "batch_no" field.
+func (m *DistributionRecordMutation) SetBatchNo(u uint32) {
+	m.batch_no = &u
+	m.addbatch_no = nil
+}
+
+// BatchNo returns the value of the "batch_no" field in the mutation.
+func (m *DistributionRecordMutation) BatchNo() (r uint32, exists bool) {
+	v := m.batch_no
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBatchNo returns the old "batch_no" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldBatchNo(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBatchNo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBatchNo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBatchNo: %w", err)
+	}
+	return oldValue.BatchNo, nil
+}
+
+// AddBatchNo adds u to the "batch_no" field.
+func (m *DistributionRecordMutation) AddBatchNo(u int32) {
+	if m.addbatch_no != nil {
+		*m.addbatch_no += u
+	} else {
+		m.addbatch_no = &u
+	}
+}
+
+// AddedBatchNo returns the value that was added to the "batch_no" field in this mutation.
+func (m *DistributionRecordMutation) AddedBatchNo() (r int32, exists bool) {
+	v := m.addbatch_no
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBatchNo resets all changes to the "batch_no" field.
+func (m *DistributionRecordMutation) ResetBatchNo() {
+	m.batch_no = nil
+	m.addbatch_no = nil
+}
+
 // SetStatus sets the "status" field.
 func (m *DistributionRecordMutation) SetStatus(d distributionrecord.Status) {
 	m.status = &d
@@ -38054,7 +38199,7 @@ func (m *DistributionRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DistributionRecordMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, distributionrecord.FieldCreatedAt)
 	}
@@ -38078,6 +38223,9 @@ func (m *DistributionRecordMutation) Fields() []string {
 	}
 	if m.command_request_id != nil {
 		fields = append(fields, distributionrecord.FieldCommandRequestID)
+	}
+	if m.batch_no != nil {
+		fields = append(fields, distributionrecord.FieldBatchNo)
 	}
 	if m.status != nil {
 		fields = append(fields, distributionrecord.FieldStatus)
@@ -38118,6 +38266,8 @@ func (m *DistributionRecordMutation) Field(name string) (ent.Value, bool) {
 		return m.NodeID()
 	case distributionrecord.FieldCommandRequestID:
 		return m.CommandRequestID()
+	case distributionrecord.FieldBatchNo:
+		return m.BatchNo()
 	case distributionrecord.FieldStatus:
 		return m.Status()
 	case distributionrecord.FieldError:
@@ -38153,6 +38303,8 @@ func (m *DistributionRecordMutation) OldField(ctx context.Context, name string) 
 		return m.OldNodeID(ctx)
 	case distributionrecord.FieldCommandRequestID:
 		return m.OldCommandRequestID(ctx)
+	case distributionrecord.FieldBatchNo:
+		return m.OldBatchNo(ctx)
 	case distributionrecord.FieldStatus:
 		return m.OldStatus(ctx)
 	case distributionrecord.FieldError:
@@ -38228,6 +38380,13 @@ func (m *DistributionRecordMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetCommandRequestID(v)
 		return nil
+	case distributionrecord.FieldBatchNo:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBatchNo(v)
+		return nil
 	case distributionrecord.FieldStatus:
 		v, ok := value.(distributionrecord.Status)
 		if !ok {
@@ -38283,6 +38442,9 @@ func (m *DistributionRecordMutation) AddedFields() []string {
 	if m.addnode_id != nil {
 		fields = append(fields, distributionrecord.FieldNodeID)
 	}
+	if m.addbatch_no != nil {
+		fields = append(fields, distributionrecord.FieldBatchNo)
+	}
 	if m.addoperator_id != nil {
 		fields = append(fields, distributionrecord.FieldOperatorID)
 	}
@@ -38302,6 +38464,8 @@ func (m *DistributionRecordMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedProjectID()
 	case distributionrecord.FieldNodeID:
 		return m.AddedNodeID()
+	case distributionrecord.FieldBatchNo:
+		return m.AddedBatchNo()
 	case distributionrecord.FieldOperatorID:
 		return m.AddedOperatorID()
 	}
@@ -38340,6 +38504,13 @@ func (m *DistributionRecordMutation) AddField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddNodeID(v)
+		return nil
+	case distributionrecord.FieldBatchNo:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBatchNo(v)
 		return nil
 	case distributionrecord.FieldOperatorID:
 		v, ok := value.(int32)
@@ -38449,6 +38620,9 @@ func (m *DistributionRecordMutation) ResetField(name string) error {
 		return nil
 	case distributionrecord.FieldCommandRequestID:
 		m.ResetCommandRequestID()
+		return nil
+	case distributionrecord.FieldBatchNo:
+		m.ResetBatchNo()
 		return nil
 	case distributionrecord.FieldStatus:
 		m.ResetStatus()

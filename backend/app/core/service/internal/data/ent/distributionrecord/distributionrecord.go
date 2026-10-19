@@ -29,6 +29,8 @@ const (
 	FieldNodeID = "node_id"
 	// FieldCommandRequestID holds the string denoting the command_request_id field in the database.
 	FieldCommandRequestID = "command_request_id"
+	// FieldBatchNo holds the string denoting the batch_no field in the database.
+	FieldBatchNo = "batch_no"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldError holds the string denoting the error field in the database.
@@ -54,6 +56,7 @@ var Columns = []string{
 	FieldProjectID,
 	FieldNodeID,
 	FieldCommandRequestID,
+	FieldBatchNo,
 	FieldStatus,
 	FieldError,
 	FieldResult,
@@ -82,6 +85,8 @@ var (
 	NodeIDValidator func(uint32) error
 	// CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
 	CommandRequestIDValidator func(string) error
+	// DefaultBatchNo holds the default value on creation for the "batch_no" field.
+	DefaultBatchNo uint32
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
 	DefaultOperatorID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -99,6 +104,7 @@ const (
 	StatusPending Status = "PENDING"
 	StatusSuccess Status = "SUCCESS"
 	StatusFailed  Status = "FAILED"
+	StatusSkipped Status = "SKIPPED"
 )
 
 func (s Status) String() string {
@@ -108,7 +114,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPending, StatusSuccess, StatusFailed:
+	case StatusPending, StatusSuccess, StatusFailed, StatusSkipped:
 		return nil
 	default:
 		return fmt.Errorf("distributionrecord: invalid enum value for status field: %q", s)
@@ -161,6 +167,11 @@ func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
 // ByCommandRequestID orders the results by the command_request_id field.
 func ByCommandRequestID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCommandRequestID, opts...).ToFunc()
+}
+
+// ByBatchNo orders the results by the batch_no field.
+func ByBatchNo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBatchNo, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

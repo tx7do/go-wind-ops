@@ -94,6 +94,11 @@ func CommandRequestID(v string) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldCommandRequestID, v))
 }
 
+// BatchNo applies equality check predicate on the "batch_no" field. It's identical to BatchNoEQ.
+func BatchNo(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldEQ(FieldBatchNo, v))
+}
+
 // Error applies equality check predicate on the "error" field. It's identical to ErrorEQ.
 func Error(v string) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldError, v))
@@ -487,6 +492,46 @@ func CommandRequestIDEqualFold(v string) predicate.DistributionRecord {
 // CommandRequestIDContainsFold applies the ContainsFold predicate on the "command_request_id" field.
 func CommandRequestIDContainsFold(v string) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldContainsFold(FieldCommandRequestID, v))
+}
+
+// BatchNoEQ applies the EQ predicate on the "batch_no" field.
+func BatchNoEQ(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldEQ(FieldBatchNo, v))
+}
+
+// BatchNoNEQ applies the NEQ predicate on the "batch_no" field.
+func BatchNoNEQ(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldNEQ(FieldBatchNo, v))
+}
+
+// BatchNoIn applies the In predicate on the "batch_no" field.
+func BatchNoIn(vs ...uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldIn(FieldBatchNo, vs...))
+}
+
+// BatchNoNotIn applies the NotIn predicate on the "batch_no" field.
+func BatchNoNotIn(vs ...uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldNotIn(FieldBatchNo, vs...))
+}
+
+// BatchNoGT applies the GT predicate on the "batch_no" field.
+func BatchNoGT(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldGT(FieldBatchNo, v))
+}
+
+// BatchNoGTE applies the GTE predicate on the "batch_no" field.
+func BatchNoGTE(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldGTE(FieldBatchNo, v))
+}
+
+// BatchNoLT applies the LT predicate on the "batch_no" field.
+func BatchNoLT(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldLT(FieldBatchNo, v))
+}
+
+// BatchNoLTE applies the LTE predicate on the "batch_no" field.
+func BatchNoLTE(v uint32) predicate.DistributionRecord {
+	return predicate.DistributionRecord(sql.FieldLTE(FieldBatchNo, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

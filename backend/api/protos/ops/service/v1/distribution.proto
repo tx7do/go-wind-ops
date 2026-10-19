@@ -144,6 +144,13 @@ message Distribution {
 
   optional string docker_network = 16 [json_name = "dockerNetwork"]; // 容器网络
 
+  optional uint32 batch_size = 17 [
+    json_name = "batchSize",
+    (gnostic.openapi.v3.property) = {
+      description: "分批发布每批目标数(0=一次性全量;前一批全部成功才继续,任一失败自动中止)"
+    }
+  ]; // 分批发布每批目标数
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY
@@ -250,10 +257,15 @@ message DistributionRecord {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 关联指令幂等键
 
+  optional uint32 batch_no = 11 [
+    json_name = "batchNo",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 分批发布批次号(从 1 起;非分批发布恒为 1)
+
   optional string status = 7 [
     json_name = "status",
     (google.api.field_behavior) = OUTPUT_ONLY
-  ]; // 分发状态(PENDING/SUCCESS/FAILED)
+  ]; // 分发状态(PENDING/SUCCESS/FAILED/SKIPPED=前序批次失败未执行)
 
   optional string error = 8 [
     json_name = "error",

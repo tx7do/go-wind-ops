@@ -48,15 +48,20 @@ func (DistributionRecord) Fields() []ent.Field {
 			Positive(),
 
 		field.String("command_request_id").
-			Comment("关联的 MQTT 指令幂等键(dist_apply)").
+			Comment("关联的 MQTT 指令幂等键(dist_apply;未投递批次为 pending: 占位)").
 			NotEmpty(),
 
+		field.Uint32("batch_no").
+			Comment("分批发布批次号(从 1 起;非分批发布恒为 1)").
+			Default(1),
+
 		field.Enum("status").
-			Comment("分发状态").
+			Comment("分发状态:SKIPPED=前序批次失败未执行").
 			NamedValues(
 				"Pending", "PENDING",
 				"Success", "SUCCESS",
 				"Failed", "FAILED",
+				"Skipped", "SKIPPED",
 			).
 			Default("PENDING").
 			Optional().

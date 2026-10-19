@@ -212,6 +212,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	buildService := service.NewBuildService(ctx, buildRepo, repositoryRepo, buildHistoryRepo, minIOClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryRepo, buildRepo, repositoryRepo, minIOClient)
 	distributionService := service.NewDistributionService(ctx, distributionRepo, distributionRecordRepo, buildRepo, buildHistoryRepo, projectRepo, agentNodeRepo, minIOClient, agentService)
+	agentService.SetDistributionAdvanceHook(distributionService.AdvanceBatches)
 	monitorService := service.NewMonitorService(ctx, monitorRepo)
 	alertService := service.NewAlertService(ctx, alertRepo)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)

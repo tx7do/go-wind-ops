@@ -3,6 +3,7 @@ import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   DrawerForm,
   ProFormDependency,
+  ProFormDigit,
   ProFormSelect,
   ProFormSwitch,
   ProFormText,
@@ -225,6 +226,15 @@ placeholder={VOLS_PLACEHOLDER}
               { label: t('afterStart'), value: 'START' },
             ]}
             initialValue={data?.afterOpt ?? 'NONE'}
+          />
+          <ProFormDigit
+            name="batchSize"
+            label={t('batchSize')}
+            min={0}
+            fieldProps={{ precision: 0 }}
+            extra={t('batchSizeHint')}
+            initialValue={data?.batchSize ?? 0}
+            addonAfter={t('batchSizeUnit')}
           />
           <ProFormTextArea
             name="description"

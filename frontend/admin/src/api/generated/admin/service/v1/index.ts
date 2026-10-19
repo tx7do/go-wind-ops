@@ -6088,6 +6088,7 @@ export type opsservicev1_ListDistributionResponse = {
 // 分发配置
 export type opsservicev1_Distribution = {
   afterOpt?: opsservicev1_Distribution_AfterOpt;
+  batchSize?: number;
   //
   // Behaviors: REQUIRED
   buildId?: number;
@@ -6180,6 +6181,9 @@ export type opsservicev1_ListDistributionRecordResponse = {
 
 // 分发执行记录
 export type opsservicev1_DistributionRecord = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  batchNo?: number;
   //
   // Behaviors: OUTPUT_ONLY
   buildHistoryId?: number;

@@ -32,9 +32,11 @@ type DistributionRecord struct {
 	ProjectID uint32 `json:"project_id,omitempty"`
 	// 目标节点(ops_agent_nodes.id)
 	NodeID uint32 `json:"node_id,omitempty"`
-	// 关联的 MQTT 指令幂等键(dist_apply)
+	// 关联的 MQTT 指令幂等键(dist_apply;未投递批次为 pending: 占位)
 	CommandRequestID string `json:"command_request_id,omitempty"`
-	// 分发状态
+	// 分批发布批次号(从 1 起;非分批发布恒为 1)
+	BatchNo uint32 `json:"batch_no,omitempty"`
+	// 分发状态:SKIPPED=前序批次失败未执行
 	Status *distributionrecord.Status `json:"status,omitempty"`
 	// 失败原因
 	Error *string `json:"error,omitempty"`
@@ -52,7 +54,7 @@ func (*DistributionRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case distributionrecord.FieldID, distributionrecord.FieldDistributionID, distributionrecord.FieldBuildHistoryID, distributionrecord.FieldProjectID, distributionrecord.FieldNodeID, distributionrecord.FieldOperatorID:
+		case distributionrecord.FieldID, distributionrecord.FieldDistributionID, distributionrecord.FieldBuildHistoryID, distributionrecord.FieldProjectID, distributionrecord.FieldNodeID, distributionrecord.FieldBatchNo, distributionrecord.FieldOperatorID:
 			values[i] = new(sql.NullInt64)
 		case distributionrecord.FieldCommandRequestID, distributionrecord.FieldStatus, distributionrecord.FieldError, distributionrecord.FieldResult:
 			values[i] = new(sql.NullString)
@@ -129,6 +131,12 @@ func (_m *DistributionRecord) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field command_request_id", values[i])
 			} else if value.Valid {
 				_m.CommandRequestID = value.String
+			}
+		case distributionrecord.FieldBatchNo:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field batch_no", values[i])
+			} else if value.Valid {
+				_m.BatchNo = uint32(value.Int64)
 			}
 		case distributionrecord.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -230,6 +238,9 @@ func (_m *DistributionRecord) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("command_request_id=")
 	builder.WriteString(_m.CommandRequestID)
+	builder.WriteString(", ")
+	builder.WriteString("batch_no=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BatchNo))
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")

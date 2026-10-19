@@ -102,6 +102,10 @@ func (Distribution) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Uint32("batch_size").
+			Comment("分批发布每批目标数(0=一次性全量;≥1 时按序分批,前一批全部成功才继续,任一失败自动中止)").
+			Default(0),
+
 		field.String("description").
 			Comment("描述").
 			Optional().

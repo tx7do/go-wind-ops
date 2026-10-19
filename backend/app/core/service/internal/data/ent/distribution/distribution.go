@@ -51,6 +51,8 @@ const (
 	FieldDockerNetwork = "docker_network"
 	// FieldAfterOpt holds the string denoting the after_opt field in the database.
 	FieldAfterOpt = "after_opt"
+	// FieldBatchSize holds the string denoting the batch_size field in the database.
+	FieldBatchSize = "batch_size"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldLabels holds the string denoting the labels field in the database.
@@ -81,6 +83,7 @@ var Columns = []string{
 	FieldDockerRestart,
 	FieldDockerNetwork,
 	FieldAfterOpt,
+	FieldBatchSize,
 	FieldDescription,
 	FieldLabels,
 }
@@ -104,6 +107,8 @@ var (
 	DefaultClearOld bool
 	// DefaultDockerRestart holds the default value on creation for the "docker_restart" field.
 	DefaultDockerRestart string
+	// DefaultBatchSize holds the default value on creation for the "batch_size" field.
+	DefaultBatchSize uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -242,6 +247,11 @@ func ByDockerNetwork(opts ...sql.OrderTermOption) OrderOption {
 // ByAfterOpt orders the results by the after_opt field.
 func ByAfterOpt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAfterOpt, opts...).ToFunc()
+}
+
+// ByBatchSize orders the results by the batch_size field.
+func ByBatchSize(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBatchSize, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

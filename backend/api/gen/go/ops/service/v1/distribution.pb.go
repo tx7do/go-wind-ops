@@ -149,6 +149,7 @@ type Distribution struct {
 	DockerVolumes []string                 `protobuf:"bytes,14,rep,name=docker_volumes,json=dockerVolumes,proto3" json:"docker_volumes,omitempty"`                                          // 卷挂载(host:container)
 	DockerRestart *string                  `protobuf:"bytes,15,opt,name=docker_restart,json=dockerRestart,proto3,oneof" json:"docker_restart,omitempty"`                                    // 容器重启策略
 	DockerNetwork *string                  `protobuf:"bytes,16,opt,name=docker_network,json=dockerNetwork,proto3,oneof" json:"docker_network,omitempty"`                                    // 容器网络
+	BatchSize     *uint32                  `protobuf:"varint,17,opt,name=batch_size,json=batchSize,proto3,oneof" json:"batch_size,omitempty"`                                               // 分批发布每批目标数
 	CreatedAt     *timestamppb.Timestamp   `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                // 创建时间
 	UpdatedAt     *timestamppb.Timestamp   `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                // 更新时间
 	unknownFields protoimpl.UnknownFields
@@ -295,6 +296,13 @@ func (x *Distribution) GetDockerNetwork() string {
 		return *x.DockerNetwork
 	}
 	return ""
+}
+
+func (x *Distribution) GetBatchSize() uint32 {
+	if x != nil && x.BatchSize != nil {
+		return *x.BatchSize
+	}
+	return 0
 }
 
 func (x *Distribution) GetCreatedAt() *timestamppb.Timestamp {
@@ -676,7 +684,8 @@ type DistributionRecord struct {
 	ProjectId        *uint32                `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                       // 目标项目ID(逐目标一条记录)
 	NodeId           *uint32                `protobuf:"varint,5,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                // 目标节点ID
 	CommandRequestId *string                `protobuf:"bytes,6,opt,name=command_request_id,json=commandRequestId,proto3,oneof" json:"command_request_id,omitempty"` // 关联指令幂等键
-	Status           *string                `protobuf:"bytes,7,opt,name=status,proto3,oneof" json:"status,omitempty"`                                               // 分发状态(PENDING/SUCCESS/FAILED)
+	BatchNo          *uint32                `protobuf:"varint,11,opt,name=batch_no,json=batchNo,proto3,oneof" json:"batch_no,omitempty"`                            // 分批发布批次号(从 1 起;非分批发布恒为 1)
+	Status           *string                `protobuf:"bytes,7,opt,name=status,proto3,oneof" json:"status,omitempty"`                                               // 分发状态(PENDING/SUCCESS/FAILED/SKIPPED=前序批次失败未执行)
 	Error            *string                `protobuf:"bytes,8,opt,name=error,proto3,oneof" json:"error,omitempty"`                                                 // 失败原因
 	Result           *string                `protobuf:"bytes,9,opt,name=result,proto3,oneof" json:"result,omitempty"`                                               // 执行结果数据(JSON)
 	OperatorId       *uint32                `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`                   // 触发人
@@ -756,6 +765,13 @@ func (x *DistributionRecord) GetCommandRequestId() string {
 		return *x.CommandRequestId
 	}
 	return ""
+}
+
+func (x *DistributionRecord) GetBatchNo() uint32 {
+	if x != nil && x.BatchNo != nil {
+		return *x.BatchNo
+	}
+	return 0
 }
 
 func (x *DistributionRecord) GetStatus() string {
@@ -900,7 +916,7 @@ var File_ops_service_v1_distribution_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
-	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf8\v\n" +
+	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x9a\r\n" +
 	"\fDistribution\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17分发名(全局唯一)H\x01R\x04name\x88\x01\x01\x12W\n" +
@@ -922,11 +938,13 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\x0edocker_volumes\x18\x0e \x03(\tR\rdockerVolumes\x12*\n" +
 	"\x0edocker_restart\x18\x0f \x01(\tH\tR\rdockerRestart\x88\x01\x01\x12*\n" +
 	"\x0edocker_network\x18\x10 \x01(\tH\n" +
-	"R\rdockerNetwork\x88\x01\x01\x12C\n" +
+	"R\rdockerNetwork\x88\x01\x01\x12\x90\x01\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"batch_size\x18\x11 \x01(\rBl\xbaGi\x92\x02f分批发布每批目标数(0=一次性全量;前一批全部成功才继续,任一失败自动中止)H\vR\tbatchSize\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tupdatedAt\x88\x01\x01\"=\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\rR\tupdatedAt\x88\x01\x01\"=\n" +
 	"\bAfterOpt\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NONE\x10\x01\x12\v\n" +
@@ -951,6 +969,7 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\x0f_container_nameB\x11\n" +
 	"\x0f_docker_restartB\x11\n" +
 	"\x0f_docker_networkB\r\n" +
+	"\v_batch_sizeB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"d\n" +
 	"\x18ListDistributionResponse\x12\x14\n" +
@@ -978,7 +997,7 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\trecord_id\x18\x01 \x01(\rR\brecordId\x12,\n" +
 	"\x12command_request_id\x18\x02 \x01(\tR\x10commandRequestId\x12\x1d\n" +
 	"\n" +
-	"record_ids\x18\x03 \x03(\rR\trecordIds\"\xe5\x05\n" +
+	"record_ids\x18\x03 \x03(\rR\trecordIds\"\x97\x06\n" +
 	"\x12DistributionRecord\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x121\n" +
 	"\x0fdistribution_id\x18\x02 \x01(\rB\x03\xe0A\x03H\x01R\x0edistributionId\x88\x01\x01\x122\n" +
@@ -986,17 +1005,18 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x04 \x01(\rB\x03\xe0A\x03H\x03R\tprojectId\x88\x01\x01\x12!\n" +
 	"\anode_id\x18\x05 \x01(\rB\x03\xe0A\x03H\x04R\x06nodeId\x88\x01\x01\x126\n" +
-	"\x12command_request_id\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\x10commandRequestId\x88\x01\x01\x12 \n" +
-	"\x06status\x18\a \x01(\tB\x03\xe0A\x03H\x06R\x06status\x88\x01\x01\x12\x1e\n" +
-	"\x05error\x18\b \x01(\tB\x03\xe0A\x03H\aR\x05error\x88\x01\x01\x12 \n" +
-	"\x06result\x18\t \x01(\tB\x03\xe0A\x03H\bR\x06result\x88\x01\x01\x12)\n" +
+	"\x12command_request_id\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\x10commandRequestId\x88\x01\x01\x12#\n" +
+	"\bbatch_no\x18\v \x01(\rB\x03\xe0A\x03H\x06R\abatchNo\x88\x01\x01\x12 \n" +
+	"\x06status\x18\a \x01(\tB\x03\xe0A\x03H\aR\x06status\x88\x01\x01\x12\x1e\n" +
+	"\x05error\x18\b \x01(\tB\x03\xe0A\x03H\bR\x05error\x88\x01\x01\x12 \n" +
+	"\x06result\x18\t \x01(\tB\x03\xe0A\x03H\tR\x06result\x88\x01\x01\x12)\n" +
 	"\voperator_id\x18\n" +
-	" \x01(\rB\x03\xe0A\x03H\tR\n" +
+	" \x01(\rB\x03\xe0A\x03H\n" +
+	"R\n" +
 	"operatorId\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
-	"R\tcreatedAt\x88\x01\x01\x12E\n" +
-	"\vfinished_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01\x12E\n" +
+	"\vfinished_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\n" +
 	"finishedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\x12\n" +
 	"\x10_distribution_idB\x13\n" +
@@ -1004,7 +1024,8 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\v_project_idB\n" +
 	"\n" +
 	"\b_node_idB\x15\n" +
-	"\x13_command_request_idB\t\n" +
+	"\x13_command_request_idB\v\n" +
+	"\t_batch_noB\t\n" +
 	"\a_statusB\b\n" +
 	"\x06_errorB\t\n" +
 	"\a_resultB\x0e\n" +

@@ -1074,6 +1074,7 @@ var (
 		{Name: "docker_restart", Type: field.TypeString, Nullable: true, Comment: "容器重启策略(DOCKER 用)", Default: "unless-stopped"},
 		{Name: "docker_network", Type: field.TypeString, Nullable: true, Comment: "容器网络(DOCKER 用)"},
 		{Name: "after_opt", Type: field.TypeEnum, Nullable: true, Comment: "分发后动作", Enums: []string{"NONE", "RESTART", "START"}, Default: "NONE"},
+		{Name: "batch_size", Type: field.TypeUint32, Comment: "分批发布每批目标数(0=一次性全量;≥1 时按序分批,前一批全部成功才继续,任一失败自动中止)", Default: 0},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "labels", Type: field.TypeJSON, Nullable: true, Comment: "标签"},
 	}
@@ -1111,8 +1112,9 @@ var (
 		{Name: "build_history_id", Type: field.TypeUint32, Comment: "构建历史(ops_build_histories.id)"},
 		{Name: "project_id", Type: field.TypeUint32, Comment: "目标项目(ops_projects.id)"},
 		{Name: "node_id", Type: field.TypeUint32, Comment: "目标节点(ops_agent_nodes.id)"},
-		{Name: "command_request_id", Type: field.TypeString, Comment: "关联的 MQTT 指令幂等键(dist_apply)"},
-		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分发状态", Enums: []string{"PENDING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "command_request_id", Type: field.TypeString, Comment: "关联的 MQTT 指令幂等键(dist_apply;未投递批次为 pending: 占位)"},
+		{Name: "batch_no", Type: field.TypeUint32, Comment: "分批发布批次号(从 1 起;非分批发布恒为 1)", Default: 1},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分发状态:SKIPPED=前序批次失败未执行", Enums: []string{"PENDING", "SUCCESS", "FAILED", "SKIPPED"}, Default: "PENDING"},
 		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
 		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON:部署文件数/输出等)"},
 		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
@@ -1138,7 +1140,7 @@ var (
 			{
 				Name:    "idx_ops_dist_record_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionRecordsColumns[9]},
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[10]},
 			},
 		},
 	}

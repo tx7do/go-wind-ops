@@ -785,6 +785,10 @@ func init() {
 	distributionDescDockerRestart := distributionFields[10].Descriptor()
 	// distribution.DefaultDockerRestart holds the default value on creation for the docker_restart field.
 	distribution.DefaultDockerRestart = distributionDescDockerRestart.Default.(string)
+	// distributionDescBatchSize is the schema descriptor for batch_size field.
+	distributionDescBatchSize := distributionFields[13].Descriptor()
+	// distribution.DefaultBatchSize holds the default value on creation for the batch_size field.
+	distribution.DefaultBatchSize = distributionDescBatchSize.Default.(uint32)
 	// distributionDescID is the schema descriptor for id field.
 	distributionDescID := distributionMixinFields0[0].Descriptor()
 	// distribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -814,8 +818,12 @@ func init() {
 	distributionrecordDescCommandRequestID := distributionrecordFields[4].Descriptor()
 	// distributionrecord.CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
 	distributionrecord.CommandRequestIDValidator = distributionrecordDescCommandRequestID.Validators[0].(func(string) error)
+	// distributionrecordDescBatchNo is the schema descriptor for batch_no field.
+	distributionrecordDescBatchNo := distributionrecordFields[5].Descriptor()
+	// distributionrecord.DefaultBatchNo holds the default value on creation for the batch_no field.
+	distributionrecord.DefaultBatchNo = distributionrecordDescBatchNo.Default.(uint32)
 	// distributionrecordDescOperatorID is the schema descriptor for operator_id field.
-	distributionrecordDescOperatorID := distributionrecordFields[8].Descriptor()
+	distributionrecordDescOperatorID := distributionrecordFields[9].Descriptor()
 	// distributionrecord.DefaultOperatorID holds the default value on creation for the operator_id field.
 	distributionrecord.DefaultOperatorID = distributionrecordDescOperatorID.Default.(uint32)
 	// distributionrecordDescID is the schema descriptor for id field.

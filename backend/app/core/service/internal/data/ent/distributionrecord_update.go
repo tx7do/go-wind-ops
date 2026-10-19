@@ -167,6 +167,27 @@ func (_u *DistributionRecordUpdate) SetNillableCommandRequestID(v *string) *Dist
 	return _u
 }
 
+// SetBatchNo sets the "batch_no" field.
+func (_u *DistributionRecordUpdate) SetBatchNo(v uint32) *DistributionRecordUpdate {
+	_u.mutation.ResetBatchNo()
+	_u.mutation.SetBatchNo(v)
+	return _u
+}
+
+// SetNillableBatchNo sets the "batch_no" field if the given value is not nil.
+func (_u *DistributionRecordUpdate) SetNillableBatchNo(v *uint32) *DistributionRecordUpdate {
+	if v != nil {
+		_u.SetBatchNo(*v)
+	}
+	return _u
+}
+
+// AddBatchNo adds value to the "batch_no" field.
+func (_u *DistributionRecordUpdate) AddBatchNo(v int32) *DistributionRecordUpdate {
+	_u.mutation.AddBatchNo(v)
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *DistributionRecordUpdate) SetStatus(v distributionrecord.Status) *DistributionRecordUpdate {
 	_u.mutation.SetStatus(v)
@@ -401,6 +422,12 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 	if value, ok := _u.mutation.CommandRequestID(); ok {
 		_spec.SetField(distributionrecord.FieldCommandRequestID, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.BatchNo(); ok {
+		_spec.SetField(distributionrecord.FieldBatchNo, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchNo(); ok {
+		_spec.AddField(distributionrecord.FieldBatchNo, field.TypeUint32, value)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(distributionrecord.FieldStatus, field.TypeEnum, value)
 	}
@@ -591,6 +618,27 @@ func (_u *DistributionRecordUpdateOne) SetNillableCommandRequestID(v *string) *D
 	if v != nil {
 		_u.SetCommandRequestID(*v)
 	}
+	return _u
+}
+
+// SetBatchNo sets the "batch_no" field.
+func (_u *DistributionRecordUpdateOne) SetBatchNo(v uint32) *DistributionRecordUpdateOne {
+	_u.mutation.ResetBatchNo()
+	_u.mutation.SetBatchNo(v)
+	return _u
+}
+
+// SetNillableBatchNo sets the "batch_no" field if the given value is not nil.
+func (_u *DistributionRecordUpdateOne) SetNillableBatchNo(v *uint32) *DistributionRecordUpdateOne {
+	if v != nil {
+		_u.SetBatchNo(*v)
+	}
+	return _u
+}
+
+// AddBatchNo adds value to the "batch_no" field.
+func (_u *DistributionRecordUpdateOne) AddBatchNo(v int32) *DistributionRecordUpdateOne {
+	_u.mutation.AddBatchNo(v)
 	return _u
 }
 
@@ -857,6 +905,12 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 	}
 	if value, ok := _u.mutation.CommandRequestID(); ok {
 		_spec.SetField(distributionrecord.FieldCommandRequestID, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.BatchNo(); ok {
+		_spec.SetField(distributionrecord.FieldBatchNo, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedBatchNo(); ok {
+		_spec.AddField(distributionrecord.FieldBatchNo, field.TypeUint32, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(distributionrecord.FieldStatus, field.TypeEnum, value)

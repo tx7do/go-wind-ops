@@ -101,6 +101,10 @@ func (m *Distribution) validate(all bool) error {
 		// no validation rules for DockerNetwork
 	}
 
+	if m.BatchSize != nil {
+		// no validation rules for BatchSize
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -1146,6 +1150,10 @@ func (m *DistributionRecord) validate(all bool) error {
 
 	if m.CommandRequestId != nil {
 		// no validation rules for CommandRequestId
+	}
+
+	if m.BatchNo != nil {
+		// no validation rules for BatchNo
 	}
 
 	if m.Status != nil {

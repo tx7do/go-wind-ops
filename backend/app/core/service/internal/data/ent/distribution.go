@@ -57,6 +57,8 @@ type Distribution struct {
 	DockerNetwork *string `json:"docker_network,omitempty"`
 	// 分发后动作
 	AfterOpt *distribution.AfterOpt `json:"after_opt,omitempty"`
+	// 分批发布每批目标数(0=一次性全量;≥1 时按序分批,前一批全部成功才继续,任一失败自动中止)
+	BatchSize uint32 `json:"batch_size,omitempty"`
 	// 描述
 	Description *string `json:"description,omitempty"`
 	// 标签
@@ -73,7 +75,7 @@ func (*Distribution) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case distribution.FieldClearOld:
 			values[i] = new(sql.NullBool)
-		case distribution.FieldID, distribution.FieldCreatedBy, distribution.FieldUpdatedBy, distribution.FieldDeletedBy, distribution.FieldBuildID:
+		case distribution.FieldID, distribution.FieldCreatedBy, distribution.FieldUpdatedBy, distribution.FieldDeletedBy, distribution.FieldBuildID, distribution.FieldBatchSize:
 			values[i] = new(sql.NullInt64)
 		case distribution.FieldName, distribution.FieldDeployType, distribution.FieldImage, distribution.FieldContainerName, distribution.FieldDockerRestart, distribution.FieldDockerNetwork, distribution.FieldAfterOpt, distribution.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -234,6 +236,12 @@ func (_m *Distribution) assignValues(columns []string, values []any) error {
 				_m.AfterOpt = new(distribution.AfterOpt)
 				*_m.AfterOpt = distribution.AfterOpt(value.String)
 			}
+		case distribution.FieldBatchSize:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field batch_size", values[i])
+			} else if value.Valid {
+				_m.BatchSize = uint32(value.Int64)
+			}
 		case distribution.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -365,6 +373,9 @@ func (_m *Distribution) String() string {
 		builder.WriteString("after_opt=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("batch_size=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BatchSize))
 	builder.WriteString(", ")
 	if v := _m.Description; v != nil {
 		builder.WriteString("description=")

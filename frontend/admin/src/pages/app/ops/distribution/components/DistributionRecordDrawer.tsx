@@ -21,6 +21,8 @@ const statusTag = (status: string | undefined, t: (k: string) => string) => {
       return <Tag color="error">{t('statusFailed')}</Tag>;
     case 'PENDING':
       return <Tag color="warning">{t('statusPending')}</Tag>;
+    case 'SKIPPED':
+      return <Tag color="default">{t('statusSkipped')}</Tag>;
     default:
       return <Tag>{status ?? '-'}</Tag>;
   }
@@ -68,6 +70,7 @@ const DistributionRecordDrawer: React.FC<DistributionRecordDrawerProps> = ({
             <thead>
               <tr style={{ textAlign: 'left', color: '#999' }}>
                 <th style={cellStyle}>#{t('buildHistoryId')}</th>
+                <th style={cellStyle}>{t('batchNo')}</th>
                 <th style={cellStyle}>{t('status')}</th>
                 <th style={cellStyle}>{t('error')}</th>
                 <th style={cellStyle}>{t('createdAt')}</th>
@@ -82,6 +85,7 @@ const DistributionRecordDrawer: React.FC<DistributionRecordDrawerProps> = ({
                   onClick={() => setDetail(r)}
                 >
                   <td style={cellStyle}>#{r.buildHistoryId}</td>
+                  <td style={cellStyle}>{r.batchNo ?? 1}</td>
                   <td style={cellStyle}>{statusTag(r.status, t)}</td>
                   <td style={{ ...cellStyle, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {r.error || '-'}

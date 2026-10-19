@@ -60,6 +60,10 @@ type AgentService struct {
 
 	mqttBroker atomic.Value // broker.Broker
 
+	// distAdvanceHook 分发批次推进钩子(回执/超时定案后触发;wiring 晚于
+	// 本服务构造,经 Setter 注入避免循环依赖)。
+	distAdvanceHook atomic.Value // func(context.Context, uint32)
+
 	// waiters 同步指令的等待队列:request_id → 回执投递通道。
 	waiters sync.Map
 
@@ -95,6 +99,17 @@ func (s *AgentService) RegisterMqttBroker(b broker.Broker) {
 	s.mqttBroker.Store(b)
 }
 
+// SetDistributionAdvanceHook 注入分批发布推进钩子(distributionID 维度)。
+func (s *AgentService) SetDistributionAdvanceHook(h func(context.Context, uint32)) {
+	s.distAdvanceHook.Store(h)
+}
+
+func (s *AgentService) notifyDistAdvance(ctx context.Context, distributionID uint32) {
+	if h, ok := s.distAdvanceHook.Load().(func(context.Context, uint32)); ok && h != nil && distributionID > 0 {
+		h(ctx, distributionID)
+	}
+}
+
 // Start 启动后台扫描循环:节点离线判定 + 指令回执超时定案。
 // (mqtt_server 装配时调用;多副本并发执行幂等。)
 func (s *AgentService) Start(ctx context.Context) {
@@ -127,10 +142,13 @@ func (s *AgentService) Start(ctx context.Context) {
 				} else if n > 0 {
 					s.log.Infof("command timeout sweep: finalized %d stale command(s)", n)
 				}
-				if n, err := s.distRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
+				if distIDs, err := s.distRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
 					s.log.Warnf("distribution timeout sweep: %s", err.Error())
-				} else if n > 0 {
-					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", n)
+				} else if len(distIDs) > 0 {
+					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", len(distIDs))
+					for _, distID := range distIDs {
+						s.notifyDistAdvance(ctx, distID)
+					}
 				}
 				// 批次内超时未回执的指令逐条定案并对账批次计数
 				if stale, err := s.recordRepo.ListStalePendingBatchItems(ctx, time.Now().Add(-commandTimeout)); err != nil {
@@ -323,12 +341,19 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 	return nil
 }
 
-// applyDistributionResult 把分发回执回写到分发记录(按指令幂等键对账)。
+// applyDistributionResult 把分发回执回写到分发记录(按指令幂等键对账),
+// 并触发分批发布推进钩子。
 func (s *AgentService) applyDistributionResult(ctx context.Context, res *signal.CommandResult) {
+	rec, err := s.distRecordRepo.GetByCommandRequestID(ctx, res.RequestId)
+	if err != nil || rec == nil {
+		s.log.Warnf("finalize distribution record [%s]: lookup failed: %v", res.RequestId, err)
+		return
+	}
 	if err := s.distRecordRepo.FinalizeByCommandRequestID(ctx, res.RequestId,
 		toRecordStatus(res.Success), strings.TrimSpace(res.Error), string(res.Data)); err != nil {
 		s.log.Warnf("finalize distribution record [%s]: %s", res.RequestId, err.Error())
 	}
+	s.notifyDistAdvance(ctx, rec.DistributionID)
 }
 
 // applyBackupResult 把备份回执回写到备份记录(大小/校验和/终态),成功后

@@ -94,6 +94,20 @@ func (_c *DistributionRecordCreate) SetCommandRequestID(v string) *DistributionR
 	return _c
 }
 
+// SetBatchNo sets the "batch_no" field.
+func (_c *DistributionRecordCreate) SetBatchNo(v uint32) *DistributionRecordCreate {
+	_c.mutation.SetBatchNo(v)
+	return _c
+}
+
+// SetNillableBatchNo sets the "batch_no" field if the given value is not nil.
+func (_c *DistributionRecordCreate) SetNillableBatchNo(v *uint32) *DistributionRecordCreate {
+	if v != nil {
+		_c.SetBatchNo(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *DistributionRecordCreate) SetStatus(v distributionrecord.Status) *DistributionRecordCreate {
 	_c.mutation.SetStatus(v)
@@ -205,6 +219,10 @@ func (_c *DistributionRecordCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *DistributionRecordCreate) defaults() {
+	if _, ok := _c.mutation.BatchNo(); !ok {
+		v := distributionrecord.DefaultBatchNo
+		_c.mutation.SetBatchNo(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := distributionrecord.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -256,6 +274,9 @@ func (_c *DistributionRecordCreate) check() error {
 		if err := distributionrecord.CommandRequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "command_request_id", err: fmt.Errorf(`ent: validator failed for field "DistributionRecord.command_request_id": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.BatchNo(); !ok {
+		return &ValidationError{Name: "batch_no", err: errors.New(`ent: missing required field "DistributionRecord.batch_no"`)}
 	}
 	if v, ok := _c.mutation.Status(); ok {
 		if err := distributionrecord.StatusValidator(v); err != nil {
@@ -331,6 +352,10 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 	if value, ok := _c.mutation.CommandRequestID(); ok {
 		_spec.SetField(distributionrecord.FieldCommandRequestID, field.TypeString, value)
 		_node.CommandRequestID = value
+	}
+	if value, ok := _c.mutation.BatchNo(); ok {
+		_spec.SetField(distributionrecord.FieldBatchNo, field.TypeUint32, value)
+		_node.BatchNo = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(distributionrecord.FieldStatus, field.TypeEnum, value)
@@ -521,6 +546,24 @@ func (u *DistributionRecordUpsert) SetCommandRequestID(v string) *DistributionRe
 // UpdateCommandRequestID sets the "command_request_id" field to the value that was provided on create.
 func (u *DistributionRecordUpsert) UpdateCommandRequestID() *DistributionRecordUpsert {
 	u.SetExcluded(distributionrecord.FieldCommandRequestID)
+	return u
+}
+
+// SetBatchNo sets the "batch_no" field.
+func (u *DistributionRecordUpsert) SetBatchNo(v uint32) *DistributionRecordUpsert {
+	u.Set(distributionrecord.FieldBatchNo, v)
+	return u
+}
+
+// UpdateBatchNo sets the "batch_no" field to the value that was provided on create.
+func (u *DistributionRecordUpsert) UpdateBatchNo() *DistributionRecordUpsert {
+	u.SetExcluded(distributionrecord.FieldBatchNo)
+	return u
+}
+
+// AddBatchNo adds v to the "batch_no" field.
+func (u *DistributionRecordUpsert) AddBatchNo(v uint32) *DistributionRecordUpsert {
+	u.Add(distributionrecord.FieldBatchNo, v)
 	return u
 }
 
@@ -808,6 +851,27 @@ func (u *DistributionRecordUpsertOne) SetCommandRequestID(v string) *Distributio
 func (u *DistributionRecordUpsertOne) UpdateCommandRequestID() *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.UpdateCommandRequestID()
+	})
+}
+
+// SetBatchNo sets the "batch_no" field.
+func (u *DistributionRecordUpsertOne) SetBatchNo(v uint32) *DistributionRecordUpsertOne {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.SetBatchNo(v)
+	})
+}
+
+// AddBatchNo adds v to the "batch_no" field.
+func (u *DistributionRecordUpsertOne) AddBatchNo(v uint32) *DistributionRecordUpsertOne {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.AddBatchNo(v)
+	})
+}
+
+// UpdateBatchNo sets the "batch_no" field to the value that was provided on create.
+func (u *DistributionRecordUpsertOne) UpdateBatchNo() *DistributionRecordUpsertOne {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.UpdateBatchNo()
 	})
 }
 
@@ -1277,6 +1341,27 @@ func (u *DistributionRecordUpsertBulk) SetCommandRequestID(v string) *Distributi
 func (u *DistributionRecordUpsertBulk) UpdateCommandRequestID() *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.UpdateCommandRequestID()
+	})
+}
+
+// SetBatchNo sets the "batch_no" field.
+func (u *DistributionRecordUpsertBulk) SetBatchNo(v uint32) *DistributionRecordUpsertBulk {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.SetBatchNo(v)
+	})
+}
+
+// AddBatchNo adds v to the "batch_no" field.
+func (u *DistributionRecordUpsertBulk) AddBatchNo(v uint32) *DistributionRecordUpsertBulk {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.AddBatchNo(v)
+	})
+}
+
+// UpdateBatchNo sets the "batch_no" field to the value that was provided on create.
+func (u *DistributionRecordUpsertBulk) UpdateBatchNo() *DistributionRecordUpsertBulk {
+	return u.Update(func(s *DistributionRecordUpsert) {
+		s.UpdateBatchNo()
 	})
 }
 

@@ -390,6 +390,8 @@ func (s *PipelineService) runDistributionStep(ctx context.Context, runID uint32,
 				} else {
 					failMsg = fmt.Sprintf("distribution record [%d] failed", id)
 				}
+			case distributionrecord.StatusSkipped:
+				failMsg = fmt.Sprintf("distribution record [%d] skipped (earlier batch failed)", id)
 			default:
 				pending++
 			}

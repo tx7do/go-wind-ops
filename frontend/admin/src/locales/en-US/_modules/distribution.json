@@ -57,5 +57,10 @@
   "dockerVolumes": "Volume Mounts",
   "dockerRestart": "Restart Policy",
   "dockerNetwork": "Network",
-  "action": "Actions"
+  "action": "Actions",
+  "batchSize": "Batch Size",
+  "batchSizeHint": "0=all at once; >=1 canary rollout: next batch only after previous fully succeeds, any failure aborts the rest",
+  "batchSizeUnit": "/batch",
+  "batchNo": "Batch",
+  "statusSkipped": "Skipped"
 }
