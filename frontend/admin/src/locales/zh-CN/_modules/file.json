@@ -39,6 +39,5 @@
   "uploadDone": "已上传({size} 字节)",
   "uploadFailed": "上传失败",
   "dropHere": "释放以上传到当前目录",
-  "folderSkip": "暂不支持文件夹,请打包后拖入",
   "dropBatchDone": "拖拽上传完成 {{ok}}/{{total}}"
 }

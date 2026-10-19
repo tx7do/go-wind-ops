@@ -4,10 +4,14 @@ package service
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
+	"unicode/utf8"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -273,9 +277,10 @@ func (s *LogSnapshotService) CaptureLogSnapshot(ctx context.Context, req *opsV1.
 	if err = json.Unmarshal(res.Data, &out); err != nil {
 		return nil, opsV1.ErrorInternalServerError("decode project log result")
 	}
+	content := logContentToUTF8(out)
 
 	row, err := s.snapshotRepo.Create(ctx, project.GetId(), nodeID, project.GetName(),
-		out.Content, "MANUAL", operatorIDOf(ctx))
+		content, "MANUAL", operatorIDOf(ctx))
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("save log snapshot failed")
 	}
@@ -313,7 +318,7 @@ func (s *LogSnapshotService) CaptureAll(ctx context.Context) error {
 			continue
 		}
 		if _, cerr := s.snapshotRepo.Create(ctx, projectID, nodeID, p.GetName(),
-			out.Content, "SCHEDULED", 0); cerr != nil {
+			logContentToUTF8(out), "SCHEDULED", 0); cerr != nil {
 			failCount++
 			continue
 		}
@@ -321,6 +326,25 @@ func (s *LogSnapshotService) CaptureAll(ctx context.Context) error {
 	}
 	s.log.Infof("scheduled log snapshot done (ok=%d fail=%d)", okCount, failCount)
 	return nil
+}
+
+// logContentToUTF8 快照落库内容:优先取 ContentB64 原始字节,UTF-8 校验
+// 失败(Windows 控制台 GBK 输出)按 GBK 解码转 UTF-8,避免有损字符串入库。
+func logContentToUTF8(out signal.ProjectLogResult) string {
+	if out.ContentB64 == "" {
+		return out.Content
+	}
+	raw, err := base64.StdEncoding.DecodeString(out.ContentB64)
+	if err != nil {
+		return out.Content
+	}
+	if utf8.Valid(raw) {
+		return string(raw)
+	}
+	if decoded, err := simplifiedchinese.GBK.NewDecoder().Bytes(raw); err == nil {
+		return string(decoded)
+	}
+	return out.Content
 }
 
 // SearchLogSnapshots 关键字检索:ILIKE 命中最近 50 份快照,每份生成命中

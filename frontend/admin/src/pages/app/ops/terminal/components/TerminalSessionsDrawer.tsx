@@ -93,7 +93,10 @@ const TerminalSessionsDrawer = ({ open, onClose, onReplay }: Props) => {
 
   return (
     <Drawer title={t('title')} open={open} onClose={onClose} size={960} destroyOnHidden>
-      <div ref={containerRef} className="page-container-content">
+      {/* Drawer body 有确定高度(antd 骨架 flex:1),须显式撑满:
+          page-container-content 的 flex:1 只在 PageContainer 布局里生效,
+          Drawer 里没有固定高度祖先,不撑满会被 hook 量成初始 100px。 */}
+      <div ref={containerRef} className="page-container-content" style={{ height: '100%' }}>
         <ListTable<TerminalSession>
           actionRef={actionRef}
           columns={columns}

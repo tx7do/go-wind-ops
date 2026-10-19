@@ -20,6 +20,7 @@ import {
   fetchPrepareAgentFilePush,
   fetchPullAgentFile,
   putFileToPresignedUrl,
+  collectDroppedEntries,
   useDeleteAgentFile,
   useListAgentFiles,
   useReadAgentFile,
@@ -117,12 +118,12 @@ const FileManager = () => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const [dropActive, setDropActive] = useState(false);
-  const onUploadPicked = async (file: File): Promise<boolean> => {
+  const onUploadPicked = async (file: File, relativePath = ''): Promise<boolean> => {
     if (!agentId || !currentDir) {
       message.warning(t('pickAgentFirst'));
       return false;
     }
-    const targetPath = joinPath(currentDir, file.name);
+    const targetPath = joinPath(currentDir, relativePath || file.name);
     setUploading(true);
     try {
       const prep = await fetchPrepareAgentFilePush(agentId, targetPath);
@@ -140,7 +141,7 @@ const FileManager = () => {
     }
   };
 
-  // 整页拖拽=上传到当前目录(与选择文件按钮同一链路);目录项第一版不支持
+  // 整页拖拽=上传到当前目录(与选择文件按钮同一链路);目录递归保持相对路径
   const onUploadPickedRef = useRef(onUploadPicked);
   onUploadPickedRef.current = onUploadPicked;
   useEffect(() => {
@@ -160,30 +161,17 @@ const FileManager = () => {
       if (!hasFiles(e)) return;
       e.preventDefault();
       setDropActive(false);
-      const files: File[] = [];
-      let dirs = 0;
-      for (const item of Array.from(e.dataTransfer?.items || [])) {
-        const entry = (
-          item as DataTransferItem & { webkitGetAsEntry?: () => { isDirectory: boolean } | null }
-        ).webkitGetAsEntry?.();
-        if (entry?.isDirectory) {
-          dirs += 1;
-          continue;
-        }
-        const f = item.getAsFile();
-        if (f) files.push(f);
-      }
-      if (dirs > 0) message.warning(t('folderSkip'));
-      if (!files.length) return;
       if (!agentId || !currentDir) {
         message.warning(t('pickAgentFirst'));
         return;
       }
+      const { entries } = await collectDroppedEntries(e.dataTransfer!);
+      if (!entries.length) return;
       let ok = 0;
-      for (const f of files) {
-        if (await onUploadPickedRef.current(f)) ok += 1;
+      for (const { file: f, relativePath } of entries) {
+        if (await onUploadPickedRef.current(f, relativePath)) ok += 1;
       }
-      if (files.length > 1) message.info(t('dropBatchDone', { ok, total: files.length }));
+      if (entries.length > 1) message.info(t('dropBatchDone', { ok, total: entries.length }));
     };
     host.addEventListener('dragover', onDragOver);
     host.addEventListener('dragleave', onDragLeave);

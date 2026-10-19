@@ -176,7 +176,11 @@ export async function collectDroppedEntries(dt: DataTransfer): Promise<{ entries
   let dirs = 0;
   const roots: FsEntry[] = [];
   for (const item of Array.from(dt.items || [])) {
-    const entry = (item as DataTransferItem & { webkitGetAsEntry?: () => FsEntry | null }).webkitGetAsEntry?.();
+    // 新版 lib.dom 原生声明了 webkitGetAsEntry(返回 FileSystemEntry),与这里的
+    // 窄化 FsEntry 交叉后会得到联合类型,须经 unknown 强转拿回自己的签名。
+    // 新版 lib.dom 已原生声明 webkitGetAsEntry(返回 FileSystemEntry),窄化交叉后
+    // 联合类型须经 unknown 强转拿回自己的签名。
+    const entry = (item as unknown as { webkitGetAsEntry?: () => FsEntry | null }).webkitGetAsEntry?.() as FsEntry | null;
     if (entry) {
       if (entry.isDirectory) dirs += 1;
       roots.push(entry);

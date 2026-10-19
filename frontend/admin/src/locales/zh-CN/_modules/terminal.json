@@ -22,7 +22,6 @@
   "uploadCancel": "取消",
   "uploadDirRequired": "请填写目标目录",
   "connectFirst": "请先连接终端",
-  "folderSkip": "暂不支持文件夹,请打包后拖入",
   "dropHere": "释放以上传到远端",
   "uploadTermStart": "[上传] {{name}} → {{path}}",
   "uploadTermProgress": "[上传] {{name}} ({{percent}}%)",

@@ -39,6 +39,5 @@
   "uploadDone": "Uploaded ({size} bytes)",
   "uploadFailed": "Upload failed",
   "dropHere": "Drop to upload to current directory",
-  "folderSkip": "Folders are not supported yet, please archive them",
   "dropBatchDone": "Drop upload finished {{ok}}/{{total}}"
 }

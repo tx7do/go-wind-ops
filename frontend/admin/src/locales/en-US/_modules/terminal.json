@@ -22,7 +22,6 @@
   "uploadCancel": "Cancel",
   "uploadDirRequired": "Target directory is required",
   "connectFirst": "Connect the terminal first",
-  "folderSkip": "Folders are not supported yet, please archive them",
   "dropHere": "Drop to upload to remote",
   "uploadTermStart": "[upload] {{name}} → {{path}}",
   "uploadTermProgress": "[upload] {{name}} ({{percent}}%)",

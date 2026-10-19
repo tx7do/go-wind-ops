@@ -28,7 +28,7 @@ const dashQuery = () =>
   });
 
 const statusColor = (s?: string) =>
-  s === 'SUCCESS' ? '#52c41a' : s === 'FAILED' ? '#ff4d4f' : s === 'RUNNING' || s === 'PENDING' ? '#1677ff' : '#8c8c8c';
+  s === 'SUCCESS' ? '#52c41a' : s === 'FAILED' ? '#ff4d4f' : s === 'RUNNING' || s === 'PENDING' ? '#1677ff' : 'var(--ant-color-text-tertiary)';
 
 const fmtTime = (v?: string) => (v ? String(v).replace('T', ' ').slice(0, 19) : '-');
 
@@ -122,8 +122,8 @@ export default function DashboardPage() {
     { key: 'onlineNodes', value: onlineNodes.length, suffix: `/ ${nodeList.length}`, color: '#52c41a', icon: <CloudServerOutlined /> },
     { key: 'runningProjects', value: runningProjects.length, suffix: `/ ${projectList.length}`, color: '#1677ff', icon: <RocketOutlined /> },
     { key: 'buildSuccess', value: successBuilds.length, suffix: `/ ${buildList.length}`, color: '#722ed1', icon: <CheckCircleOutlined /> },
-    { key: 'pendingApprovals', value: pendingApprovals.length, color: pendingApprovals.length > 0 ? '#faad14' : '#8c8c8c', icon: <ThunderboltOutlined /> },
-    { key: 'activeAlerts', value: activeAlerts.length, color: activeAlerts.length > 0 ? '#ff4d4f' : '#8c8c8c', icon: <BellOutlined /> },
+    { key: 'pendingApprovals', value: pendingApprovals.length, color: pendingApprovals.length > 0 ? '#faad14' : 'var(--ant-color-text-tertiary)', icon: <ThunderboltOutlined /> },
+    { key: 'activeAlerts', value: activeAlerts.length, color: activeAlerts.length > 0 ? '#ff4d4f' : 'var(--ant-color-text-tertiary)', icon: <BellOutlined /> },
   ];
 
   const today = new Date().toLocaleDateString('zh-CN', {
@@ -162,7 +162,7 @@ export default function DashboardPage() {
               width: 8,
               height: 8,
               borderRadius: '50%',
-              background: n.status === 'ONLINE' ? '#52c41a' : '#8c8c8c',
+              background: n.status === 'ONLINE' ? '#52c41a' : 'var(--ant-color-text-tertiary)',
               boxShadow: n.status === 'ONLINE' ? '0 0 6px #52c41a88' : undefined,
               flexShrink: 0,
             }}
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                   <span style={{ fontSize: 14, fontWeight: 600, color: percentColor(v as number) }}>{p}%</span>
                 )}
               />
-              <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 2 }}>{t(label as string)}</div>
+              <div style={{ fontSize: 12, color: 'var(--ant-color-text-tertiary)', marginTop: 2 }}>{t(label as string)}</div>
             </Col>
           ))}
         </Row>
@@ -256,7 +256,7 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, color: s.color }}>
                         {s.value}
                         {s.suffix ? (
-                          <span style={{ fontSize: 13, fontWeight: 400, color: '#8c8c8c', marginLeft: 6 }}>{s.suffix}</span>
+                          <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--ant-color-text-tertiary)', marginLeft: 6 }}>{s.suffix}</span>
                         ) : null}
                       </div>
                     </div>
@@ -276,7 +276,7 @@ export default function DashboardPage() {
               pendingApprovals.length > 0 ? (
                 <Tag color="warning" style={{ margin: 0 }}>{pendingApprovals.length}</Tag>
               ) : (
-                <ThunderboltOutlined style={{ color: '#8c8c8c' }} />
+                <ThunderboltOutlined style={{ color: 'var(--ant-color-text-tertiary)' }} />
               )
             }
           >
@@ -315,7 +315,7 @@ export default function DashboardPage() {
               activeAlerts.length > 0 ? (
                 <Tag color="error" style={{ margin: 0 }}>{activeAlerts.length}</Tag>
               ) : (
-                <BellOutlined style={{ color: '#8c8c8c' }} />
+                <BellOutlined style={{ color: 'var(--ant-color-text-tertiary)' }} />
               )
             }
           >
@@ -345,7 +345,7 @@ export default function DashboardPage() {
           <Card
             size="small"
             title={<PanelTitle color="#722ed1" text={t('recentBuilds')} />}
-            extra={<CheckCircleOutlined style={{ color: '#8c8c8c' }} />}
+            extra={<CheckCircleOutlined style={{ color: 'var(--ant-color-text-tertiary)' }} />}
           >
             {buildList.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
@@ -378,7 +378,7 @@ export default function DashboardPage() {
           <Card
             size="small"
             title={<PanelTitle color="#1677ff" text={t('projectsPanel')} />}
-            extra={<RocketOutlined style={{ color: '#8c8c8c' }} />}
+            extra={<RocketOutlined style={{ color: 'var(--ant-color-text-tertiary)' }} />}
           >
             {projectList.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noProjects')} style={{ margin: '12px 0' }} />
@@ -391,7 +391,7 @@ export default function DashboardPage() {
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        background: pj.lastStatus === 'RUNNING' ? '#52c41a' : '#8c8c8c',
+                        background: pj.lastStatus === 'RUNNING' ? '#52c41a' : 'var(--ant-color-text-tertiary)',
                         flexShrink: 0,
                       }}
                     />
@@ -414,7 +414,7 @@ export default function DashboardPage() {
           <Card
             size="small"
             title={<PanelTitle color="#52c41a" text={t('nodesPanel')} />}
-            extra={<CloudServerOutlined style={{ color: '#8c8c8c' }} />}
+            extra={<CloudServerOutlined style={{ color: 'var(--ant-color-text-tertiary)' }} />}
           >
             {nodeList.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noData')} style={{ margin: '12px 0' }} />
