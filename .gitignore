@@ -35,7 +35,7 @@ go.work.sum
 # ZCode 会话产物
 .zcode/
 
-# CMS 残留文件(防止误拷贝)
+# 旧基座残留文件(防止误拷贝)
 AGENTS.md
 CHANGELOG.md
 CLAUDE.md

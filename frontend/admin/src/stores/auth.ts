@@ -168,7 +168,7 @@ export const useAuthStore = create<AuthState>()(
 
           // ===== MFA 闸门：后端在密码校验通过、需二次验证时返回 mfa_operation_id，=====
           // ===== access_token 为空。此时不写任何 token，跳转 MFA 挑战页。
-          // mfa_operation_id 不在 CMS 生成的 LoginResponse 类型上（基座契约差异），
+          // mfa_operation_id 不在后端生成的 LoginResponse 类型上（基座契约差异），
           // 后端若启用 MFA 会运行时携带；类型层用 any 桥接。
           const mfaOperationId = (response as { mfa_operation_id?: string })
             .mfa_operation_id;
@@ -270,7 +270,7 @@ export const useAuthStore = create<AuthState>()(
       // 前端无需（也无法）读取 refresh token 值。
       refreshToken: async () => {
         try {
-          // CMS 的 refresh token 为不透明随机串，绑定键 (uid/jti) 存在于 access
+          // 后端的 refresh token 为不透明随机串，绑定键 (uid/jti) 存在于 access
           // token payload 中。从持久化的 access token 解出后随请求回传
           // （uid/jti 非机密，出现在每个 bearer 里；真正的凭证是 HttpOnly cookie
           // 中的 refresh token 值）。
@@ -354,7 +354,7 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage', // localStorage key
       // 持久化 access token 及过期时间：刷新/关闭标签后恢复登录态（对齐 vben 侧体验）。
       // 双重作用：① 深链刷新时 initRouter 发现已认证，按真实权限重建路由；
-      // ② 其 payload 里的 uid/jti 是刷新请求的绑定键（CMS refresh token 为不透明
+      // ② 其 payload 里的 uid/jti 是刷新请求的绑定键（后端 refresh token 为不透明
       // 随机串，cookie 只存凭证值）。会话过期由既有链路兜底：API 401 → 凭
       // HttpOnly refresh cookie 静默续期；cookie 失效则 forceLogout 清空本存储。
       partialize: (s) => ({

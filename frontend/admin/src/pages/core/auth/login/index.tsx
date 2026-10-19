@@ -355,7 +355,7 @@ const Login: React.FC = () => {
         <span className="text-[color:var(--ant-color-text-secondary)]">
           {t('noAccount')}{' '}
         </span>
-        {/* CMS 后端暂无找回密码 RPC，入口对齐 vben 侧改为禁用态（9e131069） */}
+        {/* 后端暂无找回密码 RPC，入口对齐 vben 侧改为禁用态（9e131069） */}
         <span
           className="cursor-not-allowed text-[color:var(--ant-color-text-quaternary)]"
           style={{ fontSize: 13 }}

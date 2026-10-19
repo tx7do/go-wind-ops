@@ -21,7 +21,7 @@ server:
         - "http://localhost:15011"
         - "http://localhost:15021"
         - "http://localhost:10086"
-        - "https://api.cms.gowind.cloud"
+        - "https://api.ops.gowind.cloud"
     middleware:
       auth:
         method: "HS256"

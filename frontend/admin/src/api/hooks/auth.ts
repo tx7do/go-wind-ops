@@ -40,13 +40,13 @@ export const loginMutation = queryClient.getMutationCache().build(queryClient, {
 // ------------------------------
 // MFA 挑战验证（Mutation）
 // 提交 operation_id + TOTP 码，后端校验通过后返回 LoginResponse（含真 access_token）。
-// CMS 后端暂无独立 MFA 服务（与基座的契约差异）：无 mfaService 时挂拒绝兜底，
+// 后端暂无独立 MFA 服务（与基座的契约差异）：无 mfaService 时挂拒绝兜底，
 // 避免模块求值即崩溃（2026-09-16 Phase 0 冒烟发现）。
 // ------------------------------
 export const verifyMfaMutation = queryClient.getMutationCache().build(queryClient, {
   mutationKey: ['mfa-verify'],
   mutationFn: (input: { operationId: string; totpCode: string }) => {
-    // CMS 后端暂无独立 MFA 服务（与基座的契约差异）：无 mfaService 时挂拒绝兜底，
+    // 后端暂无独立 MFA 服务（与基座的契约差异）：无 mfaService 时挂拒绝兜底，
     // 避免模块求值即崩溃（2026-09-16 Phase 0 冒烟发现）。
     const mfaClient = (
       apiClient as {
@@ -60,7 +60,7 @@ export const verifyMfaMutation = queryClient.getMutationCache().build(queryClien
     ).mfaService;
     if (!mfaClient) {
       return Promise.reject(
-        new Error('MFA challenge is not available in the CMS backend'),
+        new Error('MFA challenge is not available in this backend'),
       );
     }
     return mfaClient.VerifyMFAChallenge(input);
