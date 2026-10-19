@@ -47,6 +47,7 @@
   "buStart": "Start batch upload",
   "buDone": "Batch upload finished {{ok}}/{{total}}",
   "listFailed": "Failed to list directory",
+  "treeTitle": "Directory tree",
   "dropHere": "Drop to upload to current directory",
   "dropBatchDone": "Drop upload finished {{ok}}/{{total}}"
 }

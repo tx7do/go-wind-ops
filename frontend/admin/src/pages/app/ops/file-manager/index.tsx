@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Modal, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
+import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Modal, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Tree, Typography } from 'antd';
+import type { DataNode } from 'antd/es/tree';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -252,16 +253,55 @@ const FileManager = () => {
     setDirInput(v);
   };
 
-  // 选中机器后自动进入:优先该机器上次浏览目录,无记忆则取 agent 默认工作目录
+  // ── 目录树:以进入的根目录为根,懒加载子目录;点击节点=浏览该目录 ──
+  const [treeData, setTreeData] = useState<DataNode[]>([]);
+
+  const setTreeRoot = useCallback((dir: string) => {
+    const parts = dir.split(/[\\/]+/).filter(Boolean);
+    setTreeData([{ title: parts[parts.length - 1] || dir, key: dir }]);
+  }, []);
+
+  // 经典递归:把 children 挂到指定 key 的节点上
+  const updateTreeData = (list: DataNode[], key: string, children: DataNode[]): DataNode[] =>
+    list.map((n) => {
+      if (n.key === key) return { ...n, children };
+      if (n.children) return { ...n, children: updateTreeData(n.children, key, children) };
+      return n;
+    });
+
+  const loadTreeChildren = useCallback(
+    async (node: { key: string | number }) => {
+      if (!agentId) return;
+      const dir = String(node.key);
+      try {
+        const resp = await fetchListAgentFiles(agentId, dir);
+        const children: DataNode[] = (resp.entries || [])
+          .filter((e) => e.isDir)
+          .map((e) => ({ title: e.name || '', key: joinPath(dir, e.name || '') }));
+        setTreeData((origin) => updateTreeData(origin, dir, children));
+      } catch {
+        // 越权/离线目录展开失败:置空子节点,不阻塞树
+        setTreeData((origin) => updateTreeData(origin, dir, []));
+      }
+    },
+    [agentId],
+  );
+
+  // 选中机器后自动进入:优先该机器上次浏览目录,无记忆则取 agent 默认工作目录;
+  // 目录树以进入的目录为根
   const openDefaultDir = async (aid: string) => {
     const last = localStorage.getItem(`file-manager:lastDir:${aid}`);
     if (last) {
+      setTreeRoot(last);
       openDir(last);
       return;
     }
     try {
       const resp = await fetchListAgentFiles(aid, '');
-      if (resp.dir) openDir(resp.dir);
+      if (resp.dir) {
+        setTreeRoot(resp.dir);
+        openDir(resp.dir);
+      }
     } catch (e) {
       message.error((e as Error).message || t('listFailed'));
     }
@@ -299,17 +339,17 @@ const FileManager = () => {
     {
       title: t('size'),
       dataIndex: 'size',
-      width: 130,
-      render: (_: unknown, r: FileEntry) => (r.isDir ? '-' : `${r.size ?? 0} B`),
+      width: 110,
+      render: (_: unknown, r: FileEntry) => (r.isDir ? '-' : formatBytes(r.size)),
     },
     {
       title: t('action'),
       key: 'action',
-      width: 160,
+      width: 200,
       render: (_: unknown, r: FileEntry) => {
         const p = joinPath(currentDir, r.name || '');
         return (
-          <Space>
+          <Space size={4} style={{ whiteSpace: 'nowrap' }}>
             {r.isDir ? (
               <a onClick={() => openDir(p)}><FolderOpenOutlined /> {t('open')}</a>
             ) : (
@@ -335,7 +375,10 @@ const FileManager = () => {
   const canBrowse = Boolean(agentId && currentDir);
 
   return (
-    <div ref={rootRef} style={{ padding: 16, position: 'relative' }}>
+    <div
+      ref={rootRef}
+      style={{ padding: 16, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+    >
       {dropActive && (
         <div
           style={{
@@ -356,8 +399,7 @@ const FileManager = () => {
           {t('dropHere')}
         </div>
       )}
-      <Space direction="vertical" style={{ width: '100%' }} size="middle">
-        <Space wrap>
+      <Space wrap style={{ marginBottom: 12 }}>
           <Select
             showSearch
             optionFilterProp="label"
@@ -420,6 +462,7 @@ const FileManager = () => {
 
         {canBrowse && (
           <Breadcrumb
+            style={{ marginBottom: 12 }}
             items={[
               { title: <a onClick={() => openDir('')}>{t('root')}</a> },
               ...breadcrumbs.map((c, i) => ({
@@ -431,16 +474,45 @@ const FileManager = () => {
           />
         )}
 
-        <Table
-          rowKey="name"
-          size="small"
-          columns={columns as never}
-          dataSource={entries}
-          loading={listing.isFetching && !canBrowse ? false : listing.isFetching}
-          pagination={false}
-          locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : listing.isError ? <Typography.Text type="danger" style={{ fontSize: 12 }}>{(listing.error as Error)?.message || t('listFailed')}</Typography.Text> : t('emptyDir')) : t('pickAgentFirst') }}
-        />
-      </Space>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 12, alignItems: 'stretch' }}>
+          {canBrowse && (
+            <div
+              style={{
+                width: 280,
+                flexShrink: 0,
+                overflow: 'auto',
+                border: '1px solid var(--ant-color-border-secondary)',
+                borderRadius: 8,
+                padding: '8px 4px',
+              }}
+            >
+              <Typography.Text type="secondary" style={{ fontSize: 12, padding: '0 8px' }}>
+                {t('treeTitle')}
+              </Typography.Text>
+              <Tree
+                blockNode
+                treeData={treeData}
+                loadData={loadTreeChildren}
+                selectedKeys={currentDir ? [currentDir] : []}
+                onSelect={(keys) => {
+                  const k = keys[0];
+                  if (k) openDir(String(k));
+                }}
+              />
+            </div>
+          )}
+          <div style={{ flex: 1, minWidth: 0, overflow: 'auto' }}>
+            <Table
+              rowKey="name"
+              size="small"
+              columns={columns as never}
+              dataSource={entries}
+              loading={listing.isFetching && !canBrowse ? false : listing.isFetching}
+              pagination={false}
+              locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : listing.isError ? <Typography.Text type="danger" style={{ fontSize: 12 }}>{(listing.error as Error)?.message || t('listFailed')}</Typography.Text> : t('emptyDir')) : t('pickAgentFirst') }}
+            />
+          </div>
+        </div>
 
       <Modal
         title={t('batchUpload')}

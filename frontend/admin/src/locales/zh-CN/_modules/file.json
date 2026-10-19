@@ -47,6 +47,7 @@
   "buStart": "开始批量上传",
   "buDone": "批量上传完成 {{ok}}/{{total}}",
   "listFailed": "目录获取失败",
+  "treeTitle": "目录树",
   "dropHere": "释放以上传到当前目录",
   "dropBatchDone": "拖拽上传完成 {{ok}}/{{total}}"
 }
