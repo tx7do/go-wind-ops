@@ -1,0 +1,160 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// CloudAccountService 云平台账号管理:多云环境(阿里云/腾讯云/华为云/AWS)
+// 的 AK/SK 台账。SK 落库加密,实体消息永不携带明文;在线校验调各厂商
+// 身份 API(如 STS GetCallerIdentity)回填账号 ID/名。
+service CloudAccountService {
+  // 查询云账号列表
+  rpc ListCloudAccounts (pagination.PagingRequest) returns (ListCloudAccountsResponse) {}
+
+  // 查询云账号详情
+  rpc GetCloudAccount (GetCloudAccountRequest) returns (CloudAccount) {}
+
+  // 创建云账号(SK 经请求字段传入,仅此一次)
+  rpc CreateCloudAccount (CreateCloudAccountRequest) returns (CloudAccount) {}
+
+  // 更新云账号(SK 缺省表示不变更)
+  rpc UpdateCloudAccount (UpdateCloudAccountRequest) returns (google.protobuf.Empty) {}
+
+  // 删除云账号
+  rpc DeleteCloudAccount (DeleteCloudAccountRequest) returns (google.protobuf.Empty) {}
+
+  // 在线校验:用存储的 AK/SK 调厂商身份 API,回填账号 ID/名与校验时间
+  rpc VerifyCloudAccount (VerifyCloudAccountRequest) returns (VerifyCloudAccountResponse) {}
+}
+
+// 云平台账号
+message CloudAccount {
+  // 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+  enum Provider {
+    PROVIDER_UNSPECIFIED = 0; // 未知
+
+    ALIYUN = 1;         // 阿里云
+    TENCENT_CLOUD = 2;  // 腾讯云
+    HUAWEI_CLOUD = 3;   // 华为云
+    AWS = 4;            // 亚马逊云
+  }
+
+  // 状态(零值命名避开 Provider 的 UNSPECIFIED 占用)
+  enum Status {
+    STATUS_UNSPECIFIED = 0; // 未知
+
+    ENABLED = 1;  // 启用
+    DISABLED = 2; // 禁用
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 账号ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账号别名
+
+  optional Provider provider = 3 [json_name = "provider"]; // 云厂商
+
+  optional string account_id = 4 [
+    json_name = "accountId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 云平台账号ID(校验回填)
+
+  optional string account_name = 5 [
+    json_name = "accountName",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 云平台账号名(校验回填)
+
+  optional string access_key = 6 [json_name = "accessKey"]; // 访问密钥 AK
+
+  optional string secret_mask = 7 [
+    json_name = "secretMask",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // SK 掩码展示(明文永不返回)
+
+  optional string region = 8 [json_name = "region"]; // 主地域
+
+  optional Status status = 9 [json_name = "status"]; // 状态
+
+  optional google.protobuf.Timestamp last_verified_at = 10 [
+    json_name = "lastVerifiedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 最近校验
+
+  optional string description = 11 [json_name = "description"]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+message ListCloudAccountsResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated CloudAccount items = 2 [json_name = "items"]; // 云账号列表
+}
+
+message GetCloudAccountRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账号ID
+}
+
+message CreateCloudAccountRequest {
+  optional CloudAccount data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 创建数据(name/provider/accessKey/region/status/description)
+
+  optional string secret_key = 2 [
+    json_name = "secretKey",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 明文 SK(仅创建时经此传入,落库加密)
+}
+
+message UpdateCloudAccountRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账号ID
+
+  optional CloudAccount data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 更新数据
+
+  optional string secret_key = 3 [json_name = "secretKey"]; // 明文 SK(空=不变更)
+}
+
+message DeleteCloudAccountRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账号ID
+}
+
+message VerifyCloudAccountRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账号ID
+}
+
+message VerifyCloudAccountResponse {
+  optional string account_id = 1 [json_name = "accountId"]; // 云平台账号ID
+  optional string account_name = 2 [json_name = "accountName"]; // 云平台账号名
+
+  optional google.protobuf.Timestamp verified_at = 3 [json_name = "verifiedAt"]; // 校验时间
+}

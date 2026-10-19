@@ -2754,6 +2754,297 @@ export type opsservicev1_GetBuildHistoryLogResponse = {
   status?: string;
 };
 
+// CloudAccountService 云平台账号管理门面。
+export interface CloudAccountService {
+  // 查询云账号列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListCloudAccountsResponse>;
+  // 查询云账号详情
+  Get(
+    request: opsservicev1_GetCloudAccountRequest,
+  ): Promise<opsservicev1_CloudAccount>;
+  // 创建云账号(SK 明文仅此一次经请求传入)
+  Create(
+    request: opsservicev1_CreateCloudAccountRequest,
+  ): Promise<opsservicev1_CloudAccount>;
+  // 更新云账号(SK 缺省表示不变更)
+  Update(
+    request: opsservicev1_UpdateCloudAccountRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除云账号
+  Delete(
+    request: opsservicev1_DeleteCloudAccountRequest,
+  ): Promise<wellKnownEmpty>;
+  // 在线校验:调厂商身份 API 验证密钥有效性,回填账号 ID/名
+  Verify(
+    request: opsservicev1_VerifyCloudAccountRequest,
+  ): Promise<opsservicev1_VerifyCloudAccountResponse>;
+}
+
+export function createCloudAccountServiceClient(
+  transport: ClientTransport,
+): CloudAccountService {
+  return {
+    List(request) {
+      const path = `admin/v1/cloud-accounts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CloudAccountService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListCloudAccountsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-accounts/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'CloudAccountService',
+        method: 'Get',
+      }) as Promise<opsservicev1_CloudAccount>;
+    },
+    Create(request) {
+      const path = `admin/v1/cloud-accounts`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudAccountService',
+        method: 'Create',
+      }) as Promise<opsservicev1_CloudAccount>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-accounts/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CloudAccountService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-accounts/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'CloudAccountService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Verify(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-accounts/${request.id}/verify`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudAccountService',
+        method: 'Verify',
+      }) as Promise<opsservicev1_VerifyCloudAccountResponse>;
+    },
+  };
+}
+export type opsservicev1_ListCloudAccountsResponse = {
+  items: opsservicev1_CloudAccount[] | undefined;
+  total: number | undefined;
+};
+
+// 云平台账号
+export type opsservicev1_CloudAccount = {
+  accessKey?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  accountId?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  accountName?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastVerifiedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  provider?: opsservicev1_CloudAccount_Provider;
+  region?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  secretMask?: string;
+  status?: opsservicev1_CloudAccount_Status;
+};
+
+// 云厂商(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)
+export type opsservicev1_CloudAccount_Provider =
+  | 'ALIYUN'
+  | 'AWS'
+  | 'HUAWEI_CLOUD'
+  | 'PROVIDER_UNSPECIFIED'
+  | 'TENCENT_CLOUD';
+// 状态(零值命名避开 Provider 的 UNSPECIFIED 占用)
+export type opsservicev1_CloudAccount_Status =
+  | 'DISABLED'
+  | 'ENABLED'
+  | 'STATUS_UNSPECIFIED';
+export type opsservicev1_GetCloudAccountRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateCloudAccountRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_CloudAccount;
+  //
+  // Behaviors: REQUIRED
+  secretKey?: string;
+};
+
+export type opsservicev1_UpdateCloudAccountRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_CloudAccount;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  secretKey?: string;
+};
+
+export type opsservicev1_DeleteCloudAccountRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_VerifyCloudAccountRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_VerifyCloudAccountResponse = {
+  accountId?: string;
+  accountName?: string;
+  verifiedAt?: wellKnownTimestamp;
+};
+
 // CommandRecordService agent 指令台账查询
 export interface CommandRecordService {
   // 查询指令台账
@@ -10775,6 +11066,7 @@ export class ApiClient {
   private _authenticationService?: AuthenticationService;
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
+  private _cloudAccountService?: CloudAccountService;
   private _commandRecordService?: CommandRecordService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
@@ -10848,6 +11140,10 @@ export class ApiClient {
 
   get buildService(): BuildService {
     return this._buildService ??= createBuildServiceClient(this._transport);
+  }
+
+  get cloudAccountService(): CloudAccountService {
+    return this._cloudAccountService ??= createCloudAccountServiceClient(this._transport);
   }
 
   get commandRecordService(): CommandRecordService {

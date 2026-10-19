@@ -14,6 +14,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
@@ -296,6 +297,19 @@ func init() {
 	buildpipelineDescID := buildpipelineMixinFields0[0].Descriptor()
 	// buildpipeline.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	buildpipeline.IDValidator = buildpipelineDescID.Validators[0].(func(uint32) error)
+	cloudaccountMixin := schema.CloudAccount{}.Mixin()
+	cloudaccountMixinFields0 := cloudaccountMixin[0].Fields()
+	_ = cloudaccountMixinFields0
+	cloudaccountFields := schema.CloudAccount{}.Fields()
+	_ = cloudaccountFields
+	// cloudaccountDescName is the schema descriptor for name field.
+	cloudaccountDescName := cloudaccountFields[0].Descriptor()
+	// cloudaccount.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	cloudaccount.NameValidator = cloudaccountDescName.Validators[0].(func(string) error)
+	// cloudaccountDescID is the schema descriptor for id field.
+	cloudaccountDescID := cloudaccountMixinFields0[0].Descriptor()
+	// cloudaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cloudaccount.IDValidator = cloudaccountDescID.Validators[0].(func(uint32) error)
 	commandrecordMixin := schema.CommandRecord{}.Mixin()
 	commandrecordMixinFields0 := commandrecordMixin[0].Fields()
 	_ = commandrecordMixinFields0

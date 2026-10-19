@@ -128,5 +128,6 @@
   "opsCicd": "CI/CD",
   "opsAuto": "Automation",
   "opsObserve": "Observability",
-  "opsGovern": "Governance"
+  "opsGovern": "Governance",
+  "cloud-accounts": "Cloud Accounts"
 }

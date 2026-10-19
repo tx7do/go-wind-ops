@@ -410,6 +410,33 @@ var (
 			},
 		},
 	}
+	// OpsCloudAccountsColumns holds the columns for the "ops_cloud_accounts" table.
+	OpsCloudAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "账号别名(唯一)"},
+		{Name: "provider", Type: field.TypeEnum, Nullable: true, Comment: "云厂商", Enums: []string{"ALIYUN", "TENCENT_CLOUD", "HUAWEI_CLOUD", "AWS"}},
+		{Name: "account_id", Type: field.TypeString, Nullable: true, Comment: "云平台账号ID(在线校验后回填)"},
+		{Name: "account_name", Type: field.TypeString, Nullable: true, Comment: "云平台账号名(在线校验后回填)"},
+		{Name: "access_key", Type: field.TypeString, Nullable: true, Comment: "访问密钥 AK"},
+		{Name: "secret_key", Type: field.TypeString, Nullable: true, Comment: "安全密钥 SK(加密存储)"},
+		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "主地域(如 cn-hangzhou / us-east-1)"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"ENABLED", "DISABLED"}, Default: "ENABLED"},
+		{Name: "last_verified_at", Type: field.TypeTime, Nullable: true, Comment: "最近在线校验时间"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsCloudAccountsTable holds the schema information for the "ops_cloud_accounts" table.
+	OpsCloudAccountsTable = &schema.Table{
+		Name:       "ops_cloud_accounts",
+		Comment:    "云平台账号表",
+		Columns:    OpsCloudAccountsColumns,
+		PrimaryKey: []*schema.Column{OpsCloudAccountsColumns[0]},
+	}
 	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
 	OpsCommandRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3237,6 +3264,7 @@ var (
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
 		OpsBuildPipelinesTable,
+		OpsCloudAccountsTable,
 		OpsCommandRecordsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
@@ -3326,6 +3354,11 @@ func init() {
 	}
 	OpsBuildPipelinesTable.Annotation = &entsql.Annotation{
 		Table:     "ops_build_pipelines",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsCloudAccountsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_cloud_accounts",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

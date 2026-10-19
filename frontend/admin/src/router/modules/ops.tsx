@@ -244,6 +244,17 @@ export const opsRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'cloud-accounts',
+        path: '/ops/cloud-accounts',
+        element: createLazyRoute(() => import('@/pages/app/ops/cloud-account')),
+        meta: {
+          title: 'routes:cloud-accounts',
+          icon: 'lucide:cloud',
+          order: 4,
+          authority: ['sys:platform_admin'],
+        },
+      },
     ],
   },
 ];

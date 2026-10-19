@@ -127,5 +127,6 @@
   "opsCicd": "持续交付",
   "opsAuto": "自动作业",
   "opsObserve": "监控告警",
-  "opsGovern": "平台治理"
+  "opsGovern": "平台治理",
+  "cloud-accounts": "云账号"
 }

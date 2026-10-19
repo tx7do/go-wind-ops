@@ -339,6 +339,15 @@ func NewApiKeyServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.
 	return opsV1.NewApiKeyServiceClient(cli)
 }
 
+func NewCloudAccountServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.CloudAccountServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewCloudAccountServiceClient(cli)
+}
+
 func NewPluginServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.PluginServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

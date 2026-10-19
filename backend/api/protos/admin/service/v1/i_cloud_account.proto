@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/cloud_account.proto";
+
+// CloudAccountService 云平台账号管理门面。
+service CloudAccountService {
+  // 查询云账号列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListCloudAccountsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-accounts"
+    };
+  }
+
+  // 查询云账号详情
+  rpc Get (ops.service.v1.GetCloudAccountRequest) returns (ops.service.v1.CloudAccount) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-accounts/{id}"
+    };
+  }
+
+  // 创建云账号(SK 明文仅此一次经请求传入)
+  rpc Create (ops.service.v1.CreateCloudAccountRequest) returns (ops.service.v1.CloudAccount) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-accounts"
+      body: "*"
+    };
+  }
+
+  // 更新云账号(SK 缺省表示不变更)
+  rpc Update (ops.service.v1.UpdateCloudAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/cloud-accounts/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除云账号
+  rpc Delete (ops.service.v1.DeleteCloudAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/cloud-accounts/{id}"
+    };
+  }
+
+  // 在线校验:调厂商身份 API 验证密钥有效性,回填账号 ID/名
+  rpc Verify (ops.service.v1.VerifyCloudAccountRequest) returns (ops.service.v1.VerifyCloudAccountResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-accounts/{id}/verify"
+      body: "*"
+    };
+  }
+}
