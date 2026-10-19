@@ -113,7 +113,7 @@ const PipelineDrawer: React.FC<PipelineDrawerProps> = ({ open, mode, data, onClo
             initialValue={data?.steps ?? [{}]}
           >
             <ProFormDependency name={['type']}>
-              {({ type }, _form, action) => (
+              {({ type }: { type?: any }, _form?: any, action?: any) => (
                 <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', width: '100%' }}>
                   <ProFormSelect
                     name="type"

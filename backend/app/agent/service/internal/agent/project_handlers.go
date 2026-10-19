@@ -12,6 +12,7 @@ package agent
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -258,10 +259,33 @@ func (s *Service) handleProjectLog(_ context.Context, env *signal.CommandEnvelop
 	logPath := filepath.Join(payload.Dir, logFileName)
 	info, err := os.Stat(logPath)
 	if os.IsNotExist(err) {
-		return signal.ProjectLogResult{ProjectId: payload.ProjectId, Content: ""}, nil
+		return signal.ProjectLogResult{ProjectId: payload.ProjectId, Content: "", Offset: 0}, nil
 	}
 	if err != nil {
 		return nil, fmt.Errorf("stat project log: %w", err)
+	}
+
+	// 增量模式:从 offset 读到文件尾;偏移落后过多(日志轮转/清空)时重置为尾部
+	if payload.Offset > 0 {
+		if payload.Offset > info.Size() {
+			content, _, err := readLogFileTail(logPath, info.Size(), maxBytes)
+			if err != nil {
+				return nil, fmt.Errorf("read project log: %w", err)
+			}
+			return signal.ProjectLogResult{
+				ProjectId: payload.ProjectId, Size: info.Size(), Truncated: true,
+				Content: content, ContentB64: base64.StdEncoding.EncodeToString([]byte(content)),
+				Offset: info.Size(),
+			}, nil
+		}
+		raw, err := readLogFileRange(logPath, payload.Offset, info.Size()-payload.Offset)
+		if err != nil {
+			return nil, fmt.Errorf("read project log: %w", err)
+		}
+		return signal.ProjectLogResult{
+			ProjectId: payload.ProjectId, Size: info.Size(),
+			ContentB64: base64.StdEncoding.EncodeToString(raw), Offset: info.Size(),
+		}, nil
 	}
 
 	content, truncated, err := readLogFileTail(logPath, info.Size(), maxBytes)
@@ -270,10 +294,12 @@ func (s *Service) handleProjectLog(_ context.Context, env *signal.CommandEnvelop
 	}
 
 	return signal.ProjectLogResult{
-		ProjectId: payload.ProjectId,
-		Size:      info.Size(),
-		Truncated: truncated,
-		Content:   content,
+		ProjectId:  payload.ProjectId,
+		Size:       info.Size(),
+		Truncated:  truncated,
+		Content:    content,
+		ContentB64: base64.StdEncoding.EncodeToString([]byte(content)),
+		Offset:     info.Size(),
 	}, nil
 }
 
@@ -293,6 +319,23 @@ func (s *Service) handleProjectLogClear(_ context.Context, env *signal.CommandEn
 		return nil, fmt.Errorf("truncate project log: %w", err)
 	}
 	return map[string]any{"cleared": true}, nil
+}
+
+// readLogFileRange 读 [offset, offset+n) 区间字节。
+func readLogFileRange(path string, offset, n int64) ([]byte, error) {
+	if n <= 0 {
+		return []byte{}, nil
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	raw := make([]byte, n)
+	if _, err = f.ReadAt(raw, offset); err != nil && err != io.EOF {
+		return nil, err
+	}
+	return raw, nil
 }
 
 // readLogFileTail 读文件尾部 maxBytes 字节。

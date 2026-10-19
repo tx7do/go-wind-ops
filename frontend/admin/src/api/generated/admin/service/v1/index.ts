@@ -11200,6 +11200,11 @@ export function createProjectServiceClient(
           `maxBytes=${encodeURIComponent(request.maxBytes.toString())}`,
         );
       }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
       let uri = path;
       if (queryParams.length > 0) {
         uri += `?${queryParams.join('&')}`;
@@ -11322,10 +11327,13 @@ export type opsservicev1_GetProjectLogRequest = {
   // Behaviors: REQUIRED
   id?: number;
   maxBytes?: number;
+  offset?: number;
 };
 
 export type opsservicev1_GetProjectLogResponse = {
   content: string | undefined;
+  contentB64: string | undefined;
+  offset: number | undefined;
   size: number | undefined;
   truncated: boolean | undefined;
 };

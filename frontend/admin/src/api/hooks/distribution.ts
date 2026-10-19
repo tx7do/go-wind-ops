@@ -88,7 +88,7 @@ export function useTriggerDistribution(
   options?: UseMutationOptions<opsservicev1_TriggerDistributionResponse, Error, Partial<opsservicev1_TriggerDistributionRequest>>,
 ) {
   return useMutation({
-    mutationFn: (req) => apiClient.distributionService.Trigger(req),
+    mutationFn: (req) => apiClient.distributionService.Trigger(req as never),
     ...options,
   });
 }

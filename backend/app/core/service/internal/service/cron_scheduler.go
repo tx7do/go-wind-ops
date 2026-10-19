@@ -54,6 +54,7 @@ type CronScheduler struct {
 	lastBudgetCheck    time.Time
 	lastCertCheck      time.Time
 	lastLogSnapshot    time.Time
+	lastTransientSweep time.Time
 	log                *log.Helper
 }
 
@@ -102,6 +103,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.tickCerts(ctx)
 				s.tickLogSnapshots(ctx)
 				s.tickRetention(ctx)
+				s.tickTransientObjects(ctx)
 			}
 		}
 	}()
@@ -262,6 +264,44 @@ func (s *CronScheduler) tickBackups(ctx context.Context) {
 func allPaging() *paginationV1.PagingRequest {
 	return &paginationV1.PagingRequest{
 		NoPaging: trans.Ptr(true),
+	}
+}
+
+// transientObjectTTL 瞬态对象存活期:文件管理拉取(agent-files/)与配置
+// 下发中转(config-templates/)都是一次性传输,超期即清。
+const transientObjectTTL = 24 * time.Hour
+
+var transientObjectPrefixes = []string{"agent-files/", "config-templates/"}
+
+// tickTransientObjects 清理瞬态中转对象(每小时一次)。
+func (s *CronScheduler) tickTransientObjects(ctx context.Context) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return
+	}
+	if time.Since(s.lastTransientSweep) < retentionSweepInterval {
+		return
+	}
+	s.lastTransientSweep = time.Now()
+	deadline := time.Now().Add(-transientObjectTTL)
+	removed := 0
+	for _, prefix := range transientObjectPrefixes {
+		objects := s.ossClient.GetClient().ListObjects(ctx, oss.BucketFiles, minio.ListObjectsOptions{
+			Prefix:    prefix,
+			Recursive: true,
+		})
+		for obj := range objects {
+			if obj.Err != nil || obj.LastModified.After(deadline) {
+				continue
+			}
+			if err := s.ossClient.GetClient().RemoveObject(ctx, oss.BucketFiles, obj.Key, minio.RemoveObjectOptions{}); err != nil {
+				s.log.Warnf("transient object cleanup remove %s: %s", obj.Key, err.Error())
+				continue
+			}
+			removed++
+		}
+	}
+	if removed > 0 {
+		s.log.Infof("transient object cleanup: removed %d object(s)", removed)
 	}
 }
 

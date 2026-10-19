@@ -634,6 +634,7 @@ type GetProjectLogRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                             // 项目ID
 	MaxBytes      *int32                 `protobuf:"varint,2,opt,name=max_bytes,json=maxBytes,proto3,oneof" json:"max_bytes,omitempty"` // 读取尾部字节数
+	Offset        *int64                 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`                     // 增量偏移
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -682,11 +683,20 @@ func (x *GetProjectLogRequest) GetMaxBytes() int32 {
 	return 0
 }
 
+func (x *GetProjectLogRequest) GetOffset() int64 {
+	if x != nil && x.Offset != nil {
+		return *x.Offset
+	}
+	return 0
+}
+
 type GetProjectLogResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`      // 日志内容(尾部)
-	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`           // 日志文件总大小(字节)
-	Truncated     bool                   `protobuf:"varint,3,opt,name=truncated,proto3" json:"truncated,omitempty"` // 是否只返回了尾部
+	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`                         // 日志内容(尾部;GBK 场景有损,新消费方用 contentB64)
+	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`                              // 日志文件总大小(字节)
+	Truncated     bool                   `protobuf:"varint,3,opt,name=truncated,proto3" json:"truncated,omitempty"`                    // 尾部模式=只返回尾部;增量模式=偏移落后已重置
+	ContentB64    []byte                 `protobuf:"bytes,4,opt,name=content_b64,json=contentB64,proto3" json:"content_b64,omitempty"` // 原始字节(传输层为 base64)
+	Offset        int64                  `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`                          // 读后文件大小(增量下一轮起点)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -740,6 +750,20 @@ func (x *GetProjectLogResponse) GetTruncated() bool {
 		return x.Truncated
 	}
 	return false
+}
+
+func (x *GetProjectLogResponse) GetContentB64() []byte {
+	if x != nil {
+		return x.ContentB64
+	}
+	return nil
+}
+
+func (x *GetProjectLogResponse) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
 }
 
 type ClearProjectLogRequest struct {
@@ -849,17 +873,22 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\toperation\x18\x02 \x01(\x0e2 .ops.service.v1.ProjectOperationB\x03\xe0A\x02R\toperation\"7\n" +
 	"\x16OperateProjectResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\"\xa4\x01\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xb2\x02\n" +
 	"\x14GetProjectLogRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12]\n" +
-	"\tmax_bytes\x18\x02 \x01(\x05B;\xbaG8\x92\x025读取日志尾部字节数(默认 64KB,上限 256KB)H\x01R\bmaxBytes\x88\x01\x01B\x05\n" +
+	"\tmax_bytes\x18\x02 \x01(\x05B;\xbaG8\x92\x025读取日志尾部字节数(默认 64KB,上限 256KB)H\x01R\bmaxBytes\x88\x01\x01\x12\x80\x01\n" +
+	"\x06offset\x18\x03 \x01(\x03Bc\xbaG`\x92\x02]增量拉取起始偏移(>0 时从该偏移读到文件尾;偏移落后过多重置为尾部)H\x02R\x06offset\x88\x01\x01B\x05\n" +
 	"\x03_idB\f\n" +
 	"\n" +
-	"_max_bytes\"c\n" +
+	"_max_bytesB\t\n" +
+	"\a_offset\"\x9c\x01\n" +
 	"\x15GetProjectLogResponse\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\x12\x1c\n" +
-	"\ttruncated\x18\x03 \x01(\bR\ttruncated\"9\n" +
+	"\ttruncated\x18\x03 \x01(\bR\ttruncated\x12\x1f\n" +
+	"\vcontent_b64\x18\x04 \x01(\fR\n" +
+	"contentB64\x12\x16\n" +
+	"\x06offset\x18\x05 \x01(\x03R\x06offset\"9\n" +
 	"\x16ClearProjectLogRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id*I\n" +

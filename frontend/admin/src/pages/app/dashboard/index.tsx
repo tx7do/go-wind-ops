@@ -91,7 +91,7 @@ export default function DashboardPage() {
   const common = { refetchInterval: REFRESH_MS } as const;
   const nodes = useListAgentNodes(dashQuery(), common);
   const projects = useListProjects(dashQuery(), common);
-  const builds = useListBuildHistories(dashQuery(), common);
+  const builds = useListBuildHistories(dashQuery(), { ...common, refetchInterval: 15000 } as never);
   const approvals = useListApprovals(dashQuery(), common);
   const alerts = useListAlerts(dashQuery(), common);
 
@@ -397,7 +397,7 @@ export default function DashboardPage() {
                     />
                     <span style={{ fontWeight: 600 }}>{pj.name}</span>
                     <Tag color={pj.lastStatus === 'RUNNING' ? 'processing' : 'default'} style={{ margin: 0 }}>
-                      {t(`projStatus.${pj.lastStatus}`, pj.lastStatus)}
+                      {(t as (k: string, d?: string) => string)(`projStatus.${pj.lastStatus}`, pj.lastStatus)}
                     </Tag>
                     <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
                       {relTime(pj.lastStatusAt)}

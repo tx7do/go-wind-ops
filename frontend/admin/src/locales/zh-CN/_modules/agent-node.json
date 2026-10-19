@@ -38,5 +38,8 @@
   "upgradeSent": "升级指令已下发({{requestId}}…),agent 将下载并自替换重启,以重启后心跳版本为准",
   "upgradeFailed": "升级触发失败",
   "upgradeWarning": "升级会替换 agent 二进制并重启进程,期间该节点指令短暂不可用;请确认升级包与目标机平台匹配",
-  "upgradeHint": "升级包经 MinIO 预签名 URL 直传,不经平台服务器;agent 回执后延迟 3 秒自替换重启"
+  "upgradeHint": "升级包经 MinIO 预签名 URL 直传,不经平台服务器;agent 回执后延迟 3 秒自替换重启",
+  "editTitle": "编辑节点: {{name}}",
+  "labels": "标签",
+  "labelsHint": "逗号分隔,如 edge,window"
 }

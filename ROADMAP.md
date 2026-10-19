@@ -201,6 +201,20 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 - 配置中心占位符:下发时渲染 {{env}}/{{node.id|name|hostname|agentId}}/{{project.id|name|dir}}/{{date}}/{{datetime}}(未关联项目时项目类占位符置空)。
 - 巡检报告导出:报告抽屉"导出 JSON"按钮(Blob 下载 summary)。
 
+## Phase 10 · 观测与治理收尾(2026-10-19)✅ 已完成
+
+### 10.1 项目日志 WebSocket 实时 tail(ROADMAP 3.1)✅
+**实现**:project_log 指令加 Offset 载荷(>0 从偏移读到文件尾,偏移落后过多重置尾部),回执加 ContentB64(原始字节 base64,GBK 保真);GetProjectLog RPC 透传;BFF 新增 /admin/v1/ws/projects/log WS 端点(参数 token 鉴权,2s 周期增量拉取,二进制帧推内容/文本帧 RESET 通知);前端日志抽屉"实时"开关(WS 模式停轮询、增量字节缓冲 512KB 上限、RESET 清缓冲重拉)。
+
+### 10.2 日志 GBK 保真查看 ✅
+**实现**:全链路字节化——agent 回执 base64 原始字节,前端 UTF-8 严格解码失败回落 GBK(Windows 控制台中文不再乱码);日志快照采集(核心侧)存的是旧 content 字符串,GBK 场景仍可能有损,后续可切 content_b64。
+
+### 10.3 瞬态对象清理 ✅
+**实现**:CronScheduler 每小时清扫 files 桶 agent-files/(文件管理拉取)与 config-templates/(配置下发中转)前缀下超 24h 的对象——两类都是一次性传输,此前无限累积。
+
+### 10.4 节点编辑弹窗恢复 + typecheck 清零 ✅
+**实现**:agent-node 编辑按钮此前点击无反应(重构时编辑弹窗丢失、editing state 无人消费)——恢复 AgentEditModal(显示名/环境/标签);typecheck 历史遗留 34→**0**(mutation void 返回 async 化、Partial<X> as never、未用变量/导入清理、dashboard i18n key 类型适配)。`pnpm typecheck` 首次全绿。
+
 ### 环境注意
 - 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
 - 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。

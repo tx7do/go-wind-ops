@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-query';
 import {
   type opsservicev1_GetPipelineRunLogResponse,
-  type opsservicev1_GetPipelineRunResponse,
   type opsservicev1_ListPipelineResponse,
   type opsservicev1_ListPipelineRunResponse,
   type opsservicev1_Pipeline,
@@ -45,19 +44,19 @@ export function useCreatePipeline(
 }
 
 export function useUpdatePipeline(
-  options?: Partial<UseMutationOptions<void, Error, { id: number; data: Partial<opsservicev1_Pipeline> }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: number; data: Partial<opsservicev1_Pipeline> }>>,
 ) {
   return useMutation({
-    mutationFn: ({ id, data }) => apiClient.pipelineService.Update({ id, data } as never),
+    mutationFn: async ({ id, data }) => { await apiClient.pipelineService.Update({ id, data } as never); },
     ...options,
   });
 }
 
 export function useDeletePipeline(
-  options?: Partial<UseMutationOptions<void, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: number }>>,
 ) {
   return useMutation({
-    mutationFn: ({ id }) => apiClient.pipelineService.Delete({ id }),
+    mutationFn: async ({ id }) => { await apiClient.pipelineService.Delete({ id }); },
     ...options,
   });
 }
@@ -66,7 +65,7 @@ export function useTriggerPipeline(
   options?: Partial<UseMutationOptions<opsservicev1_TriggerPipelineResponse, Error, { id: number }>>,
 ) {
   return useMutation({
-    mutationFn: ({ id }) => apiClient.pipelineService.Trigger({ id }),
+    mutationFn: ({ id }) => apiClient.pipelineService.Trigger({ id } as never),
     ...options,
   });
 }

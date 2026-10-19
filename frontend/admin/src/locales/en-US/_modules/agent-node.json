@@ -38,5 +38,8 @@
   "upgradeSent": "Upgrade dispatched ({{requestId}}…); agent will self-replace and restart, verify via heartbeat version",
   "upgradeFailed": "Upgrade trigger failed",
   "upgradeWarning": "Upgrading replaces the agent binary and restarts the process; commands on this node are briefly unavailable. Make sure the package matches the target platform",
-  "upgradeHint": "The package uploads directly to MinIO via presigned URL; agent self-replaces 3s after receipt"
+  "upgradeHint": "The package uploads directly to MinIO via presigned URL; agent self-replaces 3s after receipt",
+  "editTitle": "Edit Node: {{name}}",
+  "labels": "Labels",
+  "labelsHint": "Comma separated, e.g. edge,window"
 }

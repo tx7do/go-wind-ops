@@ -230,14 +230,19 @@ type ProjectLogPayload struct {
 	ProjectId uint32 `json:"project_id"`
 	Dir       string `json:"dir"`
 	MaxBytes  int64  `json:"max_bytes,omitempty"` // 读取尾部字节数,默认 64KB,上限 256KB
+	Offset    int64  `json:"offset,omitempty"`    // 增量拉取起始偏移(>0 时从该偏移读到文件尾)
 }
 
 // ProjectLogResult 日志查询回执。
+// ContentB64 为原始字节 base64(Windows GBK 输出保真,消费侧自行解码);
+// Offset 等于读后文件大小,作为下一轮增量拉取起点。
 type ProjectLogResult struct {
-	ProjectId uint32 `json:"project_id"`
-	Size      int64  `json:"size"`      // 日志文件总大小
-	Truncated bool   `json:"truncated"` // 是否只返回了尾部
-	Content   string `json:"content"`
+	ProjectId  uint32 `json:"project_id"`
+	Size       int64  `json:"size"`      // 日志文件总大小
+	Truncated  bool   `json:"truncated"` // 尾部模式=只返回了尾部;增量模式=偏移落后过多已重置为尾部
+	Content    string `json:"content"`   // 尾部模式的内容(旧消费方兼容;GBK 场景有损)
+	ContentB64 string `json:"content_b64,omitempty"` // 原始字节 base64(两种模式都填)
+	Offset     int64  `json:"offset,omitempty"`      // 读后文件大小(增量模式下一轮起点)
 }
 
 // ============================================================================

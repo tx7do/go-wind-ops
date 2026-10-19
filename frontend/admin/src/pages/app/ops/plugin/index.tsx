@@ -25,7 +25,7 @@ const PluginPage = () => {
   const [execTarget, setExecTarget] = useState<AgentPlugin | undefined>();
   const [execArgs, setExecArgs] = useState('');
   const [execTimeout, setExecTimeout] = useState<number>(60);
-  const [result, setResult] = useState<opsservicev1_ExecAgentPluginResponse>();
+  const [result, setResult] = useState<Record<string, any> | undefined>();
 
   const { data: nodesResp } = useQuery({
     queryKey: ['listAgentNodesForPlugin', 'all'],

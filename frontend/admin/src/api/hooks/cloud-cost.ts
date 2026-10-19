@@ -50,10 +50,10 @@ export function useUpsertCloudCost(
 }
 
 export function useDeleteCloudCost(
-  options?: Partial<UseMutationOptions<void, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: number }>>,
 ) {
   return useMutation({
-    mutationFn: ({ id }) => apiClient.cloudCostService.Delete({ id }),
+    mutationFn: async ({ id }) => { await apiClient.cloudCostService.Delete({ id }); },
     ...options,
   });
 }

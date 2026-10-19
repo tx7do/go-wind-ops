@@ -3,7 +3,6 @@ import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { App, Button, Tag, Typography } from 'antd';
 import { CloudDownloadOutlined, SyncOutlined } from '@ant-design/icons';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_CloudInstance as CloudInstance } from '@/api/generated/admin/service/v1';
 import { TABLE } from '@/config/constants';
@@ -21,7 +20,6 @@ const CloudResourceManagement = () => {
   const { t } = useTranslation('cloud-resource');
   const { t: tAccount } = useTranslation('cloud-account');
   const actionRef = useRef<ActionType>(null);
-  const queryClient = useQueryClient();
   const { message } = App.useApp();
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);

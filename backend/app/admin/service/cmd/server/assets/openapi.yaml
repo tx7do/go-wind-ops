@@ -6390,6 +6390,10 @@ paths:
                   schema:
                     type: integer
                     format: int32
+                - name: offset
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -11373,6 +11377,11 @@ components:
                     type: string
                 truncated:
                     type: boolean
+                contentB64:
+                    type: string
+                    format: bytes
+                offset:
+                    type: string
         ops.service.v1.ImportCloudCostsRequest:
             required:
                 - rows

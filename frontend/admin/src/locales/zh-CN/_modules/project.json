@@ -53,5 +53,9 @@
   "timelineDistribution": "分发",
   "timelineAlert": "告警",
   "timelineDistTarget": "分发到项目",
-  "timelineResolved": "已恢复"
+  "timelineResolved": "已恢复",
+  "logLive": "实时",
+  "logLiveOn": "实时已连",
+  "logLiveConnecting": "连接中",
+  "tokenMissing": "登录态丢失,请重新打开"
 }

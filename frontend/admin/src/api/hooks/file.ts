@@ -125,6 +125,72 @@ export async function uploadAgentFile({
   return fetchCompleteAgentFilePush(agentId, path, prep.objectKey || '');
 }
 
+// ==============================
+// 拖拽收集(含目录递归)
+// ==============================
+
+export interface DroppedEntry {
+  file: File;
+  /** 相对拖入根的路径(a/b/c.txt);顶层平铺文件为空串 */
+  relativePath: string;
+}
+
+type FsEntry = {
+  isFile: boolean;
+  isDirectory: boolean;
+  name: string;
+  file: (cb: (f: File) => void, err?: (e: unknown) => void) => void;
+  createReader: () => { readEntries: (cb: (r: FsEntry[]) => void, err?: (e: unknown) => void) => void };
+};
+
+/** 递归遍历文件系统条目;readEntries 每批最多 100 条,必须循环到空数组。 */
+async function walkFsEntry(entry: FsEntry, prefix: string, out: DroppedEntry[]): Promise<void> {
+  if (entry.isFile) {
+    const file = await new Promise<File | null>((resolve) => {
+      entry.file((f) => resolve(f), () => resolve(null));
+    });
+    if (file) out.push({ file, relativePath: prefix ? `${prefix}/${file.name}` : '' });
+    return;
+  }
+  if (!entry.isDirectory) return;
+  const reader = entry.createReader();
+  const next = prefix ? `${prefix}/${entry.name}` : entry.name;
+  for (;;) {
+    const batch = await new Promise<FsEntry[]>((resolve) => {
+      reader.readEntries((r) => resolve(r), () => resolve([]));
+    });
+    if (!batch.length) break;
+    for (const child of batch) {
+      await walkFsEntry(child, next, out);
+    }
+  }
+}
+
+/**
+ * 收集 drop 事件的数据项为待上传清单:顶层文件平铺,目录递归出全部文件并
+ * 保留相对路径(agent 落盘会自动 MkdirAll 父目录)。webkitGetAsEntry/getAsFile
+ * 必须在 drop 事件同步调用栈内执行,调用方须直接把 event.dataTransfer 传入。
+ */
+export async function collectDroppedEntries(dt: DataTransfer): Promise<{ entries: DroppedEntry[]; dirs: number }> {
+  const entries: DroppedEntry[] = [];
+  let dirs = 0;
+  const roots: FsEntry[] = [];
+  for (const item of Array.from(dt.items || [])) {
+    const entry = (item as DataTransferItem & { webkitGetAsEntry?: () => FsEntry | null }).webkitGetAsEntry?.();
+    if (entry) {
+      if (entry.isDirectory) dirs += 1;
+      roots.push(entry);
+      continue;
+    }
+    const f = item.getAsFile();
+    if (f) entries.push({ file: f, relativePath: '' });
+  }
+  for (const root of roots) {
+    await walkFsEntry(root, '', entries);
+  }
+  return { entries, dirs };
+}
+
 export function useDeleteAgentFile(
   options?: Partial<UseMutationOptions<opsservicev1_DeleteAgentFileResponse, Error, { agentId: string; path: string }>>,
 ) {

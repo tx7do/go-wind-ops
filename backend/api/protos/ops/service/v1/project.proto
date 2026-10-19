@@ -228,12 +228,21 @@ message GetProjectLogRequest {
       description: "读取日志尾部字节数(默认 64KB,上限 256KB)"
     }
   ]; // 读取尾部字节数
+
+  optional int64 offset = 3 [
+    json_name = "offset",
+    (gnostic.openapi.v3.property) = {
+      description: "增量拉取起始偏移(>0 时从该偏移读到文件尾;偏移落后过多重置为尾部)"
+    }
+  ]; // 增量偏移
 }
 
 message GetProjectLogResponse {
-  string content = 1 [json_name = "content"]; // 日志内容(尾部)
+  string content = 1 [json_name = "content"]; // 日志内容(尾部;GBK 场景有损,新消费方用 contentB64)
   int64 size = 2 [json_name = "size"]; // 日志文件总大小(字节)
-  bool truncated = 3 [json_name = "truncated"]; // 是否只返回了尾部
+  bool truncated = 3 [json_name = "truncated"]; // 尾部模式=只返回尾部;增量模式=偏移落后已重置
+  bytes content_b64 = 4 [json_name = "contentB64"]; // 原始字节(传输层为 base64)
+  int64 offset = 5 [json_name = "offset"]; // 读后文件大小(增量下一轮起点)
 }
 
 message ClearProjectLogRequest {

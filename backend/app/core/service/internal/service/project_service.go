@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"time"
 
@@ -165,6 +166,7 @@ func (s *ProjectService) GetProjectLog(ctx context.Context, req *opsV1.GetProjec
 			ProjectId: project.GetId(),
 			Dir:       project.GetProjectDir(),
 			MaxBytes:  int64(req.GetMaxBytes()),
+			Offset:    req.GetOffset(),
 		},
 		operatorIDOf(ctx), logQueryTimeout)
 	if err != nil {
@@ -180,10 +182,17 @@ func (s *ProjectService) GetProjectLog(ctx context.Context, req *opsV1.GetProjec
 		return nil, opsV1.ErrorInternalServerError("decode project log result")
 	}
 
+	contentB64, derr := base64.StdEncoding.DecodeString(out.ContentB64)
+	if derr != nil {
+		contentB64 = nil
+	}
+
 	return &opsV1.GetProjectLogResponse{
-		Content:   out.Content,
-		Size:      out.Size,
-		Truncated: out.Truncated,
+		Content:    out.Content,
+		Size:       out.Size,
+		Truncated:  out.Truncated,
+		ContentB64: contentB64,
+		Offset:     out.Offset,
 	}, nil
 }
 

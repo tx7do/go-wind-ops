@@ -133,6 +133,7 @@ func NewRestServer(
 	apiKeyService *service.ApiKeyService,
 	pluginService *service.PluginService,
 	terminalWsHandler *TerminalWsHandler,
+	projectLogWsHandler *ProjectLogWsHandler,
 	openApiGateway *OpenApiGateway,
 
 	authenticationService *service.AuthenticationService,
@@ -179,6 +180,12 @@ func NewRestServer(
 	// (浏览器 WS 无法带 Authorization 头,handler 内校验查询参数 token)。
 	if terminalWsHandler != nil {
 		srv.Handle(terminalWsHandler.Path(), terminalWsHandler)
+	}
+	if projectLogWsHandler != nil {
+		srv.Handle(projectLogWsHandler.Path(), projectLogWsHandler)
+	}
+	if projectLogWsHandler != nil {
+		srv.Handle(projectLogWsHandler.Path(), projectLogWsHandler)
 	}
 
 	// OpenAPI 网关:API Key 认证,不经过 JWT 中间件

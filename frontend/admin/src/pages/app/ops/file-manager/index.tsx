@@ -10,7 +10,7 @@ import {
   FileAddOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentFileEntry as FileEntry } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';

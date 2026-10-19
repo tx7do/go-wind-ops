@@ -30,7 +30,7 @@ export function useExecAgentPlugin(
   options?: Partial<UseMutationOptions<opsservicev1_ExecAgentPluginResponse, Error, { agentId: string; action: string; args?: string[]; timeoutSeconds?: number }>>,
 ) {
   return useMutation({
-    mutationFn: (req) => apiClient.pluginService.ExecAgentPlugin(req),
+    mutationFn: (req) => apiClient.pluginService.ExecAgentPlugin(req as never),
     ...options,
   });
 }

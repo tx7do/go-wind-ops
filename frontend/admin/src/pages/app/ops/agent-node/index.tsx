@@ -1,16 +1,17 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Input, Popconfirm, Progress, Select, Space, Tag, Tooltip, App } from 'antd';
+import { Popconfirm, Progress, Tag, Tooltip, App } from 'antd';
 import { DeleteOutlined, EditOutlined, GlobalOutlined, LineChartOutlined, RocketOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentNode as AgentNode } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { ENV_PRESETS, ENV_TAG_COLOR, TABLE } from '@/config/constants';
-import { fetchListAgentNodes, useDeleteAgentNode, useSendAgentCommand, useUpdateAgentNode } from '@/api/hooks/agent-node';
+import { fetchListAgentNodes, useDeleteAgentNode, useSendAgentCommand } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import AgentUpgradeModal from './components/AgentUpgradeModal';
+import AgentEditModal from './components/AgentEditModal';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import MetricsTrendDrawer from './components/MetricsTrendDrawer';
 
@@ -51,17 +52,6 @@ const AgentNodeManagement = () => {
   const [upgradeNode, setUpgradeNode] = useState<AgentNode | undefined>();
   const [editing, setEditing] = useState<AgentNode | undefined>();
 
-  const updateMutation = useUpdateAgentNode({
-    onSuccess: () => {
-      message.success(t('updateSuccess'));
-      setEditing(undefined);
-      actionRef.current?.reload();
-      queryClient.invalidateQueries({ queryKey: ['listAgentNodes'] });
-    },
-    onError: (error: Error) => {
-      message.error(error.message || t('updateFailed'));
-    },
-  });
 
   const renderPercent = (value: number | undefined) => {
     const percent = Math.round(value ?? 0);
@@ -286,6 +276,11 @@ const AgentNodeManagement = () => {
       <AgentUpgradeModal
         node={upgradeNode}
         onClose={() => setUpgradeNode(undefined)}
+      />
+
+      <AgentEditModal
+        node={editing}
+        onClose={() => setEditing(undefined)}
       />
     </>
   );

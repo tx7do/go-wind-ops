@@ -12,7 +12,7 @@ import '@xterm/xterm/css/xterm.css';
 import { useQuery } from '@tanstack/react-query';
 import { PaginationQuery } from '@/core';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
-import { uploadAgentFile, formatBytes, joinRemotePath } from '@/api/hooks/file';
+import { uploadAgentFile, formatBytes, joinRemotePath, collectDroppedEntries, type DroppedEntry } from '@/api/hooks/file';
 import { useAuthStore } from '@/stores/auth';
 
 /** 构造终端 WS 地址(经 dev 代理或网关同源转发)。 */
@@ -44,10 +44,10 @@ const TerminalPage = () => {
   const [connecting, setConnecting] = useState(false);
   const [fontSize, setFontSize] = useState<number>(readFontSize);
   const [title, setTitle] = useState('');
-  // 拖拽/按钮上传:待确认文件列表 + 目标目录
+  // 拖拽/按钮上传:待确认文件清单(含目录递归出的相对路径) + 目标目录
   const [dropActive, setDropActive] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [pendingEntries, setPendingEntries] = useState<DroppedEntry[]>([]);
   const [uploadDir, setUploadDir] = useState('');
   const [uploading, setUploading] = useState(false);
 
@@ -233,29 +233,17 @@ const TerminalPage = () => {
       if (!hasFiles(e)) return;
       e.preventDefault();
       setDropActive(false);
-      const files: File[] = [];
-      let dirs = 0;
-      for (const item of Array.from(e.dataTransfer?.items || [])) {
-        // 目录项第一版不支持(递归遍历留二期),提示打包
-        const entry = (
-          item as DataTransferItem & { webkitGetAsEntry?: () => { isDirectory: boolean } | null }
-        ).webkitGetAsEntry?.();
-        if (entry?.isDirectory) {
-          dirs += 1;
-          continue;
-        }
-        const f = item.getAsFile();
-        if (f) files.push(f);
-      }
-      if (dirs > 0) message.warning(t('folderSkip'));
-      if (!files.length) return;
       if (!connected) {
         message.warning(t('connectFirst'));
         return;
       }
-      setPendingFiles(files);
-      setUploadDir(localStorage.getItem(LAST_UPLOAD_DIR_KEY) || '');
-      setUploadOpen(true);
+      const dt = e.dataTransfer!;
+      void collectDroppedEntries(dt).then(({ entries }) => {
+        if (!entries.length) return;
+        setPendingEntries(entries);
+        setUploadDir(localStorage.getItem(LAST_UPLOAD_DIR_KEY) || '');
+        setUploadOpen(true);
+      });
     };
     host.addEventListener('dragover', onDragOver);
     host.addEventListener('dragleave', onDragLeave);
@@ -269,37 +257,37 @@ const TerminalPage = () => {
 
   /** 执行上传并往终端写进度/结果行(进度覆写当前行,结果各自成行)。 */
   const runUploads = useCallback(
-    async (files: File[], dir: string) => {
+    async (items: DroppedEntry[], dir: string) => {
       const term = termRef.current;
       const agent = agentIdRef.current;
       if (!term || !agent) return;
       setUploading(true);
       let ok = 0;
-      for (const f of files) {
-        const target = joinRemotePath(dir, f.name);
-        term.write(`\x1b[36m${t('uploadTermStart', { name: f.name, path: target })}\x1b[0m`);
+      for (const { file: f, relativePath } of items) {
+        const target = joinRemotePath(dir, relativePath || f.name);
+        term.write(`\x1b[36m${t('uploadTermStart', { name: relativePath || f.name, path: target })}\x1b[0m`);
         try {
           const done = await uploadAgentFile({
             agentId: agent,
             path: target,
             file: f,
             onProgress: (p) => {
-              term.write(`\r\x1b[2K\x1b[36m${t('uploadTermProgress', { name: f.name, percent: p })}\x1b[0m`);
+              term.write(`\r\x1b[2K\x1b[36m${t('uploadTermProgress', { name: relativePath || f.name, percent: p })}\x1b[0m`);
             },
           });
           term.write(
-            `\r\x1b[2K\x1b[32m${t('uploadTermDone', { name: f.name, size: formatBytes(done.size ?? f.size) })}\x1b[0m\r\n`,
+            `\r\x1b[2K\x1b[32m${t('uploadTermDone', { name: relativePath || f.name, size: formatBytes(done.size ?? f.size) })}\x1b[0m\r\n`,
           );
           ok += 1;
         } catch (err) {
           term.write(
-            `\r\x1b[2K\x1b[31m${t('uploadTermFail', { name: f.name, reason: (err as Error).message })}\x1b[0m\r\n`,
+            `\r\x1b[2K\x1b[31m${t('uploadTermFail', { name: relativePath || f.name, reason: (err as Error).message })}\x1b[0m\r\n`,
           );
         }
       }
       setUploading(false);
-      if (ok === files.length) message.success(t('uploadAllDone', { n: ok }));
-      else message.warning(t('uploadPartialDone', { ok, total: files.length }));
+      if (ok === items.length) message.success(t('uploadAllDone', { n: ok }));
+      else message.warning(t('uploadPartialDone', { ok, total: items.length }));
     },
     [message, t],
   );
@@ -311,11 +299,11 @@ const TerminalPage = () => {
       return;
     }
     localStorage.setItem(LAST_UPLOAD_DIR_KEY, dir);
-    const files = pendingFiles;
+    const items = pendingEntries;
     setUploadOpen(false);
-    setPendingFiles([]);
-    void runUploads(files, dir);
-  }, [uploadDir, pendingFiles, message, t, runUploads]);
+    setPendingEntries([]);
+    void runUploads(items, dir);
+  }, [uploadDir, pendingEntries, message, t, runUploads]);
 
   /** 打开上传确认弹层(按钮入口);拖拽入口在 drop 事件里。 */
   const openUploadDialog = useCallback(
@@ -325,7 +313,7 @@ const TerminalPage = () => {
         message.warning(t('connectFirst'));
         return;
       }
-      setPendingFiles(files);
+      setPendingEntries(files.map((file) => ({ file, relativePath: '' })));
       setUploadDir(localStorage.getItem(LAST_UPLOAD_DIR_KEY) || '');
       setUploadOpen(true);
     },
@@ -570,7 +558,7 @@ const TerminalPage = () => {
         onCancel={() => {
           if (uploading) return;
           setUploadOpen(false);
-          setPendingFiles([]);
+          setPendingEntries([]);
         }}
         onOk={confirmUpload}
         okText={t('uploadStart')}
@@ -591,10 +579,10 @@ const TerminalPage = () => {
           disabled={uploading}
         />
         <div style={{ marginTop: 8, maxHeight: 180, overflow: 'auto' }}>
-          {pendingFiles.map((f, i) => (
-            <div key={`${f.name}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '2px 0' }}>
+          {pendingEntries.map(({ file: f, relativePath }, i) => (
+            <div key={`${relativePath}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '2px 0' }}>
               <Typography.Text ellipsis style={{ fontSize: 12, maxWidth: 320 }}>
-                {f.name}
+                {relativePath || f.name}
               </Typography.Text>
               <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                 {formatBytes(f.size)}

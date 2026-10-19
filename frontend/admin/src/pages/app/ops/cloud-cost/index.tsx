@@ -163,8 +163,8 @@ const CloudCostManagement = () => {
       byKey[k] = months.map(() => 0);
     });
     items.forEach((it) => {
-      const k = `${it.provider}|${it.currency}`;
-      const idx = months.indexOf(it.month);
+      const k = `${it.provider}|${it.currency ?? 'CNY'}`;
+      const idx = months.indexOf(it.month ?? '');
       if (idx >= 0) byKey[k][idx] += it.total || 0;
     });
     return {

@@ -218,6 +218,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
 	terminalWsHandler := server.NewTerminalWsHandler(ctx, accessTokenChecker, terminalServiceClient)
+	projectLogWsHandler := server.NewProjectLogWsHandler(ctx, accessTokenChecker, projectServiceClient)
 	openApiGateway := server.NewOpenApiGateway(apiKeyServiceClient, buildServiceClient, distributionServiceClient, pipelineServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
@@ -236,6 +237,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		apiKeyService,
 		pluginService,
 		terminalWsHandler,
+		projectLogWsHandler,
 		openApiGateway,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,

@@ -63,7 +63,7 @@ const CloudAccountDrawer: React.FC<CloudAccountDrawerProps> = ({
       accessKey: values.accessKey,
       region: values.region || undefined,
       description: values.description || undefined,
-      status: values.status === false ? 'DISABLED' : 'ENABLED',
+      status: (values.status === false ? 'DISABLED' : 'ENABLED') as never,
     };
     if (mode === 'create') {
       await createMutation.mutateAsync({ data: payload, secretKey: values.secretKey });

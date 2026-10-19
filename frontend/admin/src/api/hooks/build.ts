@@ -85,7 +85,7 @@ export function useTriggerBuild(
   options?: UseMutationOptions<opsservicev1_TriggerBuildResponse, Error, Partial<opsservicev1_TriggerBuildRequest>>,
 ) {
   return useMutation({
-    mutationFn: (req) => apiClient.buildService.Trigger(req),
+    mutationFn: (req) => apiClient.buildService.Trigger(req as never),
     ...options,
   });
 }

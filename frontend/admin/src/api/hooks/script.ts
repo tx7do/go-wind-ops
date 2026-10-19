@@ -85,7 +85,7 @@ export function useExecuteScript(
   options?: UseMutationOptions<opsservicev1_ExecuteScriptResponse, Error, Partial<opsservicev1_ExecuteScriptRequest>>,
 ) {
   return useMutation({
-    mutationFn: (req) => apiClient.scriptService.Execute(req),
+    mutationFn: (req) => apiClient.scriptService.Execute(req as never),
     ...options,
   });
 }

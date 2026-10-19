@@ -1159,6 +1159,10 @@ func (m *GetProjectLogRequest) validate(all bool) error {
 		// no validation rules for MaxBytes
 	}
 
+	if m.Offset != nil {
+		// no validation rules for Offset
+	}
+
 	if len(errors) > 0 {
 		return GetProjectLogRequestMultiError(errors)
 	}
@@ -1266,6 +1270,10 @@ func (m *GetProjectLogResponse) validate(all bool) error {
 	// no validation rules for Size
 
 	// no validation rules for Truncated
+
+	// no validation rules for ContentB64
+
+	// no validation rules for Offset
 
 	if len(errors) > 0 {
 		return GetProjectLogResponseMultiError(errors)

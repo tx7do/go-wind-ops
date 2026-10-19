@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { App, Modal, Space, Spin, Table, Tag } from 'antd';
+import { Modal, Space, Spin, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -17,7 +17,6 @@ interface PipelineRunsModalProps {
 /** 流水线运行记录弹窗:列表 + 增量日志 tail(RUNNING 每 2s 追加)。 */
 const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose }) => {
   const { t } = useTranslation('pipeline');
-  const { message } = App.useApp();
   const [items, setItems] = useState<PipelineRun[]>([]);
   const [loading, setLoading] = useState(false);
   const [logRun, setLogRun] = useState<PipelineRun>();
@@ -64,7 +63,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
     fetchPipelineRunLog(logRun.id, 0)
       .then((resp) => {
         if (!alive) return;
-        setLogView({ text: resp.delta || '', offset: resp.newOffset ?? 0, status: resp.status, error: resp.error });
+        setLogView({ text: resp.delta || '', offset: resp.newOffset ?? 0, status: resp.status, error: (resp as unknown as { error?: string }).error });
       })
       .catch(() => {});
     return () => {
@@ -82,7 +81,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
           text: (p?.text || '') + (resp.delta || ''),
           offset: resp.newOffset ?? p?.offset ?? 0,
           status: resp.status,
-          error: resp.error,
+          error: (resp as unknown as { error?: string }).error,
         }));
       } catch {
         /* 静默重试 */

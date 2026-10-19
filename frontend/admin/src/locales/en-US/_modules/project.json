@@ -53,5 +53,9 @@
   "timelineDistribution": "Distribution",
   "timelineAlert": "Alert",
   "timelineDistTarget": "Distribute to project",
-  "timelineResolved": "resolved"
+  "timelineResolved": "resolved",
+  "logLive": "Live",
+  "logLiveOn": "Live connected",
+  "logLiveConnecting": "Connecting",
+  "tokenMissing": "Session lost, please reopen"
 }
