@@ -106,7 +106,8 @@ message ListCloudAccountsResponse {
 }
 
 message GetCloudAccountRequest {
-  optional uint32 id = 1 [
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
@@ -125,7 +126,8 @@ message CreateCloudAccountRequest {
 }
 
 message UpdateCloudAccountRequest {
-  optional uint32 id = 1 [
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
@@ -139,14 +141,16 @@ message UpdateCloudAccountRequest {
 }
 
 message DeleteCloudAccountRequest {
-  optional uint32 id = 1 [
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
 }
 
 message VerifyCloudAccountRequest {
-  optional uint32 id = 1 [
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID

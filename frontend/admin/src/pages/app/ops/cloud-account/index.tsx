@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { App, Button, Input, Modal, Popconfirm, Select, Space, Switch, Tag, Typography } from 'antd';
+import { App, Button, Popconfirm, Tag, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -10,17 +10,12 @@ import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import {
   fetchListCloudAccounts,
-  useCreateCloudAccount,
   useDeleteCloudAccount,
-  useUpdateCloudAccount,
   useVerifyCloudAccount,
 } from '@/api/hooks/cloud-account';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
-
-const PROVIDERS = ['ALIYUN', 'TENCENT_CLOUD', 'HUAWEI_CLOUD', 'AWS'] as const;
-
-type Provider = (typeof PROVIDERS)[number];
+import CloudAccountDrawer from './components/CloudAccountDrawer';
 
 const CloudAccountManagement = () => {
   const { t } = useTranslation('cloud-account');
@@ -30,40 +25,12 @@ const CloudAccountManagement = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
 
-  const [formOpen, setFormOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<CloudAccount | undefined>();
-  const [form, setForm] = useState({
-    name: '',
-    provider: 'ALIYUN' as Provider,
-    accessKey: '',
-    secretKey: '',
-    region: '',
-    description: '',
-    status: true,
-  });
   const [verifyingId, setVerifyingId] = useState<number>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listCloudAccounts'] });
 
-  const createMutation = useCreateCloudAccount({
-    onSuccess: () => {
-      message.success(t('createSuccess'));
-      setFormOpen(false);
-      invalidate();
-      actionRef.current?.reload();
-    },
-    onError: (e: Error) => message.error(e.message || t('createFailed')),
-  });
-  const updateMutation = useUpdateCloudAccount({
-    onSuccess: () => {
-      message.success(t('updateSuccess'));
-      setFormOpen(false);
-      setEditing(undefined);
-      invalidate();
-      actionRef.current?.reload();
-    },
-    onError: (e: Error) => message.error(e.message || t('updateFailed')),
-  });
   const deleteMutation = useDeleteCloudAccount({
     onSuccess: () => {
       message.success(t('deleteSuccess'));
@@ -84,66 +51,6 @@ const CloudAccountManagement = () => {
       message.error(e.message || t('verifyFailed'));
     },
   });
-
-  const openCreate = () => {
-    setEditing(undefined);
-    setForm({ name: '', provider: 'ALIYUN', accessKey: '', secretKey: '', region: '', description: '', status: true });
-    setFormOpen(true);
-  };
-
-  const openEdit = (record: CloudAccount) => {
-    setEditing(record);
-    setForm({
-      name: record.name || '',
-      provider: (record.provider || 'ALIYUN') as Provider,
-      accessKey: record.accessKey || '',
-      secretKey: '',
-      region: record.region || '',
-      description: record.description || '',
-      status: record.status !== 'DISABLED',
-    });
-    setFormOpen(true);
-  };
-
-  const submitForm = () => {
-    if (!form.name.trim()) {
-      message.warning(t('nameRequired'));
-      return;
-    }
-    if (!form.accessKey.trim()) {
-      message.warning(t('accessKeyRequired'));
-      return;
-    }
-    if (editing) {
-      updateMutation.mutate({
-        id: editing.id!,
-        data: {
-          name: form.name.trim(),
-          provider: form.provider,
-          accessKey: form.accessKey.trim(),
-          region: form.region || undefined,
-          description: form.description || undefined,
-          status: form.status ? 'ENABLED' : 'DISABLED',
-        },
-        secretKey: form.secretKey || undefined,
-      });
-    } else {
-      if (!form.secretKey) {
-        message.warning(t('secretKeyRequired'));
-        return;
-      }
-      createMutation.mutate({
-        data: {
-          name: form.name.trim(),
-          provider: form.provider,
-          accessKey: form.accessKey.trim(),
-          region: form.region || undefined,
-          description: form.description || undefined,
-        },
-        secretKey: form.secretKey,
-      });
-    }
-  };
 
   const providerTag = (provider?: string) => {
     const color: Record<string, string> = {
@@ -196,7 +103,7 @@ const CloudAccountManagement = () => {
         >
           <SafetyCertificateOutlined /> {verifyingId === record.id ? t('verifying') : t('verify')}
         </a>,
-        <a key="edit" onClick={() => openEdit(record)}>
+        <a key="edit" onClick={() => { setEditing(record); setDrawerOpen(true); }}>
           <EditOutlined />
         </a>,
         <Popconfirm
@@ -233,7 +140,15 @@ const CloudAccountManagement = () => {
             search={false}
             pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
             toolBarRender={() => [
-              <Button key="create" type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+              <Button
+                key="create"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setEditing(undefined);
+                  setDrawerOpen(true);
+                }}
+              >
                 {t('create')}
               </Button>,
             ]}
@@ -244,65 +159,19 @@ const CloudAccountManagement = () => {
         </div>
       </ContentContainer>
 
-      {/* 创建/编辑弹窗:编辑时 SK 留空表示不变更 */}
-      <Modal
-        title={editing ? t('edit') : t('create')}
-        open={formOpen}
-        onCancel={() => {
-          setFormOpen(false);
+      <CloudAccountDrawer
+        open={drawerOpen}
+        mode={editing ? 'edit' : 'create'}
+        data={editing}
+        onClose={() => {
+          setDrawerOpen(false);
           setEditing(undefined);
         }}
-        onOk={submitForm}
-        confirmLoading={createMutation.isPending || updateMutation.isPending}
-        destroyOnClose
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Input
-            placeholder={t('name')}
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          <Select
-            style={{ width: '100%' }}
-            value={form.provider}
-            onChange={(v) => setForm({ ...form, provider: v })}
-            options={PROVIDERS.map((p) => ({ value: p, label: t(`provider_${p}`) }))}
-          />
-          <Input
-            placeholder={t('accessKey')}
-            value={form.accessKey}
-            onChange={(e) => setForm({ ...form, accessKey: e.target.value })}
-          />
-          <Input.Password
-            placeholder={editing ? t('secretKeyKeep') : t('secretKey')}
-            value={form.secretKey}
-            onChange={(e) => setForm({ ...form, secretKey: e.target.value })}
-            autoComplete="new-password"
-          />
-          <Input
-            placeholder={t('region')}
-            value={form.region}
-            onChange={(e) => setForm({ ...form, region: e.target.value })}
-          />
-          {editing && (
-            <Space>
-              <span>{t('status')}:</span>
-              <Switch
-                checked={form.status}
-                checkedChildren={t('statusEnabled')}
-                unCheckedChildren={t('statusDisabled')}
-                onChange={(v) => setForm({ ...form, status: v })}
-              />
-            </Space>
-          )}
-          <Input.TextArea
-            placeholder={t('description')}
-            rows={2}
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-        </Space>
-      </Modal>
+        onSuccess={() => {
+          invalidate();
+          actionRef.current?.reload();
+        }}
+      />
     </>
   );
 };

@@ -318,8 +318,9 @@ func (x *ListCloudAccountsResponse) GetItems() []*CloudAccount {
 }
 
 type GetCloudAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 账号ID
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+	Id            uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 账号ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,8 +356,8 @@ func (*GetCloudAccountRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *GetCloudAccountRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -414,10 +415,11 @@ func (x *CreateCloudAccountRequest) GetSecretKey() string {
 }
 
 type UpdateCloudAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                               // 账号ID
-	Data          *CloudAccount          `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`                            // 更新数据
-	SecretKey     *string                `protobuf:"bytes,3,opt,name=secret_key,json=secretKey,proto3,oneof" json:"secret_key,omitempty"` // 明文 SK(空=不变更)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+	Id            uint32        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                     // 账号ID
+	Data          *CloudAccount `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`                            // 更新数据
+	SecretKey     *string       `protobuf:"bytes,3,opt,name=secret_key,json=secretKey,proto3,oneof" json:"secret_key,omitempty"` // 明文 SK(空=不变更)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -453,8 +455,8 @@ func (*UpdateCloudAccountRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateCloudAccountRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -474,8 +476,9 @@ func (x *UpdateCloudAccountRequest) GetSecretKey() string {
 }
 
 type DeleteCloudAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 账号ID
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+	Id            uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 账号ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -511,15 +514,16 @@ func (*DeleteCloudAccountRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *DeleteCloudAccountRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
 
 type VerifyCloudAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 账号ID
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
+	Id            uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 账号ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -555,8 +559,8 @@ func (*VerifyCloudAccountRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *VerifyCloudAccountRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -670,30 +674,26 @@ const file_ops_service_v1_cloud_account_proto_rawDesc = "" +
 	"\v_created_at\"e\n" +
 	"\x19ListCloudAccountsResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x122\n" +
-	"\x05items\x18\x02 \x03(\v2\x1c.ops.service.v1.CloudAccountR\x05items\"9\n" +
-	"\x16GetCloudAccountRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\x98\x01\n" +
+	"\x05items\x18\x02 \x03(\v2\x1c.ops.service.v1.CloudAccountR\x05items\"-\n" +
+	"\x16GetCloudAccountRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"\x98\x01\n" +
 	"\x19CreateCloudAccountRequest\x12:\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.ops.service.v1.CloudAccountB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01\x12'\n" +
 	"\n" +
 	"secret_key\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\tsecretKey\x88\x01\x01B\a\n" +
 	"\x05_dataB\r\n" +
-	"\v_secret_key\"\xb4\x01\n" +
-	"\x19UpdateCloudAccountRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12:\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.ops.service.v1.CloudAccountB\x03\xe0A\x02H\x01R\x04data\x88\x01\x01\x12\"\n" +
+	"\v_secret_key\"\xa8\x01\n" +
+	"\x19UpdateCloudAccountRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12:\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.ops.service.v1.CloudAccountB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"secret_key\x18\x03 \x01(\tH\x02R\tsecretKey\x88\x01\x01B\x05\n" +
-	"\x03_idB\a\n" +
+	"secret_key\x18\x03 \x01(\tH\x01R\tsecretKey\x88\x01\x01B\a\n" +
 	"\x05_dataB\r\n" +
-	"\v_secret_key\"<\n" +
-	"\x19DeleteCloudAccountRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"<\n" +
-	"\x19VerifyCloudAccountRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\xda\x01\n" +
+	"\v_secret_key\"0\n" +
+	"\x19DeleteCloudAccountRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"0\n" +
+	"\x19VerifyCloudAccountRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"\xda\x01\n" +
 	"\x1aVerifyCloudAccountResponse\x12\"\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\tH\x00R\taccountId\x88\x01\x01\x12&\n" +
@@ -775,11 +775,8 @@ func file_ops_service_v1_cloud_account_proto_init() {
 		return
 	}
 	file_ops_service_v1_cloud_account_proto_msgTypes[0].OneofWrappers = []any{}
-	file_ops_service_v1_cloud_account_proto_msgTypes[2].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_account_proto_msgTypes[3].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_account_proto_msgTypes[4].OneofWrappers = []any{}
-	file_ops_service_v1_cloud_account_proto_msgTypes[5].OneofWrappers = []any{}
-	file_ops_service_v1_cloud_account_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_account_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

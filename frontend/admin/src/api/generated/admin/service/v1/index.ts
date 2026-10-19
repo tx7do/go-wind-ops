@@ -3003,9 +3003,10 @@ export type opsservicev1_CloudAccount_Status =
   | 'ENABLED'
   | 'STATUS_UNSPECIFIED';
 export type opsservicev1_GetCloudAccountRequest = {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_CreateCloudAccountRequest = {
@@ -3021,22 +3022,25 @@ export type opsservicev1_UpdateCloudAccountRequest = {
   //
   // Behaviors: REQUIRED
   data?: opsservicev1_CloudAccount;
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   secretKey?: string;
 };
 
 export type opsservicev1_DeleteCloudAccountRequest = {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_VerifyCloudAccountRequest = {
+  // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_VerifyCloudAccountResponse = {
