@@ -11,6 +11,9 @@
   "wsClosed": "Connection closed",
   "pickAgentFirst": "Select a machine first",
   "tokenMissing": "Not signed in, please sign in again",
-  "hint": "Real PTY terminal: Ctrl+C, backspace/arrow editing and interactive apps all work. Idle sessions disconnect after 15 minutes.",
+  "clearScreen": "Clear",
+  "reconnecting": "Connection lost, reconnecting ({{n}}/{{max}})",
+  "offline": "offline",
+  "hint": "Real PTY terminal: Ctrl+C, backspace/arrow editing and interactive apps all work; right-click to copy/paste, Ctrl+wheel to zoom. Idle sessions disconnect after 15 minutes.",
   "auditEntry": "Session Audit"
 }

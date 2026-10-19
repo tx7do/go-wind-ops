@@ -11,6 +11,9 @@
   "wsClosed": "连接已关闭",
   "pickAgentFirst": "请先选择机器",
   "tokenMissing": "登录态缺失,请重新登录",
-  "hint": "真 PTY 终端:支持 Ctrl+C、退格/方向键编辑与交互程序。闲置 15 分钟自动断开。",
+  "clearScreen": "清屏",
+  "reconnecting": "连接断开,正在重连 ({{n}}/{{max}})",
+  "offline": "离线",
+  "hint": "真 PTY 终端:支持 Ctrl+C、退格/方向键编辑与交互程序;右键复制/粘贴,Ctrl+滚轮调字号。闲置 15 分钟自动断开。",
   "auditEntry": "会话审计"
 }

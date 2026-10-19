@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { App, Button, Select, Space, Tag, Typography } from 'antd';
-import { PoweroffOutlined } from '@ant-design/icons';
+import { App, Button, Select, Space, Tag, Tooltip, Typography } from 'antd';
+import { ClearOutlined, HistoryOutlined, PoweroffOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_TerminalSession } from '@/api/generated/admin/service/v1';
-import { HistoryOutlined } from '@ant-design/icons';
 import TerminalSessionsDrawer from './components/TerminalSessionsDrawer';
 import TerminalReplayDrawer from './components/TerminalReplayDrawer';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import { WebLinksAddon } from '@xterm/addon-web-links';
 import '@xterm/xterm/css/xterm.css';
 import { useQuery } from '@tanstack/react-query';
 import { PaginationQuery } from '@/core';
@@ -20,6 +20,17 @@ function buildWsUrl(token: string, agentId: string): string {
   return `${proto}://${location.host}/admin/v1/ws/terminal?token=${encodeURIComponent(token)}&agentId=${encodeURIComponent(agentId)}`;
 }
 
+// 记忆选择与字号(localStorage 持久化)
+const LAST_AGENT_KEY = 'terminal:lastAgentId';
+const FONT_SIZE_KEY = 'terminal:fontSize';
+// 网络断开自动重连次数上限(每次重连会在 agent 上开新会话,旧会话闲置 15 分钟自动回收)
+const RECONNECT_MAX = 3;
+
+const readFontSize = (): number => {
+  const v = Number(localStorage.getItem(FONT_SIZE_KEY));
+  return v >= 10 && v <= 24 ? v : 13;
+};
+
 const TerminalPage = () => {
   const { t } = useTranslation('terminal');
   const { message } = App.useApp();
@@ -29,12 +40,19 @@ const TerminalPage = () => {
   const [replaySession, setReplaySession] = useState<opsservicev1_TerminalSession | undefined>();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [fontSize, setFontSize] = useState<number>(readFontSize);
+  const [title, setTitle] = useState('');
 
   const hostRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const openSessionRef = useRef<(agentId: string) => void>(() => {});
+  const agentIdRef = useRef<string | undefined>(undefined);
+  const attemptRef = useRef(0);
+  const userAbortRef = useRef(false);
+  const remoteClosedRef = useRef(false);
 
   const { data: nodesResp } = useQuery({
     queryKey: ['listAgentNodesForTerminal', 'all'],
@@ -42,27 +60,49 @@ const TerminalPage = () => {
   });
   const agentOptions = useMemo(
     () =>
-      (nodesResp?.items || []).map((n) => ({
-        label: n.hostname ? `${n.hostname} (${n.agentId})` : n.agentId,
-        value: n.agentId || '',
-      })),
-    [nodesResp],
+      (nodesResp?.items || []).map((n) => {
+        const offline = n.status === 'OFFLINE';
+        const label = n.hostname ? `${n.hostname} (${n.agentId})` : (n.agentId || '');
+        return {
+          label: offline ? `${label} · ${t('offline')}` : label,
+          value: n.agentId || '',
+          disabled: offline,
+        };
+      }),
+    [nodesResp, t],
   );
+
+  // 首次加载自动选中:优先记忆的上次机器(在线),仅一台且在线时直接选它
+  useEffect(() => {
+    if (agentId || !nodesResp?.items?.length) return;
+    const items = nodesResp.items;
+    const last = localStorage.getItem(LAST_AGENT_KEY);
+    const lastNode = last ? items.find((n) => n.agentId === last && n.status !== 'OFFLINE') : undefined;
+    const single = items.length === 1 ? items[0] : undefined;
+    const pick = lastNode || (single && single.status !== 'OFFLINE' ? single : undefined);
+    if (pick?.agentId) setAgentId(pick.agentId);
+  }, [agentId, nodesResp]);
+
+  useEffect(() => {
+    agentIdRef.current = agentId;
+  }, [agentId]);
 
   /** 建立 xterm 实例(懒,首次连接时创建)。 */
   const ensureTerm = useCallback(() => {
     if (termRef.current) return termRef.current;
     const term = new Terminal({
       fontFamily: 'Consolas, Menlo, monospace',
-      fontSize: 13,
+      fontSize: readFontSize(),
       cursorBlink: true,
       convertEol: false,
+      scrollback: 5000,
       theme: {
         background: '#141414',
       },
     });
     const fit = new FitAddon();
     term.loadAddon(fit);
+    term.loadAddon(new WebLinksAddon());
     if (hostRef.current) {
       term.open(hostRef.current);
       fit.fit();
@@ -79,11 +119,96 @@ const TerminalPage = () => {
         ws.send(JSON.stringify({ event: 'RESIZE', cols, rows }));
       }
     });
+    // PTY 窗口标题同步:显示当前前台命令(如 "ping -n 30 127.0.0.1");
+    // 空闲时 ConPTY 上报 cmd.exe 全路径,视为无前台命令不展示。
+    term.onTitleChange((rawTitle) => {
+      let clean = rawTitle.replace(/^cmd\.exe\s*-\s*/i, '');
+      if (/cmd\.exe$/i.test(clean)) clean = '';
+      setTitle(clean.slice(0, 120));
+    });
+    // 剪贴板快捷键:Ctrl+Shift+C / Ctrl+Insert 复制选中,Ctrl+Shift+V / Shift+Insert 粘贴
+    term.attachCustomKeyEventHandler((ev) => {
+      if (ev.type !== 'keydown') return true;
+      const copyHit = (ev.ctrlKey && ev.shiftKey && ev.key === 'C') || (ev.ctrlKey && ev.key === 'Insert');
+      const pasteHit = (ev.ctrlKey && ev.shiftKey && ev.key === 'V') || (ev.shiftKey && ev.key === 'Insert');
+      if (copyHit && term.hasSelection()) {
+        navigator.clipboard?.writeText(term.getSelection()).catch(() => {});
+        return false;
+      }
+      if (pasteHit) {
+        navigator.clipboard
+          ?.readText()
+          .then((txt) => {
+            if (txt) term.paste(txt);
+          })
+          .catch(() => {});
+        return false;
+      }
+      return true;
+    });
     return term;
   }, []);
 
+  // 右键快捷(PuTTY/Windows Terminal 习惯):有选中=复制,否则=粘贴
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const onContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      const term = termRef.current;
+      if (!term) return;
+      if (term.hasSelection()) {
+        navigator.clipboard?.writeText(term.getSelection()).catch(() => {});
+        term.clearSelection();
+        return;
+      }
+      navigator.clipboard
+        ?.readText()
+        .then((txt) => {
+          if (txt) term.paste(txt);
+        })
+        .catch(() => {});
+    };
+    host.addEventListener('contextmenu', onContextMenu);
+    return () => host.removeEventListener('contextmenu', onContextMenu);
+  }, []);
+
+  // Ctrl+滚轮调字号(10-24),持久化;fit 触发 onResize → 自动同步 PTY
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      setFontSize((v) => Math.min(24, Math.max(10, v + (e.deltaY < 0 ? 1 : -1))));
+    };
+    host.addEventListener('wheel', onWheel, { passive: false });
+    return () => host.removeEventListener('wheel', onWheel);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(FONT_SIZE_KEY, String(fontSize));
+    const term = termRef.current;
+    if (term) {
+      term.options.fontSize = fontSize;
+      fitRef.current?.fit();
+    }
+  }, [fontSize]);
+
+  // 连接期间离开页面给一次挽留提示(终端会话将断开)
+  useEffect(() => {
+    if (!connected) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [connected]);
+
   const disconnect = useCallback(() => {
     if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+    userAbortRef.current = true;
     const ws = wsRef.current;
     wsRef.current = null;
     if (ws) {
@@ -91,82 +216,107 @@ const TerminalPage = () => {
       ws.close();
     }
     setConnected(false);
+    setTitle('');
     termRef.current?.writeln('');
     termRef.current?.writeln(`\x1b[33m[${t('disconnected')}]\x1b[0m`);
   }, [t]);
+
+  /** 建立 WS 会话(连接与自动重连共用;targetId 显式传入防切换竞态)。 */
+  const openSession = useCallback(
+    (targetId: string) => {
+      const token = useAuthStore.getState().accessToken;
+      if (!token) {
+        message.error(t('tokenMissing'));
+        return;
+      }
+      const term = ensureTerm();
+      term.reset();
+      term.writeln(`\x1b[36m${t('connecting')} ${targetId} ...\x1b[0m`);
+      setConnecting(true);
+      setTitle('');
+
+      // 本次连接是否已收到输出字节(OPENED 清"正在连接"行时避免误伤回显)。
+      let gotOutput = false;
+
+      /** 把当前 xterm 尺寸推给后端(刚连上与会话就绪时各推一次,其后走 onResize)。 */
+      const sendResize = () => {
+        const ws = wsRef.current;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ event: 'RESIZE', cols: term.cols, rows: term.rows }));
+        }
+      };
+
+      const ws = new WebSocket(buildWsUrl(token, targetId));
+      ws.binaryType = 'arraybuffer';
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        setConnected(true);
+        setConnecting(false);
+        sendResize();
+      };
+      ws.onmessage = (ev) => {
+        if (typeof ev.data === 'string') {
+          // 控制事件帧
+          try {
+            const msg = JSON.parse(ev.data) as { event?: string; error?: string };
+            if (msg.event === 'OPENED') {
+              attemptRef.current = 0; // 会话就绪,重连计数归零
+              // 会话已开:把"正在连接"行冲成绿色就绪提示(shell 横幅先到则不动)。
+              if (!gotOutput) {
+                term.write('\x1b[A\r\x1b[2K');
+                term.writeln(`\x1b[32m[${t('connected')}]\x1b[0m`);
+              }
+              sendResize();
+            } else if (msg.event === 'CLOSED') {
+              remoteClosedRef.current = true;
+              term.writeln('');
+              term.writeln(`\x1b[31m[${t('sessionClosed')}${msg.error ? ': ' + msg.error : ''}]\x1b[0m`);
+              setConnected(false);
+            }
+          } catch {
+            /* 非 JSON 忽略 */
+          }
+          return;
+        }
+        gotOutput = true;
+        term.write(new Uint8Array(ev.data as ArrayBuffer));
+      };
+      ws.onerror = () => {
+        term.writeln(`\x1b[31m[${t('wsError')}]\x1b[0m`);
+      };
+      ws.onclose = () => {
+        setConnected(false);
+        setConnecting(false);
+        if (wsRef.current !== ws) return;
+        wsRef.current = null;
+        // 主动断开/远端正常关闭/已切换机器:不自动重连
+        if (userAbortRef.current || remoteClosedRef.current || agentIdRef.current !== targetId) return;
+        if (attemptRef.current >= RECONNECT_MAX) {
+          term.writeln(`\x1b[31m[${t('wsClosed')}]\x1b[0m`);
+          return;
+        }
+        attemptRef.current += 1;
+        const n = attemptRef.current;
+        term.writeln(`\x1b[33m[${t('reconnecting', { n, max: RECONNECT_MAX })}]\x1b[0m`);
+        reconnectTimer.current = setTimeout(() => openSessionRef.current(targetId), 1200 * n);
+      };
+    },
+    [ensureTerm, message, t],
+  );
+  openSessionRef.current = openSession;
 
   const connect = useCallback(() => {
     if (!agentId) {
       message.warning(t('pickAgentFirst'));
       return;
     }
-    const token = useAuthStore.getState().accessToken;
-    if (!token) {
-      message.error(t('tokenMissing'));
-      return;
-    }
-    const term = ensureTerm();
-    term.reset();
-    term.writeln(`\x1b[36m${t('connecting')} ${agentId} ...\x1b[0m`);
-    setConnecting(true);
-
-    // 本次连接是否已收到输出字节(OPENED 清"正在连接"行时避免误伤回显)。
-    let gotOutput = false;
-
-    /** 把当前 xterm 尺寸推给后端(刚连上与会话就绪时各推一次,其后走 onResize)。 */
-    const sendResize = () => {
-      const ws = wsRef.current;
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ event: 'RESIZE', cols: term.cols, rows: term.rows }));
-      }
-    };
-
-    const ws = new WebSocket(buildWsUrl(token, agentId));
-    ws.binaryType = 'arraybuffer';
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setConnected(true);
-      setConnecting(false);
-      sendResize();
-    };
-    ws.onmessage = (ev) => {
-      if (typeof ev.data === 'string') {
-        // 控制事件帧
-        try {
-          const msg = JSON.parse(ev.data) as { event?: string; error?: string };
-          if (msg.event === 'OPENED') {
-            // 会话已开:把"正在连接"行冲成绿色就绪提示(shell 横幅先到则不动)。
-            if (!gotOutput) {
-              term.write('\x1b[A\r\x1b[2K');
-              term.writeln(`\x1b[32m[${t('connected')}]\x1b[0m`);
-            }
-            sendResize();
-          } else if (msg.event === 'CLOSED') {
-            term.writeln('');
-            term.writeln(`\x1b[31m[${t('sessionClosed')}${msg.error ? ': ' + msg.error : ''}]\x1b[0m`);
-            setConnected(false);
-          }
-        } catch {
-          /* 非 JSON 忽略 */
-        }
-        return;
-      }
-      gotOutput = true;
-      term.write(new Uint8Array(ev.data as ArrayBuffer));
-    };
-    ws.onerror = () => {
-      term.writeln(`\x1b[31m[${t('wsError')}]\x1b[0m`);
-    };
-    ws.onclose = () => {
-      setConnected(false);
-      setConnecting(false);
-      if (wsRef.current === ws) {
-        wsRef.current = null;
-        term.writeln(`\x1b[31m[${t('wsClosed')}]\x1b[0m`);
-      }
-    };
-  }, [agentId, ensureTerm, message, t]);
+    userAbortRef.current = false;
+    remoteClosedRef.current = false;
+    attemptRef.current = 0;
+    localStorage.setItem(LAST_AGENT_KEY, agentId);
+    openSessionRef.current(agentId);
+  }, [agentId, message, t]);
 
   // 容器尺寸自适应
   useEffect(() => {
@@ -201,6 +351,7 @@ const TerminalPage = () => {
           onChange={(v) => {
             if (connected) disconnect();
             setAgentId(v);
+            localStorage.setItem(LAST_AGENT_KEY, v);
           }}
         />
         {connected ? (
@@ -212,7 +363,23 @@ const TerminalPage = () => {
             {t('connect')}
           </Button>
         )}
+        <Button
+          icon={<ClearOutlined />}
+          disabled={!connected}
+          onClick={() => {
+            termRef.current?.clear();
+          }}
+        >
+          {t('clearScreen')}
+        </Button>
         {connected && <Tag color="success">{t('connected')}</Tag>}
+        {connected && title && (
+          <Tooltip title={title}>
+            <Typography.Text type="secondary" style={{ fontSize: 12, maxWidth: 320 }} ellipsis>
+              {title}
+            </Typography.Text>
+          </Tooltip>
+        )}
         <Button icon={<HistoryOutlined />} onClick={() => setAuditOpen(true)}>
           {t('auditEntry')}
         </Button>
