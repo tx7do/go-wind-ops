@@ -207,7 +207,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         onCancel={onClose}
         footer={null}
         width={1080}
-        destroyOnClose
+        destroyOnHidden
       >
         {loading ? (
           <Spin style={{ display: 'block', margin: '32px auto' }} />
@@ -230,7 +230,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         onCancel={() => setLogRecord(undefined)}
         footer={null}
         width={900}
-        destroyOnClose
+        destroyOnHidden
       >
         <pre
           style={{
@@ -261,7 +261,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         okText={t('rollbackConfirm')}
         confirmLoading={rollbackLoading}
         width={420}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ marginBottom: 8 }}>{t('rollbackDistLabel')}</div>
         <Select

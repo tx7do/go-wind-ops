@@ -566,7 +566,7 @@ const TerminalPage = () => {
         confirmLoading={uploading}
         okButtonProps={{ disabled: uploading }}
         cancelButtonProps={{ disabled: uploading }}
-        maskClosable={!uploading}
+        mask={{ closable: !uploading }}
         width={480}
       >
         <Typography.Paragraph type="secondary" style={{ marginBottom: 6, fontSize: 12 }}>

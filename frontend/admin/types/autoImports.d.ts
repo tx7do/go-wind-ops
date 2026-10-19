@@ -194,6 +194,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { ImportDrawerProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { FC, AuthLayoutProps, ImportDrawerProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

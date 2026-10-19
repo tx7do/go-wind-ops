@@ -92,7 +92,7 @@ const PipelineDrawer: React.FC<PipelineDrawerProps> = ({ open, mode, data, onClo
       title={mode === 'create' ? t('create') : t('edit')}
       formRef={formRef}
       open={open}
-      drawerProps={{ onClose, destroyOnClose: true, width: 640 }}
+      drawerProps={{ onClose, destroyOnHidden: true, width: 640 }}
       onFinish={handleSubmit}
       params={{ data }}
     >

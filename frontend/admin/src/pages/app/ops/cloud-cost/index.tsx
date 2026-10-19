@@ -267,13 +267,13 @@ const CloudCostManagement = () => {
         <div style={{ flex: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <Typography.Text strong>{t('trendTitle')}</Typography.Text>
-            <Button.Group size="small">
+            <Space.Compact size="small">
               {yearOptions().map((y) => (
                 <Button key={y.value} type={chartYear === y.value ? 'primary' : 'default'} onClick={() => setChartYear(y.value)}>
                   {y.label}
                 </Button>
               ))}
-            </Button.Group>
+            </Space.Compact>
           </div>
           <ReactECharts option={chartOption} style={{ height: 260 }} notMerge lazyUpdate />
         </div>
@@ -352,7 +352,7 @@ const CloudCostManagement = () => {
         }}
         confirmLoading={fetchMutation.isPending}
         width={480}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
           <Select
@@ -383,7 +383,7 @@ const CloudCostManagement = () => {
         onOk={doImport}
         confirmLoading={importMutation.isPending}
         width={640}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" style={{ width: '100%' }} size="small">
           <Typography.Text type="secondary">{t('csvFormat')}</Typography.Text>

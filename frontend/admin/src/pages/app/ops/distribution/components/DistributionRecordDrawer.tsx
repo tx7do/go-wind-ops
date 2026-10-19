@@ -61,7 +61,7 @@ const DistributionRecordDrawer: React.FC<DistributionRecordDrawerProps> = ({
         onCancel={onClose}
         footer={null}
         width={860}
-        destroyOnClose
+        destroyOnHidden
       >
         {records.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 24, color: '#999' }}>{t('noRecords')}</div>
@@ -108,7 +108,7 @@ const DistributionRecordDrawer: React.FC<DistributionRecordDrawerProps> = ({
         onCancel={() => setDetail(undefined)}
         footer={null}
         width={720}
-        destroyOnClose
+        destroyOnHidden
       >
         {detail && (
           <>

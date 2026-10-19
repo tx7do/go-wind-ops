@@ -324,7 +324,7 @@ const ScriptManagement = () => {
         okText={t('execute')}
         confirmLoading={execLoading}
         width={420}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ marginBottom: 8 }}>{t('executeNodeLabel')}</div>
         <Select
@@ -348,7 +348,7 @@ const ScriptManagement = () => {
         okText={t('batchExec')}
         confirmLoading={batchLoading}
         width={480}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ marginBottom: 8 }}>{t('batchNodeLabel')}</div>
         <Select

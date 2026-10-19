@@ -152,7 +152,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
         onCancel={onClose}
         footer={null}
         width={1000}
-        destroyOnClose
+        destroyOnHidden
       >
         {loading && items.length === 0 ? (
           <Spin style={{ display: 'block', margin: '32px auto' }} />
@@ -182,7 +182,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
         onCancel={() => setLogRun(undefined)}
         footer={null}
         width={900}
-        destroyOnClose
+        destroyOnHidden
       >
         <pre
           ref={logPreRef}

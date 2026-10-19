@@ -25,7 +25,7 @@ const NotificationChannelDrawer: React.FC<Props> = ({ open, mode, data, onClose,
 
   return (
     <DrawerForm title={mode === 'create' ? t('create') : t('edit')} formRef={formRef} open={open}
-      drawerProps={{ onClose, destroyOnClose: true, width: 520 }}
+      drawerProps={{ onClose, destroyOnHidden: true, width: 520 }}
       onFinish={async (values: any) => {
         if (mode === 'create') await createMutation.mutateAsync(values);
         else if (data?.id) await updateMutation.mutateAsync({ id: data.id, values });

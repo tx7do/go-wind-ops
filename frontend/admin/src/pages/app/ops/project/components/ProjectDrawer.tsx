@@ -102,7 +102,7 @@ const ProjectDrawer: React.FC<ProjectDrawerProps> = ({
       open={open}
       drawerProps={{
         onClose,
-        destroyOnClose: true,
+        destroyOnHidden: true,
         width: 560,
       }}
       submitter={{ submitButtonProps: { loading: confirmLoading } }}

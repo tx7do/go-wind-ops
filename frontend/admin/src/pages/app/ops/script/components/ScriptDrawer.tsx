@@ -74,7 +74,7 @@ const ScriptDrawer: React.FC<ScriptDrawerProps> = ({
       open={open}
       drawerProps={{
         onClose,
-        destroyOnClose: true,
+        destroyOnHidden: true,
         width: 640,
       }}
       submitter={{ submitButtonProps: { loading: confirmLoading } }}

@@ -84,7 +84,7 @@ const BuildDrawer: React.FC<BuildDrawerProps> = ({
       open={open}
       drawerProps={{
         onClose,
-        destroyOnClose: true,
+        destroyOnHidden: true,
         width: 560,
       }}
       onFinish={handleSubmit}

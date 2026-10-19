@@ -66,7 +66,7 @@ const RepositoryDrawer: React.FC<RepositoryDrawerProps> = ({
       open={open}
       drawerProps={{
         onClose,
-        destroyOnClose: true,
+        destroyOnHidden: true,
         width: 560,
       }}
       onFinish={handleSubmit}

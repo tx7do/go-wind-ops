@@ -167,7 +167,7 @@ const PluginPage = () => {
         onCancel={() => setResult(undefined)}
         footer={null}
         width={820}
-        destroyOnClose
+        destroyOnHidden
       >
         <pre
           style={{

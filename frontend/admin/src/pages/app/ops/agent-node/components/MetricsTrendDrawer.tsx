@@ -54,7 +54,7 @@ const MetricsTrendDrawer: React.FC<MetricsDrawerProps> = ({ data, onClose }) => 
       open={!!data}
       onClose={onClose}
       size={720}
-      destroyOnClose
+      destroyOnHidden
     >
       {loading ? (
         <Spin style={{ display: 'block', margin: '60px auto' }} />

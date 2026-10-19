@@ -100,7 +100,7 @@ const DistributionDrawer: React.FC<DistributionDrawerProps> = ({
       open={open}
       drawerProps={{
         onClose,
-        destroyOnClose: true,
+        destroyOnHidden: true,
         width: 520,
       }}
       onFinish={handleSubmit}
