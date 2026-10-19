@@ -147,7 +147,7 @@ make compose-up   # docker compose 拉起 PG/Redis/MinIO/etcd/EMQX/Jaeger + 四�
 docker compose -f docker-compose.libs.yaml up -d   # 仅中间件
 ```
 
-- 本地依赖：PostgreSQL(5432, postgres/*Abcd123456, 库名 gwc)、Redis(6379, *Abcd123456)、MinIO(9000/9001, root/*Abcd123456)、etcd(2379)、EMQX(1883/18083, admin/public)、Jaeger(16686)
+- 本地依赖：PostgreSQL(5432, postgres/*Abcd123456, 库名 wind_ops)、Redis(6379, *Abcd123456)、MinIO(9000/9001, root/*Abcd123456)、etcd(2379)、EMQX(1883/18083, admin/public)、Jaeger(16686)
 - MQTT 凭据：core/agent 的 server.yaml 默认 `core/core-pass`、`agent/agent-pass`——**EMQX 未开认证时可任意连接；生产须启用 EMQX 认证并同步改配置**
 - 冒烟顺序：起 libs → 起 core → 起 agent（配置 `AGENT_ALLOWED_DIRS`，日志出现 enrolled/authenticated）→ 起 admin（可设 `ADMIN_CAPTCHA_DISABLED=true`）→ `pass-enc` 加密密码登录 → `GET /admin/v1/agent-nodes` 应见节点 → 建项目 → `operations:send` START/STATUS/STOP，项目 lastStatus 随之变化，进程被真实拉起/终止 → `GET /admin/v1/command-records` 台账含每条指令的终态与结果；目录越权的操作在台账中为 FAILED
 
