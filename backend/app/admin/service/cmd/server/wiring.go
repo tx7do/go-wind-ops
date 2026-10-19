@@ -137,6 +137,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudBudgetServiceClient := data.NewCloudBudgetServiceClient(ctx, discovery)
 	certServiceClient := data.NewCertServiceClient(ctx, discovery)
 	notificationDeliveryServiceClient := data.NewNotificationDeliveryServiceClient(ctx, discovery)
+	terminalAuditServiceClient := data.NewTerminalAuditServiceClient(ctx, discovery)
+	inspectionServiceClient := data.NewInspectionServiceClient(ctx, discovery)
+	logSnapshotServiceClient := data.NewLogSnapshotServiceClient(ctx, discovery)
+	configServiceClient := data.NewConfigServiceClient(ctx, discovery)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -204,6 +208,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetServiceClient)
 	certService := service.NewCertService(ctx, certServiceClient)
 	notificationDeliveryService := service.NewNotificationDeliveryService(ctx, notificationDeliveryServiceClient)
+	terminalAuditService := service.NewTerminalAuditService(ctx, terminalAuditServiceClient)
+	inspectionService := service.NewInspectionService(ctx, inspectionServiceClient)
+	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotServiceClient)
+	configService := service.NewConfigService(ctx, configServiceClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
 
@@ -241,6 +249,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		cloudBudgetService,
 		certService,
 		notificationDeliveryService,
+		terminalAuditService,
+		inspectionService,
+		logSnapshotService,
+		configService,
 	)
 
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)

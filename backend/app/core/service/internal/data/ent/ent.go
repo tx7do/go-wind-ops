@@ -23,15 +23,19 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/configdistribution"
+	"go-wind-ops/app/core/service/internal/data/ent/configtemplate"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
 	"go-wind-ops/app/core/service/internal/data/ent/distribution"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/inspection"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -61,6 +65,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalsession"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
 	"go-wind-ops/app/core/service/internal/data/ent/usercredential"
 	"go-wind-ops/app/core/service/internal/data/ent/userorgunit"
@@ -149,13 +155,17 @@ func checkColumn(t, c string) error {
 			cloudcost.Table:            cloudcost.ValidColumn,
 			cloudinstance.Table:        cloudinstance.ValidColumn,
 			commandrecord.Table:        commandrecord.ValidColumn,
+			configdistribution.Table:   configdistribution.ValidColumn,
+			configtemplate.Table:       configtemplate.ValidColumn,
 			dataaccessauditlog.Table:   dataaccessauditlog.ValidColumn,
 			dictentry.Table:            dictentry.ValidColumn,
 			dictentryi18n.Table:        dictentryi18n.ValidColumn,
 			dicttype.Table:             dicttype.ValidColumn,
 			distribution.Table:         distribution.ValidColumn,
 			distributionrecord.Table:   distributionrecord.ValidColumn,
+			inspection.Table:           inspection.ValidColumn,
 			language.Table:             language.ValidColumn,
+			logsnapshot.Table:          logsnapshot.ValidColumn,
 			loginauditlog.Table:        loginauditlog.ValidColumn,
 			loginpolicy.Table:          loginpolicy.ValidColumn,
 			membership.Table:           membership.ValidColumn,
@@ -187,6 +197,8 @@ func checkColumn(t, c string) error {
 			scriptbatch.Table:          scriptbatch.ValidColumn,
 			task.Table:                 task.ValidColumn,
 			tenant.Table:               tenant.ValidColumn,
+			terminalchunk.Table:        terminalchunk.ValidColumn,
+			terminalsession.Table:      terminalsession.ValidColumn,
 			user.Table:                 user.ValidColumn,
 			usercredential.Table:       usercredential.ValidColumn,
 			userorgunit.Table:          userorgunit.ValidColumn,

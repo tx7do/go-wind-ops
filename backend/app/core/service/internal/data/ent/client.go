@@ -28,15 +28,19 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/configdistribution"
+	"go-wind-ops/app/core/service/internal/data/ent/configtemplate"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
 	"go-wind-ops/app/core/service/internal/data/ent/distribution"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/inspection"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -66,6 +70,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalsession"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
 	"go-wind-ops/app/core/service/internal/data/ent/usercredential"
 	"go-wind-ops/app/core/service/internal/data/ent/userorgunit"
@@ -117,6 +123,10 @@ type Client struct {
 	CloudInstance *CloudInstanceClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
+	// ConfigDistribution is the client for interacting with the ConfigDistribution builders.
+	ConfigDistribution *ConfigDistributionClient
+	// ConfigTemplate is the client for interacting with the ConfigTemplate builders.
+	ConfigTemplate *ConfigTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -129,8 +139,12 @@ type Client struct {
 	Distribution *DistributionClient
 	// DistributionRecord is the client for interacting with the DistributionRecord builders.
 	DistributionRecord *DistributionRecordClient
+	// Inspection is the client for interacting with the Inspection builders.
+	Inspection *InspectionClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
+	// LogSnapshot is the client for interacting with the LogSnapshot builders.
+	LogSnapshot *LogSnapshotClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
 	LoginAuditLog *LoginAuditLogClient
 	// LoginPolicy is the client for interacting with the LoginPolicy builders.
@@ -193,6 +207,10 @@ type Client struct {
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
+	// TerminalChunk is the client for interacting with the TerminalChunk builders.
+	TerminalChunk *TerminalChunkClient
+	// TerminalSession is the client for interacting with the TerminalSession builders.
+	TerminalSession *TerminalSessionClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserCredential is the client for interacting with the UserCredential builders.
@@ -231,13 +249,17 @@ func (c *Client) init() {
 	c.CloudCost = NewCloudCostClient(c.config)
 	c.CloudInstance = NewCloudInstanceClient(c.config)
 	c.CommandRecord = NewCommandRecordClient(c.config)
+	c.ConfigDistribution = NewConfigDistributionClient(c.config)
+	c.ConfigTemplate = NewConfigTemplateClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
 	c.Distribution = NewDistributionClient(c.config)
 	c.DistributionRecord = NewDistributionRecordClient(c.config)
+	c.Inspection = NewInspectionClient(c.config)
 	c.Language = NewLanguageClient(c.config)
+	c.LogSnapshot = NewLogSnapshotClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
 	c.Membership = NewMembershipClient(c.config)
@@ -269,6 +291,8 @@ func (c *Client) init() {
 	c.ScriptBatch = NewScriptBatchClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
+	c.TerminalChunk = NewTerminalChunkClient(c.config)
+	c.TerminalSession = NewTerminalSessionClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserCredential = NewUserCredentialClient(c.config)
 	c.UserOrgUnit = NewUserOrgUnitClient(c.config)
@@ -383,13 +407,17 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CloudCost:            NewCloudCostClient(cfg),
 		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
+		ConfigDistribution:   NewConfigDistributionClient(cfg),
+		ConfigTemplate:       NewConfigTemplateClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
 		DictEntryI18n:        NewDictEntryI18nClient(cfg),
 		DictType:             NewDictTypeClient(cfg),
 		Distribution:         NewDistributionClient(cfg),
 		DistributionRecord:   NewDistributionRecordClient(cfg),
+		Inspection:           NewInspectionClient(cfg),
 		Language:             NewLanguageClient(cfg),
+		LogSnapshot:          NewLogSnapshotClient(cfg),
 		LoginAuditLog:        NewLoginAuditLogClient(cfg),
 		LoginPolicy:          NewLoginPolicyClient(cfg),
 		Membership:           NewMembershipClient(cfg),
@@ -421,6 +449,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ScriptBatch:          NewScriptBatchClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
+		TerminalChunk:        NewTerminalChunkClient(cfg),
+		TerminalSession:      NewTerminalSessionClient(cfg),
 		User:                 NewUserClient(cfg),
 		UserCredential:       NewUserCredentialClient(cfg),
 		UserOrgUnit:          NewUserOrgUnitClient(cfg),
@@ -462,13 +492,17 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CloudCost:            NewCloudCostClient(cfg),
 		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
+		ConfigDistribution:   NewConfigDistributionClient(cfg),
+		ConfigTemplate:       NewConfigTemplateClient(cfg),
 		DataAccessAuditLog:   NewDataAccessAuditLogClient(cfg),
 		DictEntry:            NewDictEntryClient(cfg),
 		DictEntryI18n:        NewDictEntryI18nClient(cfg),
 		DictType:             NewDictTypeClient(cfg),
 		Distribution:         NewDistributionClient(cfg),
 		DistributionRecord:   NewDistributionRecordClient(cfg),
+		Inspection:           NewInspectionClient(cfg),
 		Language:             NewLanguageClient(cfg),
+		LogSnapshot:          NewLogSnapshotClient(cfg),
 		LoginAuditLog:        NewLoginAuditLogClient(cfg),
 		LoginPolicy:          NewLoginPolicyClient(cfg),
 		Membership:           NewMembershipClient(cfg),
@@ -500,6 +534,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ScriptBatch:          NewScriptBatchClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
+		TerminalChunk:        NewTerminalChunkClient(cfg),
+		TerminalSession:      NewTerminalSessionClient(cfg),
 		User:                 NewUserClient(cfg),
 		UserCredential:       NewUserCredentialClient(cfg),
 		UserOrgUnit:          NewUserOrgUnitClient(cfg),
@@ -537,15 +573,17 @@ func (c *Client) Use(hooks ...Hook) {
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
 		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline, c.Cert,
 		c.CloudAccount, c.CloudBudget, c.CloudCost, c.CloudInstance, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
-		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
+		c.ConfigDistribution, c.ConfigTemplate, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
+		c.Inspection, c.Language, c.LogSnapshot, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
 		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
 		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
-		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Tenant, c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -558,15 +596,17 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
 		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline, c.Cert,
 		c.CloudAccount, c.CloudBudget, c.CloudCost, c.CloudInstance, c.CommandRecord,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
-		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
-		c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
+		c.ConfigDistribution, c.ConfigTemplate, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
+		c.Inspection, c.Language, c.LogSnapshot, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
 		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
 		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
-		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Tenant, c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -609,6 +649,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CloudInstance.mutate(ctx, m)
 	case *CommandRecordMutation:
 		return c.CommandRecord.mutate(ctx, m)
+	case *ConfigDistributionMutation:
+		return c.ConfigDistribution.mutate(ctx, m)
+	case *ConfigTemplateMutation:
+		return c.ConfigTemplate.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *DictEntryMutation:
@@ -621,8 +665,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Distribution.mutate(ctx, m)
 	case *DistributionRecordMutation:
 		return c.DistributionRecord.mutate(ctx, m)
+	case *InspectionMutation:
+		return c.Inspection.mutate(ctx, m)
 	case *LanguageMutation:
 		return c.Language.mutate(ctx, m)
+	case *LogSnapshotMutation:
+		return c.LogSnapshot.mutate(ctx, m)
 	case *LoginAuditLogMutation:
 		return c.LoginAuditLog.mutate(ctx, m)
 	case *LoginPolicyMutation:
@@ -685,6 +733,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Task.mutate(ctx, m)
 	case *TenantMutation:
 		return c.Tenant.mutate(ctx, m)
+	case *TerminalChunkMutation:
+		return c.TerminalChunk.mutate(ctx, m)
+	case *TerminalSessionMutation:
+		return c.TerminalSession.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserCredentialMutation:
@@ -2963,6 +3015,272 @@ func (c *CommandRecordClient) mutate(ctx context.Context, m *CommandRecordMutati
 	}
 }
 
+// ConfigDistributionClient is a client for the ConfigDistribution schema.
+type ConfigDistributionClient struct {
+	config
+}
+
+// NewConfigDistributionClient returns a client for the ConfigDistribution from the given config.
+func NewConfigDistributionClient(c config) *ConfigDistributionClient {
+	return &ConfigDistributionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `configdistribution.Hooks(f(g(h())))`.
+func (c *ConfigDistributionClient) Use(hooks ...Hook) {
+	c.hooks.ConfigDistribution = append(c.hooks.ConfigDistribution, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `configdistribution.Intercept(f(g(h())))`.
+func (c *ConfigDistributionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ConfigDistribution = append(c.inters.ConfigDistribution, interceptors...)
+}
+
+// Create returns a builder for creating a ConfigDistribution entity.
+func (c *ConfigDistributionClient) Create() *ConfigDistributionCreate {
+	mutation := newConfigDistributionMutation(c.config, OpCreate)
+	return &ConfigDistributionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ConfigDistribution entities.
+func (c *ConfigDistributionClient) CreateBulk(builders ...*ConfigDistributionCreate) *ConfigDistributionCreateBulk {
+	return &ConfigDistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ConfigDistributionClient) MapCreateBulk(slice any, setFunc func(*ConfigDistributionCreate, int)) *ConfigDistributionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ConfigDistributionCreateBulk{err: fmt.Errorf("calling to ConfigDistributionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ConfigDistributionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ConfigDistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ConfigDistribution.
+func (c *ConfigDistributionClient) Update() *ConfigDistributionUpdate {
+	mutation := newConfigDistributionMutation(c.config, OpUpdate)
+	return &ConfigDistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ConfigDistributionClient) UpdateOne(_m *ConfigDistribution) *ConfigDistributionUpdateOne {
+	mutation := newConfigDistributionMutation(c.config, OpUpdateOne, withConfigDistribution(_m))
+	return &ConfigDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ConfigDistributionClient) UpdateOneID(id uint32) *ConfigDistributionUpdateOne {
+	mutation := newConfigDistributionMutation(c.config, OpUpdateOne, withConfigDistributionID(id))
+	return &ConfigDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ConfigDistribution.
+func (c *ConfigDistributionClient) Delete() *ConfigDistributionDelete {
+	mutation := newConfigDistributionMutation(c.config, OpDelete)
+	return &ConfigDistributionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ConfigDistributionClient) DeleteOne(_m *ConfigDistribution) *ConfigDistributionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ConfigDistributionClient) DeleteOneID(id uint32) *ConfigDistributionDeleteOne {
+	builder := c.Delete().Where(configdistribution.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ConfigDistributionDeleteOne{builder}
+}
+
+// Query returns a query builder for ConfigDistribution.
+func (c *ConfigDistributionClient) Query() *ConfigDistributionQuery {
+	return &ConfigDistributionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeConfigDistribution},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ConfigDistribution entity by its id.
+func (c *ConfigDistributionClient) Get(ctx context.Context, id uint32) (*ConfigDistribution, error) {
+	return c.Query().Where(configdistribution.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ConfigDistributionClient) GetX(ctx context.Context, id uint32) *ConfigDistribution {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ConfigDistributionClient) Hooks() []Hook {
+	return c.hooks.ConfigDistribution
+}
+
+// Interceptors returns the client interceptors.
+func (c *ConfigDistributionClient) Interceptors() []Interceptor {
+	return c.inters.ConfigDistribution
+}
+
+func (c *ConfigDistributionClient) mutate(ctx context.Context, m *ConfigDistributionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ConfigDistributionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ConfigDistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ConfigDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ConfigDistributionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ConfigDistribution mutation op: %q", m.Op())
+	}
+}
+
+// ConfigTemplateClient is a client for the ConfigTemplate schema.
+type ConfigTemplateClient struct {
+	config
+}
+
+// NewConfigTemplateClient returns a client for the ConfigTemplate from the given config.
+func NewConfigTemplateClient(c config) *ConfigTemplateClient {
+	return &ConfigTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `configtemplate.Hooks(f(g(h())))`.
+func (c *ConfigTemplateClient) Use(hooks ...Hook) {
+	c.hooks.ConfigTemplate = append(c.hooks.ConfigTemplate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `configtemplate.Intercept(f(g(h())))`.
+func (c *ConfigTemplateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ConfigTemplate = append(c.inters.ConfigTemplate, interceptors...)
+}
+
+// Create returns a builder for creating a ConfigTemplate entity.
+func (c *ConfigTemplateClient) Create() *ConfigTemplateCreate {
+	mutation := newConfigTemplateMutation(c.config, OpCreate)
+	return &ConfigTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ConfigTemplate entities.
+func (c *ConfigTemplateClient) CreateBulk(builders ...*ConfigTemplateCreate) *ConfigTemplateCreateBulk {
+	return &ConfigTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ConfigTemplateClient) MapCreateBulk(slice any, setFunc func(*ConfigTemplateCreate, int)) *ConfigTemplateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ConfigTemplateCreateBulk{err: fmt.Errorf("calling to ConfigTemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ConfigTemplateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ConfigTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ConfigTemplate.
+func (c *ConfigTemplateClient) Update() *ConfigTemplateUpdate {
+	mutation := newConfigTemplateMutation(c.config, OpUpdate)
+	return &ConfigTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ConfigTemplateClient) UpdateOne(_m *ConfigTemplate) *ConfigTemplateUpdateOne {
+	mutation := newConfigTemplateMutation(c.config, OpUpdateOne, withConfigTemplate(_m))
+	return &ConfigTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ConfigTemplateClient) UpdateOneID(id uint32) *ConfigTemplateUpdateOne {
+	mutation := newConfigTemplateMutation(c.config, OpUpdateOne, withConfigTemplateID(id))
+	return &ConfigTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ConfigTemplate.
+func (c *ConfigTemplateClient) Delete() *ConfigTemplateDelete {
+	mutation := newConfigTemplateMutation(c.config, OpDelete)
+	return &ConfigTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ConfigTemplateClient) DeleteOne(_m *ConfigTemplate) *ConfigTemplateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ConfigTemplateClient) DeleteOneID(id uint32) *ConfigTemplateDeleteOne {
+	builder := c.Delete().Where(configtemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ConfigTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for ConfigTemplate.
+func (c *ConfigTemplateClient) Query() *ConfigTemplateQuery {
+	return &ConfigTemplateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeConfigTemplate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ConfigTemplate entity by its id.
+func (c *ConfigTemplateClient) Get(ctx context.Context, id uint32) (*ConfigTemplate, error) {
+	return c.Query().Where(configtemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ConfigTemplateClient) GetX(ctx context.Context, id uint32) *ConfigTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ConfigTemplateClient) Hooks() []Hook {
+	return c.hooks.ConfigTemplate
+}
+
+// Interceptors returns the client interceptors.
+func (c *ConfigTemplateClient) Interceptors() []Interceptor {
+	return c.inters.ConfigTemplate
+}
+
+func (c *ConfigTemplateClient) mutate(ctx context.Context, m *ConfigTemplateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ConfigTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ConfigTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ConfigTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ConfigTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ConfigTemplate mutation op: %q", m.Op())
+	}
+}
+
 // DataAccessAuditLogClient is a client for the DataAccessAuditLog schema.
 type DataAccessAuditLogClient struct {
 	config
@@ -3829,6 +4147,139 @@ func (c *DistributionRecordClient) mutate(ctx context.Context, m *DistributionRe
 	}
 }
 
+// InspectionClient is a client for the Inspection schema.
+type InspectionClient struct {
+	config
+}
+
+// NewInspectionClient returns a client for the Inspection from the given config.
+func NewInspectionClient(c config) *InspectionClient {
+	return &InspectionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `inspection.Hooks(f(g(h())))`.
+func (c *InspectionClient) Use(hooks ...Hook) {
+	c.hooks.Inspection = append(c.hooks.Inspection, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `inspection.Intercept(f(g(h())))`.
+func (c *InspectionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Inspection = append(c.inters.Inspection, interceptors...)
+}
+
+// Create returns a builder for creating a Inspection entity.
+func (c *InspectionClient) Create() *InspectionCreate {
+	mutation := newInspectionMutation(c.config, OpCreate)
+	return &InspectionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Inspection entities.
+func (c *InspectionClient) CreateBulk(builders ...*InspectionCreate) *InspectionCreateBulk {
+	return &InspectionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InspectionClient) MapCreateBulk(slice any, setFunc func(*InspectionCreate, int)) *InspectionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InspectionCreateBulk{err: fmt.Errorf("calling to InspectionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InspectionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InspectionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Inspection.
+func (c *InspectionClient) Update() *InspectionUpdate {
+	mutation := newInspectionMutation(c.config, OpUpdate)
+	return &InspectionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InspectionClient) UpdateOne(_m *Inspection) *InspectionUpdateOne {
+	mutation := newInspectionMutation(c.config, OpUpdateOne, withInspection(_m))
+	return &InspectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InspectionClient) UpdateOneID(id uint32) *InspectionUpdateOne {
+	mutation := newInspectionMutation(c.config, OpUpdateOne, withInspectionID(id))
+	return &InspectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Inspection.
+func (c *InspectionClient) Delete() *InspectionDelete {
+	mutation := newInspectionMutation(c.config, OpDelete)
+	return &InspectionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InspectionClient) DeleteOne(_m *Inspection) *InspectionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InspectionClient) DeleteOneID(id uint32) *InspectionDeleteOne {
+	builder := c.Delete().Where(inspection.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InspectionDeleteOne{builder}
+}
+
+// Query returns a query builder for Inspection.
+func (c *InspectionClient) Query() *InspectionQuery {
+	return &InspectionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInspection},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Inspection entity by its id.
+func (c *InspectionClient) Get(ctx context.Context, id uint32) (*Inspection, error) {
+	return c.Query().Where(inspection.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InspectionClient) GetX(ctx context.Context, id uint32) *Inspection {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *InspectionClient) Hooks() []Hook {
+	return c.hooks.Inspection
+}
+
+// Interceptors returns the client interceptors.
+func (c *InspectionClient) Interceptors() []Interceptor {
+	return c.inters.Inspection
+}
+
+func (c *InspectionClient) mutate(ctx context.Context, m *InspectionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InspectionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InspectionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InspectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InspectionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Inspection mutation op: %q", m.Op())
+	}
+}
+
 // LanguageClient is a client for the Language schema.
 type LanguageClient struct {
 	config
@@ -3959,6 +4410,139 @@ func (c *LanguageClient) mutate(ctx context.Context, m *LanguageMutation) (Value
 		return (&LanguageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Language mutation op: %q", m.Op())
+	}
+}
+
+// LogSnapshotClient is a client for the LogSnapshot schema.
+type LogSnapshotClient struct {
+	config
+}
+
+// NewLogSnapshotClient returns a client for the LogSnapshot from the given config.
+func NewLogSnapshotClient(c config) *LogSnapshotClient {
+	return &LogSnapshotClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `logsnapshot.Hooks(f(g(h())))`.
+func (c *LogSnapshotClient) Use(hooks ...Hook) {
+	c.hooks.LogSnapshot = append(c.hooks.LogSnapshot, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `logsnapshot.Intercept(f(g(h())))`.
+func (c *LogSnapshotClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LogSnapshot = append(c.inters.LogSnapshot, interceptors...)
+}
+
+// Create returns a builder for creating a LogSnapshot entity.
+func (c *LogSnapshotClient) Create() *LogSnapshotCreate {
+	mutation := newLogSnapshotMutation(c.config, OpCreate)
+	return &LogSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LogSnapshot entities.
+func (c *LogSnapshotClient) CreateBulk(builders ...*LogSnapshotCreate) *LogSnapshotCreateBulk {
+	return &LogSnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LogSnapshotClient) MapCreateBulk(slice any, setFunc func(*LogSnapshotCreate, int)) *LogSnapshotCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LogSnapshotCreateBulk{err: fmt.Errorf("calling to LogSnapshotClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LogSnapshotCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LogSnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LogSnapshot.
+func (c *LogSnapshotClient) Update() *LogSnapshotUpdate {
+	mutation := newLogSnapshotMutation(c.config, OpUpdate)
+	return &LogSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LogSnapshotClient) UpdateOne(_m *LogSnapshot) *LogSnapshotUpdateOne {
+	mutation := newLogSnapshotMutation(c.config, OpUpdateOne, withLogSnapshot(_m))
+	return &LogSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LogSnapshotClient) UpdateOneID(id uint32) *LogSnapshotUpdateOne {
+	mutation := newLogSnapshotMutation(c.config, OpUpdateOne, withLogSnapshotID(id))
+	return &LogSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LogSnapshot.
+func (c *LogSnapshotClient) Delete() *LogSnapshotDelete {
+	mutation := newLogSnapshotMutation(c.config, OpDelete)
+	return &LogSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LogSnapshotClient) DeleteOne(_m *LogSnapshot) *LogSnapshotDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LogSnapshotClient) DeleteOneID(id uint32) *LogSnapshotDeleteOne {
+	builder := c.Delete().Where(logsnapshot.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LogSnapshotDeleteOne{builder}
+}
+
+// Query returns a query builder for LogSnapshot.
+func (c *LogSnapshotClient) Query() *LogSnapshotQuery {
+	return &LogSnapshotQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLogSnapshot},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LogSnapshot entity by its id.
+func (c *LogSnapshotClient) Get(ctx context.Context, id uint32) (*LogSnapshot, error) {
+	return c.Query().Where(logsnapshot.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LogSnapshotClient) GetX(ctx context.Context, id uint32) *LogSnapshot {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *LogSnapshotClient) Hooks() []Hook {
+	return c.hooks.LogSnapshot
+}
+
+// Interceptors returns the client interceptors.
+func (c *LogSnapshotClient) Interceptors() []Interceptor {
+	return c.inters.LogSnapshot
+}
+
+func (c *LogSnapshotClient) mutate(ctx context.Context, m *LogSnapshotMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LogSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LogSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LogSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LogSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown LogSnapshot mutation op: %q", m.Op())
 	}
 }
 
@@ -8202,6 +8786,272 @@ func (c *TenantClient) mutate(ctx context.Context, m *TenantMutation) (Value, er
 	}
 }
 
+// TerminalChunkClient is a client for the TerminalChunk schema.
+type TerminalChunkClient struct {
+	config
+}
+
+// NewTerminalChunkClient returns a client for the TerminalChunk from the given config.
+func NewTerminalChunkClient(c config) *TerminalChunkClient {
+	return &TerminalChunkClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `terminalchunk.Hooks(f(g(h())))`.
+func (c *TerminalChunkClient) Use(hooks ...Hook) {
+	c.hooks.TerminalChunk = append(c.hooks.TerminalChunk, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `terminalchunk.Intercept(f(g(h())))`.
+func (c *TerminalChunkClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TerminalChunk = append(c.inters.TerminalChunk, interceptors...)
+}
+
+// Create returns a builder for creating a TerminalChunk entity.
+func (c *TerminalChunkClient) Create() *TerminalChunkCreate {
+	mutation := newTerminalChunkMutation(c.config, OpCreate)
+	return &TerminalChunkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TerminalChunk entities.
+func (c *TerminalChunkClient) CreateBulk(builders ...*TerminalChunkCreate) *TerminalChunkCreateBulk {
+	return &TerminalChunkCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TerminalChunkClient) MapCreateBulk(slice any, setFunc func(*TerminalChunkCreate, int)) *TerminalChunkCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TerminalChunkCreateBulk{err: fmt.Errorf("calling to TerminalChunkClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TerminalChunkCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TerminalChunkCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TerminalChunk.
+func (c *TerminalChunkClient) Update() *TerminalChunkUpdate {
+	mutation := newTerminalChunkMutation(c.config, OpUpdate)
+	return &TerminalChunkUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TerminalChunkClient) UpdateOne(_m *TerminalChunk) *TerminalChunkUpdateOne {
+	mutation := newTerminalChunkMutation(c.config, OpUpdateOne, withTerminalChunk(_m))
+	return &TerminalChunkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TerminalChunkClient) UpdateOneID(id uint32) *TerminalChunkUpdateOne {
+	mutation := newTerminalChunkMutation(c.config, OpUpdateOne, withTerminalChunkID(id))
+	return &TerminalChunkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TerminalChunk.
+func (c *TerminalChunkClient) Delete() *TerminalChunkDelete {
+	mutation := newTerminalChunkMutation(c.config, OpDelete)
+	return &TerminalChunkDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TerminalChunkClient) DeleteOne(_m *TerminalChunk) *TerminalChunkDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TerminalChunkClient) DeleteOneID(id uint32) *TerminalChunkDeleteOne {
+	builder := c.Delete().Where(terminalchunk.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TerminalChunkDeleteOne{builder}
+}
+
+// Query returns a query builder for TerminalChunk.
+func (c *TerminalChunkClient) Query() *TerminalChunkQuery {
+	return &TerminalChunkQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTerminalChunk},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TerminalChunk entity by its id.
+func (c *TerminalChunkClient) Get(ctx context.Context, id uint32) (*TerminalChunk, error) {
+	return c.Query().Where(terminalchunk.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TerminalChunkClient) GetX(ctx context.Context, id uint32) *TerminalChunk {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TerminalChunkClient) Hooks() []Hook {
+	return c.hooks.TerminalChunk
+}
+
+// Interceptors returns the client interceptors.
+func (c *TerminalChunkClient) Interceptors() []Interceptor {
+	return c.inters.TerminalChunk
+}
+
+func (c *TerminalChunkClient) mutate(ctx context.Context, m *TerminalChunkMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TerminalChunkCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TerminalChunkUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TerminalChunkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TerminalChunkDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TerminalChunk mutation op: %q", m.Op())
+	}
+}
+
+// TerminalSessionClient is a client for the TerminalSession schema.
+type TerminalSessionClient struct {
+	config
+}
+
+// NewTerminalSessionClient returns a client for the TerminalSession from the given config.
+func NewTerminalSessionClient(c config) *TerminalSessionClient {
+	return &TerminalSessionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `terminalsession.Hooks(f(g(h())))`.
+func (c *TerminalSessionClient) Use(hooks ...Hook) {
+	c.hooks.TerminalSession = append(c.hooks.TerminalSession, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `terminalsession.Intercept(f(g(h())))`.
+func (c *TerminalSessionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TerminalSession = append(c.inters.TerminalSession, interceptors...)
+}
+
+// Create returns a builder for creating a TerminalSession entity.
+func (c *TerminalSessionClient) Create() *TerminalSessionCreate {
+	mutation := newTerminalSessionMutation(c.config, OpCreate)
+	return &TerminalSessionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TerminalSession entities.
+func (c *TerminalSessionClient) CreateBulk(builders ...*TerminalSessionCreate) *TerminalSessionCreateBulk {
+	return &TerminalSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TerminalSessionClient) MapCreateBulk(slice any, setFunc func(*TerminalSessionCreate, int)) *TerminalSessionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TerminalSessionCreateBulk{err: fmt.Errorf("calling to TerminalSessionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TerminalSessionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TerminalSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TerminalSession.
+func (c *TerminalSessionClient) Update() *TerminalSessionUpdate {
+	mutation := newTerminalSessionMutation(c.config, OpUpdate)
+	return &TerminalSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TerminalSessionClient) UpdateOne(_m *TerminalSession) *TerminalSessionUpdateOne {
+	mutation := newTerminalSessionMutation(c.config, OpUpdateOne, withTerminalSession(_m))
+	return &TerminalSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TerminalSessionClient) UpdateOneID(id uint32) *TerminalSessionUpdateOne {
+	mutation := newTerminalSessionMutation(c.config, OpUpdateOne, withTerminalSessionID(id))
+	return &TerminalSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TerminalSession.
+func (c *TerminalSessionClient) Delete() *TerminalSessionDelete {
+	mutation := newTerminalSessionMutation(c.config, OpDelete)
+	return &TerminalSessionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TerminalSessionClient) DeleteOne(_m *TerminalSession) *TerminalSessionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TerminalSessionClient) DeleteOneID(id uint32) *TerminalSessionDeleteOne {
+	builder := c.Delete().Where(terminalsession.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TerminalSessionDeleteOne{builder}
+}
+
+// Query returns a query builder for TerminalSession.
+func (c *TerminalSessionClient) Query() *TerminalSessionQuery {
+	return &TerminalSessionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTerminalSession},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TerminalSession entity by its id.
+func (c *TerminalSessionClient) Get(ctx context.Context, id uint32) (*TerminalSession, error) {
+	return c.Query().Where(terminalsession.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TerminalSessionClient) GetX(ctx context.Context, id uint32) *TerminalSession {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TerminalSessionClient) Hooks() []Hook {
+	return c.hooks.TerminalSession
+}
+
+// Interceptors returns the client interceptors.
+func (c *TerminalSessionClient) Interceptors() []Interceptor {
+	return c.inters.TerminalSession
+}
+
+func (c *TerminalSessionClient) mutate(ctx context.Context, m *TerminalSessionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TerminalSessionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TerminalSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TerminalSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TerminalSessionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TerminalSession mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -8877,27 +9727,31 @@ type (
 	hooks struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
 		Build, BuildHistory, BuildPipeline, Cert, CloudAccount, CloudBudget, CloudCost,
-		CloudInstance, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
-		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		CloudInstance, CommandRecord, ConfigDistribution, ConfigTemplate,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
+		DistributionRecord, Inspection, Language, LogSnapshot, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
 		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
 		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, ScriptBatch, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Hook
+		RolePermission, Script, ScriptBatch, Task, Tenant, TerminalChunk,
+		TerminalSession, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
 		Build, BuildHistory, BuildPipeline, Cert, CloudAccount, CloudBudget, CloudCost,
-		CloudInstance, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
-		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		CloudInstance, CommandRecord, ConfigDistribution, ConfigTemplate,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
+		DistributionRecord, Inspection, Language, LogSnapshot, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
 		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
 		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, ScriptBatch, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		RolePermission, Script, ScriptBatch, Task, Tenant, TerminalChunk,
+		TerminalSession, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

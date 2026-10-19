@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/inspection.proto";
+
+// InspectionService 平台巡检报告
+service InspectionService {
+  // 查询巡检报告列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListInspectionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/inspections"
+    };
+  }
+
+  // 查询巡检报告详情
+  rpc Get (ops.service.v1.GetInspectionRequest) returns (ops.service.v1.Inspection) {
+    option (google.api.http) = {
+      get: "/admin/v1/inspections/{id}"
+    };
+  }
+
+  // 发起一次巡检
+  rpc Run (ops.service.v1.RunInspectionRequest) returns (ops.service.v1.Inspection) {
+    option (google.api.http) = {
+      post: "/admin/v1/inspections/run:send"
+      body: "*"
+    };
+  }
+}

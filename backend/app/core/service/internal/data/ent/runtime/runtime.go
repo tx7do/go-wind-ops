@@ -22,15 +22,19 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/configdistribution"
+	"go-wind-ops/app/core/service/internal/data/ent/configtemplate"
 	"go-wind-ops/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentry"
 	"go-wind-ops/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-ops/app/core/service/internal/data/ent/dicttype"
 	"go-wind-ops/app/core/service/internal/data/ent/distribution"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
+	"go-wind-ops/app/core/service/internal/data/ent/inspection"
 	"go-wind-ops/app/core/service/internal/data/ent/language"
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
+	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -61,6 +65,8 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
+	"go-wind-ops/app/core/service/internal/data/ent/terminalsession"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
 	"go-wind-ops/app/core/service/internal/data/ent/usercredential"
 	"go-wind-ops/app/core/service/internal/data/ent/userorgunit"
@@ -554,6 +560,64 @@ func init() {
 	commandrecordDescID := commandrecordMixinFields0[0].Descriptor()
 	// commandrecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	commandrecord.IDValidator = commandrecordDescID.Validators[0].(func(uint32) error)
+	configdistributionMixin := schema.ConfigDistribution{}.Mixin()
+	configdistributionMixinFields0 := configdistributionMixin[0].Fields()
+	_ = configdistributionMixinFields0
+	configdistributionFields := schema.ConfigDistribution{}.Fields()
+	_ = configdistributionFields
+	// configdistributionDescTemplateID is the schema descriptor for template_id field.
+	configdistributionDescTemplateID := configdistributionFields[0].Descriptor()
+	// configdistribution.TemplateIDValidator is a validator for the "template_id" field. It is called by the builders before save.
+	configdistribution.TemplateIDValidator = configdistributionDescTemplateID.Validators[0].(func(uint32) error)
+	// configdistributionDescTemplateName is the schema descriptor for template_name field.
+	configdistributionDescTemplateName := configdistributionFields[1].Descriptor()
+	// configdistribution.TemplateNameValidator is a validator for the "template_name" field. It is called by the builders before save.
+	configdistribution.TemplateNameValidator = configdistributionDescTemplateName.Validators[0].(func(string) error)
+	// configdistributionDescNodeID is the schema descriptor for node_id field.
+	configdistributionDescNodeID := configdistributionFields[2].Descriptor()
+	// configdistribution.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	configdistribution.NodeIDValidator = configdistributionDescNodeID.Validators[0].(func(uint32) error)
+	// configdistributionDescProjectID is the schema descriptor for project_id field.
+	configdistributionDescProjectID := configdistributionFields[3].Descriptor()
+	// configdistribution.DefaultProjectID holds the default value on creation for the project_id field.
+	configdistribution.DefaultProjectID = configdistributionDescProjectID.Default.(uint32)
+	// configdistributionDescTargetPath is the schema descriptor for target_path field.
+	configdistributionDescTargetPath := configdistributionFields[4].Descriptor()
+	// configdistribution.TargetPathValidator is a validator for the "target_path" field. It is called by the builders before save.
+	configdistribution.TargetPathValidator = configdistributionDescTargetPath.Validators[0].(func(string) error)
+	// configdistributionDescCommandRequestID is the schema descriptor for command_request_id field.
+	configdistributionDescCommandRequestID := configdistributionFields[6].Descriptor()
+	// configdistribution.CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
+	configdistribution.CommandRequestIDValidator = configdistributionDescCommandRequestID.Validators[0].(func(string) error)
+	// configdistributionDescOperatorID is the schema descriptor for operator_id field.
+	configdistributionDescOperatorID := configdistributionFields[8].Descriptor()
+	// configdistribution.DefaultOperatorID holds the default value on creation for the operator_id field.
+	configdistribution.DefaultOperatorID = configdistributionDescOperatorID.Default.(uint32)
+	// configdistributionDescID is the schema descriptor for id field.
+	configdistributionDescID := configdistributionMixinFields0[0].Descriptor()
+	// configdistribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	configdistribution.IDValidator = configdistributionDescID.Validators[0].(func(uint32) error)
+	configtemplateMixin := schema.ConfigTemplate{}.Mixin()
+	configtemplateMixinFields0 := configtemplateMixin[0].Fields()
+	_ = configtemplateMixinFields0
+	configtemplateFields := schema.ConfigTemplate{}.Fields()
+	_ = configtemplateFields
+	// configtemplateDescName is the schema descriptor for name field.
+	configtemplateDescName := configtemplateFields[0].Descriptor()
+	// configtemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	configtemplate.NameValidator = configtemplateDescName.Validators[0].(func(string) error)
+	// configtemplateDescEnv is the schema descriptor for env field.
+	configtemplateDescEnv := configtemplateFields[1].Descriptor()
+	// configtemplate.DefaultEnv holds the default value on creation for the env field.
+	configtemplate.DefaultEnv = configtemplateDescEnv.Default.(string)
+	// configtemplateDescTargetPath is the schema descriptor for target_path field.
+	configtemplateDescTargetPath := configtemplateFields[2].Descriptor()
+	// configtemplate.TargetPathValidator is a validator for the "target_path" field. It is called by the builders before save.
+	configtemplate.TargetPathValidator = configtemplateDescTargetPath.Validators[0].(func(string) error)
+	// configtemplateDescID is the schema descriptor for id field.
+	configtemplateDescID := configtemplateMixinFields0[0].Descriptor()
+	// configtemplate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	configtemplate.IDValidator = configtemplateDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -758,6 +822,39 @@ func init() {
 	distributionrecordDescID := distributionrecordMixinFields0[0].Descriptor()
 	// distributionrecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	distributionrecord.IDValidator = distributionrecordDescID.Validators[0].(func(uint32) error)
+	inspectionMixin := schema.Inspection{}.Mixin()
+	inspectionMixinFields0 := inspectionMixin[0].Fields()
+	_ = inspectionMixinFields0
+	inspectionFields := schema.Inspection{}.Fields()
+	_ = inspectionFields
+	// inspectionDescNodeTotal is the schema descriptor for node_total field.
+	inspectionDescNodeTotal := inspectionFields[2].Descriptor()
+	// inspection.DefaultNodeTotal holds the default value on creation for the node_total field.
+	inspection.DefaultNodeTotal = inspectionDescNodeTotal.Default.(int)
+	// inspectionDescNodeOnline is the schema descriptor for node_online field.
+	inspectionDescNodeOnline := inspectionFields[3].Descriptor()
+	// inspection.DefaultNodeOnline holds the default value on creation for the node_online field.
+	inspection.DefaultNodeOnline = inspectionDescNodeOnline.Default.(int)
+	// inspectionDescProjectTotal is the schema descriptor for project_total field.
+	inspectionDescProjectTotal := inspectionFields[4].Descriptor()
+	// inspection.DefaultProjectTotal holds the default value on creation for the project_total field.
+	inspection.DefaultProjectTotal = inspectionDescProjectTotal.Default.(int)
+	// inspectionDescProjectRunning is the schema descriptor for project_running field.
+	inspectionDescProjectRunning := inspectionFields[5].Descriptor()
+	// inspection.DefaultProjectRunning holds the default value on creation for the project_running field.
+	inspection.DefaultProjectRunning = inspectionDescProjectRunning.Default.(int)
+	// inspectionDescAlertOpen is the schema descriptor for alert_open field.
+	inspectionDescAlertOpen := inspectionFields[6].Descriptor()
+	// inspection.DefaultAlertOpen holds the default value on creation for the alert_open field.
+	inspection.DefaultAlertOpen = inspectionDescAlertOpen.Default.(int)
+	// inspectionDescCertExpiring is the schema descriptor for cert_expiring field.
+	inspectionDescCertExpiring := inspectionFields[7].Descriptor()
+	// inspection.DefaultCertExpiring holds the default value on creation for the cert_expiring field.
+	inspection.DefaultCertExpiring = inspectionDescCertExpiring.Default.(int)
+	// inspectionDescID is the schema descriptor for id field.
+	inspectionDescID := inspectionMixinFields0[0].Descriptor()
+	// inspection.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	inspection.IDValidator = inspectionDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0
@@ -795,6 +892,35 @@ func init() {
 	languageDescID := languageMixinFields0[0].Descriptor()
 	// language.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	language.IDValidator = languageDescID.Validators[0].(func(uint32) error)
+	logsnapshotMixin := schema.LogSnapshot{}.Mixin()
+	logsnapshotMixinFields0 := logsnapshotMixin[0].Fields()
+	_ = logsnapshotMixinFields0
+	logsnapshotFields := schema.LogSnapshot{}.Fields()
+	_ = logsnapshotFields
+	// logsnapshotDescProjectID is the schema descriptor for project_id field.
+	logsnapshotDescProjectID := logsnapshotFields[0].Descriptor()
+	// logsnapshot.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	logsnapshot.ProjectIDValidator = logsnapshotDescProjectID.Validators[0].(func(uint32) error)
+	// logsnapshotDescNodeID is the schema descriptor for node_id field.
+	logsnapshotDescNodeID := logsnapshotFields[1].Descriptor()
+	// logsnapshot.NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
+	logsnapshot.NodeIDValidator = logsnapshotDescNodeID.Validators[0].(func(uint32) error)
+	// logsnapshotDescProjectName is the schema descriptor for project_name field.
+	logsnapshotDescProjectName := logsnapshotFields[2].Descriptor()
+	// logsnapshot.ProjectNameValidator is a validator for the "project_name" field. It is called by the builders before save.
+	logsnapshot.ProjectNameValidator = logsnapshotDescProjectName.Validators[0].(func(string) error)
+	// logsnapshotDescSizeBytes is the schema descriptor for size_bytes field.
+	logsnapshotDescSizeBytes := logsnapshotFields[3].Descriptor()
+	// logsnapshot.DefaultSizeBytes holds the default value on creation for the size_bytes field.
+	logsnapshot.DefaultSizeBytes = logsnapshotDescSizeBytes.Default.(int64)
+	// logsnapshotDescTrigger is the schema descriptor for trigger field.
+	logsnapshotDescTrigger := logsnapshotFields[5].Descriptor()
+	// logsnapshot.DefaultTrigger holds the default value on creation for the trigger field.
+	logsnapshot.DefaultTrigger = logsnapshotDescTrigger.Default.(string)
+	// logsnapshotDescID is the schema descriptor for id field.
+	logsnapshotDescID := logsnapshotMixinFields0[0].Descriptor()
+	// logsnapshot.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	logsnapshot.IDValidator = logsnapshotDescID.Validators[0].(func(uint32) error)
 	loginauditlogMixin := schema.LoginAuditLog{}.Mixin()
 	loginauditlog.Policy = privacy.NewPolicies(loginauditlogMixin[2], schema.LoginAuditLog{})
 	loginauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1709,6 +1835,64 @@ func init() {
 	tenantDescID := tenantMixinFields0[0].Descriptor()
 	// tenant.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	tenant.IDValidator = tenantDescID.Validators[0].(func(uint32) error)
+	terminalchunkMixin := schema.TerminalChunk{}.Mixin()
+	terminalchunkMixinFields0 := terminalchunkMixin[0].Fields()
+	_ = terminalchunkMixinFields0
+	terminalchunkFields := schema.TerminalChunk{}.Fields()
+	_ = terminalchunkFields
+	// terminalchunkDescTerminalSessionID is the schema descriptor for terminal_session_id field.
+	terminalchunkDescTerminalSessionID := terminalchunkFields[0].Descriptor()
+	// terminalchunk.TerminalSessionIDValidator is a validator for the "terminal_session_id" field. It is called by the builders before save.
+	terminalchunk.TerminalSessionIDValidator = terminalchunkDescTerminalSessionID.Validators[0].(func(uint32) error)
+	// terminalchunkDescByteLen is the schema descriptor for byte_len field.
+	terminalchunkDescByteLen := terminalchunkFields[4].Descriptor()
+	// terminalchunk.DefaultByteLen holds the default value on creation for the byte_len field.
+	terminalchunk.DefaultByteLen = terminalchunkDescByteLen.Default.(int)
+	// terminalchunkDescID is the schema descriptor for id field.
+	terminalchunkDescID := terminalchunkMixinFields0[0].Descriptor()
+	// terminalchunk.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	terminalchunk.IDValidator = terminalchunkDescID.Validators[0].(func(uint32) error)
+	terminalsessionMixin := schema.TerminalSession{}.Mixin()
+	terminalsessionMixinFields0 := terminalsessionMixin[0].Fields()
+	_ = terminalsessionMixinFields0
+	terminalsessionFields := schema.TerminalSession{}.Fields()
+	_ = terminalsessionFields
+	// terminalsessionDescSessionID is the schema descriptor for session_id field.
+	terminalsessionDescSessionID := terminalsessionFields[0].Descriptor()
+	// terminalsession.SessionIDValidator is a validator for the "session_id" field. It is called by the builders before save.
+	terminalsession.SessionIDValidator = terminalsessionDescSessionID.Validators[0].(func(string) error)
+	// terminalsessionDescNodeID is the schema descriptor for node_id field.
+	terminalsessionDescNodeID := terminalsessionFields[1].Descriptor()
+	// terminalsession.DefaultNodeID holds the default value on creation for the node_id field.
+	terminalsession.DefaultNodeID = terminalsessionDescNodeID.Default.(uint32)
+	// terminalsessionDescAgentID is the schema descriptor for agent_id field.
+	terminalsessionDescAgentID := terminalsessionFields[2].Descriptor()
+	// terminalsession.AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
+	terminalsession.AgentIDValidator = terminalsessionDescAgentID.Validators[0].(func(string) error)
+	// terminalsessionDescOperatorID is the schema descriptor for operator_id field.
+	terminalsessionDescOperatorID := terminalsessionFields[3].Descriptor()
+	// terminalsession.DefaultOperatorID holds the default value on creation for the operator_id field.
+	terminalsession.DefaultOperatorID = terminalsessionDescOperatorID.Default.(uint32)
+	// terminalsessionDescInputBytes is the schema descriptor for input_bytes field.
+	terminalsessionDescInputBytes := terminalsessionFields[5].Descriptor()
+	// terminalsession.DefaultInputBytes holds the default value on creation for the input_bytes field.
+	terminalsession.DefaultInputBytes = terminalsessionDescInputBytes.Default.(int64)
+	// terminalsessionDescOutputBytes is the schema descriptor for output_bytes field.
+	terminalsessionDescOutputBytes := terminalsessionFields[6].Descriptor()
+	// terminalsession.DefaultOutputBytes holds the default value on creation for the output_bytes field.
+	terminalsession.DefaultOutputBytes = terminalsessionDescOutputBytes.Default.(int64)
+	// terminalsessionDescChunkCount is the schema descriptor for chunk_count field.
+	terminalsessionDescChunkCount := terminalsessionFields[7].Descriptor()
+	// terminalsession.DefaultChunkCount holds the default value on creation for the chunk_count field.
+	terminalsession.DefaultChunkCount = terminalsessionDescChunkCount.Default.(int)
+	// terminalsessionDescTruncated is the schema descriptor for truncated field.
+	terminalsessionDescTruncated := terminalsessionFields[8].Descriptor()
+	// terminalsession.DefaultTruncated holds the default value on creation for the truncated field.
+	terminalsession.DefaultTruncated = terminalsessionDescTruncated.Default.(bool)
+	// terminalsessionDescID is the schema descriptor for id field.
+	terminalsessionDescID := terminalsessionMixinFields0[0].Descriptor()
+	// terminalsession.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	terminalsession.IDValidator = terminalsessionDescID.Validators[0].(func(uint32) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[4], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

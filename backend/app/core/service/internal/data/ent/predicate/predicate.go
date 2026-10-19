@@ -57,6 +57,12 @@ type CloudInstance func(*sql.Selector)
 // CommandRecord is the predicate function for commandrecord builders.
 type CommandRecord func(*sql.Selector)
 
+// ConfigDistribution is the predicate function for configdistribution builders.
+type ConfigDistribution func(*sql.Selector)
+
+// ConfigTemplate is the predicate function for configtemplate builders.
+type ConfigTemplate func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -75,8 +81,14 @@ type Distribution func(*sql.Selector)
 // DistributionRecord is the predicate function for distributionrecord builders.
 type DistributionRecord func(*sql.Selector)
 
+// Inspection is the predicate function for inspection builders.
+type Inspection func(*sql.Selector)
+
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)
+
+// LogSnapshot is the predicate function for logsnapshot builders.
+type LogSnapshot func(*sql.Selector)
 
 // LoginAuditLog is the predicate function for loginauditlog builders.
 type LoginAuditLog func(*sql.Selector)
@@ -170,6 +182,12 @@ type Task func(*sql.Selector)
 
 // Tenant is the predicate function for tenant builders.
 type Tenant func(*sql.Selector)
+
+// TerminalChunk is the predicate function for terminalchunk builders.
+type TerminalChunk func(*sql.Selector)
+
+// TerminalSession is the predicate function for terminalsession builders.
+type TerminalSession func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

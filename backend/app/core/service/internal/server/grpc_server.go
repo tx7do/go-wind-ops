@@ -88,6 +88,9 @@ func NewGrpcServer(
 	notificationDeliveryService *service.NotificationDeliveryService,
 	cloudBudgetService *service.CloudBudgetService,
 	certService *service.CertService,
+	inspectionService *service.InspectionService,
+	logSnapshotService *service.LogSnapshotService,
+	configService *service.ConfigService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -156,6 +159,9 @@ func NewGrpcServer(
 	opsV1.RegisterNotificationDeliveryServiceServer(srv, notificationDeliveryService)
 	opsV1.RegisterCloudBudgetServiceServer(srv, cloudBudgetService)
 	opsV1.RegisterCertServiceServer(srv, certService)
+	opsV1.RegisterInspectionServiceServer(srv, inspectionService)
+	opsV1.RegisterLogSnapshotServiceServer(srv, logSnapshotService)
+	opsV1.RegisterConfigServiceServer(srv, configService)
 
 	return srv, nil
 }

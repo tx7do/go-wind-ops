@@ -81,6 +81,7 @@ require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
+	github.com/aymanbagabas/go-pty v0.2.2 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
@@ -92,6 +93,7 @@ require (
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
+	github.com/creack/pty v1.1.21 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
 	github.com/dtm-labs/dtmdriver v0.0.6 // indirect
 	github.com/dtm-labs/logger v0.0.2 // indirect
@@ -194,6 +196,7 @@ require (
 	github.com/tx7do/kratos-transport/tracing v1.2.0 // indirect
 	github.com/tx7do/kratos-transport/transport v1.4.1 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
+	github.com/u-root/u-root v0.11.0 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.33 // indirect

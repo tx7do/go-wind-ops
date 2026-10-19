@@ -7,7 +7,8 @@
 // 线路协议(与前端约定):
 //   - 服务端 → 浏览器:二进制帧 = 终端输出原始字节;文本帧 = 控制事件 JSON
 //     ({"event":"OPENED"} / {"event":"CLOSED","error":"..."});
-//   - 浏览器 → 服务端:二进制或文本帧 = 键盘输入原始字节。
+//   - 浏览器 → 服务端:二进制帧 = 键盘输入原始字节;文本帧 = 控制事件 JSON
+//     ({"event":"RESIZE","cols":N,"rows":M})。
 //
 // 本路由经 kratos Server.Handle 直接注册在 mux 上,不经过鉴权中间件,
 // 鉴权完全由查询参数 token 完成。
@@ -15,6 +16,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -143,11 +145,35 @@ func (h *TerminalWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if len(data) == 0 || mt == websocket.CloseMessage {
 			continue
 		}
+		// 文本帧=控制事件(目前仅 RESIZE);二进制帧=键盘输入原始字节。
+		if mt == websocket.TextMessage {
+			if ctl, ok := wsParseControl(data); ok {
+				if serr := stream.Send(ctl); serr != nil {
+					cancel()
+					return
+				}
+				continue
+			}
+		}
 		if serr := stream.Send(&opsV1.TerminalChunk{Data: data}); serr != nil {
 			cancel()
 			return
 		}
 	}
+}
+
+// wsParseControl 解析浏览器文本控制帧(目前仅 RESIZE);非控制帧返回 false,
+// 按原始字节转发。
+func wsParseControl(data []byte) (*opsV1.TerminalChunk, bool) {
+	var ctl struct {
+		Event string `json:"event"`
+		Cols  uint32 `json:"cols"`
+		Rows  uint32 `json:"rows"`
+	}
+	if json.Unmarshal(data, &ctl) != nil || ctl.Event != "RESIZE" || ctl.Cols == 0 || ctl.Rows == 0 {
+		return nil, false
+	}
+	return &opsV1.TerminalChunk{Event: strPtrWs("RESIZE"), Cols: &ctl.Cols, Rows: &ctl.Rows}, true
 }
 
 // wsQuote 极简 JSON 字符串转义(错误文案仅含少量可控字符)。

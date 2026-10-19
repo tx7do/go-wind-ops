@@ -212,6 +212,30 @@ func (f CommandRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommandRecordMutation", m)
 }
 
+// The ConfigDistributionFunc type is an adapter to allow the use of ordinary
+// function as ConfigDistribution mutator.
+type ConfigDistributionFunc func(context.Context, *ent.ConfigDistributionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ConfigDistributionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ConfigDistributionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ConfigDistributionMutation", m)
+}
+
+// The ConfigTemplateFunc type is an adapter to allow the use of ordinary
+// function as ConfigTemplate mutator.
+type ConfigTemplateFunc func(context.Context, *ent.ConfigTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ConfigTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ConfigTemplateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ConfigTemplateMutation", m)
+}
+
 // The DataAccessAuditLogFunc type is an adapter to allow the use of ordinary
 // function as DataAccessAuditLog mutator.
 type DataAccessAuditLogFunc func(context.Context, *ent.DataAccessAuditLogMutation) (ent.Value, error)
@@ -284,6 +308,18 @@ func (f DistributionRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DistributionRecordMutation", m)
 }
 
+// The InspectionFunc type is an adapter to allow the use of ordinary
+// function as Inspection mutator.
+type InspectionFunc func(context.Context, *ent.InspectionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InspectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.InspectionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InspectionMutation", m)
+}
+
 // The LanguageFunc type is an adapter to allow the use of ordinary
 // function as Language mutator.
 type LanguageFunc func(context.Context, *ent.LanguageMutation) (ent.Value, error)
@@ -294,6 +330,18 @@ func (f LanguageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LanguageMutation", m)
+}
+
+// The LogSnapshotFunc type is an adapter to allow the use of ordinary
+// function as LogSnapshot mutator.
+type LogSnapshotFunc func(context.Context, *ent.LogSnapshotMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LogSnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.LogSnapshotMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LogSnapshotMutation", m)
 }
 
 // The LoginAuditLogFunc type is an adapter to allow the use of ordinary
@@ -666,6 +714,30 @@ func (f TenantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, erro
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TenantMutation", m)
+}
+
+// The TerminalChunkFunc type is an adapter to allow the use of ordinary
+// function as TerminalChunk mutator.
+type TerminalChunkFunc func(context.Context, *ent.TerminalChunkMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TerminalChunkFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TerminalChunkMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TerminalChunkMutation", m)
+}
+
+// The TerminalSessionFunc type is an adapter to allow the use of ordinary
+// function as TerminalSession mutator.
+type TerminalSessionFunc func(context.Context, *ent.TerminalSessionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TerminalSessionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TerminalSessionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TerminalSessionMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

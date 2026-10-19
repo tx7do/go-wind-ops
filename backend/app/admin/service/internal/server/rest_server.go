@@ -159,6 +159,10 @@ func NewRestServer(
 	cloudBudgetService *service.CloudBudgetService,
 	certService *service.CertService,
 	notificationDeliveryService *service.NotificationDeliveryService,
+	terminalAuditService *service.TerminalAuditService,
+	inspectionService *service.InspectionService,
+	logSnapshotService *service.LogSnapshotService,
+	configService *service.ConfigService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -238,6 +242,10 @@ func NewRestServer(
 	adminV1.RegisterCloudBudgetServiceHTTPServer(srv, cloudBudgetService)
 	adminV1.RegisterCertServiceHTTPServer(srv, certService)
 	adminV1.RegisterNotificationDeliveryServiceHTTPServer(srv, notificationDeliveryService)
+	adminV1.RegisterTerminalAuditServiceHTTPServer(srv, terminalAuditService)
+	adminV1.RegisterInspectionServiceHTTPServer(srv, inspectionService)
+	adminV1.RegisterLogSnapshotServiceHTTPServer(srv, logSnapshotService)
+	adminV1.RegisterConfigServiceHTTPServer(srv, configService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/log_snapshot.proto";
+
+// LogSnapshotService 项目日志快照
+service LogSnapshotService {
+  // 查询快照列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListLogSnapshotResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/log-snapshots"
+    };
+  }
+
+  // 查询快照详情(含内容)
+  rpc Get (ops.service.v1.GetLogSnapshotRequest) returns (ops.service.v1.LogSnapshot) {
+    option (google.api.http) = {
+      get: "/admin/v1/log-snapshots/{id}"
+    };
+  }
+
+  // 采集一次项目日志快照
+  rpc Capture (ops.service.v1.CaptureLogSnapshotRequest) returns (ops.service.v1.LogSnapshot) {
+    option (google.api.http) = {
+      post: "/admin/v1/log-snapshots/capture:send"
+      body: "*"
+    };
+  }
+
+  // 关键字检索
+  rpc Search (ops.service.v1.SearchLogSnapshotsRequest) returns (ops.service.v1.SearchLogSnapshotResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/log-snapshots/search:send"
+      body: "*"
+    };
+  }
+
+  // 删除快照
+  rpc Delete (ops.service.v1.DeleteLogSnapshotRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/log-snapshots/{id}"
+    };
+  }
+}

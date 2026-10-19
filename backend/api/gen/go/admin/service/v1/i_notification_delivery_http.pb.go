@@ -33,11 +33,11 @@ type NotificationDeliveryServiceHTTPServer interface {
 
 func RegisterNotificationDeliveryServiceHTTPServer(s *http.Server, srv NotificationDeliveryServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/notification-deliveries", _NotificationDeliveryService_List25_HTTP_Handler(srv))
-	r.GET("/admin/v1/notification-deliveries/{id}", _NotificationDeliveryService_Get23_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-deliveries", _NotificationDeliveryService_List28_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-deliveries/{id}", _NotificationDeliveryService_Get26_HTTP_Handler(srv))
 }
 
-func _NotificationDeliveryService_List25_HTTP_Handler(srv NotificationDeliveryServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationDeliveryService_List28_HTTP_Handler(srv NotificationDeliveryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _NotificationDeliveryService_List25_HTTP_Handler(srv NotificationDeliverySe
 	}
 }
 
-func _NotificationDeliveryService_Get23_HTTP_Handler(srv NotificationDeliveryServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationDeliveryService_Get26_HTTP_Handler(srv NotificationDeliveryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNotificationDeliveryRequest
 		if err := ctx.BindQuery(&in); err != nil {

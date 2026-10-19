@@ -1,6 +1,6 @@
 // terminal_handlers.go 实现 Web 终端会话(terminal_open/terminal_close 指令
-// + 通配输入主题路由)。管道伪终端:进程 stdin/stdout/stderr 直连,不经
-// shell 解释器包装;不支持交互式全屏程序(vim/htop)与 Ctrl+C 控制台事件。
+// + 通配输入/尺寸主题路由)。真 PTY:Windows=ConPTY,Unix=内核 pty——回显、
+// 行编辑、Ctrl+C 与交互式程序均由伪终端原生支持。
 package agent
 
 import (
@@ -9,11 +9,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"runtime"
 	"sync"
 	"time"
 
+	"github.com/aymanbagabas/go-pty"
 	"github.com/tx7do/kratos-transport/broker"
 
 	"go-wind-ops/pkg/shellexec"
@@ -28,9 +28,9 @@ const terminalIdleTimeout = 15 * time.Minute
 type terminalSession struct {
 	id string
 
-	cmd       *exec.Cmd
+	pty       pty.Pty
+	ptyCmd    *pty.Cmd
 	shellName string
-	stdin     interface{ Write([]byte) (int, error) }
 
 	cancel context.CancelFunc
 
@@ -107,7 +107,7 @@ func (s *Service) registerTerminalHandlers() {
 	go s.terminal.gcLoop()
 }
 
-// handleTerminalOpen 打开会话:按平台起 shell 进程,接管道,挂输出泵。
+// handleTerminalOpen 打开会话:按平台起真 PTY shell 进程,挂输出泵。
 func (s *Service) handleTerminalOpen(_ context.Context, env *signal.CommandEnvelope) (any, error) {
 	payload := &signal.TerminalOpenPayload{}
 	if len(env.Payload) > 0 {
@@ -122,15 +122,15 @@ func (s *Service) handleTerminalOpen(_ context.Context, env *signal.CommandEnvel
 		return nil, fmt.Errorf("session %s already exists", payload.SessionId)
 	}
 
-	sess, err := s.terminal.open(payload.SessionId)
+	sess, err := s.terminal.open(payload.SessionId, payload.Cols, payload.Rows)
 	if err != nil {
 		return nil, err
 	}
 	s.log().Infof("terminal session opened (session=%s pid=%d shell=%s)",
-		payload.SessionId, sess.cmd.Process.Pid, sess.shellName)
+		payload.SessionId, sess.ptyCmd.Process.Pid, sess.shellName)
 	return map[string]any{
 		"session_id": payload.SessionId,
-		"pid":        sess.cmd.Process.Pid,
+		"pid":        sess.ptyCmd.Process.Pid,
 		"shell":      sess.shellName,
 	}, nil
 }
@@ -151,14 +151,14 @@ func (s *Service) handleTerminalClose(_ context.Context, env *signal.CommandEnve
 	if sess == nil {
 		return map[string]any{"closed": payload.SessionId}, nil
 	}
-	_ = shellexec.KillTree(sess.cmd.Process.Pid)
+	_ = shellexec.KillTree(sess.ptyCmd.Process.Pid)
 	sess.cancel()
 	s.log().Infof("terminal session closed (session=%s)", payload.SessionId)
 	return map[string]any{"closed": payload.SessionId}, nil
 }
 
 // HandleTerminalInput 通配主题 ops/agent/{id}/terminal/+/input 的路由入口:
-// 按 payload.session_id 找会话写入 stdin;会话不存在则静默丢弃。
+// 按 payload.session_id 找会话写入 PTY;会话不存在则静默丢弃。
 func (s *Service) HandleTerminalInput(ctx context.Context, _ string, _ broker.Headers, msg *signal.TerminalIO) error {
 	if msg == nil || msg.SessionId == "" || msg.Data == "" {
 		return nil
@@ -172,70 +172,83 @@ func (s *Service) HandleTerminalInput(ctx context.Context, _ string, _ broker.He
 		return nil
 	}
 	sess.touch()
-	if _, err = sess.stdin.Write(data); err != nil {
+	if _, err = sess.pty.Write(data); err != nil {
 		s.log().Warnf("terminal stdin write (session=%s): %s", msg.SessionId, err.Error())
 	}
 	return nil
 }
 
-// open 起进程并注册会话。
-func (m *terminalSessionManager) open(sessionId string) (*terminalSession, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	var cmd *exec.Cmd
+// HandleTerminalResize 通配主题 ops/agent/{id}/terminal/+/resize 的路由入口:
+// 调整 PTY 尺寸;会话不存在则静默丢弃。
+func (s *Service) HandleTerminalResize(ctx context.Context, _ string, _ broker.Headers, msg *signal.TerminalResizePayload) error {
+	if msg == nil || msg.SessionId == "" || msg.Cols == 0 || msg.Rows == 0 {
+		return nil
+	}
+	sess := s.terminal.get(msg.SessionId)
+	if sess == nil {
+		return nil
+	}
+	if err := sess.pty.Resize(int(msg.Cols), int(msg.Rows)); err != nil {
+		s.log().Warnf("terminal resize (session=%s cols=%d rows=%d): %s",
+			msg.SessionId, msg.Cols, msg.Rows, err.Error())
+	}
+	return nil
+}
+
+// open 起真 PTY shell 并注册会话(Windows=ConPTY,Unix=内核 pty)。
+func (m *terminalSessionManager) open(sessionId string, cols, rows uint32) (*terminalSession, error) {
+	_, cancel := context.WithCancel(context.Background())
+
+	pt, err := pty.New()
+	if err != nil {
+		cancel()
+		return nil, fmt.Errorf("new pty: %w", err)
+	}
+
+	var ptyCmd *pty.Cmd
 	shellName := "cmd.exe"
 	if runtime.GOOS == "windows" {
-		cmd = exec.CommandContext(ctx, "cmd.exe")
+		ptyCmd = pt.Command("cmd.exe")
 	} else {
 		shellName = os.Getenv("SHELL")
 		if shellName == "" {
 			shellName = "/bin/bash"
 		}
-		cmd = exec.CommandContext(ctx, shellName, "-i")
+		ptyCmd = pt.Command(shellName, "-i")
 	}
-	cmd.Env = os.Environ()
+	ptyCmd.Env = os.Environ()
 
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		cancel()
-		return nil, fmt.Errorf("stdin pipe: %w", err)
-	}
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		cancel()
-		return nil, fmt.Errorf("stdout pipe: %w", err)
-	}
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		cancel()
-		return nil, fmt.Errorf("stderr pipe: %w", err)
-	}
-	if err = cmd.Start(); err != nil {
+	if err = ptyCmd.Start(); err != nil {
+		_ = pt.Close()
 		cancel()
 		return nil, fmt.Errorf("start %s: %w", shellName, err)
 	}
+	if cols > 0 && rows > 0 {
+		_ = pt.Resize(int(cols), int(rows))
+	}
 
 	sess := &terminalSession{
-		id:         sessionId,
-		cmd:        cmd,
-		shellName:  shellName,
-		stdin:      stdin,
-		cancel:     cancel,
+		id:        sessionId,
+		pty:       pt,
+		ptyCmd:    ptyCmd,
+		shellName: shellName,
+		cancel:    cancel,
 		lastActive: time.Now(),
 	}
 	if err = m.put(sess); err != nil {
-		_ = shellexec.KillTree(cmd.Process.Pid)
+		_ = shellexec.KillTree(ptyCmd.Process.Pid)
+		_ = pt.Close()
 		cancel()
 		return nil, err
 	}
 
-	go m.pump(sess, stdout)
-	go m.pump(sess, stderr)
+	go m.pump(sess, pt)
 	go m.waitLoop(sess)
 
 	return sess, nil
 }
 
-// pump 输出泵:进程输出 → MQTT output 主题。
+// pump 输出泵:PTY 输出 → MQTT output 主题。
 func (m *terminalSessionManager) pump(sess *terminalSession, r interface{ Read([]byte) (int, error) }) {
 	buf := make([]byte, 4096)
 	for {
@@ -249,9 +262,10 @@ func (m *terminalSessionManager) pump(sess *terminalSession, r interface{ Read([
 	}
 }
 
-// waitLoop 进程退出:发 CLOSED 事件帧并清理会话表。
+// waitLoop 进程退出:关 PTY、发 CLOSED 事件帧并清理会话表。
 func (m *terminalSessionManager) waitLoop(sess *terminalSession) {
-	_ = sess.cmd.Wait()
+	_ = sess.ptyCmd.Wait()
+	_ = sess.pty.Close()
 	m.svc.publishTerminalIO(sess.id, nil, true)
 	m.remove(sess.id)
 }
@@ -263,7 +277,7 @@ func (m *terminalSessionManager) gcLoop() {
 	for range ticker.C {
 		for _, sess := range m.listIdle() {
 			m.svc.log().Infof("terminal session idle timeout, closing (session=%s)", sess.id)
-			_ = shellexec.KillTree(sess.cmd.Process.Pid)
+			_ = shellexec.KillTree(sess.ptyCmd.Process.Pid)
 			sess.cancel()
 		}
 	}

@@ -46,6 +46,7 @@ const (
 
 	MqttTopicTerminalInput  = MqttTopicPrefix + "agent/%s/terminal/%s/input"  // Core -> Agent (键盘输入)
 	MqttTopicTerminalOutput = MqttTopicPrefix + "agent/%s/terminal/%s/output" // Agent -> Core (回显输出)
+	MqttTopicTerminalResize = MqttTopicPrefix + "agent/%s/terminal/%s/resize" // Core -> Agent (PTY 尺寸)
 
 	// 文件传输信令 (文件内容走 MinIO/S3 预签名 URL,不过 MQTT)
 
@@ -102,4 +103,9 @@ func MakeMqttTopicTerminalInput(agentId, sessionId string) string {
 // MakeMqttTopicTerminalOutput 终端输出主题;通配订阅传 "+"。
 func MakeMqttTopicTerminalOutput(agentId, sessionId string) string {
 	return fmt.Sprintf(MqttTopicTerminalOutput, agentId, sessionId)
+}
+
+// MakeMqttTopicTerminalResize 终端尺寸主题;通配订阅传 "+"。
+func MakeMqttTopicTerminalResize(agentId, sessionId string) string {
+	return fmt.Sprintf(MqttTopicTerminalResize, agentId, sessionId)
 }

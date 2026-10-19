@@ -2468,6 +2468,198 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.CommandRecord'
+    /admin/v1/config-templates:
+        get:
+            tags:
+                - ConfigService
+            description: 查询模板列表
+            operationId: ConfigService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListConfigTemplateResponse'
+        post:
+            tags:
+                - ConfigService
+            description: 创建模板
+            operationId: ConfigService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CreateConfigTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ConfigTemplate'
+    /admin/v1/config-templates/distribute:send:
+        post:
+            tags:
+                - ConfigService
+            description: 下发模板到目标节点
+            operationId: ConfigService_Distribute
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.DistributeConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ConfigDistribution'
+    /admin/v1/config-templates/distributions:search:
+        post:
+            tags:
+                - ConfigService
+            description: 查询下发记录列表(按模板过滤)
+            operationId: ConfigService_ListDistributions
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.ListConfigDistributionsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListConfigDistributionResponse'
+    /admin/v1/config-templates/{id}:
+        get:
+            tags:
+                - ConfigService
+            description: 查询模板详情
+            operationId: ConfigService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ConfigTemplate'
+        put:
+            tags:
+                - ConfigService
+            description: 更新模板
+            operationId: ConfigService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.UpdateConfigTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ConfigService
+            description: 删除模板
+            operationId: ConfigService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/data-access-audit-logs:
         get:
             tags:
@@ -3521,6 +3713,275 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.InitialContextResponse'
+    /admin/v1/inspections:
+        get:
+            tags:
+                - InspectionService
+            description: 查询巡检报告列表
+            operationId: InspectionService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListInspectionResponse'
+    /admin/v1/inspections/run:send:
+        post:
+            tags:
+                - InspectionService
+            description: 发起一次巡检
+            operationId: InspectionService_Run
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.RunInspectionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.Inspection'
+    /admin/v1/inspections/{id}:
+        get:
+            tags:
+                - InspectionService
+            description: 查询巡检报告详情
+            operationId: InspectionService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.Inspection'
+    /admin/v1/log-snapshots:
+        get:
+            tags:
+                - LogSnapshotService
+            description: 查询快照列表
+            operationId: LogSnapshotService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListLogSnapshotResponse'
+    /admin/v1/log-snapshots/capture:send:
+        post:
+            tags:
+                - LogSnapshotService
+            description: 采集一次项目日志快照
+            operationId: LogSnapshotService_Capture
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CaptureLogSnapshotRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.LogSnapshot'
+    /admin/v1/log-snapshots/search:send:
+        post:
+            tags:
+                - LogSnapshotService
+            description: 关键字检索
+            operationId: LogSnapshotService_Search
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.SearchLogSnapshotsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.SearchLogSnapshotResponse'
+    /admin/v1/log-snapshots/{id}:
+        get:
+            tags:
+                - LogSnapshotService
+            description: 查询快照详情(含内容)
+            operationId: LogSnapshotService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.LogSnapshot'
+        delete:
+            tags:
+                - LogSnapshotService
+            description: 删除快照
+            operationId: LogSnapshotService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/login:
         post:
             tags:
@@ -7131,6 +7592,123 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/terminal-sessions:
+        get:
+            tags:
+                - TerminalAuditService
+            description: 查询终端会话审计列表
+            operationId: TerminalAuditService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListTerminalSessionResponse'
+    /admin/v1/terminal-sessions/chunks:search:
+        post:
+            tags:
+                - TerminalAuditService
+            description: 拉取会话录制分块(回放用)
+            operationId: TerminalAuditService_ListChunks
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.ListTerminalChunksRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListTerminalChunkResponse'
+    /admin/v1/terminal-sessions/{id}:
+        get:
+            tags:
+                - TerminalAuditService
+            description: 查询终端会话详情
+            operationId: TerminalAuditService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.TerminalSession'
     /admin/v1/users:
         get:
             tags:
@@ -9894,6 +10472,14 @@ components:
                     type: string
                     format: date-time
             description: 构建历史
+        ops.service.v1.CaptureLogSnapshotRequest:
+            required:
+                - projectId
+            type: object
+            properties:
+                projectId:
+                    type: integer
+                    format: uint32
         ops.service.v1.Cert:
             required:
                 - name
@@ -10246,6 +10832,72 @@ components:
                 sha256:
                     readOnly: true
                     type: string
+        ops.service.v1.ConfigDistribution:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                templateId:
+                    type: integer
+                    format: uint32
+                templateName:
+                    type: string
+                nodeId:
+                    type: integer
+                    format: uint32
+                projectId:
+                    type: integer
+                    format: uint32
+                targetPath:
+                    type: string
+                status:
+                    type: string
+                error:
+                    type: string
+                finishedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+        ops.service.v1.ConfigTemplate:
+            required:
+                - name
+                - targetPath
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                    description: 模板名(全局唯一)
+                env:
+                    type: string
+                    description: 所属环境(default/dev/staging/prod)
+                targetPath:
+                    type: string
+                    description: 下发目标绝对路径(须在 agent 授权目录内)
+                content:
+                    type: string
+                    description: 模板内容(≤256KB,原样下发)
+                description:
+                    type: string
+                    description: 描述
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                updatedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 配置模板
         ops.service.v1.CreateApiKeyRequest:
             required:
                 - data
@@ -10301,6 +10953,13 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/ops.service.v1.CloudBudget'
+        ops.service.v1.CreateConfigTemplateRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.ConfigTemplate'
         ops.service.v1.CreateDistributionRequest:
             required:
                 - data
@@ -10366,6 +11025,22 @@ components:
                 deleted:
                     readOnly: true
                     type: string
+        ops.service.v1.DistributeConfigRequest:
+            required:
+                - templateId
+                - nodeId
+            type: object
+            properties:
+                templateId:
+                    type: integer
+                    format: uint32
+                nodeId:
+                    type: integer
+                    format: uint32
+                projectId:
+                    type: integer
+                    description: 关联项目(0=不关联,仅记录用)
+                    format: uint32
         ops.service.v1.Distribution:
             required:
                 - name
@@ -10717,6 +11392,46 @@ components:
                     type: array
                     items:
                         type: string
+        ops.service.v1.Inspection:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                status:
+                    type: string
+                summary:
+                    type: string
+                nodeTotal:
+                    type: integer
+                    format: int32
+                nodeOnline:
+                    type: integer
+                    format: int32
+                projectTotal:
+                    type: integer
+                    format: int32
+                projectRunning:
+                    type: integer
+                    format: int32
+                alertOpen:
+                    type: integer
+                    format: int32
+                certExpiring:
+                    type: integer
+                    format: int32
+                error:
+                    type: string
+                finishedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 巡检报告
         ops.service.v1.ListAgentFilesResponse:
             type: object
             properties:
@@ -10865,6 +11580,38 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.CommandRecord'
+        ops.service.v1.ListConfigDistributionResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.ConfigDistribution'
+        ops.service.v1.ListConfigDistributionsRequest:
+            required:
+                - templateId
+            type: object
+            properties:
+                templateId:
+                    type: integer
+                    format: uint32
+                page:
+                    type: integer
+                    format: int32
+                pageSize:
+                    type: integer
+                    format: int32
+        ops.service.v1.ListConfigTemplateResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.ConfigTemplate'
         ops.service.v1.ListDistributionRecordResponse:
             type: object
             properties:
@@ -10883,6 +11630,24 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.Distribution'
+        ops.service.v1.ListInspectionResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.Inspection'
+        ops.service.v1.ListLogSnapshotResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.LogSnapshot'
         ops.service.v1.ListMonitorResponse:
             type: object
             properties:
@@ -10964,6 +11729,66 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.Script'
+        ops.service.v1.ListTerminalChunkResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.TerminalChunkItem'
+                truncated:
+                    type: boolean
+        ops.service.v1.ListTerminalChunksRequest:
+            required:
+                - sessionId
+            type: object
+            properties:
+                sessionId:
+                    type: integer
+                    format: uint32
+                fromSeq:
+                    type: integer
+                    description: 起始序号(含),默认 0
+                    format: int32
+                limit:
+                    type: integer
+                    description: 单次上限(默认 500,上限 2000)
+                    format: int32
+        ops.service.v1.ListTerminalSessionResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.TerminalSession'
+        ops.service.v1.LogSnapshot:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                projectId:
+                    type: integer
+                    format: uint32
+                nodeId:
+                    type: integer
+                    format: uint32
+                projectName:
+                    type: string
+                sizeBytes:
+                    type: string
+                content:
+                    type: string
+                trigger:
+                    type: string
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 日志快照
         ops.service.v1.Monitor:
             required:
                 - name
@@ -11473,6 +12298,9 @@ components:
                 id:
                     type: integer
                     format: uint32
+        ops.service.v1.RunInspectionRequest:
+            type: object
+            properties: {}
         ops.service.v1.Script:
             required:
                 - name
@@ -11590,6 +12418,46 @@ components:
                     type: string
                     format: date-time
             description: 批次内单节点执行结果
+        ops.service.v1.SearchLogSnapshotResponse:
+            type: object
+            properties:
+                hits:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.SearchLogSnapshotResponse_SearchHit'
+                keyword:
+                    type: string
+        ops.service.v1.SearchLogSnapshotResponse_SearchHit:
+            type: object
+            properties:
+                snapshotId:
+                    type: integer
+                    format: uint32
+                projectId:
+                    type: integer
+                    format: uint32
+                projectName:
+                    type: string
+                capturedAt:
+                    type: string
+                    format: date-time
+                excerpt:
+                    type: string
+                matchCount:
+                    type: integer
+                    format: int32
+        ops.service.v1.SearchLogSnapshotsRequest:
+            required:
+                - keyword
+            type: object
+            properties:
+                keyword:
+                    type: string
+                    description: 关键字(内容模糊匹配)
+                projectId:
+                    type: integer
+                    description: 限定项目(0=全部)
+                    format: uint32
         ops.service.v1.SendCommandRequest:
             required:
                 - action
@@ -11640,6 +12508,58 @@ components:
                     type: array
                     items:
                         type: string
+        ops.service.v1.TerminalChunkItem:
+            type: object
+            properties:
+                seq:
+                    type: integer
+                    format: int32
+                direction:
+                    type: string
+                payload:
+                    type: string
+                    format: bytes
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+        ops.service.v1.TerminalSession:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                sessionId:
+                    type: string
+                nodeId:
+                    type: integer
+                    format: uint32
+                agentId:
+                    type: string
+                operatorId:
+                    type: integer
+                    format: uint32
+                status:
+                    type: string
+                inputBytes:
+                    type: string
+                outputBytes:
+                    type: string
+                chunkCount:
+                    type: integer
+                    format: int32
+                truncated:
+                    type: boolean
+                closedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 终端会话审计记录
         ops.service.v1.TriggerBackupRequest:
             required:
                 - id
@@ -11808,6 +12728,21 @@ components:
                     format: uint32
                 data:
                     $ref: '#/components/schemas/ops.service.v1.CloudBudget'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+        ops.service.v1.UpdateConfigTemplateRequest:
+            required:
+                - id
+                - data
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.ConfigTemplate'
                 updateMask:
                     type: string
                     description: 要更新的字段列表
@@ -12940,6 +13875,8 @@ tags:
       description: CloudInstanceService 云资源实例清单门面。
     - name: CommandRecordService
       description: CommandRecordService agent 指令台账查询
+    - name: ConfigService
+      description: ConfigService 配置文件中心
     - name: DataAccessAuditLogService
       description: 数据访问审计日志管理服务
     - name: DictEntryService
@@ -12950,8 +13887,12 @@ tags:
       description: DistributionService 构建产物分发
     - name: FileService
       description: FileService 远端文件管理门面:透传 core 经 MQTT 代理的 agent 文件操作。
+    - name: InspectionService
+      description: InspectionService 平台巡检报告
     - name: LanguageService
       description: 语言管理服务
+    - name: LogSnapshotService
+      description: LogSnapshotService 项目日志快照
     - name: LoginAuditLogService
       description: 登录审计日志管理服务
     - name: LoginPolicyService
@@ -12995,6 +13936,8 @@ tags:
       description: 调度任务管理服务
     - name: TenantService
       description: 租户管理服务
+    - name: TerminalAuditService
+      description: TerminalAuditService 终端会话审计(录制回放)
     - name: UserProfileService
       description: 用户个人资料服务
     - name: UserService

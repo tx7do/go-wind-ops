@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// InspectionService 平台巡检报告:聚合节点/项目/告警/证书/备份当前状态
+// 生成健康快照,支持手动发起与历史查看。
+service InspectionService {
+  // 查询巡检报告列表
+  rpc ListInspections (pagination.PagingRequest) returns (ListInspectionResponse) {}
+
+  // 查询巡检报告详情(含报告 JSON)
+  rpc GetInspection (GetInspectionRequest) returns (Inspection) {}
+
+  // 发起一次巡检(异步执行,轮询列表看终态)
+  rpc RunInspection (RunInspectionRequest) returns (Inspection) {}
+}
+
+// 巡检报告
+message Inspection {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 报告ID
+
+  optional string status = 2 [json_name = "status"]; // 状态(RUNNING/FINISHED/FAILED)
+
+  optional string summary = 3 [json_name = "summary"]; // 报告 JSON
+
+  optional int32 node_total = 4 [json_name = "nodeTotal"]; // 节点总数
+
+  optional int32 node_online = 5 [json_name = "nodeOnline"]; // 在线节点
+
+  optional int32 project_total = 6 [json_name = "projectTotal"]; // 项目总数
+
+  optional int32 project_running = 7 [json_name = "projectRunning"]; // 运行中项目
+
+  optional int32 alert_open = 8 [json_name = "alertOpen"]; // 未恢复告警
+
+  optional int32 cert_expiring = 9 [json_name = "certExpiring"]; // 30 天内到期证书
+
+  optional string error = 10 [json_name = "error"]; // 失败原因
+
+  optional google.protobuf.Timestamp finished_at = 11 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 完成时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 发起时间
+}
+
+message ListInspectionResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Inspection items = 2 [json_name = "items"]; // 报告列表
+}
+
+message GetInspectionRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 报告ID
+}
+
+message RunInspectionRequest {}

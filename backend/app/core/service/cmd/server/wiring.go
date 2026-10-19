@@ -157,6 +157,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
 	cloudBudgetRepo := data.NewCloudBudgetRepo(ctx, entClient)
 	certRepo := data.NewCertRepo(ctx, entClient)
+	terminalSessionRepo := data.NewTerminalSessionRepo(ctx, entClient)
+	terminalChunkRepo := data.NewTerminalChunkRepo(ctx, entClient)
+	inspectionRepo := data.NewInspectionRepo(ctx, entClient)
+	logSnapshotRepo := data.NewLogSnapshotRepo(ctx, entClient)
+	configTemplateRepo := data.NewConfigTemplateRepo(ctx, entClient)
+	configDistRepo := data.NewConfigDistributionRepo(ctx, entClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -196,7 +202,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
 	metricRepo := data.NewNodeMetricRepo(ctx, entClient)
-	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, scriptBatchRepo, backupRecordRepo, backupTaskRepo, metricRepo, minIOClient)
+	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, scriptBatchRepo, backupRecordRepo, backupTaskRepo, configDistRepo, metricRepo, minIOClient)
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, metricRepo, agentService)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
@@ -211,7 +217,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)
 	approvalService := service.NewApprovalService(ctx, approvalRepo, agentService)
 	fileService := service.NewFileService(ctx, agentService, agentNodeRepo, minIOClient)
-	terminalService := service.NewTerminalService(ctx, agentService, agentNodeRepo)
+	terminalService := service.NewTerminalService(ctx, agentService, agentNodeRepo, terminalSessionRepo, terminalChunkRepo)
 	pipelineService := service.NewPipelineService(ctx, pipelineRepo, pipelineRunRepo, buildHistoryRepo, commandRecordRepo, distributionRecordRepo, buildService, scriptService, distributionService)
 	apiKeyService := service.NewApiKeyService(ctx, apiKeyRepo)
 	pluginService := service.NewPluginService(ctx, agentService, agentNodeRepo)
@@ -219,6 +225,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationDeliveryService := service.NewNotificationDeliveryService(ctx, notificationDeliveryRepo)
 	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetRepo, cloudCostRepo, cloudAccountRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
 	certService := service.NewCertService(ctx, certRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
+	inspectionService := service.NewInspectionService(ctx, inspectionRepo, agentNodeRepo, projectRepo, alertRepo, certRepo, backupRecordRepo)
+	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotRepo, projectRepo, agentNodeRepo, agentService)
+	configService := service.NewConfigService(ctx, configTemplateRepo, configDistRepo, agentNodeRepo, minIOClient, agentService)
 
 	// 定时调度(构建/脚本/备份/预算/证书 cron + 监控检查)
 	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
@@ -265,6 +274,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationDeliveryService,
 		cloudBudgetService,
 		certService,
+		inspectionService,
+		logSnapshotService,
+		configService,
 	)
 	if err != nil {
 		rollback()

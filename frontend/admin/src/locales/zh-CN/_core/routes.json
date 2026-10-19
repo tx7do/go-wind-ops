@@ -135,5 +135,8 @@
   "script-batches": "批量执行",
   "backups": "备份任务",
   "cloud-budgets": "云成本预算",
-  "certs": "证书台账"
+  "certs": "证书台账",
+  "inspections": "巡检报告",
+  "log-snapshots": "日志快照",
+  "config-center": "配置中心"
 }

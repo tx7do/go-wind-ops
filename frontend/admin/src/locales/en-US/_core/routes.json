@@ -136,5 +136,8 @@
   "script-batches": "Script Batches",
   "backups": "Backups",
   "cloud-budgets": "Cloud Budgets",
-  "certs": "Certificates"
+  "certs": "Certificates",
+  "inspections": "Inspections",
+  "log-snapshots": "Log Snapshots",
+  "config-center": "Config Center"
 }

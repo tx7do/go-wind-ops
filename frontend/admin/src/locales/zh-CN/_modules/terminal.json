@@ -11,5 +11,6 @@
   "wsClosed": "连接已关闭",
   "pickAgentFirst": "请先选择机器",
   "tokenMissing": "登录态缺失,请重新登录",
-  "hint": "管道伪终端:支持常规命令;不支持交互式全屏程序(vim/htop)与 Ctrl+C。闲置 15 分钟自动断开。"
+  "hint": "真 PTY 终端:支持 Ctrl+C、退格/方向键编辑与交互程序。闲置 15 分钟自动断开。",
+  "auditEntry": "会话审计"
 }

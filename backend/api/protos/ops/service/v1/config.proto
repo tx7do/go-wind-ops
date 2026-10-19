@@ -1,0 +1,205 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// ConfigService 配置文件中心:模板集中管理(按环境),下发经 MinIO 中转 +
+// file_push 指令写到目标节点路径,下发记录回执驱动终态。
+service ConfigService {
+  // 查询模板列表
+  rpc ListConfigTemplates (pagination.PagingRequest) returns (ListConfigTemplateResponse) {}
+
+  // 查询模板详情
+  rpc GetConfigTemplate (GetConfigTemplateRequest) returns (ConfigTemplate) {}
+
+  // 创建模板
+  rpc CreateConfigTemplate (CreateConfigTemplateRequest) returns (ConfigTemplate) {}
+
+  // 更新模板
+  rpc UpdateConfigTemplate (UpdateConfigTemplateRequest) returns (google.protobuf.Empty) {}
+
+  // 删除模板
+  rpc DeleteConfigTemplate (DeleteConfigTemplateRequest) returns (google.protobuf.Empty) {}
+
+  // 下发模板到目标节点(同步等回执)
+  rpc DistributeConfig (DistributeConfigRequest) returns (ConfigDistribution) {}
+
+  // 查询下发记录列表(按模板过滤)
+  rpc ListConfigDistributions (ListConfigDistributionsRequest) returns (ListConfigDistributionResponse) {}
+}
+
+// 配置模板
+message ConfigTemplate {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 模板ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "模板名(全局唯一)"
+    }
+  ]; // 模板名
+
+  optional string env = 3 [
+    json_name = "env",
+    (gnostic.openapi.v3.property) = {
+      description: "所属环境(default/dev/staging/prod)"
+    }
+  ]; // 环境
+
+  optional string target_path = 4 [
+    json_name = "targetPath",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "下发目标绝对路径(须在 agent 授权目录内)"
+    }
+  ]; // 目标路径
+
+  optional string content = 5 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {
+      description: "模板内容(≤256KB,原样下发)"
+    }
+  ]; // 模板内容
+
+  optional string description = 6 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListConfigTemplateResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated ConfigTemplate items = 2 [json_name = "items"]; // 模板列表
+}
+
+message GetConfigTemplateRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板ID
+}
+
+message CreateConfigTemplateRequest {
+  ConfigTemplate data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板数据
+}
+
+message UpdateConfigTemplateRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板ID
+
+  ConfigTemplate data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteConfigTemplateRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板ID
+}
+
+message DistributeConfigRequest {
+  optional uint32 template_id = 1 [
+    json_name = "templateId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板ID
+
+  optional uint32 node_id = 2 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标节点ID
+
+  optional uint32 project_id = 3 [
+    json_name = "projectId",
+    (gnostic.openapi.v3.property) = {
+      description: "关联项目(0=不关联,仅记录用)"
+    }
+  ]; // 关联项目
+}
+
+message ConfigDistribution {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 记录ID
+
+  optional uint32 template_id = 2 [json_name = "templateId"]; // 模板
+
+  optional string template_name = 3 [json_name = "templateName"]; // 模板名
+
+  optional uint32 node_id = 4 [json_name = "nodeId"]; // 目标节点
+
+  optional uint32 project_id = 5 [json_name = "projectId"]; // 关联项目
+
+  optional string target_path = 6 [json_name = "targetPath"]; // 目标路径
+
+  optional string status = 7 [json_name = "status"]; // 状态(PENDING/SUCCESS/FAILED)
+
+  optional string error = 8 [json_name = "error"]; // 失败原因
+
+  optional google.protobuf.Timestamp finished_at = 9 [
+    json_name = "finishedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 终态时间
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 下发时间
+}
+
+message ListConfigDistributionsRequest {
+  optional uint32 template_id = 1 [
+    json_name = "templateId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 按模板过滤
+
+  optional int32 page = 2 [json_name = "page"]; // 页码
+
+  optional int32 page_size = 3 [json_name = "pageSize"]; // 页大小
+}
+
+message ListConfigDistributionResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated ConfigDistribution items = 2 [json_name = "items"]; // 记录列表
+}

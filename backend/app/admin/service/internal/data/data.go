@@ -420,6 +420,42 @@ func NewNotificationDeliveryServiceClient(ctx *bootstrap.Context, r registry.Dis
 	return opsV1.NewNotificationDeliveryServiceClient(cli)
 }
 
+func NewTerminalAuditServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.TerminalServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewTerminalServiceClient(cli)
+}
+
+func NewInspectionServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.InspectionServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewInspectionServiceClient(cli)
+}
+
+func NewLogSnapshotServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.LogSnapshotServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewLogSnapshotServiceClient(cli)
+}
+
+func NewConfigServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ConfigServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewConfigServiceClient(cli)
+}
+
 func NewScriptBatchServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ScriptBatchServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

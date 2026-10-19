@@ -43,14 +43,14 @@ type MonitorServiceHTTPServer interface {
 
 func RegisterMonitorServiceHTTPServer(s *http.Server, srv MonitorServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/monitors", _MonitorService_List23_HTTP_Handler(srv))
-	r.GET("/admin/v1/monitors/{id}", _MonitorService_Get21_HTTP_Handler(srv))
-	r.POST("/admin/v1/monitors", _MonitorService_Create13_HTTP_Handler(srv))
-	r.PUT("/admin/v1/monitors/{id}", _MonitorService_Update14_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/monitors/{id}", _MonitorService_Delete15_HTTP_Handler(srv))
+	r.GET("/admin/v1/monitors", _MonitorService_List26_HTTP_Handler(srv))
+	r.GET("/admin/v1/monitors/{id}", _MonitorService_Get24_HTTP_Handler(srv))
+	r.POST("/admin/v1/monitors", _MonitorService_Create14_HTTP_Handler(srv))
+	r.PUT("/admin/v1/monitors/{id}", _MonitorService_Update15_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/monitors/{id}", _MonitorService_Delete17_HTTP_Handler(srv))
 }
 
-func _MonitorService_List23_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_List26_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _MonitorService_List23_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx 
 	}
 }
 
-func _MonitorService_Get21_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_Get24_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetMonitorRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _MonitorService_Get21_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx h
 	}
 }
 
-func _MonitorService_Create13_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_Create14_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateMonitorRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _MonitorService_Create13_HTTP_Handler(srv MonitorServiceHTTPServer) func(ct
 	}
 }
 
-func _MonitorService_Update14_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_Update15_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateMonitorRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _MonitorService_Update14_HTTP_Handler(srv MonitorServiceHTTPServer) func(ct
 	}
 }
 
-func _MonitorService_Delete15_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
+func _MonitorService_Delete17_HTTP_Handler(srv MonitorServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteMonitorRequest
 		if err := ctx.BindQuery(&in); err != nil {

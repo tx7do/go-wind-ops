@@ -1,0 +1,19 @@
+{
+  "moduleName": "Terminal Audit",
+  "title": "Terminal Session Audit",
+  "openedAt": "Opened At",
+  "nodeId": "Node",
+  "agentId": "Agent",
+  "operator": "User",
+  "status": "Status",
+  "statusOpen": "Open",
+  "statusClosed": "Closed",
+  "duration": "Duration",
+  "traffic": "Recorded",
+  "chunks": "Chunks",
+  "truncated": "Truncated",
+  "replay": "Replay",
+  "replayTitle": "Session Replay #{{id}}",
+  "replayBanner": "── Replay: {{node}} @ {{time}} ──",
+  "replayHint": "Output replayed in recorded order; [cmd] lines are keyboard input (dimmed); sessions over 8MB keep the leading part only"
+}

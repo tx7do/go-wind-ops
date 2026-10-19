@@ -48,6 +48,7 @@ type AgentService struct {
 	batchRepo        *data.ScriptBatchRepo
 	backupRecordRepo *data.BackupRecordRepo
 	backupTaskRepo   *data.BackupTaskRepo
+	configDistRepo   *data.ConfigDistributionRepo
 	metricRepo       *data.NodeMetricRepo
 	ossClient        *oss.MinIOClient
 	log              *log.Helper
@@ -62,7 +63,7 @@ type AgentService struct {
 	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, ossClient *oss.MinIOClient) *AgentService {
 	return &AgentService{
 		ctx:              ctx,
 		repo:             repo,
@@ -72,6 +73,7 @@ func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRep
 		batchRepo:        batchRepo,
 		backupRecordRepo: backupRecordRepo,
 		backupTaskRepo:   backupTaskRepo,
+		configDistRepo:   configDistRepo,
 		metricRepo:       metricRepo,
 		ossClient:        ossClient,
 		log:              ctx.NewLoggerHelper("agent/service/core-service"),
@@ -257,6 +259,11 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 	// backup_run:终态化备份记录(大小/校验和),成功后执行保留策略清扫
 	if res.Action == signal.CommandActionBackupRun {
 		s.applyBackupResult(ctx, res)
+	}
+	// file_push:配置下发记录终态对账(文件管理器的 file_push 无对应记录,静默跳过)
+	if res.Action == signal.CommandActionFilePush && s.configDistRepo != nil {
+		_ = s.configDistRepo.FinalizeByCommandRequestID(ctx, res.RequestId,
+			toRecordStatus(res.Success), strings.TrimSpace(res.Error))
 	}
 	// script_exec 且带批次标记:对账批次成败计数(幂等依赖台账仅首次定案)
 	if res.Action == signal.CommandActionScriptExec && s.batchRepo != nil {

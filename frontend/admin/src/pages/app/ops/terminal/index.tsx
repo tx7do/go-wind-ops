@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Button, Select, Space, Tag, Typography } from 'antd';
 import { PoweroffOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import type { opsservicev1_TerminalSession } from '@/api/generated/admin/service/v1';
+import { HistoryOutlined } from '@ant-design/icons';
+import TerminalSessionsDrawer from './components/TerminalSessionsDrawer';
+import TerminalReplayDrawer from './components/TerminalReplayDrawer';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
@@ -21,6 +25,8 @@ const TerminalPage = () => {
   const { message } = App.useApp();
 
   const [agentId, setAgentId] = useState<string>();
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [replaySession, setReplaySession] = useState<opsservicev1_TerminalSession | undefined>();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
@@ -28,7 +34,7 @@ const TerminalPage = () => {
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout>>();
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const { data: nodesResp } = useQuery({
     queryKey: ['listAgentNodesForTerminal', 'all'],
@@ -66,6 +72,13 @@ const TerminalPage = () => {
     term.onData((d) => {
       wsRef.current?.send(new TextEncoder().encode(d));
     });
+    // 尺寸变化 → 后端同步调整 PTY(真 PTY 模式下行宽/交互程序依赖它)
+    term.onResize(({ cols, rows }) => {
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ event: 'RESIZE', cols, rows }));
+      }
+    });
     return term;
   }, []);
 
@@ -97,6 +110,17 @@ const TerminalPage = () => {
     term.writeln(`\x1b[36m${t('connecting')} ${agentId} ...\x1b[0m`);
     setConnecting(true);
 
+    // 本次连接是否已收到输出字节(OPENED 清"正在连接"行时避免误伤回显)。
+    let gotOutput = false;
+
+    /** 把当前 xterm 尺寸推给后端(刚连上与会话就绪时各推一次,其后走 onResize)。 */
+    const sendResize = () => {
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ event: 'RESIZE', cols: term.cols, rows: term.rows }));
+      }
+    };
+
     const ws = new WebSocket(buildWsUrl(token, agentId));
     ws.binaryType = 'arraybuffer';
     wsRef.current = ws;
@@ -104,13 +128,21 @@ const TerminalPage = () => {
     ws.onopen = () => {
       setConnected(true);
       setConnecting(false);
+      sendResize();
     };
     ws.onmessage = (ev) => {
       if (typeof ev.data === 'string') {
         // 控制事件帧
         try {
           const msg = JSON.parse(ev.data) as { event?: string; error?: string };
-          if (msg.event === 'CLOSED') {
+          if (msg.event === 'OPENED') {
+            // 会话已开:把"正在连接"行冲成绿色就绪提示(shell 横幅先到则不动)。
+            if (!gotOutput) {
+              term.write('\x1b[A\r\x1b[2K');
+              term.writeln(`\x1b[32m[${t('connected')}]\x1b[0m`);
+            }
+            sendResize();
+          } else if (msg.event === 'CLOSED') {
             term.writeln('');
             term.writeln(`\x1b[31m[${t('sessionClosed')}${msg.error ? ': ' + msg.error : ''}]\x1b[0m`);
             setConnected(false);
@@ -120,6 +152,7 @@ const TerminalPage = () => {
         }
         return;
       }
+      gotOutput = true;
       term.write(new Uint8Array(ev.data as ArrayBuffer));
     };
     ws.onerror = () => {
@@ -180,6 +213,9 @@ const TerminalPage = () => {
           </Button>
         )}
         {connected && <Tag color="success">{t('connected')}</Tag>}
+        <Button icon={<HistoryOutlined />} onClick={() => setAuditOpen(true)}>
+          {t('auditEntry')}
+        </Button>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('hint')}
         </Typography.Text>
@@ -193,6 +229,16 @@ const TerminalPage = () => {
           padding: 8,
           background: '#141414',
         }}
+      />
+
+      <TerminalSessionsDrawer
+        open={auditOpen}
+        onClose={() => setAuditOpen(false)}
+        onReplay={(session) => setReplaySession(session)}
+      />
+      <TerminalReplayDrawer
+        session={replaySession}
+        onClose={() => setReplaySession(undefined)}
       />
     </div>
   );

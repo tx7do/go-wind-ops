@@ -7,8 +7,12 @@
 package opspb
 
 import (
+	_ "github.com/google/gnostic/openapiv3"
+	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -27,8 +31,10 @@ type TerminalChunk struct {
 	AgentId       *string                `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`       // 机器唯一标识(仅首帧必填)
 	SessionId     *string                `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"` // 会话ID(仅首帧必填;后续帧可不带)
 	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3,oneof" json:"data,omitempty"`                            // 字节流(输入/输出)
-	Event         *string                `protobuf:"bytes,4,opt,name=event,proto3,oneof" json:"event,omitempty"`                          // 控制事件: OPEN=发起(首帧) OPENED=会话就绪 CLOSED=会话结束
+	Event         *string                `protobuf:"bytes,4,opt,name=event,proto3,oneof" json:"event,omitempty"`                          // 控制事件: OPEN=发起(首帧) OPENED=会话就绪 CLOSED=会话结束 RESIZE=调整PTY尺寸
 	Error         *string                `protobuf:"bytes,5,opt,name=error,proto3,oneof" json:"error,omitempty"`                          // 错误信息(伴随 CLOSED/ERROR)
+	Cols          *uint32                `protobuf:"varint,6,opt,name=cols,proto3,oneof" json:"cols,omitempty"`                           // 终端列数(伴随 RESIZE)
+	Rows          *uint32                `protobuf:"varint,7,opt,name=rows,proto3,oneof" json:"rows,omitempty"`                           // 终端行数(伴随 RESIZE)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -98,24 +104,520 @@ func (x *TerminalChunk) GetError() string {
 	return ""
 }
 
+func (x *TerminalChunk) GetCols() uint32 {
+	if x != nil && x.Cols != nil {
+		return *x.Cols
+	}
+	return 0
+}
+
+func (x *TerminalChunk) GetRows() uint32 {
+	if x != nil && x.Rows != nil {
+		return *x.Rows
+	}
+	return 0
+}
+
+// 终端会话审计记录
+type TerminalSession struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                      // 记录ID
+	SessionId     *string                `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"`        // 会话 ID
+	NodeId        *uint32                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                // 节点
+	AgentId       *string                `protobuf:"bytes,4,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`              // 机器标识
+	OperatorId    *uint32                `protobuf:"varint,5,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`    // 打开人
+	Status        *string                `protobuf:"bytes,6,opt,name=status,proto3,oneof" json:"status,omitempty"`                               // 状态(OPEN/CLOSED)
+	InputBytes    *int64                 `protobuf:"varint,7,opt,name=input_bytes,json=inputBytes,proto3,oneof" json:"input_bytes,omitempty"`    // 录制输入字节
+	OutputBytes   *int64                 `protobuf:"varint,8,opt,name=output_bytes,json=outputBytes,proto3,oneof" json:"output_bytes,omitempty"` // 录制输出字节
+	ChunkCount    *int32                 `protobuf:"varint,9,opt,name=chunk_count,json=chunkCount,proto3,oneof" json:"chunk_count,omitempty"`    // 分块数
+	Truncated     *bool                  `protobuf:"varint,10,opt,name=truncated,proto3,oneof" json:"truncated,omitempty"`                       // 是否截断
+	ClosedAt      *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=closed_at,json=closedAt,proto3,oneof" json:"closed_at,omitempty"`          // 关闭时间
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`       // 打开时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TerminalSession) Reset() {
+	*x = TerminalSession{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TerminalSession) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TerminalSession) ProtoMessage() {}
+
+func (x *TerminalSession) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TerminalSession.ProtoReflect.Descriptor instead.
+func (*TerminalSession) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *TerminalSession) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetSessionId() string {
+	if x != nil && x.SessionId != nil {
+		return *x.SessionId
+	}
+	return ""
+}
+
+func (x *TerminalSession) GetNodeId() uint32 {
+	if x != nil && x.NodeId != nil {
+		return *x.NodeId
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetAgentId() string {
+	if x != nil && x.AgentId != nil {
+		return *x.AgentId
+	}
+	return ""
+}
+
+func (x *TerminalSession) GetOperatorId() uint32 {
+	if x != nil && x.OperatorId != nil {
+		return *x.OperatorId
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+func (x *TerminalSession) GetInputBytes() int64 {
+	if x != nil && x.InputBytes != nil {
+		return *x.InputBytes
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetOutputBytes() int64 {
+	if x != nil && x.OutputBytes != nil {
+		return *x.OutputBytes
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetChunkCount() int32 {
+	if x != nil && x.ChunkCount != nil {
+		return *x.ChunkCount
+	}
+	return 0
+}
+
+func (x *TerminalSession) GetTruncated() bool {
+	if x != nil && x.Truncated != nil {
+		return *x.Truncated
+	}
+	return false
+}
+
+func (x *TerminalSession) GetClosedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ClosedAt
+	}
+	return nil
+}
+
+func (x *TerminalSession) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ListTerminalSessionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Items         []*TerminalSession     `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 会话列表
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTerminalSessionResponse) Reset() {
+	*x = ListTerminalSessionResponse{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTerminalSessionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTerminalSessionResponse) ProtoMessage() {}
+
+func (x *ListTerminalSessionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTerminalSessionResponse.ProtoReflect.Descriptor instead.
+func (*ListTerminalSessionResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListTerminalSessionResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListTerminalSessionResponse) GetItems() []*TerminalSession {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type GetTerminalSessionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTerminalSessionRequest) Reset() {
+	*x = GetTerminalSessionRequest{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTerminalSessionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTerminalSessionRequest) ProtoMessage() {}
+
+func (x *GetTerminalSessionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTerminalSessionRequest.ProtoReflect.Descriptor instead.
+func (*GetTerminalSessionRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetTerminalSessionRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+type ListTerminalChunksRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionId     *uint32                `protobuf:"varint,1,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"` // 会话记录ID(ops_terminal_sessions.id)
+	FromSeq       *int32                 `protobuf:"varint,2,opt,name=from_seq,json=fromSeq,proto3,oneof" json:"from_seq,omitempty"`       // 起始序号
+	Limit         *int32                 `protobuf:"varint,3,opt,name=limit,proto3,oneof" json:"limit,omitempty"`                          // 单次上限
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTerminalChunksRequest) Reset() {
+	*x = ListTerminalChunksRequest{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTerminalChunksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTerminalChunksRequest) ProtoMessage() {}
+
+func (x *ListTerminalChunksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTerminalChunksRequest.ProtoReflect.Descriptor instead.
+func (*ListTerminalChunksRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListTerminalChunksRequest) GetSessionId() uint32 {
+	if x != nil && x.SessionId != nil {
+		return *x.SessionId
+	}
+	return 0
+}
+
+func (x *ListTerminalChunksRequest) GetFromSeq() int32 {
+	if x != nil && x.FromSeq != nil {
+		return *x.FromSeq
+	}
+	return 0
+}
+
+func (x *ListTerminalChunksRequest) GetLimit() int32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+type ListTerminalChunkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*TerminalChunkItem   `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`                // 分块列表
+	Truncated     *bool                  `protobuf:"varint,2,opt,name=truncated,proto3,oneof" json:"truncated,omitempty"` // 是否被 limit 截断
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTerminalChunkResponse) Reset() {
+	*x = ListTerminalChunkResponse{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTerminalChunkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTerminalChunkResponse) ProtoMessage() {}
+
+func (x *ListTerminalChunkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTerminalChunkResponse.ProtoReflect.Descriptor instead.
+func (*ListTerminalChunkResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListTerminalChunkResponse) GetItems() []*TerminalChunkItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListTerminalChunkResponse) GetTruncated() bool {
+	if x != nil && x.Truncated != nil {
+		return *x.Truncated
+	}
+	return false
+}
+
+type TerminalChunkItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Seq           *int32                 `protobuf:"varint,1,opt,name=seq,proto3,oneof" json:"seq,omitempty"`                             // 会话内序号
+	Direction     *string                `protobuf:"bytes,2,opt,name=direction,proto3,oneof" json:"direction,omitempty"`                  // 方向(INPUT/OUTPUT)
+	Payload       []byte                 `protobuf:"bytes,3,opt,name=payload,proto3,oneof" json:"payload,omitempty"`                      // 内容(原始字节)
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"` // 时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TerminalChunkItem) Reset() {
+	*x = TerminalChunkItem{}
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TerminalChunkItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TerminalChunkItem) ProtoMessage() {}
+
+func (x *TerminalChunkItem) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_terminal_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TerminalChunkItem.ProtoReflect.Descriptor instead.
+func (*TerminalChunkItem) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TerminalChunkItem) GetSeq() int32 {
+	if x != nil && x.Seq != nil {
+		return *x.Seq
+	}
+	return 0
+}
+
+func (x *TerminalChunkItem) GetDirection() string {
+	if x != nil && x.Direction != nil {
+		return *x.Direction
+	}
+	return ""
+}
+
+func (x *TerminalChunkItem) GetPayload() []byte {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *TerminalChunkItem) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
 var File_ops_service_v1_terminal_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_terminal_proto_rawDesc = "" +
 	"\n" +
-	"\x1dops/service/v1/terminal.proto\x12\x0eops.service.v1\"\xdb\x01\n" +
+	"\x1dops/service/v1/terminal.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\x9f\x02\n" +
 	"\rTerminalChunk\x12\x1e\n" +
 	"\bagent_id\x18\x01 \x01(\tH\x00R\aagentId\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tH\x01R\tsessionId\x88\x01\x01\x12\x17\n" +
 	"\x04data\x18\x03 \x01(\fH\x02R\x04data\x88\x01\x01\x12\x19\n" +
 	"\x05event\x18\x04 \x01(\tH\x03R\x05event\x88\x01\x01\x12\x19\n" +
-	"\x05error\x18\x05 \x01(\tH\x04R\x05error\x88\x01\x01B\v\n" +
+	"\x05error\x18\x05 \x01(\tH\x04R\x05error\x88\x01\x01\x12\x17\n" +
+	"\x04cols\x18\x06 \x01(\rH\x05R\x04cols\x88\x01\x01\x12\x17\n" +
+	"\x04rows\x18\a \x01(\rH\x06R\x04rows\x88\x01\x01B\v\n" +
 	"\t_agent_idB\r\n" +
 	"\v_session_idB\a\n" +
 	"\x05_dataB\b\n" +
 	"\x06_eventB\b\n" +
-	"\x06_error2`\n" +
-	"\x0fTerminalService\x12M\n" +
+	"\x06_errorB\a\n" +
+	"\x05_colsB\a\n" +
+	"\x05_rows\"\x95\x05\n" +
+	"\x0fTerminalSession\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"session_id\x18\x02 \x01(\tH\x01R\tsessionId\x88\x01\x01\x12\x1c\n" +
+	"\anode_id\x18\x03 \x01(\rH\x02R\x06nodeId\x88\x01\x01\x12\x1e\n" +
+	"\bagent_id\x18\x04 \x01(\tH\x03R\aagentId\x88\x01\x01\x12$\n" +
+	"\voperator_id\x18\x05 \x01(\rH\x04R\n" +
+	"operatorId\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\x06 \x01(\tH\x05R\x06status\x88\x01\x01\x12$\n" +
+	"\vinput_bytes\x18\a \x01(\x03H\x06R\n" +
+	"inputBytes\x88\x01\x01\x12&\n" +
+	"\foutput_bytes\x18\b \x01(\x03H\aR\voutputBytes\x88\x01\x01\x12$\n" +
+	"\vchunk_count\x18\t \x01(\x05H\bR\n" +
+	"chunkCount\x88\x01\x01\x12!\n" +
+	"\ttruncated\x18\n" +
+	" \x01(\bH\tR\ttruncated\x88\x01\x01\x12A\n" +
+	"\tclosed_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
+	"R\bclosedAt\x88\x01\x01\x12C\n" +
+	"\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\tcreatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\r\n" +
+	"\v_session_idB\n" +
+	"\n" +
+	"\b_node_idB\v\n" +
+	"\t_agent_idB\x0e\n" +
+	"\f_operator_idB\t\n" +
+	"\a_statusB\x0e\n" +
+	"\f_input_bytesB\x0f\n" +
+	"\r_output_bytesB\x0e\n" +
+	"\f_chunk_countB\f\n" +
+	"\n" +
+	"_truncatedB\f\n" +
+	"\n" +
+	"_closed_atB\r\n" +
+	"\v_created_at\"j\n" +
+	"\x1bListTerminalSessionResponse\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x04R\x05total\x125\n" +
+	"\x05items\x18\x02 \x03(\v2\x1f.ops.service.v1.TerminalSessionR\x05items\"<\n" +
+	"\x19GetTerminalSessionRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x03_id\"\xf3\x01\n" +
+	"\x19ListTerminalChunksRequest\x12'\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\tsessionId\x88\x01\x01\x12@\n" +
+	"\bfrom_seq\x18\x02 \x01(\x05B \xbaG\x1d\x92\x02\x1a起始序号(含),默认 0H\x01R\afromSeq\x88\x01\x01\x12E\n" +
+	"\x05limit\x18\x03 \x01(\x05B*\xbaG'\x92\x02$单次上限(默认 500,上限 2000)H\x02R\x05limit\x88\x01\x01B\r\n" +
+	"\v_session_idB\v\n" +
+	"\t_from_seqB\b\n" +
+	"\x06_limit\"\x85\x01\n" +
+	"\x19ListTerminalChunkResponse\x127\n" +
+	"\x05items\x18\x01 \x03(\v2!.ops.service.v1.TerminalChunkItemR\x05items\x12!\n" +
+	"\ttruncated\x18\x02 \x01(\bH\x00R\ttruncated\x88\x01\x01B\f\n" +
+	"\n" +
+	"_truncated\"\xe2\x01\n" +
+	"\x11TerminalChunkItem\x12\x15\n" +
+	"\x03seq\x18\x01 \x01(\x05H\x00R\x03seq\x88\x01\x01\x12!\n" +
+	"\tdirection\x18\x02 \x01(\tH\x01R\tdirection\x88\x01\x01\x12\x1d\n" +
+	"\apayload\x18\x03 \x01(\fH\x02R\apayload\x88\x01\x01\x12C\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x03R\tcreatedAt\x88\x01\x01B\x06\n" +
+	"\x04_seqB\f\n" +
+	"\n" +
+	"_directionB\n" +
+	"\n" +
+	"\b_payloadB\r\n" +
+	"\v_created_at2\x94\x03\n" +
+	"\x0fTerminalService\x12`\n" +
+	"\x14ListTerminalSessions\x12\x19.pagination.PagingRequest\x1a+.ops.service.v1.ListTerminalSessionResponse\"\x00\x12b\n" +
+	"\x12GetTerminalSession\x12).ops.service.v1.GetTerminalSessionRequest\x1a\x1f.ops.service.v1.TerminalSession\"\x00\x12l\n" +
+	"\x12ListTerminalChunks\x12).ops.service.v1.ListTerminalChunksRequest\x1a).ops.service.v1.ListTerminalChunkResponse\"\x00\x12M\n" +
 	"\aChannel\x12\x1d.ops.service.v1.TerminalChunk\x1a\x1d.ops.service.v1.TerminalChunk\"\x00(\x010\x01B\xaa\x01\n" +
 	"\x12com.ops.service.v1B\rTerminalProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
@@ -131,18 +633,37 @@ func file_ops_service_v1_terminal_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_terminal_proto_rawDescData
 }
 
-var file_ops_service_v1_terminal_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_ops_service_v1_terminal_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_ops_service_v1_terminal_proto_goTypes = []any{
-	(*TerminalChunk)(nil), // 0: ops.service.v1.TerminalChunk
+	(*TerminalChunk)(nil),               // 0: ops.service.v1.TerminalChunk
+	(*TerminalSession)(nil),             // 1: ops.service.v1.TerminalSession
+	(*ListTerminalSessionResponse)(nil), // 2: ops.service.v1.ListTerminalSessionResponse
+	(*GetTerminalSessionRequest)(nil),   // 3: ops.service.v1.GetTerminalSessionRequest
+	(*ListTerminalChunksRequest)(nil),   // 4: ops.service.v1.ListTerminalChunksRequest
+	(*ListTerminalChunkResponse)(nil),   // 5: ops.service.v1.ListTerminalChunkResponse
+	(*TerminalChunkItem)(nil),           // 6: ops.service.v1.TerminalChunkItem
+	(*timestamppb.Timestamp)(nil),       // 7: google.protobuf.Timestamp
+	(*v1.PagingRequest)(nil),            // 8: pagination.PagingRequest
 }
 var file_ops_service_v1_terminal_proto_depIdxs = []int32{
-	0, // 0: ops.service.v1.TerminalService.Channel:input_type -> ops.service.v1.TerminalChunk
-	0, // 1: ops.service.v1.TerminalService.Channel:output_type -> ops.service.v1.TerminalChunk
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	7, // 0: ops.service.v1.TerminalSession.closed_at:type_name -> google.protobuf.Timestamp
+	7, // 1: ops.service.v1.TerminalSession.created_at:type_name -> google.protobuf.Timestamp
+	1, // 2: ops.service.v1.ListTerminalSessionResponse.items:type_name -> ops.service.v1.TerminalSession
+	6, // 3: ops.service.v1.ListTerminalChunkResponse.items:type_name -> ops.service.v1.TerminalChunkItem
+	7, // 4: ops.service.v1.TerminalChunkItem.created_at:type_name -> google.protobuf.Timestamp
+	8, // 5: ops.service.v1.TerminalService.ListTerminalSessions:input_type -> pagination.PagingRequest
+	3, // 6: ops.service.v1.TerminalService.GetTerminalSession:input_type -> ops.service.v1.GetTerminalSessionRequest
+	4, // 7: ops.service.v1.TerminalService.ListTerminalChunks:input_type -> ops.service.v1.ListTerminalChunksRequest
+	0, // 8: ops.service.v1.TerminalService.Channel:input_type -> ops.service.v1.TerminalChunk
+	2, // 9: ops.service.v1.TerminalService.ListTerminalSessions:output_type -> ops.service.v1.ListTerminalSessionResponse
+	1, // 10: ops.service.v1.TerminalService.GetTerminalSession:output_type -> ops.service.v1.TerminalSession
+	5, // 11: ops.service.v1.TerminalService.ListTerminalChunks:output_type -> ops.service.v1.ListTerminalChunkResponse
+	0, // 12: ops.service.v1.TerminalService.Channel:output_type -> ops.service.v1.TerminalChunk
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_terminal_proto_init() }
@@ -151,13 +672,18 @@ func file_ops_service_v1_terminal_proto_init() {
 		return
 	}
 	file_ops_service_v1_terminal_proto_msgTypes[0].OneofWrappers = []any{}
+	file_ops_service_v1_terminal_proto_msgTypes[1].OneofWrappers = []any{}
+	file_ops_service_v1_terminal_proto_msgTypes[3].OneofWrappers = []any{}
+	file_ops_service_v1_terminal_proto_msgTypes[4].OneofWrappers = []any{}
+	file_ops_service_v1_terminal_proto_msgTypes[5].OneofWrappers = []any{}
+	file_ops_service_v1_terminal_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_terminal_proto_rawDesc), len(file_ops_service_v1_terminal_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

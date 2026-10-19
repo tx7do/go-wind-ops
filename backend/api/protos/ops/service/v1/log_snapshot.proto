@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// LogSnapshotService 项目日志快照:拉取项目日志尾部落库,支持跨项目
+// 关键字检索。
+service LogSnapshotService {
+  // 查询快照列表
+  rpc ListLogSnapshots (pagination.PagingRequest) returns (ListLogSnapshotResponse) {}
+
+  // 查询快照详情(含内容)
+  rpc GetLogSnapshot (GetLogSnapshotRequest) returns (LogSnapshot) {}
+
+  // 采集一次项目日志快照(同步指令拉取尾部)
+  rpc CaptureLogSnapshot (CaptureLogSnapshotRequest) returns (LogSnapshot) {}
+
+  // 关键字检索(跨快照内容模糊匹配,返回命中摘要)
+  rpc SearchLogSnapshots (SearchLogSnapshotsRequest) returns (SearchLogSnapshotResponse) {}
+
+  // 删除快照
+  rpc DeleteLogSnapshot (DeleteLogSnapshotRequest) returns (google.protobuf.Empty) {}
+}
+
+// 日志快照
+message LogSnapshot {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 快照ID
+
+  optional uint32 project_id = 2 [json_name = "projectId"]; // 项目
+
+  optional uint32 node_id = 3 [json_name = "nodeId"]; // 节点
+
+  optional string project_name = 4 [json_name = "projectName"]; // 项目名
+
+  optional int64 size_bytes = 5 [json_name = "sizeBytes"]; // 大小
+
+  optional string content = 6 [json_name = "content"]; // 日志内容
+
+  optional string trigger = 7 [json_name = "trigger"]; // 触发方式(MANUAL/SCHEDULED)
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 采集时间
+}
+
+message ListLogSnapshotResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated LogSnapshot items = 2 [json_name = "items"]; // 快照列表
+}
+
+message GetLogSnapshotRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 快照ID
+}
+
+message CaptureLogSnapshotRequest {
+  optional uint32 project_id = 1 [
+    json_name = "projectId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 项目ID
+}
+
+message SearchLogSnapshotsRequest {
+  optional string keyword = 1 [
+    json_name = "keyword",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "关键字(内容模糊匹配)"
+    }
+  ]; // 关键字
+
+  optional uint32 project_id = 2 [
+    json_name = "projectId",
+    (gnostic.openapi.v3.property) = {
+      description: "限定项目(0=全部)"
+    }
+  ]; // 项目过滤
+}
+
+message SearchLogSnapshotResponse {
+  message SearchHit {
+    optional uint32 snapshot_id = 1 [json_name = "snapshotId"]; // 快照ID
+
+    optional uint32 project_id = 2 [json_name = "projectId"]; // 项目
+
+    optional string project_name = 3 [json_name = "projectName"]; // 项目名
+
+    optional google.protobuf.Timestamp captured_at = 4 [json_name = "capturedAt"]; // 采集时间
+
+    optional string excerpt = 5 [json_name = "excerpt"]; // 命中上下文摘要
+
+    optional int32 match_count = 6 [json_name = "matchCount"]; // 命中行数
+  }
+  repeated SearchHit hits = 1 [json_name = "hits"]; // 命中列表
+
+  optional string keyword = 2 [json_name = "keyword"]; // 关键字
+}
+
+message DeleteLogSnapshotRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 快照ID
+}

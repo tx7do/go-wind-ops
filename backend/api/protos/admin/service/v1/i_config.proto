@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/config.proto";
+
+// ConfigService 配置文件中心
+service ConfigService {
+  // 查询模板列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListConfigTemplateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/config-templates"
+    };
+  }
+
+  // 查询模板详情
+  rpc Get (ops.service.v1.GetConfigTemplateRequest) returns (ops.service.v1.ConfigTemplate) {
+    option (google.api.http) = {
+      get: "/admin/v1/config-templates/{id}"
+    };
+  }
+
+  // 创建模板
+  rpc Create (ops.service.v1.CreateConfigTemplateRequest) returns (ops.service.v1.ConfigTemplate) {
+    option (google.api.http) = {
+      post: "/admin/v1/config-templates"
+      body: "*"
+    };
+  }
+
+  // 更新模板
+  rpc Update (ops.service.v1.UpdateConfigTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/config-templates/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除模板
+  rpc Delete (ops.service.v1.DeleteConfigTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/config-templates/{id}"
+    };
+  }
+
+  // 下发模板到目标节点
+  rpc Distribute (ops.service.v1.DistributeConfigRequest) returns (ops.service.v1.ConfigDistribution) {
+    option (google.api.http) = {
+      post: "/admin/v1/config-templates/distribute:send"
+      body: "*"
+    };
+  }
+
+  // 查询下发记录列表(按模板过滤)
+  rpc ListDistributions (ops.service.v1.ListConfigDistributionsRequest) returns (ops.service.v1.ListConfigDistributionResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/config-templates/distributions:search"
+      body: "*"
+    };
+  }
+}

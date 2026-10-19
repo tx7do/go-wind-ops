@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/terminal.proto";
+import "google/api/annotations.proto";
+
+// TerminalAuditService 终端会话审计(录制回放)
+service TerminalAuditService {
+  // 查询终端会话审计列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListTerminalSessionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/terminal-sessions"
+    };
+  }
+
+  // 查询终端会话详情
+  rpc Get (ops.service.v1.GetTerminalSessionRequest) returns (ops.service.v1.TerminalSession) {
+    option (google.api.http) = {
+      get: "/admin/v1/terminal-sessions/{id}"
+    };
+  }
+
+  // 拉取会话录制分块(回放用)
+  rpc ListChunks (ops.service.v1.ListTerminalChunksRequest) returns (ops.service.v1.ListTerminalChunkResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/terminal-sessions/chunks:search"
+      body: "*"
+    };
+  }
+}

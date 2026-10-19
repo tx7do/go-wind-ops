@@ -11,5 +11,6 @@
   "wsClosed": "Connection closed",
   "pickAgentFirst": "Select a machine first",
   "tokenMissing": "Not signed in, please sign in again",
-  "hint": "Pipe-based pseudo terminal: normal commands work; interactive full-screen apps (vim/htop) and Ctrl+C are not supported. Idle sessions disconnect after 15 minutes."
+  "hint": "Real PTY terminal: Ctrl+C, backspace/arrow editing and interactive apps all work. Idle sessions disconnect after 15 minutes.",
+  "auditEntry": "Session Audit"
 }

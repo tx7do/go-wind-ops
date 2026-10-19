@@ -8,6 +8,7 @@ package opspb
 
 import (
 	context "context"
+	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,7 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TerminalService_Channel_FullMethodName = "/ops.service.v1.TerminalService/Channel"
+	TerminalService_ListTerminalSessions_FullMethodName = "/ops.service.v1.TerminalService/ListTerminalSessions"
+	TerminalService_GetTerminalSession_FullMethodName   = "/ops.service.v1.TerminalService/GetTerminalSession"
+	TerminalService_ListTerminalChunks_FullMethodName   = "/ops.service.v1.TerminalService/ListTerminalChunks"
+	TerminalService_Channel_FullMethodName              = "/ops.service.v1.TerminalService/Channel"
 )
 
 // TerminalServiceClient is the client API for TerminalService service.
@@ -31,6 +35,12 @@ const (
 // 首帧必须为 event=OPEN 携带 agent_id,此后 data 帧双向对传;
 // 会话开关经 command 主题(terminal_open/terminal_close,入指令台账审计)。
 type TerminalServiceClient interface {
+	// 查询终端会话审计列表
+	ListTerminalSessions(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListTerminalSessionResponse, error)
+	// 查询终端会话详情
+	GetTerminalSession(ctx context.Context, in *GetTerminalSessionRequest, opts ...grpc.CallOption) (*TerminalSession, error)
+	// 拉取会话录制分块(回放用,按 seq 升序)
+	ListTerminalChunks(ctx context.Context, in *ListTerminalChunksRequest, opts ...grpc.CallOption) (*ListTerminalChunkResponse, error)
 	// 终端字节流通道
 	Channel(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TerminalChunk, TerminalChunk], error)
 }
@@ -41,6 +51,36 @@ type terminalServiceClient struct {
 
 func NewTerminalServiceClient(cc grpc.ClientConnInterface) TerminalServiceClient {
 	return &terminalServiceClient{cc}
+}
+
+func (c *terminalServiceClient) ListTerminalSessions(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListTerminalSessionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTerminalSessionResponse)
+	err := c.cc.Invoke(ctx, TerminalService_ListTerminalSessions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *terminalServiceClient) GetTerminalSession(ctx context.Context, in *GetTerminalSessionRequest, opts ...grpc.CallOption) (*TerminalSession, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TerminalSession)
+	err := c.cc.Invoke(ctx, TerminalService_GetTerminalSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *terminalServiceClient) ListTerminalChunks(ctx context.Context, in *ListTerminalChunksRequest, opts ...grpc.CallOption) (*ListTerminalChunkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTerminalChunkResponse)
+	err := c.cc.Invoke(ctx, TerminalService_ListTerminalChunks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *terminalServiceClient) Channel(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TerminalChunk, TerminalChunk], error) {
@@ -65,6 +105,12 @@ type TerminalService_ChannelClient = grpc.BidiStreamingClient[TerminalChunk, Ter
 // 首帧必须为 event=OPEN 携带 agent_id,此后 data 帧双向对传;
 // 会话开关经 command 主题(terminal_open/terminal_close,入指令台账审计)。
 type TerminalServiceServer interface {
+	// 查询终端会话审计列表
+	ListTerminalSessions(context.Context, *v1.PagingRequest) (*ListTerminalSessionResponse, error)
+	// 查询终端会话详情
+	GetTerminalSession(context.Context, *GetTerminalSessionRequest) (*TerminalSession, error)
+	// 拉取会话录制分块(回放用,按 seq 升序)
+	ListTerminalChunks(context.Context, *ListTerminalChunksRequest) (*ListTerminalChunkResponse, error)
 	// 终端字节流通道
 	Channel(grpc.BidiStreamingServer[TerminalChunk, TerminalChunk]) error
 	mustEmbedUnimplementedTerminalServiceServer()
@@ -77,6 +123,15 @@ type TerminalServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTerminalServiceServer struct{}
 
+func (UnimplementedTerminalServiceServer) ListTerminalSessions(context.Context, *v1.PagingRequest) (*ListTerminalSessionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTerminalSessions not implemented")
+}
+func (UnimplementedTerminalServiceServer) GetTerminalSession(context.Context, *GetTerminalSessionRequest) (*TerminalSession, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTerminalSession not implemented")
+}
+func (UnimplementedTerminalServiceServer) ListTerminalChunks(context.Context, *ListTerminalChunksRequest) (*ListTerminalChunkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTerminalChunks not implemented")
+}
 func (UnimplementedTerminalServiceServer) Channel(grpc.BidiStreamingServer[TerminalChunk, TerminalChunk]) error {
 	return status.Error(codes.Unimplemented, "method Channel not implemented")
 }
@@ -101,6 +156,60 @@ func RegisterTerminalServiceServer(s grpc.ServiceRegistrar, srv TerminalServiceS
 	s.RegisterService(&TerminalService_ServiceDesc, srv)
 }
 
+func _TerminalService_ListTerminalSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TerminalServiceServer).ListTerminalSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TerminalService_ListTerminalSessions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TerminalServiceServer).ListTerminalSessions(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TerminalService_GetTerminalSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTerminalSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TerminalServiceServer).GetTerminalSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TerminalService_GetTerminalSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TerminalServiceServer).GetTerminalSession(ctx, req.(*GetTerminalSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TerminalService_ListTerminalChunks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTerminalChunksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TerminalServiceServer).ListTerminalChunks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TerminalService_ListTerminalChunks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TerminalServiceServer).ListTerminalChunks(ctx, req.(*ListTerminalChunksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TerminalService_Channel_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(TerminalServiceServer).Channel(&grpc.GenericServerStream[TerminalChunk, TerminalChunk]{ServerStream: stream})
 }
@@ -114,7 +223,20 @@ type TerminalService_ChannelServer = grpc.BidiStreamingServer[TerminalChunk, Ter
 var TerminalService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ops.service.v1.TerminalService",
 	HandlerType: (*TerminalServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListTerminalSessions",
+			Handler:    _TerminalService_ListTerminalSessions_Handler,
+		},
+		{
+			MethodName: "GetTerminalSession",
+			Handler:    _TerminalService_GetTerminalSession_Handler,
+		},
+		{
+			MethodName: "ListTerminalChunks",
+			Handler:    _TerminalService_ListTerminalChunks_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Channel",

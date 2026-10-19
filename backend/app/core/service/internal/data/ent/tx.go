@@ -46,6 +46,10 @@ type Tx struct {
 	CloudInstance *CloudInstanceClient
 	// CommandRecord is the client for interacting with the CommandRecord builders.
 	CommandRecord *CommandRecordClient
+	// ConfigDistribution is the client for interacting with the ConfigDistribution builders.
+	ConfigDistribution *ConfigDistributionClient
+	// ConfigTemplate is the client for interacting with the ConfigTemplate builders.
+	ConfigTemplate *ConfigTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -58,8 +62,12 @@ type Tx struct {
 	Distribution *DistributionClient
 	// DistributionRecord is the client for interacting with the DistributionRecord builders.
 	DistributionRecord *DistributionRecordClient
+	// Inspection is the client for interacting with the Inspection builders.
+	Inspection *InspectionClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
+	// LogSnapshot is the client for interacting with the LogSnapshot builders.
+	LogSnapshot *LogSnapshotClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
 	LoginAuditLog *LoginAuditLogClient
 	// LoginPolicy is the client for interacting with the LoginPolicy builders.
@@ -122,6 +130,10 @@ type Tx struct {
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
+	// TerminalChunk is the client for interacting with the TerminalChunk builders.
+	TerminalChunk *TerminalChunkClient
+	// TerminalSession is the client for interacting with the TerminalSession builders.
+	TerminalSession *TerminalSessionClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserCredential is the client for interacting with the UserCredential builders.
@@ -280,13 +292,17 @@ func (tx *Tx) init() {
 	tx.CloudCost = NewCloudCostClient(tx.config)
 	tx.CloudInstance = NewCloudInstanceClient(tx.config)
 	tx.CommandRecord = NewCommandRecordClient(tx.config)
+	tx.ConfigDistribution = NewConfigDistributionClient(tx.config)
+	tx.ConfigTemplate = NewConfigTemplateClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
 	tx.Distribution = NewDistributionClient(tx.config)
 	tx.DistributionRecord = NewDistributionRecordClient(tx.config)
+	tx.Inspection = NewInspectionClient(tx.config)
 	tx.Language = NewLanguageClient(tx.config)
+	tx.LogSnapshot = NewLogSnapshotClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)
 	tx.Membership = NewMembershipClient(tx.config)
@@ -318,6 +334,8 @@ func (tx *Tx) init() {
 	tx.ScriptBatch = NewScriptBatchClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
+	tx.TerminalChunk = NewTerminalChunkClient(tx.config)
+	tx.TerminalSession = NewTerminalSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserCredential = NewUserCredentialClient(tx.config)
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)

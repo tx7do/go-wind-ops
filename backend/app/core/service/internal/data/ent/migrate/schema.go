@@ -723,6 +723,76 @@ var (
 			},
 		},
 	}
+	// OpsConfigDistributionsColumns holds the columns for the "ops_config_distributions" table.
+	OpsConfigDistributionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "template_id", Type: field.TypeUint32, Comment: "来源模板(ops_config_templates.id)"},
+		{Name: "template_name", Type: field.TypeString, Comment: "模板名快照"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "目标节点(ops_agent_nodes.id)"},
+		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "关联项目(ops_projects.id;不关联为 0)", Default: 0},
+		{Name: "target_path", Type: field.TypeString, Comment: "下发目标路径"},
+		{Name: "status", Type: field.TypeEnum, Comment: "下发状态", Enums: []string{"PENDING", "SUCCESS", "FAILED"}, Default: "PENDING"},
+		{Name: "command_request_id", Type: field.TypeString, Comment: "指令幂等键(ops_command_records.request_id)"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发下发的用户", Default: 0},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "终态时间"},
+	}
+	// OpsConfigDistributionsTable holds the schema information for the "ops_config_distributions" table.
+	OpsConfigDistributionsTable = &schema.Table{
+		Name:       "ops_config_distributions",
+		Comment:    "配置下发记录表",
+		Columns:    OpsConfigDistributionsColumns,
+		PrimaryKey: []*schema.Column{OpsConfigDistributionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_config_dist_tpl",
+				Unique:  false,
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[4]},
+			},
+			{
+				Name:    "idx_ops_config_dist_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[9]},
+			},
+			{
+				Name:    "uidx_ops_config_dist_req",
+				Unique:  true,
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[10]},
+			},
+		},
+	}
+	// OpsConfigTemplatesColumns holds the columns for the "ops_config_templates" table.
+	OpsConfigTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "模板名(全局唯一)"},
+		{Name: "env", Type: field.TypeString, Comment: "所属环境(default/dev/staging/prod)", Default: "default"},
+		{Name: "target_path", Type: field.TypeString, Comment: "下发目标绝对路径(须在 agent 授权目录内)"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "模板内容(≤256KB,原样下发)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsConfigTemplatesTable holds the schema information for the "ops_config_templates" table.
+	OpsConfigTemplatesTable = &schema.Table{
+		Name:       "ops_config_templates",
+		Comment:    "配置文件模板表",
+		Columns:    OpsConfigTemplatesColumns,
+		PrimaryKey: []*schema.Column{OpsConfigTemplatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_config_tpl_env",
+				Unique:  false,
+				Columns: []*schema.Column{OpsConfigTemplatesColumns[8]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1072,6 +1142,40 @@ var (
 			},
 		},
 	}
+	// OpsInspectionsColumns holds the columns for the "ops_inspections" table.
+	OpsInspectionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "执行状态", Enums: []string{"RUNNING", "FINISHED", "FAILED"}, Default: "RUNNING"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "报告 JSON(节点/项目/告警/证书/备份汇总)"},
+		{Name: "node_total", Type: field.TypeInt, Comment: "节点总数", Default: 0},
+		{Name: "node_online", Type: field.TypeInt, Comment: "在线节点数", Default: 0},
+		{Name: "project_total", Type: field.TypeInt, Comment: "项目总数", Default: 0},
+		{Name: "project_running", Type: field.TypeInt, Comment: "运行中项目数", Default: 0},
+		{Name: "alert_open", Type: field.TypeInt, Comment: "未恢复告警数", Default: 0},
+		{Name: "cert_expiring", Type: field.TypeInt, Comment: "30 天内到期证书数", Default: 0},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "完成时间"},
+	}
+	// OpsInspectionsTable holds the schema information for the "ops_inspections" table.
+	OpsInspectionsTable = &schema.Table{
+		Name:       "ops_inspections",
+		Comment:    "平台巡检报告表",
+		Columns:    OpsInspectionsColumns,
+		PrimaryKey: []*schema.Column{OpsInspectionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_inspection_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsInspectionsColumns[7]},
+			},
+		},
+	}
 	// SysLanguagesColumns holds the columns for the "sys_languages" table.
 	SysLanguagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1134,6 +1238,36 @@ var (
 				Name:    "idx_sys_languages_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{SysLanguagesColumns[1]},
+			},
+		},
+	}
+	// OpsLogSnapshotsColumns holds the columns for the "ops_log_snapshots" table.
+	OpsLogSnapshotsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "project_id", Type: field.TypeUint32, Comment: "项目(ops_projects.id)"},
+		{Name: "node_id", Type: field.TypeUint32, Comment: "执行节点(ops_agent_nodes.id)"},
+		{Name: "project_name", Type: field.TypeString, Comment: "项目名快照"},
+		{Name: "size_bytes", Type: field.TypeInt64, Comment: "日志快照大小(字节)", Default: 0},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "日志内容(尾部,≤256KB)"},
+		{Name: "trigger", Type: field.TypeString, Comment: "触发方式:MANUAL=手动 / SCHEDULED=定时", Default: "MANUAL"},
+	}
+	// OpsLogSnapshotsTable holds the schema information for the "ops_log_snapshots" table.
+	OpsLogSnapshotsTable = &schema.Table{
+		Name:       "ops_log_snapshots",
+		Comment:    "项目日志快照表",
+		Columns:    OpsLogSnapshotsColumns,
+		PrimaryKey: []*schema.Column{OpsLogSnapshotsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_log_snapshot_project",
+				Unique:  false,
+				Columns: []*schema.Column{OpsLogSnapshotsColumns[7]},
 			},
 		},
 	}
@@ -3127,6 +3261,68 @@ var (
 			},
 		},
 	}
+	// OpsTerminalChunksColumns holds the columns for the "ops_terminal_chunks" table.
+	OpsTerminalChunksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "terminal_session_id", Type: field.TypeUint32, Comment: "会话行(ops_terminal_sessions.id)"},
+		{Name: "seq", Type: field.TypeInt, Comment: "会话内序号(录制器分配,从 0 递增)"},
+		{Name: "direction", Type: field.TypeEnum, Comment: "方向", Enums: []string{"INPUT", "OUTPUT"}, Default: "OUTPUT"},
+		{Name: "payload", Type: field.TypeString, Size: 2147483647, Comment: "分块内容(base64)"},
+		{Name: "byte_len", Type: field.TypeInt, Comment: "原始字节数", Default: 0},
+	}
+	// OpsTerminalChunksTable holds the schema information for the "ops_terminal_chunks" table.
+	OpsTerminalChunksTable = &schema.Table{
+		Name:       "ops_terminal_chunks",
+		Comment:    "终端会话录制分块表",
+		Columns:    OpsTerminalChunksColumns,
+		PrimaryKey: []*schema.Column{OpsTerminalChunksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_term_chunk_seq",
+				Unique:  true,
+				Columns: []*schema.Column{OpsTerminalChunksColumns[4], OpsTerminalChunksColumns[5]},
+			},
+		},
+	}
+	// OpsTerminalSessionsColumns holds the columns for the "ops_terminal_sessions" table.
+	OpsTerminalSessionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "session_id", Type: field.TypeString, Unique: true, Comment: "会话 ID(agent 侧 UUID,与 MQTT 主题对应)"},
+		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "节点(ops_agent_nodes.id)", Default: 0},
+		{Name: "agent_id", Type: field.TypeString, Comment: "机器唯一标识"},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "打开终端的用户", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "会话状态", Enums: []string{"OPEN", "CLOSED"}, Default: "OPEN"},
+		{Name: "input_bytes", Type: field.TypeInt64, Comment: "已录制输入字节数", Default: 0},
+		{Name: "output_bytes", Type: field.TypeInt64, Comment: "已录制输出字节数", Default: 0},
+		{Name: "chunk_count", Type: field.TypeInt, Comment: "已落库分块数", Default: 0},
+		{Name: "truncated", Type: field.TypeBool, Comment: "是否因超出录制上限被截断", Default: false},
+		{Name: "closed_at", Type: field.TypeTime, Nullable: true, Comment: "会话关闭时间"},
+	}
+	// OpsTerminalSessionsTable holds the schema information for the "ops_terminal_sessions" table.
+	OpsTerminalSessionsTable = &schema.Table{
+		Name:       "ops_terminal_sessions",
+		Comment:    "终端会话审计表",
+		Columns:    OpsTerminalSessionsColumns,
+		PrimaryKey: []*schema.Column{OpsTerminalSessionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_term_session_node",
+				Unique:  false,
+				Columns: []*schema.Column{OpsTerminalSessionsColumns[5]},
+			},
+			{
+				Name:    "idx_ops_term_session_status",
+				Unique:  false,
+				Columns: []*schema.Column{OpsTerminalSessionsColumns[8]},
+			},
+		},
+	}
 	// SysUsersColumns holds the columns for the "sys_users" table.
 	SysUsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3567,13 +3763,17 @@ var (
 		OpsCloudCostsTable,
 		OpsCloudInstancesTable,
 		OpsCommandRecordsTable,
+		OpsConfigDistributionsTable,
+		OpsConfigTemplatesTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
 		OpsDistributionsTable,
 		OpsDistributionRecordsTable,
+		OpsInspectionsTable,
 		SysLanguagesTable,
+		OpsLogSnapshotsTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
 		SysMembershipsTable,
@@ -3605,6 +3805,8 @@ var (
 		OpsScriptBatchesTable,
 		SysTasksTable,
 		SysTenantsTable,
+		OpsTerminalChunksTable,
+		OpsTerminalSessionsTable,
 		SysUsersTable,
 		SysUserCredentialsTable,
 		SysUserOrgUnitsTable,
@@ -3699,6 +3901,16 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	OpsConfigDistributionsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_config_distributions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsConfigTemplatesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_config_templates",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysDataAccessAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_data_access_audit_logs",
 		Charset:   "utf8mb4",
@@ -3731,8 +3943,18 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	OpsInspectionsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_inspections",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysLanguagesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_languages",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsLogSnapshotsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_log_snapshots",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3891,6 +4113,16 @@ func init() {
 	}
 	SysTenantsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_tenants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsTerminalChunksTable.Annotation = &entsql.Annotation{
+		Table:     "ops_terminal_chunks",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsTerminalSessionsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_terminal_sessions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

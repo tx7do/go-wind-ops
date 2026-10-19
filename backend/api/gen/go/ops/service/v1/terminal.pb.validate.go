@@ -77,6 +77,14 @@ func (m *TerminalChunk) validate(all bool) error {
 		// no validation rules for Error
 	}
 
+	if m.Cols != nil {
+		// no validation rules for Cols
+	}
+
+	if m.Rows != nil {
+		// no validation rules for Rows
+	}
+
 	if len(errors) > 0 {
 		return TerminalChunkMultiError(errors)
 	}
@@ -154,3 +162,855 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TerminalChunkValidationError{}
+
+// Validate checks the field values on TerminalSession with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TerminalSession) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TerminalSession with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TerminalSessionMultiError, or nil if none found.
+func (m *TerminalSession) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TerminalSession) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.SessionId != nil {
+		// no validation rules for SessionId
+	}
+
+	if m.NodeId != nil {
+		// no validation rules for NodeId
+	}
+
+	if m.AgentId != nil {
+		// no validation rules for AgentId
+	}
+
+	if m.OperatorId != nil {
+		// no validation rules for OperatorId
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.InputBytes != nil {
+		// no validation rules for InputBytes
+	}
+
+	if m.OutputBytes != nil {
+		// no validation rules for OutputBytes
+	}
+
+	if m.ChunkCount != nil {
+		// no validation rules for ChunkCount
+	}
+
+	if m.Truncated != nil {
+		// no validation rules for Truncated
+	}
+
+	if m.ClosedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetClosedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TerminalSessionValidationError{
+						field:  "ClosedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TerminalSessionValidationError{
+						field:  "ClosedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetClosedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TerminalSessionValidationError{
+					field:  "ClosedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TerminalSessionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TerminalSessionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TerminalSessionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return TerminalSessionMultiError(errors)
+	}
+
+	return nil
+}
+
+// TerminalSessionMultiError is an error wrapping multiple validation errors
+// returned by TerminalSession.ValidateAll() if the designated constraints
+// aren't met.
+type TerminalSessionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TerminalSessionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TerminalSessionMultiError) AllErrors() []error { return m }
+
+// TerminalSessionValidationError is the validation error returned by
+// TerminalSession.Validate if the designated constraints aren't met.
+type TerminalSessionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TerminalSessionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TerminalSessionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TerminalSessionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TerminalSessionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TerminalSessionValidationError) ErrorName() string { return "TerminalSessionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TerminalSessionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTerminalSession.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TerminalSessionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TerminalSessionValidationError{}
+
+// Validate checks the field values on ListTerminalSessionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListTerminalSessionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTerminalSessionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTerminalSessionResponseMultiError, or nil if none found.
+func (m *ListTerminalSessionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTerminalSessionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTerminalSessionResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTerminalSessionResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTerminalSessionResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListTerminalSessionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListTerminalSessionResponseMultiError is an error wrapping multiple
+// validation errors returned by ListTerminalSessionResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListTerminalSessionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTerminalSessionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTerminalSessionResponseMultiError) AllErrors() []error { return m }
+
+// ListTerminalSessionResponseValidationError is the validation error returned
+// by ListTerminalSessionResponse.Validate if the designated constraints
+// aren't met.
+type ListTerminalSessionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListTerminalSessionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListTerminalSessionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListTerminalSessionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListTerminalSessionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListTerminalSessionResponseValidationError) ErrorName() string {
+	return "ListTerminalSessionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListTerminalSessionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListTerminalSessionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListTerminalSessionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListTerminalSessionResponseValidationError{}
+
+// Validate checks the field values on GetTerminalSessionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTerminalSessionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTerminalSessionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTerminalSessionRequestMultiError, or nil if none found.
+func (m *GetTerminalSessionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTerminalSessionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if len(errors) > 0 {
+		return GetTerminalSessionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTerminalSessionRequestMultiError is an error wrapping multiple validation
+// errors returned by GetTerminalSessionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetTerminalSessionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTerminalSessionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTerminalSessionRequestMultiError) AllErrors() []error { return m }
+
+// GetTerminalSessionRequestValidationError is the validation error returned by
+// GetTerminalSessionRequest.Validate if the designated constraints aren't met.
+type GetTerminalSessionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTerminalSessionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTerminalSessionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTerminalSessionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTerminalSessionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTerminalSessionRequestValidationError) ErrorName() string {
+	return "GetTerminalSessionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTerminalSessionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTerminalSessionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTerminalSessionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTerminalSessionRequestValidationError{}
+
+// Validate checks the field values on ListTerminalChunksRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListTerminalChunksRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTerminalChunksRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTerminalChunksRequestMultiError, or nil if none found.
+func (m *ListTerminalChunksRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTerminalChunksRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.SessionId != nil {
+		// no validation rules for SessionId
+	}
+
+	if m.FromSeq != nil {
+		// no validation rules for FromSeq
+	}
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
+	if len(errors) > 0 {
+		return ListTerminalChunksRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListTerminalChunksRequestMultiError is an error wrapping multiple validation
+// errors returned by ListTerminalChunksRequest.ValidateAll() if the
+// designated constraints aren't met.
+type ListTerminalChunksRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTerminalChunksRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTerminalChunksRequestMultiError) AllErrors() []error { return m }
+
+// ListTerminalChunksRequestValidationError is the validation error returned by
+// ListTerminalChunksRequest.Validate if the designated constraints aren't met.
+type ListTerminalChunksRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListTerminalChunksRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListTerminalChunksRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListTerminalChunksRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListTerminalChunksRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListTerminalChunksRequestValidationError) ErrorName() string {
+	return "ListTerminalChunksRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListTerminalChunksRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListTerminalChunksRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListTerminalChunksRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListTerminalChunksRequestValidationError{}
+
+// Validate checks the field values on ListTerminalChunkResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListTerminalChunkResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTerminalChunkResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTerminalChunkResponseMultiError, or nil if none found.
+func (m *ListTerminalChunkResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTerminalChunkResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTerminalChunkResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTerminalChunkResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTerminalChunkResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Truncated != nil {
+		// no validation rules for Truncated
+	}
+
+	if len(errors) > 0 {
+		return ListTerminalChunkResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListTerminalChunkResponseMultiError is an error wrapping multiple validation
+// errors returned by ListTerminalChunkResponse.ValidateAll() if the
+// designated constraints aren't met.
+type ListTerminalChunkResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTerminalChunkResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTerminalChunkResponseMultiError) AllErrors() []error { return m }
+
+// ListTerminalChunkResponseValidationError is the validation error returned by
+// ListTerminalChunkResponse.Validate if the designated constraints aren't met.
+type ListTerminalChunkResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListTerminalChunkResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListTerminalChunkResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListTerminalChunkResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListTerminalChunkResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListTerminalChunkResponseValidationError) ErrorName() string {
+	return "ListTerminalChunkResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListTerminalChunkResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListTerminalChunkResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListTerminalChunkResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListTerminalChunkResponseValidationError{}
+
+// Validate checks the field values on TerminalChunkItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TerminalChunkItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TerminalChunkItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TerminalChunkItemMultiError, or nil if none found.
+func (m *TerminalChunkItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TerminalChunkItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Seq != nil {
+		// no validation rules for Seq
+	}
+
+	if m.Direction != nil {
+		// no validation rules for Direction
+	}
+
+	if m.Payload != nil {
+		// no validation rules for Payload
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TerminalChunkItemValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TerminalChunkItemValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TerminalChunkItemValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return TerminalChunkItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// TerminalChunkItemMultiError is an error wrapping multiple validation errors
+// returned by TerminalChunkItem.ValidateAll() if the designated constraints
+// aren't met.
+type TerminalChunkItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TerminalChunkItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TerminalChunkItemMultiError) AllErrors() []error { return m }
+
+// TerminalChunkItemValidationError is the validation error returned by
+// TerminalChunkItem.Validate if the designated constraints aren't met.
+type TerminalChunkItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TerminalChunkItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TerminalChunkItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TerminalChunkItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TerminalChunkItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TerminalChunkItemValidationError) ErrorName() string {
+	return "TerminalChunkItemValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TerminalChunkItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTerminalChunkItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TerminalChunkItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TerminalChunkItemValidationError{}

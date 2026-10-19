@@ -43,14 +43,14 @@ type RepositoryServiceHTTPServer interface {
 
 func RegisterRepositoryServiceHTTPServer(s *http.Server, srv RepositoryServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/repositories", _RepositoryService_List35_HTTP_Handler(srv))
-	r.GET("/admin/v1/repositories/{id}", _RepositoryService_Get33_HTTP_Handler(srv))
-	r.POST("/admin/v1/repositories", _RepositoryService_Create21_HTTP_Handler(srv))
-	r.PUT("/admin/v1/repositories/{id}", _RepositoryService_Update22_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/repositories/{id}", _RepositoryService_Delete23_HTTP_Handler(srv))
+	r.GET("/admin/v1/repositories", _RepositoryService_List38_HTTP_Handler(srv))
+	r.GET("/admin/v1/repositories/{id}", _RepositoryService_Get36_HTTP_Handler(srv))
+	r.POST("/admin/v1/repositories", _RepositoryService_Create22_HTTP_Handler(srv))
+	r.PUT("/admin/v1/repositories/{id}", _RepositoryService_Update23_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/repositories/{id}", _RepositoryService_Delete25_HTTP_Handler(srv))
 }
 
-func _RepositoryService_List35_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
+func _RepositoryService_List38_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _RepositoryService_List35_HTTP_Handler(srv RepositoryServiceHTTPServer) fun
 	}
 }
 
-func _RepositoryService_Get33_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
+func _RepositoryService_Get36_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetRepositoryRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _RepositoryService_Get33_HTTP_Handler(srv RepositoryServiceHTTPServer) func
 	}
 }
 
-func _RepositoryService_Create21_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
+func _RepositoryService_Create22_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateRepositoryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _RepositoryService_Create21_HTTP_Handler(srv RepositoryServiceHTTPServer) f
 	}
 }
 
-func _RepositoryService_Update22_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
+func _RepositoryService_Update23_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateRepositoryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _RepositoryService_Update22_HTTP_Handler(srv RepositoryServiceHTTPServer) f
 	}
 }
 
-func _RepositoryService_Delete23_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
+func _RepositoryService_Delete25_HTTP_Handler(srv RepositoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteRepositoryRequest
 		if err := ctx.BindQuery(&in); err != nil {

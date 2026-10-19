@@ -1,0 +1,19 @@
+{
+  "moduleName": "终端会话审计",
+  "title": "终端会话审计",
+  "openedAt": "打开时间",
+  "nodeId": "节点",
+  "agentId": "机器",
+  "operator": "用户",
+  "status": "状态",
+  "statusOpen": "进行中",
+  "statusClosed": "已关闭",
+  "duration": "时长",
+  "traffic": "录入流量",
+  "chunks": "分块",
+  "truncated": "截断",
+  "replay": "回放",
+  "replayTitle": "会话回放 #{{id}}",
+  "replayBanner": "── 回放: {{node}} @ {{time}} ──",
+  "replayHint": "按录制顺序回放输出;[cmd] 行为当时键盘输入(灰显);超过 8MB 的会话仅保留前段"
+}

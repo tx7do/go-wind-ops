@@ -107,6 +107,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'config-center',
+        path: '/ops/config-center',
+        element: createLazyRoute(() => import('@/pages/app/ops/config-center')),
+        meta: {
+          title: 'routes:config-center',
+          icon: 'lucide:file-cog',
+          order: 5,
+          authority: ['ops:script_manage', 'ops:build_manage'],
+        },
+      },
+      {
         name: 'distributions',
         path: '/ops/distributions',
         element: createLazyRoute(() => import('@/pages/app/ops/distribution')),
@@ -188,6 +199,17 @@ export const opsRoutes: AppRouteObject[] = [
     },
     children: [
       {
+        name: 'log-snapshots',
+        path: '/ops/log-snapshots',
+        element: createLazyRoute(() => import('@/pages/app/ops/log-snapshot')),
+        meta: {
+          title: 'routes:log-snapshots',
+          icon: 'lucide:scan-search',
+          order: 4,
+          authority: ['sys:platform_admin', 'ops:project_manage'],
+        },
+      },
+      {
         name: 'monitors',
         path: '/ops/monitors',
         element: createLazyRoute(() => import('@/pages/app/ops/monitor')),
@@ -253,6 +275,17 @@ export const opsRoutes: AppRouteObject[] = [
           icon: 'lucide:scroll-text',
           order: 2,
           authority: ['ops:node_manage'],
+        },
+      },
+      {
+        name: 'inspections',
+        path: '/ops/inspections',
+        element: createLazyRoute(() => import('@/pages/app/ops/inspection')),
+        meta: {
+          title: 'routes:inspections',
+          icon: 'lucide:clipboard-check',
+          order: 5,
+          authority: ['sys:platform_admin'],
         },
       },
       {

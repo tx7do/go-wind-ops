@@ -38,13 +38,18 @@ type TerminalService struct {
 	log      *log.Helper
 	agentSvc *AgentService
 	nodeRepo *data.AgentNodeRepo
+
+	sessionRepo *data.TerminalSessionRepo
+	chunkRepo   *data.TerminalChunkRepo
 }
 
-func NewTerminalService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo) *TerminalService {
+func NewTerminalService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo, sessionRepo *data.TerminalSessionRepo, chunkRepo *data.TerminalChunkRepo) *TerminalService {
 	return &TerminalService{
-		log:      ctx.NewLoggerHelper("terminal/service/core-service"),
-		agentSvc: agentSvc,
-		nodeRepo: nodeRepo,
+		log:         ctx.NewLoggerHelper("terminal/service/core-service"),
+		agentSvc:    agentSvc,
+		nodeRepo:    nodeRepo,
+		sessionRepo: sessionRepo,
+		chunkRepo:   chunkRepo,
 	}
 }
 
@@ -66,11 +71,21 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 	}
 	ctx := stream.Context()
 
+	nodeID := uint32(0)
 	if s.nodeRepo != nil {
-		if _, err = s.nodeRepo.GetByAgentID(ctx, agentId); err != nil {
+		node, nerr := s.nodeRepo.GetByAgentID(ctx, agentId)
+		if nerr != nil {
 			return opsV1.ErrorNotFound("agent not enrolled: %s", agentId)
 		}
+		if node != nil {
+			nodeID = node.ID
+		}
 	}
+
+	// ── 先挂输出路由再开会话:shell 启动横幅早于 open 回执到达,后注册
+	// 会把首批输出当"无路由"丢帧,前端将一直停在"正在连接"。──
+	ch := s.agentSvc.RegisterTerminalRoute(agentId, sessionId)
+	defer s.agentSvc.UnregisterTerminalRoute(agentId, sessionId)
 
 	// ── 开会话:terminal_open 同步等待回执 ──
 	_, err = s.agentSvc.PublishCommandSync(ctx, 0, agentId,
@@ -81,19 +96,23 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 		_ = stream.Send(&opsV1.TerminalChunk{Event: strPtr("CLOSED"), Error: strPtr("open failed: " + err.Error())})
 		return nil
 	}
-	if err = stream.Send(&opsV1.TerminalChunk{Event: strPtr("OPENED")}); err != nil {
-		return nil
-	}
-	s.log.Infof("terminal session opened (agent=%s session=%s operator=%d)", agentId, sessionId, operatorIDOf(ctx))
-
-	// ── 挂输出路由;流结束(含 WS 断开)时关闭会话 ──
-	ch := s.agentSvc.RegisterTerminalRoute(agentId, sessionId)
-	defer s.agentSvc.UnregisterTerminalRoute(agentId, sessionId)
+	// 流结束(含 WS 断开)时关闭会话。
 	defer func() {
 		_, _ = s.agentSvc.PublishCommand(ctx, 0, agentId,
 			signal.CommandActionTerminalClose,
 			&signal.TerminalClosePayload{SessionId: sessionId}, operatorIDOf(ctx))
 	}()
+	if err = stream.Send(&opsV1.TerminalChunk{Event: strPtr("OPENED")}); err != nil {
+		return nil
+	}
+	s.log.Infof("terminal session opened (agent=%s session=%s operator=%d)", agentId, sessionId, operatorIDOf(ctx))
+
+	// ── 会话录制:异步落库,失败不影响终端 ──
+	var rec *TerminalRecorder
+	if s.sessionRepo != nil && s.chunkRepo != nil {
+		rec = NewTerminalRecorder(ctx, s.sessionRepo, s.chunkRepo, s.log, sessionId, agentId, nodeID, operatorIDOf(ctx))
+	}
+	defer rec.Close()
 
 	var sendMu sync.Mutex
 	send := func(chunk *opsV1.TerminalChunk) error {
@@ -118,6 +137,7 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 					if derr != nil {
 						continue
 					}
+					rec.Output(data)
 					chunk.Data = data
 				}
 				if serr := send(chunk); serr != nil {
@@ -141,6 +161,12 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 		if in.GetEvent() == "CLOSE" {
 			return nil
 		}
+		if in.GetEvent() == "RESIZE" {
+			if perr := s.agentSvc.PublishTerminalResize(ctx, agentId, sessionId, in.GetCols(), in.GetRows()); perr != nil {
+				s.log.Warnf("terminal resize publish (agent=%s session=%s): %s", agentId, sessionId, perr.Error())
+			}
+			continue
+		}
 		data := in.GetData()
 		if len(data) == 0 {
 			continue
@@ -148,6 +174,7 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 		if len(data) > terminalChunkMax {
 			data = data[:terminalChunkMax]
 		}
+		rec.Input(data)
 		if perr := s.agentSvc.PublishTerminalInput(ctx, agentId, sessionId, data); perr != nil {
 			s.log.Warnf("terminal input publish (agent=%s session=%s): %s", agentId, sessionId, perr.Error())
 		}
@@ -209,6 +236,23 @@ func (s *AgentService) PublishTerminalInput(ctx context.Context, agentId, sessio
 		broker.NewMessage(&signal.TerminalIO{
 			SessionId: sessionId,
 			Data:      base64.StdEncoding.EncodeToString(data),
+		}))
+}
+
+// PublishTerminalResize 发布 PTY 尺寸变更到 resize 主题。
+func (s *AgentService) PublishTerminalResize(ctx context.Context, agentId, sessionId string, cols, rows uint32) error {
+	if cols == 0 || rows == 0 {
+		return nil
+	}
+	b, ok := s.mqttBroker.Load().(broker.Broker)
+	if !ok || b == nil {
+		return fmt.Errorf("mqtt broker not ready")
+	}
+	return b.Publish(ctx, topic.MakeMqttTopicTerminalResize(agentId, sessionId),
+		broker.NewMessage(&signal.TerminalResizePayload{
+			SessionId: sessionId,
+			Cols:      cols,
+			Rows:      rows,
 		}))
 }
 
