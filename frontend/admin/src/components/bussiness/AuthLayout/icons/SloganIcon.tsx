@@ -32,7 +32,7 @@ const SloganIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     viewBox="0 0 560 560"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
-    aria-label="GoWind 风行"
+    aria-label="GoWind Ops"
     width="100%"
     height="100%"
     {...props}

@@ -32,7 +32,7 @@ const defaultPreferences: Preferences = {
         styleType: "normal",
     },
     copyright: {
-        companyName: "GoWind",
+        companyName: "GoWind Ops",
         companySiteLink: "https://www.gowind.cloud",
         date: "2026",
         enable: true,

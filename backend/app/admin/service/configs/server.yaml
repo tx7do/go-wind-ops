@@ -1,6 +1,6 @@
 server:
   rest:
-    addr: "0.0.0.0:6600"
+    addr: "0.0.0.0:18600"
     timeout: 10s
     enable_swagger: false
     cors:
@@ -19,8 +19,8 @@ server:
         - "HEAD"
         - "OPTIONS"
       origins:
-        - "http://localhost:15999"
-        - "http://127.0.0.1:15999"
+        - "http://localhost:18999"
+        - "http://127.0.0.1:18999"
     middleware:
       auth:
         method: "HS256"

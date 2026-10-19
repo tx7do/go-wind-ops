@@ -1,6 +1,6 @@
 server:
   rest:
-    addr: "0.0.0.0:6700"
+    addr: "0.0.0.0:18700"
     timeout: 10s
     enable_swagger: false
     cors:

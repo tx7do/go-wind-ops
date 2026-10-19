@@ -51,7 +51,7 @@ GoWind Ops 是一款开箱即用的多节点运维平台（Golang 全栈实现�
 | [TypeScript](https://www.typescriptlang.org/) | 类型安全       |
 | [Ant Design 6](https://ant.design/)           | 企业级 UI 组件库 |
 | [ProComponents](https://procomponents.ant.design/) | 企业级中后台组件 |
-| [Vite 6](https://vite.dev/)                   | 构建工具（dev :15999） |
+| [Vite 6](https://vite.dev/)                   | 构建工具（dev :18999） |
 
 ## 核心功能
 
@@ -89,8 +89,8 @@ go-wind-ops/
 │   │   ├── protos/                 # .proto 源文件（ops 业务域 + 基座继承域）
 │   │   └── gen/                    # 生成代码 (Go / TypeScript / OpenAPI)，不手改
 │   ├── app/
-│   │   ├── admin/service/          # 管理后台 BFF (REST :6600，gRPC → core，不连库)
-│   │   ├── front/service/          # 前台 BFF (REST :6700，gRPC → core，不连库)
+│   │   ├── admin/service/          # 管理后台 BFF (REST :18600，gRPC → core，不连库)
+│   │   ├── front/service/          # 前台 BFF (REST :18700，gRPC → core，不连库)
 │   │   ├── core/service/           # 领域资源层 (Ent schema/仓储/业务逻辑 + MQTT 控制端 + Asynq worker)
 │   │   └── agent/service/          # 边缘代理 (纯 MQTT 出站；无库/无服务发现/无 REST)
 │   ├── pkg/                        # 公共包 (signal/topic/serviceid/oss/filetransfer/鉴权中间件...)
@@ -130,7 +130,7 @@ agent 首次启动会在工作目录生成 `auth.token` 并经 MQTT 向 core 注
 ```bash
 cd frontend/admin
 pnpm install
-pnpm dev        # http://localhost:15999，代理 /admin → 127.0.0.1:6600
+pnpm dev        # http://localhost:18999，代理 /admin → 127.0.0.1:18600
 ```
 
 默认账号 `admin / admin`（验证码开发环境可设 `ADMIN_CAPTCHA_DISABLED=true` 跳过；登录密码需按前端约定 AES-GCM 加密，见 `backend/tools/pass-enc`）。

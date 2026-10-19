@@ -1,6 +1,6 @@
 # AGENTS.md — go-wind-ops 后端开发指南
 
-> 本文件是 backend 子项目的开发规范单一事实源，供开发者与 AI 编码工具使用。管理前端见 `frontend/admin`（React 19 + antd 6 + Vite 6，裁剪自 cms admin 前端；TS API 由后端 `cd api && buf generate --template buf.admin.typescript.gen.yaml` 生成到 `frontend/admin/src/api/generated`；dev 代理 `/admin` → 127.0.0.1:6600；页面加法五件套：api/hooks/页面/router/modules/locales，参照 `pages/app/ops/agent-node`）。
+> 本文件是 backend 子项目的开发规范单一事实源，供开发者与 AI 编码工具使用。管理前端见 `frontend/admin`（React 19 + antd 6 + Vite 6，裁剪自 cms admin 前端；TS API 由后端 `cd api && buf generate --template buf.admin.typescript.gen.yaml` 生成到 `frontend/admin/src/api/generated`；dev 代理 `/admin` → 127.0.0.1:18600；页面加法五件套：api/hooks/页面/router/modules/locales，参照 `pages/app/ops/agent-node`）。
 
 ## 项目概览
 
@@ -26,8 +26,8 @@
 
 ```
 用户/浏览器
-  ├─ admin-service  管理后台 BFF（REST :6600，gRPC 客户端 → core；不连数据库）
-  └─ front-service  前台 BFF（REST :6700，gRPC 客户端 → core；不连数据库）
+  ├─ admin-service  管理后台 BFF（REST :18600，gRPC 客户端 → core；不连数据库）
+  └─ front-service  前台 BFF（REST :18700，gRPC 客户端 → core；不连数据库）
         │ gRPC + etcd 服务发现（discovery:///gowind-ops/core-service）
         ▼
     core-service    领域资源层（gRPC 随机端口 + Asynq worker + MQTT 控制端）
