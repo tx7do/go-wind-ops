@@ -1323,3 +1323,254 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetCloudCostSummaryResponseValidationError{}
+
+// Validate checks the field values on FetchCloudCostFromProviderRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *FetchCloudCostFromProviderRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FetchCloudCostFromProviderRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// FetchCloudCostFromProviderRequestMultiError, or nil if none found.
+func (m *FetchCloudCostFromProviderRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FetchCloudCostFromProviderRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CloudAccountId
+
+	// no validation rules for Month
+
+	if len(errors) > 0 {
+		return FetchCloudCostFromProviderRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FetchCloudCostFromProviderRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// FetchCloudCostFromProviderRequest.ValidateAll() if the designated
+// constraints aren't met.
+type FetchCloudCostFromProviderRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FetchCloudCostFromProviderRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FetchCloudCostFromProviderRequestMultiError) AllErrors() []error { return m }
+
+// FetchCloudCostFromProviderRequestValidationError is the validation error
+// returned by FetchCloudCostFromProviderRequest.Validate if the designated
+// constraints aren't met.
+type FetchCloudCostFromProviderRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FetchCloudCostFromProviderRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FetchCloudCostFromProviderRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FetchCloudCostFromProviderRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FetchCloudCostFromProviderRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FetchCloudCostFromProviderRequestValidationError) ErrorName() string {
+	return "FetchCloudCostFromProviderRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FetchCloudCostFromProviderRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFetchCloudCostFromProviderRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FetchCloudCostFromProviderRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FetchCloudCostFromProviderRequestValidationError{}
+
+// Validate checks the field values on FetchCloudCostFromProviderResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *FetchCloudCostFromProviderResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FetchCloudCostFromProviderResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// FetchCloudCostFromProviderResponseMultiError, or nil if none found.
+func (m *FetchCloudCostFromProviderResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FetchCloudCostFromProviderResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Data != nil {
+
+		if all {
+			switch v := interface{}(m.GetData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FetchCloudCostFromProviderResponseValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FetchCloudCostFromProviderResponseValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FetchCloudCostFromProviderResponseValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ProviderMessage != nil {
+		// no validation rules for ProviderMessage
+	}
+
+	if len(errors) > 0 {
+		return FetchCloudCostFromProviderResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// FetchCloudCostFromProviderResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// FetchCloudCostFromProviderResponse.ValidateAll() if the designated
+// constraints aren't met.
+type FetchCloudCostFromProviderResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FetchCloudCostFromProviderResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FetchCloudCostFromProviderResponseMultiError) AllErrors() []error { return m }
+
+// FetchCloudCostFromProviderResponseValidationError is the validation error
+// returned by FetchCloudCostFromProviderResponse.Validate if the designated
+// constraints aren't met.
+type FetchCloudCostFromProviderResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FetchCloudCostFromProviderResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FetchCloudCostFromProviderResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FetchCloudCostFromProviderResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FetchCloudCostFromProviderResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FetchCloudCostFromProviderResponseValidationError) ErrorName() string {
+	return "FetchCloudCostFromProviderResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FetchCloudCostFromProviderResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFetchCloudCostFromProviderResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FetchCloudCostFromProviderResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FetchCloudCostFromProviderResponseValidationError{}

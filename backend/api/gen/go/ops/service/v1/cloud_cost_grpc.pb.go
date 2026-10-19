@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CloudCostService_ListCloudCosts_FullMethodName      = "/ops.service.v1.CloudCostService/ListCloudCosts"
-	CloudCostService_UpsertCloudCost_FullMethodName     = "/ops.service.v1.CloudCostService/UpsertCloudCost"
-	CloudCostService_DeleteCloudCost_FullMethodName     = "/ops.service.v1.CloudCostService/DeleteCloudCost"
-	CloudCostService_ImportCloudCosts_FullMethodName    = "/ops.service.v1.CloudCostService/ImportCloudCosts"
-	CloudCostService_GetCloudCostSummary_FullMethodName = "/ops.service.v1.CloudCostService/GetCloudCostSummary"
+	CloudCostService_ListCloudCosts_FullMethodName             = "/ops.service.v1.CloudCostService/ListCloudCosts"
+	CloudCostService_UpsertCloudCost_FullMethodName            = "/ops.service.v1.CloudCostService/UpsertCloudCost"
+	CloudCostService_DeleteCloudCost_FullMethodName            = "/ops.service.v1.CloudCostService/DeleteCloudCost"
+	CloudCostService_ImportCloudCosts_FullMethodName           = "/ops.service.v1.CloudCostService/ImportCloudCosts"
+	CloudCostService_GetCloudCostSummary_FullMethodName        = "/ops.service.v1.CloudCostService/GetCloudCostSummary"
+	CloudCostService_FetchCloudCostFromProvider_FullMethodName = "/ops.service.v1.CloudCostService/FetchCloudCostFromProvider"
 )
 
 // CloudCostServiceClient is the client API for CloudCostService service.
@@ -44,6 +45,8 @@ type CloudCostServiceClient interface {
 	ImportCloudCosts(ctx context.Context, in *ImportCloudCostsRequest, opts ...grpc.CallOption) (*ImportCloudCostsResponse, error)
 	// 月度汇总(趋势图:月 × 厂商 × 币种 合计)
 	GetCloudCostSummary(ctx context.Context, in *GetCloudCostSummaryRequest, opts ...grpc.CallOption) (*GetCloudCostSummaryResponse, error)
+	// 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	FetchCloudCostFromProvider(ctx context.Context, in *FetchCloudCostFromProviderRequest, opts ...grpc.CallOption) (*FetchCloudCostFromProviderResponse, error)
 }
 
 type cloudCostServiceClient struct {
@@ -104,6 +107,16 @@ func (c *cloudCostServiceClient) GetCloudCostSummary(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *cloudCostServiceClient) FetchCloudCostFromProvider(ctx context.Context, in *FetchCloudCostFromProviderRequest, opts ...grpc.CallOption) (*FetchCloudCostFromProviderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FetchCloudCostFromProviderResponse)
+	err := c.cc.Invoke(ctx, CloudCostService_FetchCloudCostFromProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CloudCostServiceServer is the server API for CloudCostService service.
 // All implementations must embed UnimplementedCloudCostServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type CloudCostServiceServer interface {
 	ImportCloudCosts(context.Context, *ImportCloudCostsRequest) (*ImportCloudCostsResponse, error)
 	// 月度汇总(趋势图:月 × 厂商 × 币种 合计)
 	GetCloudCostSummary(context.Context, *GetCloudCostSummaryRequest) (*GetCloudCostSummaryResponse, error)
+	// 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	FetchCloudCostFromProvider(context.Context, *FetchCloudCostFromProviderRequest) (*FetchCloudCostFromProviderResponse, error)
 	mustEmbedUnimplementedCloudCostServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedCloudCostServiceServer) ImportCloudCosts(context.Context, *Im
 }
 func (UnimplementedCloudCostServiceServer) GetCloudCostSummary(context.Context, *GetCloudCostSummaryRequest) (*GetCloudCostSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCloudCostSummary not implemented")
+}
+func (UnimplementedCloudCostServiceServer) FetchCloudCostFromProvider(context.Context, *FetchCloudCostFromProviderRequest) (*FetchCloudCostFromProviderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchCloudCostFromProvider not implemented")
 }
 func (UnimplementedCloudCostServiceServer) mustEmbedUnimplementedCloudCostServiceServer() {}
 func (UnimplementedCloudCostServiceServer) testEmbeddedByValue()                          {}
@@ -257,6 +275,24 @@ func _CloudCostService_GetCloudCostSummary_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CloudCostService_FetchCloudCostFromProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchCloudCostFromProviderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CloudCostServiceServer).FetchCloudCostFromProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CloudCostService_FetchCloudCostFromProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CloudCostServiceServer).FetchCloudCostFromProvider(ctx, req.(*FetchCloudCostFromProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CloudCostService_ServiceDesc is the grpc.ServiceDesc for CloudCostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var CloudCostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCloudCostSummary",
 			Handler:    _CloudCostService_GetCloudCostSummary_Handler,
+		},
+		{
+			MethodName: "FetchCloudCostFromProvider",
+			Handler:    _CloudCostService_FetchCloudCostFromProvider_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

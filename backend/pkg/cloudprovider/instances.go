@@ -210,7 +210,7 @@ func aliyunSignedQuery(sk string, params map[string]string) string {
 
 // describeRegionsTencent CVM DescribeRegions(全局 API,无需地域头)。
 func describeRegionsTencent(ctx context.Context, ak, sk string) ([]string, error) {
-	body, status, err := tc3Post(ctx, "cvm.tencentcloudapi.com", ak, sk, "", "DescribeRegions", "2017-03-12", "{}")
+	body, status, err := tc3Post(ctx, "cvm.tencentcloudapi.com", "cvm", ak, sk, "", "DescribeRegions", "2017-03-12", "{}")
 	if err != nil {
 		return nil, fmt.Errorf("DescribeRegions 请求失败: %w", err)
 	}
@@ -239,7 +239,7 @@ func describeRegionsTencent(ctx context.Context, ak, sk string) ([]string, error
 
 // listInstancesTencent CVM DescribeInstances 单页(Limit=100)。
 func listInstancesTencent(ctx context.Context, ak, sk, region string) ([]Instance, error) {
-	body, status, err := tc3Post(ctx, "cvm.tencentcloudapi.com", ak, sk, region, "DescribeInstances", "2017-03-12", `{"Limit":100,"Offset":0}`)
+	body, status, err := tc3Post(ctx, "cvm.tencentcloudapi.com", "cvm", ak, sk, region, "DescribeInstances", "2017-03-12", `{"Limit":100,"Offset":0}`)
 	if err != nil {
 		return nil, fmt.Errorf("DescribeInstances 请求失败: %w", err)
 	}

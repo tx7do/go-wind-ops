@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { App, Button, Input, Modal, Popconfirm, Space, Tag, Typography } from 'antd';
+import { App, Button, Input, Modal, Popconfirm, Select, Space, Tag, Typography } from 'antd';
 import {
   DeleteOutlined,
+  DownloadOutlined,
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
@@ -19,6 +20,7 @@ import {
   fetchListCloudCosts,
   useCloudCostSummary,
   useDeleteCloudCost,
+  useFetchCloudCostFromProvider,
   useImportCloudCosts,
 } from '@/api/hooks/cloud-cost';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
@@ -46,6 +48,9 @@ const CloudCostManagement = () => {
   const [importOpen, setImportOpen] = useState(false);
   const [csvText, setCsvText] = useState('');
   const [accountOptions, setAccountOptions] = useState<{ label: string; value: number }[]>([]);
+  const [fetchOpen, setFetchOpen] = useState(false);
+  const [fetchAccountId, setFetchAccountId] = useState<number>();
+  const [fetchMonth, setFetchMonth] = useState<string>(dayjs().subtract(1, 'month').format('YYYY-MM'));
 
   useEffect(() => {
     fetchListCloudAccounts(new PaginationQuery({ paging: { page: 1, pageSize: 500 } }))
@@ -81,6 +86,15 @@ const CloudCostManagement = () => {
       actionRef.current?.reload();
     },
     onError: (e: Error) => message.error(e.message || t('importFailed')),
+  });
+  const fetchMutation = useFetchCloudCostFromProvider({
+    onSuccess: (resp) => {
+      message.success(`${t('fetchDone')}: ${resp.data?.cloudAccountName || ''} ${resp.data?.month} = ${resp.data?.amount ?? 0} ${resp.data?.currency || 'CNY'}`);
+      setFetchOpen(false);
+      invalidate();
+      actionRef.current?.reload();
+    },
+    onError: (e: Error) => message.error(e.message || t('fetchFailed')),
   });
 
   // CSV 文本 → 结构化行(格式: 月份,账号名,金额[,币种][,备注];首行为表头自动跳过)
@@ -276,6 +290,12 @@ const CloudCostManagement = () => {
           search={{ labelWidth: 'auto', defaultColsNumber: 3 }}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
           toolBarRender={() => [
+            <Button key="fetch" icon={<DownloadOutlined />} onClick={() => {
+              setFetchMonth(dayjs().subtract(1, 'month').format('YYYY-MM'));
+              setFetchOpen(true);
+            }}>
+              {t('fetch')}
+            </Button>,
             <Button key="import" icon={<UploadOutlined />} onClick={() => setImportOpen(true)}>
               {t('import')}
             </Button>,
@@ -307,6 +327,47 @@ const CloudCostManagement = () => {
         }}
         onSuccess={invalidate}
       />
+
+      {/* 从云端拉取:选账号+月份,调厂商账单 API 后直接进台账 */}
+      <Modal
+        title={t('fetch')}
+        open={fetchOpen}
+        onCancel={() => setFetchOpen(false)}
+        onOk={() => {
+          if (!fetchAccountId) {
+            message.warning(t('accountRequired'));
+            return;
+          }
+          if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(fetchMonth)) {
+            message.warning(t('monthPattern'));
+            return;
+          }
+          fetchMutation.mutate({ cloudAccountId: fetchAccountId, month: fetchMonth });
+        }}
+        confirmLoading={fetchMutation.isPending}
+        width={480}
+        destroyOnClose
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <Select
+            style={{ width: '100%' }}
+            placeholder={t('cloudAccount')}
+            showSearch
+            optionFilterProp="label"
+            value={fetchAccountId}
+            onChange={setFetchAccountId}
+            options={accountOptions}
+          />
+          <Input
+            value={fetchMonth}
+            onChange={(e) => setFetchMonth(e.target.value)}
+            placeholder="2026-09"
+          />
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {t('fetchHint')}
+          </Typography.Text>
+        </Space>
+      </Modal>
 
       {/* CSV 导入:格式 月份,账号名,金额[,币种][,备注];按账号名匹配 */}
       <Modal

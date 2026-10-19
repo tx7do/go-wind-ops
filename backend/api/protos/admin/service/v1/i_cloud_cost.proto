@@ -46,4 +46,12 @@ service CloudCostService {
       get: "/admin/v1/cloud-costs/summary"
     };
   }
+
+  // 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+  rpc Fetch (ops.service.v1.FetchCloudCostFromProviderRequest) returns (ops.service.v1.FetchCloudCostFromProviderResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-costs/fetch"
+      body: "*"
+    };
+  }
 }

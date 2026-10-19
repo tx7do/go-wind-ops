@@ -62,3 +62,10 @@ func (s *CloudCostService) Summary(ctx context.Context, req *opsV1.GetCloudCostS
 	}
 	return s.cloudCostServiceClient.GetCloudCostSummary(ctx, req)
 }
+
+func (s *CloudCostService) Fetch(ctx context.Context, req *opsV1.FetchCloudCostFromProviderRequest) (*opsV1.FetchCloudCostFromProviderResponse, error) {
+	if req == nil || req.GetCloudAccountId() == 0 {
+		return nil, adminV1.ErrorBadRequest("invalid request: cloudAccountId required")
+	}
+	return s.cloudCostServiceClient.FetchCloudCostFromProvider(ctx, req)
+}

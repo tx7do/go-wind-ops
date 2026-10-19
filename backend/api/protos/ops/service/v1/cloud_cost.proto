@@ -26,6 +26,9 @@ service CloudCostService {
 
   // 月度汇总(趋势图:月 × 厂商 × 币种 合计)
   rpc GetCloudCostSummary (GetCloudCostSummaryRequest) returns (GetCloudCostSummaryResponse) {}
+
+  // 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+  rpc FetchCloudCostFromProvider (FetchCloudCostFromProviderRequest) returns (FetchCloudCostFromProviderResponse) {}
 }
 
 // 云成本月账单
@@ -142,4 +145,25 @@ message CloudCostSummaryItem {
 
 message GetCloudCostSummaryResponse {
   repeated CloudCostSummaryItem items = 1 [json_name = "items"]; // 汇总列表
+}
+
+message FetchCloudCostFromProviderRequest {
+  uint32 cloud_account_id = 1 [
+    json_name = "cloudAccountId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 云账号ID
+
+  string month = 2 [
+    json_name = "month",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 账单月份 YYYY-MM
+}
+
+message FetchCloudCostFromProviderResponse {
+  optional CloudCost data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 已 upsert 的台账记录
+
+  optional string provider_message = 2 [json_name = "providerMessage"]; // 厂商侧说明(如币种)
 }

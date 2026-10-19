@@ -3071,6 +3071,10 @@ export interface CloudCostService {
   Summary(
     request: opsservicev1_GetCloudCostSummaryRequest,
   ): Promise<opsservicev1_GetCloudCostSummaryResponse>;
+  // 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+  Fetch(
+    request: opsservicev1_FetchCloudCostFromProviderRequest,
+  ): Promise<opsservicev1_FetchCloudCostFromProviderResponse>;
 }
 
 export function createCloudCostServiceClient(
@@ -3165,6 +3169,14 @@ export function createCloudCostServiceClient(
         method: 'Summary',
       }) as Promise<opsservicev1_GetCloudCostSummaryResponse>;
     },
+    Fetch(request) {
+      const path = `admin/v1/cloud-costs/fetch`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudCostService',
+        method: 'Fetch',
+      }) as Promise<opsservicev1_FetchCloudCostFromProviderResponse>;
+    },
   };
 }
 export type opsservicev1_ListCloudCostsRequest = {
@@ -3256,6 +3268,22 @@ export type opsservicev1_CloudCostSummaryItem = {
   month: string | undefined;
   provider: string | undefined;
   total: number | undefined;
+};
+
+export type opsservicev1_FetchCloudCostFromProviderRequest = {
+  //
+  // Behaviors: REQUIRED
+  cloudAccountId: number | undefined;
+  //
+  // Behaviors: REQUIRED
+  month: string | undefined;
+};
+
+export type opsservicev1_FetchCloudCostFromProviderResponse = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  data?: opsservicev1_CloudCost;
+  providerMessage?: string;
 };
 
 // CloudInstanceService 云资源实例清单门面。

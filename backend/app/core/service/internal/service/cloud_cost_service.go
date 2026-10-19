@@ -15,8 +15,10 @@ import (
 
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
+	pkgcrypto "go-wind-ops/pkg/crypto"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/cloudprovider"
 )
 
 // ent 枚举值别名(汇总分组的厂商名映射用)。
@@ -257,4 +259,55 @@ func (s *CloudCostService) GetCloudCostSummary(ctx context.Context, req *opsV1.G
 		return items[i].GetProvider() < items[j].GetProvider()
 	})
 	return &opsV1.GetCloudCostSummaryResponse{Items: items}, nil
+}
+
+// FetchCloudCostFromProvider 从厂商账单 API 拉取单账号单月总额,直接 upsert 进台账。
+// 金额/币种以厂商返回为准;阿里/腾讯/AWS 支持,华为显式降级。
+func (s *CloudCostService) FetchCloudCostFromProvider(ctx context.Context, req *opsV1.FetchCloudCostFromProviderRequest) (*opsV1.FetchCloudCostFromProviderResponse, error) {
+	if req == nil || req.GetCloudAccountId() == 0 || !monthPattern.MatchString(req.GetMonth()) {
+		return nil, opsV1.ErrorBadRequest("invalid parameter: cloudAccountId and month(YYYY-MM) required")
+	}
+
+	acc, err := s.cloudAccountRepo.GetEntity(ctx, req.GetCloudAccountId())
+	if err != nil {
+		return nil, opsV1.ErrorNotFound("cloud account not found")
+	}
+	if acc.Provider == nil || acc.AccessKey == nil || *acc.AccessKey == "" ||
+		acc.SecretKey == nil || *acc.SecretKey == "" {
+		return nil, opsV1.ErrorBadRequest("cloud account missing provider/accessKey/secretKey")
+	}
+
+	secret, decErr := pkgcrypto.DecryptIfNeeded(*acc.SecretKey)
+	if decErr != nil {
+		return nil, opsV1.ErrorInternalServerError("decrypt secret failed")
+	}
+
+	provider := providerVerifyName(*acc.Provider)
+	bill, fErr := cloudprovider.GetMonthBill(ctx, provider, *acc.AccessKey, secret, req.GetMonth())
+	if fErr != nil {
+		s.log.Warnf("cloud bill fetch failed (account=%d month=%s): %s", req.GetCloudAccountId(), req.GetMonth(), fErr.Error())
+		return nil, opsV1.ErrorInternalServerError("%s", fErr.Error())
+	}
+
+	currency := bill.Currency
+	if currency == "" {
+		currency = "CNY"
+	}
+	amount := bill.Amount
+	providerEnum := providerCostEnum(provider)
+	entity, uErr := s.costRepo.UpsertByAccountMonth(
+		ctx, req.GetCloudAccountId(), acc.Name, providerEnum,
+		req.GetMonth(), amount, currency, nil, operatorIDOf(ctx),
+	)
+	if uErr != nil {
+		s.log.Errorf("cloud bill upsert failed (account=%d month=%s): %s", req.GetCloudAccountId(), req.GetMonth(), uErr.Error())
+		return nil, opsV1.ErrorInternalServerError("upsert failed")
+	}
+
+	s.log.Infof("cloud bill fetched (account=%d month=%s amount=%.2f %s operator=%d)",
+		req.GetCloudAccountId(), req.GetMonth(), bill.Amount, currency, operatorIDOf(ctx))
+	return &opsV1.FetchCloudCostFromProviderResponse{
+		Data:            s.costRepo.ToDTO(entity),
+		ProviderMessage: &currency,
+	}, nil
 }

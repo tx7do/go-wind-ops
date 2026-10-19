@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationCloudCostServiceDelete = "/admin.service.v1.CloudCostService/Delete"
+const OperationCloudCostServiceFetch = "/admin.service.v1.CloudCostService/Fetch"
 const OperationCloudCostServiceImport = "/admin.service.v1.CloudCostService/Import"
 const OperationCloudCostServiceList = "/admin.service.v1.CloudCostService/List"
 const OperationCloudCostServiceSummary = "/admin.service.v1.CloudCostService/Summary"
@@ -30,6 +31,8 @@ const OperationCloudCostServiceUpsert = "/admin.service.v1.CloudCostService/Upse
 type CloudCostServiceHTTPServer interface {
 	// Delete 删除成本记录
 	Delete(context.Context, *v1.DeleteCloudCostRequest) (*emptypb.Empty, error)
+	// Fetch 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	Fetch(context.Context, *v1.FetchCloudCostFromProviderRequest) (*v1.FetchCloudCostFromProviderResponse, error)
 	// Import 批量导入(按账号名匹配)
 	Import(context.Context, *v1.ImportCloudCostsRequest) (*v1.ImportCloudCostsResponse, error)
 	// List 查询成本记录
@@ -47,6 +50,7 @@ func RegisterCloudCostServiceHTTPServer(s *http.Server, srv CloudCostServiceHTTP
 	r.DELETE("/admin/v1/cloud-costs/{id}", _CloudCostService_Delete5_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-costs/import", _CloudCostService_Import0_HTTP_Handler(srv))
 	r.GET("/admin/v1/cloud-costs/summary", _CloudCostService_Summary0_HTTP_Handler(srv))
+	r.POST("/admin/v1/cloud-costs/fetch", _CloudCostService_Fetch0_HTTP_Handler(srv))
 }
 
 func _CloudCostService_List9_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
@@ -153,9 +157,33 @@ func _CloudCostService_Summary0_HTTP_Handler(srv CloudCostServiceHTTPServer) fun
 	}
 }
 
+func _CloudCostService_Fetch0_HTTP_Handler(srv CloudCostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.FetchCloudCostFromProviderRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCloudCostServiceFetch)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Fetch(ctx, req.(*v1.FetchCloudCostFromProviderRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.FetchCloudCostFromProviderResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CloudCostServiceHTTPClient interface {
 	// Delete 删除成本记录
 	Delete(ctx context.Context, req *v1.DeleteCloudCostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Fetch 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	Fetch(ctx context.Context, req *v1.FetchCloudCostFromProviderRequest, opts ...http.CallOption) (rsp *v1.FetchCloudCostFromProviderResponse, err error)
 	// Import 批量导入(按账号名匹配)
 	Import(ctx context.Context, req *v1.ImportCloudCostsRequest, opts ...http.CallOption) (rsp *v1.ImportCloudCostsResponse, err error)
 	// List 查询成本记录
@@ -182,6 +210,20 @@ func (c *CloudCostServiceHTTPClientImpl) Delete(ctx context.Context, in *v1.Dele
 	opts = append(opts, http.Operation(OperationCloudCostServiceDelete))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Fetch 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+func (c *CloudCostServiceHTTPClientImpl) Fetch(ctx context.Context, in *v1.FetchCloudCostFromProviderRequest, opts ...http.CallOption) (*v1.FetchCloudCostFromProviderResponse, error) {
+	var out v1.FetchCloudCostFromProviderResponse
+	pattern := "/admin/v1/cloud-costs/fetch"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCloudCostServiceFetch))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

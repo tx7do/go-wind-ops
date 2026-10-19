@@ -54,7 +54,7 @@ func percentEncode(s string) string {
 
 // verifyTencentCloud 腾讯云:TC3-HMAC-SHA256 签名调 STS GetCallerIdentity。
 func verifyTencentCloud(ctx context.Context, ak, sk string) (*VerifyResult, error) {
-	body, status, err := tc3Post(ctx, "sts.tencentcloudapi.com", ak, sk, "", "GetCallerIdentity", "2018-08-13", "{}")
+	body, status, err := tc3Post(ctx, "sts.tencentcloudapi.com", "sts", ak, sk, "", "GetCallerIdentity", "2018-08-13", "{}")
 	if err != nil {
 		return nil, fmt.Errorf("腾讯云校验请求失败: %w", err)
 	}
@@ -80,13 +80,8 @@ func verifyTencentCloud(ctx context.Context, ak, sk string) (*VerifyResult, erro
 }
 
 // tc3Post TC3-HMAC-SHA256 签名 POST(region 为空表示全局 API)。
-// scopeService 由 host 推断:sts 域名→sts,cvm 域名→cvm。
-func tc3Post(ctx context.Context, host, ak, sk, region, action, version, payload string) ([]byte, int, error) {
-	scopeService := "sts"
-	if host == "cvm.tencentcloudapi.com" {
-		scopeService = "cvm"
-	}
-
+// service 为签名 Credential 的服务段(sts/cvm/billing/...),随产品而变,由调用方给出。
+func tc3Post(ctx context.Context, host, service, ak, sk, region, action, version, payload string) ([]byte, int, error) {
 	ts := nowUTC().Unix()
 	// TC3 的 Credential 日期段为 ISO 格式(带横杠,如 2026-10-19),与 AWS 的 YYYYMMDD 不同
 	date := nowUTC().Format("2006-01-02")
@@ -95,14 +90,14 @@ func tc3Post(ctx context.Context, host, ak, sk, region, action, version, payload
 		"\nx-tc-action:" + strings.ToLower(action) + "\n"
 	signedHeaders := "content-type;host;x-tc-action"
 	canonicalRequest := "POST\n/\n\n" + canonicalHeaders + "\n" + signedHeaders + "\n" + sha256Hex([]byte(payload))
-	stringToSign := "TC3-HMAC-SHA256\n" + strconv.FormatInt(ts, 10) + "\n" + date + "/" + scopeService + "/tc3_request\n" + sha256Hex([]byte(canonicalRequest))
+	stringToSign := "TC3-HMAC-SHA256\n" + strconv.FormatInt(ts, 10) + "\n" + date + "/" + service + "/tc3_request\n" + sha256Hex([]byte(canonicalRequest))
 
 	kDate := hmacSHA256([]byte("TC3"+sk), []byte(date))
-	kService := hmacSHA256(kDate, []byte(scopeService))
+	kService := hmacSHA256(kDate, []byte(service))
 	kSigning := hmacSHA256(kService, []byte("tc3_request"))
 	signature := hex.EncodeToString(hmacSHA256(kSigning, []byte(stringToSign)))
 
-	authorization := "TC3-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + scopeService + "/tc3_request" +
+	authorization := "TC3-HMAC-SHA256 Credential=" + ak + "/" + date + "/" + service + "/tc3_request" +
 		", SignedHeaders=" + signedHeaders + ", Signature=" + signature
 
 	headers := map[string]string{

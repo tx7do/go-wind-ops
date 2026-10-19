@@ -27,43 +27,48 @@ var File_admin_service_v1_i_cloud_cost_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_cloud_cost_proto_rawDesc = "" +
 	"\n" +
-	"#admin/service/v1/i_cloud_cost.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fops/service/v1/cloud_cost.proto2\xf8\x04\n" +
+	"#admin/service/v1/i_cloud_cost.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fops/service/v1/cloud_cost.proto2\x91\x06\n" +
 	"\x10CloudCostService\x12t\n" +
 	"\x04List\x12%.ops.service.v1.ListCloudCostsRequest\x1a&.ops.service.v1.ListCloudCostsResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/cloud-costs\x12m\n" +
 	"\x06Upsert\x12&.ops.service.v1.UpsertCloudCostRequest\x1a\x19.ops.service.v1.CloudCost\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/cloud-costs\x12l\n" +
 	"\x06Delete\x12&.ops.service.v1.DeleteCloudCostRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/cloud-costs/{id}\x12\x84\x01\n" +
 	"\x06Import\x12'.ops.service.v1.ImportCloudCostsRequest\x1a(.ops.service.v1.ImportCloudCostsResponse\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/admin/v1/cloud-costs/import\x12\x89\x01\n" +
-	"\aSummary\x12*.ops.service.v1.GetCloudCostSummaryRequest\x1a+.ops.service.v1.GetCloudCostSummaryResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/cloud-costs/summaryB\xba\x01\n" +
+	"\aSummary\x12*.ops.service.v1.GetCloudCostSummaryRequest\x1a+.ops.service.v1.GetCloudCostSummaryResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/cloud-costs/summary\x12\x96\x01\n" +
+	"\x05Fetch\x121.ops.service.v1.FetchCloudCostFromProviderRequest\x1a2.ops.service.v1.FetchCloudCostFromProviderResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/admin/v1/cloud-costs/fetchB\xba\x01\n" +
 	"\x14com.admin.service.v1B\x0fICloudCostProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_cloud_cost_proto_goTypes = []any{
-	(*v1.ListCloudCostsRequest)(nil),       // 0: ops.service.v1.ListCloudCostsRequest
-	(*v1.UpsertCloudCostRequest)(nil),      // 1: ops.service.v1.UpsertCloudCostRequest
-	(*v1.DeleteCloudCostRequest)(nil),      // 2: ops.service.v1.DeleteCloudCostRequest
-	(*v1.ImportCloudCostsRequest)(nil),     // 3: ops.service.v1.ImportCloudCostsRequest
-	(*v1.GetCloudCostSummaryRequest)(nil),  // 4: ops.service.v1.GetCloudCostSummaryRequest
-	(*v1.ListCloudCostsResponse)(nil),      // 5: ops.service.v1.ListCloudCostsResponse
-	(*v1.CloudCost)(nil),                   // 6: ops.service.v1.CloudCost
-	(*emptypb.Empty)(nil),                  // 7: google.protobuf.Empty
-	(*v1.ImportCloudCostsResponse)(nil),    // 8: ops.service.v1.ImportCloudCostsResponse
-	(*v1.GetCloudCostSummaryResponse)(nil), // 9: ops.service.v1.GetCloudCostSummaryResponse
+	(*v1.ListCloudCostsRequest)(nil),              // 0: ops.service.v1.ListCloudCostsRequest
+	(*v1.UpsertCloudCostRequest)(nil),             // 1: ops.service.v1.UpsertCloudCostRequest
+	(*v1.DeleteCloudCostRequest)(nil),             // 2: ops.service.v1.DeleteCloudCostRequest
+	(*v1.ImportCloudCostsRequest)(nil),            // 3: ops.service.v1.ImportCloudCostsRequest
+	(*v1.GetCloudCostSummaryRequest)(nil),         // 4: ops.service.v1.GetCloudCostSummaryRequest
+	(*v1.FetchCloudCostFromProviderRequest)(nil),  // 5: ops.service.v1.FetchCloudCostFromProviderRequest
+	(*v1.ListCloudCostsResponse)(nil),             // 6: ops.service.v1.ListCloudCostsResponse
+	(*v1.CloudCost)(nil),                          // 7: ops.service.v1.CloudCost
+	(*emptypb.Empty)(nil),                         // 8: google.protobuf.Empty
+	(*v1.ImportCloudCostsResponse)(nil),           // 9: ops.service.v1.ImportCloudCostsResponse
+	(*v1.GetCloudCostSummaryResponse)(nil),        // 10: ops.service.v1.GetCloudCostSummaryResponse
+	(*v1.FetchCloudCostFromProviderResponse)(nil), // 11: ops.service.v1.FetchCloudCostFromProviderResponse
 }
 var file_admin_service_v1_i_cloud_cost_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.CloudCostService.List:input_type -> ops.service.v1.ListCloudCostsRequest
-	1, // 1: admin.service.v1.CloudCostService.Upsert:input_type -> ops.service.v1.UpsertCloudCostRequest
-	2, // 2: admin.service.v1.CloudCostService.Delete:input_type -> ops.service.v1.DeleteCloudCostRequest
-	3, // 3: admin.service.v1.CloudCostService.Import:input_type -> ops.service.v1.ImportCloudCostsRequest
-	4, // 4: admin.service.v1.CloudCostService.Summary:input_type -> ops.service.v1.GetCloudCostSummaryRequest
-	5, // 5: admin.service.v1.CloudCostService.List:output_type -> ops.service.v1.ListCloudCostsResponse
-	6, // 6: admin.service.v1.CloudCostService.Upsert:output_type -> ops.service.v1.CloudCost
-	7, // 7: admin.service.v1.CloudCostService.Delete:output_type -> google.protobuf.Empty
-	8, // 8: admin.service.v1.CloudCostService.Import:output_type -> ops.service.v1.ImportCloudCostsResponse
-	9, // 9: admin.service.v1.CloudCostService.Summary:output_type -> ops.service.v1.GetCloudCostSummaryResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.CloudCostService.List:input_type -> ops.service.v1.ListCloudCostsRequest
+	1,  // 1: admin.service.v1.CloudCostService.Upsert:input_type -> ops.service.v1.UpsertCloudCostRequest
+	2,  // 2: admin.service.v1.CloudCostService.Delete:input_type -> ops.service.v1.DeleteCloudCostRequest
+	3,  // 3: admin.service.v1.CloudCostService.Import:input_type -> ops.service.v1.ImportCloudCostsRequest
+	4,  // 4: admin.service.v1.CloudCostService.Summary:input_type -> ops.service.v1.GetCloudCostSummaryRequest
+	5,  // 5: admin.service.v1.CloudCostService.Fetch:input_type -> ops.service.v1.FetchCloudCostFromProviderRequest
+	6,  // 6: admin.service.v1.CloudCostService.List:output_type -> ops.service.v1.ListCloudCostsResponse
+	7,  // 7: admin.service.v1.CloudCostService.Upsert:output_type -> ops.service.v1.CloudCost
+	8,  // 8: admin.service.v1.CloudCostService.Delete:output_type -> google.protobuf.Empty
+	9,  // 9: admin.service.v1.CloudCostService.Import:output_type -> ops.service.v1.ImportCloudCostsResponse
+	10, // 10: admin.service.v1.CloudCostService.Summary:output_type -> ops.service.v1.GetCloudCostSummaryResponse
+	11, // 11: admin.service.v1.CloudCostService.Fetch:output_type -> ops.service.v1.FetchCloudCostFromProviderResponse
+	6,  // [6:12] is the sub-list for method output_type
+	0,  // [0:6] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_cloud_cost_proto_init() }

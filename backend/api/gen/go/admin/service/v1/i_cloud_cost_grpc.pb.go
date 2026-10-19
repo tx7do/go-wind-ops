@@ -26,6 +26,7 @@ const (
 	CloudCostService_Delete_FullMethodName  = "/admin.service.v1.CloudCostService/Delete"
 	CloudCostService_Import_FullMethodName  = "/admin.service.v1.CloudCostService/Import"
 	CloudCostService_Summary_FullMethodName = "/admin.service.v1.CloudCostService/Summary"
+	CloudCostService_Fetch_FullMethodName   = "/admin.service.v1.CloudCostService/Fetch"
 )
 
 // CloudCostServiceClient is the client API for CloudCostService service.
@@ -44,6 +45,8 @@ type CloudCostServiceClient interface {
 	Import(ctx context.Context, in *v1.ImportCloudCostsRequest, opts ...grpc.CallOption) (*v1.ImportCloudCostsResponse, error)
 	// 月度汇总(趋势图)
 	Summary(ctx context.Context, in *v1.GetCloudCostSummaryRequest, opts ...grpc.CallOption) (*v1.GetCloudCostSummaryResponse, error)
+	// 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	Fetch(ctx context.Context, in *v1.FetchCloudCostFromProviderRequest, opts ...grpc.CallOption) (*v1.FetchCloudCostFromProviderResponse, error)
 }
 
 type cloudCostServiceClient struct {
@@ -104,6 +107,16 @@ func (c *cloudCostServiceClient) Summary(ctx context.Context, in *v1.GetCloudCos
 	return out, nil
 }
 
+func (c *cloudCostServiceClient) Fetch(ctx context.Context, in *v1.FetchCloudCostFromProviderRequest, opts ...grpc.CallOption) (*v1.FetchCloudCostFromProviderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.FetchCloudCostFromProviderResponse)
+	err := c.cc.Invoke(ctx, CloudCostService_Fetch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CloudCostServiceServer is the server API for CloudCostService service.
 // All implementations must embed UnimplementedCloudCostServiceServer
 // for forward compatibility.
@@ -120,6 +133,8 @@ type CloudCostServiceServer interface {
 	Import(context.Context, *v1.ImportCloudCostsRequest) (*v1.ImportCloudCostsResponse, error)
 	// 月度汇总(趋势图)
 	Summary(context.Context, *v1.GetCloudCostSummaryRequest) (*v1.GetCloudCostSummaryResponse, error)
+	// 从云厂商账单 API 拉取单账号单月账单总额,直接 upsert 进台账
+	Fetch(context.Context, *v1.FetchCloudCostFromProviderRequest) (*v1.FetchCloudCostFromProviderResponse, error)
 	mustEmbedUnimplementedCloudCostServiceServer()
 }
 
@@ -144,6 +159,9 @@ func (UnimplementedCloudCostServiceServer) Import(context.Context, *v1.ImportClo
 }
 func (UnimplementedCloudCostServiceServer) Summary(context.Context, *v1.GetCloudCostSummaryRequest) (*v1.GetCloudCostSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Summary not implemented")
+}
+func (UnimplementedCloudCostServiceServer) Fetch(context.Context, *v1.FetchCloudCostFromProviderRequest) (*v1.FetchCloudCostFromProviderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Fetch not implemented")
 }
 func (UnimplementedCloudCostServiceServer) mustEmbedUnimplementedCloudCostServiceServer() {}
 func (UnimplementedCloudCostServiceServer) testEmbeddedByValue()                          {}
@@ -256,6 +274,24 @@ func _CloudCostService_Summary_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CloudCostService_Fetch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.FetchCloudCostFromProviderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CloudCostServiceServer).Fetch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CloudCostService_Fetch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CloudCostServiceServer).Fetch(ctx, req.(*v1.FetchCloudCostFromProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CloudCostService_ServiceDesc is the grpc.ServiceDesc for CloudCostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +318,10 @@ var CloudCostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Summary",
 			Handler:    _CloudCostService_Summary_Handler,
+		},
+		{
+			MethodName: "Fetch",
+			Handler:    _CloudCostService_Fetch_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -31,5 +31,9 @@
   "csvBadLines": "无效行",
   "deleteSuccess": "已删除",
   "deleteFailed": "删除失败",
-  "deleteConfirmTitle": "确认删除该月成本记录?"
+  "deleteConfirmTitle": "确认删除该月成本记录?",
+  "fetch": "从云端拉取",
+  "fetchDone": "已拉取并写入台账",
+  "fetchFailed": "拉取失败",
+  "fetchHint": "调云厂商账单 API 获取该月总额,直接写入台账(同账号同月覆盖);支持阿里云/腾讯云/AWS,华为云请手工录入"
 }

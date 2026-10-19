@@ -676,6 +676,110 @@ func (x *GetCloudCostSummaryResponse) GetItems() []*CloudCostSummaryItem {
 	return nil
 }
 
+type FetchCloudCostFromProviderRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CloudAccountId uint32                 `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
+	Month          string                 `protobuf:"bytes,2,opt,name=month,proto3" json:"month,omitempty"`                                            // 账单月份 YYYY-MM
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *FetchCloudCostFromProviderRequest) Reset() {
+	*x = FetchCloudCostFromProviderRequest{}
+	mi := &file_ops_service_v1_cloud_cost_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FetchCloudCostFromProviderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FetchCloudCostFromProviderRequest) ProtoMessage() {}
+
+func (x *FetchCloudCostFromProviderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_cloud_cost_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FetchCloudCostFromProviderRequest.ProtoReflect.Descriptor instead.
+func (*FetchCloudCostFromProviderRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *FetchCloudCostFromProviderRequest) GetCloudAccountId() uint32 {
+	if x != nil {
+		return x.CloudAccountId
+	}
+	return 0
+}
+
+func (x *FetchCloudCostFromProviderRequest) GetMonth() string {
+	if x != nil {
+		return x.Month
+	}
+	return ""
+}
+
+type FetchCloudCostFromProviderResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Data            *CloudCost             `protobuf:"bytes,1,opt,name=data,proto3,oneof" json:"data,omitempty"`                                              // 已 upsert 的台账记录
+	ProviderMessage *string                `protobuf:"bytes,2,opt,name=provider_message,json=providerMessage,proto3,oneof" json:"provider_message,omitempty"` // 厂商侧说明(如币种)
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *FetchCloudCostFromProviderResponse) Reset() {
+	*x = FetchCloudCostFromProviderResponse{}
+	mi := &file_ops_service_v1_cloud_cost_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FetchCloudCostFromProviderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FetchCloudCostFromProviderResponse) ProtoMessage() {}
+
+func (x *FetchCloudCostFromProviderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_cloud_cost_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FetchCloudCostFromProviderResponse.ProtoReflect.Descriptor instead.
+func (*FetchCloudCostFromProviderResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *FetchCloudCostFromProviderResponse) GetData() *CloudCost {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *FetchCloudCostFromProviderResponse) GetProviderMessage() string {
+	if x != nil && x.ProviderMessage != nil {
+		return *x.ProviderMessage
+	}
+	return ""
+}
+
 var File_ops_service_v1_cloud_cost_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_cloud_cost_proto_rawDesc = "" +
@@ -746,13 +850,22 @@ const file_ops_service_v1_cloud_cost_proto_rawDesc = "" +
 	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x12\x14\n" +
 	"\x05total\x18\x04 \x01(\x01R\x05total\"Y\n" +
 	"\x1bGetCloudCostSummaryResponse\x12:\n" +
-	"\x05items\x18\x01 \x03(\v2$.ops.service.v1.CloudCostSummaryItemR\x05items2\xfd\x03\n" +
+	"\x05items\x18\x01 \x03(\v2$.ops.service.v1.CloudCostSummaryItemR\x05items\"m\n" +
+	"!FetchCloudCostFromProviderRequest\x12-\n" +
+	"\x10cloud_account_id\x18\x01 \x01(\rB\x03\xe0A\x02R\x0ecloudAccountId\x12\x19\n" +
+	"\x05month\x18\x02 \x01(\tB\x03\xe0A\x02R\x05month\"\xab\x01\n" +
+	"\"FetchCloudCostFromProviderResponse\x127\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.ops.service.v1.CloudCostB\x03\xe0A\x03H\x00R\x04data\x88\x01\x01\x12.\n" +
+	"\x10provider_message\x18\x02 \x01(\tH\x01R\x0fproviderMessage\x88\x01\x01B\a\n" +
+	"\x05_dataB\x13\n" +
+	"\x11_provider_message2\x85\x05\n" +
 	"\x10CloudCostService\x12a\n" +
 	"\x0eListCloudCosts\x12%.ops.service.v1.ListCloudCostsRequest\x1a&.ops.service.v1.ListCloudCostsResponse\"\x00\x12V\n" +
 	"\x0fUpsertCloudCost\x12&.ops.service.v1.UpsertCloudCostRequest\x1a\x19.ops.service.v1.CloudCost\"\x00\x12S\n" +
 	"\x0fDeleteCloudCost\x12&.ops.service.v1.DeleteCloudCostRequest\x1a\x16.google.protobuf.Empty\"\x00\x12g\n" +
 	"\x10ImportCloudCosts\x12'.ops.service.v1.ImportCloudCostsRequest\x1a(.ops.service.v1.ImportCloudCostsResponse\"\x00\x12p\n" +
-	"\x13GetCloudCostSummary\x12*.ops.service.v1.GetCloudCostSummaryRequest\x1a+.ops.service.v1.GetCloudCostSummaryResponse\"\x00B\xab\x01\n" +
+	"\x13GetCloudCostSummary\x12*.ops.service.v1.GetCloudCostSummaryRequest\x1a+.ops.service.v1.GetCloudCostSummaryResponse\"\x00\x12\x85\x01\n" +
+	"\x1aFetchCloudCostFromProvider\x121.ops.service.v1.FetchCloudCostFromProviderRequest\x1a2.ops.service.v1.FetchCloudCostFromProviderResponse\"\x00B\xab\x01\n" +
 	"\x12com.ops.service.v1B\x0eCloudCostProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -768,45 +881,50 @@ func file_ops_service_v1_cloud_cost_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_cloud_cost_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ops_service_v1_cloud_cost_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_ops_service_v1_cloud_cost_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_ops_service_v1_cloud_cost_proto_goTypes = []any{
-	(CloudCost_Provider)(0),             // 0: ops.service.v1.CloudCost.Provider
-	(*CloudCost)(nil),                   // 1: ops.service.v1.CloudCost
-	(*ListCloudCostsRequest)(nil),       // 2: ops.service.v1.ListCloudCostsRequest
-	(*ListCloudCostsResponse)(nil),      // 3: ops.service.v1.ListCloudCostsResponse
-	(*UpsertCloudCostRequest)(nil),      // 4: ops.service.v1.UpsertCloudCostRequest
-	(*DeleteCloudCostRequest)(nil),      // 5: ops.service.v1.DeleteCloudCostRequest
-	(*ImportCloudCostsRequest)(nil),     // 6: ops.service.v1.ImportCloudCostsRequest
-	(*ImportCloudCostsResponse)(nil),    // 7: ops.service.v1.ImportCloudCostsResponse
-	(*GetCloudCostSummaryRequest)(nil),  // 8: ops.service.v1.GetCloudCostSummaryRequest
-	(*CloudCostSummaryItem)(nil),        // 9: ops.service.v1.CloudCostSummaryItem
-	(*GetCloudCostSummaryResponse)(nil), // 10: ops.service.v1.GetCloudCostSummaryResponse
-	(*timestamppb.Timestamp)(nil),       // 11: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),               // 12: google.protobuf.Empty
+	(CloudCost_Provider)(0),                    // 0: ops.service.v1.CloudCost.Provider
+	(*CloudCost)(nil),                          // 1: ops.service.v1.CloudCost
+	(*ListCloudCostsRequest)(nil),              // 2: ops.service.v1.ListCloudCostsRequest
+	(*ListCloudCostsResponse)(nil),             // 3: ops.service.v1.ListCloudCostsResponse
+	(*UpsertCloudCostRequest)(nil),             // 4: ops.service.v1.UpsertCloudCostRequest
+	(*DeleteCloudCostRequest)(nil),             // 5: ops.service.v1.DeleteCloudCostRequest
+	(*ImportCloudCostsRequest)(nil),            // 6: ops.service.v1.ImportCloudCostsRequest
+	(*ImportCloudCostsResponse)(nil),           // 7: ops.service.v1.ImportCloudCostsResponse
+	(*GetCloudCostSummaryRequest)(nil),         // 8: ops.service.v1.GetCloudCostSummaryRequest
+	(*CloudCostSummaryItem)(nil),               // 9: ops.service.v1.CloudCostSummaryItem
+	(*GetCloudCostSummaryResponse)(nil),        // 10: ops.service.v1.GetCloudCostSummaryResponse
+	(*FetchCloudCostFromProviderRequest)(nil),  // 11: ops.service.v1.FetchCloudCostFromProviderRequest
+	(*FetchCloudCostFromProviderResponse)(nil), // 12: ops.service.v1.FetchCloudCostFromProviderResponse
+	(*timestamppb.Timestamp)(nil),              // 13: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                      // 14: google.protobuf.Empty
 }
 var file_ops_service_v1_cloud_cost_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.CloudCost.provider:type_name -> ops.service.v1.CloudCost.Provider
-	11, // 1: ops.service.v1.CloudCost.created_at:type_name -> google.protobuf.Timestamp
-	11, // 2: ops.service.v1.CloudCost.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 1: ops.service.v1.CloudCost.created_at:type_name -> google.protobuf.Timestamp
+	13, // 2: ops.service.v1.CloudCost.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 3: ops.service.v1.ListCloudCostsResponse.items:type_name -> ops.service.v1.CloudCost
 	1,  // 4: ops.service.v1.UpsertCloudCostRequest.data:type_name -> ops.service.v1.CloudCost
 	1,  // 5: ops.service.v1.ImportCloudCostsRequest.rows:type_name -> ops.service.v1.CloudCost
 	9,  // 6: ops.service.v1.GetCloudCostSummaryResponse.items:type_name -> ops.service.v1.CloudCostSummaryItem
-	2,  // 7: ops.service.v1.CloudCostService.ListCloudCosts:input_type -> ops.service.v1.ListCloudCostsRequest
-	4,  // 8: ops.service.v1.CloudCostService.UpsertCloudCost:input_type -> ops.service.v1.UpsertCloudCostRequest
-	5,  // 9: ops.service.v1.CloudCostService.DeleteCloudCost:input_type -> ops.service.v1.DeleteCloudCostRequest
-	6,  // 10: ops.service.v1.CloudCostService.ImportCloudCosts:input_type -> ops.service.v1.ImportCloudCostsRequest
-	8,  // 11: ops.service.v1.CloudCostService.GetCloudCostSummary:input_type -> ops.service.v1.GetCloudCostSummaryRequest
-	3,  // 12: ops.service.v1.CloudCostService.ListCloudCosts:output_type -> ops.service.v1.ListCloudCostsResponse
-	1,  // 13: ops.service.v1.CloudCostService.UpsertCloudCost:output_type -> ops.service.v1.CloudCost
-	12, // 14: ops.service.v1.CloudCostService.DeleteCloudCost:output_type -> google.protobuf.Empty
-	7,  // 15: ops.service.v1.CloudCostService.ImportCloudCosts:output_type -> ops.service.v1.ImportCloudCostsResponse
-	10, // 16: ops.service.v1.CloudCostService.GetCloudCostSummary:output_type -> ops.service.v1.GetCloudCostSummaryResponse
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	1,  // 7: ops.service.v1.FetchCloudCostFromProviderResponse.data:type_name -> ops.service.v1.CloudCost
+	2,  // 8: ops.service.v1.CloudCostService.ListCloudCosts:input_type -> ops.service.v1.ListCloudCostsRequest
+	4,  // 9: ops.service.v1.CloudCostService.UpsertCloudCost:input_type -> ops.service.v1.UpsertCloudCostRequest
+	5,  // 10: ops.service.v1.CloudCostService.DeleteCloudCost:input_type -> ops.service.v1.DeleteCloudCostRequest
+	6,  // 11: ops.service.v1.CloudCostService.ImportCloudCosts:input_type -> ops.service.v1.ImportCloudCostsRequest
+	8,  // 12: ops.service.v1.CloudCostService.GetCloudCostSummary:input_type -> ops.service.v1.GetCloudCostSummaryRequest
+	11, // 13: ops.service.v1.CloudCostService.FetchCloudCostFromProvider:input_type -> ops.service.v1.FetchCloudCostFromProviderRequest
+	3,  // 14: ops.service.v1.CloudCostService.ListCloudCosts:output_type -> ops.service.v1.ListCloudCostsResponse
+	1,  // 15: ops.service.v1.CloudCostService.UpsertCloudCost:output_type -> ops.service.v1.CloudCost
+	14, // 16: ops.service.v1.CloudCostService.DeleteCloudCost:output_type -> google.protobuf.Empty
+	7,  // 17: ops.service.v1.CloudCostService.ImportCloudCosts:output_type -> ops.service.v1.ImportCloudCostsResponse
+	10, // 18: ops.service.v1.CloudCostService.GetCloudCostSummary:output_type -> ops.service.v1.GetCloudCostSummaryResponse
+	12, // 19: ops.service.v1.CloudCostService.FetchCloudCostFromProvider:output_type -> ops.service.v1.FetchCloudCostFromProviderResponse
+	14, // [14:20] is the sub-list for method output_type
+	8,  // [8:14] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_cloud_cost_proto_init() }
@@ -818,13 +936,14 @@ func file_ops_service_v1_cloud_cost_proto_init() {
 	file_ops_service_v1_cloud_cost_proto_msgTypes[1].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_cost_proto_msgTypes[3].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_cost_proto_msgTypes[7].OneofWrappers = []any{}
+	file_ops_service_v1_cloud_cost_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_cloud_cost_proto_rawDesc), len(file_ops_service_v1_cloud_cost_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

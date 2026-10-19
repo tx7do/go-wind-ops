@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query';
 import {
   type opsservicev1_CloudCost,
+  type opsservicev1_FetchCloudCostFromProviderResponse,
   type opsservicev1_GetCloudCostSummaryResponse,
   type opsservicev1_ImportCloudCostsResponse,
   type opsservicev1_ListCloudCostsResponse,
@@ -73,6 +74,15 @@ export function useCloudCostSummary(
   return useQuery({
     queryKey: ['cloudCostSummary', params],
     queryFn: () => apiClient.cloudCostService.Summary(params as never),
+    ...options,
+  });
+}
+
+export function useFetchCloudCostFromProvider(
+  options?: Partial<UseMutationOptions<opsservicev1_FetchCloudCostFromProviderResponse, Error, { cloudAccountId: number; month: string }>>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.cloudCostService.Fetch(req as never),
     ...options,
   });
 }
