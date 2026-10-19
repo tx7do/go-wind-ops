@@ -71,7 +71,8 @@ func (s *Service) handleFilePush(ctx context.Context, env *signal.CommandEnvelop
 	return map[string]any{"path": p.Path, "size": size, "sha256": sha256hex}, nil
 }
 
-// handleFileList 列出目录内容。
+// handleFileList 列出目录内容;dir 为空 = agent 进程工作目录(文件管理器
+// 选中机器后的默认落点,与在线终端进入的目录一致)。
 func (s *Service) handleFileList(_ context.Context, env *signal.CommandEnvelope) (any, error) {
 	var p struct{ Dir string `json:"dir"` }
 	if len(env.Payload) > 0 {
@@ -79,7 +80,11 @@ func (s *Service) handleFileList(_ context.Context, env *signal.CommandEnvelope)
 			return nil, fmt.Errorf("decode: %w", err)
 		}
 	}
-	if p.Dir == "" { return nil, fmt.Errorf("dir required") }
+	if p.Dir == "" {
+		wd, err := os.Getwd()
+		if err != nil { return nil, fmt.Errorf("getwd: %w", err) }
+		p.Dir = wd
+	}
 	p.Dir = normalizeFilePath(p.Dir)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: p.Dir}); err != nil { return nil, err }
 

@@ -49,6 +49,10 @@ export function useWriteAgentFile(
   });
 }
 
+export async function fetchListAgentFiles(agentId: string, dir: string): Promise<opsservicev1_ListAgentFilesResponse> {
+  return apiClient.fileService.ListAgentFiles({ agentId, dir });
+}
+
 export async function fetchPullAgentFile(agentId: string, path: string): Promise<opsservicev1_PullAgentFileResponse> {
   return apiClient.fileService.PullAgentFile({ agentId, path });
 }

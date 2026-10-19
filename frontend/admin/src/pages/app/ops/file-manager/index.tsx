@@ -18,6 +18,7 @@ import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import {
   fetchCompleteAgentFilePush,
   fetchPrepareAgentFilePush,
+  fetchListAgentFiles,
   fetchPullAgentFile,
   putFileToPresignedUrl,
   collectDroppedEntries,
@@ -81,6 +82,13 @@ const FileManager = () => {
       message.error((listing.error as Error)?.message || t('listFailed'));
     }
   }, [listing.isError, listing.error, message, t]);
+
+  // 记住每台机器上次浏览目录;浏览成功后更新
+  useEffect(() => {
+    if (agentId && currentDir && listing.data) {
+      localStorage.setItem(`file-manager:lastDir:${agentId}`, currentDir);
+    }
+  }, [agentId, currentDir, listing.data]);
 
   const refresh = useCallback(() => listing.refetch(), [listing]);
 
@@ -206,6 +214,21 @@ const FileManager = () => {
     setDirInput(v);
   };
 
+  // 选中机器后自动进入:优先该机器上次浏览目录,无记忆则取 agent 默认工作目录
+  const openDefaultDir = async (aid: string) => {
+    const last = localStorage.getItem(`file-manager:lastDir:${aid}`);
+    if (last) {
+      openDir(last);
+      return;
+    }
+    try {
+      const resp = await fetchListAgentFiles(aid, '');
+      if (resp.dir) openDir(resp.dir);
+    } catch (e) {
+      message.error((e as Error).message || t('listFailed'));
+    }
+  };
+
   const breadcrumbs = useMemo(() => {
     if (!currentDir) return [];
     const parts = currentDir.split(/[\\/]+/).filter(Boolean);
@@ -304,7 +327,7 @@ const FileManager = () => {
             style={{ minWidth: 260 }}
             value={agentId}
             options={agentOptions}
-            onChange={(v) => { setAgentId(v); setCurrentDir(''); setDirInput(''); setEditor(undefined); }}
+            onChange={(v) => { setAgentId(v); setCurrentDir(''); setDirInput(''); setEditor(undefined); if (v) void openDefaultDir(v); }}
           />
           <Input
             style={{ width: 380 }}

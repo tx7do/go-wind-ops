@@ -207,9 +207,10 @@ func (s *FileService) CompleteAgentFilePush(ctx context.Context, req *opsV1.Comp
 }
 
 func (s *FileService) ListAgentFiles(ctx context.Context, req *opsV1.ListAgentFilesRequest) (*opsV1.ListAgentFilesResponse, error) {
-	if req == nil || req.GetDir() == "" {
-		return nil, opsV1.ErrorBadRequest("dir required")
+	if req == nil || req.GetAgentId() == "" {
+		return nil, opsV1.ErrorBadRequest("agentId required")
 	}
+	// dir 为空 = agent 进程工作目录(agent 端解析,响应 dir 回带实际路径)
 	agentId, err := s.resolveAgentID(ctx, req.GetAgentId())
 	if err != nil {
 		return nil, err

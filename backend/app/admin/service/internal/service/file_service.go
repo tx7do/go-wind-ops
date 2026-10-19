@@ -27,9 +27,10 @@ func NewFileService(ctx *bootstrap.Context, fileServiceClient opsV1.FileServiceC
 }
 
 func (s *FileService) ListAgentFiles(ctx context.Context, req *opsV1.ListAgentFilesRequest) (*opsV1.ListAgentFilesResponse, error) {
-	if req == nil || req.GetAgentId() == "" || req.GetDir() == "" {
-		return nil, adminV1.ErrorBadRequest("invalid request: agentId/dir required")
+	if req == nil || req.GetAgentId() == "" {
+		return nil, adminV1.ErrorBadRequest("invalid request: agentId required")
 	}
+	// dir 允许为空:agent 端以自身工作目录兜底(响应 dir 回带实际路径)
 	return s.fileServiceClient.ListAgentFiles(ctx, req)
 }
 
