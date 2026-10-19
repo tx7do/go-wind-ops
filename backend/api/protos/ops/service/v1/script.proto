@@ -188,11 +188,18 @@ message ExecuteScriptResponse {
 
 message ExecuteScriptBatchRequest {
   optional uint32 script_id = 1 [
-    json_name = "scriptId",
-    (google.api.field_behavior) = REQUIRED
-  ]; // 脚本ID
+    json_name = "scriptId"
+  ]; // 脚本ID(与 command 二选一)
 
-  repeated uint32 node_ids = 2 [json_name = "nodeIds"]; // 目标节点ID列表
+  repeated uint32 node_ids = 2 [json_name = "nodeIds"]; // 目标节点ID列表(与 agent_ids 二选一)
+
+  optional string command = 3 [
+    json_name = "command"
+  ]; // 即席命令内容(script_id=0 时必填,为多台机器批量执行同一条命令)
+
+  repeated string agent_ids = 4 [json_name = "agentIds"]; // 目标机器标识列表(免 node 换算,与 node_ids 二选一)
+
+  optional uint32 timeout_seconds = 5 [json_name = "timeoutSeconds"]; // 单台命令超时秒(仅即席命令生效,默认 60)
 }
 
 message ExecuteScriptBatchResponse {

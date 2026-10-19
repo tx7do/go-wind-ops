@@ -72,8 +72,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// ScriptIDValidator is a validator for the "script_id" field. It is called by the builders before save.
-	ScriptIDValidator func(uint32) error
 	// ScriptNameValidator is a validator for the "script_name" field. It is called by the builders before save.
 	ScriptNameValidator func(string) error
 	// DefaultTotal holds the default value on creation for the "total" field.

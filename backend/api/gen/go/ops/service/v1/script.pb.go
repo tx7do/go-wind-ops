@@ -502,11 +502,14 @@ func (x *ExecuteScriptResponse) GetRequestId() string {
 }
 
 type ExecuteScriptBatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ScriptId      *uint32                `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"` // 脚本ID
-	NodeIds       []uint32               `protobuf:"varint,2,rep,packed,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`   // 目标节点ID列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ScriptId       *uint32                `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"`                   // 脚本ID(与 command 二选一)
+	NodeIds        []uint32               `protobuf:"varint,2,rep,packed,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`                     // 目标节点ID列表(与 agent_ids 二选一)
+	Command        *string                `protobuf:"bytes,3,opt,name=command,proto3,oneof" json:"command,omitempty"`                                      // 即席命令内容(script_id=0 时必填,为多台机器批量执行同一条命令)
+	AgentIds       []string               `protobuf:"bytes,4,rep,name=agent_ids,json=agentIds,proto3" json:"agent_ids,omitempty"`                          // 目标机器标识列表(免 node 换算,与 node_ids 二选一)
+	TimeoutSeconds *uint32                `protobuf:"varint,5,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"` // 单台命令超时秒(仅即席命令生效,默认 60)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ExecuteScriptBatchRequest) Reset() {
@@ -551,6 +554,27 @@ func (x *ExecuteScriptBatchRequest) GetNodeIds() []uint32 {
 		return x.NodeIds
 	}
 	return nil
+}
+
+func (x *ExecuteScriptBatchRequest) GetCommand() string {
+	if x != nil && x.Command != nil {
+		return *x.Command
+	}
+	return ""
+}
+
+func (x *ExecuteScriptBatchRequest) GetAgentIds() []string {
+	if x != nil {
+		return x.AgentIds
+	}
+	return nil
+}
+
+func (x *ExecuteScriptBatchRequest) GetTimeoutSeconds() uint32 {
+	if x != nil && x.TimeoutSeconds != nil {
+		return *x.TimeoutSeconds
+	}
+	return 0
 }
 
 type ExecuteScriptBatchResponse struct {
@@ -1045,12 +1069,18 @@ const file_ops_service_v1_script_proto_rawDesc = "" +
 	"\t_agent_id\"6\n" +
 	"\x15ExecuteScriptResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\"k\n" +
-	"\x19ExecuteScriptBatchRequest\x12%\n" +
-	"\tscript_id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\bscriptId\x88\x01\x01\x12\x19\n" +
-	"\bnode_ids\x18\x02 \x03(\rR\anodeIdsB\f\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xf0\x01\n" +
+	"\x19ExecuteScriptBatchRequest\x12 \n" +
+	"\tscript_id\x18\x01 \x01(\rH\x00R\bscriptId\x88\x01\x01\x12\x19\n" +
+	"\bnode_ids\x18\x02 \x03(\rR\anodeIds\x12\x1d\n" +
+	"\acommand\x18\x03 \x01(\tH\x01R\acommand\x88\x01\x01\x12\x1b\n" +
+	"\tagent_ids\x18\x04 \x03(\tR\bagentIds\x12,\n" +
+	"\x0ftimeout_seconds\x18\x05 \x01(\rH\x02R\x0etimeoutSeconds\x88\x01\x01B\f\n" +
 	"\n" +
-	"_script_id\"\xc6\x01\n" +
+	"_script_idB\n" +
+	"\n" +
+	"\b_commandB\x12\n" +
+	"\x10_timeout_seconds\"\xc6\x01\n" +
 	"\x1aExecuteScriptBatchResponse\x12\x1e\n" +
 	"\bbatch_id\x18\x01 \x01(\rH\x00R\abatchId\x88\x01\x01\x12\x1f\n" +
 	"\vrequest_ids\x18\x02 \x03(\tR\n" +

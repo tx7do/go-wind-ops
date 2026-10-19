@@ -39,8 +39,12 @@ func (s *ScriptBatchService) Get(ctx context.Context, req *opsV1.GetScriptBatchR
 }
 
 func (s *ScriptBatchService) BatchExec(ctx context.Context, req *opsV1.ExecuteScriptBatchRequest) (*opsV1.ExecuteScriptBatchResponse, error) {
-	if req == nil || req.GetScriptId() == 0 || len(req.GetNodeIds()) == 0 {
-		return nil, adminV1.ErrorBadRequest("invalid request: scriptId and nodeIds required")
+	// 即席命令模式(command+agent_ids)与脚本模式(script_id+node_ids)二选一
+	valid := req != nil && (
+		(req.GetCommand() != "" && (len(req.GetAgentIds()) > 0 || len(req.GetNodeIds()) > 0)) ||
+			(req.GetScriptId() != 0 && len(req.GetNodeIds()) > 0))
+	if !valid {
+		return nil, adminV1.ErrorBadRequest("invalid request: command+agentIds or scriptId+nodeIds required")
 	}
 	return s.scriptBatchServiceClient.ExecuteScriptBatch(ctx, req)
 }

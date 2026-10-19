@@ -3099,7 +3099,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "script_id", Type: field.TypeUint32, Comment: "脚本(ops_scripts.id)"},
+		{Name: "script_id", Type: field.TypeUint32, Comment: "脚本(ops_scripts.id);0=即席命令批量(无脚本档案)"},
 		{Name: "script_name", Type: field.TypeString, Comment: "脚本名快照(脚本改名/删除不影响批次展示)"},
 		{Name: "node_ids", Type: field.TypeJSON, Nullable: true, Comment: "目标节点 ID 列表"},
 		{Name: "total", Type: field.TypeUint32, Comment: "目标节点总数", Default: 0},

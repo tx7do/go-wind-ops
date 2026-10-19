@@ -110,33 +110,88 @@ func (s *ScriptBatchService) GetScriptBatch(ctx context.Context, req *opsV1.GetS
 
 // ExecuteScriptBatch 批量执行:先建批次,再逐节点下发脚本执行指令并把
 // 台账挂到批次上;单节点下发失败计入 failed,不影响其余节点。
+// 两种模式二选一:脚本模式(script_id+node_ids,经脚本档案)与即席命令模式
+// (command,为多台机器批量执行同一条命令;目标用 agent_ids 免 node 换算)。
 func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.ExecuteScriptBatchRequest) (*opsV1.ExecuteScriptBatchResponse, error) {
-	if req == nil || req.GetScriptId() == 0 {
-		return nil, opsV1.ErrorBadRequest("invalid parameter: scriptId required")
-	}
-	if len(req.GetNodeIds()) == 0 {
-		return nil, opsV1.ErrorBadRequest("invalid parameter: nodeIds required")
+	if req == nil {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
 
-	sc, err := s.scriptRepo.Get(ctx, &opsV1.GetScriptRequest{Id: req.ScriptId})
-	if err != nil {
-		return nil, err
-	}
-
-	timeout := sc.GetTimeoutSeconds()
-	if timeout == 0 {
-		timeout = signal.ScriptExecTimeoutDefault
-	}
-	payload := &signal.ScriptExecPayload{
-		ScriptId:   sc.GetId(),
-		Name:       sc.GetName(),
-		Content:    sc.GetContent(),
-		TimeoutSec: timeout,
+	var (
+		payload  *signal.ScriptExecPayload
+		targets  []batchTarget
+		nodeIDs  []uint32
+		batchSid uint32
+		batchNm  string
+	)
+	switch {
+	case req.GetCommand() != "":
+		timeout := req.GetTimeoutSeconds()
+		if timeout == 0 {
+			timeout = 60
+		}
+		if timeout > signal.ScriptExecTimeoutMax {
+			timeout = signal.ScriptExecTimeoutMax
+		}
+		payload = &signal.ScriptExecPayload{
+			Name:       "即席命令",
+			Content:    req.GetCommand(),
+			TimeoutSec: timeout,
+		}
+		batchNm = "即席命令"
+		if len(req.GetAgentIds()) > 0 {
+			for _, agentID := range req.GetAgentIds() {
+				targets = append(targets, batchTarget{agentID: agentID})
+			}
+		} else {
+			for _, nodeID := range req.GetNodeIds() {
+				node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+				if err != nil {
+					continue
+				}
+				targets = append(targets, batchTarget{nodeID: nodeID, agentID: node.GetAgentId()})
+				nodeIDs = append(nodeIDs, nodeID)
+			}
+		}
+		if len(targets) == 0 {
+			return nil, opsV1.ErrorBadRequest("invalid parameter: agentIds/nodeIds required")
+		}
+	default:
+		if req.GetScriptId() == 0 {
+			return nil, opsV1.ErrorBadRequest("invalid parameter: scriptId or command required")
+		}
+		if len(req.GetNodeIds()) == 0 {
+			return nil, opsV1.ErrorBadRequest("invalid parameter: nodeIds required")
+		}
+		sc, err := s.scriptRepo.Get(ctx, &opsV1.GetScriptRequest{Id: req.ScriptId})
+		if err != nil {
+			return nil, err
+		}
+		timeout := sc.GetTimeoutSeconds()
+		if timeout == 0 {
+			timeout = signal.ScriptExecTimeoutDefault
+		}
+		payload = &signal.ScriptExecPayload{
+			ScriptId:   sc.GetId(),
+			Name:       sc.GetName(),
+			Content:    sc.GetContent(),
+			TimeoutSec: timeout,
+		}
+		batchSid = sc.GetId()
+		batchNm = sc.GetName()
+		nodeIDs = req.GetNodeIds()
+		for _, nodeID := range nodeIDs {
+			node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+			if err != nil {
+				continue
+			}
+			targets = append(targets, batchTarget{nodeID: nodeID, agentID: node.GetAgentId()})
+		}
 	}
 	operatorID := s.operatorID(ctx)
 
-	batch, err := s.batchRepo.Create(ctx, sc.GetId(), sc.GetName(), req.GetNodeIds(),
-		uint32(len(req.GetNodeIds())), operatorID)
+	batch, err := s.batchRepo.Create(ctx, batchSid, batchNm, nodeIDs,
+		uint32(len(targets)), operatorID)
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("create batch failed")
 	}
@@ -146,19 +201,20 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 		dispatched uint32
 		failed     uint32
 	)
-	for _, nodeID := range req.GetNodeIds() {
-		node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
-		if err != nil {
-			s.log.Warnf("batch [%d] node [%d] not found, skip", batch.ID, nodeID)
-			_ = s.batchRepo.ApplyItemResult(ctx, batch.ID, false)
-			failed++
-			continue
+	for _, t := range targets {
+		if t.nodeID != 0 {
+			if _, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &t.nodeID}); err != nil {
+				s.log.Warnf("batch [%d] node [%d] not found, skip", batch.ID, t.nodeID)
+				_ = s.batchRepo.ApplyItemResult(ctx, batch.ID, false)
+				failed++
+				continue
+			}
 		}
 
-		requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+		requestId, err := s.agentService.PublishCommand(ctx, t.nodeID, t.agentID,
 			signal.CommandActionScriptExec, payload, operatorID)
 		if err != nil {
-			s.log.Errorf("batch [%d] dispatch failed (node=%d): %s", batch.ID, nodeID, err.Error())
+			s.log.Errorf("batch [%d] dispatch failed (agent=%s): %s", batch.ID, t.agentID, err.Error())
 			_ = s.batchRepo.ApplyItemResult(ctx, batch.ID, false)
 			failed++
 			continue
@@ -172,13 +228,19 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 	}
 
 	s.log.Infof("script batch created (batch=%d script=%d dispatched=%d failed=%d)",
-		batch.ID, sc.GetId(), dispatched, failed)
+		batch.ID, batchSid, dispatched, failed)
 	return &opsV1.ExecuteScriptBatchResponse{
 		BatchId:    &batch.ID,
 		RequestIds: requestIDs,
 		Dispatched: &dispatched,
 		Failed:     &failed,
 	}, nil
+}
+
+// batchTarget 批量下发的单台目标(agent_ids 模式 nodeID 为 0,免 node 换算)。
+type batchTarget struct {
+	nodeID  uint32
+	agentID string
 }
 
 func (s *ScriptBatchService) operatorID(ctx context.Context) uint32 {

@@ -244,11 +244,6 @@ func (_c *ScriptBatchCreate) check() error {
 	if _, ok := _c.mutation.ScriptID(); !ok {
 		return &ValidationError{Name: "script_id", err: errors.New(`ent: missing required field "ScriptBatch.script_id"`)}
 	}
-	if v, ok := _c.mutation.ScriptID(); ok {
-		if err := scriptbatch.ScriptIDValidator(v); err != nil {
-			return &ValidationError{Name: "script_id", err: fmt.Errorf(`ent: validator failed for field "ScriptBatch.script_id": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.ScriptName(); !ok {
 		return &ValidationError{Name: "script_name", err: errors.New(`ent: missing required field "ScriptBatch.script_name"`)}
 	}

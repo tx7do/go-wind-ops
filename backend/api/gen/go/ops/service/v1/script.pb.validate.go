@@ -1143,6 +1143,14 @@ func (m *ExecuteScriptBatchRequest) validate(all bool) error {
 		// no validation rules for ScriptId
 	}
 
+	if m.Command != nil {
+		// no validation rules for Command
+	}
+
+	if m.TimeoutSeconds != nil {
+		// no validation rules for TimeoutSeconds
+	}
+
 	if len(errors) > 0 {
 		return ExecuteScriptBatchRequestMultiError(errors)
 	}

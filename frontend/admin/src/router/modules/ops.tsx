@@ -164,6 +164,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'batch-commands',
+        path: '/ops/batch-commands',
+        element: createLazyRoute(() => import('@/pages/app/ops/batch-commands')),
+        meta: {
+          title: 'routes:batch-commands',
+          icon: 'lucide:list-checks',
+          order: 3,
+          authority: ['ops:script_manage', 'ops:node_manage'],
+        },
+      },
+      {
         name: 'backups',
         path: '/ops/backups',
         element: createLazyRoute(() => import('@/pages/app/ops/backup')),

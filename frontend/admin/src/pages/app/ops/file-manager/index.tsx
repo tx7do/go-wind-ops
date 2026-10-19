@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
+import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Modal, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -18,6 +18,7 @@ import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import {
   fetchCompleteAgentFilePush,
   fetchPrepareAgentFilePush,
+  formatBytes,
   fetchListAgentFiles,
   fetchPullAgentFile,
   putFileToPresignedUrl,
@@ -130,9 +131,14 @@ const FileManager = () => {
 
   // 大文件上传:直传对象存储 → 指令 agent 落盘
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const batchUploadInputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const [dropActive, setDropActive] = useState(false);
+  // 批量上传:同一批文件发到多台机器的同一目录(一次 PUT,各机分别拉取落盘)
+  const [batchUpload, setBatchUpload] = useState<{
+    open: boolean; agents: string[]; dir: string; files: File[]; busy: boolean; done: number; total: number;
+  }>({ open: false, agents: [], dir: '', files: [], busy: false, done: 0, total: 0 });
   const onUploadPicked = async (file: File, relativePath = ''): Promise<boolean> => {
     if (!agentId || !currentDir) {
       message.warning(t('pickAgentFirst'));
@@ -154,6 +160,38 @@ const FileManager = () => {
       setUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = '';
     }
+  };
+
+  // 批量上传编排:每个文件只 prepare+PUT 一次(objectKey 不绑机器),各目标机
+  // 器分别经 Complete 拉取落盘——省 N-1 倍上传带宽
+  const runBatchUpload = async () => {
+    const { agents, dir, files } = batchUpload;
+    if (!agents.length || !dir.trim() || !files.length) return;
+    const total = agents.length * files.length;
+    setBatchUpload((s) => ({ ...s, busy: true, done: 0, total }));
+    let ok = 0;
+    for (const f of files) {
+      const targetPath = joinPath(dir.trim(), f.name);
+      try {
+        const prep = await fetchPrepareAgentFilePush(agents[0], targetPath);
+        await putFileToPresignedUrl(prep.uploadUrl || '', f);
+        for (const aid of agents) {
+          try {
+            await fetchCompleteAgentFilePush(aid, targetPath, prep.objectKey || '');
+            ok += 1;
+          } catch (e) {
+            message.error(`${aid}: ${(e as Error).message || t('uploadFailed')}`);
+          }
+          setBatchUpload((s) => ({ ...s, done: Math.min(s.done + 1, total) }));
+        }
+      } catch (e) {
+        message.error((e as Error).message || t('uploadFailed'));
+        setBatchUpload((s) => ({ ...s, done: Math.min(s.done + agents.length, total) }));
+      }
+    }
+    setBatchUpload((s) => ({ ...s, busy: false }));
+    message.info(t('buDone', { ok, total }));
+    refresh();
   };
 
   // 整页拖拽=上传到当前目录(与选择文件按钮同一链路);目录递归保持相对路径
@@ -349,6 +387,26 @@ const FileManager = () => {
           <Button disabled={!canBrowse} loading={uploading} onClick={() => uploadInputRef.current?.click()}>
             <UploadOutlined /> {t('upload')}
           </Button>
+          <Button
+            icon={<UploadOutlined />}
+            disabled={!canBrowse}
+            onClick={() => {
+              setBatchUpload({ open: true, agents: agentId ? [agentId] : [], dir: currentDir, busy: false, done: 0, total: 0 });
+            }}
+          >
+            {t('batchUpload')}
+          </Button>
+          <input
+            ref={batchUploadInputRef}
+            type="file"
+            multiple
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const fs = Array.from(e.target.files || []);
+              e.target.value = '';
+              if (fs.length) setBatchUpload((s) => ({ ...s, files: fs }));
+            }}
+          />
           <input
             ref={uploadInputRef}
             type="file"
@@ -383,6 +441,80 @@ const FileManager = () => {
           locale={{ emptyText: canBrowse ? (listing.isFetching ? <Spin /> : listing.isError ? <Typography.Text type="danger" style={{ fontSize: 12 }}>{(listing.error as Error)?.message || t('listFailed')}</Typography.Text> : t('emptyDir')) : t('pickAgentFirst') }}
         />
       </Space>
+
+      <Modal
+        title={t('batchUpload')}
+        open={batchUpload.open}
+        onCancel={() => {
+          if (batchUpload.busy) return;
+          setBatchUpload({ open: false, agents: [], dir: '', files: [], busy: false, done: 0, total: 0 });
+        }}
+        footer={null}
+        width={560}
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size="small">
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {t('buTargetAgents')}
+          </Typography.Text>
+          <Select
+            mode="multiple"
+            showSearch
+            optionFilterProp="label"
+            placeholder={t('buPickAgentsFirst')}
+            style={{ width: '100%' }}
+            maxTagCount="responsive"
+            value={batchUpload.agents}
+            options={agentOptions}
+            disabled={batchUpload.busy}
+            onChange={(v) => setBatchUpload((s) => ({ ...s, agents: v }))}
+          />
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {t('buTargetDir')}
+          </Typography.Text>
+          <Input
+            value={batchUpload.dir}
+            placeholder={t('dirPlaceholder')}
+            disabled={batchUpload.busy}
+            onChange={(e) => setBatchUpload((s) => ({ ...s, dir: e.target.value }))}
+          />
+          <Space>
+            <Button disabled={batchUpload.busy} onClick={() => batchUploadInputRef.current?.click()}>
+              <FileAddOutlined /> {t('buPickFiles')}
+            </Button>
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              {t('buFilesSelected', { n: batchUpload.files.length })}
+            </Typography.Text>
+          </Space>
+          {batchUpload.files.length > 0 && (
+            <div style={{ maxHeight: 140, overflow: 'auto' }}>
+              {batchUpload.files.map((f, i) => (
+                <div key={`${f.name}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                  <Typography.Text ellipsis style={{ fontSize: 12, maxWidth: 360 }}>
+                    {f.name}
+                  </Typography.Text>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    {formatBytes(f.size)}
+                  </Typography.Text>
+                </div>
+              ))}
+            </div>
+          )}
+          {batchUpload.busy && (
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              {batchUpload.done}/{batchUpload.total}
+            </Typography.Text>
+          )}
+          <Button
+            type="primary"
+            block
+            loading={batchUpload.busy}
+            disabled={!batchUpload.agents.length || !batchUpload.dir.trim() || !batchUpload.files.length}
+            onClick={() => void runBatchUpload()}
+          >
+            {t('buStart')}
+          </Button>
+        </Space>
+      </Modal>
 
       <Drawer
         title={<span>{t('editTitle')}: <Typography.Text code>{editor?.path}</Typography.Text></span>}

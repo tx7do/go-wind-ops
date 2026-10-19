@@ -32,8 +32,7 @@ func (ScriptBatch) Annotations() []schema.Annotation {
 func (ScriptBatch) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint32("script_id").
-			Comment("脚本(ops_scripts.id)").
-			Positive(),
+			Comment("脚本(ops_scripts.id);0=即席命令批量(无脚本档案)"),
 
 		field.String("script_name").
 			Comment("脚本名快照(脚本改名/删除不影响批次展示)").

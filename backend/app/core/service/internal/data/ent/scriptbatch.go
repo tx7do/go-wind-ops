@@ -31,7 +31,7 @@ type ScriptBatch struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
-	// 脚本(ops_scripts.id)
+	// 脚本(ops_scripts.id);0=即席命令批量(无脚本档案)
 	ScriptID uint32 `json:"script_id,omitempty"`
 	// 脚本名快照(脚本改名/删除不影响批次展示)
 	ScriptName string `json:"script_name,omitempty"`

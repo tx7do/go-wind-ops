@@ -315,11 +315,6 @@ func (_u *ScriptBatchUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ScriptBatchUpdate) check() error {
-	if v, ok := _u.mutation.ScriptID(); ok {
-		if err := scriptbatch.ScriptIDValidator(v); err != nil {
-			return &ValidationError{Name: "script_id", err: fmt.Errorf(`ent: validator failed for field "ScriptBatch.script_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.ScriptName(); ok {
 		if err := scriptbatch.ScriptNameValidator(v); err != nil {
 			return &ValidationError{Name: "script_name", err: fmt.Errorf(`ent: validator failed for field "ScriptBatch.script_name": %w`, err)}
@@ -754,11 +749,6 @@ func (_u *ScriptBatchUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ScriptBatchUpdateOne) check() error {
-	if v, ok := _u.mutation.ScriptID(); ok {
-		if err := scriptbatch.ScriptIDValidator(v); err != nil {
-			return &ValidationError{Name: "script_id", err: fmt.Errorf(`ent: validator failed for field "ScriptBatch.script_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.ScriptName(); ok {
 		if err := scriptbatch.ScriptNameValidator(v); err != nil {
 			return &ValidationError{Name: "script_name", err: fmt.Errorf(`ent: validator failed for field "ScriptBatch.script_name": %w`, err)}

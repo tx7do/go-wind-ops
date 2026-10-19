@@ -1766,10 +1766,6 @@ func init() {
 	_ = scriptbatchMixinFields0
 	scriptbatchFields := schema.ScriptBatch{}.Fields()
 	_ = scriptbatchFields
-	// scriptbatchDescScriptID is the schema descriptor for script_id field.
-	scriptbatchDescScriptID := scriptbatchFields[0].Descriptor()
-	// scriptbatch.ScriptIDValidator is a validator for the "script_id" field. It is called by the builders before save.
-	scriptbatch.ScriptIDValidator = scriptbatchDescScriptID.Validators[0].(func(uint32) error)
 	// scriptbatchDescScriptName is the schema descriptor for script_name field.
 	scriptbatchDescScriptName := scriptbatchFields[1].Descriptor()
 	// scriptbatch.ScriptNameValidator is a validator for the "script_name" field. It is called by the builders before save.

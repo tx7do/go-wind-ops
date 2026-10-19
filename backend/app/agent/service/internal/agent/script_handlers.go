@@ -27,8 +27,9 @@ func (s *Service) handleScriptExec(ctx context.Context, env *signal.CommandEnvel
 	if strings.TrimSpace(payload.Content) == "" {
 		return nil, fmt.Errorf("payload.content is required")
 	}
-	if payload.ScriptId == 0 {
-		return nil, fmt.Errorf("payload.script_id is required")
+	// script_id 允许为 0:即席批量命令(无脚本档案)直接下发 content,名称兜底便于台账辨识
+	if payload.ScriptId == 0 && payload.Name == "" {
+		payload.Name = "即席命令"
 	}
 
 	timeout := payload.TimeoutSec
