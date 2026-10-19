@@ -123,5 +123,10 @@
   },
   "app": {
     "defaultName": "GoWind Ops Admin"
-  }
+  },
+  "opsResource": "Resources",
+  "opsCicd": "CI/CD",
+  "opsAuto": "Automation",
+  "opsObserve": "Observability",
+  "opsGovern": "Governance"
 }

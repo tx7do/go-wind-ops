@@ -2,23 +2,23 @@ import type { AppRouteObject } from '@/core/router/types';
 import { createLazyRoute } from '@/core/router';
 
 /**
- * 运维域路由配置
- * 节点管理、项目管理、脚本、构建与分发、指令台账
+ * 运维域路由:五个功能组直接作为一级菜单(资源管理/持续交付/自动化/可观测/治理)。
+ * 分组节点不带 path,叶子使用绝对路径 /ops/<page>,URL 与拆分前保持一致。
  */
 export const opsRoutes: AppRouteObject[] = [
+  // ── 资源管理 ──
   {
-    name: 'ops',
-    path: 'ops',
+    name: 'ops-resource',
     meta: {
-      title: 'routes:ops',
-      icon: 'lucide:server',
-      order: 2004,
-      keepAlive: true,
+      title: 'routes:opsResource',
+      icon: 'lucide:hard-drive',
+      order: 1,
+      authority: ['ops:node_manage', 'ops:project_manage'],
     },
     children: [
       {
         name: 'agent-nodes',
-        path: 'agent-nodes',
+        path: '/ops/agent-nodes',
         element: createLazyRoute(() => import('@/pages/app/ops/agent-node')),
         meta: {
           title: 'routes:agent-nodes',
@@ -29,7 +29,7 @@ export const opsRoutes: AppRouteObject[] = [
       },
       {
         name: 'terminal',
-        path: 'terminal',
+        path: '/ops/terminal',
         element: createLazyRoute(() => import('@/pages/app/ops/terminal')),
         meta: {
           title: 'routes:terminal',
@@ -39,157 +39,209 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'file-manager',
+        path: '/ops/file-manager',
+        element: createLazyRoute(() => import('@/pages/app/ops/file-manager')),
+        meta: {
+          title: 'routes:file-manager',
+          icon: 'lucide:folder-tree',
+          order: 3,
+          authority: ['ops:node_manage'],
+        },
+      },
+      {
         name: 'projects',
-        path: 'projects',
+        path: '/ops/projects',
         element: createLazyRoute(() => import('@/pages/app/ops/project')),
         meta: {
           title: 'routes:projects',
           icon: 'lucide:folder-open',
-          order: 3,
+          order: 4,
           authority: ['ops:project_manage'],
         },
       },
-      {
-        name: 'scripts',
-        path: 'scripts',
-        element: createLazyRoute(() => import('@/pages/app/ops/script')),
-        meta: {
-          title: 'routes:scripts',
-          icon: 'lucide:file-code',
-          order: 4,
-          authority: ['ops:script_manage'],
-        },
-      },
+    ],
+  },
+
+  // ── 持续交付 ──
+  {
+    name: 'ops-cicd',
+    meta: {
+      title: 'routes:opsCicd',
+      icon: 'lucide:package',
+      order: 2,
+      authority: ['ops:build_manage', 'ops:distribute'],
+    },
+    children: [
       {
         name: 'repositories',
-        path: 'repositories',
+        path: '/ops/repositories',
         element: createLazyRoute(() => import('@/pages/app/ops/repository')),
         meta: {
           title: 'routes:repositories',
           icon: 'lucide:git-branch',
-          order: 5,
+          order: 1,
           authority: ['ops:build_manage'],
         },
       },
       {
         name: 'builds',
-        path: 'builds',
+        path: '/ops/builds',
         element: createLazyRoute(() => import('@/pages/app/ops/build')),
         meta: {
           title: 'routes:builds',
           icon: 'lucide:hammer',
-          order: 6,
+          order: 2,
           authority: ['ops:build_manage'],
         },
       },
       {
         name: 'pipelines',
-        path: 'pipelines',
+        path: '/ops/pipelines',
         element: createLazyRoute(() => import('@/pages/app/ops/pipeline')),
         meta: {
           title: 'routes:pipelines',
           icon: 'lucide:workflow',
-          order: 7,
+          order: 3,
           authority: ['ops:build_manage'],
         },
       },
       {
         name: 'distributions',
-        path: 'distributions',
+        path: '/ops/distributions',
         element: createLazyRoute(() => import('@/pages/app/ops/distribution')),
         meta: {
           title: 'routes:distributions',
           icon: 'lucide:send',
-          order: 8,
+          order: 4,
           authority: ['ops:distribute'],
         },
       },
+    ],
+  },
+
+  // ── 自动化 ──
+  {
+    name: 'ops-auto',
+    meta: {
+      title: 'routes:opsAuto',
+      icon: 'lucide:bot',
+      order: 3,
+      authority: ['ops:script_manage', 'ops:node_manage'],
+    },
+    children: [
       {
-        name: 'file-manager',
-        path: 'file-manager',
-        element: createLazyRoute(() => import('@/pages/app/ops/file-manager')),
+        name: 'scripts',
+        path: '/ops/scripts',
+        element: createLazyRoute(() => import('@/pages/app/ops/script')),
         meta: {
-          title: 'routes:file-manager',
-          icon: 'lucide:folder-tree',
-          order: 10,
-          authority: ['ops:node_manage'],
+          title: 'routes:scripts',
+          icon: 'lucide:file-code',
+          order: 1,
+          authority: ['ops:script_manage'],
         },
       },
       {
-        name: 'command-records',
-        path: 'command-records',
-        element: createLazyRoute(() => import('@/pages/app/ops/command-record')),
+        name: 'plugins',
+        path: '/ops/plugins',
+        element: createLazyRoute(() => import('@/pages/app/ops/plugin')),
         meta: {
-          title: 'routes:command-records',
-          icon: 'lucide:scroll-text',
-          order: 9,
+          title: 'routes:plugins',
+          icon: 'lucide:puzzle',
+          order: 2,
           authority: ['ops:node_manage'],
         },
       },
+    ],
+  },
+
+  // ── 可观测 ──
+  {
+    name: 'ops-observe',
+    meta: {
+      title: 'routes:opsObserve',
+      icon: 'lucide:gauge',
+      order: 4,
+      authority: ['sys:platform_admin'],
+    },
+    children: [
       {
         name: 'monitors',
-        path: 'monitors',
+        path: '/ops/monitors',
         element: createLazyRoute(() => import('@/pages/app/ops/monitor')),
         meta: {
           title: 'routes:monitors',
           icon: 'lucide:activity',
-          order: 11,
+          order: 1,
           authority: ['sys:platform_admin'],
         },
       },
       {
         name: 'alerts',
-        path: 'alerts',
+        path: '/ops/alerts',
         element: createLazyRoute(() => import('@/pages/app/ops/alert')),
         meta: {
           title: 'routes:alerts',
           icon: 'lucide:bell',
-          order: 12,
+          order: 2,
           authority: ['sys:platform_admin'],
         },
       },
       {
         name: 'notification-channels',
-        path: 'notification-channels',
+        path: '/ops/notification-channels',
         element: createLazyRoute(() => import('@/pages/app/ops/notification-channel')),
         meta: {
           title: 'routes:notification-channels',
           icon: 'lucide:radio',
-          order: 13,
+          order: 3,
           authority: ['sys:platform_admin'],
         },
       },
+    ],
+  },
+
+  // ── 治理 ──
+  {
+    name: 'ops-govern',
+    meta: {
+      title: 'routes:opsGovern',
+      icon: 'lucide:shield-check',
+      order: 5,
+      authority: ['sys:platform_admin', 'ops:node_manage'],
+    },
+    children: [
       {
         name: 'approvals',
-        path: 'approvals',
+        path: '/ops/approvals',
         element: createLazyRoute(() => import('@/pages/app/ops/approval')),
         meta: {
           title: 'routes:approvals',
           icon: 'lucide:check-circle',
-          order: 14,
+          order: 1,
           authority: ['sys:platform_admin'],
+        },
+      },
+      {
+        name: 'command-records',
+        path: '/ops/command-records',
+        element: createLazyRoute(() => import('@/pages/app/ops/command-record')),
+        meta: {
+          title: 'routes:command-records',
+          icon: 'lucide:scroll-text',
+          order: 2,
+          authority: ['ops:node_manage'],
         },
       },
       {
         name: 'api-keys',
-        path: 'api-keys',
+        path: '/ops/api-keys',
         element: createLazyRoute(() => import('@/pages/app/ops/api-key')),
         meta: {
           title: 'routes:api-keys',
           icon: 'lucide:key-round',
-          order: 15,
+          order: 3,
           authority: ['sys:platform_admin'],
-        },
-      },
-      {
-        name: 'plugins',
-        path: 'plugins',
-        element: createLazyRoute(() => import('@/pages/app/ops/plugin')),
-        meta: {
-          title: 'routes:plugins',
-          icon: 'lucide:puzzle',
-          order: 16,
-          authority: ['ops:node_manage'],
         },
       },
     ],

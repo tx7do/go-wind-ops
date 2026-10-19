@@ -122,5 +122,10 @@
   },
   "app": {
     "defaultName": "GoWind Ops 运维管理平台"
-  }
+  },
+  "opsResource": "资源管理",
+  "opsCicd": "持续交付",
+  "opsAuto": "自动化",
+  "opsObserve": "可观测",
+  "opsGovern": "治理"
 }

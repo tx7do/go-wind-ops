@@ -286,10 +286,10 @@ var DefaultOpsPermissions = []*permissionV1.Permission{
 	{Id: trans.Ptr(uint32(17)), GroupId: trans.Ptr(uint32(6)), Name: trans.Ptr("产物分发"), Description: trans.Ptr("构建产物分发"), Code: trans.Ptr(OpsDistributePermissionCode), Status: trans.Ptr(permissionV1.Permission_ON), MenuIds: opsMenuIds()},
 }
 
-// opsMenuIds 运维菜单 ID 集合(80 目录 + 81-96 子项)。
+// opsMenuIds 运维菜单 ID 集合(81-85 一级分组 + 86-101 页面)。
 func opsMenuIds() []uint32 {
-	ids := make([]uint32, 0, 17)
-	for i := uint32(80); i <= 96; i++ {
+	ids := make([]uint32, 0, 21)
+	for i := uint32(81); i <= 101; i++ {
 		ids = append(ids, i)
 	}
 	return ids
@@ -726,65 +726,77 @@ func init() {
 	}
 }
 
-// defaultOpsMenus 运维域菜单树(id 80 目录 + 81-96 子项),
-// Name/Path/Authority 与前端 ops.tsx 静态路由一一对应。
+// defaultOpsMenus 运维域菜单:五个一级分组(81-85)+页面(86-101),
+// Name/Path/Authority 与前端 ops.tsx 顶级分组静态路由一一对应
+// (分组节点无 path,页面挂 /ops/<page>)。
 func defaultOpsMenus() []*permissionV1.Menu {
 	now := timeutil.TimeToTimestamppb(trans.Ptr(time.Now()))
-	op := func(id uint32, name, path, title, icon, authority string) *permissionV1.Menu {
-		m := &permissionV1.Menu{
+
+	group := func(id uint32, name, title, icon string, order int32, authority []string) *permissionV1.Menu {
+		return &permissionV1.Menu{
 			Id:        trans.Ptr(id),
-			ParentId:  trans.Ptr(uint32(80)),
-			Type:      permissionV1.Menu_MENU.Enum(),
+			ParentId:  nil,
+			Type:      permissionV1.Menu_CATALOG.Enum(),
 			Name:      trans.Ptr(name),
-			Path:      trans.Ptr(path),
+			Path:      trans.Ptr(""),
 			Component: trans.Ptr("BasicLayout"),
 			Status:    permissionV1.Menu_ON.Enum(),
 			CreatedAt: now,
 			Meta: &permissionV1.MenuMeta{
 				Title:     trans.Ptr(title),
 				Icon:      trans.Ptr(icon),
-				Order:     trans.Ptr(int32(id - 80)),
+				Order:     trans.Ptr(order),
+				Authority: authority,
+			},
+		}
+	}
+	page := func(id uint32, groupId uint32, name, title, icon, authority string) *permissionV1.Menu {
+		return &permissionV1.Menu{
+			Id:        trans.Ptr(id),
+			ParentId:  trans.Ptr(groupId),
+			Type:      permissionV1.Menu_MENU.Enum(),
+			Name:      trans.Ptr(name),
+			Path:      trans.Ptr("/ops/" + name),
+			Component: trans.Ptr("BasicLayout"),
+			Status:    permissionV1.Menu_ON.Enum(),
+			CreatedAt: now,
+			Meta: &permissionV1.MenuMeta{
+				Title:     trans.Ptr(title),
+				Icon:      trans.Ptr(icon),
+				Order:     trans.Ptr(int32(id - 85)),
 				Authority: []string{authority},
 			},
 		}
-		return m
+	}
+	g81 := group(81, "ops-resource", "routes:opsResource", "lucide:hard-drive", 1,
+		[]string{OpsNodeManagePermissionCode, OpsProjectManagePermissionCode})
+	g82 := group(82, "ops-cicd", "routes:opsCicd", "lucide:package", 2,
+		[]string{OpsBuildManagePermissionCode, OpsDistributePermissionCode})
+	g83 := group(83, "ops-auto", "routes:opsAuto", "lucide:bot", 3,
+		[]string{OpsScriptManagePermissionCode, OpsNodeManagePermissionCode})
+	g84 := group(84, "ops-observe", "routes:opsObserve", "lucide:gauge", 4,
+		[]string{SystemPlatformAdminPermissionCode})
+	g85 := group(85, "ops-govern", "routes:opsGovern", "lucide:shield-check", 5,
+		[]string{SystemPlatformAdminPermissionCode, OpsNodeManagePermissionCode})
+
+	pages := []*permissionV1.Menu{
+		page(86, 81, "agent-nodes", "routes:agent-nodes", "lucide:monitor-dot", OpsNodeManagePermissionCode),
+		page(87, 81, "terminal", "routes:terminal", "lucide:terminal", OpsNodeManagePermissionCode),
+		page(88, 81, "file-manager", "routes:file-manager", "lucide:folder-tree", OpsNodeManagePermissionCode),
+		page(89, 81, "projects", "routes:projects", "lucide:folder-open", OpsProjectManagePermissionCode),
+		page(90, 82, "repositories", "routes:repositories", "lucide:git-branch", OpsBuildManagePermissionCode),
+		page(91, 82, "builds", "routes:builds", "lucide:hammer", OpsBuildManagePermissionCode),
+		page(92, 82, "pipelines", "routes:pipelines", "lucide:workflow", OpsBuildManagePermissionCode),
+		page(93, 82, "distributions", "routes:distributions", "lucide:send", OpsDistributePermissionCode),
+		page(94, 83, "scripts", "routes:scripts", "lucide:file-code", OpsScriptManagePermissionCode),
+		page(95, 83, "plugins", "routes:plugins", "lucide:puzzle", OpsNodeManagePermissionCode),
+		page(96, 84, "monitors", "routes:monitors", "lucide:activity", SystemPlatformAdminPermissionCode),
+		page(97, 84, "alerts", "routes:alerts", "lucide:bell", SystemPlatformAdminPermissionCode),
+		page(98, 84, "notification-channels", "routes:notification-channels", "lucide:radio", SystemPlatformAdminPermissionCode),
+		page(99, 85, "approvals", "routes:approvals", "lucide:check-circle", SystemPlatformAdminPermissionCode),
+		page(100, 85, "command-records", "routes:command-records", "lucide:scroll-text", OpsNodeManagePermissionCode),
+		page(101, 85, "api-keys", "routes:api-keys", "lucide:key-round", SystemPlatformAdminPermissionCode),
 	}
 
-	menu := func(items ...*permissionV1.Menu) []*permissionV1.Menu { return items }
-
-	catalog := &permissionV1.Menu{
-		Id:        trans.Ptr(uint32(80)),
-		ParentId:  nil,
-		Type:      permissionV1.Menu_CATALOG.Enum(),
-		Name:      trans.Ptr("ops"),
-		Path:      trans.Ptr("/ops"),
-		Component: trans.Ptr("BasicLayout"),
-		Status:    permissionV1.Menu_ON.Enum(),
-		CreatedAt: now,
-		Meta: &permissionV1.MenuMeta{
-			Title:     trans.Ptr("routes:ops"),
-			Icon:      trans.Ptr("lucide:server"),
-			Order:     trans.Ptr(int32(2004)),
-			Authority: []string{OpsNodeManagePermissionCode, OpsProjectManagePermissionCode, OpsBuildManagePermissionCode, OpsDistributePermissionCode},
-		},
-	}
-
-	return menu(catalog,
-		op(81, "agent-nodes", "/ops/agent-nodes", "routes:agent-nodes", "lucide:monitor-dot", OpsNodeManagePermissionCode),
-		op(82, "terminal", "/ops/terminal", "routes:terminal", "lucide:terminal", OpsNodeManagePermissionCode),
-		op(83, "projects", "/ops/projects", "routes:projects", "lucide:folder-open", OpsProjectManagePermissionCode),
-		op(84, "scripts", "/ops/scripts", "routes:scripts", "lucide:file-code", OpsScriptManagePermissionCode),
-		op(85, "repositories", "/ops/repositories", "routes:repositories", "lucide:git-branch", OpsBuildManagePermissionCode),
-		op(86, "builds", "/ops/builds", "routes:builds", "lucide:hammer", OpsBuildManagePermissionCode),
-		op(87, "pipelines", "/ops/pipelines", "routes:pipelines", "lucide:workflow", OpsBuildManagePermissionCode),
-		op(88, "distributions", "/ops/distributions", "routes:distributions", "lucide:send", OpsDistributePermissionCode),
-		op(89, "command-records", "/ops/command-records", "routes:command-records", "lucide:scroll-text", OpsNodeManagePermissionCode),
-		op(90, "file-manager", "/ops/file-manager", "routes:file-manager", "lucide:folder-tree", OpsNodeManagePermissionCode),
-		op(91, "monitors", "/ops/monitors", "routes:monitors", "lucide:activity", SystemPlatformAdminPermissionCode),
-		op(92, "alerts", "/ops/alerts", "routes:alerts", "lucide:bell", SystemPlatformAdminPermissionCode),
-		op(93, "notification-channels", "/ops/notification-channels", "routes:notification-channels", "lucide:radio", SystemPlatformAdminPermissionCode),
-		op(94, "approvals", "/ops/approvals", "routes:approvals", "lucide:check-circle", SystemPlatformAdminPermissionCode),
-		op(95, "api-keys", "/ops/api-keys", "routes:api-keys", "lucide:key-round", SystemPlatformAdminPermissionCode),
-		op(96, "plugins", "/ops/plugins", "routes:plugins", "lucide:puzzle", OpsNodeManagePermissionCode),
-	)
+	return append([]*permissionV1.Menu{g81, g82, g83, g84, g85}, pages...)
 }
