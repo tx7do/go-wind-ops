@@ -23,6 +23,7 @@ import (
 	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils/converter"
+	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 )
 
 type PermissionService struct {
@@ -77,7 +78,7 @@ func (s *PermissionService) init() {
 		menusCount, _ := s.menuServiceClient.Count(ctx, nil)
 
 		if apiCount != nil && apiCount.Count > 0 && menusCount != nil && menusCount.Count > 0 {
-			_, _ = s.SyncPermissions(ctx, &emptypb.Empty{})
+			_, _ = s.syncPermissionsInternal(ctx)
 		}
 	}
 }
@@ -187,6 +188,11 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 }
 
 func (s *PermissionService) Create(ctx context.Context, req *permissionV1.CreatePermissionRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -203,6 +209,11 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 }
 
 func (s *PermissionService) Update(ctx context.Context, req *permissionV1.UpdatePermissionRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -224,16 +235,28 @@ func (s *PermissionService) Update(ctx context.Context, req *permissionV1.Update
 }
 
 func (s *PermissionService) Delete(ctx context.Context, req *permissionV1.DeletePermissionRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	return s.permissionServiceClient.Delete(ctx, req)
 }
 
-// SyncPermissions 同步权限点
+// SyncPermissions 同步权限点(公开入口:平台管理员权限码门;启动自同步走
+// syncPermissionsInternal,不经操作者鉴权)。
 func (s *PermissionService) SyncPermissions(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
 		return nil, err
 	}
+	return s.syncPermissionsInternal(ctx)
+}
+
+func (s *PermissionService) syncPermissionsInternal(ctx context.Context) (*emptypb.Empty, error) {
+	// 同步归属:启动自同步无操作者,记系统(0);公开入口经操作者门后进入,
+	// 审计差异可由调用方日志区分。
+	operator := &authenticationV1.UserTokenPayload{UserId: 0}
 
 	// 查询所有启用的菜单
 	menus, err := s.menuServiceClient.List(ctx, &paginationV1.PagingRequest{

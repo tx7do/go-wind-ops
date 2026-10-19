@@ -247,6 +247,11 @@ func (s *Service) handleProjectLog(_ context.Context, env *signal.CommandEnvelop
 	if payload.Dir == "" || payload.ProjectId == 0 {
 		return nil, fmt.Errorf("payload.dir/project_id are required")
 	}
+	// 项目域 handler 统一过授权目录校验,日志读取不豁免(防 project_dir 被指向
+	// 系统目录/UNC 后读取任意同名文件)。
+	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: payload.Dir}); err != nil {
+		return nil, err
+	}
 
 	maxBytes := payload.MaxBytes
 	if maxBytes <= 0 {
@@ -313,6 +318,10 @@ func (s *Service) handleProjectLogClear(_ context.Context, env *signal.CommandEn
 	}
 	if payload.Dir == "" {
 		return nil, fmt.Errorf("payload.dir is required")
+	}
+	// 同 handleProjectLog:清空动作更敏感,必须过授权目录校验。
+	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: payload.Dir}); err != nil {
+		return nil, err
 	}
 
 	if err := os.Truncate(filepath.Join(payload.Dir, logFileName), 0); err != nil && !os.IsNotExist(err) {

@@ -9,6 +9,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ScriptBatchService 脚本批量执行门面:透传 core 的 ScriptBatchService。
@@ -39,6 +40,11 @@ func (s *ScriptBatchService) Get(ctx context.Context, req *opsV1.GetScriptBatchR
 }
 
 func (s *ScriptBatchService) BatchExec(ctx context.Context, req *opsV1.ExecuteScriptBatchRequest) (*opsV1.ExecuteScriptBatchResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	// 即席命令模式(command+agent_ids)与脚本模式(script_id+node_ids)二选一
 	valid := req != nil && (
 		(req.GetCommand() != "" && (len(req.GetAgentIds()) > 0 || len(req.GetNodeIds()) > 0)) ||

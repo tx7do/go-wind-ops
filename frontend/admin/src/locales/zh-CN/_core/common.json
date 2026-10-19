@@ -150,6 +150,8 @@
       "FILE_NOT_FOUND": "文件不存在",
       "FILE_TOO_LARGE": "文件过大",
       "FORBIDDEN": "没有权限执行此操作",
+      "DANGEROUS_COMMAND_CONFIRM": "命令命中危险操作模式,需要二次确认后重新执行",
+      "APPROVAL_REQUIRED": "操作已创建审批单,等待审批人确认后执行",
       "GATEWAY_TIMEOUT": "网关超时",
       "GONE": "资源已删除",
       "HTTP_VERSION_NOT_SUPPORTED": "不支持的 HTTP 版本",

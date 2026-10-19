@@ -641,32 +641,46 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 		}
 	}()
 
+	// 关系型字段(角色/组织/岗位)只允许显式出现在 update_mask 中才生效——
+	// 否则任何能触达 Update 的调用方(如 C 端自助资料更新)都能靠在 body 里
+	// 塞 roleIds 完成提权。掩码键兼容前端驼峰(roleIds)与 proto 下划线(role_ids)。
+	maskPaths := req.GetUpdateMask().GetPaths()
+	allowRoles := maskHas(maskPaths, "role_ids", "roleIds")
+	allowOrgUnits := maskHas(maskPaths, "org_unit_ids", "orgUnitIds")
+	allowPositions := maskHas(maskPaths, "position_ids", "positionIds")
+
 	var roleIds []uint32
-	if len(req.Data.GetRoleIds()) > 0 {
-		roleIds = req.Data.GetRoleIds()
+	if allowRoles {
+		if len(req.Data.GetRoleIds()) > 0 {
+			roleIds = req.Data.GetRoleIds()
+		}
+		if req.Data.RoleId != nil && *req.Data.RoleId > 0 {
+			roleIds = append(roleIds, *req.Data.RoleId)
+		}
+		roleIds = sliceutil.Unique(roleIds)
 	}
-	if req.Data.RoleId != nil && *req.Data.RoleId > 0 {
-		roleIds = append(roleIds, *req.Data.RoleId)
-	}
-	roleIds = sliceutil.Unique(roleIds)
 
 	var orgUnitIds []uint32
-	if len(req.Data.GetOrgUnitIds()) > 0 {
-		orgUnitIds = req.Data.GetOrgUnitIds()
+	if allowOrgUnits {
+		if len(req.Data.GetOrgUnitIds()) > 0 {
+			orgUnitIds = req.Data.GetOrgUnitIds()
+		}
+		if req.Data.OrgUnitId != nil && *req.Data.OrgUnitId > 0 {
+			orgUnitIds = append(orgUnitIds, *req.Data.OrgUnitId)
+		}
+		orgUnitIds = sliceutil.Unique(orgUnitIds)
 	}
-	if req.Data.OrgUnitId != nil && *req.Data.OrgUnitId > 0 {
-		orgUnitIds = append(orgUnitIds, *req.Data.OrgUnitId)
-	}
-	orgUnitIds = sliceutil.Unique(orgUnitIds)
 
 	var positionIds []uint32
-	if len(req.Data.GetPositionIds()) > 0 {
-		positionIds = req.Data.GetPositionIds()
+	if allowPositions {
+		if len(req.Data.GetPositionIds()) > 0 {
+			positionIds = req.Data.GetPositionIds()
+		}
+		if req.Data.PositionId != nil && *req.Data.PositionId > 0 {
+			positionIds = append(positionIds, *req.Data.PositionId)
+		}
+		positionIds = sliceutil.Unique(positionIds)
 	}
-	if req.Data.PositionId != nil && *req.Data.PositionId > 0 {
-		positionIds = append(positionIds, *req.Data.PositionId)
-	}
-	positionIds = sliceutil.Unique(positionIds)
 
 	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
 		"role_ids",
@@ -1257,4 +1271,16 @@ func (r *userRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, e
 	case constants.UserTenantRelationOneToMany:
 		return r.membershipRepo.ListUserIDsByRoleIDs(ctx, roleIDs, excludeExpired)
 	}
+}
+
+// maskHas 判断 update_mask 路径中是否含任一给定键(兼容驼峰/下划线两种书写)。
+func maskHas(paths []string, keys ...string) bool {
+	for _, p := range paths {
+		for _, k := range keys {
+			if p == k {
+				return true
+			}
+		}
+	}
+	return false
 }

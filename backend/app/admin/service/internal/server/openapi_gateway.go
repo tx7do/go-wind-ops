@@ -15,6 +15,12 @@
 package server
 
 import (
+	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/hex"
+	"os"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -134,7 +140,26 @@ func (g *OpenApiGateway) trigger(w http.ResponseWriter, r *http.Request, kind st
 
 // gitWebhook Git push webhook:解析 ref 字段(GitHub/GitLab/Gitea 通用格式
 // refs/heads/<branch>),query branch 提供时按分支过滤,命中即触发构建。
+// 配置了 OPENAPI_GIT_WEBHOOK_SECRET 时强制校验 X-Signature: sha256=<HMAC-SHA256(body)>
+// (GitHub/Gitea 兼容的签名格式),防止 webhook 端点被无密钥方刷触发。
 func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, buildId uint32) {
+	if secret := os.Getenv("OPENAPI_GIT_WEBHOOK_SECRET"); secret != "" {
+		body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
+		if err != nil {
+			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "read body failed")
+			return
+		}
+		_ = r.Body.Close()
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		mac := hmac.New(sha256.New, []byte(secret))
+		mac.Write(body)
+		expect := "sha256=" + hex.EncodeToString(mac.Sum(nil))
+		if subtle.ConstantTimeCompare([]byte(expect), []byte(r.Header.Get("X-Signature"))) != 1 {
+			writeJsonError(w, http.StatusUnauthorized, "INVALID_SIGNATURE", "webhook signature mismatch")
+			return
+		}
+	}
+
 	// 分支过滤(可选)
 	filterBranch := r.URL.Query().Get("branch")
 	if filterBranch != "" {

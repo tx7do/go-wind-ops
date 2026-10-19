@@ -61,7 +61,29 @@
 
 约定：QoS 1 + JSON 序列化；`request_id`（UUID）为幂等键，回执原样带回；core 上行订阅全部走 `$share/core/` 共享订阅（多副本负载均衡）；指令 action 用小写下划线枚举（现有 `ping`），新增动作在 agent 侧 `RegisterHandler` 注册。agent 未认证前每 5 秒重发准入请求（规避与 core 的启动顺序竞争）。
 
-准入模型（当前）：SHA-256(token) 与 `ops_agent_nodes.token_hash` 一致放行；agent 首次出现按 TOFU 落库。**预留升级位**：EMQX webhook 认证/ACL 独立组件 + STS 短令牌轮换。
+准入模型（当前）：SHA-256(token) 与 `ops_agent_nodes.token_hash` 一致放行；agent 首次出现按 TOFU 落库。
+
+**Broker 级认证 + ACL（已启用，compose 默认开）**：EMQX 以 HTTP 认证/授权回调 core 的最小 REST（`core/internal/server/mqtt_auth_server.go`，:9500）：
+- `/api/v1/mqtt/auth`——username=`core` 比对 core 配置的 MQTT 账密；username=agentId 校验 SHA-256(口令) 与 token_hash（**agent 以本机 token 作为 MQTT 口令连接**，首次 CONNECT 按 TOFU 注册，与信令层准入同表同 token）。
+- `/api/v1/mqtt/acl`——core 放行 `ops/` 全部；agent 仅 `ops/agent/{自身用户名}/#`（`$share` 前缀剥壳后判定）；未命中一律 deny。
+- compose 用 `EMQX_AUTHENTICATION__1__*` / `EMQX_AUTHORIZATION__SOURCES__1__*` 环境变量装配（BODY 模板里 `$$` 是 compose 转义）；EMQX 在容器、core 在宿主机时走 `host.docker.internal:9500`（注意放行防火墙）。
+- TLS：两端 server.yaml 的 `server.mqtt.tls`（`ssl://` 端点 + `insecure_skip_verify` 或 `file.ca_path`），dev 自签可 skip，生产配 CA。**遗留升级位**：STS 短令牌轮换。
+
+**权限码点查防线（2026-10-20）**：全站 authz 引擎为 noop（admin/front `data.NewAuthorizer()→noop.State{}`，角色→API 策略无数据通道），中间件层鉴权空转——真实防线是：
+- admin BFF 门面的 **PermissionGuard 权限码点查**（`internal/service/permguard.go`，wiring 一次性注入）：31 个触发/敏感入口在方法头校验权限码（脚本执行/构建/分发/流水线 trigger、commands:send、升级收发、项目 Operate/ClearLog、文件域全部、备份触发与记录下载、配置下发、api-key 变更、审批裁决、用户增删改、角色增删改）。**码表限用已播种权限码**：ops:node_manage/project_manage/script_manage/build_manage/distribute + sys:platform_admin/sys:tenant_manager；新码须先入库播种再上门。
+- 两个 WS 端点 + 终端审计接口：握手/方法期点查（`internal/authzcheck`）。
+- core `SendCommand` 仅放行 ping（通用透传面收敛为白名单）。
+- 用户关系型字段（角色/组织/岗位）仅当 update_mask 显式包含才生效（`user_repo.Update`，兼容驼峰/下划线键）；front BFF 自助资料更新按字段白名单重建请求。
+- **真 authz 引擎已装配（2026-10-20,`AUTHZ_MODE` 三档,默认 shadow 影子模式）**：casbin 真实评估"角色→API"策略——数据通道在 `data/authz_engine.go`（角色列表 × 逐角色 `ListPermissionResources([API])` × API 表,method 统一转大写——OpenAPI 入库是小写、请求侧是大写,不转全误报）,每 5 分钟热载。`shadow`=拒绝只打 `[authz-shadow] would DENY` 日志不拦截;`enforce`=真拦截（策略加载失败 fail-closed 全拒）;`noop`=旧行为。**切 enforce 的前提**：在角色管理里配齐"角色→API"授权数据,并观察 shadow 日志无误杀。点查 PermissionGuard 与真引擎并存（点查是兜底细粒度,引擎是全量面）。- **审批闸门已接线（2026-10-20,`APPROVAL_REQUIRED_ACTIONS` 环境变量,默认空=不启用）**：配置如 `agent_upgrade,script_exec,plugin_exec`——命中动作在派发前建 PENDING 审批单并返回 403（reason=`APPROVAL_REQUIRED`,message 含审批单号）,审批人（Approve,`sys:platform_admin` 门）确认后重下发存储载荷并 MarkExecuted 闭环。仅接单目标动作（agent_upgrade/script_exec/plugin_exec）——批量/多目标与"审批单重放到单一 agent"模型不匹配,其防线是触发面权限码+危险命令确认。闸门实现 `approval_gate.go`,接线点 ScriptService.Execute/UpgradeAgent/PluginService.Exec。仓库凭据 CRUD→`ops:build_manage`。
+- **遗留大工程**：API key 作用域/限流/归因、admin/app JWT 密钥分离、front BFF 真 authz（front 仍 noop,但其路由仅登录/个人资料）。
+
+**配置面与身份面收口（2026-10-20 第三批）**：权限码门从"触发面"扩展到"配置面"——**定义执行内容的 CRUD 与触发入口同码**：脚本/流水线 CRUD→`ops:script_manage`、分发 CRUD→`ops:distribute`、构建 CRUD→`ops:build_manage`、配置模板 CRUD→`ops:project_manage`（防"改内容等他人触发"的内容投毒链）；补三个漏门：插件执行/清单（`ops:node_manage`）、日志快照 Capture/Delete、巡检 Run（`ops:project_manage`）；监控 CRUD→`ops:project_manage`。身份面：菜单/权限点 CRUD+SyncPermissions、租户 CRUD、API 表同步→`sys:platform_admin`，组织单元 CRUD→`sys:tenant_manager`（**启动自同步已抽内部方法绕过公开入口的门**，见 api_service/permission_service 的 init）。通知渠道 CRUD→`sys:platform_admin` + webhook URL 基础校验（仅 http/https,拒环回/元数据地址）。项目日志 WS 与终端 WS 统一走一次性票据（kind=project-log,绑定 projectId）。
+
+**目标机器执行面加固（2026-10-20 第二批）**：
+- 终端握手改 **30 秒一次性票据**（`/admin/v1/ws/terminal/tickets` 换票 → WS `?ticket=` GETDEL 消费）：长效 accessToken 不再进握手 URL；签发期做 token+`ops:node_manage`+agentId 绑定校验。
+- file_write/push 写出前**符号链接复核**（目标 Lstat 拒链接 + 父目录 EvalSymlinks 后重过 checkDir）；插件 .bat/.cmd 参数含 cmd 元字符（`"%&|<>^!`）直接拒绝；zip 条目补 Windows 盘符绝对路径检查。
+- 预签名直传直拉**出站主机白名单**：`AGENT_DOWNLOAD_ALLOWED_HOSTS`（env,逗号分隔 host），在 `pkg/filetransfer` 唯一出口收口；未配置不限制（dev），生产必须配置为 MinIO host。
+- 项目 stop 的 pid 文件兜底杀树为**设计性遗留**：项目启停命令本就是任意 shell、终端本就是完整 shell，pid 投毒不构成超出设计能力的提升；如需收紧要做进程属主追踪（跨平台成本高）。
 
 大文件传输：core 经 `pkg/oss.MinIOClient` 签发预签名 URL → 信令下发 → agent 经 `pkg/filetransfer`（`UploadFileToPresignedURL`/`DownloadToFile`，流式+SHA-256 对账）直传直拉。
 
@@ -148,7 +170,7 @@ docker compose -f docker-compose.libs.yaml up -d   # 仅中间件
 ```
 
 - 本地依赖：PostgreSQL(5432, postgres/*Abcd123456, 库名 wind_ops)、Redis(6379, *Abcd123456)、MinIO(9000/9001, root/*Abcd123456)、etcd(2379)、EMQX(1883/18083, admin/public)、Jaeger(16686)
-- MQTT 凭据：core/agent 的 server.yaml 默认 `core/core-pass`、`agent/agent-pass`——**EMQX 未开认证时可任意连接；生产须启用 EMQX 认证并同步改配置**
+- MQTT 凭据：core 的 server.yaml 默认 `core/core-pass`（EMQX 认证回调比对，生产务必改掉）；**agent 不再配静态账密**——进程以自身身份（username=agentId、password=本机 auth.token）连接，EMQX 认证/ACL 由 compose 环境变量启用并回调 core :9500 webhook。调试注入指令用 `tools/mqtt-pub`（须带 `-username core -password core-pass`）
 - 冒烟顺序：起 libs → 起 core → 起 agent（配置 `AGENT_ALLOWED_DIRS`，日志出现 enrolled/authenticated）→ 起 admin（可设 `ADMIN_CAPTCHA_DISABLED=true`）→ `pass-enc` 加密密码登录 → `GET /admin/v1/agent-nodes` 应见节点 → 建项目 → `operations:send` START/STATUS/STOP，项目 lastStatus 随之变化，进程被真实拉起/终止 → `GET /admin/v1/command-records` 台账含每条指令的终态与结果；目录越权的操作在台账中为 FAILED
 
 ## 代码风格

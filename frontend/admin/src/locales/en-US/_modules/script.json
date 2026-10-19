@@ -39,5 +39,9 @@
   "batchNodeRequired": "Select at least one node",
   "batchHint": "Dispatched per node; check results on the Script Batches page. Offline nodes will fail",
   "batchSent": "Batch triggered: {{dispatched}} dispatched, {{failed}} failed",
-  "nodeOffline": "offline"
+  "nodeOffline": "offline",
+  "dangerousTitle": "Dangerous script detected",
+  "dangerousContent": "The script matches catastrophic operation patterns (root deletion, disk formatting, shutdown/reboot, etc.) and may cause irreversible damage. Double-check the script before confirming.",
+  "dangerousConfirm": "I understand, run anyway",
+  "dangerousCancel": "Cancel"
 }

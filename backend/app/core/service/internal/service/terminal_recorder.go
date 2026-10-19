@@ -6,6 +6,9 @@ package service
 import (
 	"context"
 	"encoding/base64"
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -26,6 +29,48 @@ const (
 	terminalRecordQueueDepth = 1024
 )
 
+// ── 录制策略(环境变量,启动时读取一次) ──
+//
+// 终端录制含键盘按键明文(可能带用户在 shell 里敲的密码),属敏感留存:
+//   TERMINAL_RECORD_ENABLED=false        整体关闭录制(默认开)
+//   TERMINAL_RECORD_INPUT=false          不录键盘输入(默认录)
+//   TERMINAL_RECORD_OUTPUT=false         不录回显输出(默认录)
+//   TERMINAL_RETENTION_DAYS=30           录制留存天数,0=永久(默认 30)
+
+type terminalRecordPolicy struct {
+	enabled bool
+	input   bool
+	output  bool
+}
+
+var (
+	terminalRecordPolicyOnce  sync.Once
+	terminalRecordPolicyValue terminalRecordPolicy
+)
+
+func getTerminalRecordPolicy() terminalRecordPolicy {
+	terminalRecordPolicyOnce.Do(func() {
+		terminalRecordPolicyValue = terminalRecordPolicy{
+			enabled: envBool("TERMINAL_RECORD_ENABLED", true),
+			input:   envBool("TERMINAL_RECORD_INPUT", true),
+			output:  envBool("TERMINAL_RECORD_OUTPUT", true),
+		}
+	})
+	return terminalRecordPolicyValue
+}
+
+func envBool(key string, def bool) bool {
+	v := strings.TrimSpace(os.Getenv(key))
+	if v == "" {
+		return def
+	}
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return def
+	}
+	return b
+}
+
 // TerminalRecorder 单个活跃终端会话的录制器实例。
 // 由 TerminalService.Channel 在会话建立时构造,流结束时 Close。
 type TerminalRecorder struct {
@@ -33,6 +78,8 @@ type TerminalRecorder struct {
 	sessionRepo  *data.TerminalSessionRepo
 	chunkRepo    *data.TerminalChunkRepo
 	log          *log.Helper
+
+	policy terminalRecordPolicy
 
 	seq       atomic.Int64
 	inputB    atomic.Int64
@@ -48,10 +95,13 @@ type TerminalRecorder struct {
 	wg     sync.WaitGroup
 }
 
-// NewTerminalRecorder 建会话行并启动异步刷盘 goroutine;建行失败返回
-// nil(调用方判空跳过录制)。
+// NewTerminalRecorder 建会话行并启动异步刷盘 goroutine;整体录制关闭或
+// 建行失败返回 nil(调用方判空跳过录制)。
 func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionRepo, chunkRepo *data.TerminalChunkRepo, log *log.Helper, sessionId, agentId string, nodeID, operatorID uint32) *TerminalRecorder {
 	if sessionRepo == nil || chunkRepo == nil {
+		return nil
+	}
+	if !getTerminalRecordPolicy().enabled {
 		return nil
 	}
 	row, err := sessionRepo.Create(ctx, sessionId, agentId, nodeID, operatorID)
@@ -64,6 +114,7 @@ func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionR
 		sessionRepo:  sessionRepo,
 		chunkRepo:    chunkRepo,
 		log:          log,
+		policy:       getTerminalRecordPolicy(),
 		pending:      make(chan *ent.TerminalChunk, terminalRecordQueueDepth),
 		done:         make(chan struct{}),
 	}
@@ -80,6 +131,12 @@ func (r *TerminalRecorder) Output(data []byte) { r.record(terminalchunk.Directio
 
 func (r *TerminalRecorder) record(dir terminalchunk.Direction, data []byte) {
 	if r == nil || len(data) == 0 || r.truncated.Load() {
+		return
+	}
+	if dir == terminalchunk.DirectionInput && !r.policy.input {
+		return
+	}
+	if dir == terminalchunk.DirectionOutput && !r.policy.output {
 		return
 	}
 	total := r.inputB.Load() + r.outputB.Load() + int64(len(data))

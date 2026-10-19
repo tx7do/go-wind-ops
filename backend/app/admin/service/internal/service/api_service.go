@@ -20,6 +20,7 @@ import (
 
 	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/middleware/auth"
+	"go-wind-ops/pkg/constants"
 )
 
 type RouteWalker interface {
@@ -52,7 +53,8 @@ func NewApiService(
 func (s *ApiService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
 	if resp, _ := s.apiServiceClient.Count(ctx, nil); resp != nil && resp.Count == 0 {
-		if _, serr := s.SyncApis(ctx, &emptypb.Empty{}); serr != nil {
+		// 启动自同步走内部实现,绕过公开入口的权限码门(启动期无操作者)
+		if serr := s.syncWithOpenAPI(ctx); serr != nil {
 			s.log.Errorf("startup sync apis failed: %v", serr)
 		}
 	}
@@ -124,6 +126,11 @@ func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequ
 }
 
 func (s *ApiService) SyncApis(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if err := s.syncWithOpenAPI(ctx); err != nil {
 		return nil, err
 	}

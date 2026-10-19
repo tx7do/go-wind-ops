@@ -400,10 +400,13 @@ type ExecuteScriptRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 脚本ID
 	// 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-	NodeId        *uint32 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`   // 目标节点ID
-	AgentId       *string `protobuf:"bytes,3,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 目标机器唯一标识
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	NodeId  *uint32 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`   // 目标节点ID
+	AgentId *string `protobuf:"bytes,3,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 目标机器唯一标识
+	// 危险命令确认:脚本内容命中危险模式时必须显式置 true 才放行
+	// (自动化调用方——流水线/定时脚本——由服务端内部置 true)。
+	ConfirmDangerous *bool `protobuf:"varint,4,opt,name=confirm_dangerous,json=confirmDangerous,proto3,oneof" json:"confirm_dangerous,omitempty"` // 危险命令已确认
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ExecuteScriptRequest) Reset() {
@@ -457,6 +460,13 @@ func (x *ExecuteScriptRequest) GetAgentId() string {
 	return ""
 }
 
+func (x *ExecuteScriptRequest) GetConfirmDangerous() bool {
+	if x != nil && x.ConfirmDangerous != nil {
+		return *x.ConfirmDangerous
+	}
+	return false
+}
+
 type ExecuteScriptResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // 幂等键,结果见指令台账
@@ -508,8 +518,10 @@ type ExecuteScriptBatchRequest struct {
 	Command        *string                `protobuf:"bytes,3,opt,name=command,proto3,oneof" json:"command,omitempty"`                                      // 即席命令内容(script_id=0 时必填,为多台机器批量执行同一条命令)
 	AgentIds       []string               `protobuf:"bytes,4,rep,name=agent_ids,json=agentIds,proto3" json:"agent_ids,omitempty"`                          // 目标机器标识列表(免 node 换算,与 node_ids 二选一)
 	TimeoutSeconds *uint32                `protobuf:"varint,5,opt,name=timeout_seconds,json=timeoutSeconds,proto3,oneof" json:"timeout_seconds,omitempty"` // 单台命令超时秒(仅即席命令生效,默认 60)
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// 危险命令确认:命令/脚本内容命中危险模式时必须显式置 true 才放行。
+	ConfirmDangerous *bool `protobuf:"varint,6,opt,name=confirm_dangerous,json=confirmDangerous,proto3,oneof" json:"confirm_dangerous,omitempty"` // 危险命令已确认
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ExecuteScriptBatchRequest) Reset() {
@@ -575,6 +587,13 @@ func (x *ExecuteScriptBatchRequest) GetTimeoutSeconds() uint32 {
 		return *x.TimeoutSeconds
 	}
 	return 0
+}
+
+func (x *ExecuteScriptBatchRequest) GetConfirmDangerous() bool {
+	if x != nil && x.ConfirmDangerous != nil {
+		return *x.ConfirmDangerous
+	}
+	return false
 }
 
 type ExecuteScriptBatchResponse struct {
@@ -1059,28 +1078,32 @@ const file_ops_service_v1_script_proto_rawDesc = "" +
 	"updateMask\"6\n" +
 	"\x13DeleteScriptRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\x8c\x01\n" +
+	"\x03_id\"\xd9\x01\n" +
 	"\x14ExecuteScriptRequest\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12!\n" +
 	"\anode_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\x06nodeId\x88\x01\x01\x12#\n" +
-	"\bagent_id\x18\x03 \x01(\tB\x03\xe0A\x01H\x01R\aagentId\x88\x01\x01B\n" +
+	"\bagent_id\x18\x03 \x01(\tB\x03\xe0A\x01H\x01R\aagentId\x88\x01\x01\x125\n" +
+	"\x11confirm_dangerous\x18\x04 \x01(\bB\x03\xe0A\x01H\x02R\x10confirmDangerous\x88\x01\x01B\n" +
 	"\n" +
 	"\b_node_idB\v\n" +
-	"\t_agent_id\"6\n" +
+	"\t_agent_idB\x14\n" +
+	"\x12_confirm_dangerous\"6\n" +
 	"\x15ExecuteScriptResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\"\xf0\x01\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xb8\x02\n" +
 	"\x19ExecuteScriptBatchRequest\x12 \n" +
 	"\tscript_id\x18\x01 \x01(\rH\x00R\bscriptId\x88\x01\x01\x12\x19\n" +
 	"\bnode_ids\x18\x02 \x03(\rR\anodeIds\x12\x1d\n" +
 	"\acommand\x18\x03 \x01(\tH\x01R\acommand\x88\x01\x01\x12\x1b\n" +
 	"\tagent_ids\x18\x04 \x03(\tR\bagentIds\x12,\n" +
-	"\x0ftimeout_seconds\x18\x05 \x01(\rH\x02R\x0etimeoutSeconds\x88\x01\x01B\f\n" +
+	"\x0ftimeout_seconds\x18\x05 \x01(\rH\x02R\x0etimeoutSeconds\x88\x01\x01\x120\n" +
+	"\x11confirm_dangerous\x18\x06 \x01(\bH\x03R\x10confirmDangerous\x88\x01\x01B\f\n" +
 	"\n" +
 	"_script_idB\n" +
 	"\n" +
 	"\b_commandB\x12\n" +
-	"\x10_timeout_seconds\"\xc6\x01\n" +
+	"\x10_timeout_secondsB\x14\n" +
+	"\x12_confirm_dangerous\"\xc6\x01\n" +
 	"\x1aExecuteScriptBatchResponse\x12\x1e\n" +
 	"\bbatch_id\x18\x01 \x01(\rH\x00R\abatchId\x88\x01\x01\x12\x1f\n" +
 	"\vrequest_ids\x18\x02 \x03(\tR\n" +

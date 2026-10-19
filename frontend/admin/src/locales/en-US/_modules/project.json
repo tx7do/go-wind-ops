@@ -57,5 +57,6 @@
   "logLive": "Live",
   "logLiveOn": "Live connected",
   "logLiveConnecting": "Connecting",
-  "tokenMissing": "Session lost, please reopen"
+  "tokenMissing": "Session lost, please reopen",
+  "ticketFailed": "Failed to obtain connection ticket, please retry"
 }

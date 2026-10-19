@@ -70,6 +70,11 @@ func (s *Service) handleDistApply(ctx context.Context, env *signal.CommandEnvelo
 		fmt.Fprintf(&output, "extracted %d file(s) from %s", deployed, payload.FileName)
 	default:
 		target := filepath.Join(payload.ProjectDir, payload.FileName)
+		// 目录逃逸复检:FileName 含 ..\ 等相对段时 Join 会折叠出 ProjectDir,
+		// 必须确认落点仍在白名单已校验的项目目录内(上游 artifact 键名不滤反斜杠)。
+		if !pathWithinDir(payload.ProjectDir, target) {
+			return nil, fmt.Errorf("deploy path %q escapes project dir", payload.FileName)
+		}
 		if err = copyFile(tmpPath, target); err != nil {
 			return nil, fmt.Errorf("deploy file: %w", err)
 		}
@@ -127,6 +132,10 @@ func extractZip(zipPath, targetDir string) (int, error) {
 	for _, f := range reader.File {
 		name := path.Clean(strings.ReplaceAll(f.Name, "\\", "/"))
 		if strings.HasPrefix(name, "..") || path.IsAbs(name) {
+			return deployed, fmt.Errorf("zip entry escapes target dir: %s", f.Name)
+		}
+		// Windows 盘符绝对条目("C:/x")在非 Windows 平台的 path.IsAbs 检不出来
+		if len(name) >= 2 && name[1] == ':' {
 			return deployed, fmt.Errorf("zip entry escapes target dir: %s", f.Name)
 		}
 		target := filepath.Join(targetAbs, filepath.FromSlash(name))
@@ -190,4 +199,20 @@ func copyFile(src, dst string) error {
 	defer out.Close()
 	_, err = io.Copy(out, in)
 	return err
+}
+
+// pathWithinDir 词法判定 target 是否落在 base 目录内(含 base 本身)。
+// 配合 checkDir 使用:checkDir 校验 base 处于授权目录,本函数保证拼装后的
+// 具体落点没有经相对段/分隔符技巧逃逸出 base。
+func pathWithinDir(base, target string) bool {
+	absBase, err1 := filepath.Abs(filepath.Clean(base))
+	absTarget, err2 := filepath.Abs(filepath.Clean(target))
+	if err1 != nil || err2 != nil {
+		return false
+	}
+	rel, err := filepath.Rel(absBase, absTarget)
+	if err != nil {
+		return false
+	}
+	return rel == "." || (rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)))
 }

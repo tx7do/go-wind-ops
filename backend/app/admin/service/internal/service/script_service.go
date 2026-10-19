@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ScriptService 运维脚本管理门面:透传 core 的 ScriptService。
@@ -37,6 +38,11 @@ func (s *ScriptService) Get(ctx context.Context, req *opsV1.GetScriptRequest) (*
 }
 
 func (s *ScriptService) Create(ctx context.Context, req *opsV1.CreateScriptRequest) (*opsV1.Script, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *ScriptService) Create(ctx context.Context, req *opsV1.CreateScriptReque
 }
 
 func (s *ScriptService) Update(ctx context.Context, req *opsV1.UpdateScriptRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -53,6 +64,11 @@ func (s *ScriptService) Update(ctx context.Context, req *opsV1.UpdateScriptReque
 }
 
 func (s *ScriptService) Delete(ctx context.Context, req *opsV1.DeleteScriptRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.scriptServiceClient.DeleteScript(ctx, req)
 	if err != nil {
 		return nil, err
@@ -61,6 +77,11 @@ func (s *ScriptService) Delete(ctx context.Context, req *opsV1.DeleteScriptReque
 }
 
 func (s *ScriptService) Execute(ctx context.Context, req *opsV1.ExecuteScriptRequest) (*opsV1.ExecuteScriptResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

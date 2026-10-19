@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ConfigService 配置文件中心门面:透传 core。
@@ -40,6 +41,11 @@ func (s *ConfigService) Get(ctx context.Context, req *opsV1.GetConfigTemplateReq
 }
 
 func (s *ConfigService) Create(ctx context.Context, req *opsV1.CreateConfigTemplateRequest) (*opsV1.ConfigTemplate, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -47,6 +53,11 @@ func (s *ConfigService) Create(ctx context.Context, req *opsV1.CreateConfigTempl
 }
 
 func (s *ConfigService) Update(ctx context.Context, req *opsV1.UpdateConfigTemplateRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -56,6 +67,11 @@ func (s *ConfigService) Update(ctx context.Context, req *opsV1.UpdateConfigTempl
 }
 
 func (s *ConfigService) Delete(ctx context.Context, req *opsV1.DeleteConfigTemplateRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.configServiceClient.DeleteConfigTemplate(ctx, req)
 	if err != nil {
 		return nil, err
@@ -64,6 +80,11 @@ func (s *ConfigService) Delete(ctx context.Context, req *opsV1.DeleteConfigTempl
 }
 
 func (s *ConfigService) Distribute(ctx context.Context, req *opsV1.DistributeConfigRequest) (*opsV1.ConfigDistribution, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetTemplateId() == 0 || req.GetNodeId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: templateId/nodeId required")
 	}

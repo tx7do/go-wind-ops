@@ -59,8 +59,8 @@ backend/
 
 | 端点 | 说明 |
 |:---|:---|
-| `GET /ws/terminal?token=` | **WebSocket** 终端（浏览器 WS ↔ BFF ↔ core gRPC 双向流 ↔ MQTT ↔ agent 子进程；token 走查询参数） |
-| `/terminal-sessions` · `/terminal-sessions/chunks:search` | 终端会话审计（会话列表 / 分块检索，只读回放） |
+| `GET /ws/terminal?ticket=&agentId=` | **WebSocket** 终端（浏览器 WS ↔ BFF ↔ core gRPC 双向流 ↔ MQTT ↔ agent PTY；30 秒一次性票据握手——先 `POST /ws/terminal/tickets` 换票（Bearer token + `ops:node_manage` 权限码 + agentId 绑定），长效 token 不进 URL；操作者身份注入流元数据供审计归因） |
+| `/terminal-sessions` · `/terminal-sessions/chunks:search` | 终端会话审计（会话列表 / 分块检索，只读回放；要求 `sys:audit_logs` 权限码） |
 | `POST /file/list` · `/file/read` · `/file/write` · `/file/delete` | 文件管理（agent 授权目录白名单内；read 有 1MB 上限，大文件走 pull） |
 | `POST /file/pull` · `/file/push-url` · `/file/push` | 大文件三步链：预签名 PUT 中转 → 逐机拉取落盘 |
 
@@ -181,6 +181,6 @@ make lint && make vet && make test   # 提交前门禁，必须全绿
 
 ```bash
 go run ./tools/pass-enc admin   # 登录密码加密（AES-GCM + base64）
-go run ./tools/mqtt-pub -topic ops/agent/<agentId>/command \
+go run ./tools/mqtt-pub -username core -password core-pass -topic ops/agent/<agentId>/command \
   -payload '{"request_id":"t1","action":"ping"}'   # 手动注入 MQTT 指令
 ```

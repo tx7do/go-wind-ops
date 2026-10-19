@@ -57,5 +57,6 @@
   "logLive": "实时",
   "logLiveOn": "实时已连",
   "logLiveConnecting": "连接中",
-  "tokenMissing": "登录态丢失,请重新打开"
+  "tokenMissing": "登录态丢失,请重新打开",
+  "ticketFailed": "获取连接票据失败,请重试"
 }

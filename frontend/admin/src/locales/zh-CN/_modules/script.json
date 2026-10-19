@@ -39,5 +39,9 @@
   "batchNodeRequired": "请至少选择一个节点",
   "batchHint": "逐节点下发执行,结果在批量执行页查看;离线节点会执行失败",
   "batchSent": "批量执行已触发: 成功下发 {{dispatched}} 台,失败 {{failed}} 台",
-  "nodeOffline": "离线"
+  "nodeOffline": "离线",
+  "dangerousTitle": "检测到危险脚本",
+  "dangerousContent": "脚本内容命中灾难性操作模式(如根目录删除、格式化磁盘、关机重启等),可能造成不可逆破坏。请再次核对脚本内容后确认是否继续。",
+  "dangerousConfirm": "我已确认,继续执行",
+  "dangerousCancel": "取消"
 }

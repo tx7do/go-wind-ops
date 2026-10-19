@@ -58,6 +58,14 @@ func (s *Service) handleAgentUpgrade(ctx context.Context, env *signal.CommandEnv
 	if err != nil {
 		return nil, fmt.Errorf("download: %w", err)
 	}
+	// 完整性强校验:期望摘要缺失或实测不符都拒绝自替换——升级通道即远端
+	// 代码部署通道,不接受任何"无校验放行"的兼容路径。
+	if p.ExpectedSha256 == "" {
+		return nil, fmt.Errorf("upgrade payload missing expected_sha256, refusing unverified binary")
+	}
+	if !strings.EqualFold(sha256hex, p.ExpectedSha256) {
+		return nil, fmt.Errorf("upgrade binary sha256 mismatch: got %s want %s", sha256hex[:12], p.ExpectedSha256)
+	}
 	downloaded = true
 
 	exePath, err := os.Executable()

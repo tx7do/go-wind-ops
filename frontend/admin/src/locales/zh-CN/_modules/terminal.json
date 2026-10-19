@@ -30,5 +30,6 @@
   "uploadAllDone": "{{n}} 个文件上传完成",
   "uploadPartialDone": "上传完成 {{ok}}/{{total}}",
   "hint": "真 PTY 终端:支持 Ctrl+C、退格/方向键编辑与交互程序;右键复制/粘贴,Ctrl+滚轮调字号,拖文件进来可直接上传。闲置 15 分钟自动断开。",
-  "auditEntry": "会话审计"
+  "auditEntry": "会话审计",
+  "ticketFailed": "获取连接票据失败,请重试"
 }

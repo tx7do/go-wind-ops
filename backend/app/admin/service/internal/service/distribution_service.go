@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // DistributionService 构建产物分发门面:透传 core 的 DistributionService。
@@ -37,6 +38,11 @@ func (s *DistributionService) Get(ctx context.Context, req *opsV1.GetDistributio
 }
 
 func (s *DistributionService) Create(ctx context.Context, req *opsV1.CreateDistributionRequest) (*opsV1.Distribution, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsDistributePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *DistributionService) Create(ctx context.Context, req *opsV1.CreateDistr
 }
 
 func (s *DistributionService) Update(ctx context.Context, req *opsV1.UpdateDistributionRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsDistributePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -53,6 +64,11 @@ func (s *DistributionService) Update(ctx context.Context, req *opsV1.UpdateDistr
 }
 
 func (s *DistributionService) Delete(ctx context.Context, req *opsV1.DeleteDistributionRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsDistributePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.distributionServiceClient.DeleteDistribution(ctx, req)
 	if err != nil {
 		return nil, err
@@ -61,6 +77,11 @@ func (s *DistributionService) Delete(ctx context.Context, req *opsV1.DeleteDistr
 }
 
 func (s *DistributionService) Trigger(ctx context.Context, req *opsV1.TriggerDistributionRequest) (*opsV1.TriggerDistributionResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsDistributePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // MonitorService 监控规则管理门面:透传 core 的 MonitorService。
@@ -37,6 +38,11 @@ func (s *MonitorService) Get(ctx context.Context, req *opsV1.GetMonitorRequest) 
 }
 
 func (s *MonitorService) Create(ctx context.Context, req *opsV1.CreateMonitorRequest) (*opsV1.Monitor, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *MonitorService) Create(ctx context.Context, req *opsV1.CreateMonitorReq
 }
 
 func (s *MonitorService) Update(ctx context.Context, req *opsV1.UpdateMonitorRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -53,6 +64,11 @@ func (s *MonitorService) Update(ctx context.Context, req *opsV1.UpdateMonitorReq
 }
 
 func (s *MonitorService) Delete(ctx context.Context, req *opsV1.DeleteMonitorRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.monitorServiceClient.DeleteMonitor(ctx, req)
 	if err != nil {
 		return nil, err

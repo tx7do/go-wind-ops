@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // RepositoryService 构建源仓库管理门面:透传 core 的 RepositoryService。
@@ -37,6 +38,11 @@ func (s *RepositoryService) Get(ctx context.Context, req *opsV1.GetRepositoryReq
 }
 
 func (s *RepositoryService) Create(ctx context.Context, req *opsV1.CreateRepositoryRequest) (*opsV1.Repository, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *RepositoryService) Create(ctx context.Context, req *opsV1.CreateReposit
 }
 
 func (s *RepositoryService) Update(ctx context.Context, req *opsV1.UpdateRepositoryRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -53,6 +64,11 @@ func (s *RepositoryService) Update(ctx context.Context, req *opsV1.UpdateReposit
 }
 
 func (s *RepositoryService) Delete(ctx context.Context, req *opsV1.DeleteRepositoryRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.repositoryServiceClient.DeleteRepository(ctx, req)
 	if err != nil {
 		return nil, err

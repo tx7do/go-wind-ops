@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // BackupService 备份任务管理门面:透传 core 的 BackupService。
@@ -64,6 +65,11 @@ func (s *BackupService) Delete(ctx context.Context, req *opsV1.DeleteBackupTaskR
 }
 
 func (s *BackupService) Trigger(ctx context.Context, req *opsV1.TriggerBackupRequest) (*opsV1.TriggerBackupResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}
@@ -75,6 +81,11 @@ func (s *BackupService) ListRecords(ctx context.Context, req *paginationV1.Pagin
 }
 
 func (s *BackupService) GetRecordDownloadUrl(ctx context.Context, req *opsV1.GetBackupRecordDownloadUrlRequest) (*opsV1.GetBackupRecordDownloadUrlResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

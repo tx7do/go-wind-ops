@@ -1,11 +1,22 @@
+# 预签名直传直拉出站白名单(环境变量,逗号分隔 host,如 "minio,127.0.0.1"):
+#   AGENT_DOWNLOAD_ALLOWED_HOSTS=minio
+# 未配置时不限制(仅建议 dev;生产务必配置为 MinIO 主机,防 SSRF/文件外带)。
 server:
   mqtt:
     endpoint: "tcp://127.0.0.1:1883"
     codec: "json"
-    username: "agent"
-    password: "agent-pass"
+    # broker 级认证:MQTT 凭证由进程以自身身份注入(username=agentId,
+    # password=本机 auth.token,经 core 的 /api/v1/mqtt/auth 校验),
+    # 此处不再配置静态共享账密。
     clean_session: false
     auto_reconnect: true
     resume_subs: true
     connect_retry_interval: 5s
     max_reconnect_interval: 60s
+    # TLS(指向 EMQX 8883 时启用;dev 自签证书可 insecure_skip_verify)
+    # endpoint: "ssl://127.0.0.1:8883"
+    # tls:
+    #   insecure_skip_verify: true
+    #   # 生产用 CA 校验:
+    #   # file:
+    #   #   ca_path: "/etc/go-wind-ops/emqx-ca.pem"

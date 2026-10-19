@@ -65,9 +65,12 @@ services:
 #    volumes:
 #      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
 
-  # EMQX:agent 信令 MQTT broker(1883 TCP / 18083 管理控制台,默认账密 admin/public)
-  # 安全:通过环境变量启用 HTTP 认证,指向 core 的 /api/v1/mqtt/auth 端点;
-  # 部署时将 emqx-auth-url 改为 core 可达地址(容器网络内用服务名)
+  # EMQX:agent 信令 MQTT broker(1883 TCP / 8883 TLS / 18083 管理控制台,账密 admin/public)
+  # 安全(已启用 broker 级认证+授权,回调 core 的 webhook,见 mqtt_auth_server.go):
+  #   认证 /api/v1/mqtt/auth —— core 账号比对配置;agent 以 agentId+token 校验(TOFU 首连注册)
+  #   授权 /api/v1/mqtt/acl —— core 全权 ops/;agent 仅限 ops/agent/{自身用户名}/#;未命中拒绝
+  # 前提:core 服务已启动(:9500 webhook)。EMQX 在容器、core 在宿主机用
+  # host.docker.internal;整栈容器化部署改用服务名(如 http://core-service:9500)。
   emqx:
     image: docker.io/emqx/emqx:latest
     container_name: emqx
@@ -81,14 +84,20 @@ services:
       - app-tier
     environment:
       - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
-      # Broker 级 HTTP 认证(EMQX 5.x 环境变量方式;生产推荐在 Dashboard 手动配或用 EMQX API)
-      # EMQX_AUTHENTICATION__1__ENABLE=true
-      # EMQX_AUTHENTICATION__1__MECHANISM=password_based
-      # EMQX_AUTHENTICATION__1__BACKEND=http
-      # EMQX_AUTHENTICATION__1__URL=http://host.docker.internal:9500/api/v1/mqtt/auth
-      # EMQX_AUTHENTICATION__1__METHOD=post
-      # EMQX_AUTHENTICATION__1__BODY={"username":"${username}","password":"${password}"}
-      # EMQX_AUTHENTICATION__1__HEADERS.content-type=application/json
+      # ── 认证:HTTP 回调 core webhook ──
+      - EMQX_AUTHENTICATION__1__ENABLE=true
+      - EMQX_AUTHENTICATION__1__MECHANISM=password_based
+      - EMQX_AUTHENTICATION__1__BACKEND=http
+      - EMQX_AUTHENTICATION__1__METHOD=post
+      - EMQX_AUTHENTICATION__1__URL=http://host.docker.internal:9500/api/v1/mqtt/auth
+      - EMQX_AUTHENTICATION__1__BODY={"username":"$${username}","password":"$${password}","clientid":"$${clientid}"}
+      # ── 授权:HTTP 回调 core webhook ──
+      - EMQX_AUTHORIZATION__NO_MATCH=deny
+      - EMQX_AUTHORIZATION__SOURCES__1__ENABLE=true
+      - EMQX_AUTHORIZATION__SOURCES__1__TYPE=http
+      - EMQX_AUTHORIZATION__SOURCES__1__METHOD=post
+      - EMQX_AUTHORIZATION__SOURCES__1__URL=http://host.docker.internal:9500/api/v1/mqtt/acl
+      - EMQX_AUTHORIZATION__SOURCES__1__BODY={"username":"$${username}","topic":"$${topic}","action":"$${action}","clientid":"$${clientid}"}
 
   minio:
     image: docker.io/minio/minio:latest

@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -544,6 +545,27 @@ func (s *AgentService) PresignAgentUpgradeDownload(ctx context.Context, objectKe
 		return "", fmt.Errorf("presign get failed")
 	}
 	return u.String(), nil
+}
+
+// HashAgentUpgradeObject 实测计算 agent-uploads/ 下对象的 SHA-256
+// (流式读取,不落盘),作为升级指令的期望摘要。
+func (s *AgentService) HashAgentUpgradeObject(ctx context.Context, objectKey string) (string, error) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return "", fmt.Errorf("oss client not configured")
+	}
+	if !strings.HasPrefix(objectKey, "agent-uploads/") || strings.Contains(objectKey, "..") {
+		return "", fmt.Errorf("invalid object key")
+	}
+	obj, err := s.ossClient.GetClient().GetObject(ctx, oss.BucketFiles, objectKey, minio.GetObjectOptions{})
+	if err != nil {
+		return "", fmt.Errorf("get object: %w", err)
+	}
+	defer func() { _ = obj.Close() }()
+	h := sha256.New()
+	if _, err = io.Copy(h, obj); err != nil {
+		return "", fmt.Errorf("read object: %w", err)
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 // IssueUploadPresignedUrl 为 agent 签发对象存储预签名上传 URL

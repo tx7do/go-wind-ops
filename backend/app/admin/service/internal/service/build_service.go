@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // BuildService 构建配置管理与触发门面:透传 core 的 BuildService。
@@ -37,6 +38,11 @@ func (s *BuildService) Get(ctx context.Context, req *opsV1.GetBuildRequest) (*op
 }
 
 func (s *BuildService) Create(ctx context.Context, req *opsV1.CreateBuildRequest) (*opsV1.Build, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *BuildService) Create(ctx context.Context, req *opsV1.CreateBuildRequest
 }
 
 func (s *BuildService) Update(ctx context.Context, req *opsV1.UpdateBuildRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -53,6 +64,11 @@ func (s *BuildService) Update(ctx context.Context, req *opsV1.UpdateBuildRequest
 }
 
 func (s *BuildService) Delete(ctx context.Context, req *opsV1.DeleteBuildRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.buildServiceClient.DeleteBuild(ctx, req)
 	if err != nil {
 		return nil, err
@@ -61,6 +77,11 @@ func (s *BuildService) Delete(ctx context.Context, req *opsV1.DeleteBuildRequest
 }
 
 func (s *BuildService) Trigger(ctx context.Context, req *opsV1.TriggerBuildRequest) (*opsV1.TriggerBuildResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsBuildManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

@@ -12144,6 +12144,11 @@ export type opsservicev1_ExecuteScriptRequest = {
   //
   // Behaviors: OPTIONAL
   agentId?: string;
+  // 危险命令确认:脚本内容命中危险模式时必须显式置 true 才放行
+  // (自动化调用方——流水线/定时脚本——由服务端内部置 true)。
+  //
+  // Behaviors: OPTIONAL
+  confirmDangerous?: boolean;
   //
   // Behaviors: REQUIRED
   id: number | undefined;
@@ -12368,6 +12373,8 @@ export type opsservicev1_ScriptBatchItem = {
 export type opsservicev1_ExecuteScriptBatchRequest = {
   agentIds: string[] | undefined;
   command?: string;
+  // 危险命令确认:命令/脚本内容命中危险模式时必须显式置 true 才放行。
+  confirmDangerous?: boolean;
   nodeIds: number[] | undefined;
   scriptId?: number;
   timeoutSeconds?: number;

@@ -63,6 +63,7 @@ func (s *Service) handleFilePush(ctx context.Context, env *signal.CommandEnvelop
 	if p.Path == "" || p.Url == "" { return nil, fmt.Errorf("path/url required") }
 	p.Path = normalizeFilePath(p.Path)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+	if err := s.ensureWritableTarget(p.Path); err != nil { return nil, err }
 	if err := os.MkdirAll(filepath.Dir(p.Path), 0o755); err != nil { return nil, err }
 
 	size, sha256hex, err := filetransfer.DownloadToFile(ctx, p.Url, p.Path)
@@ -140,6 +141,7 @@ func (s *Service) handleFileWrite(ctx context.Context, env *signal.CommandEnvelo
 	p.Path = normalizeFilePath(p.Path)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
 
+	if err := s.ensureWritableTarget(p.Path); err != nil { return nil, err }
 	data, err := base64.StdEncoding.DecodeString(p.Content)
 	if err != nil { return nil, fmt.Errorf("decode base64: %w", err) }
 	if err = os.MkdirAll(filepath.Dir(p.Path), 0o755); err != nil { return nil, err }
@@ -158,4 +160,23 @@ func (s *Service) handleFileDelete(ctx context.Context, env *signal.CommandEnvel
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
 	if err := os.RemoveAll(p.Path); err != nil { return nil, err }
 	return map[string]any{"deleted": p.Path}, nil
+}
+
+// ensureWritableTarget 写入前的符号链接复核:
+//  1. 目标本身已是符号链接 → 拒绝(写经链接逃逸出授权目录);
+//  2. 父目录经 EvalSymlinks 解析真实落点后重新过授权目录校验
+//     (防白名单内的 junction/目录符号链接指向外部;checkDir 是词法比对,
+//     不解析链接)。
+func (s *Service) ensureWritableTarget(path string) error {
+	if fi, err := os.Lstat(path); err == nil && fi.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("target is a symlink: %s", path)
+	}
+	resolved, err := filepath.EvalSymlinks(filepath.Dir(path))
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		resolved = filepath.Dir(path) // 父目录尚不存在(MkdirAll 将创建),无链接可解析
+	}
+	return s.checkDir(&signal.ProjectOperationPayload{Dir: resolved})
 }

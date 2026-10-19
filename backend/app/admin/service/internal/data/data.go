@@ -5,8 +5,6 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	authzEngine "github.com/tx7do/kratos-authz/engine"
-	"github.com/tx7do/kratos-authz/engine/noop"
 
 	"github.com/go-kratos/kratos/v2/registry"
 
@@ -80,11 +78,6 @@ func NewDiscovery(ctx *bootstrap.Context) registry.Discovery {
 
 func NewMinIoClient(ctx *bootstrap.Context) *oss.MinIOClient {
 	return oss.NewMinIoClient(ctx.GetConfig(), ctx.GetLogger())
-}
-
-// NewAuthorizer 创建权鉴器
-func NewAuthorizer() authzEngine.Engine {
-	return noop.State{}
 }
 
 func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.AuthenticationServiceClient {

@@ -156,3 +156,21 @@ func GetOperatorFromRequestHeader(reqHeaders transport.Header) (*authenticationV
 
 	return info, nil
 }
+
+// OperatorFromTransportHeader 从 transport 请求头读取操作者元数据。
+//
+// kratos 的流式 RPC(bidi/server-stream)不执行 unary 中间件链——
+// metadata.Server() 不会把入站 x-md-global-* 头合并进 server context,
+// 流式 handler 里 FromServerContext 读不到;但 transport.ServerContext
+// 的 RequestHeader 携带原始入站头,从这里直接取。
+func OperatorFromTransportHeader(ctx context.Context) (*authenticationV1.OperatorMetadata, error) {
+	tr, ok := transport.FromServerContext(ctx)
+	if !ok || tr == nil {
+		return nil, ErrNoOperatorHeader
+	}
+	val := tr.RequestHeader().Get(mdOperatorKey)
+	if val == "" {
+		return nil, ErrNoOperatorHeader
+	}
+	return DecodeOperatorMetadata(val)
+}

@@ -30,13 +30,16 @@ type PluginService struct {
 	log      *log.Helper
 	agentSvc *AgentService
 	nodeRepo *data.AgentNodeRepo
+
+	approvalRepo *data.ApprovalRepo
 }
 
-func NewPluginService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo) *PluginService {
+func NewPluginService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo, approvalRepo *data.ApprovalRepo) *PluginService {
 	return &PluginService{
-		log:      ctx.NewLoggerHelper("plugin/service/core-service"),
-		agentSvc: agentSvc,
-		nodeRepo: nodeRepo,
+		log:          ctx.NewLoggerHelper("plugin/service/core-service"),
+		agentSvc:     agentSvc,
+		nodeRepo:     nodeRepo,
+		approvalRepo: approvalRepo,
 	}
 }
 
@@ -114,6 +117,14 @@ func (s *PluginService) ExecAgentPlugin(ctx context.Context, req *opsV1.ExecAgen
 	}
 	if timeoutSec > uint32(pluginExecTimeoutMax/time.Second) {
 		timeoutSec = uint32(pluginExecTimeoutMax / time.Second)
+	}
+
+	// 审批闸门:APPROVAL_REQUIRED_ACTIONS 含该插件动作时先建审批单待批
+	if plJSON, merr := json.Marshal(&signal.PluginExecPayload{Args: req.GetArgs(), TimeoutSec: timeoutSec}); merr == nil {
+		if aerr := approvalGate(ctx, s.log, s.approvalRepo, string(req.GetAction()),
+			0, agentId, req.GetAction(), string(plJSON), operatorIDOf(ctx)); aerr != nil {
+			return nil, aerr
+		}
 	}
 
 	res, err := s.agentSvc.PublishCommandSync(ctx, 0, agentId,

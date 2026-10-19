@@ -184,9 +184,11 @@ func (s *CronScheduler) tickScripts(ctx context.Context) {
 			continue
 		}
 		s.log.Infof("cron script triggered (script=%d node=%d spec=%s)", sc.GetId(), nodeID, spec)
+		// 自动化链路:定时脚本入库时已被作者审阅,显式确认通过危险命令门槛。
 		if _, err = s.scriptService.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{
-			Id:     sc.GetId(),
-			NodeId: &nodeID,
+			Id:               sc.GetId(),
+			NodeId:           &nodeID,
+			ConfirmDangerous: trans.Ptr(true),
 		}); err != nil {
 			s.log.Errorf("cron script execute failed (script=%d): %s", sc.GetId(), err.Error())
 		}

@@ -8,6 +8,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // FileService 远端文件管理门面:透传 core 经 MQTT 代理的 agent 文件操作。
@@ -27,6 +28,11 @@ func NewFileService(ctx *bootstrap.Context, fileServiceClient opsV1.FileServiceC
 }
 
 func (s *FileService) ListAgentFiles(ctx context.Context, req *opsV1.ListAgentFilesRequest) (*opsV1.ListAgentFilesResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId required")
 	}
@@ -35,6 +41,11 @@ func (s *FileService) ListAgentFiles(ctx context.Context, req *opsV1.ListAgentFi
 }
 
 func (s *FileService) ReadAgentFile(ctx context.Context, req *opsV1.ReadAgentFileRequest) (*opsV1.ReadAgentFileResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
 	}
@@ -42,6 +53,11 @@ func (s *FileService) ReadAgentFile(ctx context.Context, req *opsV1.ReadAgentFil
 }
 
 func (s *FileService) WriteAgentFile(ctx context.Context, req *opsV1.WriteAgentFileRequest) (*opsV1.WriteAgentFileResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" || req.GetContentBase64() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path/contentBase64 required")
 	}
@@ -49,6 +65,11 @@ func (s *FileService) WriteAgentFile(ctx context.Context, req *opsV1.WriteAgentF
 }
 
 func (s *FileService) DeleteAgentFile(ctx context.Context, req *opsV1.DeleteAgentFileRequest) (*opsV1.DeleteAgentFileResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
 	}
@@ -56,6 +77,11 @@ func (s *FileService) DeleteAgentFile(ctx context.Context, req *opsV1.DeleteAgen
 }
 
 func (s *FileService) PullAgentFile(ctx context.Context, req *opsV1.PullAgentFileRequest) (*opsV1.PullAgentFileResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
 	}
@@ -63,6 +89,11 @@ func (s *FileService) PullAgentFile(ctx context.Context, req *opsV1.PullAgentFil
 }
 
 func (s *FileService) PrepareAgentFilePush(ctx context.Context, req *opsV1.PrepareAgentFilePushRequest) (*opsV1.PrepareAgentFilePushResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path required")
 	}
@@ -70,6 +101,11 @@ func (s *FileService) PrepareAgentFilePush(ctx context.Context, req *opsV1.Prepa
 }
 
 func (s *FileService) CompleteAgentFilePush(ctx context.Context, req *opsV1.CompleteAgentFilePushRequest) (*opsV1.CompleteAgentFilePushResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAgentId() == "" || req.GetPath() == "" || req.GetObjectKey() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: agentId/path/objectKey required")
 	}

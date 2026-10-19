@@ -933,6 +933,10 @@ func (m *ExecuteScriptRequest) validate(all bool) error {
 		// no validation rules for AgentId
 	}
 
+	if m.ConfirmDangerous != nil {
+		// no validation rules for ConfirmDangerous
+	}
+
 	if len(errors) > 0 {
 		return ExecuteScriptRequestMultiError(errors)
 	}
@@ -1149,6 +1153,10 @@ func (m *ExecuteScriptBatchRequest) validate(all bool) error {
 
 	if m.TimeoutSeconds != nil {
 		// no validation rules for TimeoutSeconds
+	}
+
+	if m.ConfirmDangerous != nil {
+		// no validation rules for ConfirmDangerous
 	}
 
 	if len(errors) > 0 {

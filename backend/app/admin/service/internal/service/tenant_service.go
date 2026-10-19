@@ -17,6 +17,7 @@ import (
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
 	"go-wind-ops/pkg/middleware/auth"
+	"go-wind-ops/pkg/constants"
 )
 
 type TenantService struct {
@@ -76,6 +77,11 @@ func (s *TenantService) Get(ctx context.Context, req *identityV1.GetTenantReques
 }
 
 func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenantRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -96,6 +102,11 @@ func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenant
 }
 
 func (s *TenantService) Update(ctx context.Context, req *identityV1.UpdateTenantRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -117,6 +128,11 @@ func (s *TenantService) Update(ctx context.Context, req *identityV1.UpdateTenant
 }
 
 func (s *TenantService) Delete(ctx context.Context, req *identityV1.DeleteTenantRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	return s.tenantServiceClient.Delete(ctx, req)
 }
 

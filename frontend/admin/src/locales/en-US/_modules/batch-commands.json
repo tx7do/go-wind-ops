@@ -20,5 +20,11 @@
   "output": "Output",
   "waitingResults": "Running, waiting for results…",
   "noResults": "No results yet",
-  "hint": "Select multiple machines and run the same command on all of them; per-machine status and output stream in below. Results are also kept in the Script Batches records."
+  "hint": "Select multiple machines and run the same command on all of them; per-machine status and output stream in below. Results are also kept in the Script Batches records.",
+  "confirmTitle": "Confirm batch execution",
+  "confirmContent": "This command will run on {{n}} machine(s). Verify targets and content before proceeding.",
+  "dangerousTitle": "Dangerous command detected",
+  "dangerousContent": "The command matches catastrophic operation patterns (root deletion, disk formatting, shutdown/reboot, etc.) and may cause irreversible damage. The command is shown in the input box above; double-check it before confirming.",
+  "dangerousConfirm": "I understand, run anyway",
+  "dangerousCancel": "Cancel"
 }

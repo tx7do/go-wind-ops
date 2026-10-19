@@ -6,14 +6,17 @@ import { useQuery } from '@tanstack/react-query';
 import { PaginationQuery } from '@/core';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import { useGetScriptBatch, useBatchExecScript } from '@/api/hooks/script-batch';
+import { isDangerousConfirmError } from '@/api/hooks/script';
 
 /**
  * 批量命令:多台机器即时执行同一条命令。复用脚本批次链路(即席命令模式
  * command+agentIds),执行后轮询批次详情展示逐机状态与输出。
+ * 下发前弹确认框;后端命中危险模式(reason=DANGEROUS_COMMAND_CONFIRM)时
+ * 二次确认并携带 confirmDangerous 重发。
  */
 const BatchCommandsPage = () => {
   const { t } = useTranslation('batch-commands');
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [agentIds, setAgentIds] = useState<string[]>([]);
   const [command, setCommand] = useState('');
@@ -54,7 +57,26 @@ const BatchCommandsPage = () => {
       message.success(t('dispatched', { n: resp.dispatched ?? 0, failed: resp.failed ?? 0 }));
       if (resp.batchId) setBatchId(resp.batchId);
     },
-    onError: (e) => message.error(e.message || t('execFailed')),
+    onError: (e) => {
+      if (isDangerousConfirmError(e)) {
+        modal.confirm({
+          title: t('dangerousTitle'),
+          content: t('dangerousContent'),
+          okText: t('dangerousConfirm'),
+          okButtonProps: { danger: true },
+          cancelText: t('dangerousCancel'),
+          onOk: () =>
+            exec.mutate({
+              command,
+              agentIds,
+              timeoutSeconds: timeoutSec,
+              confirmDangerous: true,
+            } as never),
+        });
+        return;
+      }
+      message.error(e.message || t('execFailed'));
+    },
   });
 
   const onExec = useCallback(() => {
@@ -66,8 +88,15 @@ const BatchCommandsPage = () => {
       message.warning(t('commandRequired'));
       return;
     }
-    exec.mutate({ command: command, agentIds, timeoutSeconds: timeoutSec } as never);
-  }, [agentIds, command, timeoutSec, exec, message, t]);
+    // 下发前确认:批量命令直达多台机器,防手滑
+    modal.confirm({
+      title: t('confirmTitle'),
+      content: t('confirmContent', { n: agentIds.length }),
+      okText: t('exec'),
+      okButtonProps: { danger: true },
+      onOk: () => exec.mutate({ command, agentIds, timeoutSeconds: timeoutSec } as never),
+    });
+  }, [agentIds, command, timeoutSec, exec, message, modal, t]);
 
   const items = detail.data?.items || [];
   const batch = detail.data?.batch;

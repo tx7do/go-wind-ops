@@ -60,7 +60,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 服务发现与鉴权基建
 	discovery := data.NewDiscovery(ctx)
 	clientType := data.NewClientType()
-	engine := data.NewAuthorizer()
+
 
 	redisClient, cleanupRedis, err := data.NewRedisClient(ctx)
 	if err != nil {
@@ -89,6 +89,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	menuServiceClient := data.NewMenuServiceClient(ctx, discovery)
 	apiServiceClient := data.NewApiServiceClient(ctx, discovery)
 	permissionServiceClient := data.NewPermissionServiceClient(ctx, discovery)
+
+	// 触发类/敏感入口的权限码守卫(noop authz 下的真实防线,详见 service/permguard.go)
+	service.SetPermissionGuard(service.NewPermissionGuard(roleServiceClient, permissionServiceClient))
+
+	// 真 authz 引擎(AUTHZ_MODE=shadow 默认影子模式/enforce/noop):角色→API 策略
+	// 数据通道见 data/authz_engine.go
+	engine := data.NewAuthzEngine(ctx, roleServiceClient, permissionServiceClient, apiServiceClient)
 	permissionGroupServiceClient := data.NewPermissionGroupServiceClient(ctx, discovery)
 
 	// 审计日志
@@ -208,7 +215,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetServiceClient)
 	certService := service.NewCertService(ctx, certServiceClient)
 	notificationDeliveryService := service.NewNotificationDeliveryService(ctx, notificationDeliveryServiceClient)
-	terminalAuditService := service.NewTerminalAuditService(ctx, terminalAuditServiceClient)
+	terminalAuditService := service.NewTerminalAuditService(ctx, terminalAuditServiceClient, roleServiceClient, permissionServiceClient)
 	inspectionService := service.NewInspectionService(ctx, inspectionServiceClient)
 	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotServiceClient)
 	configService := service.NewConfigService(ctx, configServiceClient)
@@ -217,8 +224,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
-	terminalWsHandler := server.NewTerminalWsHandler(ctx, accessTokenChecker, terminalServiceClient)
-	projectLogWsHandler := server.NewProjectLogWsHandler(ctx, accessTokenChecker, projectServiceClient)
+	terminalWsHandler := server.NewTerminalWsHandler(ctx, redisClient, terminalServiceClient)
+	terminalTicketHandler := server.NewTerminalTicketHandler(ctx, accessTokenChecker, roleServiceClient, permissionServiceClient, redisClient)
+	projectLogWsHandler := server.NewProjectLogWsHandler(ctx, redisClient, projectServiceClient)
 	openApiGateway := server.NewOpenApiGateway(apiKeyServiceClient, buildServiceClient, distributionServiceClient, pipelineServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
@@ -236,7 +244,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		pipelineService,
 		apiKeyService,
 		pluginService,
-		terminalWsHandler,
+		terminalWsHandler, terminalTicketHandler,
 		projectLogWsHandler,
 		openApiGateway,
 		authenticationService, loginPolicyService,

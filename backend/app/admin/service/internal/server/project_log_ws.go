@@ -1,23 +1,27 @@
 // project_log_ws.go 项目日志实时 tail WebSocket 端点:
-// 浏览器 WS ↔ 本服务(参数 token 鉴权) ↔ core GetProjectLog(增量 offset) ↔ MQTT ↔ agent。
+// 浏览器 WS ↔ 本服务(一次性票据握手) ↔ core GetProjectLog(增量 offset) ↔ MQTT ↔ agent。
 //
 // 服务端按查询参数 interval 周期拉取增量,新字节以二进制帧推送;
 // 检测到日志重置(轮转/清空)时发文本帧 {"event":"RESET"},浏览器清空缓冲。
 //
-// 本路由经 kratos Server.Handle 直接注册在 mux 上,不经过鉴权中间件,
-// 鉴权完全由查询参数 token 完成。
+// 握手用 30 秒一次性票据(kind=project-log,签发期校验 ops:project_manage
+// 并绑定 projectId),GETDEL 原子消费;操作者身份以出站元数据头携带,
+// core 侧据此构建租户 viewer,防跨租户读日志。
 package server
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	grpcmd "google.golang.org/grpc/metadata"
 
-	"go-wind-ops/pkg/middleware/auth"
+	appMetadata "go-wind-ops/pkg/metadata"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
@@ -26,19 +30,24 @@ const projectLogWsPath = "/admin/v1/ws/projects/log"
 
 // ProjectLogWsHandler 项目日志实时 tail WS 处理器。
 type ProjectLogWsHandler struct {
-	checker auth.AccessTokenChecker
-	client  opsV1.ProjectServiceClient
+	client opsV1.ProjectServiceClient
+	redis  *redis.Client
 
 	upgrader websocket.Upgrader
 }
 
 // NewProjectLogWsHandler 构造处理器。
-func NewProjectLogWsHandler(ctx *bootstrap.Context, checker auth.AccessTokenChecker, client opsV1.ProjectServiceClient) *ProjectLogWsHandler {
+func NewProjectLogWsHandler(
+	ctx *bootstrap.Context,
+	redisClient *redis.Client,
+	client opsV1.ProjectServiceClient,
+) *ProjectLogWsHandler {
 	_ = ctx
 	return &ProjectLogWsHandler{
-		checker: checker,
-		client:  client,
+		client: client,
+		redis:  redisClient,
 		upgrader: websocket.Upgrader{
+			// Origin 同源校验在 ServeHTTP 显式做。
 			CheckOrigin: func(*http.Request) bool { return true },
 		},
 	}
@@ -53,13 +62,26 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	token := r.URL.Query().Get("token")
-	if token == "" || h.checker == nil {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+	if !sameOriginWs(r) {
+		http.Error(w, "cross-origin websocket forbidden", http.StatusForbidden)
 		return
 	}
-	if valid, _ := h.checker.IsValidAccessToken(r.Context(), token, false); !valid {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+	// ── 一次性票据消费(签发期已完成 token 鉴权 + ops:project_manage +
+	// projectId 绑定;长效 token 不进握手 URL)──
+	ticket := r.URL.Query().Get("ticket")
+	if ticket == "" || h.redis == nil {
+		http.Error(w, "ticket required", http.StatusBadRequest)
+		return
+	}
+	raw, rerr := h.redis.GetDel(r.Context(), terminalTicketKey(ticket)).Result()
+	if rerr != nil {
+		http.Error(w, "invalid or expired ticket", http.StatusUnauthorized)
+		return
+	}
+	var tk terminalTicket
+	if err := json.Unmarshal([]byte(raw), &tk); err != nil || tk.Operator == "" || tk.Kind != TicketKindProjectLog {
+		http.Error(w, "invalid ticket", http.StatusUnauthorized)
 		return
 	}
 
@@ -68,10 +90,28 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "projectId required", http.StatusBadRequest)
 		return
 	}
+	if tk.ProjectId != uint32(projectID) {
+		http.Error(w, "ticket/project mismatch", http.StatusForbidden)
+		return
+	}
+	operator, oerr := appMetadata.DecodeOperatorMetadata(tk.Operator)
+	if oerr != nil || operator == nil {
+		http.Error(w, "invalid ticket operator", http.StatusUnauthorized)
+		return
+	}
 
 	intervalMs := 2000
 	if v,VERR := strconv.Atoi(r.URL.Query().Get("interval")); VERR == nil && v >= 1000 && v <= 10000 {
 		intervalMs = v
+	}
+
+	// 操作者身份以出站 gRPC 元数据头携带(轮询调用不经 metadata.Client
+	// 中间件传播路径):core 侧据此构建租户 viewer,防止跨租户读项目日志。
+	callCtx := r.Context()
+	{
+		if encoded, encErr := appMetadata.EncodeOperatorMetadata(operator); encErr == nil {
+			callCtx = grpcmd.AppendToOutgoingContext(r.Context(), "x-md-global-operator", encoded)
+		}
 	}
 
 	conn, err := h.upgrader.Upgrade(w, r, nil)
@@ -106,7 +146,7 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		case <-ticker.C:
 		}
 
-		resp, err := h.client.GetProjectLog(ctx, &opsV1.GetProjectLogRequest{
+		resp, err := h.client.GetProjectLog(callCtx, &opsV1.GetProjectLogRequest{
 			Id:     uint32Ptr(uint32(projectID)),
 			Offset: int64Ptr(offset),
 		})

@@ -9,6 +9,7 @@ import (
 	"github.com/tx7do/kratos-transport/transport/mqtt"
 
 	"go-wind-ops/app/core/service/internal/service"
+	"go-wind-ops/pkg/tlsconf"
 	"go-wind-ops/pkg/topic"
 )
 
@@ -36,11 +37,15 @@ func NewCoreMqttServer(
 		clientID = "core-" + machineID
 	}
 
-	srv := mqttBootstrap.NewMqttServer(
-		cfg.Server.Mqtt,
+	opts := []mqtt.ServerOption{
 		mqtt.WithEnableKeepAlive(false),
 		mqtt.WithClientId(clientID),
-	)
+	}
+	if tlsCfg := tlsconf.ClientTLSConfig(cfg.Server.Mqtt.GetTls()); tlsCfg != nil {
+		opts = append(opts, mqtt.WithTLSConfig(tlsCfg))
+	}
+
+	srv := mqttBootstrap.NewMqttServer(cfg.Server.Mqtt, opts...)
 
 	agentService.RegisterMqttBroker(srv)
 	agentService.Start(ctx.Context())

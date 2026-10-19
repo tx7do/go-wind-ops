@@ -1,9 +1,14 @@
 // mqtt-pub 是 MQTT 信令调试小工具:向指定主题发布任意 JSON 载荷,
 // 用于手动注入指令(如 ping)验证 core/agent 链路。
 //
+// broker 已启用认证+ACL(EMQX 回调 core webhook):调试须以 core 账号连接,
+// 且只能订发 ops/ 前缀主题;agent 身份需其本机 token 作口令。
+//
 // 用法:
 //
-//	go run ./tools/mqtt-pub -endpoint tcp://localhost:1883 -topic ops/agent/<id>/command \
+//	go run ./tools/mqtt-pub -endpoint tcp://localhost:1883 \
+//	  -username core -password core-pass \
+//	  -topic ops/agent/<id>/command \
 //	  -payload '{"request_id":"t1","agent_id":"<id>","action":"ping"}'
 package main
 

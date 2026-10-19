@@ -20,6 +20,7 @@ import (
 
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils"
+	"go-wind-ops/pkg/constants"
 )
 
 type UserService struct {
@@ -79,6 +80,11 @@ func (s *UserService) Get(ctx context.Context, req *identityV1.GetUserRequest) (
 }
 
 func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequest) (*identityV1.User, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -154,6 +160,11 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 }
 
 func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -276,6 +287,11 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 }
 
 func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}

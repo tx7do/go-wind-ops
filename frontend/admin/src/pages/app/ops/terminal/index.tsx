@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Button, Input, Modal, Select, Space, Tag, Tooltip, Typography } from 'antd';
 import { ClearOutlined, HistoryOutlined, PoweroffOutlined, UploadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { useAccess } from '@/core/access/use-access';
 import type { opsservicev1_TerminalSession } from '@/api/generated/admin/service/v1';
 import TerminalSessionsDrawer from './components/TerminalSessionsDrawer';
 import TerminalReplayDrawer from './components/TerminalReplayDrawer';
@@ -11,14 +12,25 @@ import { WebLinksAddon } from '@xterm/addon-web-links';
 import '@xterm/xterm/css/xterm.css';
 import { useQuery } from '@tanstack/react-query';
 import { PaginationQuery } from '@/core';
+import { requestApi } from '@/core/transport/rest';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import { uploadAgentFile, formatBytes, joinRemotePath, collectDroppedEntries, type DroppedEntry } from '@/api/hooks/file';
-import { useAuthStore } from '@/stores/auth';
 
 /** 构造终端 WS 地址(经 dev 代理或网关同源转发)。 */
-function buildWsUrl(token: string, agentId: string): string {
+function buildWsUrl(ticket: string, agentId: string): string {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-  return `${proto}://${location.host}/admin/v1/ws/terminal?token=${encodeURIComponent(token)}&agentId=${encodeURIComponent(agentId)}`;
+  return `${proto}://${location.host}/admin/v1/ws/terminal?ticket=${encodeURIComponent(ticket)}&agentId=${encodeURIComponent(agentId)}`;
+}
+
+/** 获取一次性握手票据(30s 有效,单次消费):长效 token 不进 WS URL。 */
+async function fetchTerminalTicket(agentId: string): Promise<string> {
+  const resp = (await requestApi({
+    path: `/admin/v1/ws/terminal/tickets?agentId=${encodeURIComponent(agentId)}`,
+    method: 'POST',
+    body: null,
+  } as never)) as { ticket?: string };
+  if (!resp?.ticket) throw new Error('empty ticket');
+  return resp.ticket;
 }
 
 // 记忆选择与字号(localStorage 持久化)
@@ -36,6 +48,9 @@ const readFontSize = (): number => {
 const TerminalPage = () => {
   const { t } = useTranslation('terminal');
   const { message } = App.useApp();
+  // 终端录制含键盘按键明文,审计查看要求 sys:audit_logs(后端接口同码硬校验)
+  const { hasAccessByCodes } = useAccess();
+  const canViewAudit = hasAccessByCodes(['sys:audit_logs']);
 
   const [agentId, setAgentId] = useState<string>();
   const [auditOpen, setAuditOpen] = useState(false);
@@ -337,17 +352,23 @@ const TerminalPage = () => {
 
   /** 建立 WS 会话(连接与自动重连共用;targetId 显式传入防切换竞态)。 */
   const openSession = useCallback(
-    (targetId: string) => {
-      const token = useAuthStore.getState().accessToken;
-      if (!token) {
-        message.error(t('tokenMissing'));
-        return;
-      }
+    async (targetId: string) => {
       const term = ensureTerm();
       term.reset();
       term.writeln(`\x1b[36m${t('connecting')} ${targetId} ...\x1b[0m`);
       setConnecting(true);
       setTitle('');
+
+      // 一次性票据(30s/单次):每次连接(含自动重连)都现取,长效 token 不进 URL
+      let ticket: string;
+      try {
+        ticket = await fetchTerminalTicket(targetId);
+      } catch {
+        const ESC = String.fromCharCode(27);
+        term.writeln(`${ESC}[31m[${t('ticketFailed')}]${ESC}[0m`);
+        setConnecting(false);
+        return;
+      }
 
       // 本次连接是否已收到输出字节(OPENED 清"正在连接"行时避免误伤回显)。
       let gotOutput = false;
@@ -360,7 +381,7 @@ const TerminalPage = () => {
         }
       };
 
-      const ws = new WebSocket(buildWsUrl(token, targetId));
+      const ws = new WebSocket(buildWsUrl(ticket, targetId));
       ws.binaryType = 'arraybuffer';
       wsRef.current = ws;
 
@@ -416,7 +437,7 @@ const TerminalPage = () => {
         reconnectTimer.current = setTimeout(() => openSessionRef.current(targetId), 1200 * n);
       };
     },
-    [ensureTerm, message, t],
+    [ensureTerm, t],
   );
   openSessionRef.current = openSession;
 
@@ -512,9 +533,11 @@ const TerminalPage = () => {
             </Typography.Text>
           </Tooltip>
         )}
-        <Button icon={<HistoryOutlined />} onClick={() => setAuditOpen(true)}>
-          {t('auditEntry')}
-        </Button>
+        {canViewAudit && (
+          <Button icon={<HistoryOutlined />} onClick={() => setAuditOpen(true)}>
+            {t('auditEntry')}
+          </Button>
+        )}
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('hint')}
         </Typography.Text>

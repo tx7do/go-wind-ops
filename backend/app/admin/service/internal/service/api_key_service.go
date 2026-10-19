@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ApiKeyService OpenAPI 密钥管理门面:透传 core(Validate 不对外暴露)。
@@ -37,6 +38,11 @@ func (s *ApiKeyService) Get(ctx context.Context, req *opsV1.GetApiKeyRequest) (*
 }
 
 func (s *ApiKeyService) Create(ctx context.Context, req *opsV1.CreateApiKeyRequest) (*opsV1.CreateApiKeyResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *ApiKeyService) Create(ctx context.Context, req *opsV1.CreateApiKeyReque
 }
 
 func (s *ApiKeyService) Update(ctx context.Context, req *opsV1.UpdateApiKeyRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -55,6 +66,11 @@ func (s *ApiKeyService) Update(ctx context.Context, req *opsV1.UpdateApiKeyReque
 }
 
 func (s *ApiKeyService) Delete(ctx context.Context, req *opsV1.DeleteApiKeyRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.apiKeyServiceClient.DeleteApiKey(ctx, req)
 	if err != nil {
 		return nil, err

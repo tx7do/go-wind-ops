@@ -16,6 +16,22 @@ import { makeUpdateMask, type PaginationQuery, queryClient } from '@/core';
 import { apiClient } from '@/api/client';
 
 // ==============================
+// 危险命令确认契约(与 core script_dangerous.go 对齐)
+// ==============================
+
+/** 后端拦截危险命令时的专用 reason(message 会被 i18n 覆盖,不可作契约)。 */
+export const DANGEROUS_COMMAND_REASON = 'DANGEROUS_COMMAND_CONFIRM';
+
+/** 判定错误是否为"危险命令需确认"拦截(onError 里据此弹二次确认并重发)。 */
+export function isDangerousConfirmError(e: unknown): boolean {
+  return Boolean(
+    e &&
+      typeof e === 'object' &&
+      (e as { reason?: unknown }).reason === DANGEROUS_COMMAND_REASON,
+  );
+}
+
+// ==============================
 // 脚本管理
 // ==============================
 

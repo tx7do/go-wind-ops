@@ -13,6 +13,7 @@ import (
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 
 	"go-wind-ops/pkg/middleware/auth"
+	"go-wind-ops/pkg/constants"
 )
 
 type OrgUnitService struct {
@@ -59,6 +60,11 @@ func (s *OrgUnitService) Get(ctx context.Context, req *identityV1.GetOrgUnitRequ
 }
 
 func (s *OrgUnitService) Create(ctx context.Context, req *identityV1.CreateOrgUnitRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -75,6 +81,11 @@ func (s *OrgUnitService) Create(ctx context.Context, req *identityV1.CreateOrgUn
 }
 
 func (s *OrgUnitService) Update(ctx context.Context, req *identityV1.UpdateOrgUnitRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -96,5 +107,10 @@ func (s *OrgUnitService) Update(ctx context.Context, req *identityV1.UpdateOrgUn
 }
 
 func (s *OrgUnitService) Delete(ctx context.Context, req *identityV1.DeleteOrgUnitRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemTenantManagerPermissionCode); err != nil {
+		return nil, err
+	}
 	return s.orgUnitServiceClient.Delete(ctx, req)
 }

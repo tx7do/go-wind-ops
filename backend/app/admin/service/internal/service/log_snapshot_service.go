@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // LogSnapshotService 日志快照门面:透传 core。
@@ -40,6 +41,11 @@ func (s *LogSnapshotService) Get(ctx context.Context, req *opsV1.GetLogSnapshotR
 }
 
 func (s *LogSnapshotService) Capture(ctx context.Context, req *opsV1.CaptureLogSnapshotRequest) (*opsV1.LogSnapshot, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetProjectId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: projectId required")
 	}
@@ -54,6 +60,11 @@ func (s *LogSnapshotService) Search(ctx context.Context, req *opsV1.SearchLogSna
 }
 
 func (s *LogSnapshotService) Delete(ctx context.Context, req *opsV1.DeleteLogSnapshotRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.logSnapshotServiceClient.DeleteLogSnapshot(ctx, req)
 	if err != nil {
 		return nil, err

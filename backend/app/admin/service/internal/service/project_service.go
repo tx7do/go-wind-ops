@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ProjectService 受管机器应用项目管理门面:透传 core 的 ProjectService。
@@ -61,6 +62,11 @@ func (s *ProjectService) Delete(ctx context.Context, req *opsV1.DeleteProjectReq
 }
 
 func (s *ProjectService) Operate(ctx context.Context, req *opsV1.OperateProjectRequest) (*opsV1.OperateProjectResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetOperation() == opsV1.ProjectOperation_PROJECT_OPERATION_UNSPECIFIED {
 		return nil, adminV1.ErrorBadRequest("invalid request: operation required")
 	}
@@ -75,6 +81,11 @@ func (s *ProjectService) GetLog(ctx context.Context, req *opsV1.GetProjectLogReq
 }
 
 func (s *ProjectService) ClearLog(ctx context.Context, req *opsV1.ClearProjectLogRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

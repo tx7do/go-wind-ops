@@ -133,6 +133,7 @@ func NewRestServer(
 	apiKeyService *service.ApiKeyService,
 	pluginService *service.PluginService,
 	terminalWsHandler *TerminalWsHandler,
+	terminalTicketHandler *TerminalTicketHandler,
 	projectLogWsHandler *ProjectLogWsHandler,
 	openApiGateway *OpenApiGateway,
 
@@ -176,13 +177,13 @@ func NewRestServer(
 		panic(err)
 	}
 
-	// Web 终端 WS 端点:直接注册在 mux 上,不经过鉴权中间件
-	// (浏览器 WS 无法带 Authorization 头,handler 内校验查询参数 token)。
+	// Web 终端 WS/票据端点:直接注册在 mux 上,不经过鉴权中间件
+	// (浏览器 WS 无法带 Authorization 头;鉴权在 handler 内显式完成)。
 	if terminalWsHandler != nil {
 		srv.Handle(terminalWsHandler.Path(), terminalWsHandler)
 	}
-	if projectLogWsHandler != nil {
-		srv.Handle(projectLogWsHandler.Path(), projectLogWsHandler)
+	if terminalTicketHandler != nil {
+		srv.Handle(terminalTicketHandler.Path(), terminalTicketHandler)
 	}
 	if projectLogWsHandler != nil {
 		srv.Handle(projectLogWsHandler.Path(), projectLogWsHandler)

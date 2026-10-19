@@ -11236,6 +11236,9 @@ components:
                 timeoutSeconds:
                     type: integer
                     format: uint32
+                confirmDangerous:
+                    type: boolean
+                    description: 危险命令确认:命令/脚本内容命中危险模式时必须显式置 true 才放行。
         ops.service.v1.ExecuteScriptBatchResponse:
             type: object
             properties:
@@ -11266,6 +11269,9 @@ components:
                     format: uint32
                 agentId:
                     type: string
+                confirmDangerous:
+                    type: boolean
+                    description: "危险命令确认:脚本内容命中危险模式时必须显式置 true 才放行\r\n (自动化调用方——流水线/定时脚本——由服务端内部置 true)。"
         ops.service.v1.ExecuteScriptResponse:
             type: object
             properties:

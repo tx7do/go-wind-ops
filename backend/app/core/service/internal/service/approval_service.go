@@ -64,11 +64,16 @@ func (s *ApprovalService) ApproveApproval(ctx context.Context, req *opsV1.Approv
 	}
 
 	_, dispatchErr := s.agentSvc.PublishCommand(ctx, 0, record.AgentID,
-		signal.CommandAction(record.OperationType), payload, 0)
+		signal.CommandAction(record.OperationType), payload, operatorIDOf(ctx))
 	if dispatchErr != nil {
 		s.log.Errorf("approved operation dispatch failed (approval=%d agent=%s action=%s): %s",
 			req.GetId(), record.AgentID, record.OperationType, dispatchErr.Error())
 		return &opsV1.OpApprovalResult{}, nil
+	}
+
+	// 执行闭环:重下发成功后回写审批单执行结果
+	if merr := s.repo.MarkExecuted(ctx, req.GetId(), "dispatched request completed"); merr != nil {
+		s.log.Warnf("mark approval executed [%d]: %s", req.GetId(), merr.Error())
 	}
 
 	s.log.Infof("approved operation dispatched (approval=%d agent=%s action=%s)",

@@ -155,6 +155,10 @@ func InjectViewerForStream(ctx context.Context) context.Context {
 
 	op, opErr := appMetadata.FromServerContext(ctx)
 	if opErr != nil || op == nil {
+		// 流式 RPC 无 unary 中间件合并入站头,回退到 transport 请求头直读
+		op, opErr = appMetadata.OperatorFromTransportHeader(ctx)
+	}
+	if opErr != nil || op == nil {
 		return viewer.WithContext(ctx, resolveAnonymousViewer(ctx, nil, traceID))
 	}
 	return viewer.WithContext(ctx, metaDataToUserViewerContext(op, traceID))

@@ -91,6 +91,20 @@
 ### 安全
 
 - EMQX broker 级认证：core 暴露认证端点对接 EMQX HTTP 认证数据源（校验 agent token SHA-256），agent 只能访问自身主题（ACL）。
+  - **收口落地**：compose 默认启用 EMQX HTTP 认证 + 授权（`no_match=deny`），回调 core :9500 webhook（`/api/v1/mqtt/auth`、`/api/v1/mqtt/acl`）；core 账号比对配置、agent 以本机 token 作 MQTT 口令（TOFU 与信令层准入同表同 token），agent 仅可订发 `ops/agent/{自身用户Id}/#`；TLS 走两端 `server.mqtt.tls` 配置（`ssl://`+CA 或 dev 自签 skip）。
+- Web 终端 WS 接入权限体系：终端/项目日志两个 WS 端点此前仅验 token 有效性（绕过 auth 中间件），现补齐——同源校验、权限码硬校验（终端 `ops:node_manage`、项目日志 `ops:project_manage`，与前端路由 authority 对齐），并把操作者身份注入 gRPC 流元数据，终端台账与会话审计的 `operator_id` 归因恢复（此前恒为 0）。
+- 脚本/批量执行危险命令确认门槛：`ExecuteScript`/`ExecuteScriptBatch` 命中灾难性模式（根目录删除、mkfs/dd 覆盘、格式化、关机重启、fork 炸弹等）时以专用 reason `DANGEROUS_COMMAND_CONFIRM` 拒绝，前端弹二次确认后携 `confirm_dangerous=true` 重发；流水线/定时脚本自动化链路由服务端显式放行。
+- 终端审计收紧：审计接口（会话列表/详情/录制回放）要求 `sys:audit_logs` 权限码（前端审计入口同码显隐）；录制支持环境变量策略开关（`TERMINAL_RECORD_ENABLED/_INPUT/_OUTPUT`）与留存清理（`TERMINAL_RETENTION_DAYS`，默认 30 天，先删分块再删会话行）。
+- 权限码点查防线：admin BFF 门面 31 个触发/敏感入口（脚本执行、构建/分发/流水线触发、节点指令、升级、项目操作、文件域、备份、配置下发、API key 变更、审批裁决、用户/角色管理）显式校验权限码；用户关系型字段（角色/组织/岗位）仅在 update_mask 显式包含时生效，C 端自助资料更新按字段白名单重建请求——封死"任何登录用户自助提权/越权触发目标机操作"的通道；节点指令通用透传面收敛为 ping 白名单。
+- 目标机器执行面加固：分发落盘路径目录逃逸复检（`..\` 折叠）、项目日志读取/清空补授权目录校验、agent 升级包强制 SHA-256 实测比对（缺失/不符拒绝自替换，升级通道不再是无校验 RCE）、EMQX webhook 口令比较改常时比较、OpenAPI git webhook 支持可选 HMAC-Signature 校验（`OPENAPI_GIT_WEBHOOK_SECRET`）。
+- Web 终端握手改 30 秒一次性票据（换票端点签发、WS GETDEL 原子消费）：长效 accessToken 不再进 WS 握手 URL（不落代理/访问日志），权限校验前移到换票期。
+- **审批闸门接线**：`APPROVAL_REQUIRED_ACTIONS` 配置的动作（如 `agent_upgrade,script_exec,plugin_exec`）派发前自动创建待审单并拒绝直接执行（reason `APPROVAL_REQUIRED`）,审批人确认后重下发并回写执行结果闭环;默认未配置时行为不变。仓库凭据 CRUD 挂 `ops:build_manage` 权限门。
+- **真 authz 引擎装配（影子模式上线）**：admin BFF 的"角色→API"鉴权从 noop 空转升级为 casbin 真实评估——策略数据通道（角色×权限×API 表）每 5 分钟热载,`AUTHZ_MODE=shadow`（默认,拒绝仅记日志）/`enforce`（真拦截）/`noop` 三档;影子日志 `[authz-shadow] would DENY` 用于在切 enforce 前核对授权数据完整性。
+- 权限码门扩展到配置面与身份面：脚本/流水线/分发/构建/配置模板等"定义执行内容"的 CRUD 与触发入口同码（封死"改内容等定时任务或他人触发"的内容投毒链）；补插件执行、日志快照抓取、巡检运行三个直派目标机的漏门；菜单/权限点/租户/组织单元等身份面 CRUD 与 API 表同步收归平台管理员；通知渠道 CRUD 加权限门与 webhook 地址基础校验（拒环回/元数据地址,防 core 侧 SSRF）。
+- 项目日志 WS 与终端统一一次性票据握手（kind=project-log,绑定 projectId）。
+- file_write/push 写出前符号链接复核（目标拒链接 + 父目录 EvalSymlinks 重过白名单）；插件 .bat/.cmd 参数含 cmd 元字符直接拒绝；zip 条目补 Windows 盘符绝对路径检查。
+- 预签名直传直拉出站主机白名单（`AGENT_DOWNLOAD_ALLOWED_HOSTS`）：file_pull/push、分发、备份、升级的下载上传在 `pkg/filetransfer` 唯一出口校验目标 host，防 SSRF 与白名单内文件外带。
+- 流式 RPC 归因与租户隔离：Web 终端 gRPC 双向流与项目日志轮询的操作者身份改经 gRPC 原生出站元数据头传播，core 侧流式入口手动构建租户 viewer——终端台账/会话审计 `operator_id` 归因真正生效（此前因 kratos 流式 RPC 不执行 unary 中间件而恒为 0），并消除多租户下跨租户读项目日志的可能。
 - ops 业务域 RBAC：节点/项目/脚本/构建/分发等资源权限码播种，前端路由挂权限码。
 - 云厂商 AK/SK、Git 仓库凭据 AES-GCM 加密落库、回显脱敏。
 - 瞬态对象清理：files/config-templates 中转前缀下超 24h 的对象定时清扫。

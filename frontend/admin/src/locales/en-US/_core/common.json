@@ -150,6 +150,8 @@
       "FILE_NOT_FOUND": "File not found",
       "FILE_TOO_LARGE": "File is too large",
       "FORBIDDEN": "You do not have permission to perform this action",
+      "DANGEROUS_COMMAND_CONFIRM": "Command matches dangerous operation patterns; confirm to retry execution",
+      "APPROVAL_REQUIRED": "Operation held for approval; it will run once an approver confirms",
       "GATEWAY_TIMEOUT": "Gateway timed out",
       "GONE": "Resource is no longer available",
       "HTTP_VERSION_NOT_SUPPORTED": "Unsupported HTTP version",

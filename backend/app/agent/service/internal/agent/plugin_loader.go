@@ -169,6 +169,13 @@ func runPlugin(s *Service, kind, path string, args []string, timeout time.Durati
 	var argv []string
 	switch kind {
 	case "bat":
+		// cmd.exe 按自有规则解析参数(\" 视为字面反斜杠+引号结束,另有 % 变量
+		// 展开与 &|<>^ 管道元字符),无安全转义可用——含元字符的参数直接拒绝。
+		for _, a := range args {
+			if strings.ContainsAny(a, "\"%&|<>^!") {
+				return 0, "", false, fmt.Errorf("plugin arg contains cmd metacharacter, rejected: %q", a)
+			}
+		}
 		name, argv = "cmd", append([]string{"/c", path}, args...)
 	case "ps1":
 		name, argv = "powershell", append([]string{"-NoProfile", "-ExecutionPolicy", "Bypass", "-File", path}, args...)

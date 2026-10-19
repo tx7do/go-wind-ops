@@ -9,6 +9,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // InspectionService 平台巡检门面:透传 core。
@@ -39,5 +40,10 @@ func (s *InspectionService) Get(ctx context.Context, req *opsV1.GetInspectionReq
 }
 
 func (s *InspectionService) Run(ctx context.Context, req *opsV1.RunInspectionRequest) (*opsV1.Inspection, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsProjectManagePermissionCode); err != nil {
+		return nil, err
+	}
 	return s.inspectionServiceClient.RunInspection(ctx, req)
 }

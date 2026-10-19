@@ -5,6 +5,7 @@ import {
   type UseQueryOptions,
 } from '@tanstack/react-query';
 import {
+  type opsservicev1_ExecuteScriptBatchRequest,
   type opsservicev1_ExecuteScriptBatchResponse,
   type opsservicev1_GetScriptBatchRequest,
   type opsservicev1_ListScriptBatchResponse,
@@ -51,7 +52,7 @@ export function useBatchExecScript(
   options?: UseMutationOptions<
     opsservicev1_ExecuteScriptBatchResponse,
     Error,
-    { scriptId: number; nodeIds: number[] }
+    Partial<opsservicev1_ExecuteScriptBatchRequest>
   >,
 ) {
   return useMutation({

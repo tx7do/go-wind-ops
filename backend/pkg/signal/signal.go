@@ -350,6 +350,9 @@ type ProcessListResult struct {
 type AgentUpgradePayload struct {
 	Version string `json:"version"`
 	Url     string `json:"url"`
+	// ExpectedSha256 升级包期望摘要:core 侧从对象存储实测计算,agent 下载后
+	// 必须比对一致才允许自替换(缺失或不符一律拒绝,防升级通道变 RCE)。
+	ExpectedSha256 string `json:"expected_sha256"`
 }
 
 // AgentUpgradeResult agent_upgrade 回执(替换尚未发生,重启后心跳带新版本)。

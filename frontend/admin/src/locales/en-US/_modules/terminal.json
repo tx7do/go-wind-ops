@@ -30,5 +30,6 @@
   "uploadAllDone": "{{n}} file(s) uploaded",
   "uploadPartialDone": "Uploaded {{ok}}/{{total}}",
   "hint": "Real PTY terminal: Ctrl+C, backspace/arrow editing and interactive apps all work; right-click to copy/paste, Ctrl+wheel to zoom, drop files here to upload. Idle sessions disconnect after 15 minutes.",
-  "auditEntry": "Session Audit"
+  "auditEntry": "Session Audit",
+  "ticketFailed": "Failed to obtain connection ticket, please retry"
 }

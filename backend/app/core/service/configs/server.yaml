@@ -25,6 +25,8 @@ server:
   mqtt:
     endpoint: "tcp://127.0.0.1:1883"
     codec: "json"
+    # core 自身的 MQTT 账号:EMQX HTTP 认证回调 /api/v1/mqtt/auth 时,
+    # username==core 按这对凭证比对(不出现在 agent 表);务必改掉默认口令。
     username: "core"
     password: "core-pass"
     clean_session: false
@@ -32,3 +34,9 @@ server:
     resume_subs: true
     connect_retry_interval: 5s
     max_reconnect_interval: 60s
+    # TLS(指向 EMQX 8883 时启用;dev 自签证书可 insecure_skip_verify)
+    # endpoint: "ssl://127.0.0.1:8883"
+    # tls:
+    #   insecure_skip_verify: true
+    #   file:
+    #     ca_path: "/etc/go-wind-ops/emqx-ca.pem"

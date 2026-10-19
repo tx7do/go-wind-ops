@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // PipelineService 构建流水线门面:透传 core 的配置 CRUD/触发/运行记录。
@@ -37,6 +38,11 @@ func (s *PipelineService) Get(ctx context.Context, req *opsV1.GetPipelineRequest
 }
 
 func (s *PipelineService) Create(ctx context.Context, req *opsV1.CreatePipelineRequest) (*opsV1.Pipeline, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -44,6 +50,11 @@ func (s *PipelineService) Create(ctx context.Context, req *opsV1.CreatePipelineR
 }
 
 func (s *PipelineService) Update(ctx context.Context, req *opsV1.UpdatePipelineRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -55,6 +66,11 @@ func (s *PipelineService) Update(ctx context.Context, req *opsV1.UpdatePipelineR
 }
 
 func (s *PipelineService) Delete(ctx context.Context, req *opsV1.DeletePipelineRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(配置面/敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	_, err := s.pipelineServiceClient.DeletePipeline(ctx, req)
 	if err != nil {
 		return nil, err
@@ -63,6 +79,11 @@ func (s *PipelineService) Delete(ctx context.Context, req *opsV1.DeletePipelineR
 }
 
 func (s *PipelineService) Trigger(ctx context.Context, req *opsV1.TriggerPipelineRequest) (*opsV1.TriggerPipelineResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsScriptManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

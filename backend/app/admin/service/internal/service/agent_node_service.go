@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // AgentNodeService 受管机器(agent 节点)管理门面:透传 core 的
@@ -60,6 +61,11 @@ func (s *AgentNodeService) GetMetrics(ctx context.Context, req *opsV1.GetNodeMet
 }
 
 func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendCommandRequest) (*opsV1.SendCommandResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetAction() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: action required")
 	}
@@ -72,11 +78,21 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 
 // GetUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)。
 func (s *AgentNodeService) GetUpgradeUploadUrl(ctx context.Context, req *opsV1.GetAgentUpgradeUploadUrlRequest) (*opsV1.GetAgentUpgradeUploadUrlResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	return s.agentNodeServiceClient.GetAgentUpgradeUploadUrl(ctx, req)
 }
 
 // Upgrade 远程升级 agent(下发自替换指令)。
 func (s *AgentNodeService) Upgrade(ctx context.Context, req *opsV1.UpgradeAgentRequest) (*opsV1.UpgradeAgentResponse, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetNodeId() == 0 || req.GetVersion() == "" || req.GetObjectKey() == "" {
 		return nil, adminV1.ErrorBadRequest("invalid request: nodeId/version/objectKey required")
 	}

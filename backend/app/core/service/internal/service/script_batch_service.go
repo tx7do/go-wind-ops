@@ -190,6 +190,11 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 	}
 	operatorID := s.operatorID(ctx)
 
+	// 危险命令确认门槛:命中灾难性模式须显式 confirm_dangerous 才放行。
+	if ok, patterns := guardDangerousContent(s.log, payload.Content, req.GetConfirmDangerous(), operatorID); !ok {
+		return nil, dangerousCommandError(patterns)
+	}
+
 	batch, err := s.batchRepo.Create(ctx, batchSid, batchNm, nodeIDs,
 		uint32(len(targets)), operatorID)
 	if err != nil {

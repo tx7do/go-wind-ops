@@ -13,6 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"github.com/tx7do/go-utils/trans"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-ops/app/core/service/internal/data"
@@ -324,7 +325,8 @@ func (s *PipelineService) runBuildStep(ctx context.Context, runID uint32, st *op
 
 // runScriptStep 脚本:同步下发后按指令台账轮询终态,输出进日志。
 func (s *PipelineService) runScriptStep(ctx context.Context, runID uint32, st *opsV1.PipelineStep) error {
-	resp, err := s.scriptSvc.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{Id: st.GetRefId(), AgentId: st.AgentId})
+		// 自动化链路:脚本内容在流水线编排/脚本入库时已被作者审阅,此处显式确认通过危险命令门槛。
+	resp, err := s.scriptSvc.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{Id: st.GetRefId(), AgentId: st.AgentId, ConfirmDangerous: trans.Ptr(true)})
 	if err != nil {
 		return fmt.Errorf("execute script: %s", err.Error())
 	}

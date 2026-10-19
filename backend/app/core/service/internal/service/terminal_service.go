@@ -9,6 +9,8 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -18,6 +20,8 @@ import (
 	"github.com/tx7do/kratos-transport/broker"
 
 	"go-wind-ops/app/core/service/internal/data"
+	appMetadata "go-wind-ops/pkg/metadata"
+	entmw "go-wind-ops/pkg/middleware/ent"
 	"go-wind-ops/pkg/signal"
 	"go-wind-ops/pkg/topic"
 
@@ -30,6 +34,13 @@ const (
 
 	// terminalChunkMax 单帧字节上限(回显不宜过大,输出泵已按 4KB 切)。
 	terminalChunkMax = 64 << 10
+
+	// terminalRetentionSweepInterval 留存清理扫描周期。
+	terminalRetentionSweepInterval = time.Hour
+	// terminalRetentionBatchSize 单轮清理会话行数上限(先删分块再删行)。
+	terminalRetentionBatchSize = 200
+	// terminalRetentionDaysDefault 录制默认留存天数(0=永久)。
+	terminalRetentionDaysDefault = 30
 )
 
 type TerminalService struct {
@@ -70,6 +81,19 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 		return opsV1.ErrorBadRequest("sessionId too long")
 	}
 	ctx := stream.Context()
+
+	// 流式 RPC 不执行 unary 中间件链(kratos 限制):手动解析操作者元数据,
+	// 补齐租户 UserViewer(ent 查询隔离)与台账/会话的 operator 归因。
+	if op, operr := appMetadata.OperatorFromTransportHeader(ctx); operr == nil && op != nil {
+		if mctx, merr := appMetadata.NewContext(ctx, op); merr == nil {
+			ctx = mctx
+		}
+		ctx = entmw.InjectViewerForStream(ctx)
+	} else {
+		// 无操作者元数据(理论上 BFF 已校验权限码才会到这里):fail-closed,
+		// 注入 noop viewer 拒绝租户数据查询,台账归因保持 0。
+		s.log.Warnf("terminal channel without operator metadata (agent=%s)", agentId)
+	}
 
 	nodeID := uint32(0)
 	if s.nodeRepo != nil {
@@ -263,4 +287,71 @@ func segmentOf(topicStr string, idx int) string {
 		return ""
 	}
 	return parts[idx]
+}
+
+// ── 录制留存清理 ──
+
+// terminalRetentionDays 录制留存天数:TERMINAL_RETENTION_DAYS,默认 30,0=永久。
+func terminalRetentionDays() int {
+	v := strings.TrimSpace(os.Getenv("TERMINAL_RETENTION_DAYS"))
+	if v == "" {
+		return terminalRetentionDaysDefault
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n < 0 {
+		return terminalRetentionDaysDefault
+	}
+	return n
+}
+
+// StartRetentionLoop 启动录制留存清理:周期删除已关闭且超过留存期的会话
+// (先删分块再删行,分批进行)。留存 0 天表示永久保留,不启动。
+func (s *TerminalService) StartRetentionLoop(ctx context.Context) {
+	days := terminalRetentionDays()
+	if days <= 0 {
+		s.log.Infof("terminal record retention disabled (keep forever)")
+		return
+	}
+	go func() {
+		ticker := time.NewTicker(terminalRetentionSweepInterval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.sweepRetention(ctx, days)
+			}
+		}
+	}()
+	s.log.Infof("terminal record retention loop started (days=%d)", days)
+}
+
+func (s *TerminalService) sweepRetention(ctx context.Context, days int) {
+	cutoff := time.Now().AddDate(0, 0, -days)
+	total := 0
+	for {
+		ids, err := s.sessionRepo.ListExpiredSessionIDs(ctx, cutoff, terminalRetentionBatchSize)
+		if err != nil || len(ids) == 0 {
+			if err != nil {
+				s.log.Warnf("terminal retention sweep: %s", err.Error())
+			}
+			break
+		}
+		if err = s.chunkRepo.DeleteBySessionIDs(ctx, ids); err != nil {
+			s.log.Warnf("terminal retention sweep: delete chunks: %s", err.Error())
+			break
+		}
+		if err = s.sessionRepo.DeleteByIDs(ctx, ids); err != nil {
+			s.log.Warnf("terminal retention sweep: delete sessions: %s", err.Error())
+			break
+		}
+		total += len(ids)
+		if len(ids) < terminalRetentionBatchSize {
+			break
+		}
+	}
+	if total > 0 {
+		s.log.Infof("terminal retention sweep: purged %d sessions (older than %d days)", total, days)
+	}
 }

@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 // ApprovalService 操作审批门面:透传 core 的 ApprovalService。
@@ -38,6 +39,11 @@ func (s *ApprovalService) Get(ctx context.Context, req *opsV1.GetApprovalRequest
 }
 
 func (s *ApprovalService) Approve(ctx context.Context, req *opsV1.ApproveApprovalRequest) (*opsV1.OpApprovalResult, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}
@@ -45,6 +51,11 @@ func (s *ApprovalService) Approve(ctx context.Context, req *opsV1.ApproveApprova
 }
 
 func (s *ApprovalService) Reject(ctx context.Context, req *opsV1.RejectApprovalRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.GetId() == 0 {
 		return nil, adminV1.ErrorBadRequest("invalid request: id required")
 	}

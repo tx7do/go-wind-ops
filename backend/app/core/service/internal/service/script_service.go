@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -25,14 +26,16 @@ type ScriptService struct {
 	nodeRepo *data.AgentNodeRepo
 
 	agentService *AgentService
+	approvalRepo *data.ApprovalRepo
 }
 
-func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService) *ScriptService {
+func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo) *ScriptService {
 	return &ScriptService{
 		log:          ctx.NewLoggerHelper("script/service/core-service"),
 		repo:         repo,
 		nodeRepo:     nodeRepo,
 		agentService: agentService,
+		approvalRepo: approvalRepo,
 	}
 }
 
@@ -132,6 +135,20 @@ func (s *ScriptService) ExecuteScript(ctx context.Context, req *opsV1.ExecuteScr
 		Name:       sc.GetName(),
 		Content:    sc.GetContent(),
 		TimeoutSec: timeout,
+	}
+
+	// 危险命令确认门槛:命中灾难性模式须显式 confirm_dangerous 才放行。
+	// 流水线/定时脚本属自动化调用,由调用点显式置 confirm(脚本入库时作者已审)。
+	if ok, patterns := guardDangerousContent(s.log, payload.Content, req.GetConfirmDangerous(), s.operatorID(ctx)); !ok {
+		return nil, dangerousCommandError(patterns)
+	}
+
+	// 审批闸门:APPROVAL_REQUIRED_ACTIONS 含 script_exec 时先建审批单待批
+	if pbJSON, merr := json.Marshal(payload); merr == nil {
+		if aerr := approvalGate(ctx, s.log, s.approvalRepo, string(signal.CommandActionScriptExec),
+			sc.GetId(), agentId, sc.GetName(), string(pbJSON), s.operatorID(ctx)); aerr != nil {
+			return nil, aerr
+		}
 	}
 
 	requestId, err := s.agentService.PublishCommand(ctx, nodeID, agentId,

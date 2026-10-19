@@ -133,6 +133,46 @@ func (r *TerminalSessionRepo) Finalize(ctx context.Context, id uint32, inputByte
 	return err
 }
 
+// ListExpiredSessionIDs 取已关闭且早于 cutoff 的会话行 ID(留存清理用,
+// 分批上限 limit)。
+func (r *TerminalSessionRepo) ListExpiredSessionIDs(ctx context.Context, cutoff time.Time, limit int) ([]uint32, error) {
+	if limit <= 0 || limit > 1000 {
+		limit = 200
+	}
+	rows, err := r.entClient.Client().TerminalSession.
+		Query().
+		Where(
+			terminalsession.StatusEQ(terminalsession.StatusClosed),
+			terminalsession.ClosedAtLT(cutoff),
+		).
+		Select(terminalsession.FieldID).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]uint32, 0, len(rows))
+	for _, row := range rows {
+		ids = append(ids, row.ID)
+	}
+	return ids, nil
+}
+
+// DeleteByIDs 删除会话行(留存清理;调用方须先删干净关联分块)。
+func (r *TerminalSessionRepo) DeleteByIDs(ctx context.Context, ids []uint32) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	_, err := r.entClient.Client().TerminalSession.
+		Delete().
+		Where(terminalsession.IDIn(ids...)).
+		Exec(ctx)
+	if err != nil {
+		r.log.Errorf("delete terminal sessions: %s", err.Error())
+	}
+	return err
+}
+
 // TerminalChunkRepo 终端录制分块仓储(基表读写,无 DTO 映射)。
 type TerminalChunkRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
@@ -166,6 +206,21 @@ func (r *TerminalChunkRepo) CreateBulk(ctx context.Context, rows []*ent.Terminal
 		return err
 	}
 	return nil
+}
+
+// DeleteBySessionIDs 批量删除会话分块(留存清理,先于会话行删除)。
+func (r *TerminalChunkRepo) DeleteBySessionIDs(ctx context.Context, sessionRowIDs []uint32) error {
+	if len(sessionRowIDs) == 0 {
+		return nil
+	}
+	_, err := r.entClient.Client().TerminalChunk.
+		Delete().
+		Where(terminalchunk.TerminalSessionIDIn(sessionRowIDs...)).
+		Exec(ctx)
+	if err != nil {
+		r.log.Errorf("delete terminal chunks: %s", err.Error())
+	}
+	return err
 }
 
 // ListBySession 按会话取分块(基表查询,手写转换——payload 用 bytes 类型)。

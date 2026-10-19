@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_Project as Project } from '@/api/generated/admin/service/v1';
 import { useClearProjectLog, useGetProjectLog } from '@/api/hooks/project';
-import { useAuthStore } from '@/stores/auth';
+import { requestApi } from '@/core/transport/rest';
 
 interface ProjectLogDrawerProps {
   data?: Project;
@@ -39,9 +39,20 @@ function bytesToText(bytes: Uint8Array): string {
   }
 }
 
-function buildWsUrl(token: string, projectId: number, intervalMs: number): string {
+function buildWsUrl(ticket: string, projectId: number, intervalMs: number): string {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-  return `${proto}://${location.host}/admin/v1/ws/projects/log?token=${encodeURIComponent(token)}&projectId=${projectId}&interval=${intervalMs}`;
+  return `${proto}://${location.host}/admin/v1/ws/projects/log?ticket=${encodeURIComponent(ticket)}&projectId=${projectId}&interval=${intervalMs}`;
+}
+
+/** 获取一次性握手票据(30s 有效,单次消费):长效 token 不进 WS URL。 */
+async function fetchLogTicket(projectId: number): Promise<string> {
+  const resp = (await requestApi({
+    path: `/admin/v1/ws/terminal/tickets?kind=project-log&projectId=${projectId}`,
+    method: 'POST',
+    body: null,
+  } as never)) as { ticket?: string };
+  if (!resp?.ticket) throw new Error('empty ticket');
+  return resp.ticket;
 }
 
 /**
@@ -75,42 +86,53 @@ const ProjectLogDrawer: React.FC<ProjectLogDrawerProps> = ({ data, onClose }) =>
   // ── 实时 WS 生命周期 ──
   useEffect(() => {
     if (!live || !projectId) return;
-    const token = useAuthStore.getState().accessToken;
-    if (!token) {
-      message.error(t('tokenMissing'));
-      setLive(false);
-      return;
-    }
+    let cancelled = false;
     bufRef.current = new Uint8Array();
     setLiveText('');
     setLiveStatus('connecting');
-    const ws = new WebSocket(buildWsUrl(token, projectId, 2000));
-    ws.binaryType = 'arraybuffer';
-    wsRef.current = ws;
-    ws.onopen = () => setLiveStatus('open');
-    ws.onmessage = (ev) => {
-      if (typeof ev.data === 'string') {
-        try {
-          const msg = JSON.parse(ev.data) as { event?: string };
-          if (msg.event === 'RESET') {
-            resetRef.current = true;
-            bufRef.current = new Uint8Array();
-            setLiveText('');
+    let ws: WebSocket | null = null;
+    fetchLogTicket(projectId)
+      .then((ticket) => {
+        if (cancelled) return;
+        ws = new WebSocket(buildWsUrl(ticket, projectId, 2000));
+        ws.binaryType = 'arraybuffer';
+        wsRef.current = ws;
+        ws.onopen = () => setLiveStatus('open');
+        ws.onmessage = (ev) => {
+          if (typeof ev.data === 'string') {
+            try {
+              const msg = JSON.parse(ev.data) as { event?: string };
+              if (msg.event === 'RESET') {
+                resetRef.current = true;
+                bufRef.current = new Uint8Array();
+                setLiveText('');
+              }
+            } catch { /* 忽略非 JSON 帧 */ }
+            return;
           }
-        } catch { /* 忽略非 JSON 帧 */ }
-        return;
-      }
-      if (ev.data instanceof ArrayBuffer) {
-        if (resetRef.current) {
-          resetRef.current = false;
-          bufRef.current = new Uint8Array();
+          if (ev.data instanceof ArrayBuffer) {
+            if (resetRef.current) {
+              resetRef.current = false;
+              bufRef.current = new Uint8Array();
+            }
+            appendLive(new Uint8Array(ev.data));
+          }
+        };
+        ws.onclose = () => {
+          setLiveStatus('idle');
+          if (wsRef.current === ws) wsRef.current = null;
+        };
+      })
+      .catch(() => {
+        if (!cancelled) {
+          message.error(t('ticketFailed'));
+          setLive(false);
+          setLiveStatus('idle');
         }
-        appendLive(new Uint8Array(ev.data));
-      }
-    };
-    ws.onclose = () => setLiveStatus('idle');
+      });
     return () => {
-      ws.close();
+      cancelled = true;
+      if (ws) ws.close();
       wsRef.current = null;
       setLiveStatus('idle');
     };

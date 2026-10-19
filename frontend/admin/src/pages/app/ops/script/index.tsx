@@ -22,6 +22,7 @@ import {
   fetchListScripts,
   useDeleteScript,
   useExecuteScript,
+  isDangerousConfirmError,
 } from '@/api/hooks/script';
 import { useBatchExecScript } from '@/api/hooks/script-batch';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
@@ -36,7 +37,7 @@ const ScriptManagement = () => {
   const { t } = useTranslation('script');
   const actionRef = useRef<ActionType>(null);
   const queryClient = useQueryClient();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const navigate = useNavigate();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +75,26 @@ const ScriptManagement = () => {
       message.success(t('executeSent', { requestId: resp.requestId }));
       setExecScript(undefined);
     },
-    onError: (error: Error) => message.error(error.message || t('executeFailed')),
+    onError: (error: Error) => {
+      if (isDangerousConfirmError(error)) {
+        modal.confirm({
+          title: t('dangerousTitle'),
+          content: t('dangerousContent'),
+          okText: t('dangerousConfirm'),
+          okButtonProps: { danger: true },
+          cancelText: t('dangerousCancel'),
+          onOk: () => {
+            if (!execScript?.id) return;
+            executeMutation.mutate(
+              { id: execScript.id, nodeId: execNodeId, confirmDangerous: true },
+              { onSettled: () => setExecLoading(false) },
+            );
+          },
+        });
+        return;
+      }
+      message.error(error.message || t('executeFailed'));
+    },
   });
 
   const batchExecMutation = useBatchExecScript({
@@ -83,9 +103,27 @@ const ScriptManagement = () => {
       setBatchScript(undefined);
       navigate('/ops/script-batches');
     },
-    onError: (error: Error) => message.error(error.message || t('executeFailed')),
+    onError: (error: Error) => {
+      if (isDangerousConfirmError(error)) {
+        modal.confirm({
+          title: t('dangerousTitle'),
+          content: t('dangerousContent'),
+          okText: t('dangerousConfirm'),
+          okButtonProps: { danger: true },
+          cancelText: t('dangerousCancel'),
+          onOk: () => {
+            if (!batchScript?.id || batchNodeIds.length === 0) return;
+            batchExecMutation.mutate(
+              { scriptId: batchScript.id, nodeIds: batchNodeIds, confirmDangerous: true },
+              { onSettled: () => setBatchLoading(false) },
+            );
+          },
+        });
+        return;
+      }
+      message.error(error.message || t('executeFailed'));
+    },
   });
-
 
   const confirmExecute = () => {
     if (!execScript?.id || !execNodeId) {

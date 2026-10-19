@@ -15,6 +15,7 @@ import (
 
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils"
+	"go-wind-ops/pkg/constants"
 )
 
 type RoleService struct {
@@ -62,6 +63,11 @@ func (s *RoleService) Get(ctx context.Context, req *permissionV1.GetRoleRequest)
 }
 
 func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -83,6 +89,11 @@ func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRe
 }
 
 func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -138,6 +149,11 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 }
 
 func (s *RoleService) Delete(ctx context.Context, req *permissionV1.DeleteRoleRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(noop authz 下的真实防线):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}

@@ -28,14 +28,16 @@ type AgentNodeService struct {
 	metricRepo *data.NodeMetricRepo
 
 	agentService *AgentService
+	approvalRepo *data.ApprovalRepo
 }
 
-func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, metricRepo *data.NodeMetricRepo, agentService *AgentService) *AgentNodeService {
+func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, metricRepo *data.NodeMetricRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo) *AgentNodeService {
 	return &AgentNodeService{
-		log:        ctx.NewLoggerHelper("agent-node/service/core-service"),
-		repo:       repo,
-		metricRepo: metricRepo,
+		log:          ctx.NewLoggerHelper("agent-node/service/core-service"),
+		repo:         repo,
+		metricRepo:   metricRepo,
 		agentService: agentService,
+		approvalRepo: approvalRepo,
 	}
 }
 
@@ -74,6 +76,12 @@ func (s *AgentNodeService) DeleteAgentNode(ctx context.Context, req *opsV1.Delet
 func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendCommandRequest) (*opsV1.SendCommandResponse, error) {
 	if req == nil || req.GetAction() == "" {
 		return nil, opsV1.ErrorBadRequest("invalid parameter: action required")
+	}
+	// action 白名单:本端点是通用指令透传面,不设白名单等价于把全部指令面
+	// (脚本/文件/终端/升级...)暴露给单个"节点指令"权限。现仅开放 ping,
+	// 其余能力走各自域的专用入口(经权限码门)。
+	if req.GetAction() != string(signal.CommandActionPing) {
+		return nil, opsV1.ErrorBadRequest("action %q not allowed (ping only)", req.GetAction())
 	}
 	if req.GetId() == 0 && req.GetAgentId() == "" {
 		return nil, opsV1.ErrorBadRequest("invalid parameter: id or agentId required")
@@ -189,10 +197,27 @@ func (s *AgentNodeService) UpgradeAgent(ctx context.Context, req *opsV1.UpgradeA
 		return nil, opsV1.ErrorServiceUnavailable("presign download failed")
 	}
 
-	payload := &signal.AgentUpgradePayload{
-		Version: req.GetVersion(),
-		Url:     downloadUrl,
+	// 实测对象摘要随指令下发:agent 下载后比对一致才自替换(升级通道完整性)
+	expectedSha, err := s.agentService.HashAgentUpgradeObject(ctx, req.GetObjectKey())
+	if err != nil {
+		s.log.Errorf("hash agent upgrade object: %s", err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("hash upgrade package failed")
 	}
+
+	payload := &signal.AgentUpgradePayload{
+		Version:        req.GetVersion(),
+		Url:            downloadUrl,
+		ExpectedSha256: expectedSha,
+	}
+
+	// 审批闸门:APPROVAL_REQUIRED_ACTIONS 含 agent_upgrade 时先建审批单待批
+	if upJSON, merr := json.Marshal(payload); merr == nil {
+		if aerr := approvalGate(ctx, s.log, s.approvalRepo, string(signal.CommandActionAgentUpgrade),
+			node.GetId(), node.GetAgentId(), req.GetVersion(), string(upJSON), s.operatorID(ctx)); aerr != nil {
+			return nil, aerr
+		}
+	}
+
 	requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
 		signal.CommandActionAgentUpgrade, payload, s.operatorID(ctx))
 	if err != nil {
