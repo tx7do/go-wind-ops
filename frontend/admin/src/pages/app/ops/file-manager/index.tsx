@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Modal, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Tree, Typography } from 'antd';
-import type { DataNode } from 'antd/es/tree';
+import type { DataNode, EventDataNode } from 'antd/es/tree';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -47,6 +47,15 @@ function base64ToUtf8(s: string): string {
 /** 按平台风格拼接路径段(纯展示用,实际路径由 agent 校验)。 */
 function joinPath(dir: string, name: string): string {
   return dir.endsWith('/') || dir.endsWith('\\') ? dir + name : `${dir}/${name}`;
+}
+
+/** 经典递归:把 children 挂到指定 key 的节点上(纯函数)。 */
+function updateTreeData(list: DataNode[], key: string, children: DataNode[]): DataNode[] {
+  return list.map((n) => {
+    if (n.key === key) return { ...n, children };
+    if (n.children) return { ...n, children: updateTreeData(n.children, key, children) };
+    return n;
+  });
 }
 
 type EditorState = { path: string; content: string; truncated: boolean; loading: boolean };
@@ -140,7 +149,7 @@ const FileManager = () => {
   const [batchUpload, setBatchUpload] = useState<{
     open: boolean; agents: string[]; dir: string; files: File[]; busy: boolean; done: number; total: number;
   }>({ open: false, agents: [], dir: '', files: [], busy: false, done: 0, total: 0 });
-  const onUploadPicked = async (file: File, relativePath = ''): Promise<boolean> => {
+  const onUploadPicked = useCallback(async (file: File, relativePath = ''): Promise<boolean> => {
     if (!agentId || !currentDir) {
       message.warning(t('pickAgentFirst'));
       return false;
@@ -161,7 +170,7 @@ const FileManager = () => {
       setUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = '';
     }
-  };
+  }, [agentId, currentDir, message, t, refresh]);
 
   // 批量上传编排:每个文件只 prepare+PUT 一次(objectKey 不绑机器),各目标机
   // 器分别经 Complete 拉取落盘——省 N-1 倍上传带宽
@@ -197,7 +206,9 @@ const FileManager = () => {
 
   // 整页拖拽=上传到当前目录(与选择文件按钮同一链路);目录递归保持相对路径
   const onUploadPickedRef = useRef(onUploadPicked);
-  onUploadPickedRef.current = onUploadPicked;
+  useEffect(() => {
+    onUploadPickedRef.current = onUploadPicked;
+  }, [onUploadPicked]);
   useEffect(() => {
     const host = rootRef.current;
     if (!host) return;
@@ -261,16 +272,8 @@ const FileManager = () => {
     setTreeData([{ title: parts[parts.length - 1] || dir, key: dir }]);
   }, []);
 
-  // 经典递归:把 children 挂到指定 key 的节点上
-  const updateTreeData = (list: DataNode[], key: string, children: DataNode[]): DataNode[] =>
-    list.map((n) => {
-      if (n.key === key) return { ...n, children };
-      if (n.children) return { ...n, children: updateTreeData(n.children, key, children) };
-      return n;
-    });
-
   const loadTreeChildren = useCallback(
-    async (node: { key: string | number }) => {
+    async (node: EventDataNode<DataNode>) => {
       if (!agentId) return;
       const dir = String(node.key);
       try {
@@ -433,7 +436,7 @@ const FileManager = () => {
             icon={<UploadOutlined />}
             disabled={!canBrowse}
             onClick={() => {
-              setBatchUpload({ open: true, agents: agentId ? [agentId] : [], dir: currentDir, busy: false, done: 0, total: 0 });
+              setBatchUpload({ open: true, agents: agentId ? [agentId] : [], dir: currentDir, files: [], busy: false, done: 0, total: 0 });
             }}
           >
             {t('batchUpload')}

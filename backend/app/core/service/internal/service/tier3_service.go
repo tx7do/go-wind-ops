@@ -268,10 +268,10 @@ func (s *LogSnapshotService) CaptureLogSnapshot(ctx context.Context, req *opsV1.
 		&signal.ProjectLogPayload{ProjectId: project.GetId(), Dir: project.GetProjectDir(), MaxBytes: 256 << 10},
 		operatorIDOf(ctx), logQueryTimeout)
 	if err != nil {
-		return nil, opsV1.ErrorServiceUnavailable("capture log failed: " + err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("%s", "capture log failed: "+err.Error())
 	}
 	if !res.Success {
-		return nil, opsV1.ErrorInternalServerError("capture log: " + res.Error)
+		return nil, opsV1.ErrorInternalServerError("%s", "capture log: "+res.Error)
 	}
 	var out signal.ProjectLogResult
 	if err = json.Unmarshal(res.Data, &out); err != nil {
