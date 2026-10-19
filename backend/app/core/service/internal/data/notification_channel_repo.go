@@ -117,6 +117,7 @@ func (r *NotificationChannelRepo) Create(ctx context.Context, req *opsV1.CreateN
 	if req.Data.SmtpUsername != nil { builder.SetSMTPUsername(req.Data.GetSmtpUsername()) }
 	if req.Data.SmtpPassword != nil { builder.SetSMTPPassword(req.Data.GetSmtpPassword()) }
 	if req.Data.SmtpFrom != nil { builder.SetSMTPFrom(req.Data.GetSmtpFrom()) }
+	if req.Data.EmailTo != nil { builder.SetEmailTo(req.Data.GetEmailTo()) }
 	if req.Data.Description != nil { builder.SetDescription(req.Data.GetDescription()) }
 	if operatorID > 0 { builder.SetCreatedBy(operatorID) }
 
@@ -142,6 +143,7 @@ func (r *NotificationChannelRepo) Update(ctx context.Context, req *opsV1.UpdateN
 				SetNillableSMTPHost(req.Data.SmtpHost).
 				SetNillableSMTPUsername(req.Data.SmtpUsername).
 				SetNillableSMTPFrom(req.Data.SmtpFrom).
+				SetNillableEmailTo(req.Data.EmailTo).
 				SetNillableDescription(req.Data.Description).
 				SetEnabled(req.Data.GetEnabled())
 			if req.Data.WebhookSignStyle != nil {

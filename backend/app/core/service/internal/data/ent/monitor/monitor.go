@@ -43,6 +43,8 @@ const (
 	FieldConsecutiveHits = "consecutive_hits"
 	// FieldNotifyOnRecovery holds the string denoting the notify_on_recovery field in the database.
 	FieldNotifyOnRecovery = "notify_on_recovery"
+	// FieldRepeatIntervalMinutes holds the string denoting the repeat_interval_minutes field in the database.
+	FieldRepeatIntervalMinutes = "repeat_interval_minutes"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldAutoRestart holds the string denoting the auto_restart field in the database.
@@ -75,6 +77,7 @@ var Columns = []string{
 	FieldConsecutiveCount,
 	FieldConsecutiveHits,
 	FieldNotifyOnRecovery,
+	FieldRepeatIntervalMinutes,
 	FieldCron,
 	FieldAutoRestart,
 	FieldWebhookURL,
@@ -107,6 +110,8 @@ var (
 	DefaultConsecutiveHits int
 	// DefaultNotifyOnRecovery holds the default value on creation for the "notify_on_recovery" field.
 	DefaultNotifyOnRecovery bool
+	// DefaultRepeatIntervalMinutes holds the default value on creation for the "repeat_interval_minutes" field.
+	DefaultRepeatIntervalMinutes int
 	// CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	CronValidator func(string) error
 	// DefaultAutoRestart holds the default value on creation for the "auto_restart" field.
@@ -251,6 +256,11 @@ func ByConsecutiveHits(opts ...sql.OrderTermOption) OrderOption {
 // ByNotifyOnRecovery orders the results by the notify_on_recovery field.
 func ByNotifyOnRecovery(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNotifyOnRecovery, opts...).ToFunc()
+}
+
+// ByRepeatIntervalMinutes orders the results by the repeat_interval_minutes field.
+func ByRepeatIntervalMinutes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRepeatIntervalMinutes, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

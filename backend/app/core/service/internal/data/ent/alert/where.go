@@ -74,6 +74,11 @@ func MonitorID(v uint32) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldMonitorID, v))
 }
 
+// Source applies equality check predicate on the "source" field. It's identical to SourceEQ.
+func Source(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldEQ(FieldSource, v))
+}
+
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
 func ProjectID(v uint32) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldProjectID, v))
@@ -292,6 +297,81 @@ func MonitorIDLT(v uint32) predicate.Alert {
 // MonitorIDLTE applies the LTE predicate on the "monitor_id" field.
 func MonitorIDLTE(v uint32) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldMonitorID, v))
+}
+
+// MonitorIDIsNil applies the IsNil predicate on the "monitor_id" field.
+func MonitorIDIsNil() predicate.Alert {
+	return predicate.Alert(sql.FieldIsNull(FieldMonitorID))
+}
+
+// MonitorIDNotNil applies the NotNil predicate on the "monitor_id" field.
+func MonitorIDNotNil() predicate.Alert {
+	return predicate.Alert(sql.FieldNotNull(FieldMonitorID))
+}
+
+// SourceEQ applies the EQ predicate on the "source" field.
+func SourceEQ(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldEQ(FieldSource, v))
+}
+
+// SourceNEQ applies the NEQ predicate on the "source" field.
+func SourceNEQ(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldNEQ(FieldSource, v))
+}
+
+// SourceIn applies the In predicate on the "source" field.
+func SourceIn(vs ...string) predicate.Alert {
+	return predicate.Alert(sql.FieldIn(FieldSource, vs...))
+}
+
+// SourceNotIn applies the NotIn predicate on the "source" field.
+func SourceNotIn(vs ...string) predicate.Alert {
+	return predicate.Alert(sql.FieldNotIn(FieldSource, vs...))
+}
+
+// SourceGT applies the GT predicate on the "source" field.
+func SourceGT(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldGT(FieldSource, v))
+}
+
+// SourceGTE applies the GTE predicate on the "source" field.
+func SourceGTE(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldGTE(FieldSource, v))
+}
+
+// SourceLT applies the LT predicate on the "source" field.
+func SourceLT(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldLT(FieldSource, v))
+}
+
+// SourceLTE applies the LTE predicate on the "source" field.
+func SourceLTE(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldLTE(FieldSource, v))
+}
+
+// SourceContains applies the Contains predicate on the "source" field.
+func SourceContains(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldContains(FieldSource, v))
+}
+
+// SourceHasPrefix applies the HasPrefix predicate on the "source" field.
+func SourceHasPrefix(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldHasPrefix(FieldSource, v))
+}
+
+// SourceHasSuffix applies the HasSuffix predicate on the "source" field.
+func SourceHasSuffix(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldHasSuffix(FieldSource, v))
+}
+
+// SourceEqualFold applies the EqualFold predicate on the "source" field.
+func SourceEqualFold(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldEqualFold(FieldSource, v))
+}
+
+// SourceContainsFold applies the ContainsFold predicate on the "source" field.
+func SourceContainsFold(v string) predicate.Alert {
+	return predicate.Alert(sql.FieldContainsFold(FieldSource, v))
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.

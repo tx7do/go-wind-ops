@@ -1,0 +1,187 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// CertService 证书到期台账:core 直连 host:port 做 TLS 探测读取对端证书
+// 有效期,调度器按提前天数产生到期告警并经通知渠道外呼。
+service CertService {
+  // 查询证书列表
+  rpc ListCerts (pagination.PagingRequest) returns (ListCertResponse) {}
+
+  // 查询证书详情
+  rpc GetCert (GetCertRequest) returns (Cert) {}
+
+  // 创建证书
+  rpc CreateCert (CreateCertRequest) returns (Cert) {}
+
+  // 更新证书
+  rpc UpdateCert (UpdateCertRequest) returns (google.protobuf.Empty) {}
+
+  // 删除证书
+  rpc DeleteCert (DeleteCertRequest) returns (google.protobuf.Empty) {}
+
+  // 立即探测一次(TLS 握手读取有效期并回填)
+  rpc ProbeCert (ProbeCertRequest) returns (ProbeCertResponse) {}
+}
+
+// 证书台账
+message Cert {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 证书ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "证书名(全局唯一)"
+    }
+  ]; // 证书名
+
+  optional string host = 3 [
+    json_name = "host",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "探测目标主机(域名/IP)"
+    }
+  ]; // 目标主机
+
+  optional int32 port = 4 [
+    json_name = "port",
+    (gnostic.openapi.v3.property) = {
+      description: "TLS 端口(默认 443)"
+    }
+  ]; // TLS 端口
+
+  optional string issuer = 5 [
+    json_name = "issuer",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 签发者
+
+  optional google.protobuf.Timestamp not_before = 6 [
+    json_name = "notBefore",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 生效时间
+
+  optional google.protobuf.Timestamp not_after = 7 [
+    json_name = "notAfter",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 到期时间
+
+  optional int32 days_before_expire = 8 [
+    json_name = "daysBeforeExpire",
+    (gnostic.openapi.v3.property) = {
+      description: "到期前多少天告警"
+    }
+  ]; // 提前告警天数
+
+  optional string probe_cron = 9 [
+    json_name = "probeCron",
+    (gnostic.openapi.v3.property) = {
+      description: "自动探测周期 cron(空=仅手动)"
+    }
+  ]; // 自动探测周期
+
+  optional google.protobuf.Timestamp last_probed_at = 10 [
+    json_name = "lastProbedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 上次探测时间
+
+  optional string last_error = 11 [
+    json_name = "lastError",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 上次探测失败原因
+
+  optional bool enabled = 12 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 13 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListCertResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated Cert items = 2 [json_name = "items"]; // 证书列表
+}
+
+message GetCertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 证书ID
+}
+
+message CreateCertRequest {
+  Cert data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 证书数据
+}
+
+message UpdateCertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 证书ID
+
+  Cert data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteCertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 证书ID
+}
+
+message ProbeCertRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 证书ID
+}
+
+message ProbeCertResponse {
+  optional string issuer = 1 [json_name = "issuer"]; // 签发者
+
+  optional google.protobuf.Timestamp not_after = 2 [json_name = "notAfter"]; // 到期时间
+
+  optional int32 remaining_days = 3 [json_name = "remainingDays"]; // 剩余天数
+
+  optional string error = 4 [json_name = "error"]; // 探测失败原因
+}

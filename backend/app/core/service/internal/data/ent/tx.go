@@ -34,8 +34,12 @@ type Tx struct {
 	BuildHistory *BuildHistoryClient
 	// BuildPipeline is the client for interacting with the BuildPipeline builders.
 	BuildPipeline *BuildPipelineClient
+	// Cert is the client for interacting with the Cert builders.
+	Cert *CertClient
 	// CloudAccount is the client for interacting with the CloudAccount builders.
 	CloudAccount *CloudAccountClient
+	// CloudBudget is the client for interacting with the CloudBudget builders.
+	CloudBudget *CloudBudgetClient
 	// CloudCost is the client for interacting with the CloudCost builders.
 	CloudCost *CloudCostClient
 	// CloudInstance is the client for interacting with the CloudInstance builders.
@@ -270,7 +274,9 @@ func (tx *Tx) init() {
 	tx.Build = NewBuildClient(tx.config)
 	tx.BuildHistory = NewBuildHistoryClient(tx.config)
 	tx.BuildPipeline = NewBuildPipelineClient(tx.config)
+	tx.Cert = NewCertClient(tx.config)
 	tx.CloudAccount = NewCloudAccountClient(tx.config)
+	tx.CloudBudget = NewCloudBudgetClient(tx.config)
 	tx.CloudCost = NewCloudCostClient(tx.config)
 	tx.CloudInstance = NewCloudInstanceClient(tx.config)
 	tx.CommandRecord = NewCommandRecordClient(tx.config)

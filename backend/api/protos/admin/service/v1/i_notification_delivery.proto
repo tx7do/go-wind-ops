@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/notification_delivery.proto";
+
+// NotificationDeliveryService 告警通知投递记录(只读)
+service NotificationDeliveryService {
+  // 查询投递记录列表(按 alertId 过滤)
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListNotificationDeliveryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-deliveries"
+    };
+  }
+
+  // 查询投递记录详情
+  rpc Get (ops.service.v1.GetNotificationDeliveryRequest) returns (ops.service.v1.NotificationDelivery) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-deliveries/{id}"
+    };
+  }
+}

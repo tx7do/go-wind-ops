@@ -52,17 +52,17 @@ type DistributionServiceHTTPServer interface {
 
 func RegisterDistributionServiceHTTPServer(s *http.Server, srv DistributionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/distributions", _DistributionService_List16_HTTP_Handler(srv))
-	r.GET("/admin/v1/distributions/{id}", _DistributionService_Get14_HTTP_Handler(srv))
-	r.POST("/admin/v1/distributions", _DistributionService_Create7_HTTP_Handler(srv))
-	r.PUT("/admin/v1/distributions/{id}", _DistributionService_Update8_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/distributions/{id}", _DistributionService_Delete9_HTTP_Handler(srv))
+	r.GET("/admin/v1/distributions", _DistributionService_List18_HTTP_Handler(srv))
+	r.GET("/admin/v1/distributions/{id}", _DistributionService_Get16_HTTP_Handler(srv))
+	r.POST("/admin/v1/distributions", _DistributionService_Create9_HTTP_Handler(srv))
+	r.PUT("/admin/v1/distributions/{id}", _DistributionService_Update10_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/distributions/{id}", _DistributionService_Delete11_HTTP_Handler(srv))
 	r.POST("/admin/v1/distributions/{id}/distributions:trigger", _DistributionService_Trigger2_HTTP_Handler(srv))
 	r.GET("/admin/v1/distribution-records", _DistributionService_ListRecords1_HTTP_Handler(srv))
 	r.GET("/admin/v1/distribution-records/{id}", _DistributionService_GetRecord0_HTTP_Handler(srv))
 }
 
-func _DistributionService_List16_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_List18_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -81,7 +81,7 @@ func _DistributionService_List16_HTTP_Handler(srv DistributionServiceHTTPServer)
 	}
 }
 
-func _DistributionService_Get14_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_Get16_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetDistributionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -103,7 +103,7 @@ func _DistributionService_Get14_HTTP_Handler(srv DistributionServiceHTTPServer) 
 	}
 }
 
-func _DistributionService_Create7_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_Create9_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateDistributionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -125,7 +125,7 @@ func _DistributionService_Create7_HTTP_Handler(srv DistributionServiceHTTPServer
 	}
 }
 
-func _DistributionService_Update8_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_Update10_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateDistributionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -150,7 +150,7 @@ func _DistributionService_Update8_HTTP_Handler(srv DistributionServiceHTTPServer
 	}
 }
 
-func _DistributionService_Delete9_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
+func _DistributionService_Delete11_HTTP_Handler(srv DistributionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteDistributionRequest
 		if err := ctx.BindQuery(&in); err != nil {

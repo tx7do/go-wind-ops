@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -148,4 +149,57 @@ func (s *AgentNodeService) operatorID(ctx context.Context) uint32 {
 		return 0
 	}
 	return uint32(operator.GetUserId())
+}
+
+// GetAgentUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)。
+func (s *AgentNodeService) GetAgentUpgradeUploadUrl(ctx context.Context, req *opsV1.GetAgentUpgradeUploadUrlRequest) (*opsV1.GetAgentUpgradeUploadUrlResponse, error) {
+	if req == nil {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+	url, objectKey, err := s.agentService.PresignAgentUpgradeUpload(ctx, req.GetFilename())
+	if err != nil {
+		s.log.Errorf("presign agent upgrade upload: %s", err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("presign upload failed")
+	}
+	return &opsV1.GetAgentUpgradeUploadUrlResponse{
+		UploadUrl: &url,
+		ObjectKey: &objectKey,
+	}, nil
+}
+
+// UpgradeAgent 远程升级:校验对象键前缀 → 预签名下载 URL → 下发
+// agent_upgrade 指令(agent 落地新二进制后自替换重启)。
+func (s *AgentNodeService) UpgradeAgent(ctx context.Context, req *opsV1.UpgradeAgentRequest) (*opsV1.UpgradeAgentResponse, error) {
+	if req == nil || req.GetNodeId() == 0 || req.GetVersion() == "" || req.GetObjectKey() == "" {
+		return nil, opsV1.ErrorBadRequest("invalid parameter: nodeId/version/objectKey required")
+	}
+	if !strings.HasPrefix(req.GetObjectKey(), "agent-uploads/") {
+		return nil, opsV1.ErrorBadRequest("objectKey must be under agent-uploads/")
+	}
+
+	nodeID := req.GetNodeId()
+	node, err := s.repo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+	if err != nil {
+		return nil, err
+	}
+
+	downloadUrl, err := s.agentService.PresignAgentUpgradeDownload(ctx, req.GetObjectKey())
+	if err != nil {
+		s.log.Errorf("presign agent upgrade download: %s", err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("presign download failed")
+	}
+
+	payload := &signal.AgentUpgradePayload{
+		Version: req.GetVersion(),
+		Url:     downloadUrl,
+	}
+	requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionAgentUpgrade, payload, s.operatorID(ctx))
+	if err != nil {
+		s.log.Errorf("dispatch agent upgrade failed (node=%d): %s", nodeID, err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("dispatch command failed: mqtt channel unavailable")
+	}
+
+	s.log.Infof("agent upgrade dispatched (node=%d version=%s request_id=%s)", nodeID, req.GetVersion(), requestId)
+	return &opsV1.UpgradeAgentResponse{RequestId: requestId}, nil
 }

@@ -38,14 +38,14 @@ type NotificationChannelServiceHTTPServer interface {
 
 func RegisterNotificationChannelServiceHTTPServer(s *http.Server, srv NotificationChannelServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/notification-channels", _NotificationChannelService_List22_HTTP_Handler(srv))
-	r.GET("/admin/v1/notification-channels/{id}", _NotificationChannelService_Get20_HTTP_Handler(srv))
-	r.POST("/admin/v1/notification-channels", _NotificationChannelService_Create12_HTTP_Handler(srv))
-	r.PUT("/admin/v1/notification-channels/{id}", _NotificationChannelService_Update13_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/notification-channels/{id}", _NotificationChannelService_Delete14_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-channels", _NotificationChannelService_List24_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-channels/{id}", _NotificationChannelService_Get22_HTTP_Handler(srv))
+	r.POST("/admin/v1/notification-channels", _NotificationChannelService_Create14_HTTP_Handler(srv))
+	r.PUT("/admin/v1/notification-channels/{id}", _NotificationChannelService_Update15_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/notification-channels/{id}", _NotificationChannelService_Delete16_HTTP_Handler(srv))
 }
 
-func _NotificationChannelService_List22_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_List24_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -64,7 +64,7 @@ func _NotificationChannelService_List22_HTTP_Handler(srv NotificationChannelServ
 	}
 }
 
-func _NotificationChannelService_Get20_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_Get22_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNotificationChannelRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _NotificationChannelService_Get20_HTTP_Handler(srv NotificationChannelServi
 	}
 }
 
-func _NotificationChannelService_Create12_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_Create14_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateNotificationChannelRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -108,7 +108,7 @@ func _NotificationChannelService_Create12_HTTP_Handler(srv NotificationChannelSe
 	}
 }
 
-func _NotificationChannelService_Update13_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_Update15_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateNotificationChannelRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -133,7 +133,7 @@ func _NotificationChannelService_Update13_HTTP_Handler(srv NotificationChannelSe
 	}
 }
 
-func _NotificationChannelService_Delete14_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_Delete16_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteNotificationChannelRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -124,6 +124,11 @@ func SMTPFrom(v string) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPFrom, v))
 }
 
+// EmailTo applies equality check predicate on the "email_to" field. It's identical to EmailToEQ.
+func EmailTo(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldEmailTo, v))
+}
+
 // Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
 func Enabled(v bool) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldEnabled, v))
@@ -1047,6 +1052,81 @@ func SMTPFromEqualFold(v string) predicate.NotificationChannel {
 // SMTPFromContainsFold applies the ContainsFold predicate on the "smtp_from" field.
 func SMTPFromContainsFold(v string) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSMTPFrom, v))
+}
+
+// EmailToEQ applies the EQ predicate on the "email_to" field.
+func EmailToEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldEmailTo, v))
+}
+
+// EmailToNEQ applies the NEQ predicate on the "email_to" field.
+func EmailToNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldEmailTo, v))
+}
+
+// EmailToIn applies the In predicate on the "email_to" field.
+func EmailToIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldEmailTo, vs...))
+}
+
+// EmailToNotIn applies the NotIn predicate on the "email_to" field.
+func EmailToNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldEmailTo, vs...))
+}
+
+// EmailToGT applies the GT predicate on the "email_to" field.
+func EmailToGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldEmailTo, v))
+}
+
+// EmailToGTE applies the GTE predicate on the "email_to" field.
+func EmailToGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldEmailTo, v))
+}
+
+// EmailToLT applies the LT predicate on the "email_to" field.
+func EmailToLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldEmailTo, v))
+}
+
+// EmailToLTE applies the LTE predicate on the "email_to" field.
+func EmailToLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldEmailTo, v))
+}
+
+// EmailToContains applies the Contains predicate on the "email_to" field.
+func EmailToContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldEmailTo, v))
+}
+
+// EmailToHasPrefix applies the HasPrefix predicate on the "email_to" field.
+func EmailToHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldEmailTo, v))
+}
+
+// EmailToHasSuffix applies the HasSuffix predicate on the "email_to" field.
+func EmailToHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldEmailTo, v))
+}
+
+// EmailToIsNil applies the IsNil predicate on the "email_to" field.
+func EmailToIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldEmailTo))
+}
+
+// EmailToNotNil applies the NotNil predicate on the "email_to" field.
+func EmailToNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldEmailTo))
+}
+
+// EmailToEqualFold applies the EqualFold predicate on the "email_to" field.
+func EmailToEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldEmailTo, v))
+}
+
+// EmailToContainsFold applies the ContainsFold predicate on the "email_to" field.
+func EmailToContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldEmailTo, v))
 }
 
 // EnabledEQ applies the EQ predicate on the "enabled" field.

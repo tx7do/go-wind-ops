@@ -60,9 +60,10 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "monitor_id", Type: field.TypeUint32, Comment: "来源监控规则(ops_monitors.id)"},
-		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "关联项目(节点指标告警为 0)", Default: 0},
-		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "关联节点(ops_agent_nodes.id;项目状态告警为 0)", Default: 0},
+		{Name: "monitor_id", Type: field.TypeUint32, Nullable: true, Comment: "来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)", Default: 0},
+		{Name: "source", Type: field.TypeString, Comment: "告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期", Default: "MONITOR"},
+		{Name: "project_id", Type: field.TypeUint32, Nullable: true, Comment: "关联项目(节点指标/预算/证书告警为 0)", Default: 0},
+		{Name: "node_id", Type: field.TypeUint32, Nullable: true, Comment: "关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)", Default: 0},
 		{Name: "level", Type: field.TypeEnum, Comment: "告警级别", Enums: []string{"WARNING", "ERROR", "RECOVERY"}, Default: "ERROR"},
 		{Name: "message", Type: field.TypeString, Comment: "告警内容"},
 		{Name: "resolved", Type: field.TypeBool, Comment: "是否已恢复/确认", Default: false},
@@ -84,12 +85,12 @@ var (
 			{
 				Name:    "idx_ops_alert_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[6]},
+				Columns: []*schema.Column{OpsAlertsColumns[7]},
 			},
 			{
 				Name:    "idx_ops_alert_resolved",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[9]},
+				Columns: []*schema.Column{OpsAlertsColumns[10]},
 			},
 		},
 	}
@@ -495,6 +496,42 @@ var (
 			},
 		},
 	}
+	// OpsCertsColumns holds the columns for the "ops_certs" table.
+	OpsCertsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Unique: true, Comment: "证书名(全局唯一)"},
+		{Name: "host", Type: field.TypeString, Comment: "探测目标主机(域名/IP)"},
+		{Name: "port", Type: field.TypeInt, Comment: "TLS 端口", Default: 443},
+		{Name: "issuer", Type: field.TypeString, Nullable: true, Comment: "签发者(探测回填)"},
+		{Name: "not_before", Type: field.TypeTime, Nullable: true, Comment: "生效时间(探测回填)"},
+		{Name: "not_after", Type: field.TypeTime, Nullable: true, Comment: "到期时间(探测回填)"},
+		{Name: "days_before_expire", Type: field.TypeInt, Comment: "到期前多少天告警", Default: 30},
+		{Name: "probe_cron", Type: field.TypeString, Nullable: true, Comment: "自动探测周期 cron(5 段标准语法,空=仅手动)", Default: ""},
+		{Name: "last_probed_at", Type: field.TypeTime, Nullable: true, Comment: "上次探测时间"},
+		{Name: "last_error", Type: field.TypeString, Nullable: true, Comment: "上次探测失败原因"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用(到期检查与调度探测)", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsCertsTable holds the schema information for the "ops_certs" table.
+	OpsCertsTable = &schema.Table{
+		Name:       "ops_certs",
+		Comment:    "证书到期台账表",
+		Columns:    OpsCertsColumns,
+		PrimaryKey: []*schema.Column{OpsCertsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_cert_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCertsColumns[17]},
+			},
+		},
+	}
 	// OpsCloudAccountsColumns holds the columns for the "ops_cloud_accounts" table.
 	OpsCloudAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -521,6 +558,45 @@ var (
 		Comment:    "云平台账号表",
 		Columns:    OpsCloudAccountsColumns,
 		PrimaryKey: []*schema.Column{OpsCloudAccountsColumns[0]},
+	}
+	// OpsCloudBudgetsColumns holds the columns for the "ops_cloud_budgets" table.
+	OpsCloudBudgetsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "cloud_account_id", Type: field.TypeUint32, Nullable: true, Comment: "云账号(ops_cloud_accounts.id;0=全部账号合计)", Default: 0},
+		{Name: "month", Type: field.TypeString, Comment: "预算月份(YYYY-MM)"},
+		{Name: "amount", Type: field.TypeFloat64, Comment: "预算金额", Default: 0},
+		{Name: "currency", Type: field.TypeString, Comment: "币种(CNY/USD/...)", Default: "CNY"},
+		{Name: "threshold_percent", Type: field.TypeFloat64, Comment: "达到预算的百分比时告警(默认 100)", Default: 100},
+		{Name: "notified", Type: field.TypeBool, Comment: "本月阈值告警是否已发(防重复)", Default: false},
+		{Name: "anomaly_ratio", Type: field.TypeFloat64, Comment: "环比突增倍数(本月成本>前 3 月均值×该倍数时告警;0=不检测)", Default: 0},
+		{Name: "anomaly_notified", Type: field.TypeBool, Comment: "本月突增告警是否已发(防重复)", Default: false},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用检查", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsCloudBudgetsTable holds the schema information for the "ops_cloud_budgets" table.
+	OpsCloudBudgetsTable = &schema.Table{
+		Name:       "ops_cloud_budgets",
+		Comment:    "云成本月度预算表",
+		Columns:    OpsCloudBudgetsColumns,
+		PrimaryKey: []*schema.Column{OpsCloudBudgetsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_ops_cloud_budget_key",
+				Unique:  true,
+				Columns: []*schema.Column{OpsCloudBudgetsColumns[7], OpsCloudBudgetsColumns[8]},
+			},
+			{
+				Name:    "idx_ops_cloud_budget_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{OpsCloudBudgetsColumns[15]},
+			},
+		},
 	}
 	// OpsCloudCostsColumns holds the columns for the "ops_cloud_costs" table.
 	OpsCloudCostsColumns = []*schema.Column{
@@ -1680,6 +1756,7 @@ var (
 		{Name: "consecutive_count", Type: field.TypeInt, Comment: "连续命中多少个检查周期才告警(防抖)", Default: 1},
 		{Name: "consecutive_hits", Type: field.TypeInt, Comment: "运行态:当前连续命中次数(调度器维护,非用户配置)", Default: 0},
 		{Name: "notify_on_recovery", Type: field.TypeBool, Comment: "恢复时是否产生 RECOVERY 告警并通知", Default: true},
+		{Name: "repeat_interval_minutes", Type: field.TypeInt, Comment: "重复告警最小间隔(分钟,0=每次异常检查都报;恢复后重新告警同样受此约束)", Default: 0},
 		{Name: "cron", Type: field.TypeString, Comment: "检查周期 cron 表达式(5 段标准语法)"},
 		{Name: "auto_restart", Type: field.TypeBool, Comment: "异常时自动重启项目(仅项目状态规则生效)", Default: false},
 		{Name: "webhook_url", Type: field.TypeString, Nullable: true, Comment: "告警通知 webhook 地址(空则只落告警不外呼)"},
@@ -1706,7 +1783,7 @@ var (
 			{
 				Name:    "idx_ops_monitor_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[19]},
+				Columns: []*schema.Column{OpsMonitorsColumns[20]},
 			},
 		},
 	}
@@ -1756,6 +1833,7 @@ var (
 		{Name: "smtp_username", Type: field.TypeString, Nullable: true, Comment: "SMTP 用户名"},
 		{Name: "smtp_password", Type: field.TypeString, Nullable: true, Comment: "SMTP 密码"},
 		{Name: "smtp_from", Type: field.TypeString, Nullable: true, Comment: "发件人地址"},
+		{Name: "email_to", Type: field.TypeString, Nullable: true, Comment: "收件人地址列表(逗号分隔)"},
 		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 	}
@@ -3483,7 +3561,9 @@ var (
 		OpsBuildsTable,
 		OpsBuildHistoriesTable,
 		OpsBuildPipelinesTable,
+		OpsCertsTable,
 		OpsCloudAccountsTable,
+		OpsCloudBudgetsTable,
 		OpsCloudCostsTable,
 		OpsCloudInstancesTable,
 		OpsCommandRecordsTable,
@@ -3589,8 +3669,18 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	OpsCertsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_certs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	OpsCloudAccountsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_cloud_accounts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsCloudBudgetsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_cloud_budgets",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

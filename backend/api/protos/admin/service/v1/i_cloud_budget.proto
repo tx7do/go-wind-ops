@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/cloud_budget.proto";
+
+// CloudBudgetService 云成本月度预算
+service CloudBudgetService {
+  // 查询预算列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListCloudBudgetResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-budgets"
+    };
+  }
+
+  // 查询预算详情
+  rpc Get (ops.service.v1.GetCloudBudgetRequest) returns (ops.service.v1.CloudBudget) {
+    option (google.api.http) = {
+      get: "/admin/v1/cloud-budgets/{id}"
+    };
+  }
+
+  // 创建预算
+  rpc Create (ops.service.v1.CreateCloudBudgetRequest) returns (ops.service.v1.CloudBudget) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-budgets"
+      body: "*"
+    };
+  }
+
+  // 更新预算
+  rpc Update (ops.service.v1.UpdateCloudBudgetRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/cloud-budgets/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除预算
+  rpc Delete (ops.service.v1.DeleteCloudBudgetRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/cloud-budgets/{id}"
+    };
+  }
+
+  // 立即执行一次预算检查
+  rpc Check (ops.service.v1.CheckCloudBudgetRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/cloud-budgets/check:send"
+      body: "*"
+    };
+  }
+}

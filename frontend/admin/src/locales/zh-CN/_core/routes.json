@@ -133,5 +133,7 @@
   "cloud-resources": "云资源",
   "cloud-costs": "云成本",
   "script-batches": "批量执行",
-  "backups": "备份任务"
+  "backups": "备份任务",
+  "cloud-budgets": "云成本预算",
+  "certs": "证书台账"
 }

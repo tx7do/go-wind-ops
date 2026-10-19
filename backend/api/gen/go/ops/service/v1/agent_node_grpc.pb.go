@@ -21,12 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AgentNodeService_ListAgentNodes_FullMethodName        = "/ops.service.v1.AgentNodeService/ListAgentNodes"
-	AgentNodeService_GetAgentNode_FullMethodName          = "/ops.service.v1.AgentNodeService/GetAgentNode"
-	AgentNodeService_UpdateAgentNode_FullMethodName       = "/ops.service.v1.AgentNodeService/UpdateAgentNode"
-	AgentNodeService_DeleteAgentNode_FullMethodName       = "/ops.service.v1.AgentNodeService/DeleteAgentNode"
-	AgentNodeService_SendCommand_FullMethodName           = "/ops.service.v1.AgentNodeService/SendCommand"
-	AgentNodeService_GetNodeMetricsHistory_FullMethodName = "/ops.service.v1.AgentNodeService/GetNodeMetricsHistory"
+	AgentNodeService_ListAgentNodes_FullMethodName           = "/ops.service.v1.AgentNodeService/ListAgentNodes"
+	AgentNodeService_GetAgentNode_FullMethodName             = "/ops.service.v1.AgentNodeService/GetAgentNode"
+	AgentNodeService_UpdateAgentNode_FullMethodName          = "/ops.service.v1.AgentNodeService/UpdateAgentNode"
+	AgentNodeService_DeleteAgentNode_FullMethodName          = "/ops.service.v1.AgentNodeService/DeleteAgentNode"
+	AgentNodeService_SendCommand_FullMethodName              = "/ops.service.v1.AgentNodeService/SendCommand"
+	AgentNodeService_GetNodeMetricsHistory_FullMethodName    = "/ops.service.v1.AgentNodeService/GetNodeMetricsHistory"
+	AgentNodeService_GetAgentUpgradeUploadUrl_FullMethodName = "/ops.service.v1.AgentNodeService/GetAgentUpgradeUploadUrl"
+	AgentNodeService_UpgradeAgent_FullMethodName             = "/ops.service.v1.AgentNodeService/UpgradeAgent"
 )
 
 // AgentNodeServiceClient is the client API for AgentNodeService service.
@@ -50,6 +52,11 @@ type AgentNodeServiceClient interface {
 	SendCommand(ctx context.Context, in *SendCommandRequest, opts ...grpc.CallOption) (*SendCommandResponse, error)
 	// 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
 	GetNodeMetricsHistory(ctx context.Context, in *GetNodeMetricsHistoryRequest, opts ...grpc.CallOption) (*GetNodeMetricsHistoryResponse, error)
+	// 签发 agent 升级包上传预签名 URL(浏览器直传 MinIO agent-uploads/ 前缀)
+	GetAgentUpgradeUploadUrl(ctx context.Context, in *GetAgentUpgradeUploadUrlRequest, opts ...grpc.CallOption) (*GetAgentUpgradeUploadUrlResponse, error)
+	// 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
+	// agent 落地新二进制后自替换重启(过程与结果见指令台账)
+	UpgradeAgent(ctx context.Context, in *UpgradeAgentRequest, opts ...grpc.CallOption) (*UpgradeAgentResponse, error)
 }
 
 type agentNodeServiceClient struct {
@@ -120,6 +127,26 @@ func (c *agentNodeServiceClient) GetNodeMetricsHistory(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *agentNodeServiceClient) GetAgentUpgradeUploadUrl(ctx context.Context, in *GetAgentUpgradeUploadUrlRequest, opts ...grpc.CallOption) (*GetAgentUpgradeUploadUrlResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAgentUpgradeUploadUrlResponse)
+	err := c.cc.Invoke(ctx, AgentNodeService_GetAgentUpgradeUploadUrl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentNodeServiceClient) UpgradeAgent(ctx context.Context, in *UpgradeAgentRequest, opts ...grpc.CallOption) (*UpgradeAgentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpgradeAgentResponse)
+	err := c.cc.Invoke(ctx, AgentNodeService_UpgradeAgent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentNodeServiceServer is the server API for AgentNodeService service.
 // All implementations must embed UnimplementedAgentNodeServiceServer
 // for forward compatibility.
@@ -141,6 +168,11 @@ type AgentNodeServiceServer interface {
 	SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error)
 	// 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
 	GetNodeMetricsHistory(context.Context, *GetNodeMetricsHistoryRequest) (*GetNodeMetricsHistoryResponse, error)
+	// 签发 agent 升级包上传预签名 URL(浏览器直传 MinIO agent-uploads/ 前缀)
+	GetAgentUpgradeUploadUrl(context.Context, *GetAgentUpgradeUploadUrlRequest) (*GetAgentUpgradeUploadUrlResponse, error)
+	// 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
+	// agent 落地新二进制后自替换重启(过程与结果见指令台账)
+	UpgradeAgent(context.Context, *UpgradeAgentRequest) (*UpgradeAgentResponse, error)
 	mustEmbedUnimplementedAgentNodeServiceServer()
 }
 
@@ -168,6 +200,12 @@ func (UnimplementedAgentNodeServiceServer) SendCommand(context.Context, *SendCom
 }
 func (UnimplementedAgentNodeServiceServer) GetNodeMetricsHistory(context.Context, *GetNodeMetricsHistoryRequest) (*GetNodeMetricsHistoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetNodeMetricsHistory not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) GetAgentUpgradeUploadUrl(context.Context, *GetAgentUpgradeUploadUrlRequest) (*GetAgentUpgradeUploadUrlResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAgentUpgradeUploadUrl not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) UpgradeAgent(context.Context, *UpgradeAgentRequest) (*UpgradeAgentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpgradeAgent not implemented")
 }
 func (UnimplementedAgentNodeServiceServer) mustEmbedUnimplementedAgentNodeServiceServer() {}
 func (UnimplementedAgentNodeServiceServer) testEmbeddedByValue()                          {}
@@ -298,6 +336,42 @@ func _AgentNodeService_GetNodeMetricsHistory_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentNodeService_GetAgentUpgradeUploadUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAgentUpgradeUploadUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).GetAgentUpgradeUploadUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_GetAgentUpgradeUploadUrl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).GetAgentUpgradeUploadUrl(ctx, req.(*GetAgentUpgradeUploadUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AgentNodeService_UpgradeAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpgradeAgentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).UpgradeAgent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_UpgradeAgent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).UpgradeAgent(ctx, req.(*UpgradeAgentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentNodeService_ServiceDesc is the grpc.ServiceDesc for AgentNodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +402,14 @@ var AgentNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNodeMetricsHistory",
 			Handler:    _AgentNodeService_GetNodeMetricsHistory_Handler,
+		},
+		{
+			MethodName: "GetAgentUpgradeUploadUrl",
+			Handler:    _AgentNodeService_GetAgentUpgradeUploadUrl_Handler,
+		},
+		{
+			MethodName: "UpgradeAgent",
+			Handler:    _AgentNodeService_UpgradeAgent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

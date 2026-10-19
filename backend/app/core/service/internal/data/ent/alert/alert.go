@@ -21,6 +21,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldMonitorID holds the string denoting the monitor_id field in the database.
 	FieldMonitorID = "monitor_id"
+	// FieldSource holds the string denoting the source field in the database.
+	FieldSource = "source"
 	// FieldProjectID holds the string denoting the project_id field in the database.
 	FieldProjectID = "project_id"
 	// FieldNodeID holds the string denoting the node_id field in the database.
@@ -46,6 +48,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldMonitorID,
+	FieldSource,
 	FieldProjectID,
 	FieldNodeID,
 	FieldLevel,
@@ -66,8 +69,10 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// MonitorIDValidator is a validator for the "monitor_id" field. It is called by the builders before save.
-	MonitorIDValidator func(uint32) error
+	// DefaultMonitorID holds the default value on creation for the "monitor_id" field.
+	DefaultMonitorID uint32
+	// DefaultSource holds the default value on creation for the "source" field.
+	DefaultSource string
 	// DefaultProjectID holds the default value on creation for the "project_id" field.
 	DefaultProjectID uint32
 	// DefaultNodeID holds the default value on creation for the "node_id" field.
@@ -135,6 +140,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByMonitorID orders the results by the monitor_id field.
 func ByMonitorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMonitorID, opts...).ToFunc()
+}
+
+// BySource orders the results by the source field.
+func BySource(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSource, opts...).ToFunc()
 }
 
 // ByProjectID orders the results by the project_id field.

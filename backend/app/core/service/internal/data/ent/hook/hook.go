@@ -140,6 +140,18 @@ func (f BuildPipelineFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BuildPipelineMutation", m)
 }
 
+// The CertFunc type is an adapter to allow the use of ordinary
+// function as Cert mutator.
+type CertFunc func(context.Context, *ent.CertMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CertMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CertMutation", m)
+}
+
 // The CloudAccountFunc type is an adapter to allow the use of ordinary
 // function as CloudAccount mutator.
 type CloudAccountFunc func(context.Context, *ent.CloudAccountMutation) (ent.Value, error)
@@ -150,6 +162,18 @@ func (f CloudAccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CloudAccountMutation", m)
+}
+
+// The CloudBudgetFunc type is an adapter to allow the use of ordinary
+// function as CloudBudget mutator.
+type CloudBudgetFunc func(context.Context, *ent.CloudBudgetMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CloudBudgetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CloudBudgetMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CloudBudgetMutation", m)
 }
 
 // The CloudCostFunc type is an adapter to allow the use of ordinary

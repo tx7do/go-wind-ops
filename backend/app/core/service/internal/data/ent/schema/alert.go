@@ -32,16 +32,21 @@ func (Alert) Annotations() []schema.Annotation {
 func (Alert) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint32("monitor_id").
-			Comment("来源监控规则(ops_monitors.id)").
-			Positive(),
+			Comment("来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)").
+			Default(0).
+			Optional(),
+
+		field.String("source").
+			Comment("告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期").
+			Default("MONITOR"),
 
 		field.Uint32("project_id").
-			Comment("关联项目(节点指标告警为 0)").
+			Comment("关联项目(节点指标/预算/证书告警为 0)").
 			Default(0).
 			Optional(),
 
 		field.Uint32("node_id").
-			Comment("关联节点(ops_agent_nodes.id;项目状态告警为 0)").
+			Comment("关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)").
 			Default(0).
 			Optional(),
 

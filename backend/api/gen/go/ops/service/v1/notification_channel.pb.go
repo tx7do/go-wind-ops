@@ -91,6 +91,7 @@ type NotificationChannel struct {
 	SmtpUsername     *string                  `protobuf:"bytes,9,opt,name=smtp_username,json=smtpUsername,proto3,oneof" json:"smtp_username,omitempty"`               // SMTP 用户名
 	SmtpPassword     *string                  `protobuf:"bytes,10,opt,name=smtp_password,json=smtpPassword,proto3,oneof" json:"smtp_password,omitempty"`              // SMTP 密码(写入)
 	SmtpFrom         *string                  `protobuf:"bytes,11,opt,name=smtp_from,json=smtpFrom,proto3,oneof" json:"smtp_from,omitempty"`                          // 发件人
+	EmailTo          *string                  `protobuf:"bytes,14,opt,name=email_to,json=emailTo,proto3,oneof" json:"email_to,omitempty"`                             // 收件人
 	Enabled          *bool                    `protobuf:"varint,12,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                           // 是否启用
 	Description      *string                  `protobuf:"bytes,13,opt,name=description,proto3,oneof" json:"description,omitempty"`                                    // 描述
 	CreatedAt        *timestamppb.Timestamp   `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                       // 创建时间
@@ -202,6 +203,13 @@ func (x *NotificationChannel) GetSmtpPassword() string {
 func (x *NotificationChannel) GetSmtpFrom() string {
 	if x != nil && x.SmtpFrom != nil {
 		return *x.SmtpFrom
+	}
+	return ""
+}
+
+func (x *NotificationChannel) GetEmailTo() string {
+	if x != nil && x.EmailTo != nil {
+		return *x.EmailTo
 	}
 	return ""
 }
@@ -482,7 +490,7 @@ var File_ops_service_v1_notification_channel_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\n" +
-	")ops/service/v1/notification_channel.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xb1\b\n" +
+	")ops/service/v1/notification_channel.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x89\t\n" +
 	"\x13NotificationChannel\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17渠道名(全局唯一)H\x01R\x04name\x88\x01\x01\x12E\n" +
@@ -497,13 +505,14 @@ const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\rsmtp_password\x18\n" +
 	" \x01(\tB\x03\xe0A\x04H\tR\fsmtpPassword\x88\x01\x01\x12 \n" +
 	"\tsmtp_from\x18\v \x01(\tH\n" +
-	"R\bsmtpFrom\x88\x01\x01\x12\x1d\n" +
-	"\aenabled\x18\f \x01(\bH\vR\aenabled\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\r \x01(\tH\fR\vdescription\x88\x01\x01\x12C\n" +
+	"R\bsmtpFrom\x88\x01\x01\x12I\n" +
+	"\bemail_to\x18\x0e \x01(\tB)\xbaG&\x92\x02#收件人地址列表(逗号分隔)H\vR\aemailTo\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\f \x01(\bH\fR\aenabled\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\r \x01(\tH\rR\vdescription\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\rR\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0eR\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0eR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x0fR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\a\n" +
 	"\x05_typeB\x0e\n" +
@@ -517,7 +526,8 @@ const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\x0e_smtp_usernameB\x10\n" +
 	"\x0e_smtp_passwordB\f\n" +
 	"\n" +
-	"_smtp_fromB\n" +
+	"_smtp_fromB\v\n" +
+	"\t_email_toB\n" +
 	"\n" +
 	"\b_enabledB\x0e\n" +
 	"\f_descriptionB\r\n" +

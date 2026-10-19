@@ -48,6 +48,8 @@ type Monitor struct {
 	ConsecutiveHits int `json:"consecutive_hits,omitempty"`
 	// 恢复时是否产生 RECOVERY 告警并通知
 	NotifyOnRecovery bool `json:"notify_on_recovery,omitempty"`
+	// 重复告警最小间隔(分钟,0=每次异常检查都报;恢复后重新告警同样受此约束)
+	RepeatIntervalMinutes int `json:"repeat_interval_minutes,omitempty"`
 	// 检查周期 cron 表达式(5 段标准语法)
 	Cron string `json:"cron,omitempty"`
 	// 异常时自动重启项目(仅项目状态规则生效)
@@ -70,7 +72,7 @@ func (*Monitor) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case monitor.FieldThresholdPercent:
 			values[i] = new(sql.NullFloat64)
-		case monitor.FieldID, monitor.FieldCreatedBy, monitor.FieldUpdatedBy, monitor.FieldDeletedBy, monitor.FieldProjectID, monitor.FieldNodeID, monitor.FieldConsecutiveCount, monitor.FieldConsecutiveHits:
+		case monitor.FieldID, monitor.FieldCreatedBy, monitor.FieldUpdatedBy, monitor.FieldDeletedBy, monitor.FieldProjectID, monitor.FieldNodeID, monitor.FieldConsecutiveCount, monitor.FieldConsecutiveHits, monitor.FieldRepeatIntervalMinutes:
 			values[i] = new(sql.NullInt64)
 		case monitor.FieldName, monitor.FieldTargetType, monitor.FieldMetricType, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -192,6 +194,12 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field notify_on_recovery", values[i])
 			} else if value.Valid {
 				_m.NotifyOnRecovery = value.Bool
+			}
+		case monitor.FieldRepeatIntervalMinutes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field repeat_interval_minutes", values[i])
+			} else if value.Valid {
+				_m.RepeatIntervalMinutes = int(value.Int64)
 			}
 		case monitor.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -317,6 +325,9 @@ func (_m *Monitor) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("notify_on_recovery=")
 	builder.WriteString(fmt.Sprintf("%v", _m.NotifyOnRecovery))
+	builder.WriteString(", ")
+	builder.WriteString("repeat_interval_minutes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RepeatIntervalMinutes))
 	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(_m.Cron)

@@ -13,5 +13,18 @@
   "resolveConfirm": "确认恢复该告警？",
   "resolveSuccess": "告警已确认恢复",
   "resolveFailed": "操作失败",
-  "nodeId": "节点"
+  "nodeId": "节点",
+  "source": "来源",
+  "sourceMonitor": "监控",
+  "sourceBudget": "预算",
+  "sourceCert": "证书",
+  "deliveries": "投递记录",
+  "deliveriesTitle": "通知投递记录 #{{id}}",
+  "deliveryTime": "时间",
+  "deliveryChannel": "渠道",
+  "deliveryTarget": "目标",
+  "deliveryStatus": "状态",
+  "deliverySent": "已送达",
+  "deliveryFailed": "失败",
+  "deliveryError": "失败原因"
 }

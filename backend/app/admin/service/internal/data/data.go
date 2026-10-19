@@ -393,6 +393,33 @@ func NewAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.A
 	return opsV1.NewAlertServiceClient(cli)
 }
 
+func NewCloudBudgetServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.CloudBudgetServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewCloudBudgetServiceClient(cli)
+}
+
+func NewCertServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.CertServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewCertServiceClient(cli)
+}
+
+func NewNotificationDeliveryServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.NotificationDeliveryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return opsV1.NewNotificationDeliveryServiceClient(cli)
+}
+
 func NewScriptBatchServiceClient(ctx *bootstrap.Context, r registry.Discovery) opsV1.ScriptBatchServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

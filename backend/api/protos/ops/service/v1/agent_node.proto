@@ -35,6 +35,13 @@ service AgentNodeService {
 
   // 查询节点心跳指标历史(CPU/内存/磁盘时间序列)
   rpc GetNodeMetricsHistory (GetNodeMetricsHistoryRequest) returns (GetNodeMetricsHistoryResponse) {}
+
+  // 签发 agent 升级包上传预签名 URL(浏览器直传 MinIO agent-uploads/ 前缀)
+  rpc GetAgentUpgradeUploadUrl (GetAgentUpgradeUploadUrlRequest) returns (GetAgentUpgradeUploadUrlResponse) {}
+
+  // 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
+  // agent 落地新二进制后自替换重启(过程与结果见指令台账)
+  rpc UpgradeAgent (UpgradeAgentRequest) returns (UpgradeAgentResponse) {}
 }
 
 // 节点在线状态
@@ -275,4 +282,46 @@ message GetNodeMetricsHistoryResponse {
     double disk_used_percent = 4 [json_name = "diskUsedPercent"];
   }
   repeated MetricPoint points = 1 [json_name = "points"];
+}
+
+message GetAgentUpgradeUploadUrlRequest {
+  optional string filename = 1 [
+    json_name = "filename",
+    (gnostic.openapi.v3.property) = {
+      description: "升级包文件名(取扩展名生成对象键)"
+    }
+  ]; // 升级包文件名
+}
+
+message GetAgentUpgradeUploadUrlResponse {
+  optional string upload_url = 1 [json_name = "uploadUrl"]; // 预签名 PUT URL
+
+  optional string object_key = 2 [json_name = "objectKey"]; // 对象键
+}
+
+message UpgradeAgentRequest {
+  optional uint32 node_id = 1 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标节点ID
+
+  optional string version = 2 [
+    json_name = "version",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "目标版本号(仅记录用途,实际以二进制为准)"
+    }
+  ]; // 目标版本号
+
+  optional string object_key = 3 [
+    json_name = "objectKey",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "升级包对象键(agent-uploads/ 前缀,须先经上传预签名直传)"
+    }
+  ]; // 升级包对象键
+}
+
+message UpgradeAgentResponse {
+  string request_id = 1 [json_name = "requestId"]; // 幂等键,结果见指令台账
 }

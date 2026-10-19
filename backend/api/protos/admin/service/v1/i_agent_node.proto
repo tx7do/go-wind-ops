@@ -53,4 +53,20 @@ service AgentNodeService {
       get: "/admin/v1/agent-nodes/{id}/metrics"
     };
   }
+
+  // 签发 agent 升级包上传预签名 URL(浏览器直传)
+  rpc GetUpgradeUploadUrl (ops.service.v1.GetAgentUpgradeUploadUrlRequest) returns (ops.service.v1.GetAgentUpgradeUploadUrlResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/agent-nodes/upgrade-upload-url:resolve"
+      body: "*"
+    };
+  }
+
+  // 远程升级 agent(下发自替换指令)
+  rpc Upgrade (ops.service.v1.UpgradeAgentRequest) returns (ops.service.v1.UpgradeAgentResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/agent-nodes/upgrade:send"
+      body: "*"
+    };
+  }
 }

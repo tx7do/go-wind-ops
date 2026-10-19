@@ -119,6 +119,11 @@ func NotifyOnRecovery(v bool) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldNotifyOnRecovery, v))
 }
 
+// RepeatIntervalMinutes applies equality check predicate on the "repeat_interval_minutes" field. It's identical to RepeatIntervalMinutesEQ.
+func RepeatIntervalMinutes(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldRepeatIntervalMinutes, v))
+}
+
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
 func Cron(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldCron, v))
@@ -777,6 +782,46 @@ func NotifyOnRecoveryEQ(v bool) predicate.Monitor {
 // NotifyOnRecoveryNEQ applies the NEQ predicate on the "notify_on_recovery" field.
 func NotifyOnRecoveryNEQ(v bool) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldNotifyOnRecovery, v))
+}
+
+// RepeatIntervalMinutesEQ applies the EQ predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldRepeatIntervalMinutes, v))
+}
+
+// RepeatIntervalMinutesNEQ applies the NEQ predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesNEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldRepeatIntervalMinutes, v))
+}
+
+// RepeatIntervalMinutesIn applies the In predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldRepeatIntervalMinutes, vs...))
+}
+
+// RepeatIntervalMinutesNotIn applies the NotIn predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesNotIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldRepeatIntervalMinutes, vs...))
+}
+
+// RepeatIntervalMinutesGT applies the GT predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesGT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldRepeatIntervalMinutes, v))
+}
+
+// RepeatIntervalMinutesGTE applies the GTE predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesGTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldRepeatIntervalMinutes, v))
+}
+
+// RepeatIntervalMinutesLT applies the LT predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesLT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldRepeatIntervalMinutes, v))
+}
+
+// RepeatIntervalMinutesLTE applies the LTE predicate on the "repeat_interval_minutes" field.
+func RepeatIntervalMinutesLTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldRepeatIntervalMinutes, v))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.

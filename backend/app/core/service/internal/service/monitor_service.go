@@ -156,12 +156,28 @@ func (s *AlertService) ResolveAlert(ctx context.Context, req *opsV1.ResolveAlert
 // CheckMonitor 对单个监控规则执行一次状态检查:
 // 项目状态规则走同步指令探测;节点指标规则直接读心跳快照判阈值。
 // 由 CronScheduler 在规则 cron 命中时调用。
-func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
 	if string(monitor.TargetType) == "NODE_METRIC" {
-		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, nodeRepo, monitorRepo, monitor)
+		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, monitor)
 		return
 	}
-	checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, projectRepo, nodeRepo, agentSvc, monitor)
+	checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, projectRepo, nodeRepo, agentSvc, monitor)
+}
+
+// alertIntervalAllowed 重复告警间隔判断:repeat_interval>0 时,距该规则
+// 最近一条告警不足间隔则跳过本次新建(0=不限制,保持旧行为)。
+func alertIntervalAllowed(ctx context.Context, alertRepo *data.AlertRepo, monitor *ent.Monitor) bool {
+	if monitor.RepeatIntervalMinutes <= 0 {
+		return true
+	}
+	latest, err := alertRepo.LatestAlertByMonitor(ctx, monitor.ID)
+	if err != nil || latest == nil {
+		return true
+	}
+	if latest.CreatedAt == nil {
+		return true
+	}
+	return time.Since(*latest.CreatedAt) >= time.Duration(monitor.RepeatIntervalMinutes)*time.Minute
 }
 
 // metricDisplayName 指标类型中文名。
@@ -186,7 +202,7 @@ func ptrFloatOrZero(v *float64) float64 {
 // CheckNodeMetricMonitor 节点指标阈值检查:心跳快照(在线节点才有新鲜
 // 指标)读 CPU/内存/磁盘百分比,连续 N 个周期 ≥ 阈值才告警(防抖),恢复时
 // 自动落 RECOVERY 记录并通知。节点离线跳过(离线告警属准入域,本轮不做)。
-func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, monitor *ent.Monitor) {
+func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, monitor *ent.Monitor) {
 	nodeID := monitor.NodeID
 	if nodeID == 0 {
 		return
@@ -228,28 +244,35 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		if already {
 			return
 		}
+		if !alertIntervalAllowed(ctx, alertRepo, monitor) {
+			return
+		}
 
 		metricName := metricDisplayName(string(monitor.MetricType))
 		msg := fmt.Sprintf("节点 [%s] %s使用率 %.1f%%,连续 %d 次超过阈值 %.1f%%",
 			nodeName, metricName, *value, hits, monitor.ThresholdPercent)
-		if a, err := alertRepo.Create(ctx, monitor.ID, 0, nodeID, "WARNING", msg, false); err != nil {
+		alertID := uint32(0)
+		if a, err := alertRepo.Create(ctx, monitor.ID, 0, nodeID, "MONITOR", "WARNING", msg, false); err != nil {
 			log.Errorf("create node metric alert failed: %s", err.Error())
-		} else if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
-			notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
-				"alert_id":    a.ID,
-				"monitor":     monitor.Name,
-				"node":        nodeName,
-				"node_id":     nodeID,
-				"metric":      string(monitor.MetricType),
-				"value":       *value,
-				"threshold":   monitor.ThresholdPercent,
-				"level":       "WARNING",
-				"message":     msg,
-				"occurred_at": time.Now().Format(time.RFC3339),
-			})
-			_ = alertRepo.MarkNotified(ctx, a.ID)
+		} else {
+			alertID = a.ID
+			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
+				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+					"alert_id":    a.ID,
+					"monitor":     monitor.Name,
+					"node":        nodeName,
+					"node_id":     nodeID,
+					"metric":      string(monitor.MetricType),
+					"value":       *value,
+					"threshold":   monitor.ThresholdPercent,
+					"level":       "WARNING",
+					"message":     msg,
+					"occurred_at": time.Now().Format(time.RFC3339),
+				})
+				_ = alertRepo.MarkNotified(ctx, a.ID)
+			}
 		}
-		SendAlertToWebhooks(ctx, notifChannelRepo, "告警: "+monitor.Name, msg)
+		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
 		log.Warnf("ALERT: %s", msg)
 		return
 	}
@@ -271,17 +294,19 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		metricName := metricDisplayName(string(monitor.MetricType))
 		msg := fmt.Sprintf("节点 [%s] %s使用率已回落至 %.1f%%,低于阈值 %.1f%%,告警恢复",
 			nodeName, metricName, ptrFloatOrZero(value), monitor.ThresholdPercent)
-		if _, err = alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, msg); err != nil {
+		if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, "MONITOR", msg); err != nil {
 			log.Errorf("create recovery alert failed: %s", err.Error())
+		} else {
+			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
 		}
-		SendAlertToWebhooks(ctx, notifChannelRepo, "恢复: "+monitor.Name, msg)
 		log.Infof("RECOVERED: %s", msg)
 	}
 }
 
-// checkProjectMonitor 项目状态规则检查(原有逻辑):同步指令探测项目状态 →
-// 异常则去重落告警 → 可选自动重启 → 可选 webhook 外呼。
-func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+// checkProjectMonitor 项目状态规则检查:同步指令探测项目状态 → 异常按
+// 重复间隔落告警 → 可选自动重启 → 渠道外呼;恢复正常时统一 resolve +
+// RECOVERY 记录 + 恢复通知(与节点指标规则对齐)。
+func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, monitor *ent.Monitor) {
 	projectID := monitor.ProjectID
 
 	project, err := projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID})
@@ -316,28 +341,51 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 	}
 	_ = json.Unmarshal(res.Data, &status)
 	if status.Status == "RUNNING" {
-		return // 项目正常运行,无需告警;同时恢复已有的未恢复告警
+		// ── 正常运行:统一恢复语义(与节点指标规则对齐)──
+		unresolved, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
+		if !unresolved {
+			return
+		}
+		if _, err := alertRepo.ResolveAllByMonitor(ctx, monitor.ID); err != nil {
+			log.Warnf("resolve project alerts [%d]: %s", monitor.ID, err.Error())
+		}
+		if monitor.NotifyOnRecovery {
+			msg := fmt.Sprintf("项目 [%s] 已恢复 RUNNING,告警关闭", project.GetName())
+			if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, projectID, 0, "MONITOR", msg); err != nil {
+				log.Errorf("create recovery alert failed: %s", err.Error())
+			} else {
+				SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
+				log.Infof("RECOVERED: %s", msg)
+			}
+		}
+		return
 	}
-	_, _ = alertRepo.ResolveAllByMonitor(ctx, monitor.ID)
 
 	// ── 异常:状态不是 RUNNING ──
+	if !alertIntervalAllowed(ctx, alertRepo, monitor) {
+		return // 距上次告警不足重复间隔,保持既有未恢复告警即可
+	}
 	already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
 	if !already {
 		msg := fmt.Sprintf("项目 [%s] 状态异常: %s", project.GetName(), status.Status)
-		if a, err := alertRepo.Create(ctx, monitor.ID, projectID, 0, "ERROR", msg, false); err != nil {
+		alertID := uint32(0)
+		if a, err := alertRepo.Create(ctx, monitor.ID, projectID, 0, "MONITOR", "ERROR", msg, false); err != nil {
 			log.Errorf("create alert failed: %s", err.Error())
-		} else if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
-			notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
-				"alert_id":    a.ID,
-				"monitor":     monitor.Name,
-				"project":     project.GetName(),
-				"level":       "ERROR",
-			"message":     msg,
-			"occurred_at": time.Now().Format(time.RFC3339),
-			})
-			_ = alertRepo.MarkNotified(ctx, a.ID)
+		} else {
+			alertID = a.ID
+			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
+				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+					"alert_id":    a.ID,
+					"monitor":     monitor.Name,
+					"project":     project.GetName(),
+					"level":       "ERROR",
+					"message":     msg,
+					"occurred_at": time.Now().Format(time.RFC3339),
+				})
+				_ = alertRepo.MarkNotified(ctx, a.ID)
+			}
 		}
-		SendAlertToWebhooks(ctx, notifChannelRepo, "告警: "+monitor.Name, msg)
+		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
 		log.Warnf("ALERT: %s", msg)
 	}
 

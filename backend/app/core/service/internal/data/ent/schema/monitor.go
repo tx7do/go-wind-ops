@@ -81,6 +81,10 @@ func (Monitor) Fields() []ent.Field {
 			Comment("恢复时是否产生 RECOVERY 告警并通知").
 			Default(true),
 
+		field.Int("repeat_interval_minutes").
+			Comment("重复告警最小间隔(分钟,0=每次异常检查都报;恢复后重新告警同样受此约束)").
+			Default(0),
+
 		field.String("cron").
 			Comment("检查周期 cron 表达式(5 段标准语法)").
 			NotEmpty(),

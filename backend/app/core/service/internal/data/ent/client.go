@@ -22,7 +22,9 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
+	"go-wind-ops/app/core/service/internal/data/ent/cert"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudbudget"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
@@ -103,8 +105,12 @@ type Client struct {
 	BuildHistory *BuildHistoryClient
 	// BuildPipeline is the client for interacting with the BuildPipeline builders.
 	BuildPipeline *BuildPipelineClient
+	// Cert is the client for interacting with the Cert builders.
+	Cert *CertClient
 	// CloudAccount is the client for interacting with the CloudAccount builders.
 	CloudAccount *CloudAccountClient
+	// CloudBudget is the client for interacting with the CloudBudget builders.
+	CloudBudget *CloudBudgetClient
 	// CloudCost is the client for interacting with the CloudCost builders.
 	CloudCost *CloudCostClient
 	// CloudInstance is the client for interacting with the CloudInstance builders.
@@ -219,7 +225,9 @@ func (c *Client) init() {
 	c.Build = NewBuildClient(c.config)
 	c.BuildHistory = NewBuildHistoryClient(c.config)
 	c.BuildPipeline = NewBuildPipelineClient(c.config)
+	c.Cert = NewCertClient(c.config)
 	c.CloudAccount = NewCloudAccountClient(c.config)
+	c.CloudBudget = NewCloudBudgetClient(c.config)
 	c.CloudCost = NewCloudCostClient(c.config)
 	c.CloudInstance = NewCloudInstanceClient(c.config)
 	c.CommandRecord = NewCommandRecordClient(c.config)
@@ -369,7 +377,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
+		Cert:                 NewCertClient(cfg),
 		CloudAccount:         NewCloudAccountClient(cfg),
+		CloudBudget:          NewCloudBudgetClient(cfg),
 		CloudCost:            NewCloudCostClient(cfg),
 		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
@@ -446,7 +456,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Build:                NewBuildClient(cfg),
 		BuildHistory:         NewBuildHistoryClient(cfg),
 		BuildPipeline:        NewBuildPipelineClient(cfg),
+		Cert:                 NewCertClient(cfg),
 		CloudAccount:         NewCloudAccountClient(cfg),
+		CloudBudget:          NewCloudBudgetClient(cfg),
 		CloudCost:            NewCloudCostClient(cfg),
 		CloudInstance:        NewCloudInstanceClient(cfg),
 		CommandRecord:        NewCommandRecordClient(cfg),
@@ -523,8 +535,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
-		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline,
-		c.CloudAccount, c.CloudCost, c.CloudInstance, c.CommandRecord,
+		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline, c.Cert,
+		c.CloudAccount, c.CloudBudget, c.CloudCost, c.CloudInstance, c.CommandRecord,
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
 		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
@@ -544,8 +556,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AgentNode, c.Alert, c.Api, c.ApiAuditLog, c.ApiKey, c.Approval,
-		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline,
-		c.CloudAccount, c.CloudCost, c.CloudInstance, c.CommandRecord,
+		c.BackupRecord, c.BackupTask, c.Build, c.BuildHistory, c.BuildPipeline, c.Cert,
+		c.CloudAccount, c.CloudBudget, c.CloudCost, c.CloudInstance, c.CommandRecord,
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.Distribution,
 		c.DistributionRecord, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu, c.Monitor,
@@ -585,8 +597,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.BuildHistory.mutate(ctx, m)
 	case *BuildPipelineMutation:
 		return c.BuildPipeline.mutate(ctx, m)
+	case *CertMutation:
+		return c.Cert.mutate(ctx, m)
 	case *CloudAccountMutation:
 		return c.CloudAccount.mutate(ctx, m)
+	case *CloudBudgetMutation:
+		return c.CloudBudget.mutate(ctx, m)
 	case *CloudCostMutation:
 		return c.CloudCost.mutate(ctx, m)
 	case *CloudInstanceMutation:
@@ -2149,6 +2165,139 @@ func (c *BuildPipelineClient) mutate(ctx context.Context, m *BuildPipelineMutati
 	}
 }
 
+// CertClient is a client for the Cert schema.
+type CertClient struct {
+	config
+}
+
+// NewCertClient returns a client for the Cert from the given config.
+func NewCertClient(c config) *CertClient {
+	return &CertClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cert.Hooks(f(g(h())))`.
+func (c *CertClient) Use(hooks ...Hook) {
+	c.hooks.Cert = append(c.hooks.Cert, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cert.Intercept(f(g(h())))`.
+func (c *CertClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Cert = append(c.inters.Cert, interceptors...)
+}
+
+// Create returns a builder for creating a Cert entity.
+func (c *CertClient) Create() *CertCreate {
+	mutation := newCertMutation(c.config, OpCreate)
+	return &CertCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Cert entities.
+func (c *CertClient) CreateBulk(builders ...*CertCreate) *CertCreateBulk {
+	return &CertCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CertClient) MapCreateBulk(slice any, setFunc func(*CertCreate, int)) *CertCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CertCreateBulk{err: fmt.Errorf("calling to CertClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CertCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CertCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Cert.
+func (c *CertClient) Update() *CertUpdate {
+	mutation := newCertMutation(c.config, OpUpdate)
+	return &CertUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CertClient) UpdateOne(_m *Cert) *CertUpdateOne {
+	mutation := newCertMutation(c.config, OpUpdateOne, withCert(_m))
+	return &CertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CertClient) UpdateOneID(id uint32) *CertUpdateOne {
+	mutation := newCertMutation(c.config, OpUpdateOne, withCertID(id))
+	return &CertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Cert.
+func (c *CertClient) Delete() *CertDelete {
+	mutation := newCertMutation(c.config, OpDelete)
+	return &CertDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CertClient) DeleteOne(_m *Cert) *CertDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CertClient) DeleteOneID(id uint32) *CertDeleteOne {
+	builder := c.Delete().Where(cert.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CertDeleteOne{builder}
+}
+
+// Query returns a query builder for Cert.
+func (c *CertClient) Query() *CertQuery {
+	return &CertQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCert},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Cert entity by its id.
+func (c *CertClient) Get(ctx context.Context, id uint32) (*Cert, error) {
+	return c.Query().Where(cert.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CertClient) GetX(ctx context.Context, id uint32) *Cert {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CertClient) Hooks() []Hook {
+	return c.hooks.Cert
+}
+
+// Interceptors returns the client interceptors.
+func (c *CertClient) Interceptors() []Interceptor {
+	return c.inters.Cert
+}
+
+func (c *CertClient) mutate(ctx context.Context, m *CertMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CertCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CertUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CertDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Cert mutation op: %q", m.Op())
+	}
+}
+
 // CloudAccountClient is a client for the CloudAccount schema.
 type CloudAccountClient struct {
 	config
@@ -2279,6 +2428,139 @@ func (c *CloudAccountClient) mutate(ctx context.Context, m *CloudAccountMutation
 		return (&CloudAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CloudAccount mutation op: %q", m.Op())
+	}
+}
+
+// CloudBudgetClient is a client for the CloudBudget schema.
+type CloudBudgetClient struct {
+	config
+}
+
+// NewCloudBudgetClient returns a client for the CloudBudget from the given config.
+func NewCloudBudgetClient(c config) *CloudBudgetClient {
+	return &CloudBudgetClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cloudbudget.Hooks(f(g(h())))`.
+func (c *CloudBudgetClient) Use(hooks ...Hook) {
+	c.hooks.CloudBudget = append(c.hooks.CloudBudget, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cloudbudget.Intercept(f(g(h())))`.
+func (c *CloudBudgetClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CloudBudget = append(c.inters.CloudBudget, interceptors...)
+}
+
+// Create returns a builder for creating a CloudBudget entity.
+func (c *CloudBudgetClient) Create() *CloudBudgetCreate {
+	mutation := newCloudBudgetMutation(c.config, OpCreate)
+	return &CloudBudgetCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CloudBudget entities.
+func (c *CloudBudgetClient) CreateBulk(builders ...*CloudBudgetCreate) *CloudBudgetCreateBulk {
+	return &CloudBudgetCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CloudBudgetClient) MapCreateBulk(slice any, setFunc func(*CloudBudgetCreate, int)) *CloudBudgetCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CloudBudgetCreateBulk{err: fmt.Errorf("calling to CloudBudgetClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CloudBudgetCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CloudBudgetCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CloudBudget.
+func (c *CloudBudgetClient) Update() *CloudBudgetUpdate {
+	mutation := newCloudBudgetMutation(c.config, OpUpdate)
+	return &CloudBudgetUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CloudBudgetClient) UpdateOne(_m *CloudBudget) *CloudBudgetUpdateOne {
+	mutation := newCloudBudgetMutation(c.config, OpUpdateOne, withCloudBudget(_m))
+	return &CloudBudgetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CloudBudgetClient) UpdateOneID(id uint32) *CloudBudgetUpdateOne {
+	mutation := newCloudBudgetMutation(c.config, OpUpdateOne, withCloudBudgetID(id))
+	return &CloudBudgetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CloudBudget.
+func (c *CloudBudgetClient) Delete() *CloudBudgetDelete {
+	mutation := newCloudBudgetMutation(c.config, OpDelete)
+	return &CloudBudgetDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CloudBudgetClient) DeleteOne(_m *CloudBudget) *CloudBudgetDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CloudBudgetClient) DeleteOneID(id uint32) *CloudBudgetDeleteOne {
+	builder := c.Delete().Where(cloudbudget.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CloudBudgetDeleteOne{builder}
+}
+
+// Query returns a query builder for CloudBudget.
+func (c *CloudBudgetClient) Query() *CloudBudgetQuery {
+	return &CloudBudgetQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCloudBudget},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CloudBudget entity by its id.
+func (c *CloudBudgetClient) Get(ctx context.Context, id uint32) (*CloudBudget, error) {
+	return c.Query().Where(cloudbudget.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CloudBudgetClient) GetX(ctx context.Context, id uint32) *CloudBudget {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CloudBudgetClient) Hooks() []Hook {
+	return c.hooks.CloudBudget
+}
+
+// Interceptors returns the client interceptors.
+func (c *CloudBudgetClient) Interceptors() []Interceptor {
+	return c.inters.CloudBudget
+}
+
+func (c *CloudBudgetClient) mutate(ctx context.Context, m *CloudBudgetMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CloudBudgetCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CloudBudgetUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CloudBudgetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CloudBudgetDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CloudBudget mutation op: %q", m.Op())
 	}
 }
 
@@ -8594,11 +8876,11 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
-		Build, BuildHistory, BuildPipeline, CloudAccount, CloudCost, CloudInstance,
-		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
-		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		Build, BuildHistory, BuildPipeline, Cert, CloudAccount, CloudBudget, CloudCost,
+		CloudInstance, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
+		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
 		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
@@ -8607,11 +8889,11 @@ type (
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
-		Build, BuildHistory, BuildPipeline, CloudAccount, CloudCost, CloudInstance,
-		CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType,
-		Distribution, DistributionRecord, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
+		Build, BuildHistory, BuildPipeline, Cert, CloudAccount, CloudBudget, CloudCost,
+		CloudInstance, CommandRecord, DataAccessAuditLog, DictEntry, DictEntryI18n,
+		DictType, Distribution, DistributionRecord, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
 		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,

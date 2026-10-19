@@ -238,6 +238,20 @@ func (_c *NotificationChannelCreate) SetNillableSMTPFrom(v *string) *Notificatio
 	return _c
 }
 
+// SetEmailTo sets the "email_to" field.
+func (_c *NotificationChannelCreate) SetEmailTo(v string) *NotificationChannelCreate {
+	_c.mutation.SetEmailTo(v)
+	return _c
+}
+
+// SetNillableEmailTo sets the "email_to" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableEmailTo(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetEmailTo(*v)
+	}
+	return _c
+}
+
 // SetEnabled sets the "enabled" field.
 func (_c *NotificationChannelCreate) SetEnabled(v bool) *NotificationChannelCreate {
 	_c.mutation.SetEnabled(v)
@@ -452,6 +466,10 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 	if value, ok := _c.mutation.SMTPFrom(); ok {
 		_spec.SetField(notificationchannel.FieldSMTPFrom, field.TypeString, value)
 		_node.SMTPFrom = &value
+	}
+	if value, ok := _c.mutation.EmailTo(); ok {
+		_spec.SetField(notificationchannel.FieldEmailTo, field.TypeString, value)
+		_node.EmailTo = &value
 	}
 	if value, ok := _c.mutation.Enabled(); ok {
 		_spec.SetField(notificationchannel.FieldEnabled, field.TypeBool, value)
@@ -792,6 +810,24 @@ func (u *NotificationChannelUpsert) UpdateSMTPFrom() *NotificationChannelUpsert 
 // ClearSMTPFrom clears the value of the "smtp_from" field.
 func (u *NotificationChannelUpsert) ClearSMTPFrom() *NotificationChannelUpsert {
 	u.SetNull(notificationchannel.FieldSMTPFrom)
+	return u
+}
+
+// SetEmailTo sets the "email_to" field.
+func (u *NotificationChannelUpsert) SetEmailTo(v string) *NotificationChannelUpsert {
+	u.Set(notificationchannel.FieldEmailTo, v)
+	return u
+}
+
+// UpdateEmailTo sets the "email_to" field to the value that was provided on create.
+func (u *NotificationChannelUpsert) UpdateEmailTo() *NotificationChannelUpsert {
+	u.SetExcluded(notificationchannel.FieldEmailTo)
+	return u
+}
+
+// ClearEmailTo clears the value of the "email_to" field.
+func (u *NotificationChannelUpsert) ClearEmailTo() *NotificationChannelUpsert {
+	u.SetNull(notificationchannel.FieldEmailTo)
 	return u
 }
 
@@ -1202,6 +1238,27 @@ func (u *NotificationChannelUpsertOne) UpdateSMTPFrom() *NotificationChannelUpse
 func (u *NotificationChannelUpsertOne) ClearSMTPFrom() *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.ClearSMTPFrom()
+	})
+}
+
+// SetEmailTo sets the "email_to" field.
+func (u *NotificationChannelUpsertOne) SetEmailTo(v string) *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.SetEmailTo(v)
+	})
+}
+
+// UpdateEmailTo sets the "email_to" field to the value that was provided on create.
+func (u *NotificationChannelUpsertOne) UpdateEmailTo() *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.UpdateEmailTo()
+	})
+}
+
+// ClearEmailTo clears the value of the "email_to" field.
+func (u *NotificationChannelUpsertOne) ClearEmailTo() *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.ClearEmailTo()
 	})
 }
 
@@ -1783,6 +1840,27 @@ func (u *NotificationChannelUpsertBulk) UpdateSMTPFrom() *NotificationChannelUps
 func (u *NotificationChannelUpsertBulk) ClearSMTPFrom() *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.ClearSMTPFrom()
+	})
+}
+
+// SetEmailTo sets the "email_to" field.
+func (u *NotificationChannelUpsertBulk) SetEmailTo(v string) *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.SetEmailTo(v)
+	})
+}
+
+// UpdateEmailTo sets the "email_to" field to the value that was provided on create.
+func (u *NotificationChannelUpsertBulk) UpdateEmailTo() *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.UpdateEmailTo()
+	})
+}
+
+// ClearEmailTo clears the value of the "email_to" field.
+func (u *NotificationChannelUpsertBulk) ClearEmailTo() *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.ClearEmailTo()
 	})
 }
 

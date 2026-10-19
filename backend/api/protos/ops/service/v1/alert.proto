@@ -66,6 +66,11 @@ message Alert {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 关联节点(节点指标告警;项目状态告警为 0)
 
+  optional string source = 9 [
+    json_name = "source",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 告警来源(MONITOR/BUDGET/CERT)
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

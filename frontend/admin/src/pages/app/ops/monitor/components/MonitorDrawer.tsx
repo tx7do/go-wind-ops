@@ -102,10 +102,12 @@ const MonitorDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSuccess }
             initialValue={data?.consecutiveCount ?? 1}
           />
           <ProFormSwitch name="notifyOnRecovery" label={t('notifyOnRecovery')} initialValue={data?.notifyOnRecovery ?? true} />
+          <ProFormDigit name="repeatIntervalMinutes" label={t('repeatInterval')} min={0} fieldProps={{ precision: 0 }} extra={t('repeatIntervalHint')} initialValue={data?.repeatIntervalMinutes ?? 0} addonAfter="min" />
         </>) : (
           <ProFormSelect name="projectId" label={t('projectId')} options={projectOptions} rules={[{ required: true }]} initialValue={data?.projectId} />
         )}
         <ProFormText name="cron" label={t('cron')} rules={[{ required: true }]} placeholder="*/5 * * * *" extra={t('cronHint')} initialValue={data?.cron} />
+        <ProFormDigit name="repeatIntervalMinutes" label={t('repeatInterval')} min={0} fieldProps={{ precision: 0 }} extra={t('repeatIntervalHint')} initialValue={data?.repeatIntervalMinutes ?? 0} addonAfter="min" />
         {!isNode && <ProFormSwitch name="autoRestart" label={t('autoRestart')} initialValue={data?.autoRestart ?? false} />}
         <ProFormSwitch name="enabled" label={t('enabled')} initialValue={data?.enabled ?? true} />
         <ProFormText name="webhookUrl" label={t('webhookUrl')} placeholder="https://..." initialValue={data?.webhookUrl} />

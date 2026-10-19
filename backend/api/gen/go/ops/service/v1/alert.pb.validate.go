@@ -88,6 +88,10 @@ func (m *Alert) validate(all bool) error {
 		// no validation rules for NodeId
 	}
 
+	if m.Source != nil {
+		// no validation rules for Source
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

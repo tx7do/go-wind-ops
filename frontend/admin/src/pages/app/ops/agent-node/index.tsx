@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Input, Popconfirm, Progress, Select, Space, Tag, Tooltip, App } from 'antd';
-import { DeleteOutlined, EditOutlined, GlobalOutlined, LineChartOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, GlobalOutlined, LineChartOutlined, RocketOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentNode as AgentNode } from '@/api/generated/admin/service/v1';
@@ -10,6 +10,7 @@ import { PaginationQuery } from '@/core';
 import { ENV_PRESETS, ENV_TAG_COLOR, TABLE } from '@/config/constants';
 import { fetchListAgentNodes, useDeleteAgentNode, useSendAgentCommand, useUpdateAgentNode } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import AgentUpgradeModal from './components/AgentUpgradeModal';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import MetricsTrendDrawer from './components/MetricsTrendDrawer';
 
@@ -47,6 +48,7 @@ const AgentNodeManagement = () => {
   });
 
   const [trendNode, setTrendNode] = useState<AgentNode | undefined>();
+  const [upgradeNode, setUpgradeNode] = useState<AgentNode | undefined>();
   const [editing, setEditing] = useState<AgentNode | undefined>();
 
   const updateMutation = useUpdateAgentNode({
@@ -173,7 +175,7 @@ const AgentNodeManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 110,
+      width: 140,
       fixed: 'right',
       render: (_, record) => [
         <Tooltip key="edit" title={t('edit')}>
@@ -184,6 +186,11 @@ const AgentNodeManagement = () => {
         <Tooltip key="trend" title={t('trendTooltip')}>
           <a onClick={() => setTrendNode(record)}>
             <LineChartOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip key="upgrade" title={t('upgradeTooltip')}>
+          <a onClick={() => setUpgradeNode(record)}>
+            <RocketOutlined />
           </a>
         </Tooltip>,
         <Tooltip key="ping" title={t('pingTooltip')}>
@@ -275,6 +282,11 @@ const AgentNodeManagement = () => {
     </ContentContainer>
 
       <MetricsTrendDrawer data={trendNode} onClose={() => setTrendNode(undefined)} />
+
+      <AgentUpgradeModal
+        node={upgradeNode}
+        onClose={() => setUpgradeNode(undefined)}
+      />
     </>
   );
 };

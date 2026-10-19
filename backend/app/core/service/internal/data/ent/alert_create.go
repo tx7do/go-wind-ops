@@ -70,6 +70,28 @@ func (_c *AlertCreate) SetMonitorID(v uint32) *AlertCreate {
 	return _c
 }
 
+// SetNillableMonitorID sets the "monitor_id" field if the given value is not nil.
+func (_c *AlertCreate) SetNillableMonitorID(v *uint32) *AlertCreate {
+	if v != nil {
+		_c.SetMonitorID(*v)
+	}
+	return _c
+}
+
+// SetSource sets the "source" field.
+func (_c *AlertCreate) SetSource(v string) *AlertCreate {
+	_c.mutation.SetSource(v)
+	return _c
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (_c *AlertCreate) SetNillableSource(v *string) *AlertCreate {
+	if v != nil {
+		_c.SetSource(*v)
+	}
+	return _c
+}
+
 // SetProjectID sets the "project_id" field.
 func (_c *AlertCreate) SetProjectID(v uint32) *AlertCreate {
 	_c.mutation.SetProjectID(v)
@@ -201,6 +223,14 @@ func (_c *AlertCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *AlertCreate) defaults() {
+	if _, ok := _c.mutation.MonitorID(); !ok {
+		v := alert.DefaultMonitorID
+		_c.mutation.SetMonitorID(v)
+	}
+	if _, ok := _c.mutation.Source(); !ok {
+		v := alert.DefaultSource
+		_c.mutation.SetSource(v)
+	}
 	if _, ok := _c.mutation.ProjectID(); !ok {
 		v := alert.DefaultProjectID
 		_c.mutation.SetProjectID(v)
@@ -225,13 +255,8 @@ func (_c *AlertCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *AlertCreate) check() error {
-	if _, ok := _c.mutation.MonitorID(); !ok {
-		return &ValidationError{Name: "monitor_id", err: errors.New(`ent: missing required field "Alert.monitor_id"`)}
-	}
-	if v, ok := _c.mutation.MonitorID(); ok {
-		if err := alert.MonitorIDValidator(v); err != nil {
-			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
-		}
+	if _, ok := _c.mutation.Source(); !ok {
+		return &ValidationError{Name: "source", err: errors.New(`ent: missing required field "Alert.source"`)}
 	}
 	if _, ok := _c.mutation.Level(); !ok {
 		return &ValidationError{Name: "level", err: errors.New(`ent: missing required field "Alert.level"`)}
@@ -308,6 +333,10 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.MonitorID(); ok {
 		_spec.SetField(alert.FieldMonitorID, field.TypeUint32, value)
 		_node.MonitorID = value
+	}
+	if value, ok := _c.mutation.Source(); ok {
+		_spec.SetField(alert.FieldSource, field.TypeString, value)
+		_node.Source = value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
 		_spec.SetField(alert.FieldProjectID, field.TypeUint32, value)
@@ -440,6 +469,24 @@ func (u *AlertUpsert) UpdateMonitorID() *AlertUpsert {
 // AddMonitorID adds v to the "monitor_id" field.
 func (u *AlertUpsert) AddMonitorID(v uint32) *AlertUpsert {
 	u.Add(alert.FieldMonitorID, v)
+	return u
+}
+
+// ClearMonitorID clears the value of the "monitor_id" field.
+func (u *AlertUpsert) ClearMonitorID() *AlertUpsert {
+	u.SetNull(alert.FieldMonitorID)
+	return u
+}
+
+// SetSource sets the "source" field.
+func (u *AlertUpsert) SetSource(v string) *AlertUpsert {
+	u.Set(alert.FieldSource, v)
+	return u
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AlertUpsert) UpdateSource() *AlertUpsert {
+	u.SetExcluded(alert.FieldSource)
 	return u
 }
 
@@ -668,6 +715,27 @@ func (u *AlertUpsertOne) AddMonitorID(v uint32) *AlertUpsertOne {
 func (u *AlertUpsertOne) UpdateMonitorID() *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.UpdateMonitorID()
+	})
+}
+
+// ClearMonitorID clears the value of the "monitor_id" field.
+func (u *AlertUpsertOne) ClearMonitorID() *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearMonitorID()
+	})
+}
+
+// SetSource sets the "source" field.
+func (u *AlertUpsertOne) SetSource(v string) *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.SetSource(v)
+	})
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AlertUpsertOne) UpdateSource() *AlertUpsertOne {
+	return u.Update(func(s *AlertUpsert) {
+		s.UpdateSource()
 	})
 }
 
@@ -1081,6 +1149,27 @@ func (u *AlertUpsertBulk) AddMonitorID(v uint32) *AlertUpsertBulk {
 func (u *AlertUpsertBulk) UpdateMonitorID() *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.UpdateMonitorID()
+	})
+}
+
+// ClearMonitorID clears the value of the "monitor_id" field.
+func (u *AlertUpsertBulk) ClearMonitorID() *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.ClearMonitorID()
+	})
+}
+
+// SetSource sets the "source" field.
+func (u *AlertUpsertBulk) SetSource(v string) *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.SetSource(v)
+	})
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AlertUpsertBulk) UpdateSource() *AlertUpsertBulk {
+	return u.Update(func(s *AlertUpsert) {
+		s.UpdateSource()
 	})
 }
 

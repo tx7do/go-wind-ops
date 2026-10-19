@@ -89,6 +89,13 @@ message NotificationChannel {
   ]; // SMTP 密码(写入)
   optional string smtp_from = 11 [json_name = "smtpFrom"]; // 发件人
 
+  optional string email_to = 14 [
+    json_name = "emailTo",
+    (gnostic.openapi.v3.property) = {
+      description: "收件人地址列表(逗号分隔)"
+    }
+  ]; // 收件人
+
   optional bool enabled = 12 [json_name = "enabled"]; // 是否启用
 
   optional string description = 13 [json_name = "description"]; // 描述

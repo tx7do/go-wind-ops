@@ -33,5 +33,7 @@
   "thresholdHint": "指标使用率 ≥ 阈值即命中(0-100)",
   "consecutiveCount": "连续命中次数",
   "consecutiveHint": "连续 N 个检查周期超阈值才告警(防抖)",
-  "notifyOnRecovery": "恢复时通知"
+  "notifyOnRecovery": "恢复时通知",
+  "repeatInterval": "重复告警间隔",
+  "repeatIntervalHint": "距上次告警不足该间隔则不重复报(0=每次异常都报,恢复后重新告警同样受限)"
 }

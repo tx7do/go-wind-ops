@@ -375,6 +375,30 @@ func (f BuildPipelineMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BuildPipelineMutation", m)
 }
 
+// The CertQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CertQueryRuleFunc func(context.Context, *ent.CertQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CertQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CertQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CertQuery", q)
+}
+
+// The CertMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CertMutationRuleFunc func(context.Context, *ent.CertMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CertMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CertMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CertMutation", m)
+}
+
 // The CloudAccountQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CloudAccountQueryRuleFunc func(context.Context, *ent.CloudAccountQuery) error
@@ -397,6 +421,30 @@ func (f CloudAccountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CloudAccountMutation", m)
+}
+
+// The CloudBudgetQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CloudBudgetQueryRuleFunc func(context.Context, *ent.CloudBudgetQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CloudBudgetQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CloudBudgetQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CloudBudgetQuery", q)
+}
+
+// The CloudBudgetMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CloudBudgetMutationRuleFunc func(context.Context, *ent.CloudBudgetMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CloudBudgetMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CloudBudgetMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CloudBudgetMutation", m)
 }
 
 // The CloudCostQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1560,7 +1608,11 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.BuildPipelineQuery:
 		return q.Filter(), nil
+	case *ent.CertQuery:
+		return q.Filter(), nil
 	case *ent.CloudAccountQuery:
+		return q.Filter(), nil
+	case *ent.CloudBudgetQuery:
 		return q.Filter(), nil
 	case *ent.CloudCostQuery:
 		return q.Filter(), nil
@@ -1683,7 +1735,11 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.BuildPipelineMutation:
 		return m.Filter(), nil
+	case *ent.CertMutation:
+		return m.Filter(), nil
 	case *ent.CloudAccountMutation:
+		return m.Filter(), nil
+	case *ent.CloudBudgetMutation:
 		return m.Filter(), nil
 	case *ent.CloudCostMutation:
 		return m.Filter(), nil

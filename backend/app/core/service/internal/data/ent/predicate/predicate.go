@@ -39,8 +39,14 @@ type BuildHistory func(*sql.Selector)
 // BuildPipeline is the predicate function for buildpipeline builders.
 type BuildPipeline func(*sql.Selector)
 
+// Cert is the predicate function for cert builders.
+type Cert func(*sql.Selector)
+
 // CloudAccount is the predicate function for cloudaccount builders.
 type CloudAccount func(*sql.Selector)
+
+// CloudBudget is the predicate function for cloudbudget builders.
+type CloudBudget func(*sql.Selector)
 
 // CloudCost is the predicate function for cloudcost builders.
 type CloudCost func(*sql.Selector)

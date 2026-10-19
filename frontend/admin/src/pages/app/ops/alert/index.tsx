@@ -1,7 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Popconfirm, Tag, App } from 'antd';
+import { Popconfirm, Tag, Tooltip, App } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
+import AlertDeliveriesDrawer from './components/AlertDeliveriesDrawer';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_Alert as Alert } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
@@ -12,6 +14,7 @@ import ContentContainer from '@/layouts/components/PageContainer/ContentContaine
 
 const AlertManagement = () => {
   const { t } = useTranslation('alert');
+  const [deliveriesAlert, setDeliveriesAlert] = useState<Alert | undefined>();
   const actionRef = useRef<ActionType>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
@@ -24,6 +27,15 @@ const AlertManagement = () => {
   const { message } = App.useApp();
 
   const columns: ProColumns<Alert>[] = [
+    { title: t('source'), dataIndex: 'source', width: 95, hideInSearch: true, render: (_, r) => {
+        const map: Record<string, { color: string; label: string }> = {
+          MONITOR: { color: 'blue', label: t('sourceMonitor') },
+          BUDGET: { color: 'orange', label: t('sourceBudget') },
+          CERT: { color: 'purple', label: t('sourceCert') },
+        };
+        const it = map[r.source || 'MONITOR'] || map.MONITOR;
+        return <Tag color={it.color}>{it.label}</Tag>;
+      } },
     { title: t('monitorId'), dataIndex: 'monitorId', width: 90, hideInSearch: true },
     { title: t('projectId'), dataIndex: 'projectId', width: 90, hideInSearch: true, render: (_, r) => (r.projectId ? r.projectId : '-') },
     { title: t('nodeId'), dataIndex: 'nodeId', width: 90, hideInSearch: true, render: (_, r) => (r.nodeId ? r.nodeId : '-') },
@@ -38,12 +50,17 @@ const AlertManagement = () => {
     },
     { title: t('createdAt'), dataIndex: 'createdAt', width: 165, valueType: 'dateTime' },
     {
-      title: t('action'), valueType: 'option', width: 100,
-      render: (_, r) => !r.resolved ? [
-        <Popconfirm key="resolve" title={t('resolveConfirm')} onConfirm={() => r.id && resolveMutation.mutate({ id: r.id })} okText="OK" cancelText="Cancel">
-          <a>{t('resolve')}</a>
-        </Popconfirm>,
-      ] : [],
+      title: t('action'), valueType: 'option', width: 130,
+      render: (_, r) => [
+        <Tooltip key="deliveries" title={t('deliveries')}>
+          <a onClick={() => setDeliveriesAlert(r)}><SendOutlined /></a>
+        </Tooltip>,
+        ...(!r.resolved ? [
+          <Popconfirm key="resolve" title={t('resolveConfirm')} onConfirm={() => r.id && resolveMutation.mutate({ id: r.id })} okText="OK" cancelText="Cancel">
+            <a>{t('resolve')}</a>
+          </Popconfirm>,
+        ] : []),
+      ],
     },
   ];
 
@@ -67,6 +84,10 @@ const AlertManagement = () => {
           size="middle" bordered scroll={{ y: tableScrollY, x: 1000 }}
         />
       </div>
+      <AlertDeliveriesDrawer
+        alertId={deliveriesAlert?.id}
+        onClose={() => setDeliveriesAlert(undefined)}
+      />
     </ContentContainer>
   );
 };

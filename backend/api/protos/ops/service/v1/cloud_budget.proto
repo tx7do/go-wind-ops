@@ -1,0 +1,164 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// CloudBudgetService 云成本月度预算:调度器周期比对台账成本与预算,
+// 达到阈值或环比突增时产生告警并经通知渠道外呼。
+service CloudBudgetService {
+  // 查询预算列表
+  rpc ListCloudBudgets (pagination.PagingRequest) returns (ListCloudBudgetResponse) {}
+
+  // 查询预算详情
+  rpc GetCloudBudget (GetCloudBudgetRequest) returns (CloudBudget) {}
+
+  // 创建预算
+  rpc CreateCloudBudget (CreateCloudBudgetRequest) returns (CloudBudget) {}
+
+  // 更新预算
+  rpc UpdateCloudBudget (UpdateCloudBudgetRequest) returns (google.protobuf.Empty) {}
+
+  // 删除预算
+  rpc DeleteCloudBudget (DeleteCloudBudgetRequest) returns (google.protobuf.Empty) {}
+
+  // 立即执行一次预算检查(忽略通知防重位,重算并按需告警)
+  rpc CheckCloudBudget (CheckCloudBudgetRequest) returns (google.protobuf.Empty) {}
+}
+
+// 云成本月度预算
+message CloudBudget {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 预算ID
+
+  optional uint32 cloud_account_id = 2 [
+    json_name = "cloudAccountId",
+    (gnostic.openapi.v3.property) = {
+      description: "云账号(0=全部账号合计)"
+    }
+  ]; // 云账号
+
+  optional string month = 3 [
+    json_name = "month",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "预算月份(YYYY-MM)"
+    }
+  ]; // 预算月份
+
+  optional double amount = 4 [
+    json_name = "amount",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "预算金额"
+    }
+  ]; // 预算金额
+
+  optional string currency = 5 [
+    json_name = "currency",
+    (gnostic.openapi.v3.property) = {
+      description: "币种(CNY/USD/...)"
+    }
+  ]; // 币种
+
+  optional double threshold_percent = 6 [
+    json_name = "thresholdPercent",
+    (gnostic.openapi.v3.property) = {
+      description: "达到预算的百分比时告警(默认 100)"
+    }
+  ]; // 告警阈值百分比
+
+  optional bool notified = 7 [
+    json_name = "notified",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 阈值告警是否已发
+
+  optional double anomaly_ratio = 8 [
+    json_name = "anomalyRatio",
+    (gnostic.openapi.v3.property) = {
+      description: "环比突增倍数(本月>前 3 月均值×该倍数告警;0=不检测)"
+    }
+  ]; // 环比突增倍数
+
+  optional bool anomaly_notified = 9 [
+    json_name = "anomalyNotified",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 突增告警是否已发
+
+  optional bool enabled = 10 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 11 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {
+      description: "描述"
+    }
+  ]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 31 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新时间
+}
+
+message ListCloudBudgetResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated CloudBudget items = 2 [json_name = "items"]; // 预算列表
+}
+
+message GetCloudBudgetRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 预算ID
+}
+
+message CreateCloudBudgetRequest {
+  CloudBudget data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 预算数据
+}
+
+message UpdateCloudBudgetRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 预算ID
+
+  CloudBudget data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 待更新数据
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表"
+    }
+  ]; // 要更新的字段列表
+}
+
+message DeleteCloudBudgetRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 预算ID
+}
+
+message CheckCloudBudgetRequest {}

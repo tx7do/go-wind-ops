@@ -25,9 +25,11 @@ const _ = http.SupportPackageIsVersion1
 const OperationAgentNodeServiceDelete = "/admin.service.v1.AgentNodeService/Delete"
 const OperationAgentNodeServiceGet = "/admin.service.v1.AgentNodeService/Get"
 const OperationAgentNodeServiceGetMetrics = "/admin.service.v1.AgentNodeService/GetMetrics"
+const OperationAgentNodeServiceGetUpgradeUploadUrl = "/admin.service.v1.AgentNodeService/GetUpgradeUploadUrl"
 const OperationAgentNodeServiceList = "/admin.service.v1.AgentNodeService/List"
 const OperationAgentNodeServiceSendCommand = "/admin.service.v1.AgentNodeService/SendCommand"
 const OperationAgentNodeServiceUpdate = "/admin.service.v1.AgentNodeService/Update"
+const OperationAgentNodeServiceUpgrade = "/admin.service.v1.AgentNodeService/Upgrade"
 
 type AgentNodeServiceHTTPServer interface {
 	// Delete 删除节点记录
@@ -36,12 +38,16 @@ type AgentNodeServiceHTTPServer interface {
 	Get(context.Context, *v11.GetAgentNodeRequest) (*v11.AgentNode, error)
 	// GetMetrics 查询节点心跳指标历史
 	GetMetrics(context.Context, *v11.GetNodeMetricsHistoryRequest) (*v11.GetNodeMetricsHistoryResponse, error)
+	// GetUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)
+	GetUpgradeUploadUrl(context.Context, *v11.GetAgentUpgradeUploadUrlRequest) (*v11.GetAgentUpgradeUploadUrlResponse, error)
 	// List 查询节点列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListAgentNodeResponse, error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error)
 	// Update 更新节点(显示名/标签)
 	Update(context.Context, *v11.UpdateAgentNodeRequest) (*emptypb.Empty, error)
+	// Upgrade 远程升级 agent(下发自替换指令)
+	Upgrade(context.Context, *v11.UpgradeAgentRequest) (*v11.UpgradeAgentResponse, error)
 }
 
 func RegisterAgentNodeServiceHTTPServer(s *http.Server, srv AgentNodeServiceHTTPServer) {
@@ -52,6 +58,8 @@ func RegisterAgentNodeServiceHTTPServer(s *http.Server, srv AgentNodeServiceHTTP
 	r.DELETE("/admin/v1/agent-nodes/{id}", _AgentNodeService_Delete0_HTTP_Handler(srv))
 	r.POST("/admin/v1/agent-nodes/{id}/commands:send", _AgentNodeService_SendCommand0_HTTP_Handler(srv))
 	r.GET("/admin/v1/agent-nodes/{id}/metrics", _AgentNodeService_GetMetrics0_HTTP_Handler(srv))
+	r.POST("/admin/v1/agent-nodes/upgrade-upload-url:resolve", _AgentNodeService_GetUpgradeUploadUrl0_HTTP_Handler(srv))
+	r.POST("/admin/v1/agent-nodes/upgrade:send", _AgentNodeService_Upgrade0_HTTP_Handler(srv))
 }
 
 func _AgentNodeService_List0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
@@ -189,6 +197,50 @@ func _AgentNodeService_GetMetrics0_HTTP_Handler(srv AgentNodeServiceHTTPServer) 
 	}
 }
 
+func _AgentNodeService_GetUpgradeUploadUrl0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetAgentUpgradeUploadUrlRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAgentNodeServiceGetUpgradeUploadUrl)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetUpgradeUploadUrl(ctx, req.(*v11.GetAgentUpgradeUploadUrlRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetAgentUpgradeUploadUrlResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AgentNodeService_Upgrade0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.UpgradeAgentRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAgentNodeServiceUpgrade)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Upgrade(ctx, req.(*v11.UpgradeAgentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.UpgradeAgentResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AgentNodeServiceHTTPClient interface {
 	// Delete 删除节点记录
 	Delete(ctx context.Context, req *v11.DeleteAgentNodeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -196,12 +248,16 @@ type AgentNodeServiceHTTPClient interface {
 	Get(ctx context.Context, req *v11.GetAgentNodeRequest, opts ...http.CallOption) (rsp *v11.AgentNode, err error)
 	// GetMetrics 查询节点心跳指标历史
 	GetMetrics(ctx context.Context, req *v11.GetNodeMetricsHistoryRequest, opts ...http.CallOption) (rsp *v11.GetNodeMetricsHistoryResponse, err error)
+	// GetUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)
+	GetUpgradeUploadUrl(ctx context.Context, req *v11.GetAgentUpgradeUploadUrlRequest, opts ...http.CallOption) (rsp *v11.GetAgentUpgradeUploadUrlResponse, err error)
 	// List 查询节点列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListAgentNodeResponse, err error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(ctx context.Context, req *v11.SendCommandRequest, opts ...http.CallOption) (rsp *v11.SendCommandResponse, err error)
 	// Update 更新节点(显示名/标签)
 	Update(ctx context.Context, req *v11.UpdateAgentNodeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Upgrade 远程升级 agent(下发自替换指令)
+	Upgrade(ctx context.Context, req *v11.UpgradeAgentRequest, opts ...http.CallOption) (rsp *v11.UpgradeAgentResponse, err error)
 }
 
 type AgentNodeServiceHTTPClientImpl struct {
@@ -254,6 +310,20 @@ func (c *AgentNodeServiceHTTPClientImpl) GetMetrics(ctx context.Context, in *v11
 	return &out, nil
 }
 
+// GetUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)
+func (c *AgentNodeServiceHTTPClientImpl) GetUpgradeUploadUrl(ctx context.Context, in *v11.GetAgentUpgradeUploadUrlRequest, opts ...http.CallOption) (*v11.GetAgentUpgradeUploadUrlResponse, error) {
+	var out v11.GetAgentUpgradeUploadUrlResponse
+	pattern := "/admin/v1/agent-nodes/upgrade-upload-url:resolve"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAgentNodeServiceGetUpgradeUploadUrl))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // List 查询节点列表
 func (c *AgentNodeServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListAgentNodeResponse, error) {
 	var out v11.ListAgentNodeResponse
@@ -290,6 +360,20 @@ func (c *AgentNodeServiceHTTPClientImpl) Update(ctx context.Context, in *v11.Upd
 	opts = append(opts, http.Operation(OperationAgentNodeServiceUpdate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Upgrade 远程升级 agent(下发自替换指令)
+func (c *AgentNodeServiceHTTPClientImpl) Upgrade(ctx context.Context, in *v11.UpgradeAgentRequest, opts ...http.CallOption) (*v11.UpgradeAgentResponse, error) {
+	var out v11.UpgradeAgentResponse
+	pattern := "/admin/v1/agent-nodes/upgrade:send"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAgentNodeServiceUpgrade))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -112,6 +112,10 @@ func (m *Monitor) validate(all bool) error {
 		// no validation rules for NotifyOnRecovery
 	}
 
+	if m.RepeatIntervalMinutes != nil {
+		// no validation rules for RepeatIntervalMinutes
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

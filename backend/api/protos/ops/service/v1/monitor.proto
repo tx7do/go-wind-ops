@@ -128,6 +128,13 @@ message Monitor {
     }
   ]; // 恢复通知
 
+  optional int32 repeat_interval_minutes = 15 [
+    json_name = "repeatIntervalMinutes",
+    (gnostic.openapi.v3.property) = {
+      description: "重复告警最小间隔(分钟,0=每次异常检查都报)"
+    }
+  ]; // 重复告警间隔
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

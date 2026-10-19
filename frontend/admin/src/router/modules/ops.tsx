@@ -256,6 +256,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'certs',
+        path: '/ops/certs',
+        element: createLazyRoute(() => import('@/pages/app/ops/cert')),
+        meta: {
+          title: 'routes:certs',
+          icon: 'lucide:file-badge',
+          order: 4,
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
         name: 'api-keys',
         path: '/ops/api-keys',
         element: createLazyRoute(() => import('@/pages/app/ops/api-key')),
@@ -298,6 +309,17 @@ export const opsRoutes: AppRouteObject[] = [
           title: 'routes:cloud-resources',
           icon: 'lucide:server',
           order: 2,
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
+        name: 'cloud-budgets',
+        path: '/ops/cloud-budgets',
+        element: createLazyRoute(() => import('@/pages/app/ops/cloud-budget')),
+        meta: {
+          title: 'routes:cloud-budgets',
+          icon: 'lucide:wallet',
+          order: 4,
           authority: ['sys:platform_admin'],
         },
       },

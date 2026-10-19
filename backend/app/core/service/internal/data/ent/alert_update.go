@@ -90,6 +90,26 @@ func (_u *AlertUpdate) AddMonitorID(v int32) *AlertUpdate {
 	return _u
 }
 
+// ClearMonitorID clears the value of the "monitor_id" field.
+func (_u *AlertUpdate) ClearMonitorID() *AlertUpdate {
+	_u.mutation.ClearMonitorID()
+	return _u
+}
+
+// SetSource sets the "source" field.
+func (_u *AlertUpdate) SetSource(v string) *AlertUpdate {
+	_u.mutation.SetSource(v)
+	return _u
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (_u *AlertUpdate) SetNillableSource(v *string) *AlertUpdate {
+	if v != nil {
+		_u.SetSource(*v)
+	}
+	return _u
+}
+
 // SetProjectID sets the "project_id" field.
 func (_u *AlertUpdate) SetProjectID(v uint32) *AlertUpdate {
 	_u.mutation.ResetProjectID()
@@ -254,11 +274,6 @@ func (_u *AlertUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *AlertUpdate) check() error {
-	if v, ok := _u.mutation.MonitorID(); ok {
-		if err := alert.MonitorIDValidator(v); err != nil {
-			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Level(); ok {
 		if err := alert.LevelValidator(v); err != nil {
 			return &ValidationError{Name: "level", err: fmt.Errorf(`ent: validator failed for field "Alert.level": %w`, err)}
@@ -310,6 +325,12 @@ func (_u *AlertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedMonitorID(); ok {
 		_spec.AddField(alert.FieldMonitorID, field.TypeUint32, value)
+	}
+	if _u.mutation.MonitorIDCleared() {
+		_spec.ClearField(alert.FieldMonitorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Source(); ok {
+		_spec.SetField(alert.FieldSource, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
 		_spec.SetField(alert.FieldProjectID, field.TypeUint32, value)
@@ -427,6 +448,26 @@ func (_u *AlertUpdateOne) SetNillableMonitorID(v *uint32) *AlertUpdateOne {
 // AddMonitorID adds value to the "monitor_id" field.
 func (_u *AlertUpdateOne) AddMonitorID(v int32) *AlertUpdateOne {
 	_u.mutation.AddMonitorID(v)
+	return _u
+}
+
+// ClearMonitorID clears the value of the "monitor_id" field.
+func (_u *AlertUpdateOne) ClearMonitorID() *AlertUpdateOne {
+	_u.mutation.ClearMonitorID()
+	return _u
+}
+
+// SetSource sets the "source" field.
+func (_u *AlertUpdateOne) SetSource(v string) *AlertUpdateOne {
+	_u.mutation.SetSource(v)
+	return _u
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (_u *AlertUpdateOne) SetNillableSource(v *string) *AlertUpdateOne {
+	if v != nil {
+		_u.SetSource(*v)
+	}
 	return _u
 }
 
@@ -607,11 +648,6 @@ func (_u *AlertUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *AlertUpdateOne) check() error {
-	if v, ok := _u.mutation.MonitorID(); ok {
-		if err := alert.MonitorIDValidator(v); err != nil {
-			return &ValidationError{Name: "monitor_id", err: fmt.Errorf(`ent: validator failed for field "Alert.monitor_id": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Level(); ok {
 		if err := alert.LevelValidator(v); err != nil {
 			return &ValidationError{Name: "level", err: fmt.Errorf(`ent: validator failed for field "Alert.level": %w`, err)}
@@ -680,6 +716,12 @@ func (_u *AlertUpdateOne) sqlSave(ctx context.Context) (_node *Alert, err error)
 	}
 	if value, ok := _u.mutation.AddedMonitorID(); ok {
 		_spec.AddField(alert.FieldMonitorID, field.TypeUint32, value)
+	}
+	if _u.mutation.MonitorIDCleared() {
+		_spec.ClearField(alert.FieldMonitorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Source(); ok {
+		_spec.SetField(alert.FieldSource, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
 		_spec.SetField(alert.FieldProjectID, field.TypeUint32, value)

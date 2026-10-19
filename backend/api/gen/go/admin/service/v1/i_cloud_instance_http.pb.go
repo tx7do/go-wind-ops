@@ -32,11 +32,11 @@ type CloudInstanceServiceHTTPServer interface {
 
 func RegisterCloudInstanceServiceHTTPServer(s *http.Server, srv CloudInstanceServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/cloud-instances", _CloudInstanceService_List11_HTTP_Handler(srv))
+	r.GET("/admin/v1/cloud-instances", _CloudInstanceService_List13_HTTP_Handler(srv))
 	r.POST("/admin/v1/cloud-instances/sync", _CloudInstanceService_Sync0_HTTP_Handler(srv))
 }
 
-func _CloudInstanceService_List11_HTTP_Handler(srv CloudInstanceServiceHTTPServer) func(ctx http.Context) error {
+func _CloudInstanceService_List13_HTTP_Handler(srv CloudInstanceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.ListCloudInstancesRequest
 		if err := ctx.BindQuery(&in); err != nil {

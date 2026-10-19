@@ -224,6 +224,20 @@ func (_c *MonitorCreate) SetNillableNotifyOnRecovery(v *bool) *MonitorCreate {
 	return _c
 }
 
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (_c *MonitorCreate) SetRepeatIntervalMinutes(v int) *MonitorCreate {
+	_c.mutation.SetRepeatIntervalMinutes(v)
+	return _c
+}
+
+// SetNillableRepeatIntervalMinutes sets the "repeat_interval_minutes" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableRepeatIntervalMinutes(v *int) *MonitorCreate {
+	if v != nil {
+		_c.SetRepeatIntervalMinutes(*v)
+	}
+	return _c
+}
+
 // SetCron sets the "cron" field.
 func (_c *MonitorCreate) SetCron(v string) *MonitorCreate {
 	_c.mutation.SetCron(v)
@@ -359,6 +373,10 @@ func (_c *MonitorCreate) defaults() {
 		v := monitor.DefaultNotifyOnRecovery
 		_c.mutation.SetNotifyOnRecovery(v)
 	}
+	if _, ok := _c.mutation.RepeatIntervalMinutes(); !ok {
+		v := monitor.DefaultRepeatIntervalMinutes
+		_c.mutation.SetRepeatIntervalMinutes(v)
+	}
 	if _, ok := _c.mutation.AutoRestart(); !ok {
 		v := monitor.DefaultAutoRestart
 		_c.mutation.SetAutoRestart(v)
@@ -406,6 +424,9 @@ func (_c *MonitorCreate) check() error {
 	}
 	if _, ok := _c.mutation.NotifyOnRecovery(); !ok {
 		return &ValidationError{Name: "notify_on_recovery", err: errors.New(`ent: missing required field "Monitor.notify_on_recovery"`)}
+	}
+	if _, ok := _c.mutation.RepeatIntervalMinutes(); !ok {
+		return &ValidationError{Name: "repeat_interval_minutes", err: errors.New(`ent: missing required field "Monitor.repeat_interval_minutes"`)}
 	}
 	if _, ok := _c.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Monitor.cron"`)}
@@ -518,6 +539,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.NotifyOnRecovery(); ok {
 		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
 		_node.NotifyOnRecovery = value
+	}
+	if value, ok := _c.mutation.RepeatIntervalMinutes(); ok {
+		_spec.SetField(monitor.FieldRepeatIntervalMinutes, field.TypeInt, value)
+		_node.RepeatIntervalMinutes = value
 	}
 	if value, ok := _c.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
@@ -846,6 +871,24 @@ func (u *MonitorUpsert) SetNotifyOnRecovery(v bool) *MonitorUpsert {
 // UpdateNotifyOnRecovery sets the "notify_on_recovery" field to the value that was provided on create.
 func (u *MonitorUpsert) UpdateNotifyOnRecovery() *MonitorUpsert {
 	u.SetExcluded(monitor.FieldNotifyOnRecovery)
+	return u
+}
+
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (u *MonitorUpsert) SetRepeatIntervalMinutes(v int) *MonitorUpsert {
+	u.Set(monitor.FieldRepeatIntervalMinutes, v)
+	return u
+}
+
+// UpdateRepeatIntervalMinutes sets the "repeat_interval_minutes" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateRepeatIntervalMinutes() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldRepeatIntervalMinutes)
+	return u
+}
+
+// AddRepeatIntervalMinutes adds v to the "repeat_interval_minutes" field.
+func (u *MonitorUpsert) AddRepeatIntervalMinutes(v int) *MonitorUpsert {
+	u.Add(monitor.FieldRepeatIntervalMinutes, v)
 	return u
 }
 
@@ -1270,6 +1313,27 @@ func (u *MonitorUpsertOne) SetNotifyOnRecovery(v bool) *MonitorUpsertOne {
 func (u *MonitorUpsertOne) UpdateNotifyOnRecovery() *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateNotifyOnRecovery()
+	})
+}
+
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (u *MonitorUpsertOne) SetRepeatIntervalMinutes(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetRepeatIntervalMinutes(v)
+	})
+}
+
+// AddRepeatIntervalMinutes adds v to the "repeat_interval_minutes" field.
+func (u *MonitorUpsertOne) AddRepeatIntervalMinutes(v int) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddRepeatIntervalMinutes(v)
+	})
+}
+
+// UpdateRepeatIntervalMinutes sets the "repeat_interval_minutes" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateRepeatIntervalMinutes() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateRepeatIntervalMinutes()
 	})
 }
 
@@ -1872,6 +1936,27 @@ func (u *MonitorUpsertBulk) SetNotifyOnRecovery(v bool) *MonitorUpsertBulk {
 func (u *MonitorUpsertBulk) UpdateNotifyOnRecovery() *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateNotifyOnRecovery()
+	})
+}
+
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (u *MonitorUpsertBulk) SetRepeatIntervalMinutes(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetRepeatIntervalMinutes(v)
+	})
+}
+
+// AddRepeatIntervalMinutes adds v to the "repeat_interval_minutes" field.
+func (u *MonitorUpsertBulk) AddRepeatIntervalMinutes(v int) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.AddRepeatIntervalMinutes(v)
+	})
+}
+
+// UpdateRepeatIntervalMinutes sets the "repeat_interval_minutes" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateRepeatIntervalMinutes() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateRepeatIntervalMinutes()
 	})
 }
 

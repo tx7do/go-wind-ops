@@ -70,3 +70,16 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 
 	return s.agentNodeServiceClient.SendCommand(ctx, req)
 }
+
+// GetUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)。
+func (s *AgentNodeService) GetUpgradeUploadUrl(ctx context.Context, req *opsV1.GetAgentUpgradeUploadUrlRequest) (*opsV1.GetAgentUpgradeUploadUrlResponse, error) {
+	return s.agentNodeServiceClient.GetAgentUpgradeUploadUrl(ctx, req)
+}
+
+// Upgrade 远程升级 agent(下发自替换指令)。
+func (s *AgentNodeService) Upgrade(ctx context.Context, req *opsV1.UpgradeAgentRequest) (*opsV1.UpgradeAgentResponse, error) {
+	if req == nil || req.GetNodeId() == 0 || req.GetVersion() == "" || req.GetObjectKey() == "" {
+		return nil, adminV1.ErrorBadRequest("invalid request: nodeId/version/objectKey required")
+	}
+	return s.agentNodeServiceClient.UpgradeAgent(ctx, req)
+}

@@ -24,11 +24,13 @@ type Alert struct {
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	// 来源监控规则(ops_monitors.id)
+	// 来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)
 	MonitorID uint32 `json:"monitor_id,omitempty"`
-	// 关联项目(节点指标告警为 0)
+	// 告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期
+	Source string `json:"source,omitempty"`
+	// 关联项目(节点指标/预算/证书告警为 0)
 	ProjectID uint32 `json:"project_id,omitempty"`
-	// 关联节点(ops_agent_nodes.id;项目状态告警为 0)
+	// 关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)
 	NodeID uint32 `json:"node_id,omitempty"`
 	// 告警级别
 	Level alert.Level `json:"level,omitempty"`
@@ -52,7 +54,7 @@ func (*Alert) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case alert.FieldID, alert.FieldMonitorID, alert.FieldProjectID, alert.FieldNodeID:
 			values[i] = new(sql.NullInt64)
-		case alert.FieldLevel, alert.FieldMessage:
+		case alert.FieldSource, alert.FieldLevel, alert.FieldMessage:
 			values[i] = new(sql.NullString)
 		case alert.FieldCreatedAt, alert.FieldUpdatedAt, alert.FieldDeletedAt, alert.FieldResolvedAt:
 			values[i] = new(sql.NullTime)
@@ -103,6 +105,12 @@ func (_m *Alert) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field monitor_id", values[i])
 			} else if value.Valid {
 				_m.MonitorID = uint32(value.Int64)
+			}
+		case alert.FieldSource:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field source", values[i])
+			} else if value.Valid {
+				_m.Source = value.String
 			}
 		case alert.FieldProjectID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -200,6 +208,9 @@ func (_m *Alert) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("monitor_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MonitorID))
+	builder.WriteString(", ")
+	builder.WriteString("source=")
+	builder.WriteString(_m.Source)
 	builder.WriteString(", ")
 	builder.WriteString("project_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ProjectID))

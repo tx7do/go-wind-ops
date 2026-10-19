@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -446,6 +447,38 @@ func (s *AgentService) publish(ctx context.Context, nodeID uint32, agentId strin
 
 	s.log.Infof("command dispatched (request_id=%s agent=%s action=%s)", requestId, agentId, action)
 	return requestId, nil
+}
+
+// PresignAgentUpgradeUpload 为浏览器直传 agent 升级包签发预签名 PUT URL
+// (对象键固定 agent-uploads/ 前缀,下发下载时校验防越权)。
+func (s *AgentService) PresignAgentUpgradeUpload(ctx context.Context, filename string) (string, string, error) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return "", "", fmt.Errorf("oss client not configured")
+	}
+	objectKey := fmt.Sprintf("agent-uploads/%s%s", id.NewGUIDv4(false), strings.ToLower(filepath.Ext(filename)))
+	if err := s.ossClient.EnsureBucketExists(ctx, oss.BucketFiles); err != nil {
+		return "", "", fmt.Errorf("ensure bucket failed")
+	}
+	u, err := s.ossClient.GetClient().PresignedPutObject(ctx, oss.BucketFiles, objectKey, 15*time.Minute)
+	if err != nil {
+		return "", "", fmt.Errorf("presign put failed")
+	}
+	return u.String(), objectKey, nil
+}
+
+// PresignAgentUpgradeDownload 校验前缀后为升级包签发预签名 GET URL。
+func (s *AgentService) PresignAgentUpgradeDownload(ctx context.Context, objectKey string) (string, error) {
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return "", fmt.Errorf("oss client not configured")
+	}
+	if !strings.HasPrefix(objectKey, "agent-uploads/") || strings.Contains(objectKey, "..") {
+		return "", fmt.Errorf("invalid object key")
+	}
+	u, err := s.ossClient.GetClient().PresignedGetObject(ctx, oss.BucketFiles, objectKey, time.Hour, nil)
+	if err != nil {
+		return "", fmt.Errorf("presign get failed")
+	}
+	return u.String(), nil
 }
 
 // IssueUploadPresignedUrl 为 agent 签发对象存储预签名上传 URL

@@ -101,6 +101,10 @@ func (m *NotificationChannel) validate(all bool) error {
 		// no validation rules for SmtpFrom
 	}
 
+	if m.EmailTo != nil {
+		// no validation rules for EmailTo
+	}
+
 	if m.Enabled != nil {
 		// no validation rules for Enabled
 	}

@@ -50,6 +50,8 @@ type NotificationChannel struct {
 	SMTPPassword *string `json:"-"`
 	// 发件人地址
 	SMTPFrom *string `json:"smtp_from,omitempty"`
+	// 收件人地址列表(逗号分隔)
+	EmailTo *string `json:"email_to,omitempty"`
 	// 是否启用
 	Enabled bool `json:"enabled,omitempty"`
 	// 描述
@@ -66,7 +68,7 @@ func (*NotificationChannel) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case notificationchannel.FieldID, notificationchannel.FieldCreatedBy, notificationchannel.FieldUpdatedBy, notificationchannel.FieldDeletedBy, notificationchannel.FieldSMTPPort:
 			values[i] = new(sql.NullInt64)
-		case notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookSecret, notificationchannel.FieldWebhookSignStyle, notificationchannel.FieldSMTPHost, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldSMTPFrom, notificationchannel.FieldDescription:
+		case notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookSecret, notificationchannel.FieldWebhookSignStyle, notificationchannel.FieldSMTPHost, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldSMTPFrom, notificationchannel.FieldEmailTo, notificationchannel.FieldDescription:
 			values[i] = new(sql.NullString)
 		case notificationchannel.FieldCreatedAt, notificationchannel.FieldUpdatedAt, notificationchannel.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -201,6 +203,13 @@ func (_m *NotificationChannel) assignValues(columns []string, values []any) erro
 				_m.SMTPFrom = new(string)
 				*_m.SMTPFrom = value.String
 			}
+		case notificationchannel.FieldEmailTo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field email_to", values[i])
+			} else if value.Valid {
+				_m.EmailTo = new(string)
+				*_m.EmailTo = value.String
+			}
 		case notificationchannel.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enabled", values[i])
@@ -317,6 +326,11 @@ func (_m *NotificationChannel) String() string {
 	builder.WriteString(", ")
 	if v := _m.SMTPFrom; v != nil {
 		builder.WriteString("smtp_from=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.EmailTo; v != nil {
+		builder.WriteString("email_to=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")

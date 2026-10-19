@@ -345,6 +345,26 @@ func (_u *NotificationChannelUpdate) ClearSMTPFrom() *NotificationChannelUpdate 
 	return _u
 }
 
+// SetEmailTo sets the "email_to" field.
+func (_u *NotificationChannelUpdate) SetEmailTo(v string) *NotificationChannelUpdate {
+	_u.mutation.SetEmailTo(v)
+	return _u
+}
+
+// SetNillableEmailTo sets the "email_to" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableEmailTo(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetEmailTo(*v)
+	}
+	return _u
+}
+
+// ClearEmailTo clears the value of the "email_to" field.
+func (_u *NotificationChannelUpdate) ClearEmailTo() *NotificationChannelUpdate {
+	_u.mutation.ClearEmailTo()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *NotificationChannelUpdate) SetEnabled(v bool) *NotificationChannelUpdate {
 	_u.mutation.SetEnabled(v)
@@ -547,6 +567,12 @@ func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, er
 	}
 	if _u.mutation.SMTPFromCleared() {
 		_spec.ClearField(notificationchannel.FieldSMTPFrom, field.TypeString)
+	}
+	if value, ok := _u.mutation.EmailTo(); ok {
+		_spec.SetField(notificationchannel.FieldEmailTo, field.TypeString, value)
+	}
+	if _u.mutation.EmailToCleared() {
+		_spec.ClearField(notificationchannel.FieldEmailTo, field.TypeString)
 	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(notificationchannel.FieldEnabled, field.TypeBool, value)
@@ -895,6 +921,26 @@ func (_u *NotificationChannelUpdateOne) ClearSMTPFrom() *NotificationChannelUpda
 	return _u
 }
 
+// SetEmailTo sets the "email_to" field.
+func (_u *NotificationChannelUpdateOne) SetEmailTo(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetEmailTo(v)
+	return _u
+}
+
+// SetNillableEmailTo sets the "email_to" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableEmailTo(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetEmailTo(*v)
+	}
+	return _u
+}
+
+// ClearEmailTo clears the value of the "email_to" field.
+func (_u *NotificationChannelUpdateOne) ClearEmailTo() *NotificationChannelUpdateOne {
+	_u.mutation.ClearEmailTo()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *NotificationChannelUpdateOne) SetEnabled(v bool) *NotificationChannelUpdateOne {
 	_u.mutation.SetEnabled(v)
@@ -1127,6 +1173,12 @@ func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *Not
 	}
 	if _u.mutation.SMTPFromCleared() {
 		_spec.ClearField(notificationchannel.FieldSMTPFrom, field.TypeString)
+	}
+	if value, ok := _u.mutation.EmailTo(); ok {
+		_spec.SetField(notificationchannel.FieldEmailTo, field.TypeString, value)
+	}
+	if _u.mutation.EmailToCleared() {
+		_spec.ClearField(notificationchannel.FieldEmailTo, field.TypeString)
 	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(notificationchannel.FieldEnabled, field.TypeBool, value)

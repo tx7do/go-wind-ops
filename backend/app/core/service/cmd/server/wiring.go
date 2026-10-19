@@ -154,6 +154,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	scriptBatchRepo := data.NewScriptBatchRepo(ctx, entClient)
 	backupTaskRepo := data.NewBackupTaskRepo(ctx, entClient)
 	backupRecordRepo := data.NewBackupRecordRepo(ctx, entClient)
+	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
+	cloudBudgetRepo := data.NewCloudBudgetRepo(ctx, entClient)
+	certRepo := data.NewCertRepo(ctx, entClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -213,9 +216,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	apiKeyService := service.NewApiKeyService(ctx, apiKeyRepo)
 	pluginService := service.NewPluginService(ctx, agentService, agentNodeRepo)
 	backupService := service.NewBackupService(ctx, backupTaskRepo, backupRecordRepo, agentNodeRepo, minIOClient, agentService)
+	notificationDeliveryService := service.NewNotificationDeliveryService(ctx, notificationDeliveryRepo)
+	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetRepo, cloudCostRepo, cloudAccountRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
+	certService := service.NewCertService(ctx, certRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
 
-	// 定时调度(构建/脚本/备份 cron + 监控检查)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
+	// 定时调度(构建/脚本/备份/预算/证书 cron + 监控检查)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
 	cronScheduler.Start(ctx.Context())
 
 	// EMQX broker 认证 webhook(最小 HTTP listener, :9500)
@@ -256,6 +262,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		cloudAccountService,
 		scriptBatchService,
 		backupService,
+		notificationDeliveryService,
+		cloudBudgetService,
+		certService,
 	)
 	if err != nil {
 		rollback()

@@ -129,12 +129,13 @@ func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint32) (b
 		Exist(ctx)
 }
 
-// Create 创建告警记录。
-func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uint32, level, message string, notified bool) (*ent.Alert, error) {
+// Create 创建告警记录(source: MONITOR/BUDGET/CERT)。
+func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uint32, source, level, message string, notified bool) (*ent.Alert, error) {
 	builder := r.entClient.Client().Alert.
 		Create().
 		SetMonitorID(monitorID).
 		SetProjectID(projectID).
+		SetSource(source).
 		SetLevel(alert.Level(level)).
 		SetMessage(message).
 		SetNotified(notified)
@@ -150,12 +151,13 @@ func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uin
 }
 
 // CreateRecovery 创建已恢复的 RECOVERY 告警记录(条件消除通知用,直接终态)。
-func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, nodeID uint32, message string) (*ent.Alert, error) {
+func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, nodeID uint32, source, message string) (*ent.Alert, error) {
 	now := time.Now()
 	builder := r.entClient.Client().Alert.
 		Create().
 		SetMonitorID(monitorID).
 		SetProjectID(projectID).
+		SetSource(source).
 		SetLevel(alert.LevelRecovery).
 		SetMessage(message).
 		SetResolved(true).
@@ -169,6 +171,15 @@ func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, no
 		return nil, err
 	}
 	return record, nil
+}
+
+// LatestAlertByMonitor 取某监控最近一条告警(重复告警间隔判断用)。
+func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID uint32) (*ent.Alert, error) {
+	return r.entClient.Client().Alert.
+		Query().
+		Where(alert.MonitorIDEQ(monitorID)).
+		Order(ent.Desc(alert.FieldID)).
+		First(ctx)
 }
 
 // Resolve 标记告警已恢复。

@@ -38,14 +38,21 @@ type CronScheduler struct {
 	backupService    *BackupService
 	agentService     *AgentService
 	notifChannelRepo *data.NotificationChannelRepo
+	deliveryRepo     *data.NotificationDeliveryRepo
+	budgetRepo       *data.CloudBudgetRepo
+	budgetService    *CloudBudgetService
+	certRepo         *data.CertRepo
+	certService      *CertService
 	historyRepo      *data.BuildHistoryRepo
 	ossClient        *oss.MinIOClient
 
 	lastRetentionSweep time.Time
+	lastBudgetCheck    time.Time
+	lastCertCheck      time.Time
 	log                *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
 		ctx:              ctx,
 		buildRepo:        buildRepo,
@@ -56,6 +63,11 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		nodeRepo:         nodeRepo,
 		backupTaskRepo:   backupTaskRepo,
 		notifChannelRepo: notifChannelRepo,
+		deliveryRepo:     deliveryRepo,
+		budgetRepo:       budgetRepo,
+		budgetService:    budgetService,
+		certRepo:         certRepo,
+		certService:      certService,
 		historyRepo:      historyRepo,
 		ossClient:        ossClient,
 		buildService:     buildService,
@@ -80,6 +92,8 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.tickScripts(ctx)
 				s.tickMonitors(ctx)
 				s.tickBackups(ctx)
+				s.tickBudgets(ctx)
+				s.tickCerts(ctx)
 				s.tickRetention(ctx)
 			}
 		}
@@ -176,7 +190,7 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 		if !cronHitMinute(schedule, now) {
 			continue
 		}
-		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, m)
+		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.deliveryRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, m)
 	}
 }
 
@@ -287,5 +301,39 @@ func (s *CronScheduler) tickRetention(ctx context.Context) {
 	}
 	if removed > 0 {
 		s.log.Infof("retention sweep done: removed %d artifacts", removed)
+	}
+}
+
+// budgetCheckInterval 预算/证书检查节流(低频任务,每 30 分钟一轮)。
+const budgetCheckInterval = 30 * time.Minute
+
+// tickBudgets 云成本预算检查:当前月份预算比对台账成本,阈值/环比突增告警。
+func (s *CronScheduler) tickBudgets(ctx context.Context) {
+	if s.budgetService == nil {
+		return
+	}
+	if time.Since(s.lastBudgetCheck) < budgetCheckInterval {
+		return
+	}
+	s.lastBudgetCheck = time.Now()
+	if err := s.budgetService.RunBudgetCheck(ctx, false); err != nil {
+		s.log.Warnf("budget check: %s", err.Error())
+	}
+}
+
+// tickCerts 证书调度探测 + 到期检查(cron 命中或每日兜底)。
+func (s *CronScheduler) tickCerts(ctx context.Context) {
+	if s.certService == nil {
+		return
+	}
+	if time.Since(s.lastCertCheck) < budgetCheckInterval {
+		return
+	}
+	s.lastCertCheck = time.Now()
+	if err := s.certService.RunScheduledProbes(ctx); err != nil {
+		s.log.Warnf("cert probe: %s", err.Error())
+	}
+	if err := s.certService.RunExpiryCheck(ctx); err != nil {
+		s.log.Warnf("cert expiry check: %s", err.Error())
 	}
 }

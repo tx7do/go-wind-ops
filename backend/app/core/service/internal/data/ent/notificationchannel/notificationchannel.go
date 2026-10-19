@@ -45,6 +45,8 @@ const (
 	FieldSMTPPassword = "smtp_password"
 	// FieldSMTPFrom holds the string denoting the smtp_from field in the database.
 	FieldSMTPFrom = "smtp_from"
+	// FieldEmailTo holds the string denoting the email_to field in the database.
+	FieldEmailTo = "email_to"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldSMTPUsername,
 	FieldSMTPPassword,
 	FieldSMTPFrom,
+	FieldEmailTo,
 	FieldEnabled,
 	FieldDescription,
 }
@@ -237,6 +240,11 @@ func BySMTPPassword(opts ...sql.OrderTermOption) OrderOption {
 // BySMTPFrom orders the results by the smtp_from field.
 func BySMTPFrom(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSMTPFrom, opts...).ToFunc()
+}
+
+// ByEmailTo orders the results by the email_to field.
+func ByEmailTo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmailTo, opts...).ToFunc()
 }
 
 // ByEnabled orders the results by the enabled field.

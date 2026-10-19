@@ -16,7 +16,9 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
+	"go-wind-ops/app/core/service/internal/data/ent/cert"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudaccount"
+	"go-wind-ops/app/core/service/internal/data/ent/cloudbudget"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudcost"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
@@ -101,26 +103,30 @@ func init() {
 	_ = alertFields
 	// alertDescMonitorID is the schema descriptor for monitor_id field.
 	alertDescMonitorID := alertFields[0].Descriptor()
-	// alert.MonitorIDValidator is a validator for the "monitor_id" field. It is called by the builders before save.
-	alert.MonitorIDValidator = alertDescMonitorID.Validators[0].(func(uint32) error)
+	// alert.DefaultMonitorID holds the default value on creation for the monitor_id field.
+	alert.DefaultMonitorID = alertDescMonitorID.Default.(uint32)
+	// alertDescSource is the schema descriptor for source field.
+	alertDescSource := alertFields[1].Descriptor()
+	// alert.DefaultSource holds the default value on creation for the source field.
+	alert.DefaultSource = alertDescSource.Default.(string)
 	// alertDescProjectID is the schema descriptor for project_id field.
-	alertDescProjectID := alertFields[1].Descriptor()
+	alertDescProjectID := alertFields[2].Descriptor()
 	// alert.DefaultProjectID holds the default value on creation for the project_id field.
 	alert.DefaultProjectID = alertDescProjectID.Default.(uint32)
 	// alertDescNodeID is the schema descriptor for node_id field.
-	alertDescNodeID := alertFields[2].Descriptor()
+	alertDescNodeID := alertFields[3].Descriptor()
 	// alert.DefaultNodeID holds the default value on creation for the node_id field.
 	alert.DefaultNodeID = alertDescNodeID.Default.(uint32)
 	// alertDescMessage is the schema descriptor for message field.
-	alertDescMessage := alertFields[4].Descriptor()
+	alertDescMessage := alertFields[5].Descriptor()
 	// alert.MessageValidator is a validator for the "message" field. It is called by the builders before save.
 	alert.MessageValidator = alertDescMessage.Validators[0].(func(string) error)
 	// alertDescResolved is the schema descriptor for resolved field.
-	alertDescResolved := alertFields[5].Descriptor()
+	alertDescResolved := alertFields[6].Descriptor()
 	// alert.DefaultResolved holds the default value on creation for the resolved field.
 	alert.DefaultResolved = alertDescResolved.Default.(bool)
 	// alertDescNotified is the schema descriptor for notified field.
-	alertDescNotified := alertFields[7].Descriptor()
+	alertDescNotified := alertFields[8].Descriptor()
 	// alert.DefaultNotified holds the default value on creation for the notified field.
 	alert.DefaultNotified = alertDescNotified.Default.(bool)
 	// alertDescID is the schema descriptor for id field.
@@ -376,6 +382,39 @@ func init() {
 	buildpipelineDescID := buildpipelineMixinFields0[0].Descriptor()
 	// buildpipeline.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	buildpipeline.IDValidator = buildpipelineDescID.Validators[0].(func(uint32) error)
+	certMixin := schema.Cert{}.Mixin()
+	certMixinFields0 := certMixin[0].Fields()
+	_ = certMixinFields0
+	certFields := schema.Cert{}.Fields()
+	_ = certFields
+	// certDescName is the schema descriptor for name field.
+	certDescName := certFields[0].Descriptor()
+	// cert.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	cert.NameValidator = certDescName.Validators[0].(func(string) error)
+	// certDescHost is the schema descriptor for host field.
+	certDescHost := certFields[1].Descriptor()
+	// cert.HostValidator is a validator for the "host" field. It is called by the builders before save.
+	cert.HostValidator = certDescHost.Validators[0].(func(string) error)
+	// certDescPort is the schema descriptor for port field.
+	certDescPort := certFields[2].Descriptor()
+	// cert.DefaultPort holds the default value on creation for the port field.
+	cert.DefaultPort = certDescPort.Default.(int)
+	// certDescDaysBeforeExpire is the schema descriptor for days_before_expire field.
+	certDescDaysBeforeExpire := certFields[6].Descriptor()
+	// cert.DefaultDaysBeforeExpire holds the default value on creation for the days_before_expire field.
+	cert.DefaultDaysBeforeExpire = certDescDaysBeforeExpire.Default.(int)
+	// certDescProbeCron is the schema descriptor for probe_cron field.
+	certDescProbeCron := certFields[7].Descriptor()
+	// cert.DefaultProbeCron holds the default value on creation for the probe_cron field.
+	cert.DefaultProbeCron = certDescProbeCron.Default.(string)
+	// certDescEnabled is the schema descriptor for enabled field.
+	certDescEnabled := certFields[10].Descriptor()
+	// cert.DefaultEnabled holds the default value on creation for the enabled field.
+	cert.DefaultEnabled = certDescEnabled.Default.(bool)
+	// certDescID is the schema descriptor for id field.
+	certDescID := certMixinFields0[0].Descriptor()
+	// cert.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cert.IDValidator = certDescID.Validators[0].(func(uint32) error)
 	cloudaccountMixin := schema.CloudAccount{}.Mixin()
 	cloudaccountMixinFields0 := cloudaccountMixin[0].Fields()
 	_ = cloudaccountMixinFields0
@@ -389,6 +428,51 @@ func init() {
 	cloudaccountDescID := cloudaccountMixinFields0[0].Descriptor()
 	// cloudaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	cloudaccount.IDValidator = cloudaccountDescID.Validators[0].(func(uint32) error)
+	cloudbudgetMixin := schema.CloudBudget{}.Mixin()
+	cloudbudgetMixinFields0 := cloudbudgetMixin[0].Fields()
+	_ = cloudbudgetMixinFields0
+	cloudbudgetFields := schema.CloudBudget{}.Fields()
+	_ = cloudbudgetFields
+	// cloudbudgetDescCloudAccountID is the schema descriptor for cloud_account_id field.
+	cloudbudgetDescCloudAccountID := cloudbudgetFields[0].Descriptor()
+	// cloudbudget.DefaultCloudAccountID holds the default value on creation for the cloud_account_id field.
+	cloudbudget.DefaultCloudAccountID = cloudbudgetDescCloudAccountID.Default.(uint32)
+	// cloudbudgetDescMonth is the schema descriptor for month field.
+	cloudbudgetDescMonth := cloudbudgetFields[1].Descriptor()
+	// cloudbudget.MonthValidator is a validator for the "month" field. It is called by the builders before save.
+	cloudbudget.MonthValidator = cloudbudgetDescMonth.Validators[0].(func(string) error)
+	// cloudbudgetDescAmount is the schema descriptor for amount field.
+	cloudbudgetDescAmount := cloudbudgetFields[2].Descriptor()
+	// cloudbudget.DefaultAmount holds the default value on creation for the amount field.
+	cloudbudget.DefaultAmount = cloudbudgetDescAmount.Default.(float64)
+	// cloudbudgetDescCurrency is the schema descriptor for currency field.
+	cloudbudgetDescCurrency := cloudbudgetFields[3].Descriptor()
+	// cloudbudget.DefaultCurrency holds the default value on creation for the currency field.
+	cloudbudget.DefaultCurrency = cloudbudgetDescCurrency.Default.(string)
+	// cloudbudgetDescThresholdPercent is the schema descriptor for threshold_percent field.
+	cloudbudgetDescThresholdPercent := cloudbudgetFields[4].Descriptor()
+	// cloudbudget.DefaultThresholdPercent holds the default value on creation for the threshold_percent field.
+	cloudbudget.DefaultThresholdPercent = cloudbudgetDescThresholdPercent.Default.(float64)
+	// cloudbudgetDescNotified is the schema descriptor for notified field.
+	cloudbudgetDescNotified := cloudbudgetFields[5].Descriptor()
+	// cloudbudget.DefaultNotified holds the default value on creation for the notified field.
+	cloudbudget.DefaultNotified = cloudbudgetDescNotified.Default.(bool)
+	// cloudbudgetDescAnomalyRatio is the schema descriptor for anomaly_ratio field.
+	cloudbudgetDescAnomalyRatio := cloudbudgetFields[6].Descriptor()
+	// cloudbudget.DefaultAnomalyRatio holds the default value on creation for the anomaly_ratio field.
+	cloudbudget.DefaultAnomalyRatio = cloudbudgetDescAnomalyRatio.Default.(float64)
+	// cloudbudgetDescAnomalyNotified is the schema descriptor for anomaly_notified field.
+	cloudbudgetDescAnomalyNotified := cloudbudgetFields[7].Descriptor()
+	// cloudbudget.DefaultAnomalyNotified holds the default value on creation for the anomaly_notified field.
+	cloudbudget.DefaultAnomalyNotified = cloudbudgetDescAnomalyNotified.Default.(bool)
+	// cloudbudgetDescEnabled is the schema descriptor for enabled field.
+	cloudbudgetDescEnabled := cloudbudgetFields[8].Descriptor()
+	// cloudbudget.DefaultEnabled holds the default value on creation for the enabled field.
+	cloudbudget.DefaultEnabled = cloudbudgetDescEnabled.Default.(bool)
+	// cloudbudgetDescID is the schema descriptor for id field.
+	cloudbudgetDescID := cloudbudgetMixinFields0[0].Descriptor()
+	// cloudbudget.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cloudbudget.IDValidator = cloudbudgetDescID.Validators[0].(func(uint32) error)
 	cloudcostMixin := schema.CloudCost{}.Mixin()
 	cloudcostMixinFields0 := cloudcostMixin[0].Fields()
 	_ = cloudcostMixinFields0
@@ -938,16 +1022,20 @@ func init() {
 	monitorDescNotifyOnRecovery := monitorFields[8].Descriptor()
 	// monitor.DefaultNotifyOnRecovery holds the default value on creation for the notify_on_recovery field.
 	monitor.DefaultNotifyOnRecovery = monitorDescNotifyOnRecovery.Default.(bool)
+	// monitorDescRepeatIntervalMinutes is the schema descriptor for repeat_interval_minutes field.
+	monitorDescRepeatIntervalMinutes := monitorFields[9].Descriptor()
+	// monitor.DefaultRepeatIntervalMinutes holds the default value on creation for the repeat_interval_minutes field.
+	monitor.DefaultRepeatIntervalMinutes = monitorDescRepeatIntervalMinutes.Default.(int)
 	// monitorDescCron is the schema descriptor for cron field.
-	monitorDescCron := monitorFields[9].Descriptor()
+	monitorDescCron := monitorFields[10].Descriptor()
 	// monitor.CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	monitor.CronValidator = monitorDescCron.Validators[0].(func(string) error)
 	// monitorDescAutoRestart is the schema descriptor for auto_restart field.
-	monitorDescAutoRestart := monitorFields[10].Descriptor()
+	monitorDescAutoRestart := monitorFields[11].Descriptor()
 	// monitor.DefaultAutoRestart holds the default value on creation for the auto_restart field.
 	monitor.DefaultAutoRestart = monitorDescAutoRestart.Default.(bool)
 	// monitorDescEnabled is the schema descriptor for enabled field.
-	monitorDescEnabled := monitorFields[12].Descriptor()
+	monitorDescEnabled := monitorFields[13].Descriptor()
 	// monitor.DefaultEnabled holds the default value on creation for the enabled field.
 	monitor.DefaultEnabled = monitorDescEnabled.Default.(bool)
 	// monitorDescID is the schema descriptor for id field.
@@ -989,7 +1077,7 @@ func init() {
 	// notificationchannel.DefaultSMTPPort holds the default value on creation for the smtp_port field.
 	notificationchannel.DefaultSMTPPort = notificationchannelDescSMTPPort.Default.(int)
 	// notificationchannelDescEnabled is the schema descriptor for enabled field.
-	notificationchannelDescEnabled := notificationchannelFields[10].Descriptor()
+	notificationchannelDescEnabled := notificationchannelFields[11].Descriptor()
 	// notificationchannel.DefaultEnabled holds the default value on creation for the enabled field.
 	notificationchannel.DefaultEnabled = notificationchannelDescEnabled.Default.(bool)
 	// notificationchannelDescID is the schema descriptor for id field.

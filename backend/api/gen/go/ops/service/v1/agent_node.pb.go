@@ -707,6 +707,206 @@ func (x *GetNodeMetricsHistoryResponse) GetPoints() []*GetNodeMetricsHistoryResp
 	return nil
 }
 
+type GetAgentUpgradeUploadUrlRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Filename      *string                `protobuf:"bytes,1,opt,name=filename,proto3,oneof" json:"filename,omitempty"` // 升级包文件名
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAgentUpgradeUploadUrlRequest) Reset() {
+	*x = GetAgentUpgradeUploadUrlRequest{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAgentUpgradeUploadUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAgentUpgradeUploadUrlRequest) ProtoMessage() {}
+
+func (x *GetAgentUpgradeUploadUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAgentUpgradeUploadUrlRequest.ProtoReflect.Descriptor instead.
+func (*GetAgentUpgradeUploadUrlRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetAgentUpgradeUploadUrlRequest) GetFilename() string {
+	if x != nil && x.Filename != nil {
+		return *x.Filename
+	}
+	return ""
+}
+
+type GetAgentUpgradeUploadUrlResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadUrl     *string                `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"` // 预签名 PUT URL
+	ObjectKey     *string                `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key,omitempty"` // 对象键
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAgentUpgradeUploadUrlResponse) Reset() {
+	*x = GetAgentUpgradeUploadUrlResponse{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAgentUpgradeUploadUrlResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAgentUpgradeUploadUrlResponse) ProtoMessage() {}
+
+func (x *GetAgentUpgradeUploadUrlResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAgentUpgradeUploadUrlResponse.ProtoReflect.Descriptor instead.
+func (*GetAgentUpgradeUploadUrlResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetAgentUpgradeUploadUrlResponse) GetUploadUrl() string {
+	if x != nil && x.UploadUrl != nil {
+		return *x.UploadUrl
+	}
+	return ""
+}
+
+func (x *GetAgentUpgradeUploadUrlResponse) GetObjectKey() string {
+	if x != nil && x.ObjectKey != nil {
+		return *x.ObjectKey
+	}
+	return ""
+}
+
+type UpgradeAgentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NodeId        *uint32                `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`         // 目标节点ID
+	Version       *string                `protobuf:"bytes,2,opt,name=version,proto3,oneof" json:"version,omitempty"`                      // 目标版本号
+	ObjectKey     *string                `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key,omitempty"` // 升级包对象键
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpgradeAgentRequest) Reset() {
+	*x = UpgradeAgentRequest{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpgradeAgentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpgradeAgentRequest) ProtoMessage() {}
+
+func (x *UpgradeAgentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpgradeAgentRequest.ProtoReflect.Descriptor instead.
+func (*UpgradeAgentRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpgradeAgentRequest) GetNodeId() uint32 {
+	if x != nil && x.NodeId != nil {
+		return *x.NodeId
+	}
+	return 0
+}
+
+func (x *UpgradeAgentRequest) GetVersion() string {
+	if x != nil && x.Version != nil {
+		return *x.Version
+	}
+	return ""
+}
+
+func (x *UpgradeAgentRequest) GetObjectKey() string {
+	if x != nil && x.ObjectKey != nil {
+		return *x.ObjectKey
+	}
+	return ""
+}
+
+type UpgradeAgentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // 幂等键,结果见指令台账
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpgradeAgentResponse) Reset() {
+	*x = UpgradeAgentResponse{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpgradeAgentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpgradeAgentResponse) ProtoMessage() {}
+
+func (x *UpgradeAgentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpgradeAgentResponse.ProtoReflect.Descriptor instead.
+func (*UpgradeAgentResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpgradeAgentResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
 type GetNodeMetricsHistoryResponse_MetricPoint struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Time              string                 `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"` // ISO 8601
@@ -719,7 +919,7 @@ type GetNodeMetricsHistoryResponse_MetricPoint struct {
 
 func (x *GetNodeMetricsHistoryResponse_MetricPoint) Reset() {
 	*x = GetNodeMetricsHistoryResponse_MetricPoint{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -731,7 +931,7 @@ func (x *GetNodeMetricsHistoryResponse_MetricPoint) String() string {
 func (*GetNodeMetricsHistoryResponse_MetricPoint) ProtoMessage() {}
 
 func (x *GetNodeMetricsHistoryResponse_MetricPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -870,19 +1070,44 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\vcpu_percent\x18\x02 \x01(\x01R\n" +
 	"cpuPercent\x12.\n" +
 	"\x13memory_used_percent\x18\x03 \x01(\x01R\x11memoryUsedPercent\x12*\n" +
-	"\x11disk_used_percent\x18\x04 \x01(\x01R\x0fdiskUsedPercent*M\n" +
+	"\x11disk_used_percent\x18\x04 \x01(\x01R\x0fdiskUsedPercent\"\x86\x01\n" +
+	"\x1fGetAgentUpgradeUploadUrlRequest\x12V\n" +
+	"\bfilename\x18\x01 \x01(\tB5\xbaG2\x92\x02/升级包文件名(取扩展名生成对象键)H\x00R\bfilename\x88\x01\x01B\v\n" +
+	"\t_filename\"\x88\x01\n" +
+	" GetAgentUpgradeUploadUrlResponse\x12\"\n" +
+	"\n" +
+	"upload_url\x18\x01 \x01(\tH\x00R\tuploadUrl\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"object_key\x18\x02 \x01(\tH\x01R\tobjectKey\x88\x01\x01B\r\n" +
+	"\v_upload_urlB\r\n" +
+	"\v_object_key\"\xb9\x02\n" +
+	"\x13UpgradeAgentRequest\x12!\n" +
+	"\anode_id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x06nodeId\x88\x01\x01\x12a\n" +
+	"\aversion\x18\x02 \x01(\tBB\xe0A\x02\xbaG<\x92\x029目标版本号(仅记录用途,实际以二进制为准)H\x01R\aversion\x88\x01\x01\x12u\n" +
+	"\n" +
+	"object_key\x18\x03 \x01(\tBQ\xe0A\x02\xbaGK\x92\x02H升级包对象键(agent-uploads/ 前缀,须先经上传预签名直传)H\x02R\tobjectKey\x88\x01\x01B\n" +
+	"\n" +
+	"\b_node_idB\n" +
+	"\n" +
+	"\b_versionB\r\n" +
+	"\v_object_key\"5\n" +
+	"\x14UpgradeAgentResponse\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId*M\n" +
 	"\x0fAgentNodeStatus\x12!\n" +
 	"\x1dAGENT_NODE_STATUS_UNSPECIFIED\x10\x00\x12\n" +
 	"\n" +
 	"\x06ONLINE\x10\x01\x12\v\n" +
-	"\aOFFLINE\x10\x022\xb6\x04\n" +
+	"\aOFFLINE\x10\x022\x94\x06\n" +
 	"\x10AgentNodeService\x12T\n" +
 	"\x0eListAgentNodes\x12\x19.pagination.PagingRequest\x1a%.ops.service.v1.ListAgentNodeResponse\"\x00\x12P\n" +
 	"\fGetAgentNode\x12#.ops.service.v1.GetAgentNodeRequest\x1a\x19.ops.service.v1.AgentNode\"\x00\x12S\n" +
 	"\x0fUpdateAgentNode\x12&.ops.service.v1.UpdateAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
 	"\x0fDeleteAgentNode\x12&.ops.service.v1.DeleteAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\x00\x12X\n" +
 	"\vSendCommand\x12\".ops.service.v1.SendCommandRequest\x1a#.ops.service.v1.SendCommandResponse\"\x00\x12v\n" +
-	"\x15GetNodeMetricsHistory\x12,.ops.service.v1.GetNodeMetricsHistoryRequest\x1a-.ops.service.v1.GetNodeMetricsHistoryResponse\"\x00B\xab\x01\n" +
+	"\x15GetNodeMetricsHistory\x12,.ops.service.v1.GetNodeMetricsHistoryRequest\x1a-.ops.service.v1.GetNodeMetricsHistoryResponse\"\x00\x12\x7f\n" +
+	"\x18GetAgentUpgradeUploadUrl\x12/.ops.service.v1.GetAgentUpgradeUploadUrlRequest\x1a0.ops.service.v1.GetAgentUpgradeUploadUrlResponse\"\x00\x12[\n" +
+	"\fUpgradeAgent\x12#.ops.service.v1.UpgradeAgentRequest\x1a$.ops.service.v1.UpgradeAgentResponse\"\x00B\xab\x01\n" +
 	"\x12com.ops.service.v1B\x0eAgentNodeProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -898,7 +1123,7 @@ func file_ops_service_v1_agent_node_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_agent_node_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_ops_service_v1_agent_node_proto_goTypes = []any{
 	(AgentNodeStatus)(0),                              // 0: ops.service.v1.AgentNodeStatus
 	(*AgentNode)(nil),                                 // 1: ops.service.v1.AgentNode
@@ -910,35 +1135,43 @@ var file_ops_service_v1_agent_node_proto_goTypes = []any{
 	(*SendCommandResponse)(nil),                       // 7: ops.service.v1.SendCommandResponse
 	(*GetNodeMetricsHistoryRequest)(nil),              // 8: ops.service.v1.GetNodeMetricsHistoryRequest
 	(*GetNodeMetricsHistoryResponse)(nil),             // 9: ops.service.v1.GetNodeMetricsHistoryResponse
-	(*GetNodeMetricsHistoryResponse_MetricPoint)(nil), // 10: ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
-	(*timestamppb.Timestamp)(nil),                     // 11: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                     // 12: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                          // 13: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                             // 14: google.protobuf.Empty
+	(*GetAgentUpgradeUploadUrlRequest)(nil),           // 10: ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	(*GetAgentUpgradeUploadUrlResponse)(nil),          // 11: ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	(*UpgradeAgentRequest)(nil),                       // 12: ops.service.v1.UpgradeAgentRequest
+	(*UpgradeAgentResponse)(nil),                      // 13: ops.service.v1.UpgradeAgentResponse
+	(*GetNodeMetricsHistoryResponse_MetricPoint)(nil), // 14: ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	(*timestamppb.Timestamp)(nil),                     // 15: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                     // 16: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                          // 17: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                             // 18: google.protobuf.Empty
 }
 var file_ops_service_v1_agent_node_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.AgentNode.status:type_name -> ops.service.v1.AgentNodeStatus
-	11, // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
-	11, // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
-	11, // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
+	15, // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
+	15, // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: ops.service.v1.ListAgentNodeResponse.items:type_name -> ops.service.v1.AgentNode
 	1,  // 5: ops.service.v1.UpdateAgentNodeRequest.data:type_name -> ops.service.v1.AgentNode
-	12, // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 7: ops.service.v1.GetNodeMetricsHistoryResponse.points:type_name -> ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
-	13, // 8: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
+	16, // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
+	14, // 7: ops.service.v1.GetNodeMetricsHistoryResponse.points:type_name -> ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	17, // 8: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
 	3,  // 9: ops.service.v1.AgentNodeService.GetAgentNode:input_type -> ops.service.v1.GetAgentNodeRequest
 	4,  // 10: ops.service.v1.AgentNodeService.UpdateAgentNode:input_type -> ops.service.v1.UpdateAgentNodeRequest
 	5,  // 11: ops.service.v1.AgentNodeService.DeleteAgentNode:input_type -> ops.service.v1.DeleteAgentNodeRequest
 	6,  // 12: ops.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
 	8,  // 13: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
-	2,  // 14: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
-	1,  // 15: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
-	14, // 16: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
-	14, // 17: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
-	7,  // 18: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
-	9,  // 19: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
+	10, // 14: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:input_type -> ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	12, // 15: ops.service.v1.AgentNodeService.UpgradeAgent:input_type -> ops.service.v1.UpgradeAgentRequest
+	2,  // 16: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
+	1,  // 17: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
+	18, // 18: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
+	18, // 19: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
+	7,  // 20: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
+	9,  // 21: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
+	11, // 22: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:output_type -> ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	13, // 23: ops.service.v1.AgentNodeService.UpgradeAgent:output_type -> ops.service.v1.UpgradeAgentResponse
+	16, // [16:24] is the sub-list for method output_type
+	8,  // [8:16] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
 	8,  // [8:8] is the sub-list for extension extendee
 	0,  // [0:8] is the sub-list for field type_name
@@ -955,13 +1188,16 @@ func file_ops_service_v1_agent_node_proto_init() {
 	file_ops_service_v1_agent_node_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[7].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[9].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[10].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_agent_node_proto_rawDesc), len(file_ops_service_v1_agent_node_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

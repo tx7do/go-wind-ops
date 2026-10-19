@@ -177,6 +177,46 @@ func (r *CloudCostRepo) ListAll(ctx context.Context, req *opsV1.GetCloudCostSumm
 	return query.All(ctx)
 }
 
+// SumMonthByCurrency 按月+币种汇总成本,返回总额与按账号的细分(预算检查用)。
+func (r *CloudCostRepo) SumMonthByCurrency(ctx context.Context, month, currency string) (float64, map[uint32]float64, error) {
+	rows, err := r.entClient.Client().CloudCost.
+		Query().
+		Where(
+			cloudcost.MonthEQ(month),
+			cloudcost.CurrencyEQ(currency),
+		).
+		All(ctx)
+	if err != nil {
+		return 0, nil, err
+	}
+	total := 0.0
+	perAccount := make(map[uint32]float64)
+	for _, row := range rows {
+		total += row.Amount
+		perAccount[row.CloudAccountID] += row.Amount
+	}
+	return total, perAccount, nil
+}
+
+// SumMonthsByCurrency 汇总多个月份(排除 skipMonth)的总额(环比均值用)。
+func (r *CloudCostRepo) SumMonthsByCurrency(ctx context.Context, months []string, currency string) (float64, error) {
+	rows, err := r.entClient.Client().CloudCost.
+		Query().
+		Where(
+			cloudcost.MonthIn(months...),
+			cloudcost.CurrencyEQ(currency),
+		).
+		All(ctx)
+	if err != nil {
+		return 0, err
+	}
+	total := 0.0
+	for _, row := range rows {
+		total += row.Amount
+	}
+	return total, nil
+}
+
 // UpsertByAccountMonth 按账号+月份 upsert(存在则更新金额/币种/备注/厂商快照)。
 func (r *CloudCostRepo) UpsertByAccountMonth(ctx context.Context, accountID uint32, accountName string, provider opsV1.CloudCost_Provider, month string, amount float64, currency string, remark *string, operatorID uint32) (*ent.CloudCost, error) {
 	client := r.entClient.Client().CloudCost

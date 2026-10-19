@@ -12,6 +12,8 @@ import {
   type opsservicev1_SendCommandRequest,
   type opsservicev1_SendCommandResponse,
   type opsservicev1_UpdateAgentNodeRequest,
+  type opsservicev1_GetAgentUpgradeUploadUrlResponse,
+  type opsservicev1_UpgradeAgentResponse,
 } from '@/api/generated/admin/service/v1';
 import { makeUpdateMask, type PaginationQuery, queryClient } from '@/core';
 import { apiClient } from '@/api/client';
@@ -80,6 +82,32 @@ export function useSendAgentCommand(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.agentNodeService.SendCommand(req),
+    ...options,
+  });
+}
+
+export function useGetAgentUpgradeUploadUrl(
+  options?: UseMutationOptions<
+    opsservicev1_GetAgentUpgradeUploadUrlResponse,
+    Error,
+    { filename: string }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.agentNodeService.GetUpgradeUploadUrl(req as never),
+    ...options,
+  });
+}
+
+export function useUpgradeAgent(
+  options?: UseMutationOptions<
+    opsservicev1_UpgradeAgentResponse,
+    Error,
+    { nodeId: number; version: string; objectKey: string }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.agentNodeService.Upgrade(req as never),
     ...options,
   });
 }

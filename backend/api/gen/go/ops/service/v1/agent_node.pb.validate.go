@@ -1287,6 +1287,444 @@ var _ interface {
 	ErrorName() string
 } = GetNodeMetricsHistoryResponseValidationError{}
 
+// Validate checks the field values on GetAgentUpgradeUploadUrlRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAgentUpgradeUploadUrlRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAgentUpgradeUploadUrlRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetAgentUpgradeUploadUrlRequestMultiError, or nil if none found.
+func (m *GetAgentUpgradeUploadUrlRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAgentUpgradeUploadUrlRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Filename != nil {
+		// no validation rules for Filename
+	}
+
+	if len(errors) > 0 {
+		return GetAgentUpgradeUploadUrlRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAgentUpgradeUploadUrlRequestMultiError is an error wrapping multiple
+// validation errors returned by GetAgentUpgradeUploadUrlRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetAgentUpgradeUploadUrlRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAgentUpgradeUploadUrlRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAgentUpgradeUploadUrlRequestMultiError) AllErrors() []error { return m }
+
+// GetAgentUpgradeUploadUrlRequestValidationError is the validation error
+// returned by GetAgentUpgradeUploadUrlRequest.Validate if the designated
+// constraints aren't met.
+type GetAgentUpgradeUploadUrlRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAgentUpgradeUploadUrlRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAgentUpgradeUploadUrlRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAgentUpgradeUploadUrlRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAgentUpgradeUploadUrlRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAgentUpgradeUploadUrlRequestValidationError) ErrorName() string {
+	return "GetAgentUpgradeUploadUrlRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAgentUpgradeUploadUrlRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAgentUpgradeUploadUrlRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAgentUpgradeUploadUrlRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAgentUpgradeUploadUrlRequestValidationError{}
+
+// Validate checks the field values on GetAgentUpgradeUploadUrlResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *GetAgentUpgradeUploadUrlResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAgentUpgradeUploadUrlResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetAgentUpgradeUploadUrlResponseMultiError, or nil if none found.
+func (m *GetAgentUpgradeUploadUrlResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAgentUpgradeUploadUrlResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UploadUrl != nil {
+		// no validation rules for UploadUrl
+	}
+
+	if m.ObjectKey != nil {
+		// no validation rules for ObjectKey
+	}
+
+	if len(errors) > 0 {
+		return GetAgentUpgradeUploadUrlResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAgentUpgradeUploadUrlResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// GetAgentUpgradeUploadUrlResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetAgentUpgradeUploadUrlResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAgentUpgradeUploadUrlResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAgentUpgradeUploadUrlResponseMultiError) AllErrors() []error { return m }
+
+// GetAgentUpgradeUploadUrlResponseValidationError is the validation error
+// returned by GetAgentUpgradeUploadUrlResponse.Validate if the designated
+// constraints aren't met.
+type GetAgentUpgradeUploadUrlResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAgentUpgradeUploadUrlResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAgentUpgradeUploadUrlResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAgentUpgradeUploadUrlResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAgentUpgradeUploadUrlResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAgentUpgradeUploadUrlResponseValidationError) ErrorName() string {
+	return "GetAgentUpgradeUploadUrlResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAgentUpgradeUploadUrlResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAgentUpgradeUploadUrlResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAgentUpgradeUploadUrlResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAgentUpgradeUploadUrlResponseValidationError{}
+
+// Validate checks the field values on UpgradeAgentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpgradeAgentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpgradeAgentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpgradeAgentRequestMultiError, or nil if none found.
+func (m *UpgradeAgentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpgradeAgentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.NodeId != nil {
+		// no validation rules for NodeId
+	}
+
+	if m.Version != nil {
+		// no validation rules for Version
+	}
+
+	if m.ObjectKey != nil {
+		// no validation rules for ObjectKey
+	}
+
+	if len(errors) > 0 {
+		return UpgradeAgentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpgradeAgentRequestMultiError is an error wrapping multiple validation
+// errors returned by UpgradeAgentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpgradeAgentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpgradeAgentRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpgradeAgentRequestMultiError) AllErrors() []error { return m }
+
+// UpgradeAgentRequestValidationError is the validation error returned by
+// UpgradeAgentRequest.Validate if the designated constraints aren't met.
+type UpgradeAgentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpgradeAgentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpgradeAgentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpgradeAgentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpgradeAgentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpgradeAgentRequestValidationError) ErrorName() string {
+	return "UpgradeAgentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpgradeAgentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpgradeAgentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpgradeAgentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpgradeAgentRequestValidationError{}
+
+// Validate checks the field values on UpgradeAgentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpgradeAgentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpgradeAgentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpgradeAgentResponseMultiError, or nil if none found.
+func (m *UpgradeAgentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpgradeAgentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RequestId
+
+	if len(errors) > 0 {
+		return UpgradeAgentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpgradeAgentResponseMultiError is an error wrapping multiple validation
+// errors returned by UpgradeAgentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpgradeAgentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpgradeAgentResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpgradeAgentResponseMultiError) AllErrors() []error { return m }
+
+// UpgradeAgentResponseValidationError is the validation error returned by
+// UpgradeAgentResponse.Validate if the designated constraints aren't met.
+type UpgradeAgentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpgradeAgentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpgradeAgentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpgradeAgentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpgradeAgentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpgradeAgentResponseValidationError) ErrorName() string {
+	return "UpgradeAgentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpgradeAgentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpgradeAgentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpgradeAgentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpgradeAgentResponseValidationError{}
+
 // Validate checks the field values on
 // GetNodeMetricsHistoryResponse_MetricPoint with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

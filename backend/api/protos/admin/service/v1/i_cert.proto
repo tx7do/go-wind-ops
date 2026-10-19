@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ops/service/v1/cert.proto";
+
+// CertService 证书到期台账
+service CertService {
+  // 查询证书列表
+  rpc List (pagination.PagingRequest) returns (ops.service.v1.ListCertResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/certs"
+    };
+  }
+
+  // 查询证书详情
+  rpc Get (ops.service.v1.GetCertRequest) returns (ops.service.v1.Cert) {
+    option (google.api.http) = {
+      get: "/admin/v1/certs/{id}"
+    };
+  }
+
+  // 创建证书
+  rpc Create (ops.service.v1.CreateCertRequest) returns (ops.service.v1.Cert) {
+    option (google.api.http) = {
+      post: "/admin/v1/certs"
+      body: "*"
+    };
+  }
+
+  // 更新证书
+  rpc Update (ops.service.v1.UpdateCertRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/certs/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除证书
+  rpc Delete (ops.service.v1.DeleteCertRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/certs/{id}"
+    };
+  }
+
+  // 立即探测一次
+  rpc Probe (ops.service.v1.ProbeCertRequest) returns (ops.service.v1.ProbeCertResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/certs/{id}/probe:send"
+      body: "*"
+    };
+  }
+}

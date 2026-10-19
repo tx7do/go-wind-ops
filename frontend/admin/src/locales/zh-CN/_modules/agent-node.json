@@ -26,5 +26,17 @@
   "envHint": "环境标签,用于环境隔离(default/dev/staging/prod)",
   "metricsTrend": "指标趋势",
   "metricsNoData": "暂无指标数据",
-  "trendTooltip": "查看节点指标趋势"
+  "trendTooltip": "查看节点指标趋势",
+  "upgradeTooltip": "远程升级",
+  "upgradeTitle": "远程升级: {{name}}",
+  "upgradeVersionLabel": "目标版本号",
+  "upgradeFileLabel": "升级包(agent 可执行文件)",
+  "upgradeFilePlaceholder": "点击选择文件",
+  "upgradeVersionRequired": "请填写目标版本号",
+  "upgradeFileRequired": "请选择升级包文件",
+  "upgradeGo": "开始升级",
+  "upgradeSent": "升级指令已下发({{requestId}}…),agent 将下载并自替换重启,以重启后心跳版本为准",
+  "upgradeFailed": "升级触发失败",
+  "upgradeWarning": "升级会替换 agent 二进制并重启进程,期间该节点指令短暂不可用;请确认升级包与目标机平台匹配",
+  "upgradeHint": "升级包经 MinIO 预签名 URL 直传,不经平台服务器;agent 回执后延迟 3 秒自替换重启"
 }

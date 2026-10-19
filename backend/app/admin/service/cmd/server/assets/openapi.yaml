@@ -92,6 +92,44 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.ListAgentNodeResponse'
+    /admin/v1/agent-nodes/upgrade-upload-url:resolve:
+        post:
+            tags:
+                - AgentNodeService
+            description: 签发 agent 升级包上传预签名 URL(浏览器直传)
+            operationId: AgentNodeService_GetUpgradeUploadUrl
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.GetAgentUpgradeUploadUrlRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.GetAgentUpgradeUploadUrlResponse'
+    /admin/v1/agent-nodes/upgrade:send:
+        post:
+            tags:
+                - AgentNodeService
+            description: 远程升级 agent(下发自替换指令)
+            operationId: AgentNodeService_Upgrade
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.UpgradeAgentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.UpgradeAgentResponse'
     /admin/v1/agent-nodes/{id}:
         get:
             tags:
@@ -1601,6 +1639,186 @@ paths:
                                 $ref: '#/components/schemas/authentication.service.v1.VerifyCaptchaResponse'
             security:
                 - {}
+    /admin/v1/certs:
+        get:
+            tags:
+                - CertService
+            description: 查询证书列表
+            operationId: CertService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListCertResponse'
+        post:
+            tags:
+                - CertService
+            description: 创建证书
+            operationId: CertService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CreateCertRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.Cert'
+    /admin/v1/certs/{id}:
+        get:
+            tags:
+                - CertService
+            description: 查询证书详情
+            operationId: CertService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.Cert'
+        put:
+            tags:
+                - CertService
+            description: 更新证书
+            operationId: CertService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.UpdateCertRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - CertService
+            description: 删除证书
+            operationId: CertService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/certs/{id}/probe:send:
+        post:
+            tags:
+                - CertService
+            description: 立即探测一次
+            operationId: CertService_Probe
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.ProbeCertRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ProbeCertResponse'
     /admin/v1/cloud-accounts:
         get:
             tags:
@@ -1785,6 +2003,176 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.VerifyCloudAccountResponse'
+    /admin/v1/cloud-budgets:
+        get:
+            tags:
+                - CloudBudgetService
+            description: 查询预算列表
+            operationId: CloudBudgetService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListCloudBudgetResponse'
+        post:
+            tags:
+                - CloudBudgetService
+            description: 创建预算
+            operationId: CloudBudgetService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CreateCloudBudgetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.CloudBudget'
+    /admin/v1/cloud-budgets/check:send:
+        post:
+            tags:
+                - CloudBudgetService
+            description: 立即执行一次预算检查
+            operationId: CloudBudgetService_Check
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CheckCloudBudgetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/cloud-budgets/{id}:
+        get:
+            tags:
+                - CloudBudgetService
+            description: 查询预算详情
+            operationId: CloudBudgetService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.CloudBudget'
+        put:
+            tags:
+                - CloudBudgetService
+            description: 更新预算
+            operationId: CloudBudgetService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.UpdateCloudBudgetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - CloudBudgetService
+            description: 删除预算
+            operationId: CloudBudgetService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/cloud-costs:
         get:
             tags:
@@ -3967,6 +4355,104 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/notification-deliveries:
+        get:
+            tags:
+                - NotificationDeliveryService
+            description: 查询投递记录列表(按 alertId 过滤)
+            operationId: NotificationDeliveryService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListNotificationDeliveryResponse'
+    /admin/v1/notification-deliveries/{id}:
+        get:
+            tags:
+                - NotificationDeliveryService
+            description: 查询投递记录详情
+            operationId: NotificationDeliveryService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.NotificationDelivery'
     /admin/v1/oidc/authorize-url:
         post:
             tags:
@@ -9100,6 +9586,9 @@ components:
                     readOnly: true
                     type: integer
                     format: uint32
+                source:
+                    readOnly: true
+                    type: string
                 createdAt:
                     readOnly: true
                     type: string
@@ -9405,6 +9894,68 @@ components:
                     type: string
                     format: date-time
             description: 构建历史
+        ops.service.v1.Cert:
+            required:
+                - name
+                - host
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                    description: 证书名(全局唯一)
+                host:
+                    type: string
+                    description: 探测目标主机(域名/IP)
+                port:
+                    type: integer
+                    description: TLS 端口(默认 443)
+                    format: int32
+                issuer:
+                    readOnly: true
+                    type: string
+                notBefore:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                notAfter:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                daysBeforeExpire:
+                    type: integer
+                    description: 到期前多少天告警
+                    format: int32
+                probeCron:
+                    type: string
+                    description: 自动探测周期 cron(空=仅手动)
+                lastProbedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                lastError:
+                    readOnly: true
+                    type: string
+                enabled:
+                    type: boolean
+                description:
+                    type: string
+                    description: 描述
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                updatedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 证书台账
+        ops.service.v1.CheckCloudBudgetRequest:
+            type: object
+            properties: {}
         ops.service.v1.CloudAccount:
             required:
                 - name
@@ -9456,6 +10007,58 @@ components:
                     type: string
                     format: date-time
             description: 云平台账号
+        ops.service.v1.CloudBudget:
+            required:
+                - month
+                - amount
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                cloudAccountId:
+                    type: integer
+                    description: 云账号(0=全部账号合计)
+                    format: uint32
+                month:
+                    type: string
+                    description: 预算月份(YYYY-MM)
+                amount:
+                    type: number
+                    description: 预算金额
+                    format: double
+                currency:
+                    type: string
+                    description: 币种(CNY/USD/...)
+                thresholdPercent:
+                    type: number
+                    description: 达到预算的百分比时告警(默认 100)
+                    format: double
+                notified:
+                    readOnly: true
+                    type: boolean
+                anomalyRatio:
+                    type: number
+                    description: 环比突增倍数(本月>前 3 月均值×该倍数告警;0=不检测)
+                    format: double
+                anomalyNotified:
+                    readOnly: true
+                    type: boolean
+                enabled:
+                    type: boolean
+                description:
+                    type: string
+                    description: 描述
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+                updatedAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 云成本月度预算
         ops.service.v1.CloudCost:
             required:
                 - cloudAccountId
@@ -9674,6 +10277,13 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/ops.service.v1.Build'
+        ops.service.v1.CreateCertRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.Cert'
         ops.service.v1.CreateCloudAccountRequest:
             required:
                 - data
@@ -9684,6 +10294,13 @@ components:
                     $ref: '#/components/schemas/ops.service.v1.CloudAccount'
                 secretKey:
                     type: string
+        ops.service.v1.CreateCloudBudgetRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.CloudBudget'
         ops.service.v1.CreateDistributionRequest:
             required:
                 - data
@@ -9980,6 +10597,19 @@ components:
                         - $ref: '#/components/schemas/ops.service.v1.CloudCost'
                 providerMessage:
                     type: string
+        ops.service.v1.GetAgentUpgradeUploadUrlRequest:
+            type: object
+            properties:
+                filename:
+                    type: string
+                    description: 升级包文件名(取扩展名生成对象键)
+        ops.service.v1.GetAgentUpgradeUploadUrlResponse:
+            type: object
+            properties:
+                uploadUrl:
+                    type: string
+                objectKey:
+                    type: string
         ops.service.v1.GetArtifactDownloadUrlResponse:
             type: object
             properties:
@@ -10181,6 +10811,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.Build'
+        ops.service.v1.ListCertResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.Cert'
         ops.service.v1.ListCloudAccountsResponse:
             type: object
             properties:
@@ -10190,6 +10829,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.CloudAccount'
+        ops.service.v1.ListCloudBudgetResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.CloudBudget'
         ops.service.v1.ListCloudCostsResponse:
             type: object
             properties:
@@ -10253,6 +10901,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.NotificationChannel'
+        ops.service.v1.ListNotificationDeliveryResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.NotificationDelivery'
         ops.service.v1.ListPipelineResponse:
             type: object
             properties:
@@ -10360,6 +11017,10 @@ components:
                 notifyOnRecovery:
                     type: boolean
                     description: 恢复时是否产生 RECOVERY 告警并通知
+                repeatIntervalMinutes:
+                    type: integer
+                    description: 重复告警最小间隔(分钟,0=每次异常检查都报)
+                    format: int32
                 createdAt:
                     readOnly: true
                     type: string
@@ -10410,6 +11071,9 @@ components:
                     type: string
                 smtpFrom:
                     type: string
+                emailTo:
+                    type: string
+                    description: 收件人地址列表(逗号分隔)
                 enabled:
                     type: boolean
                 description:
@@ -10423,6 +11087,40 @@ components:
                     type: string
                     format: date-time
             description: 告警通知渠道配置
+        ops.service.v1.NotificationDelivery:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                alertId:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                channelId:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                channelType:
+                    readOnly: true
+                    type: string
+                target:
+                    readOnly: true
+                    type: string
+                status:
+                    readOnly: true
+                    type: string
+                lastError:
+                    readOnly: true
+                    type: string
+                title:
+                    readOnly: true
+                    type: string
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
         ops.service.v1.Op_approval_result:
             type: object
             properties:
@@ -10591,6 +11289,27 @@ components:
                     type: string
                 objectKey:
                     readOnly: true
+                    type: string
+        ops.service.v1.ProbeCertRequest:
+            required:
+                - id
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        ops.service.v1.ProbeCertResponse:
+            type: object
+            properties:
+                issuer:
+                    type: string
+                notAfter:
+                    type: string
+                    format: date-time
+                remainingDays:
+                    type: integer
+                    format: int32
+                error:
                     type: string
         ops.service.v1.Project:
             required:
@@ -11049,6 +11768,21 @@ components:
                     type: string
                     description: 要更新的字段列表
                     format: field-mask
+        ops.service.v1.UpdateCertRequest:
+            required:
+                - id
+                - data
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.Cert'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
         ops.service.v1.UpdateCloudAccountRequest:
             required:
                 - id
@@ -11063,6 +11797,21 @@ components:
                     $ref: '#/components/schemas/ops.service.v1.CloudAccount'
                 secretKey:
                     type: string
+        ops.service.v1.UpdateCloudBudgetRequest:
+            required:
+                - id
+                - data
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.CloudBudget'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
         ops.service.v1.UpdateDistributionRequest:
             required:
                 - id
@@ -11163,6 +11912,27 @@ components:
                     type: string
                     description: 要更新的字段列表
                     format: field-mask
+        ops.service.v1.UpgradeAgentRequest:
+            required:
+                - nodeId
+                - version
+                - objectKey
+            type: object
+            properties:
+                nodeId:
+                    type: integer
+                    format: uint32
+                version:
+                    type: string
+                    description: 目标版本号(仅记录用途,实际以二进制为准)
+                objectKey:
+                    type: string
+                    description: 升级包对象键(agent-uploads/ 前缀,须先经上传预签名直传)
+        ops.service.v1.UpgradeAgentResponse:
+            type: object
+            properties:
+                requestId:
+                    type: string
         ops.service.v1.UpsertCloudCostRequest:
             required:
                 - data
@@ -12158,8 +12928,12 @@ tags:
       description: BuildHistoryService 构建历史查询与产物下载
     - name: BuildService
       description: BuildService 构建配置管理与触发
+    - name: CertService
+      description: CertService 证书到期台账
     - name: CloudAccountService
       description: CloudAccountService 云平台账号管理门面。
+    - name: CloudBudgetService
+      description: CloudBudgetService 云成本月度预算
     - name: CloudCostService
       description: CloudCostService 云成本月账单门面。
     - name: CloudInstanceService
@@ -12187,6 +12961,8 @@ tags:
     - name: MonitorService
       description: MonitorService 监控规则管理
     - name: NotificationChannelService
+    - name: NotificationDeliveryService
+      description: NotificationDeliveryService 告警通知投递记录(只读)
     - name: OperationAuditLogService
       description: 操作审计日志管理服务
     - name: OrgUnitService

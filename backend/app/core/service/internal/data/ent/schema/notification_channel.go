@@ -88,6 +88,10 @@ func (NotificationChannel) Fields() []ent.Field {
 			Comment("发件人地址").
 			Optional().
 			Nillable(),
+		field.String("email_to").
+			Comment("收件人地址列表(逗号分隔)").
+			Optional().
+			Nillable(),
 
 		field.Bool("enabled").
 			Comment("是否启用").

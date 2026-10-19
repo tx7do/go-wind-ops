@@ -167,6 +167,7 @@ func (r *MonitorRepo) Create(ctx context.Context, req *opsV1.CreateMonitorReques
 		targetType = "PROJECT"
 	}
 	builder.SetTargetType(monitor.TargetType(targetType))
+	builder.SetRepeatIntervalMinutes(int(req.Data.GetRepeatIntervalMinutes()))
 	if targetType == "NODE_METRIC" {
 		builder.SetNodeID(req.Data.GetNodeId()).
 			SetMetricType(monitor.MetricType(req.Data.GetMetricType())).
@@ -208,7 +209,8 @@ func (r *MonitorRepo) Update(ctx context.Context, req *opsV1.UpdateMonitorReques
 				SetNillableDescription(req.Data.Description).
 				SetAutoRestart(req.Data.GetAutoRestart()).
 				SetEnabled(req.Data.GetEnabled()).
-				SetNotifyOnRecovery(req.Data.GetNotifyOnRecovery())
+				SetNotifyOnRecovery(req.Data.GetNotifyOnRecovery()).
+				SetRepeatIntervalMinutes(int(req.Data.GetRepeatIntervalMinutes()))
 
 			if req.Data.TargetType != nil && req.Data.GetTargetType() != "" {
 				builder.SetTargetType(monitor.TargetType(req.Data.GetTargetType()))

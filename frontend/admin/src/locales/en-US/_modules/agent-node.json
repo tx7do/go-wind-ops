@@ -26,5 +26,17 @@
   "envHint": "Environment tag for isolation (default/dev/staging/prod)",
   "metricsTrend": "Metrics Trend",
   "metricsNoData": "No metrics data yet",
-  "trendTooltip": "View node metrics trend"
+  "trendTooltip": "View node metrics trend",
+  "upgradeTooltip": "Remote Upgrade",
+  "upgradeTitle": "Remote Upgrade: {{name}}",
+  "upgradeVersionLabel": "Target version",
+  "upgradeFileLabel": "Upgrade package (agent binary)",
+  "upgradeFilePlaceholder": "Click to choose a file",
+  "upgradeVersionRequired": "Target version is required",
+  "upgradeFileRequired": "Choose an upgrade package file",
+  "upgradeGo": "Start Upgrade",
+  "upgradeSent": "Upgrade dispatched ({{requestId}}…); agent will self-replace and restart, verify via heartbeat version",
+  "upgradeFailed": "Upgrade trigger failed",
+  "upgradeWarning": "Upgrading replaces the agent binary and restarts the process; commands on this node are briefly unavailable. Make sure the package matches the target platform",
+  "upgradeHint": "The package uploads directly to MinIO via presigned URL; agent self-replaces 3s after receipt"
 }

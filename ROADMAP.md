@@ -149,6 +149,24 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 - proto int64 经 JSON 是字符串(sizeBytes 等),前端展示需 `Number()` 归一。
 - BFF REST `post: .../{id}/...` + `body: "*"`:生成客户端会把 id 同时塞 path 和 body,kratos 报 `field already set for oneof "_id"`;新路由触发类 POST 不要带 path 参数。
 
+## Phase 7 · 第二梯队增强(2026-10-19)✅ 已完成
+
+### 7.1 告警治理 ✅
+**实现**:项目监控恢复语义与节点规则统一(RUNNING 且有未恢复告警 → resolve + RECOVERY 记录 + 恢复通知);Monitor 加 repeat_interval_minutes(重复告警最小间隔,距上次告警不足则跳过,恢复后重新告警同样受限);Alert 加 source(MONITOR/BUDGET/CERT)且 monitor_id 放宽为"非 MONITOR 来源存域对象 ID"(预算/证书复用 HasUnresolvedAlert/ResolveAllByMonitor 去重恢复);通知渠道 EMAIL 真发送(net/smtp,465 隐式 TLS/其余 STARTTLS,channel 加 email_to 收件人列表)+ 统一 SendAlertToChannels 逐渠道落投递台账(ops_notification_deliveries 此前只有 schema 无 repo/实现,NotificationDeliveryService 已实现并暴露 GET /admin/v1/notification-deliveries,告警页行内"投递记录"抽屉)。
+
+### 7.2 云成本预算与突增检测 ✅
+**实现**:ops_cloud_budgets(账号(0=全部合计)+月份唯一,amount/currency/threshold_percent/anomaly_ratio);调度器 30 分钟节拍 RunBudgetCheck:当月台账成本 ≥ 预算×阈值% 或 > 前 3 月均值×倍数 → 落 BUDGET 告警 + 渠道外呼(notified/anomaly_notified 防重位,手动"立即检查"重置后重算);前端云管理组"云成本预算"页(CRUD+立即检查)。
+
+### 7.3 证书到期台账 ✅
+**实现**:ops_certs(name/host/port/issuer/not_after/days_before_expire/probe_cron);core 直连 TLS 探测(tls.Dialer+InsecureSkipVerify 只取对端叶子证书,回填签发者/有效期,失败落 last_error);调度探测以 last_probed_at 为锚点(cron 跨过触发点即探);到期检查:剩余 ≤ 提前天数 → CERT 告警+外呼,续期后剩余回升 → 自动 resolve + RECOVERY;前端治理组"证书台账"页(CRUD+立即探测+到期倒计时着色)。
+
+### 7.4 Agent 远程升级 ✅
+**实现**:浏览器经 GET /admin/v1/agent-nodes/upgrade-upload-url:resolve 拿预签名 PUT 直传 agent-uploads/ 前缀 → POST upgrade:send(校验前缀防越权,预签名 GET 下发 agent_upgrade 指令);agent 下载到临时文件 → **回执先发**(台账 SUCCESS)→ 3 秒后退出,接力脚本(Windows bat/Unix sh,平台分离的 SysProcAttr)等进程退出 → 旧二进制改名腾位 → 新二进制落回原路径 → 原参数重启 → 清理;实际版本以重启后心跳上报为准。真机验证:31MB 二进制上传→下载→自替换→新 PID→重新认证,全链路通过。
+
+### 冒烟补记
+- 手动 API 冒烟建了 smoke-account/baidu-www/预算 #1 等 smoke 数据;webhook 渠道 smoke-webhook 指向必失败地址用于验证投递 FAILED 落库。
+- 登录接口 access_token 字段是 access_token(snake),前端 axios 封装已适配;冒烟脚本直调时注意。
+
 ### 环境注意
 - 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
 - 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。

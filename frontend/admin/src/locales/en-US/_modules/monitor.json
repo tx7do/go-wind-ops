@@ -33,5 +33,7 @@
   "thresholdHint": "Alert when usage >= threshold (0-100)",
   "consecutiveCount": "Consecutive Hits",
   "consecutiveHint": "Alert only after N consecutive hits (debounce)",
-  "notifyOnRecovery": "Notify on Recovery"
+  "notifyOnRecovery": "Notify on Recovery",
+  "repeatInterval": "Repeat Interval",
+  "repeatIntervalHint": "Skip duplicate alerts within this many minutes (0 = every check); also applies after recovery"
 }

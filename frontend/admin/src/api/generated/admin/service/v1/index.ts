@@ -311,6 +311,14 @@ export interface AgentNodeService {
   GetMetrics(
     request: opsservicev1_GetNodeMetricsHistoryRequest,
   ): Promise<opsservicev1_GetNodeMetricsHistoryResponse>;
+  // 签发 agent 升级包上传预签名 URL(浏览器直传)
+  GetUpgradeUploadUrl(
+    request: opsservicev1_GetAgentUpgradeUploadUrlRequest,
+  ): Promise<opsservicev1_GetAgentUpgradeUploadUrlResponse>;
+  // 远程升级 agent(下发自替换指令)
+  Upgrade(
+    request: opsservicev1_UpgradeAgentRequest,
+  ): Promise<opsservicev1_UpgradeAgentResponse>;
 }
 
 export function createAgentNodeServiceClient(
@@ -496,6 +504,22 @@ export function createAgentNodeServiceClient(
         service: 'AgentNodeService',
         method: 'GetMetrics',
       }) as Promise<opsservicev1_GetNodeMetricsHistoryResponse>;
+    },
+    GetUpgradeUploadUrl(request) {
+      const path = `admin/v1/agent-nodes/upgrade-upload-url:resolve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AgentNodeService',
+        method: 'GetUpgradeUploadUrl',
+      }) as Promise<opsservicev1_GetAgentUpgradeUploadUrlResponse>;
+    },
+    Upgrade(request) {
+      const path = `admin/v1/agent-nodes/upgrade:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AgentNodeService',
+        method: 'Upgrade',
+      }) as Promise<opsservicev1_UpgradeAgentResponse>;
     },
   };
 }
@@ -802,6 +826,31 @@ export type opsservicev1_GetNodeMetricsHistoryResponse_MetricPoint = {
   time: string | undefined;
 };
 
+export type opsservicev1_GetAgentUpgradeUploadUrlRequest = {
+  filename?: string;
+};
+
+export type opsservicev1_GetAgentUpgradeUploadUrlResponse = {
+  objectKey?: string;
+  uploadUrl?: string;
+};
+
+export type opsservicev1_UpgradeAgentRequest = {
+  //
+  // Behaviors: REQUIRED
+  nodeId?: number;
+  //
+  // Behaviors: REQUIRED
+  objectKey?: string;
+  //
+  // Behaviors: REQUIRED
+  version?: string;
+};
+
+export type opsservicev1_UpgradeAgentResponse = {
+  requestId: string | undefined;
+};
+
 // AlertService 告警记录查询
 export interface AlertService {
   // 查询告警列表
@@ -998,6 +1047,9 @@ export type opsservicev1_Alert = {
   //
   // Behaviors: OUTPUT_ONLY
   resolvedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  source?: string;
 };
 
 export type opsservicev1_GetAlertRequest = {
@@ -3208,6 +3260,292 @@ export type opsservicev1_GetBuildHistoryLogResponse = {
   status?: string;
 };
 
+// CertService 证书到期台账
+export interface CertService {
+  // 查询证书列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListCertResponse>;
+  // 查询证书详情
+  Get(
+    request: opsservicev1_GetCertRequest,
+  ): Promise<opsservicev1_Cert>;
+  // 创建证书
+  Create(
+    request: opsservicev1_CreateCertRequest,
+  ): Promise<opsservicev1_Cert>;
+  // 更新证书
+  Update(
+    request: opsservicev1_UpdateCertRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除证书
+  Delete(
+    request: opsservicev1_DeleteCertRequest,
+  ): Promise<wellKnownEmpty>;
+  // 立即探测一次
+  Probe(
+    request: opsservicev1_ProbeCertRequest,
+  ): Promise<opsservicev1_ProbeCertResponse>;
+}
+
+export function createCertServiceClient(
+  transport: ClientTransport,
+): CertService {
+  return {
+    List(request) {
+      const path = `admin/v1/certs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CertService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListCertResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/certs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'CertService',
+        method: 'Get',
+      }) as Promise<opsservicev1_Cert>;
+    },
+    Create(request) {
+      const path = `admin/v1/certs`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CertService',
+        method: 'Create',
+      }) as Promise<opsservicev1_Cert>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/certs/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CertService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/certs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'CertService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Probe(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/certs/${request.id}/probe:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CertService',
+        method: 'Probe',
+      }) as Promise<opsservicev1_ProbeCertResponse>;
+    },
+  };
+}
+export type opsservicev1_ListCertResponse = {
+  items: opsservicev1_Cert[] | undefined;
+  total: number | undefined;
+};
+
+// 证书台账
+export type opsservicev1_Cert = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  daysBeforeExpire?: number;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: REQUIRED
+  host?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  issuer?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastError?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastProbedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  notAfter?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  notBefore?: wellKnownTimestamp;
+  port?: number;
+  probeCron?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+};
+
+export type opsservicev1_GetCertRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateCertRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_Cert | undefined;
+};
+
+export type opsservicev1_UpdateCertRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_Cert | undefined;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteCertRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_ProbeCertRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_ProbeCertResponse = {
+  error?: string;
+  issuer?: string;
+  notAfter?: wellKnownTimestamp;
+  remainingDays?: number;
+};
+
 // CloudAccountService 云平台账号管理门面。
 export interface CloudAccountService {
   // 查询云账号列表
@@ -3501,6 +3839,271 @@ export type opsservicev1_VerifyCloudAccountResponse = {
   accountId?: string;
   accountName?: string;
   verifiedAt?: wellKnownTimestamp;
+};
+
+// CloudBudgetService 云成本月度预算
+export interface CloudBudgetService {
+  // 查询预算列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListCloudBudgetResponse>;
+  // 查询预算详情
+  Get(
+    request: opsservicev1_GetCloudBudgetRequest,
+  ): Promise<opsservicev1_CloudBudget>;
+  // 创建预算
+  Create(
+    request: opsservicev1_CreateCloudBudgetRequest,
+  ): Promise<opsservicev1_CloudBudget>;
+  // 更新预算
+  Update(
+    request: opsservicev1_UpdateCloudBudgetRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除预算
+  Delete(
+    request: opsservicev1_DeleteCloudBudgetRequest,
+  ): Promise<wellKnownEmpty>;
+  // 立即执行一次预算检查
+  Check(
+    request: opsservicev1_CheckCloudBudgetRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createCloudBudgetServiceClient(
+  transport: ClientTransport,
+): CloudBudgetService {
+  return {
+    List(request) {
+      const path = `admin/v1/cloud-budgets`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CloudBudgetService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListCloudBudgetResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-budgets/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'CloudBudgetService',
+        method: 'Get',
+      }) as Promise<opsservicev1_CloudBudget>;
+    },
+    Create(request) {
+      const path = `admin/v1/cloud-budgets`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudBudgetService',
+        method: 'Create',
+      }) as Promise<opsservicev1_CloudBudget>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-budgets/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CloudBudgetService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/cloud-budgets/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'CloudBudgetService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Check(request) {
+      const path = `admin/v1/cloud-budgets/check:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CloudBudgetService',
+        method: 'Check',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListCloudBudgetResponse = {
+  items: opsservicev1_CloudBudget[] | undefined;
+  total: number | undefined;
+};
+
+// 云成本月度预算
+export type opsservicev1_CloudBudget = {
+  //
+  // Behaviors: REQUIRED
+  amount?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  anomalyNotified?: boolean;
+  anomalyRatio?: number;
+  cloudAccountId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  currency?: string;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  month?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  notified?: boolean;
+  thresholdPercent?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+};
+
+export type opsservicev1_GetCloudBudgetRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateCloudBudgetRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_CloudBudget | undefined;
+};
+
+export type opsservicev1_UpdateCloudBudgetRequest = {
+  //
+  // Behaviors: REQUIRED
+  data: opsservicev1_CloudBudget | undefined;
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteCloudBudgetRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CheckCloudBudgetRequest = {
 };
 
 // CloudCostService 云成本月账单门面。
@@ -6840,6 +7443,7 @@ export type opsservicev1_Monitor = {
   //
   // Behaviors: REQUIRED
   projectId?: number;
+  repeatIntervalMinutes?: number;
   targetType?: string;
   thresholdPercent?: number;
   //
@@ -7067,6 +7671,7 @@ export type opsservicev1_NotificationChannel = {
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;
   description?: string;
+  emailTo?: string;
   enabled?: boolean;
   //
   // Behaviors: OUTPUT_ONLY
@@ -7120,6 +7725,191 @@ export type opsservicev1_UpdateNotificationChannelRequest = {
 };
 
 export type opsservicev1_DeleteNotificationChannelRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+// NotificationDeliveryService 告警通知投递记录(只读)
+export interface NotificationDeliveryService {
+  // 查询投递记录列表(按 alertId 过滤)
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListNotificationDeliveryResponse>;
+  // 查询投递记录详情
+  Get(
+    request: opsservicev1_GetNotificationDeliveryRequest,
+  ): Promise<opsservicev1_NotificationDelivery>;
+}
+
+export function createNotificationDeliveryServiceClient(
+  transport: ClientTransport,
+): NotificationDeliveryService {
+  return {
+    List(request) {
+      const path = `admin/v1/notification-deliveries`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'NotificationDeliveryService',
+        method: 'List',
+      }) as Promise<opsservicev1_ListNotificationDeliveryResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/notification-deliveries/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'NotificationDeliveryService',
+        method: 'Get',
+      }) as Promise<opsservicev1_NotificationDelivery>;
+    },
+  };
+}
+export type opsservicev1_ListNotificationDeliveryResponse = {
+  items: opsservicev1_NotificationDelivery[] | undefined;
+  total: number | undefined;
+};
+
+export type opsservicev1_NotificationDelivery = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  alertId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  channelId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  channelType?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  lastError?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  status?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  target?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  title?: string;
+};
+
+export type opsservicev1_GetNotificationDeliveryRequest = {
   //
   // Behaviors: REQUIRED
   id?: number;
@@ -12135,7 +12925,9 @@ export class ApiClient {
   private _backupService?: BackupService;
   private _buildHistoryService?: BuildHistoryService;
   private _buildService?: BuildService;
+  private _certService?: CertService;
   private _cloudAccountService?: CloudAccountService;
+  private _cloudBudgetService?: CloudBudgetService;
   private _cloudCostService?: CloudCostService;
   private _cloudInstanceService?: CloudInstanceService;
   private _commandRecordService?: CommandRecordService;
@@ -12150,6 +12942,7 @@ export class ApiClient {
   private _menuService?: MenuService;
   private _monitorService?: MonitorService;
   private _notificationChannelService?: NotificationChannelService;
+  private _notificationDeliveryService?: NotificationDeliveryService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orgUnitService?: OrgUnitService;
   private _permissionAuditLogService?: PermissionAuditLogService;
@@ -12218,8 +13011,16 @@ export class ApiClient {
     return this._buildService ??= createBuildServiceClient(this._transport);
   }
 
+  get certService(): CertService {
+    return this._certService ??= createCertServiceClient(this._transport);
+  }
+
   get cloudAccountService(): CloudAccountService {
     return this._cloudAccountService ??= createCloudAccountServiceClient(this._transport);
+  }
+
+  get cloudBudgetService(): CloudBudgetService {
+    return this._cloudBudgetService ??= createCloudBudgetServiceClient(this._transport);
   }
 
   get cloudCostService(): CloudCostService {
@@ -12276,6 +13077,10 @@ export class ApiClient {
 
   get notificationChannelService(): NotificationChannelService {
     return this._notificationChannelService ??= createNotificationChannelServiceClient(this._transport);
+  }
+
+  get notificationDeliveryService(): NotificationDeliveryService {
+    return this._notificationDeliveryService ??= createNotificationDeliveryServiceClient(this._transport);
   }
 
   get operationAuditLogService(): OperationAuditLogService {

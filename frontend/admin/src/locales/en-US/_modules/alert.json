@@ -13,5 +13,18 @@
   "resolveConfirm": "Mark this alert as resolved?",
   "resolveSuccess": "Alert resolved",
   "resolveFailed": "Operation failed",
-  "nodeId": "Node"
+  "nodeId": "Node",
+  "source": "Source",
+  "sourceMonitor": "Monitor",
+  "sourceBudget": "Budget",
+  "sourceCert": "Cert",
+  "deliveries": "Deliveries",
+  "deliveriesTitle": "Notification Deliveries #{{id}}",
+  "deliveryTime": "Time",
+  "deliveryChannel": "Channel",
+  "deliveryTarget": "Target",
+  "deliveryStatus": "Status",
+  "deliverySent": "Sent",
+  "deliveryFailed": "Failed",
+  "deliveryError": "Error"
 }

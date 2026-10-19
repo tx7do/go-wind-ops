@@ -55,18 +55,18 @@ type PipelineServiceHTTPServer interface {
 
 func RegisterPipelineServiceHTTPServer(s *http.Server, srv PipelineServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/pipelines", _PipelineService_List28_HTTP_Handler(srv))
-	r.GET("/admin/v1/pipelines/{id}", _PipelineService_Get26_HTTP_Handler(srv))
-	r.POST("/admin/v1/pipelines", _PipelineService_Create16_HTTP_Handler(srv))
-	r.PUT("/admin/v1/pipelines/{id}", _PipelineService_Update17_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/pipelines/{id}", _PipelineService_Delete18_HTTP_Handler(srv))
+	r.GET("/admin/v1/pipelines", _PipelineService_List31_HTTP_Handler(srv))
+	r.GET("/admin/v1/pipelines/{id}", _PipelineService_Get29_HTTP_Handler(srv))
+	r.POST("/admin/v1/pipelines", _PipelineService_Create18_HTTP_Handler(srv))
+	r.PUT("/admin/v1/pipelines/{id}", _PipelineService_Update19_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/pipelines/{id}", _PipelineService_Delete20_HTTP_Handler(srv))
 	r.POST("/admin/v1/pipelines/{id}/trigger", _PipelineService_Trigger3_HTTP_Handler(srv))
 	r.GET("/admin/v1/pipeline-runs", _PipelineService_ListRuns0_HTTP_Handler(srv))
 	r.GET("/admin/v1/pipeline-runs/{id}", _PipelineService_GetRun0_HTTP_Handler(srv))
 	r.GET("/admin/v1/pipeline-runs/{id}/log", _PipelineService_GetRunLog0_HTTP_Handler(srv))
 }
 
-func _PipelineService_List28_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
+func _PipelineService_List31_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -85,7 +85,7 @@ func _PipelineService_List28_HTTP_Handler(srv PipelineServiceHTTPServer) func(ct
 	}
 }
 
-func _PipelineService_Get26_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
+func _PipelineService_Get29_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPipelineRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -107,7 +107,7 @@ func _PipelineService_Get26_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx
 	}
 }
 
-func _PipelineService_Create16_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
+func _PipelineService_Create18_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePipelineRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -129,7 +129,7 @@ func _PipelineService_Create16_HTTP_Handler(srv PipelineServiceHTTPServer) func(
 	}
 }
 
-func _PipelineService_Update17_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
+func _PipelineService_Update19_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePipelineRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -154,7 +154,7 @@ func _PipelineService_Update17_HTTP_Handler(srv PipelineServiceHTTPServer) func(
 	}
 }
 
-func _PipelineService_Delete18_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
+func _PipelineService_Delete20_HTTP_Handler(srv PipelineServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePipelineRequest
 		if err := ctx.BindQuery(&in); err != nil {

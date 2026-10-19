@@ -323,6 +323,27 @@ func (_u *MonitorUpdate) SetNillableNotifyOnRecovery(v *bool) *MonitorUpdate {
 	return _u
 }
 
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (_u *MonitorUpdate) SetRepeatIntervalMinutes(v int) *MonitorUpdate {
+	_u.mutation.ResetRepeatIntervalMinutes()
+	_u.mutation.SetRepeatIntervalMinutes(v)
+	return _u
+}
+
+// SetNillableRepeatIntervalMinutes sets the "repeat_interval_minutes" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableRepeatIntervalMinutes(v *int) *MonitorUpdate {
+	if v != nil {
+		_u.SetRepeatIntervalMinutes(*v)
+	}
+	return _u
+}
+
+// AddRepeatIntervalMinutes adds value to the "repeat_interval_minutes" field.
+func (_u *MonitorUpdate) AddRepeatIntervalMinutes(v int) *MonitorUpdate {
+	_u.mutation.AddRepeatIntervalMinutes(v)
+	return _u
+}
+
 // SetCron sets the "cron" field.
 func (_u *MonitorUpdate) SetCron(v string) *MonitorUpdate {
 	_u.mutation.SetCron(v)
@@ -569,6 +590,12 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.NotifyOnRecovery(); ok {
 		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.RepeatIntervalMinutes(); ok {
+		_spec.SetField(monitor.FieldRepeatIntervalMinutes, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRepeatIntervalMinutes(); ok {
+		_spec.AddField(monitor.FieldRepeatIntervalMinutes, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
@@ -907,6 +934,27 @@ func (_u *MonitorUpdateOne) SetNillableNotifyOnRecovery(v *bool) *MonitorUpdateO
 	return _u
 }
 
+// SetRepeatIntervalMinutes sets the "repeat_interval_minutes" field.
+func (_u *MonitorUpdateOne) SetRepeatIntervalMinutes(v int) *MonitorUpdateOne {
+	_u.mutation.ResetRepeatIntervalMinutes()
+	_u.mutation.SetRepeatIntervalMinutes(v)
+	return _u
+}
+
+// SetNillableRepeatIntervalMinutes sets the "repeat_interval_minutes" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableRepeatIntervalMinutes(v *int) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetRepeatIntervalMinutes(*v)
+	}
+	return _u
+}
+
+// AddRepeatIntervalMinutes adds value to the "repeat_interval_minutes" field.
+func (_u *MonitorUpdateOne) AddRepeatIntervalMinutes(v int) *MonitorUpdateOne {
+	_u.mutation.AddRepeatIntervalMinutes(v)
+	return _u
+}
+
 // SetCron sets the "cron" field.
 func (_u *MonitorUpdateOne) SetCron(v string) *MonitorUpdateOne {
 	_u.mutation.SetCron(v)
@@ -1183,6 +1231,12 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	}
 	if value, ok := _u.mutation.NotifyOnRecovery(); ok {
 		_spec.SetField(monitor.FieldNotifyOnRecovery, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.RepeatIntervalMinutes(); ok {
+		_spec.SetField(monitor.FieldRepeatIntervalMinutes, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRepeatIntervalMinutes(); ok {
+		_spec.AddField(monitor.FieldRepeatIntervalMinutes, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)

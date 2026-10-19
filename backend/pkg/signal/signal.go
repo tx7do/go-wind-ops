@@ -304,7 +304,29 @@ const (
 
 	// 目录备份:agent 打包 zip 后经预签名 URL 直传对象存储。
 	CommandActionBackupRun CommandAction = "backup_run"
+
+	// Agent 远程升级:agent 下载新二进制后自替换重启(回执先发,替换随后)。
+	CommandActionAgentUpgrade CommandAction = "agent_upgrade"
 )
+
+// ============================================================================
+// Agent 远程升级
+// ============================================================================
+
+// AgentUpgradePayload agent_upgrade 指令载荷:agent 下载新二进制到临时文件,
+// 发送回执后延迟自替换并重启(Windows bat / Unix sh 脚本接力)。
+type AgentUpgradePayload struct {
+	Version string `json:"version"`
+	Url     string `json:"url"`
+}
+
+// AgentUpgradeResult agent_upgrade 回执(替换尚未发生,重启后心跳带新版本)。
+type AgentUpgradeResult struct {
+	Version   string `json:"version"`
+	SizeBytes int64  `json:"size_bytes"`
+	SHA256    string `json:"sha256"`
+	Output    string `json:"output,omitempty"`
+}
 
 // ============================================================================
 // 目录备份
