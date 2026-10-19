@@ -143,7 +143,8 @@ func (r *BuildRepo) Create(ctx context.Context, req *opsV1.CreateBuildRequest, o
 		SetBuildCommand(req.Data.GetBuildCommand()).
 		SetArtifactPath(req.Data.GetArtifactPath()).
 		SetNillableDescription(req.Data.Description).
-		SetLabels(req.Data.Labels)
+		SetLabels(req.Data.Labels).
+		SetNillableCron(req.Data.Cron)
 
 	if req.Data.Branch != nil {
 		builder.SetBranch(req.Data.GetBranch())
@@ -182,7 +183,8 @@ func (r *BuildRepo) Update(ctx context.Context, req *opsV1.UpdateBuildRequest) e
 				SetNillableArtifactPath(req.Data.ArtifactPath).
 				SetNillableTimeoutSeconds(req.Data.TimeoutSeconds).
 				SetNillableArtifactRetention(req.Data.ArtifactRetention).
-				SetNillableDescription(req.Data.Description)
+				SetNillableDescription(req.Data.Description).
+				SetNillableCron(req.Data.Cron)
 
 			if req.Data.RepositoryId != nil && req.Data.GetRepositoryId() > 0 {
 				builder.SetRepositoryID(req.Data.GetRepositoryId())
@@ -232,6 +234,21 @@ func (r *BuildRepo) IncrBuildNo(ctx context.Context, buildID uint32) (uint32, er
 		return 0, opsV1.ErrorInternalServerError("incr build no failed")
 	}
 	return entity.BuildNo, nil
+}
+
+// AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效):
+// 新建任务 last_cron_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致定时
+// 调度从未触发;首见先落锚不补跑,从下一个周期起正常调度。
+func (r *BuildRepo) AdvanceCronAnchorFromNull(ctx context.Context, buildID uint32, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Build.
+		Update().
+		Where(
+			build.IDEQ(buildID),
+			build.LastCronAtIsNil(),
+		).
+		SetLastCronAt(now).
+		Save(ctx)
+	return n > 0, err
 }
 
 // AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected

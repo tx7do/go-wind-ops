@@ -26,5 +26,6 @@
   "noCertExpiring": "No expiring certificates",
   "certName": "Certificate",
   "certHost": "Target",
-  "certExpires": "Expires At"
+  "certExpires": "Expires At",
+  "exportJson": "Export JSON"
 }

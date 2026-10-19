@@ -5,7 +5,7 @@
   "targetPath": "目标路径",
   "targetPathHint": "下发目标绝对路径,须在 agent 授权目录内",
   "content": "模板内容",
-  "contentHint": "原样下发,≤256KB",
+  "contentHint": "≤256KB;支持占位符 {{env}} {{node.name}} {{node.hostname}} {{node.agentId}} {{node.id}} {{project.name}} {{project.dir}} {{project.id}} {{date}} {{datetime}}(下发时替换)",
   "description": "描述",
   "create": "新建模板",
   "edit": "编辑模板",

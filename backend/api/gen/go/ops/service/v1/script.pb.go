@@ -294,7 +294,7 @@ func (x *CreateScriptRequest) GetData() *Script {
 
 type UpdateScriptRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 脚本ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 脚本ID
 	Data          *Script                `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -332,8 +332,8 @@ func (*UpdateScriptRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateScriptRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -398,7 +398,7 @@ func (x *DeleteScriptRequest) GetId() uint32 {
 
 type ExecuteScriptRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 脚本ID
+	Id    uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 脚本ID
 	// 节点ID 与 agentId 二选一;同时提供时以 id 为准。
 	NodeId        *uint32 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`   // 目标节点ID
 	AgentId       *string `protobuf:"bytes,3,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 目标机器唯一标识
@@ -437,8 +437,8 @@ func (*ExecuteScriptRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *ExecuteScriptRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -1027,21 +1027,19 @@ const file_ops_service_v1_script_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"F\n" +
 	"\x13CreateScriptRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x16.ops.service.v1.ScriptB\x03\xe0A\x02R\x04data\"\xc4\x01\n" +
-	"\x13UpdateScriptRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x16.ops.service.v1.ScriptB\x03\xe0A\x02R\x04data\"\xb8\x01\n" +
+	"\x13UpdateScriptRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12/\n" +
 	"\x04data\x18\x02 \x01(\v2\x16.ops.service.v1.ScriptB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\"6\n" +
+	"updateMask\"6\n" +
 	"\x13DeleteScriptRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\x98\x01\n" +
-	"\x14ExecuteScriptRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12!\n" +
-	"\anode_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\x06nodeId\x88\x01\x01\x12#\n" +
-	"\bagent_id\x18\x03 \x01(\tB\x03\xe0A\x01H\x02R\aagentId\x88\x01\x01B\x05\n" +
-	"\x03_idB\n" +
+	"\x03_id\"\x8c\x01\n" +
+	"\x14ExecuteScriptRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12!\n" +
+	"\anode_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\x06nodeId\x88\x01\x01\x12#\n" +
+	"\bagent_id\x18\x03 \x01(\tB\x03\xe0A\x01H\x01R\aagentId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_node_idB\v\n" +
 	"\t_agent_id\"6\n" +
@@ -1210,7 +1208,6 @@ func file_ops_service_v1_script_proto_init() {
 	}
 	file_ops_service_v1_script_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_script_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[8].OneofWrappers = []any{}

@@ -108,14 +108,14 @@ message GetApprovalRequest {
 }
 
 message ApproveApprovalRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 审批单ID
 }
 
 message RejectApprovalRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 审批单ID

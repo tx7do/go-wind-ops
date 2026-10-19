@@ -396,7 +396,7 @@ func (x *GetAgentNodeRequest) GetId() uint32 {
 
 type UpdateAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 节点ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 节点ID
 	Data          *AgentNode             `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据(仅 name/labels 可更新)
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -434,8 +434,8 @@ func (*UpdateAgentNodeRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateAgentNodeRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -501,7 +501,7 @@ func (x *DeleteAgentNodeRequest) GetId() uint32 {
 type SendCommandRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-	Id            *uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                         // 节点ID
+	Id            uint32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                               // 节点ID
 	AgentId       *string `protobuf:"bytes,2,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 机器唯一标识
 	Action        string  `protobuf:"bytes,3,opt,name=action,proto3" json:"action,omitempty"`                        // 指令动作
 	Payload       *string `protobuf:"bytes,4,opt,name=payload,proto3,oneof" json:"payload,omitempty"`                // 指令载荷(JSON 字符串)
@@ -540,8 +540,8 @@ func (*SendCommandRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *SendCommandRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -1036,22 +1036,20 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\x05items\x18\x02 \x03(\v2\x19.ops.service.v1.AgentNodeR\x05items\"6\n" +
 	"\x13GetAgentNodeRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\xd7\x01\n" +
-	"\x16UpdateAgentNodeRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x122\n" +
+	"\x03_id\"\xcb\x01\n" +
+	"\x16UpdateAgentNodeRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x122\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.ops.service.v1.AgentNodeB\x03\xe0A\x02R\x04data\x12h\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB+\xbaG(\x92\x02%要更新的字段列表(name/labels)R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\"9\n" +
+	"updateMask\"9\n" +
 	"\x16DeleteAgentNodeRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\x88\x02\n" +
-	"\x12SendCommandRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x01H\x00R\x02id\x88\x01\x01\x12#\n" +
-	"\bagent_id\x18\x02 \x01(\tB\x03\xe0A\x01H\x01R\aagentId\x88\x01\x01\x12P\n" +
+	"\x03_id\"\xfc\x01\n" +
+	"\x12SendCommandRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x01R\x02id\x12#\n" +
+	"\bagent_id\x18\x02 \x01(\tB\x03\xe0A\x01H\x00R\aagentId\x88\x01\x01\x12P\n" +
 	"\x06action\x18\x03 \x01(\tB8\xe0A\x02\xbaG2\x92\x02/指令动作(小写下划线,当前支持 ping)R\x06action\x12A\n" +
-	"\apayload\x18\x04 \x01(\tB\"\xbaG\x1f\x92\x02\x1c指令载荷(JSON 字符串)H\x02R\apayload\x88\x01\x01B\x05\n" +
-	"\x03_idB\v\n" +
+	"\apayload\x18\x04 \x01(\tB\"\xbaG\x1f\x92\x02\x1c指令载荷(JSON 字符串)H\x01R\apayload\x88\x01\x01B\v\n" +
 	"\t_agent_idB\n" +
 	"\n" +
 	"\b_payload\"4\n" +
@@ -1184,7 +1182,6 @@ func file_ops_service_v1_agent_node_proto_init() {
 	}
 	file_ops_service_v1_agent_node_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_agent_node_proto_msgTypes[3].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[7].OneofWrappers = []any{}

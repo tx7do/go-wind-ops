@@ -203,7 +203,7 @@ message GetAgentNodeRequest {
 }
 
 message UpdateAgentNodeRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -230,7 +230,7 @@ message DeleteAgentNodeRequest {
 
 message SendCommandRequest {
   // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL
   ]; // 节点ID

@@ -283,6 +283,46 @@ func (s *LogSnapshotService) CaptureLogSnapshot(ctx context.Context, req *opsV1.
 	return logSnapshotToDTO(row), nil
 }
 
+// CaptureAll 定时采集入口:全部项目逐个采集(trigger=SCHEDULED),单个
+// 失败仅记日志。串行下发,依赖 30 分钟窗口上限。
+func (s *LogSnapshotService) CaptureAll(ctx context.Context) error {
+	resp, err := s.projectRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: boolPtr(true)})
+	if err != nil {
+		return err
+	}
+	okCount, failCount := 0, 0
+	for _, p := range resp.GetItems() {
+		projectID := p.GetId()
+		nodeID := p.GetNodeId()
+		node, nerr := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &nodeID})
+		if nerr != nil {
+			failCount++
+			continue
+		}
+		res, rerr := s.agentSvc.PublishCommandSync(ctx, node.GetId(), node.GetAgentId(),
+			signal.CommandActionProjectLog,
+			&signal.ProjectLogPayload{ProjectId: projectID, Dir: p.GetProjectDir(), MaxBytes: 256 << 10},
+			0, logQueryTimeout)
+		if rerr != nil || !res.Success {
+			failCount++
+			continue
+		}
+		var out signal.ProjectLogResult
+		if json.Unmarshal(res.Data, &out) != nil {
+			failCount++
+			continue
+		}
+		if _, cerr := s.snapshotRepo.Create(ctx, projectID, nodeID, p.GetName(),
+			out.Content, "SCHEDULED", 0); cerr != nil {
+			failCount++
+			continue
+		}
+		okCount++
+	}
+	s.log.Infof("scheduled log snapshot done (ok=%d fail=%d)", okCount, failCount)
+	return nil
+}
+
 // SearchLogSnapshots 关键字检索:ILIKE 命中最近 50 份快照,每份生成命中
 // 摘要(首处命中行 ± 上下文,截断 400 字符)。
 func (s *LogSnapshotService) SearchLogSnapshots(ctx context.Context, req *opsV1.SearchLogSnapshotsRequest) (*opsV1.SearchLogSnapshotResponse, error) {
@@ -384,16 +424,18 @@ type ConfigService struct {
 	templateRepo  *data.ConfigTemplateRepo
 	distRepo      *data.ConfigDistributionRepo
 	nodeRepo      *data.AgentNodeRepo
+	projectRepo   *data.ProjectRepo
 	ossClient     *oss.MinIOClient
 	agentSvc      *AgentService
 }
 
-func NewConfigService(ctx *bootstrap.Context, templateRepo *data.ConfigTemplateRepo, distRepo *data.ConfigDistributionRepo, nodeRepo *data.AgentNodeRepo, ossClient *oss.MinIOClient, agentSvc *AgentService) *ConfigService {
+func NewConfigService(ctx *bootstrap.Context, templateRepo *data.ConfigTemplateRepo, distRepo *data.ConfigDistributionRepo, nodeRepo *data.AgentNodeRepo, projectRepo *data.ProjectRepo, ossClient *oss.MinIOClient, agentSvc *AgentService) *ConfigService {
 	return &ConfigService{
 		log:          ctx.NewLoggerHelper("config/service/core-service"),
 		templateRepo: templateRepo,
 		distRepo:     distRepo,
 		nodeRepo:     nodeRepo,
+		projectRepo:  projectRepo,
 		ossClient:    ossClient,
 		agentSvc:     agentSvc,
 	}
@@ -488,9 +530,11 @@ func (s *ConfigService) DistributeConfig(ctx context.Context, req *opsV1.Distrib
 		return nil, opsV1.ErrorInternalServerError("ensure bucket failed")
 	}
 
+	content := s.renderTemplate(ctx, tpl, req.GetProjectId(), node)
+
 	objectKey := fmt.Sprintf("%s/%s.conf", configObjectPrefix, id.NewGUIDv4(false))
 	if _, err = s.ossClient.GetClient().PutObject(ctx, oss.BucketFiles, objectKey,
-		strings.NewReader(tpl.Content), int64(len(tpl.Content)), minio.PutObjectOptions{}); err != nil {
+		strings.NewReader(content), int64(len(content)), minio.PutObjectOptions{}); err != nil {
 		s.log.Errorf("upload config content failed (tpl=%d): %s", tpl.ID, err.Error())
 		return nil, opsV1.ErrorInternalServerError("upload config content failed")
 	}
@@ -530,6 +574,36 @@ func (s *ConfigService) ListConfigDistributions(ctx context.Context, req *opsV1.
 		resp.Items = append(resp.Items, configDistributionToDTO(row))
 	}
 	return resp, nil
+}
+
+// renderTemplate 下发前占位符替换:{{env}}/{{node.*}}/{{project.*}}/{{date}}/{{datetime}};
+// 项目类占位符在未关联项目时替换为空串。
+func (s *ConfigService) renderTemplate(ctx context.Context, tpl *ent.ConfigTemplate, projectID uint32, node *opsV1.AgentNode) string {
+	content := tpl.Content
+	nodeID := node.GetId()
+	repl := map[string]string{
+		"{{env}}":           tpl.Env,
+		"{{node.id}}":       fmt.Sprintf("%d", nodeID),
+		"{{node.name}}":     node.GetName(),
+		"{{node.hostname}}": node.GetHostname(),
+		"{{node.agentId}}":  node.GetAgentId(),
+		"{{date}}":          time.Now().Format("2006-01-02"),
+		"{{datetime}}":      time.Now().Format("2006-01-02 15:04:05"),
+		"{{project.id}}":    "",
+		"{{project.name}}":  "",
+		"{{project.dir}}":   "",
+	}
+	if projectID > 0 {
+		if p, err := s.projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID}); err == nil && p != nil {
+			repl["{{project.id}}"] = fmt.Sprintf("%d", p.GetId())
+			repl["{{project.name}}"] = p.GetName()
+			repl["{{project.dir}}"] = p.GetProjectDir()
+		}
+	}
+	for k, v := range repl {
+		content = strings.ReplaceAll(content, k, v)
+	}
+	return content
 }
 
 func configTemplateToDTO(row *ent.ConfigTemplate) *opsV1.ConfigTemplate {

@@ -249,7 +249,7 @@ func (x *GetAlertRequest) GetId() uint32 {
 
 type ResolveAlertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 告警ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 告警ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -285,8 +285,8 @@ func (*ResolveAlertRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *ResolveAlertRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -331,10 +331,9 @@ const file_ops_service_v1_alert_proto_rawDesc = "" +
 	"\x05items\x18\x02 \x03(\v2\x15.ops.service.v1.AlertR\x05items\"2\n" +
 	"\x0fGetAlertRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"6\n" +
-	"\x13ResolveAlertRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id2\xf1\x01\n" +
+	"\x03_id\"*\n" +
+	"\x13ResolveAlertRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id2\xf1\x01\n" +
 	"\fAlertService\x12L\n" +
 	"\n" +
 	"ListAlerts\x12\x19.pagination.PagingRequest\x1a!.ops.service.v1.ListAlertResponse\"\x00\x12D\n" +
@@ -389,7 +388,6 @@ func file_ops_service_v1_alert_proto_init() {
 	}
 	file_ops_service_v1_alert_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_alert_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_alert_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

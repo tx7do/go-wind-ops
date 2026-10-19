@@ -26,5 +26,6 @@
   "noCertExpiring": "无到期证书",
   "certName": "证书",
   "certHost": "目标",
-  "certExpires": "到期时间"
+  "certExpires": "到期时间",
+  "exportJson": "导出 JSON"
 }

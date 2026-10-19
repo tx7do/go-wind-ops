@@ -371,7 +371,7 @@ func (x *CreateApiKeyResponse) GetPlainKey() string {
 
 type UpdateApiKeyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`    // 密钥ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`          // 密钥ID
 	Data          *ApiKey                `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"` // 更新数据(status/description/expiresAt)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -408,8 +408,8 @@ func (*UpdateApiKeyRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateApiKeyRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -552,11 +552,10 @@ const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\tplain_key\x18\x02 \x01(\tB\x03\xe0A\x03H\x01R\bplainKey\x88\x01\x01B\a\n" +
 	"\x05_dataB\f\n" +
 	"\n" +
-	"_plain_key\"u\n" +
-	"\x13UpdateApiKeyRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x124\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.ops.service.v1.ApiKeyB\x03\xe0A\x02H\x01R\x04data\x88\x01\x01B\x05\n" +
-	"\x03_idB\a\n" +
+	"_plain_key\"i\n" +
+	"\x13UpdateApiKeyRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x124\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.ops.service.v1.ApiKeyB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
 	"\x05_data\"6\n" +
 	"\x13DeleteApiKeyRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +

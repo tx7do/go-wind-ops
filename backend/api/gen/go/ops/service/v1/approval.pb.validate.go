@@ -608,9 +608,7 @@ func (m *ApproveApprovalRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return ApproveApprovalRequestMultiError(errors)
@@ -714,9 +712,7 @@ func (m *RejectApprovalRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if m.Reason != nil {
 		// no validation rules for Reason

@@ -188,6 +188,19 @@ Phase 5 (平台化) ────────── 依赖 Phase 1-3 稳定
 - 配置:模板下发 smoke 库 repo-demo/app.conf → 记录 SUCCESS。
 - 三新页 + 终端审计抽屉 UI 走查全通过。
 
+## Phase 9 · 存量 bug 治理与 v1 收尾(2026-10-19)✅ 已完成
+
+### 9.1 定时调度三连修(构建/脚本调度从未真正可用)✅
+**三处断点**:①新建任务 last_cron_at 为 NULL,CAS(EQ)永远匹配不上→tickBuilds/tickScripts 对新任务永不触发(补 AdvanceCronAnchorFromNull,首见落锚不补跑);②**ScriptRepo/BuildRepo 的 Create/Update 从未写入 cron/cron_node_id 字段**——创建带定时的任务配置静默丢失,调度端无米下锅(补 SetNillableCron/SetNillableCronNodeID);③UpdateScript 的内容校验拦截部分更新(只改 cron 也要求 content)→content 不在 mask 时不校验。冒烟:每分钟脚本连续三轮 operator=0 自动触发、台账 SUCCESS、exit_code 0。
+
+### 9.2 oneof 双写 400 全域治理 ✅
+**24 个 ops request 消息的 optional uint32 id 改普通字段**(路径变量与 body 双写触发 kratos oneof 重复赋值 400;Update/Trigger/Operate/Execute/Approve/Reject/Probe/Verify/Resolve/SendCommand 全覆盖;基座域上游本就是普通字段故编辑一直正常)。涟漪修复:12 个 BFF 门面删无效的 req.Data.Id 赋值、core 侧 struct literal 指针适配、openapi 网关/pipeline 触发参数适配。复测:项目启停/监控更新/脚本执行/备份与模板更新**带 id 的 body 全部 200**(此前全 400)。
+
+### 9.3 第三梯队 v1 收尾 ✅
+- 日志快照定时采集:LOG_SNAPSHOT_INTERVAL_MINUTES 环境变量(默认 0=关),CronScheduler 每小时节流,到期对全部项目逐个采集(SCHEDULED 触发,单项目失败不影响其余,30 分钟窗口上限)。
+- 配置中心占位符:下发时渲染 {{env}}/{{node.id|name|hostname|agentId}}/{{project.id|name|dir}}/{{date}}/{{datetime}}(未关联项目时项目类占位符置空)。
+- 巡检报告导出:报告抽屉"导出 JSON"按钮(Blob 下载 summary)。
+
 ### 环境注意
 - 菜单种子仅在空表时播种(ops_menu_ids 86-106);**已有库需在菜单管理里手动补**"批量执行/备份任务"两个页面(前端路由不受影响,页面直接可访问)。
 - 本机 smoke 环境的 agent 有未知看门狗会重拉进程,授权目录已 `setx AGENT_ALLOWED_DIRS`(用户级)兜底。

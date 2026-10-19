@@ -51,7 +51,6 @@ func (s *CloudBudgetService) Update(ctx context.Context, req *opsV1.UpdateCloudB
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.cloudBudgetServiceClient.UpdateCloudBudget(ctx, req)
 }

@@ -51,7 +51,6 @@ func (s *CertService) Update(ctx context.Context, req *opsV1.UpdateCertRequest) 
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.certServiceClient.UpdateCert(ctx, req)
 }

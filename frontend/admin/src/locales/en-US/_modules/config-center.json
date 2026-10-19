@@ -5,7 +5,7 @@
   "targetPath": "Target Path",
   "targetPathHint": "Absolute destination path; must be within agent allowed dirs",
   "content": "Content",
-  "contentHint": "Distributed as-is, <=256KB",
+  "contentHint": "<=256KB; placeholders {{env}} {{node.name}} {{node.hostname}} {{node.agentId}} {{node.id}} {{project.name}} {{project.dir}} {{project.id}} {{date}} {{datetime}} are replaced on distribute",
   "description": "Description",
   "create": "New Template",
   "edit": "Edit Template",

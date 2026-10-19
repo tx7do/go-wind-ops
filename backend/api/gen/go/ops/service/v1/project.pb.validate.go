@@ -673,6 +673,8 @@ func (m *UpdateProjectRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if all {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
@@ -729,10 +731,6 @@ func (m *UpdateProjectRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
-	}
-
-	if m.Id != nil {
-		// no validation rules for Id
 	}
 
 	if len(errors) > 0 {
@@ -943,11 +941,9 @@ func (m *OperateProjectRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Operation
+	// no validation rules for Id
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Operation
 
 	if len(errors) > 0 {
 		return OperateProjectRequestMultiError(errors)

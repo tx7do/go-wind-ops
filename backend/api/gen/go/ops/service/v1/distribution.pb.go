@@ -453,7 +453,7 @@ func (x *CreateDistributionRequest) GetData() *Distribution {
 
 type UpdateDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 分发配置ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 分发配置ID
 	Data          *Distribution          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -491,8 +491,8 @@ func (*UpdateDistributionRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateDistributionRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -557,7 +557,7 @@ func (x *DeleteDistributionRequest) GetId() uint32 {
 
 type TriggerDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 分发配置ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                      // 分发配置ID
 	HistoryId     *uint32                `protobuf:"varint,2,opt,name=history_id,json=historyId,proto3,oneof" json:"history_id,omitempty"` // 指定构建历史ID(缺省取最新成功)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -594,8 +594,8 @@ func (*TriggerDistributionRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *TriggerDistributionRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -960,21 +960,19 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"R\n" +
 	"\x19CreateDistributionRequest\x125\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.ops.service.v1.DistributionB\x03\xe0A\x02R\x04data\"\xd0\x01\n" +
-	"\x19UpdateDistributionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x125\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.ops.service.v1.DistributionB\x03\xe0A\x02R\x04data\"\xc4\x01\n" +
+	"\x19UpdateDistributionRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x125\n" +
 	"\x04data\x18\x02 \x01(\v2\x1c.ops.service.v1.DistributionB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\"<\n" +
+	"updateMask\"<\n" +
 	"\x19DeleteDistributionRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"u\n" +
-	"\x1aTriggerDistributionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12'\n" +
+	"\x03_id\"i\n" +
+	"\x1aTriggerDistributionRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12'\n" +
 	"\n" +
-	"history_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\thistoryId\x88\x01\x01B\x05\n" +
-	"\x03_idB\r\n" +
+	"history_id\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\thistoryId\x88\x01\x01B\r\n" +
 	"\v_history_id\"\x87\x01\n" +
 	"\x1bTriggerDistributionResponse\x12\x1b\n" +
 	"\trecord_id\x18\x01 \x01(\rR\brecordId\x12,\n" +
@@ -1105,7 +1103,6 @@ func file_ops_service_v1_distribution_proto_init() {
 	}
 	file_ops_service_v1_distribution_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_distribution_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_distribution_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_distribution_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_distribution_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_distribution_proto_msgTypes[8].OneofWrappers = []any{}

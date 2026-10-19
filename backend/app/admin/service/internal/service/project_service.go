@@ -48,7 +48,6 @@ func (s *ProjectService) Update(ctx context.Context, req *opsV1.UpdateProjectReq
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.projectServiceClient.UpdateProject(ctx, req)
 }

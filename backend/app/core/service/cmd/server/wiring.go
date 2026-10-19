@@ -227,10 +227,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	certService := service.NewCertService(ctx, certRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
 	inspectionService := service.NewInspectionService(ctx, inspectionRepo, agentNodeRepo, projectRepo, alertRepo, certRepo, backupRecordRepo)
 	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotRepo, projectRepo, agentNodeRepo, agentService)
-	configService := service.NewConfigService(ctx, configTemplateRepo, configDistRepo, agentNodeRepo, minIOClient, agentService)
+	configService := service.NewConfigService(ctx, configTemplateRepo, configDistRepo, agentNodeRepo, projectRepo, minIOClient, agentService)
 
 	// 定时调度(构建/脚本/备份/预算/证书 cron + 监控检查)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
 	cronScheduler.Start(ctx.Context())
 
 	// EMQX broker 认证 webhook(最小 HTTP listener, :9500)

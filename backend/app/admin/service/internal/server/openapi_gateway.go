@@ -109,17 +109,17 @@ func (g *OpenApiGateway) trigger(w http.ResponseWriter, r *http.Request, kind st
 	)
 	switch kind {
 	case "builds":
-		resp, err = g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: &id})
+		resp, err = g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerBuildResponse))
 		}
 	case "distributions":
-		resp, err = g.distClient.TriggerDistribution(r.Context(), &opsV1.TriggerDistributionRequest{Id: &id})
+		resp, err = g.distClient.TriggerDistribution(r.Context(), &opsV1.TriggerDistributionRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerDistributionResponse))
 		}
 	case "pipelines":
-		resp, err = g.pipelineClient.TriggerPipeline(r.Context(), &opsV1.TriggerPipelineRequest{Id: &id})
+		resp, err = g.pipelineClient.TriggerPipeline(r.Context(), &opsV1.TriggerPipelineRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerPipelineResponse))
 		}
@@ -156,7 +156,7 @@ func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, buil
 		}
 	}
 
-	resp, err := g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: &buildId})
+	resp, err := g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: buildId})
 	if err != nil {
 		writeKratosError(w, err)
 		return

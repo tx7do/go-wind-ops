@@ -439,7 +439,7 @@ func (x *CreatePipelineRequest) GetData() *Pipeline {
 
 type UpdatePipelineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`    // 流水线ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`          // 流水线ID
 	Data          *Pipeline              `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"` // 更新数据
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -476,8 +476,8 @@ func (*UpdatePipelineRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdatePipelineRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -535,7 +535,7 @@ func (x *DeletePipelineRequest) GetId() uint32 {
 
 type TriggerPipelineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 流水线ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -571,8 +571,8 @@ func (*TriggerPipelineRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *TriggerPipelineRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -1082,18 +1082,16 @@ const file_ops_service_v1_pipeline_proto_rawDesc = "" +
 	"\x03_id\"X\n" +
 	"\x15CreatePipelineRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.ops.service.v1.PipelineB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
-	"\x05_data\"y\n" +
-	"\x15UpdatePipelineRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x126\n" +
-	"\x04data\x18\x02 \x01(\v2\x18.ops.service.v1.PipelineB\x03\xe0A\x02H\x01R\x04data\x88\x01\x01B\x05\n" +
-	"\x03_idB\a\n" +
+	"\x05_data\"m\n" +
+	"\x15UpdatePipelineRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x126\n" +
+	"\x04data\x18\x02 \x01(\v2\x18.ops.service.v1.PipelineB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
 	"\x05_data\"8\n" +
 	"\x15DeletePipelineRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"9\n" +
-	"\x16TriggerPipelineRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"E\n" +
+	"\x03_id\"-\n" +
+	"\x16TriggerPipelineRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"E\n" +
 	"\x17TriggerPipelineResponse\x12\x1f\n" +
 	"\x06run_id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x05runId\x88\x01\x01B\t\n" +
 	"\a_run_id\"b\n" +
@@ -1261,7 +1259,6 @@ func file_ops_service_v1_pipeline_proto_init() {
 	file_ops_service_v1_pipeline_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_pipeline_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_pipeline_proto_msgTypes[6].OneofWrappers = []any{}
-	file_ops_service_v1_pipeline_proto_msgTypes[7].OneofWrappers = []any{}
 	file_ops_service_v1_pipeline_proto_msgTypes[8].OneofWrappers = []any{}
 	file_ops_service_v1_pipeline_proto_msgTypes[10].OneofWrappers = []any{}
 	file_ops_service_v1_pipeline_proto_msgTypes[11].OneofWrappers = []any{}

@@ -571,6 +571,8 @@ func (m *UpdateAgentNodeRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if all {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
@@ -627,10 +629,6 @@ func (m *UpdateAgentNodeRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
-	}
-
-	if m.Id != nil {
-		// no validation rules for Id
 	}
 
 	if len(errors) > 0 {
@@ -841,11 +839,9 @@ func (m *SendCommandRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Action
+	// no validation rules for Id
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Action
 
 	if m.AgentId != nil {
 		// no validation rules for AgentId

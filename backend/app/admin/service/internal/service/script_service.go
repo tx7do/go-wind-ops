@@ -48,7 +48,6 @@ func (s *ScriptService) Update(ctx context.Context, req *opsV1.UpdateScriptReque
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.scriptServiceClient.UpdateScript(ctx, req)
 }

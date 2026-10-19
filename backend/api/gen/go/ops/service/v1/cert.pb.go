@@ -326,7 +326,7 @@ func (x *CreateCertRequest) GetData() *Cert {
 
 type UpdateCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 证书ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 证书ID
 	Data          *Cert                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -364,8 +364,8 @@ func (*UpdateCertRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateCertRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -430,7 +430,7 @@ func (x *DeleteCertRequest) GetId() uint32 {
 
 type ProbeCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 证书ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 证书ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -466,8 +466,8 @@ func (*ProbeCertRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *ProbeCertRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -592,19 +592,17 @@ const file_ops_service_v1_cert_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"B\n" +
 	"\x11CreateCertRequest\x12-\n" +
-	"\x04data\x18\x01 \x01(\v2\x14.ops.service.v1.CertB\x03\xe0A\x02R\x04data\"\xc0\x01\n" +
-	"\x11UpdateCertRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x14.ops.service.v1.CertB\x03\xe0A\x02R\x04data\"\xb4\x01\n" +
+	"\x11UpdateCertRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x14.ops.service.v1.CertB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\"4\n" +
+	"updateMask\"4\n" +
 	"\x11DeleteCertRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"3\n" +
-	"\x10ProbeCertRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\xeb\x01\n" +
+	"\x03_id\"'\n" +
+	"\x10ProbeCertRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"\xeb\x01\n" +
 	"\x11ProbeCertResponse\x12\x1b\n" +
 	"\x06issuer\x18\x01 \x01(\tH\x00R\x06issuer\x88\x01\x01\x12<\n" +
 	"\tnot_after\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bnotAfter\x88\x01\x01\x12*\n" +
@@ -691,9 +689,7 @@ func file_ops_service_v1_cert_proto_init() {
 	}
 	file_ops_service_v1_cert_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_cert_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_cert_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_cert_proto_msgTypes[5].OneofWrappers = []any{}
-	file_ops_service_v1_cert_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_cert_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

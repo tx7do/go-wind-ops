@@ -125,7 +125,7 @@ message CreatePipelineRequest {
 }
 
 message UpdatePipelineRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID
@@ -144,7 +144,7 @@ message DeletePipelineRequest {
 }
 
 message TriggerPipelineRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID

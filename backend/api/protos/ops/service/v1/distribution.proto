@@ -175,7 +175,7 @@ message CreateDistributionRequest {
 }
 
 message UpdateDistributionRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID
@@ -201,7 +201,7 @@ message DeleteDistributionRequest {
 }
 
 message TriggerDistributionRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID

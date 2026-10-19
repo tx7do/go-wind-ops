@@ -48,7 +48,6 @@ func (s *MonitorService) Update(ctx context.Context, req *opsV1.UpdateMonitorReq
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.monitorServiceClient.UpdateMonitor(ctx, req)
 }

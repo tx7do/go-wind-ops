@@ -82,7 +82,7 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 	agentId := req.GetAgentId()
 	nodeID := uint32(0)
 	if req.GetId() != 0 {
-		node, err := s.repo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: req.Id})
+		node, err := s.repo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &req.Id})
 		if err != nil {
 			return nil, err
 		}

@@ -310,7 +310,7 @@ func (x *CreateCloudBudgetRequest) GetData() *CloudBudget {
 
 type UpdateCloudBudgetRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 预算ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 预算ID
 	Data          *CloudBudget           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -348,8 +348,8 @@ func (*UpdateCloudBudgetRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateCloudBudgetRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -492,13 +492,12 @@ const file_ops_service_v1_cloud_budget_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"P\n" +
 	"\x18CreateCloudBudgetRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.ops.service.v1.CloudBudgetB\x03\xe0A\x02R\x04data\"\xce\x01\n" +
-	"\x18UpdateCloudBudgetRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x124\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.ops.service.v1.CloudBudgetB\x03\xe0A\x02R\x04data\"\xc2\x01\n" +
+	"\x18UpdateCloudBudgetRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x124\n" +
 	"\x04data\x18\x02 \x01(\v2\x1b.ops.service.v1.CloudBudgetB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\";\n" +
+	"updateMask\";\n" +
 	"\x18DeleteCloudBudgetRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\x19\n" +
@@ -571,7 +570,6 @@ func file_ops_service_v1_cloud_budget_proto_init() {
 	}
 	file_ops_service_v1_cloud_budget_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_budget_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_cloud_budget_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_cloud_budget_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

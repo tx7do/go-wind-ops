@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -43,16 +46,18 @@ type CronScheduler struct {
 	budgetService    *CloudBudgetService
 	certRepo         *data.CertRepo
 	certService      *CertService
+	logSnapshotService *LogSnapshotService
 	historyRepo      *data.BuildHistoryRepo
 	ossClient        *oss.MinIOClient
 
 	lastRetentionSweep time.Time
 	lastBudgetCheck    time.Time
 	lastCertCheck      time.Time
+	lastLogSnapshot    time.Time
 	log                *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
 		ctx:              ctx,
 		buildRepo:        buildRepo,
@@ -68,6 +73,7 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		budgetService:    budgetService,
 		certRepo:         certRepo,
 		certService:      certService,
+		logSnapshotService: logSnapshotService,
 		historyRepo:      historyRepo,
 		ossClient:        ossClient,
 		buildService:     buildService,
@@ -94,6 +100,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.tickBackups(ctx)
 				s.tickBudgets(ctx)
 				s.tickCerts(ctx)
+				s.tickLogSnapshots(ctx)
 				s.tickRetention(ctx)
 			}
 		}
@@ -117,10 +124,15 @@ func (s *CronScheduler) tickBuilds(ctx context.Context) {
 		if err != nil {
 			continue
 		}
-		last := b.GetLastCronAt().AsTime()
-		if last.IsZero() {
-			last = now
+		if b.GetLastCronAt() == nil {
+			// 新任务的空锚点先落当前时间(不补跑),从下一个 cron 周期起
+			// 正常触发;NULL 直接走 CAS 会因 EQ(NULL) 永远匹配不上而永不触发。
+			if ok, _ := s.buildRepo.AdvanceCronAnchorFromNull(ctx, b.GetId(), now); ok {
+				s.log.Infof("cron build anchor initialized (build=%d spec=%s)", b.GetId(), spec)
+			}
+			continue
 		}
+		last := b.GetLastCronAt().AsTime()
 		next := schedule.Next(last)
 		if next.After(now) {
 			continue
@@ -130,7 +142,7 @@ func (s *CronScheduler) tickBuilds(ctx context.Context) {
 			continue
 		}
 		s.log.Infof("cron build triggered (build=%d no=%d spec=%s)", b.GetId(), b.GetBuildNo()+1, spec)
-		if _, err = s.buildService.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: b.Id}); err != nil {
+		if _, err = s.buildService.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: b.GetId()}); err != nil {
 			s.log.Errorf("cron build trigger failed (build=%d): %s", b.GetId(), err.Error())
 		}
 	}
@@ -153,10 +165,14 @@ func (s *CronScheduler) tickScripts(ctx context.Context) {
 		if err != nil {
 			continue
 		}
-		last := sc.GetLastCronAt().AsTime()
-		if last.IsZero() {
-			last = now
+		if sc.GetLastCronAt() == nil {
+			// 同 tickBuilds:空锚点先落锚,避免 NULL 永不触发。
+			if ok, _ := s.scriptRepo.AdvanceCronAnchorFromNull(ctx, sc.GetId(), now); ok {
+				s.log.Infof("cron script anchor initialized (script=%d spec=%s)", sc.GetId(), spec)
+			}
+			continue
 		}
+		last := sc.GetLastCronAt().AsTime()
 		next := schedule.Next(last)
 		if next.After(now) {
 			continue
@@ -167,7 +183,7 @@ func (s *CronScheduler) tickScripts(ctx context.Context) {
 		}
 		s.log.Infof("cron script triggered (script=%d node=%d spec=%s)", sc.GetId(), nodeID, spec)
 		if _, err = s.scriptService.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{
-			Id:     sc.Id,
+			Id:     sc.GetId(),
 			NodeId: &nodeID,
 		}); err != nil {
 			s.log.Errorf("cron script execute failed (script=%d): %s", sc.GetId(), err.Error())
@@ -319,6 +335,36 @@ func (s *CronScheduler) tickBudgets(ctx context.Context) {
 	if err := s.budgetService.RunBudgetCheck(ctx, false); err != nil {
 		s.log.Warnf("budget check: %s", err.Error())
 	}
+}
+
+// logSnapshotIntervalMinutes 日志快照定时采集间隔(分钟),环境变量
+// LOG_SNAPSHOT_INTERVAL_MINUTES 配置,0(默认)=关闭定时仅手动。
+var logSnapshotIntervalMinutes = func() int {
+	if v := strings.TrimSpace(os.Getenv("LOG_SNAPSHOT_INTERVAL_MINUTES")); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			return n
+		}
+	}
+	return 0
+}()
+
+// tickLogSnapshots 定时采集:全部项目逐个采集(trigger=SCHEDULED),单个
+// 失败不影响其余;整循环放 goroutine 避免拖长 30s tick。
+func (s *CronScheduler) tickLogSnapshots(ctx context.Context) {
+	if s.logSnapshotService == nil || logSnapshotIntervalMinutes <= 0 {
+		return
+	}
+	if time.Since(s.lastLogSnapshot) < time.Duration(logSnapshotIntervalMinutes)*time.Minute {
+		return
+	}
+	s.lastLogSnapshot = time.Now()
+	go func() {
+		bgCtx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+		defer cancel()
+		if err := s.logSnapshotService.CaptureAll(bgCtx); err != nil {
+			s.log.Warnf("scheduled log snapshot: %s", err.Error())
+		}
+	}()
 }
 
 // tickCerts 证书调度探测 + 到期检查(cron 命中或每日兜底)。

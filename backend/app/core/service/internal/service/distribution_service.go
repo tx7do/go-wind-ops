@@ -129,7 +129,7 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 		return nil, opsV1.ErrorBadRequest("invalid parameter: id required")
 	}
 
-	dist, err := s.repo.Get(ctx, &opsV1.GetDistributionRequest{Id: req.Id})
+	dist, err := s.repo.Get(ctx, &opsV1.GetDistributionRequest{Id: &req.Id})
 	if err != nil {
 		return nil, err
 	}

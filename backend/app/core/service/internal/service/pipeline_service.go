@@ -295,7 +295,7 @@ func stepDisplayName(st *opsV1.PipelineStep) string {
 
 // runBuildStep 构建:触发后轮询构建历史终态。
 func (s *PipelineService) runBuildStep(ctx context.Context, runID uint32, st *opsV1.PipelineStep) error {
-	resp, err := s.buildSvc.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: st.RefId})
+	resp, err := s.buildSvc.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: st.GetRefId()})
 	if err != nil {
 		return fmt.Errorf("trigger build: %s", err.Error())
 	}
@@ -324,7 +324,7 @@ func (s *PipelineService) runBuildStep(ctx context.Context, runID uint32, st *op
 
 // runScriptStep 脚本:同步下发后按指令台账轮询终态,输出进日志。
 func (s *PipelineService) runScriptStep(ctx context.Context, runID uint32, st *opsV1.PipelineStep) error {
-	resp, err := s.scriptSvc.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{Id: st.RefId, AgentId: st.AgentId})
+	resp, err := s.scriptSvc.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{Id: st.GetRefId(), AgentId: st.AgentId})
 	if err != nil {
 		return fmt.Errorf("execute script: %s", err.Error())
 	}
@@ -363,7 +363,7 @@ func (s *PipelineService) runScriptStep(ctx context.Context, runID uint32, st *o
 
 // runDistributionStep 分发:触发后轮询全部目标记录终态(任一 FAILED 即失败)。
 func (s *PipelineService) runDistributionStep(ctx context.Context, runID uint32, st *opsV1.PipelineStep) error {
-	resp, err := s.distSvc.TriggerDistribution(ctx, &opsV1.TriggerDistributionRequest{Id: st.RefId})
+	resp, err := s.distSvc.TriggerDistribution(ctx, &opsV1.TriggerDistributionRequest{Id: st.GetRefId()})
 	if err != nil {
 		return fmt.Errorf("trigger distribution: %s", err.Error())
 	}

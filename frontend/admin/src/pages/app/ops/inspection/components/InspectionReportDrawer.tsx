@@ -1,4 +1,5 @@
-import { Descriptions, Drawer, Spin, Table, Tag } from 'antd';
+import { Button, Descriptions, Drawer, Spin, Table, Tag } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useGetInspection } from '@/api/hooks/inspection';
 
@@ -53,6 +54,25 @@ const InspectionReportDrawer = ({ inspectionId, onClose }: Props) => {
       onClose={onClose}
       size={900}
       destroyOnHidden
+      extra={
+        data?.summary ? (
+          <Button
+            size="small"
+            icon={<DownloadOutlined />}
+            onClick={() => {
+              const blob = new Blob([data.summary as string], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `inspection-report-${inspectionId}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            {t('exportJson')}
+          </Button>
+        ) : undefined
+      }
     >
       {isFetching ? (
         <div style={{ textAlign: 'center', padding: 48 }}><Spin /></div>

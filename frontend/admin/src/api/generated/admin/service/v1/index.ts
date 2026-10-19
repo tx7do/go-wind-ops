@@ -780,7 +780,7 @@ export type opsservicev1_UpdateAgentNodeRequest = {
   data: opsservicev1_AgentNode | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -800,7 +800,7 @@ export type opsservicev1_SendCommandRequest = {
   // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id: number | undefined;
   payload?: string;
 };
 
@@ -1061,7 +1061,7 @@ export type opsservicev1_GetAlertRequest = {
 export type opsservicev1_ResolveAlertRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 // API资源管理服务
@@ -1833,7 +1833,7 @@ export type opsservicev1_UpdateApiKeyRequest = {
   data?: opsservicev1_ApiKey;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_DeleteApiKeyRequest = {
@@ -2070,7 +2070,7 @@ export type opsservicev1_GetApprovalRequest = {
 export type opsservicev1_ApproveApprovalRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 // op_approval_result 审批通过后的执行结果
@@ -2081,7 +2081,7 @@ export type opsservicev1_op_approval_result = {
 export type opsservicev1_RejectApprovalRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   reason?: string;
 };
 
@@ -2625,7 +2625,7 @@ export type opsservicev1_UpdateBackupTaskRequest = {
   data: opsservicev1_BackupTask | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -2953,7 +2953,7 @@ export type opsservicev1_UpdateBuildRequest = {
   data: opsservicev1_Build | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -2966,7 +2966,7 @@ export type opsservicev1_DeleteBuildRequest = {
 export type opsservicev1_TriggerBuildRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_TriggerBuildResponse = {
@@ -3523,7 +3523,7 @@ export type opsservicev1_UpdateCertRequest = {
   data: opsservicev1_Cert | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -3536,7 +3536,7 @@ export type opsservicev1_DeleteCertRequest = {
 export type opsservicev1_ProbeCertRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_ProbeCertResponse = {
@@ -4093,7 +4093,7 @@ export type opsservicev1_UpdateCloudBudgetRequest = {
   data: opsservicev1_CloudBudget | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -4944,7 +4944,7 @@ export type opsservicev1_UpdateConfigTemplateRequest = {
   data: opsservicev1_ConfigTemplate | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -6148,7 +6148,7 @@ export type opsservicev1_UpdateDistributionRequest = {
   data: opsservicev1_Distribution | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -6164,7 +6164,7 @@ export type opsservicev1_TriggerDistributionRequest = {
   historyId?: number;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_TriggerDistributionResponse = {
@@ -8212,7 +8212,7 @@ export type opsservicev1_UpdateMonitorRequest = {
   data: opsservicev1_Monitor | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -8462,7 +8462,7 @@ export type opsservicev1_UpdateNotificationChannelRequest = {
   data: opsservicev1_NotificationChannel | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -10304,7 +10304,7 @@ export type opsservicev1_UpdatePipelineRequest = {
   data?: opsservicev1_Pipeline;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_DeletePipelineRequest = {
@@ -10316,7 +10316,7 @@ export type opsservicev1_DeletePipelineRequest = {
 export type opsservicev1_TriggerPipelineRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
 };
 
 export type opsservicev1_TriggerPipelineResponse = {
@@ -11287,7 +11287,7 @@ export type opsservicev1_UpdateProjectRequest = {
   data: opsservicev1_Project | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -11300,7 +11300,7 @@ export type opsservicev1_DeleteProjectRequest = {
 export type opsservicev1_OperateProjectRequest = {
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   //
   // Behaviors: REQUIRED
   operation: opsservicev1_ProjectOperation | undefined;
@@ -11571,7 +11571,7 @@ export type opsservicev1_UpdateRepositoryRequest = {
   data: opsservicev1_Repository | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -12117,7 +12117,7 @@ export type opsservicev1_UpdateScriptRequest = {
   data: opsservicev1_Script | undefined;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -12133,7 +12133,7 @@ export type opsservicev1_ExecuteScriptRequest = {
   agentId?: string;
   //
   // Behaviors: REQUIRED
-  id?: number;
+  id: number | undefined;
   // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
   //
   // Behaviors: OPTIONAL

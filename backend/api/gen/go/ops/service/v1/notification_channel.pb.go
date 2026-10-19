@@ -384,7 +384,7 @@ func (x *CreateNotificationChannelRequest) GetData() *NotificationChannel {
 
 type UpdateNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *NotificationChannel   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -422,8 +422,8 @@ func (*UpdateNotificationChannelRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateNotificationChannelRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -540,13 +540,12 @@ const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"`\n" +
 	" CreateNotificationChannelRequest\x12<\n" +
-	"\x04data\x18\x01 \x01(\v2#.ops.service.v1.NotificationChannelB\x03\xe0A\x02R\x04data\"\xbe\x01\n" +
-	" UpdateNotificationChannelRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12<\n" +
+	"\x04data\x18\x01 \x01(\v2#.ops.service.v1.NotificationChannelB\x03\xe0A\x02R\x04data\"\xb2\x01\n" +
+	" UpdateNotificationChannelRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12<\n" +
 	"\x04data\x18\x02 \x01(\v2#.ops.service.v1.NotificationChannelB\x03\xe0A\x02R\x04data\x12;\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\"C\n" +
+	"updateMask\"C\n" +
 	" DeleteNotificationChannelRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id*\\\n" +
@@ -622,7 +621,6 @@ func file_ops_service_v1_notification_channel_proto_init() {
 	}
 	file_ops_service_v1_notification_channel_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_notification_channel_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_notification_channel_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_notification_channel_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

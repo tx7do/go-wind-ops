@@ -131,7 +131,7 @@ message CreateNotificationChannelRequest {
 }
 
 message UpdateNotificationChannelRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ];

@@ -286,7 +286,7 @@ func (x *CreateRepositoryRequest) GetData() *Repository {
 
 type UpdateRepositoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 仓库ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 仓库ID
 	Data          *Repository            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -324,8 +324,8 @@ func (*UpdateRepositoryRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *UpdateRepositoryRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -424,13 +424,12 @@ const file_ops_service_v1_repository_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"N\n" +
 	"\x17CreateRepositoryRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1a.ops.service.v1.RepositoryB\x03\xe0A\x02R\x04data\"\xcc\x01\n" +
-	"\x17UpdateRepositoryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x123\n" +
+	"\x04data\x18\x01 \x01(\v2\x1a.ops.service.v1.RepositoryB\x03\xe0A\x02R\x04data\"\xc0\x01\n" +
+	"\x17UpdateRepositoryRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x123\n" +
 	"\x04data\x18\x02 \x01(\v2\x1a.ops.service.v1.RepositoryB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
-	"updateMaskB\x05\n" +
-	"\x03_id\":\n" +
+	"updateMask\":\n" +
 	"\x17DeleteRepositoryRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xca\x03\n" +
@@ -498,7 +497,6 @@ func file_ops_service_v1_repository_proto_init() {
 	}
 	file_ops_service_v1_repository_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_repository_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_repository_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_repository_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

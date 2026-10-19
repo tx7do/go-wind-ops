@@ -82,7 +82,7 @@ func (s *ProjectService) UpdateProject(ctx context.Context, req *opsV1.UpdatePro
 	if req.Data.Name != nil {
 		nodeID := req.Data.GetNodeId()
 		if nodeID == 0 {
-			existing, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: req.Id})
+			existing, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: &req.Id})
 			if err != nil {
 				return nil, err
 			}
@@ -117,7 +117,7 @@ func (s *ProjectService) OperateProject(ctx context.Context, req *opsV1.OperateP
 		return nil, opsV1.ErrorBadRequest("invalid parameter: operation required")
 	}
 
-	project, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: req.Id})
+	project, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: &req.Id})
 	if err != nil {
 		return nil, err
 	}

@@ -67,8 +67,11 @@ func (s *ScriptService) UpdateScript(ctx context.Context, req *opsV1.UpdateScrip
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
-	if err := validateContent(req.Data.GetContent(), req.Data.GetTimeoutSeconds()); err != nil {
-		return nil, err
+	// 部分更新(如仅改 cron)时 content 不在 mask 内,不参与校验
+	if req.Data.Content != nil {
+		if err := validateContent(req.Data.GetContent(), req.Data.GetTimeoutSeconds()); err != nil {
+			return nil, err
+		}
 	}
 
 	if req.Data.Name != nil {
@@ -104,7 +107,7 @@ func (s *ScriptService) ExecuteScript(ctx context.Context, req *opsV1.ExecuteScr
 		return nil, opsV1.ErrorBadRequest("invalid parameter: nodeId or agentId required")
 	}
 
-	sc, err := s.repo.Get(ctx, &opsV1.GetScriptRequest{Id: req.Id})
+	sc, err := s.repo.Get(ctx, &opsV1.GetScriptRequest{Id: &req.Id})
 	if err != nil {
 		return nil, err
 	}

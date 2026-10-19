@@ -48,7 +48,6 @@ func (s *RepositoryService) Update(ctx context.Context, req *opsV1.UpdateReposit
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.repositoryServiceClient.UpdateRepository(ctx, req)
 }

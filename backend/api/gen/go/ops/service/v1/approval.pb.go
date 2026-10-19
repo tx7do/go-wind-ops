@@ -302,7 +302,7 @@ func (x *GetApprovalRequest) GetId() uint32 {
 
 type ApproveApprovalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 审批单ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 审批单ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -338,15 +338,15 @@ func (*ApproveApprovalRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *ApproveApprovalRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
 
 type RejectApprovalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`        // 审批单ID
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`              // 审批单ID
 	Reason        *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"` // 驳回原因
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -383,8 +383,8 @@ func (*RejectApprovalRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *RejectApprovalRequest) GetId() uint32 {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
@@ -440,14 +440,12 @@ const file_ops_service_v1_approval_proto_rawDesc = "" +
 	"\x05items\x18\x02 \x03(\v2\x18.ops.service.v1.ApprovalR\x05items\"5\n" +
 	"\x12GetApprovalRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"9\n" +
-	"\x16ApproveApprovalRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"t\n" +
-	"\x15RejectApprovalRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12/\n" +
-	"\x06reason\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f驳回原因H\x01R\x06reason\x88\x01\x01B\x05\n" +
-	"\x03_idB\t\n" +
+	"\x03_id\"-\n" +
+	"\x16ApproveApprovalRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\"h\n" +
+	"\x15RejectApprovalRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12/\n" +
+	"\x06reason\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f驳回原因H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason2\xe8\x02\n" +
 	"\x0fApprovalService\x12R\n" +
 	"\rListApprovals\x12\x19.pagination.PagingRequest\x1a$.ops.service.v1.ListApprovalResponse\"\x00\x12M\n" +
@@ -506,7 +504,6 @@ func file_ops_service_v1_approval_proto_init() {
 	}
 	file_ops_service_v1_approval_proto_msgTypes[1].OneofWrappers = []any{}
 	file_ops_service_v1_approval_proto_msgTypes[3].OneofWrappers = []any{}
-	file_ops_service_v1_approval_proto_msgTypes[4].OneofWrappers = []any{}
 	file_ops_service_v1_approval_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

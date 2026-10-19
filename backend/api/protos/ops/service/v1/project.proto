@@ -175,7 +175,7 @@ message CreateProjectRequest {
 }
 
 message UpdateProjectRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -201,7 +201,7 @@ message DeleteProjectRequest {
 }
 
 message OperateProjectRequest {
-  optional uint32 id = 1 [
+  uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID

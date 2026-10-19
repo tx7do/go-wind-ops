@@ -762,9 +762,7 @@ func (m *UpdatePipelineRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if m.Data != nil {
 
@@ -1007,9 +1005,7 @@ func (m *TriggerPipelineRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return TriggerPipelineRequestMultiError(errors)

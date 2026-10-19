@@ -177,7 +177,7 @@ make test
 - [x] 定时构建/脚本：cron 表达式调度（CAS 锚点去重），构建在 core 触发、脚本下发到目标节点
 - [ ] 准入加固：EMQX webhook 认证/ACL、STS 短令牌轮换
 - [x] 定时构建：cron 表达式调度
-- [ ] 构建日志实时 tail
+- [x] 构建日志实时 tail(GetBuildHistoryLog 增量拉取 + 前端 2s 追加)
 - [ ] 日志增强：WebSocket 实时 tail、日志文件下载/备份、控制台编码转换（Windows GBK 输出按原样字节存储）
 
 ## 参与贡献

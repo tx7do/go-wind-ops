@@ -48,7 +48,6 @@ func (s *NotificationChannelService) Update(ctx context.Context, req *opsV1.Upda
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.notificationChannelServiceClient.UpdateChannel(ctx, req)
 }

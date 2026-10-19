@@ -655,6 +655,8 @@ func (m *UpdateScriptRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if all {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
@@ -711,10 +713,6 @@ func (m *UpdateScriptRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
-	}
-
-	if m.Id != nil {
-		// no validation rules for Id
 	}
 
 	if len(errors) > 0 {
@@ -925,9 +923,7 @@ func (m *ExecuteScriptRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if m.NodeId != nil {
 		// no validation rules for NodeId

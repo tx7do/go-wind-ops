@@ -51,7 +51,6 @@ func (s *ConfigService) Update(ctx context.Context, req *opsV1.UpdateConfigTempl
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	req.Data.Id = req.Id
 
 	return s.configServiceClient.UpdateConfigTemplate(ctx, req)
 }

@@ -142,7 +142,9 @@ func (r *ScriptRepo) Create(ctx context.Context, req *opsV1.CreateScriptRequest,
 		SetNillableDescription(req.Data.Description).
 		SetContent(req.Data.GetContent()).
 		SetNillableTimeoutSeconds(req.Data.TimeoutSeconds).
-		SetLabels(req.Data.Labels)
+		SetLabels(req.Data.Labels).
+		SetNillableCron(req.Data.Cron).
+		SetNillableCronNodeID(req.Data.CronNodeId)
 
 	if operatorID > 0 {
 		builder.SetCreatedBy(operatorID)
@@ -170,7 +172,9 @@ func (r *ScriptRepo) Update(ctx context.Context, req *opsV1.UpdateScriptRequest)
 			builder.
 				SetNillableName(req.Data.Name).
 				SetNillableDescription(req.Data.Description).
-				SetNillableTimeoutSeconds(req.Data.TimeoutSeconds)
+				SetNillableTimeoutSeconds(req.Data.TimeoutSeconds).
+				SetNillableCron(req.Data.Cron).
+				SetNillableCronNodeID(req.Data.CronNodeId)
 
 			if req.Data.Content != nil {
 				builder.SetContent(req.Data.GetContent())
@@ -205,6 +209,21 @@ func (r *ScriptRepo) Delete(ctx context.Context, req *opsV1.DeleteScriptRequest)
 	}
 
 	return nil
+}
+
+// AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效):
+// 新建任务 last_cron_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致定时
+// 调度从未触发;首见先落锚不补跑,从下一个周期起正常调度。
+func (r *ScriptRepo) AdvanceCronAnchorFromNull(ctx context.Context, scriptID uint32, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Script.
+		Update().
+		Where(
+			script.IDEQ(scriptID),
+			script.LastCronAtIsNil(),
+		).
+		SetLastCronAt(now).
+		Save(ctx)
+	return n > 0, err
 }
 
 // AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected

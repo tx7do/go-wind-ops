@@ -149,7 +149,7 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 		return nil, opsV1.ErrorBadRequest("invalid parameter: id required")
 	}
 
-	buildDto, err := s.repo.Get(ctx, &opsV1.GetBuildRequest{Id: req.Id})
+	buildDto, err := s.repo.Get(ctx, &opsV1.GetBuildRequest{Id: &req.Id})
 	if err != nil {
 		return nil, err
 	}
