@@ -543,6 +543,8 @@ github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 h1:p1B1jpGN3SqoTrrr
 github.com/tx7do/kratos-transport/transport/keepalive v1.3.5/go.mod h1:vfYTnR7EpZfn2+jv1rscmhfNTDvEa5TBDEgU6iuTFwA=
 github.com/tx7do/kratos-transport/transport/mqtt v1.3.6 h1:+Mlk1X5M4VoR+ym6yRUlsDF2FQNZX9vaysrwJePr534=
 github.com/tx7do/kratos-transport/transport/mqtt v1.3.6/go.mod h1:w6vs7SnSS2vExHyHB9QnnDIk7nI/l67ZiJ4mn2fykUs=
+github.com/u-root/gobusybox/src v0.0.0-20221229083637-46b2883a7f90 h1:zTk5683I9K62wtZ6eUa6vu6IWwVHXPnoKK5n2unAwv0=
+github.com/u-root/gobusybox/src v0.0.0-20221229083637-46b2883a7f90/go.mod h1:lYt+LVfZBBwDZ3+PHk4k/c/TnKOkjJXiJO73E32Mmpc=
 github.com/u-root/u-root v0.11.0 h1:6gCZLOeRyevw7gbTwMj3fKxnr9+yHFlgF3N7udUVNO8=
 github.com/u-root/u-root v0.11.0/go.mod h1:DBkDtiZyONk9hzVEdB/PWI9B4TxDkElWlVTHseglrZY=
 github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
@@ -737,6 +739,8 @@ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
 golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
 golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
 golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
+golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=

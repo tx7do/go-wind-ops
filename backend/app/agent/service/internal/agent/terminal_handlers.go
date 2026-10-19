@@ -4,6 +4,7 @@
 package agent
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -56,6 +57,10 @@ type terminalSessionManager struct {
 
 	mu       sync.Mutex
 	sessions map[string]*terminalSession
+
+	// consoleMu 串行化 Windows 控制台状态操作(FreeConsole/AttachConsole/
+	// CtrlHandler 是进程级状态,与 open/inject 并发会互踩)。
+	consoleMu sync.Mutex
 }
 
 func newTerminalSessionManager(svc *Service) *terminalSessionManager {
@@ -172,6 +177,17 @@ func (s *Service) HandleTerminalInput(ctx context.Context, _ string, _ broker.He
 		return nil
 	}
 	sess.touch()
+	// Ctrl+C(0x03): ConPTY 的 VT 输入流不生成控制台事件,须向控制台显式
+	// 投递才能中断运行中的前台子进程;0x03 本身仍透传 PTY(conhost 原生
+	// 行纪律负责取消行编辑等)。
+	if bytes.IndexByte(data, 0x03) >= 0 {
+		s.terminal.consoleMu.Lock()
+		if ierr := interruptForeground(sess.ptyCmd.Process.Pid); ierr != nil {
+			s.log().Warnf("terminal ctrl+c deliver (session=%s pid=%d): %s",
+				msg.SessionId, sess.ptyCmd.Process.Pid, ierr.Error())
+		}
+		s.terminal.consoleMu.Unlock()
+	}
 	if _, err = sess.pty.Write(data); err != nil {
 		s.log().Warnf("terminal stdin write (session=%s): %s", msg.SessionId, err.Error())
 	}
@@ -218,10 +234,18 @@ func (m *terminalSessionManager) open(sessionId string, cols, rows uint32) (*ter
 	}
 	ptyCmd.Env = os.Environ()
 
-	if err = ptyCmd.Start(); err != nil {
+	// 清除本进程(可能继承自服务链)的"忽略 CTRL_C"标志再起子进程——该标志
+	// 会遗传给 cmd→子进程整条链,导致 Ctrl+C 全链失效;起完立即给自身设回
+	// 免疫(投递事件时不波及自己)。进程级状态,用 consoleMu 串行化。
+	m.consoleMu.Lock()
+	prepareChildCtrlC()
+	startErr := ptyCmd.Start()
+	restoreSelfCtrlC()
+	m.consoleMu.Unlock()
+	if startErr != nil {
 		_ = pt.Close()
 		cancel()
-		return nil, fmt.Errorf("start %s: %w", shellName, err)
+		return nil, fmt.Errorf("start %s: %w", shellName, startErr)
 	}
 	if cols > 0 && rows > 0 {
 		_ = pt.Resize(int(cols), int(rows))

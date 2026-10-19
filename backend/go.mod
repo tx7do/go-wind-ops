@@ -5,6 +5,7 @@ go 1.26.4
 require (
 	entgo.io/ent v0.14.6
 	github.com/alicebob/miniredis/v2 v2.38.0
+	github.com/aymanbagabas/go-pty v0.2.2
 	github.com/dtm-labs/dtm v1.19.0
 	github.com/eclipse/paho.mqtt.golang v1.5.1
 	github.com/envoyproxy/protoc-gen-validate v1.3.3
@@ -62,6 +63,7 @@ require (
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.13
 	github.com/tx7do/kratos-transport/transport/mqtt v1.3.6
 	go.opentelemetry.io/otel/trace v1.46.0
+	golang.org/x/sys v0.48.0
 	google.golang.org/genproto v0.0.0-20260810153831-ec0a7760b754
 	google.golang.org/genproto/googleapis/api v0.0.0-20260825221802-da73d73af1c5
 	google.golang.org/grpc v1.83.2
@@ -81,7 +83,6 @@ require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
-	github.com/aymanbagabas/go-pty v0.2.2 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
@@ -241,7 +242,6 @@ require (
 	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.49.0 // indirect
