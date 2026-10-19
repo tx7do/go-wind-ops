@@ -37,5 +37,8 @@
   "pullReady": "Ready ({size} bytes), download window opened",
   "pullFailed": "Pull failed (machine offline / path not allowed / timeout)",
   "uploadDone": "Uploaded ({size} bytes)",
-  "uploadFailed": "Upload failed"
+  "uploadFailed": "Upload failed",
+  "dropHere": "Drop to upload to current directory",
+  "folderSkip": "Folders are not supported yet, please archive them",
+  "dropBatchDone": "Drop upload finished {{ok}}/{{total}}"
 }

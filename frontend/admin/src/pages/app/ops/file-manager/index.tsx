@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Breadcrumb, Button, Descriptions, Drawer, Input, Popconfirm, Select, Space, Spin, Table, Tag, Tooltip, Typography } from 'antd';
 import {
   DeleteOutlined,
@@ -50,7 +50,6 @@ type EditorState = { path: string; content: string; truncated: boolean; loading:
 const FileManager = () => {
   const { t } = useTranslation('file');
   const { message } = App.useApp();
-  const queryClient = useQueryClient();
 
   const [agentId, setAgentId] = useState<string>();
   const [dirInput, setDirInput] = useState('');
@@ -98,7 +97,7 @@ const FileManager = () => {
     onError: (e: Error) => message.error(e.message || t('writeFailed')),
   });
   // 大文件下载:agent 经对象存储中转,拿预签名 URL 后开新窗口
-  const [pulling, setPulling] = useState(false);
+  const [, setPulling] = useState(false);
   const downloadFile = async (path: string) => {
     if (!agentId) return;
     setPulling(true);
@@ -115,8 +114,10 @@ const FileManager = () => {
 
   // 大文件上传:直传对象存储 → 指令 agent 落盘
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
-  const onUploadPicked = async (file: File) => {
+  const [dropActive, setDropActive] = useState(false);
+  const onUploadPicked = async (file: File): Promise<boolean> => {
     if (!agentId || !currentDir) {
       message.warning(t('pickAgentFirst'));
       return false;
@@ -129,14 +130,70 @@ const FileManager = () => {
       const done = await fetchCompleteAgentFilePush(agentId, targetPath, prep.objectKey || '');
       message.success(t('uploadDone', { size: done.size ?? 0 }));
       refresh();
+      return true;
     } catch (e) {
       message.error((e as Error).message || t('uploadFailed'));
+      return false;
     } finally {
       setUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = '';
     }
-    return false; // 阻止 antd Upload 默认行为
   };
+
+  // 整页拖拽=上传到当前目录(与选择文件按钮同一链路);目录项第一版不支持
+  const onUploadPickedRef = useRef(onUploadPicked);
+  onUploadPickedRef.current = onUploadPicked;
+  useEffect(() => {
+    const host = rootRef.current;
+    if (!host) return;
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
+    const onDragOver = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      setDropActive(true);
+    };
+    const onDragLeave = (e: DragEvent) => {
+      if (e.relatedTarget && host.contains(e.relatedTarget as Node)) return;
+      setDropActive(false);
+    };
+    const onDrop = async (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      setDropActive(false);
+      const files: File[] = [];
+      let dirs = 0;
+      for (const item of Array.from(e.dataTransfer?.items || [])) {
+        const entry = (
+          item as DataTransferItem & { webkitGetAsEntry?: () => { isDirectory: boolean } | null }
+        ).webkitGetAsEntry?.();
+        if (entry?.isDirectory) {
+          dirs += 1;
+          continue;
+        }
+        const f = item.getAsFile();
+        if (f) files.push(f);
+      }
+      if (dirs > 0) message.warning(t('folderSkip'));
+      if (!files.length) return;
+      if (!agentId || !currentDir) {
+        message.warning(t('pickAgentFirst'));
+        return;
+      }
+      let ok = 0;
+      for (const f of files) {
+        if (await onUploadPickedRef.current(f)) ok += 1;
+      }
+      if (files.length > 1) message.info(t('dropBatchDone', { ok, total: files.length }));
+    };
+    host.addEventListener('dragover', onDragOver);
+    host.addEventListener('dragleave', onDragLeave);
+    host.addEventListener('drop', onDrop);
+    return () => {
+      host.removeEventListener('dragover', onDragOver);
+      host.removeEventListener('dragleave', onDragLeave);
+      host.removeEventListener('drop', onDrop);
+    };
+  }, [agentId, currentDir, message, t]);
 
   const deleteMutation = useDeleteAgentFile({
     onSuccess: () => {
@@ -216,7 +273,27 @@ const FileManager = () => {
   const canBrowse = Boolean(agentId && currentDir);
 
   return (
-    <div style={{ padding: 16 }}>
+    <div ref={rootRef} style={{ padding: 16, position: 'relative' }}>
+      {dropActive && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 8,
+            border: '2px dashed #1668dc',
+            background: 'rgba(22, 104, 220, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 20,
+            pointerEvents: 'none',
+            color: '#4096ff',
+            fontSize: 18,
+          }}
+        >
+          {t('dropHere')}
+        </div>
+      )}
       <Space direction="vertical" style={{ width: '100%' }} size="middle">
         <Space wrap>
           <Select

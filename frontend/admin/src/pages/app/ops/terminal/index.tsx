@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { App, Button, Select, Space, Tag, Tooltip, Typography } from 'antd';
-import { ClearOutlined, HistoryOutlined, PoweroffOutlined } from '@ant-design/icons';
+import { App, Button, Input, Modal, Select, Space, Tag, Tooltip, Typography } from 'antd';
+import { ClearOutlined, HistoryOutlined, PoweroffOutlined, UploadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_TerminalSession } from '@/api/generated/admin/service/v1';
 import TerminalSessionsDrawer from './components/TerminalSessionsDrawer';
@@ -12,6 +12,7 @@ import '@xterm/xterm/css/xterm.css';
 import { useQuery } from '@tanstack/react-query';
 import { PaginationQuery } from '@/core';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
+import { uploadAgentFile, formatBytes, joinRemotePath } from '@/api/hooks/file';
 import { useAuthStore } from '@/stores/auth';
 
 /** 构造终端 WS 地址(经 dev 代理或网关同源转发)。 */
@@ -23,6 +24,7 @@ function buildWsUrl(token: string, agentId: string): string {
 // 记忆选择与字号(localStorage 持久化)
 const LAST_AGENT_KEY = 'terminal:lastAgentId';
 const FONT_SIZE_KEY = 'terminal:fontSize';
+const LAST_UPLOAD_DIR_KEY = 'terminal:lastUploadDir';
 // 网络断开自动重连次数上限(每次重连会在 agent 上开新会话,旧会话闲置 15 分钟自动回收)
 const RECONNECT_MAX = 3;
 
@@ -42,11 +44,18 @@ const TerminalPage = () => {
   const [connecting, setConnecting] = useState(false);
   const [fontSize, setFontSize] = useState<number>(readFontSize);
   const [title, setTitle] = useState('');
+  // 拖拽/按钮上传:待确认文件列表 + 目标目录
+  const [dropActive, setDropActive] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [uploadDir, setUploadDir] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const hostRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const openSessionRef = useRef<(agentId: string) => void>(() => {});
   const agentIdRef = useRef<string | undefined>(undefined);
@@ -205,6 +214,123 @@ const TerminalPage = () => {
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, [connected]);
+
+  // 拖文件进终端=上传到远端:dragover 放行 → drop 收集文件(跳过文件夹)→ 弹目录确认
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
+    const onDragOver = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      setDropActive(true);
+    };
+    const onDragLeave = (e: DragEvent) => {
+      if (e.relatedTarget && host.contains(e.relatedTarget as Node)) return;
+      setDropActive(false);
+    };
+    const onDrop = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      setDropActive(false);
+      const files: File[] = [];
+      let dirs = 0;
+      for (const item of Array.from(e.dataTransfer?.items || [])) {
+        // 目录项第一版不支持(递归遍历留二期),提示打包
+        const entry = (
+          item as DataTransferItem & { webkitGetAsEntry?: () => { isDirectory: boolean } | null }
+        ).webkitGetAsEntry?.();
+        if (entry?.isDirectory) {
+          dirs += 1;
+          continue;
+        }
+        const f = item.getAsFile();
+        if (f) files.push(f);
+      }
+      if (dirs > 0) message.warning(t('folderSkip'));
+      if (!files.length) return;
+      if (!connected) {
+        message.warning(t('connectFirst'));
+        return;
+      }
+      setPendingFiles(files);
+      setUploadDir(localStorage.getItem(LAST_UPLOAD_DIR_KEY) || '');
+      setUploadOpen(true);
+    };
+    host.addEventListener('dragover', onDragOver);
+    host.addEventListener('dragleave', onDragLeave);
+    host.addEventListener('drop', onDrop);
+    return () => {
+      host.removeEventListener('dragover', onDragOver);
+      host.removeEventListener('dragleave', onDragLeave);
+      host.removeEventListener('drop', onDrop);
+    };
+  }, [connected, message, t]);
+
+  /** 执行上传并往终端写进度/结果行(进度覆写当前行,结果各自成行)。 */
+  const runUploads = useCallback(
+    async (files: File[], dir: string) => {
+      const term = termRef.current;
+      const agent = agentIdRef.current;
+      if (!term || !agent) return;
+      setUploading(true);
+      let ok = 0;
+      for (const f of files) {
+        const target = joinRemotePath(dir, f.name);
+        term.write(`\x1b[36m${t('uploadTermStart', { name: f.name, path: target })}\x1b[0m`);
+        try {
+          const done = await uploadAgentFile({
+            agentId: agent,
+            path: target,
+            file: f,
+            onProgress: (p) => {
+              term.write(`\r\x1b[2K\x1b[36m${t('uploadTermProgress', { name: f.name, percent: p })}\x1b[0m`);
+            },
+          });
+          term.write(
+            `\r\x1b[2K\x1b[32m${t('uploadTermDone', { name: f.name, size: formatBytes(done.size ?? f.size) })}\x1b[0m\r\n`,
+          );
+          ok += 1;
+        } catch (err) {
+          term.write(
+            `\r\x1b[2K\x1b[31m${t('uploadTermFail', { name: f.name, reason: (err as Error).message })}\x1b[0m\r\n`,
+          );
+        }
+      }
+      setUploading(false);
+      if (ok === files.length) message.success(t('uploadAllDone', { n: ok }));
+      else message.warning(t('uploadPartialDone', { ok, total: files.length }));
+    },
+    [message, t],
+  );
+
+  const confirmUpload = useCallback(() => {
+    const dir = uploadDir.trim();
+    if (!dir) {
+      message.warning(t('uploadDirRequired'));
+      return;
+    }
+    localStorage.setItem(LAST_UPLOAD_DIR_KEY, dir);
+    const files = pendingFiles;
+    setUploadOpen(false);
+    setPendingFiles([]);
+    void runUploads(files, dir);
+  }, [uploadDir, pendingFiles, message, t, runUploads]);
+
+  /** 打开上传确认弹层(按钮入口);拖拽入口在 drop 事件里。 */
+  const openUploadDialog = useCallback(
+    (files: File[]) => {
+      if (!files.length) return;
+      if (!connected) {
+        message.warning(t('connectFirst'));
+        return;
+      }
+      setPendingFiles(files);
+      setUploadDir(localStorage.getItem(LAST_UPLOAD_DIR_KEY) || '');
+      setUploadOpen(true);
+    },
+    [connected, message, t],
+  );
 
   const disconnect = useCallback(() => {
     if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
@@ -372,6 +498,24 @@ const TerminalPage = () => {
         >
           {t('clearScreen')}
         </Button>
+        <Button
+          icon={<UploadOutlined />}
+          disabled={!connected}
+          onClick={() => uploadInputRef.current?.click()}
+        >
+          {t('uploadBtn')}
+        </Button>
+        <input
+          ref={uploadInputRef}
+          type="file"
+          multiple
+          hidden
+          onChange={(e) => {
+            const fs = Array.from(e.target.files || []);
+            e.target.value = '';
+            openUploadDialog(fs);
+          }}
+        />
         {connected && <Tag color="success">{t('connected')}</Tag>}
         {connected && title && (
           <Tooltip title={title}>
@@ -390,13 +534,75 @@ const TerminalPage = () => {
       <div
         ref={hostRef}
         style={{
+          position: 'relative',
           flex: 1,
           minHeight: 420,
           borderRadius: 8,
           padding: 8,
           background: '#141414',
         }}
-      />
+      >
+        {dropActive && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 8,
+              borderRadius: 8,
+              border: '2px dashed #1668dc',
+              background: 'rgba(22, 104, 220, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+              pointerEvents: 'none',
+              color: '#4096ff',
+              fontSize: 16,
+            }}
+          >
+            {t('dropHere')}
+          </div>
+        )}
+      </div>
+
+      <Modal
+        title={t('uploadTitle')}
+        open={uploadOpen}
+        onCancel={() => {
+          if (uploading) return;
+          setUploadOpen(false);
+          setPendingFiles([]);
+        }}
+        onOk={confirmUpload}
+        okText={t('uploadStart')}
+        cancelText={t('uploadCancel')}
+        confirmLoading={uploading}
+        okButtonProps={{ disabled: uploading }}
+        cancelButtonProps={{ disabled: uploading }}
+        maskClosable={!uploading}
+        width={480}
+      >
+        <Typography.Paragraph type="secondary" style={{ marginBottom: 6, fontSize: 12 }}>
+          {t('uploadTargetDir')}
+        </Typography.Paragraph>
+        <Input
+          value={uploadDir}
+          placeholder={t('uploadDirPlaceholder')}
+          onChange={(e) => setUploadDir(e.target.value)}
+          disabled={uploading}
+        />
+        <div style={{ marginTop: 8, maxHeight: 180, overflow: 'auto' }}>
+          {pendingFiles.map((f, i) => (
+            <div key={`${f.name}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '2px 0' }}>
+              <Typography.Text ellipsis style={{ fontSize: 12, maxWidth: 320 }}>
+                {f.name}
+              </Typography.Text>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                {formatBytes(f.size)}
+              </Typography.Text>
+            </div>
+          ))}
+        </div>
+      </Modal>
 
       <TerminalSessionsDrawer
         open={auditOpen}

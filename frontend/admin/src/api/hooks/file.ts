@@ -61,12 +61,68 @@ export async function fetchCompleteAgentFilePush(agentId: string, path: string, 
   return apiClient.fileService.CompleteAgentFilePush({ agentId, path, objectKey });
 }
 
-/** 浏览器直传对象存储(预签名 PUT)。 */
-export async function putFileToPresignedUrl(url: string, file: File): Promise<void> {
-  const resp = await fetch(url, { method: 'PUT', body: file });
-  if (!resp.ok) {
-    throw new Error(`upload failed: HTTP ${resp.status}`);
+/** 浏览器直传对象存储(预签名 PUT);传 onProgress 时走 XHR 上报百分比。 */
+export async function putFileToPresignedUrl(
+  url: string,
+  file: File,
+  onProgress?: (percent: number) => void,
+): Promise<void> {
+  if (!onProgress) {
+    const resp = await fetch(url, { method: 'PUT', body: file });
+    if (!resp.ok) {
+      throw new Error(`upload failed: HTTP ${resp.status}`);
+    }
+    return;
   }
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url);
+    xhr.upload.onprogress = (ev) => {
+      if (ev.lengthComputable) onProgress(Math.round((ev.loaded / ev.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(`upload failed: HTTP ${xhr.status}`));
+    };
+    xhr.onerror = () => reject(new Error('upload network error'));
+    xhr.send(file);
+  });
+}
+
+/** 字节数人性化显示(终端上传回显/提示用)。 */
+export function formatBytes(n?: number): string {
+  if (!n || n <= 0) return '0B';
+  if (n < 1024) return `${n}B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)}KB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / 1024 / 1024).toFixed(1)}MB`;
+  return `${(n / 1024 / 1024 / 1024).toFixed(2)}GB`;
+}
+
+/** 远端路径拼接(分隔符跟随目录写法,win/posix 通用)。 */
+export function joinRemotePath(dir: string, name: string): string {
+  if (!dir) return name;
+  const sep = dir.includes('\\') ? '\\' : '/';
+  return dir.endsWith(sep) ? `${dir}${name}` : `${dir}${sep}${name}`;
+}
+
+export interface UploadAgentFileOptions {
+  agentId: string;
+  /** 远端绝对目标路径(含文件名) */
+  path: string;
+  file: File;
+  onProgress?: (percent: number) => void;
+}
+
+/** 上传文件到 agent(预签名三步链:prepare → 浏览器直传 MinIO → complete 落盘)。 */
+export async function uploadAgentFile({
+  agentId,
+  path,
+  file,
+  onProgress,
+}: UploadAgentFileOptions): Promise<opsservicev1_CompleteAgentFilePushResponse> {
+  const prep = await fetchPrepareAgentFilePush(agentId, path);
+  await putFileToPresignedUrl(prep.uploadUrl || '', file, onProgress);
+  return fetchCompleteAgentFilePush(agentId, path, prep.objectKey || '');
 }
 
 export function useDeleteAgentFile(
