@@ -10,6 +10,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-ops/api/gen/go/audit/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 type PermissionAuditLogService struct {
@@ -31,6 +32,11 @@ func NewPermissionAuditLogService(
 }
 
 func (s *PermissionAuditLogService) List(ctx context.Context, req *paginationV1.PagingRequest) (*auditV1.ListPermissionAuditLogResponse, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	resp, err := s.permissionAuditLogServiceClient.List(ctx, req)
 	if err != nil {
 		return nil, err
@@ -40,6 +46,11 @@ func (s *PermissionAuditLogService) List(ctx context.Context, req *paginationV1.
 }
 
 func (s *PermissionAuditLogService) Get(ctx context.Context, req *auditV1.GetPermissionAuditLogRequest) (*auditV1.PermissionAuditLog, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	resp, err := s.permissionAuditLogServiceClient.Get(ctx, req)
 	if err != nil {
 		return nil, err
@@ -49,6 +60,11 @@ func (s *PermissionAuditLogService) Get(ctx context.Context, req *auditV1.GetPer
 }
 
 func (s *PermissionAuditLogService) Create(ctx context.Context, req *auditV1.CreatePermissionAuditLogRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}

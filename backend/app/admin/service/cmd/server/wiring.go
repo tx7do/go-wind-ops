@@ -152,7 +152,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证与登录策略
-	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha)
+	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha, redisClient)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyServiceClient)
 
 	// 身份与组织

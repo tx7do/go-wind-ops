@@ -11,6 +11,7 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-ops/api/gen/go/audit/service/v1"
+	"go-wind-ops/pkg/constants"
 )
 
 type OperationAuditLogService struct {
@@ -29,14 +30,29 @@ func NewOperationAuditLogService(ctx *bootstrap.Context, operationAuditLogServic
 }
 
 func (s *OperationAuditLogService) List(ctx context.Context, req *paginationV1.PagingRequest) (*auditV1.ListOperationAuditLogResponse, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	return s.operationAuditLogServiceClient.List(ctx, req)
 }
 
 func (s *OperationAuditLogService) Get(ctx context.Context, req *auditV1.GetOperationAuditLogRequest) (*auditV1.OperationAuditLog, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	return s.operationAuditLogServiceClient.Get(ctx, req)
 }
 
 func (s *OperationAuditLogService) Create(ctx context.Context, req *auditV1.CreateOperationAuditLogRequest) (*emptypb.Empty, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemAuditLogsPermissionCode); err != nil {
+		return nil, err
+	}
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}

@@ -1,6 +1,9 @@
 package service
 
 import (
+	"github.com/redis/go-redis/v9"
+	kratosErrors "github.com/go-kratos/kratos/v2/errors"
+	"go-wind-ops/pkg/serviceid"
 	"context"
 	"fmt"
 	"net/http"
@@ -152,17 +155,60 @@ type AuthenticationService struct {
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 
 	captchaClient *captcha.Captcha
+	redisClient   *redis.Client
+}
+
+// 登录失败锁定(防爆破):同用户名连续失败 N 次后锁定 M 分钟(Redis 计数)。
+const (
+	loginFailKeyPrefix = serviceid.ProjectName + ":login:fail:"
+	loginMaxFailures   = 5
+	loginLockMinutes   = 15
+)
+
+func loginFailKey(username string) string {
+	return loginFailKeyPrefix + strings.ToLower(username)
+}
+
+func (s *AuthenticationService) loginLockCheck(ctx context.Context, username string) error {
+	if s.redisClient == nil {
+		return nil
+	}
+	if n, err := s.redisClient.Get(ctx, loginFailKey(username)).Int(); err == nil && n >= loginMaxFailures {
+		return kratosErrors.New(http.StatusTooManyRequests, "TOO_MANY_REQUESTS",
+			"too many failed logins, retry later")
+	}
+	return nil
+}
+
+func (s *AuthenticationService) loginRecordFailure(ctx context.Context, username string) {
+	if s.redisClient == nil {
+		return
+	}
+	key := loginFailKey(username)
+	pipe := s.redisClient.TxPipeline()
+	pipe.Incr(ctx, key)
+	pipe.Expire(ctx, key, loginLockMinutes*time.Minute)
+	_, _ = pipe.Exec(ctx)
+}
+
+func (s *AuthenticationService) loginClearFailures(ctx context.Context, username string) {
+	if s.redisClient == nil {
+		return
+	}
+	s.redisClient.Del(ctx, loginFailKey(username))
 }
 
 func NewAuthenticationService(
 	ctx *bootstrap.Context,
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
 	captchaClient *captcha.Captcha,
+	redisClient *redis.Client,
 ) *AuthenticationService {
 	return &AuthenticationService{
 		log:                         log.NewHelper(log.With(ctx.GetLogger(), "module", "user/service/admin-service")),
 		authenticationServiceClient: authenticationServiceClient,
 		captchaClient:               captchaClient,
+		redisClient:                 redisClient,
 	}
 }
 
@@ -253,11 +299,22 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 		if !s.verifyLoginCaptcha(ctx) {
 			return nil, authenticationV1.ErrorBadRequest("invalid or missing captcha")
 		}
+		// ===== 失败锁定(防爆破):连续失败达阈值后拒绝,成功即清零 =====
+		if lerr := s.loginLockCheck(ctx, req.GetUsername()); lerr != nil {
+			return nil, lerr
+		}
 	}
 
 	resp, err := s.authenticationServiceClient.Login(ctx, req)
 	if err != nil {
+		// 密码授权失败即计入失败次数(验证码缺失等前置错误不计)
+		if req.GetGrantType() == authenticationV1.GrantType_password {
+			s.loginRecordFailure(ctx, req.GetUsername())
+		}
 		return nil, err
+	}
+	if req.GetGrantType() == authenticationV1.GrantType_password {
+		s.loginClearFailures(ctx, req.GetUsername())
 	}
 
 	// refresh token 经 HttpOnly Cookie 下发，不再放入响应体（对齐 go-wind-admin 上游）

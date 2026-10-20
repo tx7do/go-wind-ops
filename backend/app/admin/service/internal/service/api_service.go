@@ -242,7 +242,12 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 }
 
 // GetWalkRouteData 获取通过 WalkRoute 获取的路由数据，用于调试
-func (s *ApiService) GetWalkRouteData(_ context.Context, _ *emptypb.Empty) (*permissionV1.ListApiResponse, error) {
+func (s *ApiService) GetWalkRouteData(ctx context.Context, _ *emptypb.Empty) (*permissionV1.ListApiResponse, error) {
+
+	// 权限码门(敏感面):见 service/permguard.go
+	if err := requirePermission(ctx, constants.SystemPlatformAdminPermissionCode); err != nil {
+		return nil, err
+	}
 	if s.routeWalker == nil {
 		return nil, adminV1.ErrorInternalServerError("router walker is nil")
 	}
