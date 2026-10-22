@@ -18,9 +18,10 @@ import (
 // PipelineRunRepo 流水线运行记录仓储(手写转换,单写者模型:
 // 执行 goroutine 独占推进,Log/StepResults 增量落库)。
 //
-// updated_at 在本表是 runner 心跳语义:mixin 未定义自动更新,
-// 所有写点必须显式 SetUpdatedAt,孤儿清扫(FinalizeStaleInterrupted)
-// 依赖它判定 runner 消失;漏写会让遗留的中间态记录永远无人定案。
+// updated_at 在本表是 runner 心跳语义,孤儿清扫(FinalizeStaleInterrupted)
+// 依赖它判定 runner 消失。全局 ApplyTimeDefaultHooks(data/client)在未显式
+// 设置时会自动补写 updated_at;本仓储仍逐写点显式 SetUpdatedAt,把"每个
+// 写点都是心跳"落成不依赖全局 hook 的显式契约,便于阅读与审计。
 type PipelineRunRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper

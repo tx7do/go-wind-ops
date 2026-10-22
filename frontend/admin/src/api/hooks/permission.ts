@@ -81,7 +81,9 @@ export function useDeletePermission(
   });
 }
 
-export function useSyncPermissions(options?: UseMutationOptions<{}, Error>) {
+export function useSyncPermissions(
+  options?: UseMutationOptions<Record<never, never>, Error>,
+) {
   return useMutation({
     mutationFn: () => apiClient.permissionService.SyncPermissions({}),
     ...options,

@@ -352,8 +352,9 @@ func (r *BuildHistoryRepo) FinalizeInterruptedByRunner(ctx context.Context, runn
 // buildOrphanStaleThreshold 孤儿构建判定阈值:构建命令最长 3600s 且执行
 // 期间每 5s 刷新日志(updated_at 持续更新),克隆(≤10min)与产物上传亦各有
 // 时限;超过该阈值仍无任何更新的 PENDING/RUNNING,可判定其 runner 已消失。
-// 注意:mixin 的 updated_at 无自动更新,本仓储所有写点必须显式
-// SetUpdatedAt(含 Create,否则 MarkRunning 前卡死的记录无人兜底)。
+// updated_at 由全局 ApplyTimeDefaultHooks 兜底刷新,本仓储逐写点显式
+// SetUpdatedAt 是防御性冗余(Create 也写,让 MarkRunning 前卡死的记录
+// 同样可被兜底定案)。
 const buildOrphanStaleThreshold = 2 * time.Hour
 
 // FinalizeStaleInterrupted 周期清扫孤儿构建:runner 崩溃后无力自 Clean 的

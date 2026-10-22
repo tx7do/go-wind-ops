@@ -225,8 +225,18 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 			continue
 		}
 
-		if err = s.recordRepo.AttachBatch(ctx, requestId, batch.ID); err != nil {
-			s.log.Warnf("batch [%d] attach record [%s]: %s", batch.ID, requestId, err.Error())
+		// 回执可能抢在 attach 之前(极快脚本):回填时记录已终态的,回执路径
+		// 因当时 batch_id==0 已放弃计数,这里按终态补一次,保证恰好计入一次。
+		if status, aerr := s.recordRepo.AttachBatch(ctx, requestId, batch.ID); aerr != nil {
+			s.log.Warnf("batch [%d] attach record [%s]: %s", batch.ID, requestId, aerr.Error())
+		} else if status == "SUCCESS" {
+			if aerr = s.batchRepo.ApplyItemResult(ctx, batch.ID, true); aerr != nil {
+				s.log.Warnf("batch [%d] late-receipt apply (request=%s): %s", batch.ID, requestId, aerr.Error())
+			}
+		} else if status == "FAILED" {
+			if aerr = s.batchRepo.ApplyItemResult(ctx, batch.ID, false); aerr != nil {
+				s.log.Warnf("batch [%d] late-timeout apply (request=%s): %s", batch.ID, requestId, aerr.Error())
+			}
 		}
 		requestIDs = append(requestIDs, requestId)
 		dispatched++

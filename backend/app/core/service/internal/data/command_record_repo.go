@@ -156,9 +156,10 @@ func (r *CommandRecordRepo) GetByRequestID(ctx context.Context, requestID string
 		First(ctx)
 }
 
-// FinalizeByRequestID 按幂等键回填台账终态;记录不存在或已终态时静默返回
-// (重复回执/手工注入场景)。
-func (r *CommandRecordRepo) FinalizeByRequestID(ctx context.Context, requestID, status, errMsg, result string) error {
+// FinalizeByRequestID 按幂等键回填台账终态,返回实际定案的行数(0=不存在
+// 或已终态,重复回执/手工注入场景)。批次计数等"恰好一次"的后续动作必须
+// 以 n>0(本次调用完成了状态迁移)为前提,否则并发回执与超时清扫会双计数。
+func (r *CommandRecordRepo) FinalizeByRequestID(ctx context.Context, requestID, status, errMsg, result string) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().CommandRecord.
 		Update().
@@ -172,12 +173,12 @@ func (r *CommandRecordRepo) FinalizeByRequestID(ctx context.Context, requestID, 
 		SetNillableFinishedAt(&now).
 		Save(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if n == 0 {
 		r.log.Debugf("command record [%s] not pending (duplicated or unknown)", requestID)
 	}
-	return nil
+	return n, nil
 }
 
 // ptrOrNil 空串转 nil(可选文本字段不覆盖原值)。
@@ -188,9 +189,14 @@ func ptrOrNil(s string) *string {
 	return &s
 }
 
-// AttachBatch 给指令台账打上批量执行批次标记(批次先建、指令后发,事后回填)。
-func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, batchID uint32) error {
-	_, err := r.entClient.Client().CommandRecord.
+// AttachBatch 给指令台账打上批量执行批次标记(批次先建、指令后发,事后回填),
+// 返回回填后的记录状态(空串=标记已存在,重复调用)。
+//
+// 回执可能抢在本调用之前到达(极快脚本):回执路径读记录时 batch_id 仍为 0
+// 会放弃计数,因此回填时记录已终态的,调用方必须按返回状态补一次批次计数,
+// 否则该 item 永不计入、批次永远停在 RUNNING。
+func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, batchID uint32) (string, error) {
+	n, err := r.entClient.Client().CommandRecord.
 		Update().
 		Where(
 			commandrecord.RequestIDEQ(requestID),
@@ -198,7 +204,24 @@ func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, b
 		).
 		SetBatchID(batchID).
 		Save(ctx)
-	return err
+	if err != nil {
+		return "", err
+	}
+	if n == 0 {
+		return "", nil
+	}
+	rec, err := r.entClient.Client().CommandRecord.
+		Query().
+		Where(commandrecord.RequestIDEQ(requestID)).
+		Select(commandrecord.FieldStatus).
+		First(ctx)
+	if err != nil {
+		return "", err
+	}
+	if rec.Status == nil {
+		return "", nil
+	}
+	return string(*rec.Status), nil
 }
 
 // ListStalePendingBatchItems 取超时未回执且带批次标记的 PENDING 台账

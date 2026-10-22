@@ -39,6 +39,10 @@ const (
 	// 跑满上限的脚本会先被扫成 FAILED,迟到的真实回执被幂等丢弃,流水线
 	// 脚本步骤据 FAILED 误判(agent 端实际成功)。
 	commandTimeout = 15 * time.Minute
+	// distCommandTimeout 分发回执超时:分发应用(解压/重启/迁移)可能接近流水线
+	// 分发步骤上限(pipelineDistTimeout=20min),清扫阈值必须大于它,否则合法
+	// 的长分发会被抢先定案 FAILED。
+	distCommandTimeout = 25 * time.Minute
 	// backupCommandTimeout 备份回执超时:打包大目录+上传耗时显著高于普通指令。
 	backupCommandTimeout = 30 * time.Minute
 )
@@ -146,7 +150,7 @@ func (s *AgentService) Start(ctx context.Context) {
 				} else if n > 0 {
 					s.log.Infof("command timeout sweep: finalized %d stale command(s)", n)
 				}
-				if distIDs, err := s.distRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-commandTimeout)); err != nil {
+				if distIDs, err := s.distRecordRepo.FinalizeStalePending(ctx, time.Now().Add(-distCommandTimeout)); err != nil {
 					s.log.Warnf("distribution timeout sweep: %s", err.Error())
 				} else if len(distIDs) > 0 {
 					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", len(distIDs))
@@ -154,12 +158,21 @@ func (s *AgentService) Start(ctx context.Context) {
 						s.notifyDistAdvance(ctx, distID)
 					}
 				}
-				// 批次内超时未回执的指令逐条定案并对账批次计数
+				// 批次内超时未回执的指令逐条定案并对账批次计数。
+				// 只有定案确实生效(n>0)才计数——回执与清扫并发时定案只有一方
+				// 命中,无条件计数会双计;定案瞬时失败则留给下一轮重扫。
 				if stale, err := s.recordRepo.ListStalePendingBatchItems(ctx, time.Now().Add(-commandTimeout)); err != nil {
 					s.log.Warnf("batch item timeout sweep: %s", err.Error())
 				} else {
 					for _, rec := range stale {
-						_ = s.recordRepo.FinalizeByRequestID(ctx, rec.RequestID, "FAILED", "command timeout without result", "")
+						n, ferr := s.recordRepo.FinalizeByRequestID(ctx, rec.RequestID, "FAILED", "command timeout without result", "")
+						if ferr != nil {
+							s.log.Warnf("batch item timeout finalize (request=%s): %s", rec.RequestID, ferr.Error())
+							continue
+						}
+						if n == 0 {
+							continue
+						}
 						if err = s.batchRepo.ApplyItemResult(ctx, rec.BatchID, false); err != nil {
 							s.log.Warnf("batch item timeout apply (batch=%d): %s", rec.BatchID, err.Error())
 						}
@@ -299,7 +312,7 @@ func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string,
 		return nil
 	}
 
-	if err := s.recordRepo.FinalizeByRequestID(ctx, res.RequestId,
+	if _, err := s.recordRepo.FinalizeByRequestID(ctx, res.RequestId,
 		toRecordStatus(res.Success), strings.TrimSpace(res.Error), string(res.Data)); err != nil {
 		s.log.Warnf("finalize command record [%s]: %s", res.RequestId, err.Error())
 	}
@@ -510,7 +523,7 @@ func (s *AgentService) publish(ctx context.Context, nodeID uint32, agentId strin
 		if waiter != nil {
 			s.waiters.Delete(requestId)
 		}
-		_ = s.recordRepo.FinalizeByRequestID(ctx, requestId, "FAILED", "publish failed: "+err.Error(), "")
+		_, _ = s.recordRepo.FinalizeByRequestID(ctx, requestId, "FAILED", "publish failed: "+err.Error(), "")
 		return "", err
 	}
 
