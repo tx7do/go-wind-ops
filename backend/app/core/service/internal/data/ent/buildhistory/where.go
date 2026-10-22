@@ -124,6 +124,11 @@ func OperatorID(v uint32) predicate.BuildHistory {
 	return predicate.BuildHistory(sql.FieldEQ(FieldOperatorID, v))
 }
 
+// RunnerID applies equality check predicate on the "runner_id" field. It's identical to RunnerIDEQ.
+func RunnerID(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldEQ(FieldRunnerID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.BuildHistory {
 	return predicate.BuildHistory(sql.FieldEQ(FieldCreatedAt, v))
@@ -957,6 +962,81 @@ func OperatorIDIsNil() predicate.BuildHistory {
 // OperatorIDNotNil applies the NotNil predicate on the "operator_id" field.
 func OperatorIDNotNil() predicate.BuildHistory {
 	return predicate.BuildHistory(sql.FieldNotNull(FieldOperatorID))
+}
+
+// RunnerIDEQ applies the EQ predicate on the "runner_id" field.
+func RunnerIDEQ(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldEQ(FieldRunnerID, v))
+}
+
+// RunnerIDNEQ applies the NEQ predicate on the "runner_id" field.
+func RunnerIDNEQ(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldNEQ(FieldRunnerID, v))
+}
+
+// RunnerIDIn applies the In predicate on the "runner_id" field.
+func RunnerIDIn(vs ...string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldIn(FieldRunnerID, vs...))
+}
+
+// RunnerIDNotIn applies the NotIn predicate on the "runner_id" field.
+func RunnerIDNotIn(vs ...string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldNotIn(FieldRunnerID, vs...))
+}
+
+// RunnerIDGT applies the GT predicate on the "runner_id" field.
+func RunnerIDGT(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldGT(FieldRunnerID, v))
+}
+
+// RunnerIDGTE applies the GTE predicate on the "runner_id" field.
+func RunnerIDGTE(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldGTE(FieldRunnerID, v))
+}
+
+// RunnerIDLT applies the LT predicate on the "runner_id" field.
+func RunnerIDLT(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldLT(FieldRunnerID, v))
+}
+
+// RunnerIDLTE applies the LTE predicate on the "runner_id" field.
+func RunnerIDLTE(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldLTE(FieldRunnerID, v))
+}
+
+// RunnerIDContains applies the Contains predicate on the "runner_id" field.
+func RunnerIDContains(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldContains(FieldRunnerID, v))
+}
+
+// RunnerIDHasPrefix applies the HasPrefix predicate on the "runner_id" field.
+func RunnerIDHasPrefix(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldHasPrefix(FieldRunnerID, v))
+}
+
+// RunnerIDHasSuffix applies the HasSuffix predicate on the "runner_id" field.
+func RunnerIDHasSuffix(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldHasSuffix(FieldRunnerID, v))
+}
+
+// RunnerIDIsNil applies the IsNil predicate on the "runner_id" field.
+func RunnerIDIsNil() predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldIsNull(FieldRunnerID))
+}
+
+// RunnerIDNotNil applies the NotNil predicate on the "runner_id" field.
+func RunnerIDNotNil() predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldNotNull(FieldRunnerID))
+}
+
+// RunnerIDEqualFold applies the EqualFold predicate on the "runner_id" field.
+func RunnerIDEqualFold(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldEqualFold(FieldRunnerID, v))
+}
+
+// RunnerIDContainsFold applies the ContainsFold predicate on the "runner_id" field.
+func RunnerIDContainsFold(v string) predicate.BuildHistory {
+	return predicate.BuildHistory(sql.FieldContainsFold(FieldRunnerID, v))
 }
 
 // And groups predicates with the AND operator between them.

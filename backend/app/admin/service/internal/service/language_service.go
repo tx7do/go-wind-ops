@@ -62,6 +62,31 @@ func (s *LanguageService) Create(ctx context.Context, req *dictV1.CreateLanguage
 	return &emptypb.Empty{}, nil
 }
 
+// BatchCreate 批量创建语言(逐条补操作人后转发 core)。
+func (s *LanguageService) BatchCreate(ctx context.Context, req *dictV1.BatchCreateLanguagesRequest) (*emptypb.Empty, error) {
+	if req == nil || len(req.GetItems()) == 0 {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, item := range req.GetItems() {
+		if item != nil {
+			item.CreatedBy = trans.Ptr(operator.UserId)
+		}
+	}
+
+	if _, err = s.languageServiceClient.BatchCreate(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 func (s *LanguageService) Update(ctx context.Context, req *dictV1.UpdateLanguageRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")

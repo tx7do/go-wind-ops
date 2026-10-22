@@ -158,7 +158,7 @@ func (s *CloudBudgetService) RunBudgetCheck(ctx context.Context, force bool) err
 		// ── 阈值检查 ──
 		threshold := b.Amount * b.ThresholdPercent / 100
 		if b.Amount > 0 && threshold > 0 && total >= threshold && !b.Notified {
-			already, _ := s.alertRepo.HasUnresolvedAlert(ctx, b.ID)
+			already, _ := s.alertRepo.HasUnresolvedAlert(ctx, b.ID, "BUDGET")
 			if !already {
 				msg := fmt.Sprintf("云成本预算 [%s %s] %s 已达 %.1f %s(预算 %.1f 的 %.0f%%)%s",
 					subject, b.Month, b.Currency, total, b.Currency, b.Amount, b.ThresholdPercent, budgetScopeSuffix(b.CloudAccountID))
@@ -174,7 +174,7 @@ func (s *CloudBudgetService) RunBudgetCheck(ctx context.Context, force bool) err
 			if prevTotal, err = s.costRepo.SumMonthsByCurrency(ctx, prevMonths, b.Currency); err == nil {
 				avg := prevTotal / float64(len(prevMonths))
 				if avg > 0 && total > avg*b.AnomalyRatio {
-					already, _ := s.alertRepo.HasUnresolvedAlert(ctx, b.ID)
+					already, _ := s.alertRepo.HasUnresolvedAlert(ctx, b.ID, "BUDGET")
 					if !already {
 						_ = perAccount
 						msg := fmt.Sprintf("云成本突增 [%s %s] %s 本月 %.1f,超前 3 月均值(%.1f)的 %.1f 倍%s",

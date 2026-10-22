@@ -10,7 +10,6 @@ import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import { fetchListPermissionAuditLogs } from '@/api/hooks/permission-audit-log';
 import { exportAuditLogs, type AuditExportFormat } from '@/utils/csv';
-import { exportAuditLogsServer } from '@/api/hooks/audit-export';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getActionMap, getActionOptions } from './constants';
@@ -158,31 +157,6 @@ const PermissionAuditLogPage = () => {
     },
   ];
 
-  // 按当前搜索条件导出 CSV（客户端分页聚合，上限 1 万行；全量归档走后端 JSONL 任务）
-  // 服务端全量导出（XLSX，上限 50 万行）：当前搜索条件透传给后端，
-  // 突破客户端聚合导出的 1 万行上限
-  const handleServerExport = async () => {
-    try {
-      await exportAuditLogsServer(
-        'permission',
-        // 与列表请求同构的搜索条件（剔除 ProTable params 里的分页键：后端
-        // repo 对非表列字段直接报错），经 PaginationQuery 同源序列化
-        // （contains 转换/空值清理），导出的即当前搜索看到的。
-        new PaginationQuery({
-          formValues: Object.fromEntries(
-            Object.entries(latestParamsRef.current ?? {}).filter(
-              ([k]) => !['current', 'pageSize'].includes(k),
-            ),
-          ),
-        }),
-      );
-      message.success(t('exportServerSuccess'));
-    } catch (error: any) {
-      console.error('server-side audit export failed', error);
-      message.error(error?.message || t('exportServerFailed'));
-    }
-  };
-
   const handleExport = async (format: AuditExportFormat) => {
     const exportColumns = columns
       .filter((c) => c.dataIndex && !c.hideInTable)
@@ -251,13 +225,8 @@ const PermissionAuditLogPage = () => {
                 items: [
                   { key: 'csv', label: t('exportCsv') },
                   { key: 'xlsx', label: t('exportXlsx') },
-                  { key: 'server-xlsx', label: t('exportServerXlsx') },
                 ],
                 onClick: ({ key }) => {
-                  if (key === 'server-xlsx') {
-                    handleServerExport();
-                    return;
-                  }
                   handleExport(key as AuditExportFormat);
                 },
               }}

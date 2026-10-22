@@ -216,6 +216,20 @@ func (_c *BuildHistoryCreate) SetNillableOperatorID(v *uint32) *BuildHistoryCrea
 	return _c
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_c *BuildHistoryCreate) SetRunnerID(v string) *BuildHistoryCreate {
+	_c.mutation.SetRunnerID(v)
+	return _c
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_c *BuildHistoryCreate) SetNillableRunnerID(v *string) *BuildHistoryCreate {
+	if v != nil {
+		_c.SetRunnerID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *BuildHistoryCreate) SetID(v uint32) *BuildHistoryCreate {
 	_c.mutation.SetID(v)
@@ -268,6 +282,10 @@ func (_c *BuildHistoryCreate) defaults() {
 	if _, ok := _c.mutation.OperatorID(); !ok {
 		v := buildhistory.DefaultOperatorID
 		_c.mutation.SetOperatorID(v)
+	}
+	if _, ok := _c.mutation.RunnerID(); !ok {
+		v := buildhistory.DefaultRunnerID
+		_c.mutation.SetRunnerID(v)
 	}
 }
 
@@ -391,6 +409,10 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.OperatorID(); ok {
 		_spec.SetField(buildhistory.FieldOperatorID, field.TypeUint32, value)
 		_node.OperatorID = &value
+	}
+	if value, ok := _c.mutation.RunnerID(); ok {
+		_spec.SetField(buildhistory.FieldRunnerID, field.TypeString, value)
+		_node.RunnerID = &value
 	}
 	return _node, _spec
 }
@@ -705,6 +727,24 @@ func (u *BuildHistoryUpsert) AddOperatorID(v uint32) *BuildHistoryUpsert {
 // ClearOperatorID clears the value of the "operator_id" field.
 func (u *BuildHistoryUpsert) ClearOperatorID() *BuildHistoryUpsert {
 	u.SetNull(buildhistory.FieldOperatorID)
+	return u
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *BuildHistoryUpsert) SetRunnerID(v string) *BuildHistoryUpsert {
+	u.Set(buildhistory.FieldRunnerID, v)
+	return u
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *BuildHistoryUpsert) UpdateRunnerID() *BuildHistoryUpsert {
+	u.SetExcluded(buildhistory.FieldRunnerID)
+	return u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *BuildHistoryUpsert) ClearRunnerID() *BuildHistoryUpsert {
+	u.SetNull(buildhistory.FieldRunnerID)
 	return u
 }
 
@@ -1064,6 +1104,27 @@ func (u *BuildHistoryUpsertOne) UpdateOperatorID() *BuildHistoryUpsertOne {
 func (u *BuildHistoryUpsertOne) ClearOperatorID() *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *BuildHistoryUpsertOne) SetRunnerID(v string) *BuildHistoryUpsertOne {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.SetRunnerID(v)
+	})
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *BuildHistoryUpsertOne) UpdateRunnerID() *BuildHistoryUpsertOne {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.UpdateRunnerID()
+	})
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *BuildHistoryUpsertOne) ClearRunnerID() *BuildHistoryUpsertOne {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.ClearRunnerID()
 	})
 }
 
@@ -1589,6 +1650,27 @@ func (u *BuildHistoryUpsertBulk) UpdateOperatorID() *BuildHistoryUpsertBulk {
 func (u *BuildHistoryUpsertBulk) ClearOperatorID() *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *BuildHistoryUpsertBulk) SetRunnerID(v string) *BuildHistoryUpsertBulk {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.SetRunnerID(v)
+	})
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *BuildHistoryUpsertBulk) UpdateRunnerID() *BuildHistoryUpsertBulk {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.UpdateRunnerID()
+	})
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *BuildHistoryUpsertBulk) ClearRunnerID() *BuildHistoryUpsertBulk {
+	return u.Update(func(s *BuildHistoryUpsert) {
+		s.ClearRunnerID()
 	})
 }
 

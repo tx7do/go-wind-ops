@@ -214,14 +214,14 @@ func (s *CertService) RunExpiryCheck(ctx context.Context) error {
 		}
 
 		if remaining <= 0 {
-			if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID); !already {
+			if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID, "CERT"); !already {
 				msg := fmt.Sprintf("证书 [%s](%s) 已于 %s 过期", name, row.Host, row.NotAfter.Format("2006-01-02"))
 				s.fireCertAlert(ctx, row, msg)
 			}
 			continue
 		}
 		if int(remaining.Hours()/24) <= row.DaysBeforeExpire {
-			if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID); !already {
+			if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID, "CERT"); !already {
 				msg := fmt.Sprintf("证书 [%s](%s) 将于 %s 到期,剩余 %d 天",
 					name, row.Host, row.NotAfter.Format("2006-01-02"), int(remaining.Hours()/24))
 				s.fireCertAlert(ctx, row, msg)
@@ -230,11 +230,11 @@ func (s *CertService) RunExpiryCheck(ctx context.Context) error {
 		}
 
 		// 未到告警窗口:如有历史告警(续期后)则恢复
-		unresolved, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID)
+		unresolved, _ := s.alertRepo.HasUnresolvedAlert(ctx, row.ID, "CERT")
 		if !unresolved {
 			continue
 		}
-		if _, err = s.alertRepo.ResolveAllByMonitor(ctx, row.ID); err != nil {
+		if _, err = s.alertRepo.ResolveAllByMonitor(ctx, row.ID, "CERT"); err != nil {
 			s.log.Warnf("resolve cert alerts [%d]: %s", row.ID, err.Error())
 		}
 		msg := fmt.Sprintf("证书 [%s](%s) 已续期,新到期时间 %s,告警恢复",

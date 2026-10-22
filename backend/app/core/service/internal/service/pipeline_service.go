@@ -20,6 +20,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/pipelinerun"
+	"go-wind-ops/pkg/machine"
 	pkgMetadata "go-wind-ops/pkg/metadata"
 
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
@@ -53,6 +54,10 @@ type PipelineService struct {
 	buildSvc *BuildService
 	scriptSvc *ScriptService
 	distSvc   *DistributionService
+
+	// runnerID 本实例的执行标识(机器指纹):写入 run 记录,启动清扫与孤儿
+	// 清扫据此区分"本实例遗留"与"其他副本在跑"。
+	runnerID string
 }
 
 func NewPipelineService(
@@ -66,7 +71,9 @@ func NewPipelineService(
 	scriptSvc *ScriptService,
 	distSvc *DistributionService,
 ) *PipelineService {
-	return &PipelineService{
+	runnerID := machine.MachineID()
+
+	s := &PipelineService{
 		log:               ctx.NewLoggerHelper("pipeline/service/core-service"),
 		repo:              repo,
 		runRepo:           runRepo,
@@ -76,7 +83,16 @@ func NewPipelineService(
 		buildSvc:          buildSvc,
 		scriptSvc:         scriptSvc,
 		distSvc:           distSvc,
+		runnerID:          runnerID,
 	}
+
+	// 启动清扫:本实例(同机器指纹)上次重启中断的 run 定案 FAILED。
+	// 其他实例的未终态 run 归调度器的孤儿清扫(超阈值兜底)。
+	if n, err := runRepo.FinalizeInterruptedByRunner(ctx.Context(), runnerID); err == nil && n > 0 {
+		s.log.Infof("finalized %d interrupted pipeline run(s) (runner=%s)", n, runnerID)
+	}
+
+	return s
 }
 
 // ── 配置 CRUD ──
@@ -183,7 +199,7 @@ func (s *PipelineService) TriggerPipeline(ctx context.Context, req *opsV1.Trigge
 		return nil, opsV1.ErrorInternalServerError("%s", err.Error())
 	}
 	operatorID := operatorIDOf(ctx)
-	run, err := s.runRepo.Create(ctx, pipeline.GetId(), stepsJSON, operatorID)
+	run, err := s.runRepo.Create(ctx, pipeline.GetId(), stepsJSON, operatorID, s.runnerID)
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("create run failed")
 	}

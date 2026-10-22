@@ -131,3 +131,12 @@ export function useRestartAllTasks(options?: UseMutationOptions<{}, Error, void>
     ...options,
   });
 }
+
+/** 任务执行记录(Asynq 实例快照,受 retention 窗口约束,typeName 空则返回全部) */
+export async function fetchListTaskExecutions(params: {
+  typeName?: string;
+  page: number;
+  pageSize: number;
+}) {
+  return apiClient.taskService.ListTaskExecutions(params);
+}

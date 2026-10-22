@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -20,6 +21,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent"
 	pkgcrypto "go-wind-ops/pkg/crypto"
+	"go-wind-ops/pkg/machine"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/shellexec"
 
@@ -41,7 +43,8 @@ const (
 
 // BuildService 构建配置管理与执行:v1 在 core 所在机器构建(git clone →
 // 构建命令 → 产物打包 → MinIO 上传),执行器为进程内 goroutine,core 重启
-// 时未完成历史由启动清扫定案 FAILED。
+// 时本实例遗留的未完成历史由启动清扫定案 FAILED(多副本部署下按 runner_id
+// 限定范围,不误伤其他副本正在跑的构建)。
 type BuildService struct {
 	opsV1.UnimplementedBuildServiceServer
 
@@ -52,6 +55,9 @@ type BuildService struct {
 	ossClient *oss.MinIOClient
 
 	workspaceRoot string
+	// runnerID 本实例的执行标识(机器指纹):写入构建历史,启动清扫与孤儿
+	// 清扫据此区分"本实例遗留"与"其他副本在跑"。
+	runnerID string
 }
 
 func NewBuildService(ctx *bootstrap.Context, repo *data.BuildRepo, repoRepo *data.RepositoryRepo, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient) *BuildService {
@@ -60,6 +66,8 @@ func NewBuildService(ctx *bootstrap.Context, repo *data.BuildRepo, repoRepo *dat
 		workspaceRoot = filepath.Join("data", "builds")
 	}
 
+	runnerID := machine.MachineID()
+
 	s := &BuildService{
 		log:           ctx.NewLoggerHelper("build/service/core-service"),
 		repo:          repo,
@@ -67,11 +75,13 @@ func NewBuildService(ctx *bootstrap.Context, repo *data.BuildRepo, repoRepo *dat
 		historyRepo:   historyRepo,
 		ossClient:     ossClient,
 		workspaceRoot: workspaceRoot,
+		runnerID:      runnerID,
 	}
 
-	// 启动清扫:上次重启中断的构建定案 FAILED
-	if n, err := historyRepo.FinalizeInterrupted(ctx.Context()); err == nil && n > 0 {
-		s.log.Infof("finalized %d interrupted build history record(s)", n)
+	// 启动清扫:本实例(同机器指纹)上次重启中断的构建定案 FAILED。
+	// 其他实例的未终态历史归对方的孤儿清扫(阈值内)或周期兜底(超阈值)管。
+	if n, err := historyRepo.FinalizeInterruptedByRunner(ctx.Context(), runnerID); err == nil && n > 0 {
+		s.log.Infof("finalized %d interrupted build history record(s) (runner=%s)", n, runnerID)
 	}
 
 	return s
@@ -142,8 +152,9 @@ func (s *BuildService) DeleteBuild(ctx context.Context, req *opsV1.DeleteBuildRe
 	return &emptypb.Empty{}, nil
 }
 
-// TriggerBuild 触发构建:去重(同配置存在未终态历史则 409)→ 构建号自增 →
-// 创建历史 → goroutine 异步执行。
+// TriggerBuild 触发构建:独占式创建历史(事务内 FOR UPDATE 锁配置行,复查
+// 未终态 + 推进构建号原子完成)→ goroutine 异步执行。手动/API/webhook/cron
+// 全部路径收敛于此,并发触发由 CreateExclusive 去重(冲突 409)。
 func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuildRequest) (*opsV1.TriggerBuildResponse, error) {
 	if req == nil || req.GetId() == 0 {
 		return nil, opsV1.ErrorBadRequest("invalid parameter: id required")
@@ -154,14 +165,6 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 		return nil, err
 	}
 
-	active, err := s.historyRepo.HasActiveHistory(ctx, buildDto.GetId())
-	if err != nil {
-		return nil, opsV1.ErrorInternalServerError("check active build failed")
-	}
-	if active {
-		return nil, opsV1.ErrorConflict("build already running")
-	}
-
 	repoEntity, err := s.repoRepo.GetEntity(ctx, buildDto.GetRepositoryId())
 	if err != nil {
 		return nil, opsV1.ErrorBadRequest("repository not found")
@@ -169,20 +172,19 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 
 	branch := resolveBranch(buildDto.GetBranch(), repoEntity)
 
-	buildNo, err := s.repo.IncrBuildNo(ctx, buildDto.GetId())
+	history, conflict, err := s.historyRepo.CreateExclusive(ctx, buildDto.GetId(), branch, operatorIDOf(ctx), s.runnerID)
 	if err != nil {
 		return nil, err
 	}
-
-	history, err := s.historyRepo.Create(ctx, buildDto.GetId(), buildNo, branch, operatorIDOf(ctx))
-	if err != nil {
-		return nil, err
+	if conflict {
+		return nil, opsV1.ErrorConflict("build already running")
 	}
 
 	go s.runBuild(history.ID)
 
-	s.log.Infof("build triggered (build=%d history=%d no=%d branch=%s)", buildDto.GetId(), history.ID, buildNo, branch)
-	return &opsV1.TriggerBuildResponse{HistoryId: history.ID, BuildNo: buildNo}, nil
+	s.log.Infof("build triggered (build=%d history=%d no=%d branch=%s runner=%s)",
+		buildDto.GetId(), history.ID, history.BuildNo, branch, s.runnerID)
+	return &opsV1.TriggerBuildResponse{HistoryId: history.ID, BuildNo: history.BuildNo}, nil
 }
 
 // ============================================================================
@@ -191,11 +193,31 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 
 func (s *BuildService) runBuild(historyID uint32) {
 	ctx := context.Background()
-	logLines := ""
+	// 日志缓冲由主 goroutine 写、flush goroutine 每 5s 读,统一走互斥锁
+	// (string 复合结构非原子,无锁读写是数据竞争)。
+	var (
+		logMu    sync.Mutex
+		logLines string
+	)
+	appendLog := func(delta string) {
+		logMu.Lock()
+		logLines += delta
+		logMu.Unlock()
+	}
+	setLog := func(text string) {
+		logMu.Lock()
+		logLines = text
+		logMu.Unlock()
+	}
+	logSnapshot := func() string {
+		logMu.Lock()
+		defer logMu.Unlock()
+		return logLines
+	}
 	fail := func(errMsg string) {
-		logText := logLines
+		logText := logSnapshot()
 		if errMsg != "" {
-			logText = strings.TrimSpace(logLines + "\n[ERROR] " + errMsg)
+			logText = strings.TrimSpace(logText + "\n[ERROR] " + errMsg)
 		}
 		if updErr := s.historyRepo.UpdateFinished(ctx, historyID, "FAILED", truncateBuildLog(logText), errMsg, "", "", 0); updErr != nil {
 			s.log.Errorf("finalize build history [%d] failed: %s", historyID, updErr.Error())
@@ -233,10 +255,10 @@ func (s *BuildService) runBuild(historyID uint32) {
 	}
 	code, out, timedOut, err := shellexec.RunGit(ctx, workspace, cloneTimeout,
 		"clone", "--depth", "1", "--single-branch", "--branch", branch, buildGitURL(repoEntity), "src")
-	logLines = "$ git clone --depth 1 --single-branch --branch " + branch + " <url> src\n" + out
+	setLog("$ git clone --depth 1 --single-branch --branch " + branch + " <url> src\n" + out)
 
 	// 克隆完成即增量落库(前端立即可见)
-	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logSnapshot()))
 
 	if timedOut {
 		fail("git clone timeout")
@@ -256,9 +278,9 @@ func (s *BuildService) runBuild(historyID uint32) {
 		timeoutSeconds = maxBuildTimeoutSeconds
 	}
 	buildCmd := buildDto.GetBuildCommand()
-	logLines += "\n\n$ " + buildCmd + "\n"
+	appendLog("\n\n$ " + buildCmd + "\n")
 	// 先落库"构建命令开始执行",让前端看到当前状态
-	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+	_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logSnapshot()))
 
 	// 定期刷新日志(构建命令可能运行几分钟;让前端 3s 轮询可见进展)
 	flushDone := make(chan struct{})
@@ -270,14 +292,14 @@ func (s *BuildService) runBuild(historyID uint32) {
 			case <-flushDone:
 				return
 			case <-ticker.C:
-				_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logLines))
+				_ = s.historyRepo.UpdateLogText(ctx, historyID, truncateBuildLog(logSnapshot()))
 			}
 		}
 	}()
 
 	code, out, timedOut, err = shellexec.Run(ctx, srcDir, buildCmd, time.Duration(timeoutSeconds)*time.Second)
 	close(flushDone)
-	logLines += out
+	appendLog(out)
 	if timedOut {
 		fail(fmt.Sprintf("build command timeout after %ds", timeoutSeconds))
 		return
@@ -303,7 +325,7 @@ func (s *BuildService) runBuild(historyID uint32) {
 	}
 
 	// ── 成功终态 ──
-	if updErr := s.historyRepo.UpdateFinished(ctx, historyID, "SUCCESS", truncateBuildLog(logLines), "", artifactBucket, objectKey, size); updErr != nil {
+	if updErr := s.historyRepo.UpdateFinished(ctx, historyID, "SUCCESS", truncateBuildLog(logSnapshot()), "", artifactBucket, objectKey, size); updErr != nil {
 		s.log.Errorf("finalize build history [%d]: %s", historyID, updErr.Error())
 	}
 	s.log.Infof("build succeeded (history=%d no=%d artifact=%s size=%d)", historyID, history.BuildNo, objectKey, size)

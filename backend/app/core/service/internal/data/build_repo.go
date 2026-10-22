@@ -219,23 +219,6 @@ func (r *BuildRepo) Delete(ctx context.Context, req *opsV1.DeleteBuildRequest) e
 	return nil
 }
 
-// IncrBuildNo 构建号自增并返回新值(单条 UPDATE ... RETURNING 语义,
-// 由 ent 的 Save 返回更新后实体)。
-func (r *BuildRepo) IncrBuildNo(ctx context.Context, buildID uint32) (uint32, error) {
-	entity, err := r.entClient.Client().Build.
-		UpdateOneID(buildID).
-		AddBuildNo(1).
-		Save(ctx)
-	if ent.IsNotFound(err) {
-		return 0, opsV1.ErrorNotFound("build not found")
-	}
-	if err != nil {
-		r.log.Errorf("incr build no [%d]: %s", buildID, err.Error())
-		return 0, opsV1.ErrorInternalServerError("incr build no failed")
-	}
-	return entity.BuildNo, nil
-}
-
 // AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效):
 // 新建任务 last_cron_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致定时
 // 调度从未触发;首见先落锚不补跑,从下一个周期起正常调度。

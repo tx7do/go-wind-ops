@@ -10,6 +10,7 @@ import {
   CaretRightOutlined,
   PauseOutlined,
   ReloadOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +29,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getTaskTypeMap, getTaskTypeOptions } from './constants';
 import TaskDrawer from './components/TaskDrawer';
+import TaskExecutionsModal from './components/TaskExecutionsModal';
 
 /**
  * 任务管理页面
@@ -45,6 +47,11 @@ const TaskManagement = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [selectedTask, setSelectedTask] = useState<Task | undefined>();
+
+  // 执行记录 Modal(每次打开递增序号作 key,强制重挂载以重置分页状态)
+  const [executionsOpen, setExecutionsOpen] = useState(false);
+  const [executionsTypeName, setExecutionsTypeName] = useState<string | undefined>(undefined);
+  const [executionsSeq, setExecutionsSeq] = useState(0);
 
   const taskTypeMap = getTaskTypeMap(t);
 
@@ -219,6 +226,16 @@ const TaskManagement = () => {
         >
           <EditOutlined />
         </a>,
+        <a
+          key="executions"
+          onClick={() => {
+            setExecutionsTypeName(record.typeName as string);
+            setExecutionsSeq((s) => s + 1);
+            setExecutionsOpen(true);
+          }}
+        >
+          <HistoryOutlined />
+        </a>,
         <Popconfirm
           key="start"
           title={t('startTaskConfirmTitle')}
@@ -386,6 +403,17 @@ const TaskManagement = () => {
         }}
         onSuccess={() => {
           actionRef.current?.reload();
+        }}
+      />
+
+      {/* 任务执行记录 Modal */}
+      <TaskExecutionsModal
+        key={executionsSeq}
+        open={executionsOpen}
+        typeName={executionsTypeName}
+        onClose={() => {
+          setExecutionsOpen(false);
+          setExecutionsTypeName(undefined);
         }}
       />
     </>

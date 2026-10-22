@@ -181,7 +181,7 @@ func alertIntervalAllowed(ctx context.Context, alertRepo *data.AlertRepo, monito
 	if monitor.RepeatIntervalMinutes <= 0 {
 		return true
 	}
-	latest, err := alertRepo.LatestAlertByMonitor(ctx, monitor.ID)
+	latest, err := alertRepo.LatestAlertByMonitor(ctx, monitor.ID, "MONITOR")
 	if err != nil || latest == nil {
 		return true
 	}
@@ -244,15 +244,17 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 
 	hit := value != nil && *value >= monitor.ThresholdPercent
 	if hit {
-		hits := monitor.ConsecutiveHits + 1
-		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, hits); err != nil {
+		// 防抖计数原子自增(SQL 侧 +1),杜绝多副本读改写丢失更新
+		hits, err := monitorRepo.IncConsecutiveHits(ctx, monitor.ID)
+		if err != nil {
 			log.Warnf("update monitor hits [%d]: %s", monitor.ID, err.Error())
+			return
 		}
 		if hits < monitor.ConsecutiveCount {
 			return
 		}
 
-		already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
+		already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID, "MONITOR")
 		if already {
 			return
 		}
@@ -269,7 +271,7 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		} else {
 			alertID = a.ID
 			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
-				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+				if werr := notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
 					"alert_id":    a.ID,
 					"monitor":     monitor.Name,
 					"node":        nodeName,
@@ -280,8 +282,11 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 					"level":       "WARNING",
 					"message":     msg,
 					"occurred_at": time.Now().Format(time.RFC3339),
-				})
-				_ = alertRepo.MarkNotified(ctx, a.ID)
+				}); werr != nil {
+					log.Errorf("webhook notify failed (monitor=%d): %s", monitor.ID, werr.Error())
+				} else {
+					_ = alertRepo.MarkNotified(ctx, a.ID)
+				}
 			}
 		}
 		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
@@ -291,16 +296,19 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 
 	// 未命中:计数归零;如有未恢复告警则恢复 + RECOVERY 记录 + 通知
 	if monitor.ConsecutiveHits != 0 {
-		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, 0); err != nil {
+		if err = monitorRepo.ResetConsecutiveHits(ctx, monitor.ID); err != nil {
 			log.Warnf("reset monitor hits [%d]: %s", monitor.ID, err.Error())
 		}
 	}
-	unresolved, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
-	if !unresolved {
+	// 恢复走条件更新(仅 UNRESOLVED 行生效):resolved==0 说明无告警可恢复
+	// 或已被并发方恢复,不再发恢复通知——多副本下恰一方发出。
+	resolved, err := alertRepo.ResolveAllByMonitor(ctx, monitor.ID, "MONITOR")
+	if err != nil {
+		log.Warnf("resolve node metric alerts [%d]: %s", monitor.ID, err.Error())
 		return
 	}
-	if _, err = alertRepo.ResolveAllByMonitor(ctx, monitor.ID); err != nil {
-		log.Warnf("resolve node metric alerts [%d]: %s", monitor.ID, err.Error())
+	if resolved == 0 {
+		return
 	}
 	if monitor.NotifyOnRecovery {
 		metricName := metricDisplayName(string(monitor.MetricType))
@@ -351,15 +359,17 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 	found := len(out.Processes) > 0
 
 	if !found {
-		hits := monitor.ConsecutiveHits + 1
-		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, hits); err != nil {
+		// 防抖计数原子自增(SQL 侧 +1),杜绝多副本读改写丢失更新
+		hits, err := monitorRepo.IncConsecutiveHits(ctx, monitor.ID)
+		if err != nil {
 			log.Warnf("update monitor hits [%d]: %s", monitor.ID, err.Error())
+			return
 		}
 		if hits < monitor.ConsecutiveCount {
 			return
 		}
 
-		already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
+		already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID, "MONITOR")
 		if already {
 			return
 		}
@@ -374,7 +384,7 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 		} else {
 			alertID = a.ID
 			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
-				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+				if werr := notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
 					"alert_id":    a.ID,
 					"monitor":     monitor.Name,
 					"node":        nodeName,
@@ -383,8 +393,11 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 					"level":       "ERROR",
 					"message":     msg,
 					"occurred_at": time.Now().Format(time.RFC3339),
-				})
-				_ = alertRepo.MarkNotified(ctx, a.ID)
+				}); werr != nil {
+					log.Errorf("webhook notify failed (monitor=%d): %s", monitor.ID, werr.Error())
+				} else {
+					_ = alertRepo.MarkNotified(ctx, a.ID)
+				}
 			}
 		}
 		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
@@ -394,16 +407,19 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 
 	// 进程在:计数归零;有未恢复告警则恢复 + RECOVERY 记录 + 通知
 	if monitor.ConsecutiveHits != 0 {
-		if err = monitorRepo.UpdateConsecutiveHits(ctx, monitor.ID, 0); err != nil {
+		if err = monitorRepo.ResetConsecutiveHits(ctx, monitor.ID); err != nil {
 			log.Warnf("reset monitor hits [%d]: %s", monitor.ID, err.Error())
 		}
 	}
-	unresolved, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
-	if !unresolved {
+	// 恢复走条件更新(仅 UNRESOLVED 行生效):resolved==0 说明无告警可恢复
+	// 或已被并发方恢复,不再发恢复通知——多副本下恰一方发出。
+	resolved, err := alertRepo.ResolveAllByMonitor(ctx, monitor.ID, "MONITOR")
+	if err != nil {
+		log.Warnf("resolve process alerts [%d]: %s", monitor.ID, err.Error())
 		return
 	}
-	if _, err = alertRepo.ResolveAllByMonitor(ctx, monitor.ID); err != nil {
-		log.Warnf("resolve process alerts [%d]: %s", monitor.ID, err.Error())
+	if resolved == 0 {
+		return
 	}
 	if monitor.NotifyOnRecovery {
 		msg := fmt.Sprintf("节点 [%s] 重新发现进程 [%s](匹配 %d 个),告警恢复", nodeName, monitor.ProcessName, out.Total)
@@ -455,12 +471,15 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 	_ = json.Unmarshal(res.Data, &status)
 	if status.Status == "RUNNING" {
 		// ── 正常运行:统一恢复语义(与节点指标规则对齐)──
-		unresolved, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
-		if !unresolved {
+		// 恢复走条件更新(仅 UNRESOLVED 行生效):resolved==0 说明无告警可
+		// 恢复或已被并发方恢复,不再发恢复通知——多副本下恰一方发出。
+		resolved, err := alertRepo.ResolveAllByMonitor(ctx, monitor.ID, "MONITOR")
+		if err != nil {
+			log.Warnf("resolve project alerts [%d]: %s", monitor.ID, err.Error())
 			return
 		}
-		if _, err := alertRepo.ResolveAllByMonitor(ctx, monitor.ID); err != nil {
-			log.Warnf("resolve project alerts [%d]: %s", monitor.ID, err.Error())
+		if resolved == 0 {
+			return
 		}
 		if monitor.NotifyOnRecovery {
 			msg := fmt.Sprintf("项目 [%s] 已恢复 RUNNING,告警关闭", project.GetName())
@@ -475,60 +494,73 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 	}
 
 	// ── 异常:状态不是 RUNNING ──
+	already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID, "MONITOR")
+	if already {
+		// 告警已在:本周期不重复外呼,也不重复触发自动重启(否则默认配置下
+		// 每个检查周期都会重启一次异常项目)
+		return
+	}
 	if !alertIntervalAllowed(ctx, alertRepo, monitor) {
 		return // 距上次告警不足重复间隔,保持既有未恢复告警即可
 	}
-	already, _ := alertRepo.HasUnresolvedAlert(ctx, monitor.ID)
-	if !already {
-		msg := fmt.Sprintf("项目 [%s] 状态异常: %s", project.GetName(), status.Status)
-		alertID := uint32(0)
-		if a, err := alertRepo.Create(ctx, monitor.ID, projectID, 0, "MONITOR", "ERROR", msg, false); err != nil {
-			log.Errorf("create alert failed: %s", err.Error())
-		} else {
-			alertID = a.ID
-			if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
-				notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
-					"alert_id":    a.ID,
-					"monitor":     monitor.Name,
-					"project":     project.GetName(),
-					"level":       "ERROR",
-					"message":     msg,
-					"occurred_at": time.Now().Format(time.RFC3339),
-				})
+	msg := fmt.Sprintf("项目 [%s] 状态异常: %s", project.GetName(), status.Status)
+	alertID := uint32(0)
+	if a, err := alertRepo.Create(ctx, monitor.ID, projectID, 0, "MONITOR", "ERROR", msg, false); err != nil {
+		log.Errorf("create alert failed: %s", err.Error())
+	} else {
+		alertID = a.ID
+		if monitor.WebhookURL != nil && *monitor.WebhookURL != "" {
+			if werr := notifyWebhook(ctx, *monitor.WebhookURL, map[string]any{
+				"alert_id":    a.ID,
+				"monitor":     monitor.Name,
+				"project":     project.GetName(),
+				"level":       "ERROR",
+				"message":     msg,
+				"occurred_at": time.Now().Format(time.RFC3339),
+			}); werr != nil {
+				log.Errorf("webhook notify failed (monitor=%d): %s", monitor.ID, werr.Error())
+			} else {
 				_ = alertRepo.MarkNotified(ctx, a.ID)
 			}
 		}
-		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
-		log.Warnf("ALERT: %s", msg)
 	}
+	SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
+	log.Warnf("ALERT: %s", msg)
 
-	// 自动重启
+	// 自动重启:仅随新告警触发一次,异常持续期间不逐周期重启;重启效果由
+	// 下一周期状态探测自然收敛(恢复则 resolve,仍异常则维持告警)。
 	if monitor.AutoRestart {
 		log.Infof("monitor [%d] auto restarting project [%d]", monitor.ID, projectID)
-		_, _ = agentSvc.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+		if _, rerr := agentSvc.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
 			"project_restart",
 			map[string]any{"project_id": project.GetId(), "dir": project.GetProjectDir()},
-			0)
+			0); rerr != nil {
+			log.Errorf("monitor [%d] auto restart project [%d] failed: %s", monitor.ID, projectID, rerr.Error())
+		}
 	}
 }
 
-// notifyWebhook POST JSON 告警通知(5s 超时,失败仅记日志不重试)。
-func notifyWebhook(ctx context.Context, url string, payload map[string]any) {
+// notifyWebhook POST JSON 告警通知(5s 超时,不重试;失败原样返回由调用方
+// 记日志,2xx 之外的状态码视为失败)。
+func notifyWebhook(ctx context.Context, url string, payload map[string]any) error {
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return
+		return err
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return
+		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("[webhook] notify %s failed: %v\n", url, err)
-		return
+		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("webhook returned status %d", resp.StatusCode)
+	}
+	return nil
 }
 

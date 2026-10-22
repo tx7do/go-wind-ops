@@ -64,5 +64,13 @@
   "enableMap": {
     "true": "启用",
     "false": "禁用"
-  }
+  },
+  "executionsTitle": "执行记录 - {{typeName}}",
+  "allTypes": "全部类型",
+  "execState": "实例状态",
+  "execRetried": "已重试",
+  "execLastError": "最近错误",
+  "execCompletedAt": "完成时间",
+  "execNextProcessAt": "下次处理时间",
+  "executionsLoadFailed": "执行记录加载失败"
 }

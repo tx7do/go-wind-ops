@@ -43,6 +43,8 @@ const (
 	FieldFinishedAt = "finished_at"
 	// FieldOperatorID holds the string denoting the operator_id field in the database.
 	FieldOperatorID = "operator_id"
+	// FieldRunnerID holds the string denoting the runner_id field in the database.
+	FieldRunnerID = "runner_id"
 	// Table holds the table name of the buildhistory in the database.
 	Table = "ops_build_histories"
 )
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldOperatorID,
+	FieldRunnerID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -86,6 +89,8 @@ var (
 	DefaultArtifactSize uint64
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
 	DefaultOperatorID uint32
+	// DefaultRunnerID holds the default value on creation for the "runner_id" field.
+	DefaultRunnerID string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -199,4 +204,9 @@ func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByOperatorID orders the results by the operator_id field.
 func ByOperatorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOperatorID, opts...).ToFunc()
+}
+
+// ByRunnerID orders the results by the runner_id field.
+func ByRunnerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRunnerID, opts...).ToFunc()
 }

@@ -97,6 +97,11 @@ func (Monitor) Fields() []ent.Field {
 			Comment("检查周期 cron 表达式(5 段标准语法)").
 			NotEmpty(),
 
+		field.Time("last_check_at").
+			Comment("检查调度锚点(调度器 CAS 推进,多副本去重;NULL=首见落锚不补跑)").
+			Optional().
+			Nillable(),
+
 		field.Bool("auto_restart").
 			Comment("异常时自动重启项目(仅项目状态规则生效)").
 			Default(false),

@@ -54,6 +54,8 @@ type Monitor struct {
 	RepeatIntervalMinutes int `json:"repeat_interval_minutes,omitempty"`
 	// 检查周期 cron 表达式(5 段标准语法)
 	Cron string `json:"cron,omitempty"`
+	// 检查调度锚点(调度器 CAS 推进,多副本去重;NULL=首见落锚不补跑)
+	LastCheckAt *time.Time `json:"last_check_at,omitempty"`
 	// 异常时自动重启项目(仅项目状态规则生效)
 	AutoRestart bool `json:"auto_restart,omitempty"`
 	// 告警通知 webhook 地址(空则只落告警不外呼)
@@ -78,7 +80,7 @@ func (*Monitor) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case monitor.FieldName, monitor.FieldTargetType, monitor.FieldProcessName, monitor.FieldMetricType, monitor.FieldCron, monitor.FieldWebhookURL, monitor.FieldDescription:
 			values[i] = new(sql.NullString)
-		case monitor.FieldCreatedAt, monitor.FieldUpdatedAt, monitor.FieldDeletedAt:
+		case monitor.FieldCreatedAt, monitor.FieldUpdatedAt, monitor.FieldDeletedAt, monitor.FieldLastCheckAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -215,6 +217,13 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Cron = value.String
 			}
+		case monitor.FieldLastCheckAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_check_at", values[i])
+			} else if value.Valid {
+				_m.LastCheckAt = new(time.Time)
+				*_m.LastCheckAt = value.Time
+			}
 		case monitor.FieldAutoRestart:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field auto_restart", values[i])
@@ -342,6 +351,11 @@ func (_m *Monitor) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(_m.Cron)
+	builder.WriteString(", ")
+	if v := _m.LastCheckAt; v != nil {
+		builder.WriteString("last_check_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("auto_restart=")
 	builder.WriteString(fmt.Sprintf("%v", _m.AutoRestart))

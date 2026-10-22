@@ -15,6 +15,7 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
+	"go-wind-ops/app/core/service/internal/data/ent/build"
 	"go-wind-ops/app/core/service/internal/data/ent/buildhistory"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
 
@@ -168,7 +169,7 @@ func (r *BuildHistoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.Build
 	return entity, nil
 }
 
-func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, branch string, operatorID uint32) (*ent.BuildHistory, error) {
+func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, branch string, operatorID uint32, runnerID string) (*ent.BuildHistory, error) {
 	builder := r.entClient.Client().BuildHistory.
 		Create().
 		SetBuildID(buildID).
@@ -179,6 +180,10 @@ func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, 
 	if operatorID > 0 {
 		builder.SetOperatorID(operatorID)
 	}
+	if runnerID != "" {
+		builder.SetRunnerID(runnerID)
+	}
+	builder.SetUpdatedAt(time.Now())
 
 	record, err := builder.Save(ctx)
 	if err != nil {
@@ -188,20 +193,85 @@ func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, 
 	return record, nil
 }
 
-// HasActiveHistory 是否存在未终态的构建(PENDING/RUNNING),用于触发去重。
-func (r *BuildHistoryRepo) HasActiveHistory(ctx context.Context, buildID uint32) (bool, error) {
-	exist, err := r.entClient.Client().BuildHistory.
-		Query().
+// CreateExclusive 独占式创建构建历史:事务内先 FOR UPDATE 锁定构建配置行
+// 作为锁锚,再复查未终态历史、推进构建号、落 PENDING 历史,三步对其他触发方
+// (手动/API/webhook/cron,乃至其他 core 副本)原子。
+//
+// 背景:TriggerBuild 原实现是 HasActiveHistory 检查 → IncrBuildNo → Create
+// 的 check-then-act,并发触发(两副本同分钟 cron 命中、用户连点、webhook
+// 重试)可双双通过检查各跑一条构建。构建配置行是全部触发路径的公共锚,
+// 行锁把临界区串行化,等价于"每配置仅允许一条活跃"的互斥,无需引入分布式锁。
+// 返回 conflict=true 表示存在未终态历史,调用方回 409。
+func (r *BuildHistoryRepo) CreateExclusive(ctx context.Context, buildID uint32, branch string, operatorID uint32, runnerID string) (history *ent.BuildHistory, conflict bool, err error) {
+	tx, err := r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("begin tx for build history [%d]: %s", buildID, err.Error())
+		return nil, false, opsV1.ErrorInternalServerError("begin tx failed")
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+		if err != nil {
+			history = nil
+			r.log.Errorf("commit build history [%d]: %s", buildID, err.Error())
+			err = opsV1.ErrorInternalServerError("commit build history failed")
+		}
+	}()
+
+	// 锁锚:配置行 FOR UPDATE,并发触发在此排队
+	cfg, err := tx.Build.Query().
+		Where(build.IDEQ(buildID)).
+		ForUpdate().
+		First(ctx)
+	if ent.IsNotFound(err) {
+		return nil, false, opsV1.ErrorNotFound("build not found")
+	}
+	if err != nil {
+		r.log.Errorf("lock build [%d]: %s", buildID, err.Error())
+		return nil, false, opsV1.ErrorInternalServerError("lock build failed")
+	}
+
+	exist, err := tx.BuildHistory.Query().
 		Where(
 			buildhistory.BuildIDEQ(buildID),
 			buildhistory.StatusIn(buildhistory.StatusPending, buildhistory.StatusRunning),
 		).
 		Exist(ctx)
 	if err != nil {
-		r.log.Errorf("query active build history: %s", err.Error())
-		return false, err
+		r.log.Errorf("query active build history [%d]: %s", buildID, err.Error())
+		return nil, false, opsV1.ErrorInternalServerError("check active build failed")
 	}
-	return exist, nil
+	if exist {
+		return nil, true, nil
+	}
+
+	buildNo := cfg.BuildNo + 1
+	if err = tx.Build.UpdateOneID(buildID).SetBuildNo(buildNo).Exec(ctx); err != nil {
+		r.log.Errorf("bump build no [%d]: %s", buildID, err.Error())
+		return nil, false, opsV1.ErrorInternalServerError("bump build no failed")
+	}
+
+	builder := tx.BuildHistory.Create().
+		SetBuildID(buildID).
+		SetBuildNo(buildNo).
+		SetBranch(branch).
+		SetStatus(buildhistory.StatusPending).
+		SetUpdatedAt(time.Now())
+	if operatorID > 0 {
+		builder.SetOperatorID(operatorID)
+	}
+	if runnerID != "" {
+		builder.SetRunnerID(runnerID)
+	}
+	history, err = builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create build history [%d/%d]: %s", buildID, buildNo, err.Error())
+		return nil, false, opsV1.ErrorInternalServerError("create build history failed")
+	}
+	return history, false, nil
 }
 
 // UpdateRunning 置 RUNNING 并记开始时间。
@@ -211,6 +281,7 @@ func (r *BuildHistoryRepo) UpdateRunning(ctx context.Context, id uint32) error {
 		UpdateOneID(id).
 		SetStatus(buildhistory.StatusRunning).
 		SetNillableStartedAt(&now).
+		SetUpdatedAt(now).
 		Save(ctx)
 	return err
 }
@@ -238,32 +309,68 @@ func (r *BuildHistoryRepo) UpdateFinished(ctx context.Context, id uint32, status
 	if size > 0 {
 		builder.SetArtifactSize(size)
 	}
+	builder.SetUpdatedAt(now)
 
 	_, err := builder.Save(ctx)
 	return err
 }
 
-// UpdateLogText 增量刷新日志(RUNNING 期间调用,让前端轮询可见进度)。
+// UpdateLogText 增量刷新日志(RUNNING 期间执行器每 5s flush 一次,同时
+// 充当孤儿清扫的 runner 心跳)。
 func (r *BuildHistoryRepo) UpdateLogText(ctx context.Context, id uint32, logText string) error {
 	_, err := r.entClient.Client().BuildHistory.
 		UpdateOneID(id).
 		SetLog(logText).
+		SetUpdatedAt(time.Now()).
 		Save(ctx)
 	return err
 }
 
-// FinalizeInterrupted 服务启动时把上次遗留的 PENDING/RUNNING 定案 FAILED
-// (core 重启会中断进行中的构建),返回行数。
-func (r *BuildHistoryRepo) FinalizeInterrupted(ctx context.Context) (int, error) {
+// FinalizeInterruptedByRunner 启动清扫:只把本实例(同机器指纹)遗留的
+// PENDING/RUNNING 定案 FAILED。构建 goroutine 在进程内,core 重启必然中断
+// 本机构建;但多副本部署下全局清扫会把其他副本正在跑的构建也误标 FAILED,
+// 故以 runner_id(机器指纹)限定清扫范围。
+func (r *BuildHistoryRepo) FinalizeInterruptedByRunner(ctx context.Context, runnerID string) (int, error) {
+	now := time.Now()
+	q := r.entClient.Client().BuildHistory.
+		Update().
+		Where(
+			buildhistory.StatusIn(buildhistory.StatusPending, buildhistory.StatusRunning),
+		)
+	if runnerID != "" {
+		q = q.Where(buildhistory.RunnerIDEQ(runnerID))
+	}
+	n, err := q.
+		SetStatus(buildhistory.StatusFailed).
+		SetError("interrupted by core restart").
+		SetNillableFinishedAt(&now).
+		SetUpdatedAt(now).
+		Save(ctx)
+	return n, err
+}
+
+// buildOrphanStaleThreshold 孤儿构建判定阈值:构建命令最长 3600s 且执行
+// 期间每 5s 刷新日志(updated_at 持续更新),克隆(≤10min)与产物上传亦各有
+// 时限;超过该阈值仍无任何更新的 PENDING/RUNNING,可判定其 runner 已消失。
+// 注意:mixin 的 updated_at 无自动更新,本仓储所有写点必须显式
+// SetUpdatedAt(含 Create,否则 MarkRunning 前卡死的记录无人兜底)。
+const buildOrphanStaleThreshold = 2 * time.Hour
+
+// FinalizeStaleInterrupted 周期清扫孤儿构建:runner 崩溃后无力自 Clean 的
+// PENDING/RUNNING 历史(其他实例无权在启动时替它定案),按 updated_at 停更
+// 时间兜底定案。条件更新幂等,多副本并发执行恰一方生效。
+func (r *BuildHistoryRepo) FinalizeStaleInterrupted(ctx context.Context) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().BuildHistory.
 		Update().
 		Where(
 			buildhistory.StatusIn(buildhistory.StatusPending, buildhistory.StatusRunning),
+			buildhistory.UpdatedAtLT(now.Add(-buildOrphanStaleThreshold)),
 		).
 		SetStatus(buildhistory.StatusFailed).
-		SetError("interrupted by core restart").
+		SetError("orphaned: runner lost (no progress beyond threshold)").
 		SetNillableFinishedAt(&now).
+		SetUpdatedAt(now).
 		Save(ctx)
 	return n, err
 }

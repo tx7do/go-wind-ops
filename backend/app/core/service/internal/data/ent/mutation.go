@@ -14827,6 +14827,7 @@ type BuildHistoryMutation struct {
 	finished_at         *time.Time
 	operator_id         *uint32
 	addoperator_id      *int32
+	runner_id           *string
 	clearedFields       map[string]struct{}
 	done                bool
 	oldValue            func(context.Context) (*BuildHistory, error)
@@ -15728,6 +15729,55 @@ func (m *BuildHistoryMutation) ResetOperatorID() {
 	delete(m.clearedFields, buildhistory.FieldOperatorID)
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (m *BuildHistoryMutation) SetRunnerID(s string) {
+	m.runner_id = &s
+}
+
+// RunnerID returns the value of the "runner_id" field in the mutation.
+func (m *BuildHistoryMutation) RunnerID() (r string, exists bool) {
+	v := m.runner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRunnerID returns the old "runner_id" field's value of the BuildHistory entity.
+// If the BuildHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildHistoryMutation) OldRunnerID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRunnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRunnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRunnerID: %w", err)
+	}
+	return oldValue.RunnerID, nil
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (m *BuildHistoryMutation) ClearRunnerID() {
+	m.runner_id = nil
+	m.clearedFields[buildhistory.FieldRunnerID] = struct{}{}
+}
+
+// RunnerIDCleared returns if the "runner_id" field was cleared in this mutation.
+func (m *BuildHistoryMutation) RunnerIDCleared() bool {
+	_, ok := m.clearedFields[buildhistory.FieldRunnerID]
+	return ok
+}
+
+// ResetRunnerID resets all changes to the "runner_id" field.
+func (m *BuildHistoryMutation) ResetRunnerID() {
+	m.runner_id = nil
+	delete(m.clearedFields, buildhistory.FieldRunnerID)
+}
+
 // Where appends a list predicates to the BuildHistoryMutation builder.
 func (m *BuildHistoryMutation) Where(ps ...predicate.BuildHistory) {
 	m.predicates = append(m.predicates, ps...)
@@ -15762,7 +15812,7 @@ func (m *BuildHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BuildHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, buildhistory.FieldCreatedAt)
 	}
@@ -15808,6 +15858,9 @@ func (m *BuildHistoryMutation) Fields() []string {
 	if m.operator_id != nil {
 		fields = append(fields, buildhistory.FieldOperatorID)
 	}
+	if m.runner_id != nil {
+		fields = append(fields, buildhistory.FieldRunnerID)
+	}
 	return fields
 }
 
@@ -15846,6 +15899,8 @@ func (m *BuildHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.FinishedAt()
 	case buildhistory.FieldOperatorID:
 		return m.OperatorID()
+	case buildhistory.FieldRunnerID:
+		return m.RunnerID()
 	}
 	return nil, false
 }
@@ -15885,6 +15940,8 @@ func (m *BuildHistoryMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldFinishedAt(ctx)
 	case buildhistory.FieldOperatorID:
 		return m.OldOperatorID(ctx)
+	case buildhistory.FieldRunnerID:
+		return m.OldRunnerID(ctx)
 	}
 	return nil, fmt.Errorf("unknown BuildHistory field %s", name)
 }
@@ -15998,6 +16055,13 @@ func (m *BuildHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOperatorID(v)
+		return nil
+	case buildhistory.FieldRunnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRunnerID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown BuildHistory field %s", name)
@@ -16119,6 +16183,9 @@ func (m *BuildHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(buildhistory.FieldOperatorID) {
 		fields = append(fields, buildhistory.FieldOperatorID)
 	}
+	if m.FieldCleared(buildhistory.FieldRunnerID) {
+		fields = append(fields, buildhistory.FieldRunnerID)
+	}
 	return fields
 }
 
@@ -16172,6 +16239,9 @@ func (m *BuildHistoryMutation) ClearField(name string) error {
 	case buildhistory.FieldOperatorID:
 		m.ClearOperatorID()
 		return nil
+	case buildhistory.FieldRunnerID:
+		m.ClearRunnerID()
+		return nil
 	}
 	return fmt.Errorf("unknown BuildHistory nullable field %s", name)
 }
@@ -16224,6 +16294,9 @@ func (m *BuildHistoryMutation) ResetField(name string) error {
 		return nil
 	case buildhistory.FieldOperatorID:
 		m.ResetOperatorID()
+		return nil
+	case buildhistory.FieldRunnerID:
+		m.ResetRunnerID()
 		return nil
 	}
 	return fmt.Errorf("unknown BuildHistory field %s", name)
@@ -54832,6 +54905,7 @@ type MonitorMutation struct {
 	repeat_interval_minutes    *int
 	addrepeat_interval_minutes *int
 	cron                       *string
+	last_check_at              *time.Time
 	auto_restart               *bool
 	webhook_url                *string
 	enabled                    *bool
@@ -55896,6 +55970,55 @@ func (m *MonitorMutation) ResetCron() {
 	m.cron = nil
 }
 
+// SetLastCheckAt sets the "last_check_at" field.
+func (m *MonitorMutation) SetLastCheckAt(t time.Time) {
+	m.last_check_at = &t
+}
+
+// LastCheckAt returns the value of the "last_check_at" field in the mutation.
+func (m *MonitorMutation) LastCheckAt() (r time.Time, exists bool) {
+	v := m.last_check_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastCheckAt returns the old "last_check_at" field's value of the Monitor entity.
+// If the Monitor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorMutation) OldLastCheckAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastCheckAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastCheckAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastCheckAt: %w", err)
+	}
+	return oldValue.LastCheckAt, nil
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (m *MonitorMutation) ClearLastCheckAt() {
+	m.last_check_at = nil
+	m.clearedFields[monitor.FieldLastCheckAt] = struct{}{}
+}
+
+// LastCheckAtCleared returns if the "last_check_at" field was cleared in this mutation.
+func (m *MonitorMutation) LastCheckAtCleared() bool {
+	_, ok := m.clearedFields[monitor.FieldLastCheckAt]
+	return ok
+}
+
+// ResetLastCheckAt resets all changes to the "last_check_at" field.
+func (m *MonitorMutation) ResetLastCheckAt() {
+	m.last_check_at = nil
+	delete(m.clearedFields, monitor.FieldLastCheckAt)
+}
+
 // SetAutoRestart sets the "auto_restart" field.
 func (m *MonitorMutation) SetAutoRestart(b bool) {
 	m.auto_restart = &b
@@ -56100,7 +56223,7 @@ func (m *MonitorMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MonitorMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, monitor.FieldCreatedAt)
 	}
@@ -56154,6 +56277,9 @@ func (m *MonitorMutation) Fields() []string {
 	}
 	if m.cron != nil {
 		fields = append(fields, monitor.FieldCron)
+	}
+	if m.last_check_at != nil {
+		fields = append(fields, monitor.FieldLastCheckAt)
 	}
 	if m.auto_restart != nil {
 		fields = append(fields, monitor.FieldAutoRestart)
@@ -56211,6 +56337,8 @@ func (m *MonitorMutation) Field(name string) (ent.Value, bool) {
 		return m.RepeatIntervalMinutes()
 	case monitor.FieldCron:
 		return m.Cron()
+	case monitor.FieldLastCheckAt:
+		return m.LastCheckAt()
 	case monitor.FieldAutoRestart:
 		return m.AutoRestart()
 	case monitor.FieldWebhookURL:
@@ -56264,6 +56392,8 @@ func (m *MonitorMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldRepeatIntervalMinutes(ctx)
 	case monitor.FieldCron:
 		return m.OldCron(ctx)
+	case monitor.FieldLastCheckAt:
+		return m.OldLastCheckAt(ctx)
 	case monitor.FieldAutoRestart:
 		return m.OldAutoRestart(ctx)
 	case monitor.FieldWebhookURL:
@@ -56406,6 +56536,13 @@ func (m *MonitorMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCron(v)
+		return nil
+	case monitor.FieldLastCheckAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastCheckAt(v)
 		return nil
 	case monitor.FieldAutoRestart:
 		v, ok := value.(bool)
@@ -56603,6 +56740,9 @@ func (m *MonitorMutation) ClearedFields() []string {
 	if m.FieldCleared(monitor.FieldProcessName) {
 		fields = append(fields, monitor.FieldProcessName)
 	}
+	if m.FieldCleared(monitor.FieldLastCheckAt) {
+		fields = append(fields, monitor.FieldLastCheckAt)
+	}
 	if m.FieldCleared(monitor.FieldWebhookURL) {
 		fields = append(fields, monitor.FieldWebhookURL)
 	}
@@ -56649,6 +56789,9 @@ func (m *MonitorMutation) ClearField(name string) error {
 		return nil
 	case monitor.FieldProcessName:
 		m.ClearProcessName()
+		return nil
+	case monitor.FieldLastCheckAt:
+		m.ClearLastCheckAt()
 		return nil
 	case monitor.FieldWebhookURL:
 		m.ClearWebhookURL()
@@ -56717,6 +56860,9 @@ func (m *MonitorMutation) ResetField(name string) error {
 		return nil
 	case monitor.FieldCron:
 		m.ResetCron()
+		return nil
+	case monitor.FieldLastCheckAt:
+		m.ResetLastCheckAt()
 		return nil
 	case monitor.FieldAutoRestart:
 		m.ResetAutoRestart()
@@ -73481,6 +73627,7 @@ type PipelineRunMutation struct {
 	finished_at     *time.Time
 	operator_id     *uint32
 	addoperator_id  *int32
+	runner_id       *string
 	clearedFields   map[string]struct{}
 	done            bool
 	oldValue        func(context.Context) (*PipelineRun, error)
@@ -74263,6 +74410,55 @@ func (m *PipelineRunMutation) ResetOperatorID() {
 	delete(m.clearedFields, pipelinerun.FieldOperatorID)
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (m *PipelineRunMutation) SetRunnerID(s string) {
+	m.runner_id = &s
+}
+
+// RunnerID returns the value of the "runner_id" field in the mutation.
+func (m *PipelineRunMutation) RunnerID() (r string, exists bool) {
+	v := m.runner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRunnerID returns the old "runner_id" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldRunnerID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRunnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRunnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRunnerID: %w", err)
+	}
+	return oldValue.RunnerID, nil
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (m *PipelineRunMutation) ClearRunnerID() {
+	m.runner_id = nil
+	m.clearedFields[pipelinerun.FieldRunnerID] = struct{}{}
+}
+
+// RunnerIDCleared returns if the "runner_id" field was cleared in this mutation.
+func (m *PipelineRunMutation) RunnerIDCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldRunnerID]
+	return ok
+}
+
+// ResetRunnerID resets all changes to the "runner_id" field.
+func (m *PipelineRunMutation) ResetRunnerID() {
+	m.runner_id = nil
+	delete(m.clearedFields, pipelinerun.FieldRunnerID)
+}
+
 // Where appends a list predicates to the PipelineRunMutation builder.
 func (m *PipelineRunMutation) Where(ps ...predicate.PipelineRun) {
 	m.predicates = append(m.predicates, ps...)
@@ -74297,7 +74493,7 @@ func (m *PipelineRunMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PipelineRunMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, pipelinerun.FieldCreatedAt)
 	}
@@ -74337,6 +74533,9 @@ func (m *PipelineRunMutation) Fields() []string {
 	if m.operator_id != nil {
 		fields = append(fields, pipelinerun.FieldOperatorID)
 	}
+	if m.runner_id != nil {
+		fields = append(fields, pipelinerun.FieldRunnerID)
+	}
 	return fields
 }
 
@@ -74371,6 +74570,8 @@ func (m *PipelineRunMutation) Field(name string) (ent.Value, bool) {
 		return m.FinishedAt()
 	case pipelinerun.FieldOperatorID:
 		return m.OperatorID()
+	case pipelinerun.FieldRunnerID:
+		return m.RunnerID()
 	}
 	return nil, false
 }
@@ -74406,6 +74607,8 @@ func (m *PipelineRunMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldFinishedAt(ctx)
 	case pipelinerun.FieldOperatorID:
 		return m.OldOperatorID(ctx)
+	case pipelinerun.FieldRunnerID:
+		return m.OldRunnerID(ctx)
 	}
 	return nil, fmt.Errorf("unknown PipelineRun field %s", name)
 }
@@ -74505,6 +74708,13 @@ func (m *PipelineRunMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOperatorID(v)
+		return nil
+	case pipelinerun.FieldRunnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRunnerID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PipelineRun field %s", name)
@@ -74608,6 +74818,9 @@ func (m *PipelineRunMutation) ClearedFields() []string {
 	if m.FieldCleared(pipelinerun.FieldOperatorID) {
 		fields = append(fields, pipelinerun.FieldOperatorID)
 	}
+	if m.FieldCleared(pipelinerun.FieldRunnerID) {
+		fields = append(fields, pipelinerun.FieldRunnerID)
+	}
 	return fields
 }
 
@@ -74655,6 +74868,9 @@ func (m *PipelineRunMutation) ClearField(name string) error {
 	case pipelinerun.FieldOperatorID:
 		m.ClearOperatorID()
 		return nil
+	case pipelinerun.FieldRunnerID:
+		m.ClearRunnerID()
+		return nil
 	}
 	return fmt.Errorf("unknown PipelineRun nullable field %s", name)
 }
@@ -74701,6 +74917,9 @@ func (m *PipelineRunMutation) ResetField(name string) error {
 		return nil
 	case pipelinerun.FieldOperatorID:
 		m.ResetOperatorID()
+		return nil
+	case pipelinerun.FieldRunnerID:
+		m.ResetRunnerID()
 		return nil
 	}
 	return fmt.Errorf("unknown PipelineRun field %s", name)

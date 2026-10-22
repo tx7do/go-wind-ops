@@ -35,7 +35,10 @@ const (
 	// offlineSweepInterval 离线扫描周期。
 	offlineSweepInterval = 30 * time.Second
 	// commandTimeout 指令回执超时:超时未回执的 PENDING 台账由扫描定案 FAILED。
-	commandTimeout = 10 * time.Minute
+	// 必须大于脚本执行上限(signal.ScriptExecTimeoutMax=600s)并留余量,否则
+	// 跑满上限的脚本会先被扫成 FAILED,迟到的真实回执被幂等丢弃,流水线
+	// 脚本步骤据 FAILED 误判(agent 端实际成功)。
+	commandTimeout = 15 * time.Minute
 	// backupCommandTimeout 备份回执超时:打包大目录+上传耗时显著高于普通指令。
 	backupCommandTimeout = 30 * time.Minute
 )
@@ -601,7 +604,7 @@ func (s *AgentService) fireNodeOfflineAlert(node *ent.AgentNode) {
 		return
 	}
 	ctx := context.Background()
-	if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID); already {
+	if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID, "NODE_OFFLINE"); already {
 		return
 	}
 	msg := fmt.Sprintf("节点 [%s] 心跳超时已判离线(最后心跳 %s)",
@@ -626,11 +629,11 @@ func (s *AgentService) fireNodeOnlineRecovery(agentID string) {
 	if err != nil || node == nil {
 		return
 	}
-	unresolved, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID)
+	unresolved, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID, "NODE_OFFLINE")
 	if !unresolved {
 		return
 	}
-	if _, err = s.alertRepo.ResolveAllByMonitor(ctx, node.ID); err != nil {
+	if _, err = s.alertRepo.ResolveAllByMonitor(ctx, node.ID, "NODE_OFFLINE"); err != nil {
 		s.log.Warnf("resolve node offline alerts [%d]: %s", node.ID, err.Error())
 		return
 	}

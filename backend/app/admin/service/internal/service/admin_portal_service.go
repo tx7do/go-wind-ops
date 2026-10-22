@@ -112,16 +112,43 @@ func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Contex
 	return idSet.Ids, nil
 }
 
-func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb.Empty) (*adminV1.ListPermissionCodeResponse, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
+// getMyMenuTree 当前操作人可见的菜单路由树(GetNavigation/GetInitialContext 共用)。
+func (s *AdminPortalService) getMyMenuTree(ctx context.Context, userID uint32) ([]*permissionV1.MenuRouteItem, error) {
+	user, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{
+			Id: userID,
+		},
+	})
+	if err != nil {
+		s.log.Errorf("query user failed[%s]", err.Error())
+		return nil, adminV1.ErrorInternalServerError("query user failed")
+	}
+
+	// 多角色的菜单
+	roleMenus, err := s.queryMultipleRolesMenusByRoleIds(ctx, user.GetRoleIds())
 	if err != nil {
 		return nil, err
 	}
 
+	menuList, err := s.menuServiceClient.List(ctx, &paginationV1.PagingRequest{
+		NoPaging: trans.Ptr(true),
+		FilteringType: &paginationV1.PagingRequest_Query{
+			Query: s.menuListToQueryString(roleMenus, false),
+		},
+	})
+	if err != nil {
+		s.log.Errorf("list route failed [%s]", err.Error())
+		return nil, adminV1.ErrorInternalServerError("list route failed")
+	}
+
+	return s.fillRouteItem(menuList.Items), nil
+}
+
+// getMyPermissionCodes 当前操作人的权限码列表(GetMyPermissionCode/GetInitialContext 共用)。
+func (s *AdminPortalService) getMyPermissionCodes(ctx context.Context, userID uint32) ([]string, error) {
 	permissionIdsResp, err := s.roleServiceClient.ListPermissionIds(ctx, &permissionV1.ListPermissionIdsRequest{
 		QueryBy: &permissionV1.ListPermissionIdsRequest_UserId{
-			UserId: operator.GetUserId(),
+			UserId: userID,
 		},
 	})
 	if err != nil {
@@ -137,9 +164,22 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 		return nil, adminV1.ErrorInternalServerError("list permission codes by ids failed")
 	}
 
-	return &adminV1.ListPermissionCodeResponse{
-		Codes: permissionCodeResp.PermissionCodes,
-	}, nil
+	return permissionCodeResp.PermissionCodes, nil
+}
+
+func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb.Empty) (*adminV1.ListPermissionCodeResponse, error) {
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	codes, err := s.getMyPermissionCodes(ctx, operator.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &adminV1.ListPermissionCodeResponse{Codes: codes}, nil
 }
 
 func (s *AdminPortalService) fillRouteItem(menus []*permissionV1.Menu) []*permissionV1.MenuRouteItem {
@@ -183,32 +223,35 @@ func (s *AdminPortalService) GetNavigation(ctx context.Context, _ *emptypb.Empty
 		return nil, err
 	}
 
-	user, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Id{
-			Id: operator.UserId,
-		},
-	})
-	if err != nil {
-		s.log.Errorf("query user failed[%s]", err.Error())
-		return nil, adminV1.ErrorInternalServerError("query user failed")
-	}
-
-	// 多角色的菜单
-	roleMenus, err := s.queryMultipleRolesMenusByRoleIds(ctx, user.GetRoleIds())
+	items, err := s.getMyMenuTree(ctx, operator.GetUserId())
 	if err != nil {
 		return nil, err
 	}
 
-	menuList, err := s.menuServiceClient.List(ctx, &paginationV1.PagingRequest{
-		NoPaging: trans.Ptr(true),
-		FilteringType: &paginationV1.PagingRequest_Query{
-			Query: s.menuListToQueryString(roleMenus, false),
-		},
-	})
+	return &adminV1.ListRouteResponse{Items: items}, nil
+}
+
+// GetInitialContext 一次性聚合进入后台所需上下文(菜单树+权限码),
+// 语义等价于 GetNavigation + GetMyPermissionCode 的合并调用。
+func (s *AdminPortalService) GetInitialContext(ctx context.Context, _ *emptypb.Empty) (*adminV1.InitialContextResponse, error) {
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
 	if err != nil {
-		s.log.Errorf("list route failed [%s]", err.Error())
-		return nil, adminV1.ErrorInternalServerError("list route failed")
+		return nil, err
 	}
 
-	return &adminV1.ListRouteResponse{Items: s.fillRouteItem(menuList.Items)}, nil
+	menus, err := s.getMyMenuTree(ctx, operator.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+
+	codes, err := s.getMyPermissionCodes(ctx, operator.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &adminV1.InitialContextResponse{
+		Menus:       menus,
+		Permissions: codes,
+	}, nil
 }

@@ -276,13 +276,65 @@ func (r *MonitorRepo) Delete(ctx context.Context, req *opsV1.DeleteMonitorReques
 	return nil
 }
 
-// UpdateConsecutiveHits 更新节点指标规则的连续命中计数(调度器防抖状态)。
-func (r *MonitorRepo) UpdateConsecutiveHits(ctx context.Context, id uint32, hits int) error {
-	_, err := r.entClient.Client().Monitor.
+// IncConsecutiveHits 连续命中计数原子自增(SQL 侧 consecutive_hits =
+// consecutive_hits + 1),返回自增后的新值供防抖阈值判断与告警文案使用。
+// 相比"读出 +1 再写回"的读改写,多副本并发下不会丢失更新。
+func (r *MonitorRepo) IncConsecutiveHits(ctx context.Context, id uint32) (int, error) {
+	entity, err := r.entClient.Client().Monitor.
 		UpdateOneID(id).
-		SetConsecutiveHits(hits).
+		AddConsecutiveHits(1).
+		Save(ctx)
+	if err != nil {
+		return 0, err
+	}
+	return entity.ConsecutiveHits, nil
+}
+
+// ResetConsecutiveHits 未命中时计数归零(仅非零行生效,幂等)。
+func (r *MonitorRepo) ResetConsecutiveHits(ctx context.Context, id uint32) error {
+	_, err := r.entClient.Client().Monitor.
+		Update().
+		Where(
+			monitor.IDEQ(id),
+			monitor.ConsecutiveHitsNEQ(0),
+		).
+		SetConsecutiveHits(0).
 		Save(ctx)
 	return err
+}
+
+// AdvanceCheckAnchorFromNull 给空锚点监控规则落初始锚点(仅 NULL 行生效):
+// 新建规则 last_check_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致检查从未
+// 触发;首见先落锚不补跑,从下一个周期起正常调度。
+func (r *MonitorRepo) AdvanceCheckAnchorFromNull(ctx context.Context, monitorID uint32, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Monitor.
+		Update().
+		Where(
+			monitor.IDEQ(monitorID),
+			monitor.LastCheckAtIsNil(),
+		).
+		SetLastCheckAt(now).
+		Save(ctx)
+	return n > 0, err
+}
+
+// AdvanceCheckAnchor CAS 推进检查锚点:仅当 last_check_at 仍等于 expected
+// 时更新为 now,返回是否抢到(多副本去重)——同一规则同一周期只有一方
+// 执行检查,探测指令、防抖计数与告警创建随之天然单份。
+func (r *MonitorRepo) AdvanceCheckAnchor(ctx context.Context, monitorID uint32, expected, now time.Time) (bool, error) {
+	n, err := r.entClient.Client().Monitor.
+		Update().
+		Where(
+			monitor.IDEQ(monitorID),
+			monitor.LastCheckAtEQ(expected),
+		).
+		SetLastCheckAt(now).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("advance check anchor [monitor=%d]: %s", monitorID, err.Error())
+		return false, err
+	}
+	return n > 0, nil
 }
 
 var _ = time.Now

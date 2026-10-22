@@ -41,5 +41,7 @@
   "statusMap": {
     "ON": "启用",
     "OFF": "禁用"
-  }
+  },
+  "syncSuccess": "同步成功",
+  "syncFailed": "同步失败"
 }

@@ -64,5 +64,13 @@
   "enableMap": {
     "true": "Active",
     "false": "Inactive"
-  }
+  },
+  "executionsTitle": "Executions - {{typeName}}",
+  "allTypes": "All Types",
+  "execState": "State",
+  "execRetried": "Retried",
+  "execLastError": "Last Error",
+  "execCompletedAt": "Completed At",
+  "execNextProcessAt": "Next Process At",
+  "executionsLoadFailed": "Failed to load executions"
 }

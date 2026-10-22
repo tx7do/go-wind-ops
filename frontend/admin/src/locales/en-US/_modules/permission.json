@@ -41,5 +41,7 @@
   "statusMap": {
     "ON": "Active",
     "OFF": "Inactive"
-  }
+  },
+  "syncSuccess": "Synced successfully",
+  "syncFailed": "Sync failed"
 }

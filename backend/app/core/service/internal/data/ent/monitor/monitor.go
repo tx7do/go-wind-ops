@@ -49,6 +49,8 @@ const (
 	FieldRepeatIntervalMinutes = "repeat_interval_minutes"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
+	// FieldLastCheckAt holds the string denoting the last_check_at field in the database.
+	FieldLastCheckAt = "last_check_at"
 	// FieldAutoRestart holds the string denoting the auto_restart field in the database.
 	FieldAutoRestart = "auto_restart"
 	// FieldWebhookURL holds the string denoting the webhook_url field in the database.
@@ -82,6 +84,7 @@ var Columns = []string{
 	FieldNotifyOnRecovery,
 	FieldRepeatIntervalMinutes,
 	FieldCron,
+	FieldLastCheckAt,
 	FieldAutoRestart,
 	FieldWebhookURL,
 	FieldEnabled,
@@ -277,6 +280,11 @@ func ByRepeatIntervalMinutes(opts ...sql.OrderTermOption) OrderOption {
 // ByCron orders the results by the cron field.
 func ByCron(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCron, opts...).ToFunc()
+}
+
+// ByLastCheckAt orders the results by the last_check_at field.
+func ByLastCheckAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastCheckAt, opts...).ToFunc()
 }
 
 // ByAutoRestart orders the results by the auto_restart field.

@@ -98,6 +98,12 @@ func (BuildHistory) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		field.String("runner_id").
+			Comment("执行实例标识(机器指纹):构建 goroutine 归属实例,启动清扫只定案本实例的遗留记录").
+			Default("").
+			Optional().
+			Nillable(),
 	}
 }
 

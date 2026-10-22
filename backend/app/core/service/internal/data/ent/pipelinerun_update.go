@@ -278,6 +278,26 @@ func (_u *PipelineRunUpdate) ClearOperatorID() *PipelineRunUpdate {
 	return _u
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_u *PipelineRunUpdate) SetRunnerID(v string) *PipelineRunUpdate {
+	_u.mutation.SetRunnerID(v)
+	return _u
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_u *PipelineRunUpdate) SetNillableRunnerID(v *string) *PipelineRunUpdate {
+	if v != nil {
+		_u.SetRunnerID(*v)
+	}
+	return _u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (_u *PipelineRunUpdate) ClearRunnerID() *PipelineRunUpdate {
+	_u.mutation.ClearRunnerID()
+	return _u
+}
+
 // Mutation returns the PipelineRunMutation object of the builder.
 func (_u *PipelineRunUpdate) Mutation() *PipelineRunMutation {
 	return _u.mutation
@@ -420,6 +440,12 @@ func (_u *PipelineRunUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.RunnerID(); ok {
+		_spec.SetField(pipelinerun.FieldRunnerID, field.TypeString, value)
+	}
+	if _u.mutation.RunnerIDCleared() {
+		_spec.ClearField(pipelinerun.FieldRunnerID, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -692,6 +718,26 @@ func (_u *PipelineRunUpdateOne) ClearOperatorID() *PipelineRunUpdateOne {
 	return _u
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_u *PipelineRunUpdateOne) SetRunnerID(v string) *PipelineRunUpdateOne {
+	_u.mutation.SetRunnerID(v)
+	return _u
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_u *PipelineRunUpdateOne) SetNillableRunnerID(v *string) *PipelineRunUpdateOne {
+	if v != nil {
+		_u.SetRunnerID(*v)
+	}
+	return _u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (_u *PipelineRunUpdateOne) ClearRunnerID() *PipelineRunUpdateOne {
+	_u.mutation.ClearRunnerID()
+	return _u
+}
+
 // Mutation returns the PipelineRunMutation object of the builder.
 func (_u *PipelineRunUpdateOne) Mutation() *PipelineRunMutation {
 	return _u.mutation
@@ -864,6 +910,12 @@ func (_u *PipelineRunUpdateOne) sqlSave(ctx context.Context) (_node *PipelineRun
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.RunnerID(); ok {
+		_spec.SetField(pipelinerun.FieldRunnerID, field.TypeString, value)
+	}
+	if _u.mutation.RunnerIDCleared() {
+		_spec.ClearField(pipelinerun.FieldRunnerID, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PipelineRun{config: _u.config}

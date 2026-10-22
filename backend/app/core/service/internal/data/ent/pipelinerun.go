@@ -43,7 +43,9 @@ type PipelineRun struct {
 	// 结束时间(终态)
 	FinishedAt *time.Time `json:"finished_at,omitempty"`
 	// 触发人
-	OperatorID   *uint32 `json:"operator_id,omitempty"`
+	OperatorID *uint32 `json:"operator_id,omitempty"`
+	// 执行实例标识(机器指纹):执行 goroutine 归属实例,启动清扫只定案本实例的遗留记录
+	RunnerID     *string `json:"runner_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -54,7 +56,7 @@ func (*PipelineRun) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case pipelinerun.FieldID, pipelinerun.FieldPipelineID, pipelinerun.FieldCurrentStep, pipelinerun.FieldOperatorID:
 			values[i] = new(sql.NullInt64)
-		case pipelinerun.FieldStatus, pipelinerun.FieldSteps, pipelinerun.FieldStepResults, pipelinerun.FieldLog, pipelinerun.FieldError:
+		case pipelinerun.FieldStatus, pipelinerun.FieldSteps, pipelinerun.FieldStepResults, pipelinerun.FieldLog, pipelinerun.FieldError, pipelinerun.FieldRunnerID:
 			values[i] = new(sql.NullString)
 		case pipelinerun.FieldCreatedAt, pipelinerun.FieldUpdatedAt, pipelinerun.FieldDeletedAt, pipelinerun.FieldStartedAt, pipelinerun.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -168,6 +170,13 @@ func (_m *PipelineRun) assignValues(columns []string, values []any) error {
 				_m.OperatorID = new(uint32)
 				*_m.OperatorID = uint32(value.Int64)
 			}
+		case pipelinerun.FieldRunnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field runner_id", values[i])
+			} else if value.Valid {
+				_m.RunnerID = new(string)
+				*_m.RunnerID = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -263,6 +272,11 @@ func (_m *PipelineRun) String() string {
 	if v := _m.OperatorID; v != nil {
 		builder.WriteString("operator_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.RunnerID; v != nil {
+		builder.WriteString("runner_id=")
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

@@ -224,13 +224,17 @@ func (r *CommandRecordRepo) ListByBatch(ctx context.Context, batchID uint32) ([]
 }
 
 // FinalizeStalePending 把超时未回执的 PENDING 台账定案 FAILED,返回行数。
-// 幂等,可多副本并发执行。
+// 幂等,可多副本并发执行。批次项(batch_id>0)不在本函数定案:它们的超时
+// 走 ListStalePendingBatchItems → FinalizeByRequestID + ApplyItemResult,
+// 对账批次计数后才能推进批次终态;在这里一并定案会让对账查询永远查空,
+// 批次将永远停在 RUNNING。
 func (r *CommandRecordRepo) FinalizeStalePending(ctx context.Context, before time.Time) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().CommandRecord.
 		Update().
 		Where(
 			commandrecord.StatusEQ(commandrecord.StatusPending),
+			commandrecord.BatchIDEQ(0),
 			commandrecord.CreatedAtLT(before),
 		).
 		SetStatus(commandrecord.StatusFailed).

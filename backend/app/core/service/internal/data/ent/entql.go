@@ -377,6 +377,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			buildhistory.FieldStartedAt:         {Type: field.TypeTime, Column: buildhistory.FieldStartedAt},
 			buildhistory.FieldFinishedAt:        {Type: field.TypeTime, Column: buildhistory.FieldFinishedAt},
 			buildhistory.FieldOperatorID:        {Type: field.TypeUint32, Column: buildhistory.FieldOperatorID},
+			buildhistory.FieldRunnerID:          {Type: field.TypeString, Column: buildhistory.FieldRunnerID},
 		},
 	}
 	graph.Nodes[10] = &sqlgraph.Node{
@@ -1115,6 +1116,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			monitor.FieldNotifyOnRecovery:      {Type: field.TypeBool, Column: monitor.FieldNotifyOnRecovery},
 			monitor.FieldRepeatIntervalMinutes: {Type: field.TypeInt, Column: monitor.FieldRepeatIntervalMinutes},
 			monitor.FieldCron:                  {Type: field.TypeString, Column: monitor.FieldCron},
+			monitor.FieldLastCheckAt:           {Type: field.TypeTime, Column: monitor.FieldLastCheckAt},
 			monitor.FieldAutoRestart:           {Type: field.TypeBool, Column: monitor.FieldAutoRestart},
 			monitor.FieldWebhookURL:            {Type: field.TypeString, Column: monitor.FieldWebhookURL},
 			monitor.FieldEnabled:               {Type: field.TypeBool, Column: monitor.FieldEnabled},
@@ -1451,6 +1453,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pipelinerun.FieldStartedAt:   {Type: field.TypeTime, Column: pipelinerun.FieldStartedAt},
 			pipelinerun.FieldFinishedAt:  {Type: field.TypeTime, Column: pipelinerun.FieldFinishedAt},
 			pipelinerun.FieldOperatorID:  {Type: field.TypeUint32, Column: pipelinerun.FieldOperatorID},
+			pipelinerun.FieldRunnerID:    {Type: field.TypeString, Column: pipelinerun.FieldRunnerID},
 		},
 	}
 	graph.Nodes[48] = &sqlgraph.Node{
@@ -3345,6 +3348,11 @@ func (f *BuildHistoryFilter) WhereFinishedAt(p entql.TimeP) {
 // WhereOperatorID applies the entql uint32 predicate on the operator_id field.
 func (f *BuildHistoryFilter) WhereOperatorID(p entql.Uint32P) {
 	f.Where(p.Field(buildhistory.FieldOperatorID))
+}
+
+// WhereRunnerID applies the entql string predicate on the runner_id field.
+func (f *BuildHistoryFilter) WhereRunnerID(p entql.StringP) {
+	f.Where(p.Field(buildhistory.FieldRunnerID))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -6471,6 +6479,11 @@ func (f *MonitorFilter) WhereCron(p entql.StringP) {
 	f.Where(p.Field(monitor.FieldCron))
 }
 
+// WhereLastCheckAt applies the entql time.Time predicate on the last_check_at field.
+func (f *MonitorFilter) WhereLastCheckAt(p entql.TimeP) {
+	f.Where(p.Field(monitor.FieldLastCheckAt))
+}
+
 // WhereAutoRestart applies the entql bool predicate on the auto_restart field.
 func (f *MonitorFilter) WhereAutoRestart(p entql.BoolP) {
 	f.Where(p.Field(monitor.FieldAutoRestart))
@@ -7905,6 +7918,11 @@ func (f *PipelineRunFilter) WhereFinishedAt(p entql.TimeP) {
 // WhereOperatorID applies the entql uint32 predicate on the operator_id field.
 func (f *PipelineRunFilter) WhereOperatorID(p entql.Uint32P) {
 	f.Where(p.Field(pipelinerun.FieldOperatorID))
+}
+
+// WhereRunnerID applies the entql string predicate on the runner_id field.
+func (f *PipelineRunFilter) WhereRunnerID(p entql.StringP) {
+	f.Where(p.Field(pipelinerun.FieldRunnerID))
 }
 
 // addPredicate implements the predicateAdder interface.

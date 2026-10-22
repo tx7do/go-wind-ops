@@ -134,6 +134,11 @@ func Cron(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldCron, v))
 }
 
+// LastCheckAt applies equality check predicate on the "last_check_at" field. It's identical to LastCheckAtEQ.
+func LastCheckAt(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldLastCheckAt, v))
+}
+
 // AutoRestart applies equality check predicate on the "auto_restart" field. It's identical to AutoRestartEQ.
 func AutoRestart(v bool) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldAutoRestart, v))
@@ -967,6 +972,56 @@ func CronEqualFold(v string) predicate.Monitor {
 // CronContainsFold applies the ContainsFold predicate on the "cron" field.
 func CronContainsFold(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldContainsFold(FieldCron, v))
+}
+
+// LastCheckAtEQ applies the EQ predicate on the "last_check_at" field.
+func LastCheckAtEQ(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldLastCheckAt, v))
+}
+
+// LastCheckAtNEQ applies the NEQ predicate on the "last_check_at" field.
+func LastCheckAtNEQ(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldLastCheckAt, v))
+}
+
+// LastCheckAtIn applies the In predicate on the "last_check_at" field.
+func LastCheckAtIn(vs ...time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldLastCheckAt, vs...))
+}
+
+// LastCheckAtNotIn applies the NotIn predicate on the "last_check_at" field.
+func LastCheckAtNotIn(vs ...time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldLastCheckAt, vs...))
+}
+
+// LastCheckAtGT applies the GT predicate on the "last_check_at" field.
+func LastCheckAtGT(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldLastCheckAt, v))
+}
+
+// LastCheckAtGTE applies the GTE predicate on the "last_check_at" field.
+func LastCheckAtGTE(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldLastCheckAt, v))
+}
+
+// LastCheckAtLT applies the LT predicate on the "last_check_at" field.
+func LastCheckAtLT(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldLastCheckAt, v))
+}
+
+// LastCheckAtLTE applies the LTE predicate on the "last_check_at" field.
+func LastCheckAtLTE(v time.Time) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldLastCheckAt, v))
+}
+
+// LastCheckAtIsNil applies the IsNil predicate on the "last_check_at" field.
+func LastCheckAtIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldLastCheckAt))
+}
+
+// LastCheckAtNotNil applies the NotNil predicate on the "last_check_at" field.
+func LastCheckAtNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldLastCheckAt))
 }
 
 // AutoRestartEQ applies the EQ predicate on the "auto_restart" field.

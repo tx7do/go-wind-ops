@@ -448,6 +448,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "开始执行时间"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间"},
 		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
+		{Name: "runner_id", Type: field.TypeString, Nullable: true, Comment: "执行实例标识(机器指纹):构建 goroutine 归属实例,启动清扫只定案本实例的遗留记录", Default: ""},
 	}
 	// OpsBuildHistoriesTable holds the schema information for the "ops_build_histories" table.
 	OpsBuildHistoriesTable = &schema.Table{
@@ -1895,6 +1896,7 @@ var (
 		{Name: "notify_on_recovery", Type: field.TypeBool, Comment: "恢复时是否产生 RECOVERY 告警并通知", Default: true},
 		{Name: "repeat_interval_minutes", Type: field.TypeInt, Comment: "重复告警最小间隔(分钟,0=每次异常检查都报;恢复后重新告警同样受此约束)", Default: 0},
 		{Name: "cron", Type: field.TypeString, Comment: "检查周期 cron 表达式(5 段标准语法)"},
+		{Name: "last_check_at", Type: field.TypeTime, Nullable: true, Comment: "检查调度锚点(调度器 CAS 推进,多副本去重;NULL=首见落锚不补跑)"},
 		{Name: "auto_restart", Type: field.TypeBool, Comment: "异常时自动重启项目(仅项目状态规则生效)", Default: false},
 		{Name: "webhook_url", Type: field.TypeString, Nullable: true, Comment: "告警通知 webhook 地址(空则只落告警不外呼)"},
 		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
@@ -1920,7 +1922,7 @@ var (
 			{
 				Name:    "idx_ops_monitor_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[21]},
+				Columns: []*schema.Column{OpsMonitorsColumns[22]},
 			},
 		},
 	}
@@ -2552,6 +2554,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "开始执行时间"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间(终态)"},
 		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "触发人", Default: 0},
+		{Name: "runner_id", Type: field.TypeString, Nullable: true, Comment: "执行实例标识(机器指纹):执行 goroutine 归属实例,启动清扫只定案本实例的遗留记录", Default: ""},
 	}
 	// OpsPipelineRunsTable holds the schema information for the "ops_pipeline_runs" table.
 	OpsPipelineRunsTable = &schema.Table{

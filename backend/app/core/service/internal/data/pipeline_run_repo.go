@@ -17,6 +17,10 @@ import (
 
 // PipelineRunRepo 流水线运行记录仓储(手写转换,单写者模型:
 // 执行 goroutine 独占推进,Log/StepResults 增量落库)。
+//
+// updated_at 在本表是 runner 心跳语义:mixin 未定义自动更新,
+// 所有写点必须显式 SetUpdatedAt,孤儿清扫(FinalizeStaleInterrupted)
+// 依赖它判定 runner 消失;漏写会让遗留的中间态记录永远无人定案。
 type PipelineRunRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
@@ -76,15 +80,19 @@ func statusToProto(v pipelinerun.Status) opsV1.PipelineRun_Status {
 }
 
 // Create 触发时建 run(快照步骤 JSON)。
-func (r *PipelineRunRepo) Create(ctx context.Context, pipelineID uint32, stepsJSON string, operatorID uint32) (*ent.PipelineRun, error) {
+func (r *PipelineRunRepo) Create(ctx context.Context, pipelineID uint32, stepsJSON string, operatorID uint32, runnerID string) (*ent.PipelineRun, error) {
 	builder := r.entClient.Client().PipelineRun.Create().
 		SetPipelineID(pipelineID).
-		SetCurrentStep(-1)
+		SetCurrentStep(-1).
+		SetUpdatedAt(time.Now())
 	if stepsJSON != "" {
 		builder = builder.SetSteps(stepsJSON)
 	}
 	if operatorID > 0 {
 		builder = builder.SetOperatorID(operatorID)
+	}
+	if runnerID != "" {
+		builder = builder.SetRunnerID(runnerID)
 	}
 	return builder.Save(ctx)
 }
@@ -96,13 +104,14 @@ func (r *PipelineRunRepo) MarkRunning(ctx context.Context, id uint32) error {
 		SetStatus(pipelinerun.StatusRunning).
 		SetStartedAt(now).
 		SetCurrentStep(-1).
+		SetUpdatedAt(now).
 		Save(ctx)
 	return err
 }
 
 // SetCurrentStep 推进当前步骤下标。
 func (r *PipelineRunRepo) SetCurrentStep(ctx context.Context, id uint32, idx int32) error {
-	_, err := r.entClient.Client().PipelineRun.UpdateOneID(id).SetCurrentStep(idx).Save(ctx)
+	_, err := r.entClient.Client().PipelineRun.UpdateOneID(id).SetCurrentStep(idx).SetUpdatedAt(time.Now()).Save(ctx)
 	return err
 }
 
@@ -120,12 +129,13 @@ func (r *PipelineRunRepo) AppendLog(ctx context.Context, id uint32, delta string
 		text = *e.Log
 	}
 	text += delta
-	return r.entClient.Client().PipelineRun.UpdateOneID(id).SetLog(text).Exec(ctx)
+	return r.entClient.Client().PipelineRun.UpdateOneID(id).SetLog(text).SetUpdatedAt(time.Now()).Exec(ctx)
 }
 
 // SetStepResults 回写步骤结果 JSON。
 func (r *PipelineRunRepo) SetStepResults(ctx context.Context, id uint32, resultsJSON string) error {
-	builder := r.entClient.Client().PipelineRun.UpdateOneID(id)
+	builder := r.entClient.Client().PipelineRun.UpdateOneID(id).
+		SetUpdatedAt(time.Now())
 	if resultsJSON != "" {
 		builder = builder.SetStepResults(resultsJSON)
 	}
@@ -135,9 +145,11 @@ func (r *PipelineRunRepo) SetStepResults(ctx context.Context, id uint32, results
 
 // UpdateFinished 终态落库。
 func (r *PipelineRunRepo) UpdateFinished(ctx context.Context, id uint32, status pipelinerun.Status, errMsg string) error {
+	now := time.Now()
 	builder := r.entClient.Client().PipelineRun.UpdateOneID(id).
 		SetStatus(status).
-		SetFinishedAt(time.Now())
+		SetFinishedAt(now).
+		SetUpdatedAt(now)
 	if errMsg != "" {
 		builder = builder.SetError(errMsg)
 	}
@@ -145,23 +157,50 @@ func (r *PipelineRunRepo) UpdateFinished(ctx context.Context, id uint32, status 
 	return err
 }
 
-// FinalizeInterrupted 启动清扫:上进程崩溃遗留的 RUNNING/PENDING 判 FAILED。
-func (r *PipelineRunRepo) FinalizeInterrupted(ctx context.Context) (int, error) {
-	runs, err := r.entClient.Client().PipelineRun.Query().
+// FinalizeInterruptedByRunner 启动清扫:只把本实例(同机器指纹)遗留的
+// RUNNING/PENDING 判 FAILED。执行 goroutine 在进程内,重启必然中断本机
+// 流水线;多副本部署下全局清扫会误伤其他副本正在跑的 run,以 runner_id
+// 限定范围。
+func (r *PipelineRunRepo) FinalizeInterruptedByRunner(ctx context.Context, runnerID string) (int, error) {
+	q := r.entClient.Client().PipelineRun.
+		Update().
 		Where(
 			pipelinerun.StatusIn(pipelinerun.StatusRunning, pipelinerun.StatusPending),
+		)
+	if runnerID != "" {
+		q = q.Where(pipelinerun.RunnerIDEQ(runnerID))
+	}
+	n, err := q.
+		SetStatus(pipelinerun.StatusFailed).
+		SetError("interrupted by core restart").
+		SetFinishedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		Save(ctx)
+	return n, err
+}
+
+// pipelineOrphanStaleThreshold 孤儿 run 判定阈值:各步等待超时上限(构建
+// 70min/脚本 12min/分发 20min)内 appendLog/SetStepResults 持续刷新
+// updated_at;超过该阈值仍无任何更新,可判定 runner 已消失。
+const pipelineOrphanStaleThreshold = 2 * time.Hour
+
+// FinalizeStaleInterrupted 周期清扫孤儿 run:runner 崩溃后遗留的
+// RUNNING/PENDING 按 updated_at 停更时间兜底定案。条件更新幂等,多副本
+// 并发执行恰一方生效。
+func (r *PipelineRunRepo) FinalizeStaleInterrupted(ctx context.Context) (int, error) {
+	now := time.Now()
+	n, err := r.entClient.Client().PipelineRun.
+		Update().
+		Where(
+			pipelinerun.StatusIn(pipelinerun.StatusRunning, pipelinerun.StatusPending),
+			pipelinerun.UpdatedAtLT(now.Add(-pipelineOrphanStaleThreshold)),
 		).
-		All(ctx)
-	if err != nil {
-		return 0, err
-	}
-	count := 0
-	for _, run := range runs {
-		if err = r.UpdateFinished(ctx, run.ID, pipelinerun.StatusFailed, "interrupted by restart"); err == nil {
-			count++
-		}
-	}
-	return count, nil
+		SetStatus(pipelinerun.StatusFailed).
+		SetError("orphaned: runner lost (no progress beyond threshold)").
+		SetFinishedAt(now).
+		SetUpdatedAt(now).
+		Save(ctx)
+	return n, err
 }
 
 // GetEntity 取原始实体(日志 delta 切片用)。

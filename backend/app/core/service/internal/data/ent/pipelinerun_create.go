@@ -196,6 +196,20 @@ func (_c *PipelineRunCreate) SetNillableOperatorID(v *uint32) *PipelineRunCreate
 	return _c
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_c *PipelineRunCreate) SetRunnerID(v string) *PipelineRunCreate {
+	_c.mutation.SetRunnerID(v)
+	return _c
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_c *PipelineRunCreate) SetNillableRunnerID(v *string) *PipelineRunCreate {
+	if v != nil {
+		_c.SetRunnerID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PipelineRunCreate) SetID(v uint32) *PipelineRunCreate {
 	_c.mutation.SetID(v)
@@ -248,6 +262,10 @@ func (_c *PipelineRunCreate) defaults() {
 	if _, ok := _c.mutation.OperatorID(); !ok {
 		v := pipelinerun.DefaultOperatorID
 		_c.mutation.SetOperatorID(v)
+	}
+	if _, ok := _c.mutation.RunnerID(); !ok {
+		v := pipelinerun.DefaultRunnerID
+		_c.mutation.SetRunnerID(v)
 	}
 }
 
@@ -358,6 +376,10 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.OperatorID(); ok {
 		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeUint32, value)
 		_node.OperatorID = &value
+	}
+	if value, ok := _c.mutation.RunnerID(); ok {
+		_spec.SetField(pipelinerun.FieldRunnerID, field.TypeString, value)
+		_node.RunnerID = &value
 	}
 	return _node, _spec
 }
@@ -630,6 +652,24 @@ func (u *PipelineRunUpsert) AddOperatorID(v uint32) *PipelineRunUpsert {
 // ClearOperatorID clears the value of the "operator_id" field.
 func (u *PipelineRunUpsert) ClearOperatorID() *PipelineRunUpsert {
 	u.SetNull(pipelinerun.FieldOperatorID)
+	return u
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *PipelineRunUpsert) SetRunnerID(v string) *PipelineRunUpsert {
+	u.Set(pipelinerun.FieldRunnerID, v)
+	return u
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *PipelineRunUpsert) UpdateRunnerID() *PipelineRunUpsert {
+	u.SetExcluded(pipelinerun.FieldRunnerID)
+	return u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *PipelineRunUpsert) ClearRunnerID() *PipelineRunUpsert {
+	u.SetNull(pipelinerun.FieldRunnerID)
 	return u
 }
 
@@ -940,6 +980,27 @@ func (u *PipelineRunUpsertOne) UpdateOperatorID() *PipelineRunUpsertOne {
 func (u *PipelineRunUpsertOne) ClearOperatorID() *PipelineRunUpsertOne {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *PipelineRunUpsertOne) SetRunnerID(v string) *PipelineRunUpsertOne {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.SetRunnerID(v)
+	})
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *PipelineRunUpsertOne) UpdateRunnerID() *PipelineRunUpsertOne {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.UpdateRunnerID()
+	})
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *PipelineRunUpsertOne) ClearRunnerID() *PipelineRunUpsertOne {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.ClearRunnerID()
 	})
 }
 
@@ -1416,6 +1477,27 @@ func (u *PipelineRunUpsertBulk) UpdateOperatorID() *PipelineRunUpsertBulk {
 func (u *PipelineRunUpsertBulk) ClearOperatorID() *PipelineRunUpsertBulk {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.ClearOperatorID()
+	})
+}
+
+// SetRunnerID sets the "runner_id" field.
+func (u *PipelineRunUpsertBulk) SetRunnerID(v string) *PipelineRunUpsertBulk {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.SetRunnerID(v)
+	})
+}
+
+// UpdateRunnerID sets the "runner_id" field to the value that was provided on create.
+func (u *PipelineRunUpsertBulk) UpdateRunnerID() *PipelineRunUpsertBulk {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.UpdateRunnerID()
+	})
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (u *PipelineRunUpsertBulk) ClearRunnerID() *PipelineRunUpsertBulk {
+	return u.Update(func(s *PipelineRunUpsert) {
+		s.ClearRunnerID()
 	})
 }
 

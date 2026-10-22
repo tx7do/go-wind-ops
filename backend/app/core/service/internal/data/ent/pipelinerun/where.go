@@ -114,6 +114,11 @@ func OperatorID(v uint32) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldOperatorID, v))
 }
 
+// RunnerID applies equality check predicate on the "runner_id" field. It's identical to RunnerIDEQ.
+func RunnerID(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldEQ(FieldRunnerID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldCreatedAt, v))
@@ -822,6 +827,81 @@ func OperatorIDIsNil() predicate.PipelineRun {
 // OperatorIDNotNil applies the NotNil predicate on the "operator_id" field.
 func OperatorIDNotNil() predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNotNull(FieldOperatorID))
+}
+
+// RunnerIDEQ applies the EQ predicate on the "runner_id" field.
+func RunnerIDEQ(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldEQ(FieldRunnerID, v))
+}
+
+// RunnerIDNEQ applies the NEQ predicate on the "runner_id" field.
+func RunnerIDNEQ(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldNEQ(FieldRunnerID, v))
+}
+
+// RunnerIDIn applies the In predicate on the "runner_id" field.
+func RunnerIDIn(vs ...string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldIn(FieldRunnerID, vs...))
+}
+
+// RunnerIDNotIn applies the NotIn predicate on the "runner_id" field.
+func RunnerIDNotIn(vs ...string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldNotIn(FieldRunnerID, vs...))
+}
+
+// RunnerIDGT applies the GT predicate on the "runner_id" field.
+func RunnerIDGT(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldGT(FieldRunnerID, v))
+}
+
+// RunnerIDGTE applies the GTE predicate on the "runner_id" field.
+func RunnerIDGTE(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldGTE(FieldRunnerID, v))
+}
+
+// RunnerIDLT applies the LT predicate on the "runner_id" field.
+func RunnerIDLT(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldLT(FieldRunnerID, v))
+}
+
+// RunnerIDLTE applies the LTE predicate on the "runner_id" field.
+func RunnerIDLTE(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldLTE(FieldRunnerID, v))
+}
+
+// RunnerIDContains applies the Contains predicate on the "runner_id" field.
+func RunnerIDContains(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldContains(FieldRunnerID, v))
+}
+
+// RunnerIDHasPrefix applies the HasPrefix predicate on the "runner_id" field.
+func RunnerIDHasPrefix(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldHasPrefix(FieldRunnerID, v))
+}
+
+// RunnerIDHasSuffix applies the HasSuffix predicate on the "runner_id" field.
+func RunnerIDHasSuffix(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldHasSuffix(FieldRunnerID, v))
+}
+
+// RunnerIDIsNil applies the IsNil predicate on the "runner_id" field.
+func RunnerIDIsNil() predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldIsNull(FieldRunnerID))
+}
+
+// RunnerIDNotNil applies the NotNil predicate on the "runner_id" field.
+func RunnerIDNotNil() predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldNotNull(FieldRunnerID))
+}
+
+// RunnerIDEqualFold applies the EqualFold predicate on the "runner_id" field.
+func RunnerIDEqualFold(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldEqualFold(FieldRunnerID, v))
+}
+
+// RunnerIDContainsFold applies the ContainsFold predicate on the "runner_id" field.
+func RunnerIDContainsFold(v string) predicate.PipelineRun {
+	return predicate.PipelineRun(sql.FieldContainsFold(FieldRunnerID, v))
 }
 
 // And groups predicates with the AND operator between them.

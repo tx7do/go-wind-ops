@@ -371,6 +371,10 @@ func init() {
 	buildhistoryDescOperatorID := buildhistoryFields[11].Descriptor()
 	// buildhistory.DefaultOperatorID holds the default value on creation for the operator_id field.
 	buildhistory.DefaultOperatorID = buildhistoryDescOperatorID.Default.(uint32)
+	// buildhistoryDescRunnerID is the schema descriptor for runner_id field.
+	buildhistoryDescRunnerID := buildhistoryFields[12].Descriptor()
+	// buildhistory.DefaultRunnerID holds the default value on creation for the runner_id field.
+	buildhistory.DefaultRunnerID = buildhistoryDescRunnerID.Default.(string)
 	// buildhistoryDescID is the schema descriptor for id field.
 	buildhistoryDescID := buildhistoryMixinFields0[0].Descriptor()
 	// buildhistory.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1169,11 +1173,11 @@ func init() {
 	// monitor.CronValidator is a validator for the "cron" field. It is called by the builders before save.
 	monitor.CronValidator = monitorDescCron.Validators[0].(func(string) error)
 	// monitorDescAutoRestart is the schema descriptor for auto_restart field.
-	monitorDescAutoRestart := monitorFields[12].Descriptor()
+	monitorDescAutoRestart := monitorFields[13].Descriptor()
 	// monitor.DefaultAutoRestart holds the default value on creation for the auto_restart field.
 	monitor.DefaultAutoRestart = monitorDescAutoRestart.Default.(bool)
 	// monitorDescEnabled is the schema descriptor for enabled field.
-	monitorDescEnabled := monitorFields[14].Descriptor()
+	monitorDescEnabled := monitorFields[15].Descriptor()
 	// monitor.DefaultEnabled holds the default value on creation for the enabled field.
 	monitor.DefaultEnabled = monitorDescEnabled.Default.(bool)
 	// monitorDescID is the schema descriptor for id field.
@@ -1512,6 +1516,10 @@ func init() {
 	pipelinerunDescOperatorID := pipelinerunFields[9].Descriptor()
 	// pipelinerun.DefaultOperatorID holds the default value on creation for the operator_id field.
 	pipelinerun.DefaultOperatorID = pipelinerunDescOperatorID.Default.(uint32)
+	// pipelinerunDescRunnerID is the schema descriptor for runner_id field.
+	pipelinerunDescRunnerID := pipelinerunFields[10].Descriptor()
+	// pipelinerun.DefaultRunnerID holds the default value on creation for the runner_id field.
+	pipelinerun.DefaultRunnerID = pipelinerunDescRunnerID.Default.(string)
 	// pipelinerunDescID is the schema descriptor for id field.
 	pipelinerunDescID := pipelinerunMixinFields0[0].Descriptor()
 	// pipelinerun.IDValidator is a validator for the "id" field. It is called by the builders before save.

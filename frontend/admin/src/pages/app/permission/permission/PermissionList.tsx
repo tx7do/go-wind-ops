@@ -3,14 +3,14 @@ import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, App, Empty } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
-import { fetchListPermissions, useDeletePermission } from '@/api/hooks/permission';
+import { fetchListPermissions, useDeletePermission, useSyncPermissions } from '@/api/hooks/permission';
 import { getStatusMap, getStatusOptions } from './constants';
 import PermissionDrawer from './PermissionDrawer';
 
@@ -44,6 +44,19 @@ const PermissionList: React.FC<PermissionListProps> = ({ groupId }) => {
     },
     onError: (error: Error) => {
       message.error(error.message || t('deleteFailed'));
+    },
+  });
+
+  // 同步权限点(从各服务注册表重新扫描并同步权限点定义)
+  const syncMutation = useSyncPermissions({
+    onSuccess: () => {
+      message.success(t('syncSuccess'));
+      actionRef.current?.reload();
+      queryClient.invalidateQueries({ queryKey: ['listPermissions'] });
+      queryClient.invalidateQueries({ queryKey: ['listPermissionGroups'] });
+    },
+    onError: (error: Error) => {
+      message.error(error.message || t('syncFailed'));
     },
   });
 
@@ -169,6 +182,17 @@ const PermissionList: React.FC<PermissionListProps> = ({ groupId }) => {
               >
                 {t('create')}
               </Button>,
+              <Popconfirm
+                key="sync"
+                title={t('confirmSync')}
+                onConfirm={() => syncMutation.mutate()}
+                okText={t('common:button.ok')}
+                cancelText={t('common:button.cancel')}
+              >
+                <Button type="primary" danger icon={<SyncOutlined />} size="small" loading={syncMutation.isPending}>
+                  {t('syncPermissions')}
+                </Button>
+              </Popconfirm>,
             ]}
             options={{
               density: true,

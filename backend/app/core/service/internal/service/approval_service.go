@@ -68,7 +68,11 @@ func (s *ApprovalService) ApproveApproval(ctx context.Context, req *opsV1.Approv
 	if dispatchErr != nil {
 		s.log.Errorf("approved operation dispatch failed (approval=%d agent=%s action=%s): %s",
 			req.GetId(), record.AgentID, record.OperationType, dispatchErr.Error())
-		return &opsV1.OpApprovalResult{}, nil
+		// 执行结果回写失败详情,审批人可见;状态仍为 APPROVED(不回退,便于人工排查后重发)
+		if merr := s.repo.MarkExecuted(ctx, req.GetId(), "dispatch failed: "+dispatchErr.Error()); merr != nil {
+			s.log.Warnf("mark approval dispatch-failed [%d]: %s", req.GetId(), merr.Error())
+		}
+		return nil, opsV1.ErrorInternalServerError("approved operation dispatch failed")
 	}
 
 	// 执行闭环:重下发成功后回写审批单执行结果

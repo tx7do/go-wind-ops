@@ -258,6 +258,20 @@ func (_c *MonitorCreate) SetCron(v string) *MonitorCreate {
 	return _c
 }
 
+// SetLastCheckAt sets the "last_check_at" field.
+func (_c *MonitorCreate) SetLastCheckAt(v time.Time) *MonitorCreate {
+	_c.mutation.SetLastCheckAt(v)
+	return _c
+}
+
+// SetNillableLastCheckAt sets the "last_check_at" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableLastCheckAt(v *time.Time) *MonitorCreate {
+	if v != nil {
+		_c.SetLastCheckAt(*v)
+	}
+	return _c
+}
+
 // SetAutoRestart sets the "auto_restart" field.
 func (_c *MonitorCreate) SetAutoRestart(v bool) *MonitorCreate {
 	_c.mutation.SetAutoRestart(v)
@@ -569,6 +583,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
 		_node.Cron = value
+	}
+	if value, ok := _c.mutation.LastCheckAt(); ok {
+		_spec.SetField(monitor.FieldLastCheckAt, field.TypeTime, value)
+		_node.LastCheckAt = &value
 	}
 	if value, ok := _c.mutation.AutoRestart(); ok {
 		_spec.SetField(monitor.FieldAutoRestart, field.TypeBool, value)
@@ -941,6 +959,24 @@ func (u *MonitorUpsert) SetCron(v string) *MonitorUpsert {
 // UpdateCron sets the "cron" field to the value that was provided on create.
 func (u *MonitorUpsert) UpdateCron() *MonitorUpsert {
 	u.SetExcluded(monitor.FieldCron)
+	return u
+}
+
+// SetLastCheckAt sets the "last_check_at" field.
+func (u *MonitorUpsert) SetLastCheckAt(v time.Time) *MonitorUpsert {
+	u.Set(monitor.FieldLastCheckAt, v)
+	return u
+}
+
+// UpdateLastCheckAt sets the "last_check_at" field to the value that was provided on create.
+func (u *MonitorUpsert) UpdateLastCheckAt() *MonitorUpsert {
+	u.SetExcluded(monitor.FieldLastCheckAt)
+	return u
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (u *MonitorUpsert) ClearLastCheckAt() *MonitorUpsert {
+	u.SetNull(monitor.FieldLastCheckAt)
 	return u
 }
 
@@ -1409,6 +1445,27 @@ func (u *MonitorUpsertOne) SetCron(v string) *MonitorUpsertOne {
 func (u *MonitorUpsertOne) UpdateCron() *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateCron()
+	})
+}
+
+// SetLastCheckAt sets the "last_check_at" field.
+func (u *MonitorUpsertOne) SetLastCheckAt(v time.Time) *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetLastCheckAt(v)
+	})
+}
+
+// UpdateLastCheckAt sets the "last_check_at" field to the value that was provided on create.
+func (u *MonitorUpsertOne) UpdateLastCheckAt() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateLastCheckAt()
+	})
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (u *MonitorUpsertOne) ClearLastCheckAt() *MonitorUpsertOne {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearLastCheckAt()
 	})
 }
 
@@ -2053,6 +2110,27 @@ func (u *MonitorUpsertBulk) SetCron(v string) *MonitorUpsertBulk {
 func (u *MonitorUpsertBulk) UpdateCron() *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.UpdateCron()
+	})
+}
+
+// SetLastCheckAt sets the "last_check_at" field.
+func (u *MonitorUpsertBulk) SetLastCheckAt(v time.Time) *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.SetLastCheckAt(v)
+	})
+}
+
+// UpdateLastCheckAt sets the "last_check_at" field to the value that was provided on create.
+func (u *MonitorUpsertBulk) UpdateLastCheckAt() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.UpdateLastCheckAt()
+	})
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (u *MonitorUpsertBulk) ClearLastCheckAt() *MonitorUpsertBulk {
+	return u.Update(func(s *MonitorUpsert) {
+		s.ClearLastCheckAt()
 	})
 }
 

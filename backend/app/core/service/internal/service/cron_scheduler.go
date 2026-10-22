@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"os"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
@@ -25,8 +26,9 @@ const cronSweepInterval = 30 * time.Second
 
 // CronScheduler 定时调度器:每 30s 扫描定时构建/脚本/监控/备份任务,命中即触发。
 //
-// 去重:构建/脚本/备份用 last_cron_at 锚点 + CAS 推进(多副本安全);
-// 监控检查只读幂等,重复无害。
+// 去重:构建/脚本/监控/备份全部用锚点 CAS 推进(多副本安全)——构建/脚本/
+// 备份锚在 last_cron_at,监控检查锚在 last_check_at;同一规则同一周期只有
+// 抢到锚点的副本执行,探测指令、防抖计数与告警创建随之单份。
 type CronScheduler struct {
 	ctx           *bootstrap.Context
 	buildRepo     *data.BuildRepo
@@ -48,9 +50,11 @@ type CronScheduler struct {
 	certService      *CertService
 	logSnapshotService *LogSnapshotService
 	historyRepo      *data.BuildHistoryRepo
+	pipelineRunRepo  *data.PipelineRunRepo
 	ossClient        *oss.MinIOClient
 
 	lastRetentionSweep time.Time
+	lastOrphanSweep    time.Time
 	lastBudgetCheck    time.Time
 	lastCertCheck      time.Time
 	lastLogSnapshot    time.Time
@@ -58,7 +62,7 @@ type CronScheduler struct {
 	log                *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
 	return &CronScheduler{
 		ctx:              ctx,
 		buildRepo:        buildRepo,
@@ -76,6 +80,7 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		certService:      certService,
 		logSnapshotService: logSnapshotService,
 		historyRepo:      historyRepo,
+		pipelineRunRepo:  pipelineRunRepo,
 		ossClient:        ossClient,
 		buildService:     buildService,
 		scriptService:    scriptService,
@@ -95,19 +100,32 @@ func (s *CronScheduler) Start(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				s.tickBuilds(ctx)
-				s.tickScripts(ctx)
-				s.tickMonitors(ctx)
-				s.tickBackups(ctx)
-				s.tickBudgets(ctx)
-				s.tickCerts(ctx)
-				s.tickLogSnapshots(ctx)
-				s.tickRetention(ctx)
-				s.tickTransientObjects(ctx)
+				s.runTick(ctx, "builds", s.tickBuilds)
+				s.runTick(ctx, "scripts", s.tickScripts)
+				s.runTick(ctx, "monitors", s.tickMonitors)
+				s.runTick(ctx, "backups", s.tickBackups)
+				s.runTick(ctx, "orphan-runs", s.tickOrphanRuns)
+				s.runTick(ctx, "budgets", s.tickBudgets)
+				s.runTick(ctx, "certs", s.tickCerts)
+				s.runTick(ctx, "log-snapshots", s.tickLogSnapshots)
+				s.runTick(ctx, "retention", s.tickRetention)
+				s.runTick(ctx, "transient-objects", s.tickTransientObjects)
 			}
 		}
 	}()
 	s.log.Info("cron scheduler started (30s tick)")
+}
+
+// runTick 单个 tick 的 panic 隔离:调度循环是单 goroutine 顺序执行,任一
+// tick 恐慌会沿调用栈炸掉整个 core 进程。这里兜住并记日志,只损失本轮该
+// 任务,下一周期照常执行。
+func (s *CronScheduler) runTick(ctx context.Context, name string, fn func(ctx context.Context)) {
+	defer func() {
+		if r := recover(); r != nil {
+			s.log.Errorf("cron tick [%s] panicked: %v\n%s", name, r, debug.Stack())
+		}
+	}()
+	fn(ctx)
 }
 
 // tickBuilds 扫描定时构建。
@@ -195,7 +213,9 @@ func (s *CronScheduler) tickScripts(ctx context.Context) {
 	}
 }
 
-// tickMonitors 扫描监控规则:cron 命中即对项目做状态探测(只读,重复无害)。
+// tickMonitors 扫描监控规则:锚点 CAS 去重(last_check_at),同一规则同一
+// 周期只有抢到锚点的副本执行检查——检查并非"只读幂等":它会创建告警、
+// 外呼 webhook、推进防抖计数,多副本双跑会双发告警,必须单份执行。
 func (s *CronScheduler) tickMonitors(ctx context.Context) {
 	monitors, err := s.monitorRepo.ListEnabled(ctx)
 	if err != nil {
@@ -207,17 +227,54 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 		if err != nil {
 			continue
 		}
-		if !cronHitMinute(schedule, now) {
+		if m.LastCheckAt == nil {
+			// 新规则的空锚点先落当前时间(不补跑),从下一个 cron 周期起
+			// 正常检查;NULL 直接走 CAS 会因 EQ(NULL) 永远匹配不上而永不触发。
+			if ok, _ := s.monitorRepo.AdvanceCheckAnchorFromNull(ctx, m.ID, now); ok {
+				s.log.Infof("monitor check anchor initialized (monitor=%d spec=%s)", m.ID, m.Cron)
+			}
+			continue
+		}
+		last := *m.LastCheckAt
+		next := schedule.Next(last)
+		if next.After(now) {
+			continue
+		}
+		ok, err := s.monitorRepo.AdvanceCheckAnchor(ctx, m.ID, last, now)
+		if err != nil || !ok {
 			continue
 		}
 		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.deliveryRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, m)
 	}
 }
 
-// cronHitMinute 判断 cron 调度在当前分钟内是否命中。
-func cronHitMinute(schedule cron.Schedule, now time.Time) bool {
-	next := schedule.Next(now.Add(-time.Minute))
-	return !next.After(now)
+// orphanSweepInterval 孤儿构建/流水线清扫周期(低频,每小时一次)。
+const orphanSweepInterval = time.Hour
+
+// tickOrphanRuns 周期清扫孤儿运行记录:runner 副本崩溃后无法自 Clean 的
+// PENDING/RUNNING 构建历史与流水线 run,按 updated_at 停更超阈值兜底定案
+// FAILED(启动清扫只管本实例,跨实例的遗留归这里)。条件更新幂等,多副本
+// 并发执行恰一方生效。
+func (s *CronScheduler) tickOrphanRuns(ctx context.Context) {
+	if s.historyRepo == nil {
+		return
+	}
+	if time.Since(s.lastOrphanSweep) < orphanSweepInterval {
+		return
+	}
+	s.lastOrphanSweep = time.Now()
+	if n, err := s.historyRepo.FinalizeStaleInterrupted(ctx); err != nil {
+		s.log.Warnf("orphan build sweep: %s", err.Error())
+	} else if n > 0 {
+		s.log.Infof("orphan build sweep: finalized %d record(s)", n)
+	}
+	if s.pipelineRunRepo != nil {
+		if n, err := s.pipelineRunRepo.FinalizeStaleInterrupted(ctx); err != nil {
+			s.log.Warnf("orphan pipeline sweep: %s", err.Error())
+		} else if n > 0 {
+			s.log.Infof("orphan pipeline sweep: finalized %d run(s)", n)
+		}
+	}
 }
 
 // tickBackups 扫描定时备份任务(锚点 CAS 去重)。新建任务的空锚点先落

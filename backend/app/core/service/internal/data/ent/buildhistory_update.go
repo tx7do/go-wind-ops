@@ -325,6 +325,26 @@ func (_u *BuildHistoryUpdate) ClearOperatorID() *BuildHistoryUpdate {
 	return _u
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_u *BuildHistoryUpdate) SetRunnerID(v string) *BuildHistoryUpdate {
+	_u.mutation.SetRunnerID(v)
+	return _u
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_u *BuildHistoryUpdate) SetNillableRunnerID(v *string) *BuildHistoryUpdate {
+	if v != nil {
+		_u.SetRunnerID(*v)
+	}
+	return _u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (_u *BuildHistoryUpdate) ClearRunnerID() *BuildHistoryUpdate {
+	_u.mutation.ClearRunnerID()
+	return _u
+}
+
 // Mutation returns the BuildHistoryMutation object of the builder.
 func (_u *BuildHistoryUpdate) Mutation() *BuildHistoryMutation {
 	return _u.mutation
@@ -487,6 +507,12 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.RunnerID(); ok {
+		_spec.SetField(buildhistory.FieldRunnerID, field.TypeString, value)
+	}
+	if _u.mutation.RunnerIDCleared() {
+		_spec.ClearField(buildhistory.FieldRunnerID, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -806,6 +832,26 @@ func (_u *BuildHistoryUpdateOne) ClearOperatorID() *BuildHistoryUpdateOne {
 	return _u
 }
 
+// SetRunnerID sets the "runner_id" field.
+func (_u *BuildHistoryUpdateOne) SetRunnerID(v string) *BuildHistoryUpdateOne {
+	_u.mutation.SetRunnerID(v)
+	return _u
+}
+
+// SetNillableRunnerID sets the "runner_id" field if the given value is not nil.
+func (_u *BuildHistoryUpdateOne) SetNillableRunnerID(v *string) *BuildHistoryUpdateOne {
+	if v != nil {
+		_u.SetRunnerID(*v)
+	}
+	return _u
+}
+
+// ClearRunnerID clears the value of the "runner_id" field.
+func (_u *BuildHistoryUpdateOne) ClearRunnerID() *BuildHistoryUpdateOne {
+	_u.mutation.ClearRunnerID()
+	return _u
+}
+
 // Mutation returns the BuildHistoryMutation object of the builder.
 func (_u *BuildHistoryUpdateOne) Mutation() *BuildHistoryMutation {
 	return _u.mutation
@@ -998,6 +1044,12 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 	}
 	if _u.mutation.OperatorIDCleared() {
 		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.RunnerID(); ok {
+		_spec.SetField(buildhistory.FieldRunnerID, field.TypeString, value)
+	}
+	if _u.mutation.RunnerIDCleared() {
+		_spec.ClearField(buildhistory.FieldRunnerID, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &BuildHistory{config: _u.config}

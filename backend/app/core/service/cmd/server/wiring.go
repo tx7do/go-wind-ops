@@ -230,8 +230,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotRepo, projectRepo, agentNodeRepo, agentService)
 	configService := service.NewConfigService(ctx, configTemplateRepo, configDistRepo, agentNodeRepo, projectRepo, minIOClient, agentService)
 
-	// 定时调度(构建/脚本/备份/预算/证书 cron + 监控检查)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, minIOClient, buildService, scriptService, backupService, agentService)
+	// 定时调度(构建/脚本/监控/备份/预算/证书 cron + 孤儿构建清扫)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService)
 	cronScheduler.Start(ctx.Context())
 
 	// 终端录制留存清理(TERMINAL_RETENTION_DAYS,默认 30 天,0=永久)

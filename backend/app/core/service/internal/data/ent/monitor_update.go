@@ -378,6 +378,26 @@ func (_u *MonitorUpdate) SetNillableCron(v *string) *MonitorUpdate {
 	return _u
 }
 
+// SetLastCheckAt sets the "last_check_at" field.
+func (_u *MonitorUpdate) SetLastCheckAt(v time.Time) *MonitorUpdate {
+	_u.mutation.SetLastCheckAt(v)
+	return _u
+}
+
+// SetNillableLastCheckAt sets the "last_check_at" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableLastCheckAt(v *time.Time) *MonitorUpdate {
+	if v != nil {
+		_u.SetLastCheckAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (_u *MonitorUpdate) ClearLastCheckAt() *MonitorUpdate {
+	_u.mutation.ClearLastCheckAt()
+	return _u
+}
+
 // SetAutoRestart sets the "auto_restart" field.
 func (_u *MonitorUpdate) SetAutoRestart(v bool) *MonitorUpdate {
 	_u.mutation.SetAutoRestart(v)
@@ -625,6 +645,12 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.LastCheckAt(); ok {
+		_spec.SetField(monitor.FieldLastCheckAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCheckAtCleared() {
+		_spec.ClearField(monitor.FieldLastCheckAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.AutoRestart(); ok {
 		_spec.SetField(monitor.FieldAutoRestart, field.TypeBool, value)
@@ -1015,6 +1041,26 @@ func (_u *MonitorUpdateOne) SetNillableCron(v *string) *MonitorUpdateOne {
 	return _u
 }
 
+// SetLastCheckAt sets the "last_check_at" field.
+func (_u *MonitorUpdateOne) SetLastCheckAt(v time.Time) *MonitorUpdateOne {
+	_u.mutation.SetLastCheckAt(v)
+	return _u
+}
+
+// SetNillableLastCheckAt sets the "last_check_at" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableLastCheckAt(v *time.Time) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetLastCheckAt(*v)
+	}
+	return _u
+}
+
+// ClearLastCheckAt clears the value of the "last_check_at" field.
+func (_u *MonitorUpdateOne) ClearLastCheckAt() *MonitorUpdateOne {
+	_u.mutation.ClearLastCheckAt()
+	return _u
+}
+
 // SetAutoRestart sets the "auto_restart" field.
 func (_u *MonitorUpdateOne) SetAutoRestart(v bool) *MonitorUpdateOne {
 	_u.mutation.SetAutoRestart(v)
@@ -1292,6 +1338,12 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	}
 	if value, ok := _u.mutation.Cron(); ok {
 		_spec.SetField(monitor.FieldCron, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.LastCheckAt(); ok {
+		_spec.SetField(monitor.FieldLastCheckAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastCheckAtCleared() {
+		_spec.ClearField(monitor.FieldLastCheckAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.AutoRestart(); ok {
 		_spec.SetField(monitor.FieldAutoRestart, field.TypeBool, value)

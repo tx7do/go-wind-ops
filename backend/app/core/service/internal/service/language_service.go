@@ -86,6 +86,24 @@ func (s *LanguageService) Create(ctx context.Context, req *dictV1.CreateLanguage
 	return &emptypb.Empty{}, nil
 }
 
+// BatchCreate 批量创建语言(逐条落库,单条失败即整体失败)。
+func (s *LanguageService) BatchCreate(ctx context.Context, req *dictV1.BatchCreateLanguagesRequest) (*emptypb.Empty, error) {
+	if req == nil || len(req.GetItems()) == 0 {
+		return nil, dictV1.ErrorBadRequest("invalid parameter")
+	}
+
+	for _, item := range req.GetItems() {
+		if item == nil {
+			return nil, dictV1.ErrorBadRequest("invalid parameter")
+		}
+		if err := s.languageRepo.Create(ctx, &dictV1.CreateLanguageRequest{Data: item}); err != nil {
+			return nil, err
+		}
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 func (s *LanguageService) Update(ctx context.Context, req *dictV1.UpdateLanguageRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {
 		return nil, dictV1.ErrorBadRequest("invalid parameter")

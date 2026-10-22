@@ -118,12 +118,15 @@ func (r *AlertRepo) Get(ctx context.Context, req *opsV1.GetAlertRequest) (*opsV1
 	return dto, nil
 }
 
-// HasUnresolvedAlert 同一监控是否存在未恢复告警(重复告警去重)。
-func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint32) (bool, error) {
+// HasUnresolvedAlert 同一来源对象是否存在未恢复告警(重复告警去重)。
+// monitor_id 是跨来源复用字段(MONITOR=规则ID/NODE_OFFLINE=节点ID/BUDGET=
+// 预算ID/CERT=证书ID),各业务表独立自增必然撞号,必须加 source 才能唯一定位。
+func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint32, source string) (bool, error) {
 	return r.entClient.Client().Alert.
 		Query().
 		Where(
 			alert.MonitorIDEQ(monitorID),
+			alert.SourceEQ(source),
 			alert.ResolvedEQ(false),
 		).
 		Exist(ctx)
@@ -173,11 +176,14 @@ func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, no
 	return record, nil
 }
 
-// LatestAlertByMonitor 取某监控最近一条告警(重复告警间隔判断用)。
-func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID uint32) (*ent.Alert, error) {
+// LatestAlertByMonitor 取某来源对象最近一条告警(重复告警间隔判断用)。
+func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID uint32, source string) (*ent.Alert, error) {
 	return r.entClient.Client().Alert.
 		Query().
-		Where(alert.MonitorIDEQ(monitorID)).
+		Where(
+			alert.MonitorIDEQ(monitorID),
+			alert.SourceEQ(source),
+		).
 		Order(ent.Desc(alert.FieldID)).
 		First(ctx)
 }
@@ -196,13 +202,15 @@ func (r *AlertRepo) Resolve(ctx context.Context, id uint32) error {
 	return err
 }
 
-// ResolveAllByMonitor 恢复某监控的全部未恢复告警(项目恢复运行时调用)。
-func (r *AlertRepo) ResolveAllByMonitor(ctx context.Context, monitorID uint32) (int, error) {
+// ResolveAllByMonitor 恢复某来源对象的全部未恢复告警(条件恢复运行时调用)。
+// 必须带 source,否则会误关撞号的其他来源告警(如节点 N 恢复时误关监控规则 N)。
+func (r *AlertRepo) ResolveAllByMonitor(ctx context.Context, monitorID uint32, source string) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().Alert.
 		Update().
 		Where(
 			alert.MonitorIDEQ(monitorID),
+			alert.SourceEQ(source),
 			alert.ResolvedEQ(false),
 		).
 		SetResolved(true).
