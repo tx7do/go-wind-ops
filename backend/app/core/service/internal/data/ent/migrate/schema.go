@@ -21,6 +21,7 @@ var (
 		{Name: "agent_id", Type: field.TypeString, Unique: true, Comment: "机器唯一标识(machine-id),MQTT 主题与准入的锚点"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "节点显示名(默认取 hostname,可人工修改)"},
 		{Name: "token_hash", Type: field.TypeString, Comment: "接入令牌的 SHA-256 十六进制哈希(明文只存 agent 本机)"},
+		{Name: "revoked", Type: field.TypeBool, Comment: "已吊销:吊销后 broker/信令两层准入均拒绝(token 泄露应急处置),恢复须解除吊销", Default: false},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "在线状态", Enums: []string{"ONLINE", "OFFLINE"}, Default: "OFFLINE"},
 		{Name: "env", Type: field.TypeString, Nullable: true, Comment: "环境标签(default/dev/staging/prod,登记时指定,用于环境隔离)", Default: "default"},
 		{Name: "hostname", Type: field.TypeString, Nullable: true, Comment: "主机名"},
@@ -50,7 +51,7 @@ var (
 			{
 				Name:    "idx_ops_agent_node_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAgentNodesColumns[10]},
+				Columns: []*schema.Column{OpsAgentNodesColumns[11]},
 			},
 		},
 	}

@@ -178,6 +178,7 @@ type AgentNodeMutation struct {
 	agent_id               *string
 	name                   *string
 	token_hash             *string
+	revoked                *bool
 	status                 *agentnode.Status
 	env                    *string
 	hostname               *string
@@ -790,6 +791,42 @@ func (m *AgentNodeMutation) OldTokenHash(ctx context.Context) (v string, err err
 // ResetTokenHash resets all changes to the "token_hash" field.
 func (m *AgentNodeMutation) ResetTokenHash() {
 	m.token_hash = nil
+}
+
+// SetRevoked sets the "revoked" field.
+func (m *AgentNodeMutation) SetRevoked(b bool) {
+	m.revoked = &b
+}
+
+// Revoked returns the value of the "revoked" field in the mutation.
+func (m *AgentNodeMutation) Revoked() (r bool, exists bool) {
+	v := m.revoked
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRevoked returns the old "revoked" field's value of the AgentNode entity.
+// If the AgentNode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgentNodeMutation) OldRevoked(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRevoked is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRevoked requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRevoked: %w", err)
+	}
+	return oldValue.Revoked, nil
+}
+
+// ResetRevoked resets all changes to the "revoked" field.
+func (m *AgentNodeMutation) ResetRevoked() {
+	m.revoked = nil
 }
 
 // SetStatus sets the "status" field.
@@ -1866,7 +1903,7 @@ func (m *AgentNodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AgentNodeMutation) Fields() []string {
-	fields := make([]string, 0, 27)
+	fields := make([]string, 0, 28)
 	if m.created_at != nil {
 		fields = append(fields, agentnode.FieldCreatedAt)
 	}
@@ -1893,6 +1930,9 @@ func (m *AgentNodeMutation) Fields() []string {
 	}
 	if m.token_hash != nil {
 		fields = append(fields, agentnode.FieldTokenHash)
+	}
+	if m.revoked != nil {
+		fields = append(fields, agentnode.FieldRevoked)
 	}
 	if m.status != nil {
 		fields = append(fields, agentnode.FieldStatus)
@@ -1974,6 +2014,8 @@ func (m *AgentNodeMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case agentnode.FieldTokenHash:
 		return m.TokenHash()
+	case agentnode.FieldRevoked:
+		return m.Revoked()
 	case agentnode.FieldStatus:
 		return m.Status()
 	case agentnode.FieldEnv:
@@ -2037,6 +2079,8 @@ func (m *AgentNodeMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldName(ctx)
 	case agentnode.FieldTokenHash:
 		return m.OldTokenHash(ctx)
+	case agentnode.FieldRevoked:
+		return m.OldRevoked(ctx)
 	case agentnode.FieldStatus:
 		return m.OldStatus(ctx)
 	case agentnode.FieldEnv:
@@ -2144,6 +2188,13 @@ func (m *AgentNodeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTokenHash(v)
+		return nil
+	case agentnode.FieldRevoked:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRevoked(v)
 		return nil
 	case agentnode.FieldStatus:
 		v, ok := value.(agentnode.Status)
@@ -2610,6 +2661,9 @@ func (m *AgentNodeMutation) ResetField(name string) error {
 		return nil
 	case agentnode.FieldTokenHash:
 		m.ResetTokenHash()
+		return nil
+	case agentnode.FieldRevoked:
+		m.ResetRevoked()
 		return nil
 	case agentnode.FieldStatus:
 		m.ResetStatus()

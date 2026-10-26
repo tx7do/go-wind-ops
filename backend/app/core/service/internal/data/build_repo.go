@@ -118,6 +118,14 @@ func (r *BuildRepo) Get(ctx context.Context, req *opsV1.GetBuildRequest) (*opsV1
 	return dto, nil
 }
 
+// GetEntity 读取 ent 实体(后台归因用:cron 触发时取构建配置租户)。
+func (r *BuildRepo) GetEntity(ctx context.Context, id uint32) (*ent.Build, error) {
+	return r.entClient.Client().Build.
+		Query().
+		Where(build.IDEQ(id)).
+		First(ctx)
+}
+
 // IsNameTaken 校验构建名唯一性。
 func (r *BuildRepo) IsNameTaken(ctx context.Context, name string, excludeID uint32) (bool, error) {
 	query := r.entClient.Client().Build.Query().Where(build.NameEQ(name))

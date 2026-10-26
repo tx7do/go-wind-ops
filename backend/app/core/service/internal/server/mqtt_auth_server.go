@@ -31,6 +31,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/envs"
 	"go-wind-ops/pkg/configenv"
 )
 
@@ -126,13 +127,25 @@ func (h *MqttAuthServer) handleAuth(w http.ResponseWriter, r *http.Request) {
 
 	tokenHash := sha256Hex(req.Password)
 	if node == nil {
-		// TOFU 首连注册
+		// TOFU 首连注册;AGENT_ENROLL_ALLOWLIST 配置后关闭开放注册
+		if !envs.EnrollmentAllowed(req.Username) {
+			h.log.Warnf("mqtt broker auth: agent [%s] enrollment denied (allowlist)", req.Username)
+			h.writeDeny(w)
+			return
+		}
 		if _, err = h.repo.Enrol(ctx, req.Username, tokenHash, nil); err != nil {
 			h.writeDeny(w)
 			return
 		}
 		h.log.Infof("mqtt broker auth: agent [%s] enrolled (TOFU)", req.Username)
 		h.writeAllow(w)
+		return
+	}
+
+	// 已吊销节点:哈希比对放行与否都拒绝(token 泄露应急处置)
+	if node.Revoked {
+		h.log.Warnf("mqtt broker auth: agent [%s] DENIED (revoked)", req.Username)
+		h.writeDeny(w)
 		return
 	}
 

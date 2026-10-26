@@ -94,8 +94,12 @@ func init() {
 	agentnodeDescTokenHash := agentnodeFields[2].Descriptor()
 	// agentnode.TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
 	agentnode.TokenHashValidator = agentnodeDescTokenHash.Validators[0].(func(string) error)
+	// agentnodeDescRevoked is the schema descriptor for revoked field.
+	agentnodeDescRevoked := agentnodeFields[3].Descriptor()
+	// agentnode.DefaultRevoked holds the default value on creation for the revoked field.
+	agentnode.DefaultRevoked = agentnodeDescRevoked.Default.(bool)
 	// agentnodeDescEnv is the schema descriptor for env field.
-	agentnodeDescEnv := agentnodeFields[4].Descriptor()
+	agentnodeDescEnv := agentnodeFields[5].Descriptor()
 	// agentnode.DefaultEnv holds the default value on creation for the env field.
 	agentnode.DefaultEnv = agentnodeDescEnv.Default.(string)
 	// agentnodeDescID is the schema descriptor for id field.

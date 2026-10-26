@@ -65,7 +65,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证
-	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, tenantServiceClient, tenantResolver)
+	redisClient, cleanupRedis, err := data.NewRedisClient(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	cleanups = append(cleanups, cleanupRedis)
+	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, tenantServiceClient, tenantResolver, redisClient)
 
 	// 身份
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)

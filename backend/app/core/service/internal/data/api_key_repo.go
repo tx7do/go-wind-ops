@@ -8,6 +8,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
@@ -39,6 +40,14 @@ func (r *ApiKeyRepo) toDTO(e *ent.ApiKey) *opsV1.ApiKey {
 		CreatedAt:   timeTimestamppb(e.CreatedAt),
 		LastUsedAt:  timeTimestamppb(e.LastUsedAt),
 		ExpiresAt:   timeTimestamppb(e.ExpiresAt),
+	}
+	// 归属信息:OpenAPI 网关据此注入操作者/租户归因(触发的构建/分发/流水线
+	// 落到密钥创建者的租户,而非平台)。
+	if e.CreatedBy != nil {
+		dto.OwnerUserId = trans.Ptr(uint32(*e.CreatedBy))
+	}
+	if e.TenantID != nil {
+		dto.TenantId = e.TenantID
 	}
 	if e.Status != nil {
 		status := opsV1.ApiKey_ENABLED

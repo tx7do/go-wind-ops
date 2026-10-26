@@ -39,6 +39,14 @@ service AgentNodeService {
     };
   }
 
+  // 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+  rpc Revoke (ops.service.v1.RevokeAgentNodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/agent-nodes/revoke:send"
+      body: "*"
+    };
+  }
+
   // 向节点下发指令(如 ping),返回幂等 request_id
   rpc SendCommand (ops.service.v1.SendCommandRequest) returns (ops.service.v1.SendCommandResponse) {
     option (google.api.http) = {

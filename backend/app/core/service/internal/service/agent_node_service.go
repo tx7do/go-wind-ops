@@ -71,6 +71,20 @@ func (s *AgentNodeService) DeleteAgentNode(ctx context.Context, req *opsV1.Delet
 	return &emptypb.Empty{}, nil
 }
 
+// RevokeAgentNode 吊销/恢复节点准入:吊销后 broker 级(webhook)与信令级两层
+// 准入均拒绝——token 泄露的应急处置;恢复后 agent 以原 token 重新认证即可,
+// 无需重新 TOFU。
+func (s *AgentNodeService) RevokeAgentNode(ctx context.Context, req *opsV1.RevokeAgentNodeRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter: id required")
+	}
+	if err := s.repo.SetRevoked(ctx, req.GetId(), req.GetRevoked()); err != nil {
+		return nil, err
+	}
+	s.log.Infof("agent node [%d] revoked=%v", req.GetId(), req.GetRevoked())
+	return &emptypb.Empty{}, nil
+}
+
 // SendCommand 向节点下发指令。action 当前支持 ping;载荷为 JSON 字符串,
 // 原样透传进 MQTT 指令信封。返回的 request_id 是执行结果回执的幂等键。
 func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendCommandRequest) (*opsV1.SendCommandResponse, error) {

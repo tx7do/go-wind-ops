@@ -42,6 +42,10 @@ service AgentNodeService {
   // 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
   // agent 落地新二进制后自替换重启(过程与结果见指令台账)
   rpc UpgradeAgent (UpgradeAgentRequest) returns (UpgradeAgentResponse) {}
+
+  // 吊销/恢复节点准入:吊销后 broker 级与信令级两层准入均拒绝
+  // (token 泄露应急处置;恢复后 agent 以原 token 重新认证即可)。
+  rpc RevokeAgentNode (RevokeAgentNodeRequest) returns (google.protobuf.Empty) {}
 }
 
 // 节点在线状态
@@ -142,6 +146,11 @@ message AgentNode {
     }
   ]; // 环境标签
 
+  optional bool revoked = 17 [
+    json_name = "revoked",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 已吊销(准入拒绝)
+
   repeated string labels = 15 [
     json_name = "labels",
     (gnostic.openapi.v3.property) = {
@@ -200,6 +209,17 @@ message GetAgentNodeRequest {
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
+}
+
+// RevokeAgentNodeRequest 吊销/恢复节点准入(id 走 body:触发类 POST
+// 不带 path 参数,见 AGENTS 铁律)。
+message RevokeAgentNodeRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 节点ID
+
+  optional bool revoked = 2 [json_name = "revoked"]; // true=吊销,false=恢复(缺省 true)
 }
 
 message UpdateAgentNodeRequest {

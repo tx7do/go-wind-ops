@@ -30,7 +30,7 @@ import (
 func main() {
 	endpoint := flag.String("endpoint", "tcp://127.0.0.1:1883", "MQTT broker 地址")
 	username := flag.String("username", "", "用户名")
-	password := flag.String("password", "", "密码")
+	password := flag.String("password", os.Getenv("MQTT_CORE_PASSWORD"), "密码(缺省读 MQTT_CORE_PASSWORD 环境变量)")
 	clientID := flag.String("client-id", "mqtt-pub-debug", "客户端 ID")
 	topic := flag.String("topic", "", "目标主题")
 	payload := flag.String("payload", "{}", "JSON 载荷")

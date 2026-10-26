@@ -31,6 +31,8 @@ const (
 	FieldName = "name"
 	// FieldTokenHash holds the string denoting the token_hash field in the database.
 	FieldTokenHash = "token_hash"
+	// FieldRevoked holds the string denoting the revoked field in the database.
+	FieldRevoked = "revoked"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldEnv holds the string denoting the env field in the database.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldAgentID,
 	FieldName,
 	FieldTokenHash,
+	FieldRevoked,
 	FieldStatus,
 	FieldEnv,
 	FieldHostname,
@@ -118,6 +121,8 @@ var (
 	AgentIDValidator func(string) error
 	// TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
 	TokenHashValidator func(string) error
+	// DefaultRevoked holds the default value on creation for the "revoked" field.
+	DefaultRevoked bool
 	// DefaultEnv holds the default value on creation for the "env" field.
 	DefaultEnv string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -201,6 +206,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByTokenHash orders the results by the token_hash field.
 func ByTokenHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTokenHash, opts...).ToFunc()
+}
+
+// ByRevoked orders the results by the revoked field.
+func ByRevoked(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRevoked, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

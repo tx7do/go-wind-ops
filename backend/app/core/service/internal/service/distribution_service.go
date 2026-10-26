@@ -367,6 +367,10 @@ func (s *DistributionService) AdvanceBatches(ctx context.Context, distributionID
 	if err != nil || len(records) == 0 {
 		return
 	}
+	// 租户归因:推进补发的指令归属分发记录的租户——钩子运行在系统视图上下文
+	// (MQTT 回执/超时清扫驱动),不覆盖会让补发指令落 tenant 0。
+	// 同一分发的记录同租户(单次触发创建),取首条即可。
+	ctx = tenantScopedCtx(ctx, records[0].TenantID)
 	if batchSize >= len(records) {
 		return
 	}

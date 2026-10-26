@@ -132,6 +132,20 @@ func (_c *AgentNodeCreate) SetTokenHash(v string) *AgentNodeCreate {
 	return _c
 }
 
+// SetRevoked sets the "revoked" field.
+func (_c *AgentNodeCreate) SetRevoked(v bool) *AgentNodeCreate {
+	_c.mutation.SetRevoked(v)
+	return _c
+}
+
+// SetNillableRevoked sets the "revoked" field if the given value is not nil.
+func (_c *AgentNodeCreate) SetNillableRevoked(v *bool) *AgentNodeCreate {
+	if v != nil {
+		_c.SetRevoked(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *AgentNodeCreate) SetStatus(v agentnode.Status) *AgentNodeCreate {
 	_c.mutation.SetStatus(v)
@@ -409,6 +423,10 @@ func (_c *AgentNodeCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *AgentNodeCreate) defaults() {
+	if _, ok := _c.mutation.Revoked(); !ok {
+		v := agentnode.DefaultRevoked
+		_c.mutation.SetRevoked(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := agentnode.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -436,6 +454,9 @@ func (_c *AgentNodeCreate) check() error {
 		if err := agentnode.TokenHashValidator(v); err != nil {
 			return &ValidationError{Name: "token_hash", err: fmt.Errorf(`ent: validator failed for field "AgentNode.token_hash": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.Revoked(); !ok {
+		return &ValidationError{Name: "revoked", err: errors.New(`ent: missing required field "AgentNode.revoked"`)}
 	}
 	if v, ok := _c.mutation.Status(); ok {
 		if err := agentnode.StatusValidator(v); err != nil {
@@ -515,6 +536,10 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.TokenHash(); ok {
 		_spec.SetField(agentnode.FieldTokenHash, field.TypeString, value)
 		_node.TokenHash = value
+	}
+	if value, ok := _c.mutation.Revoked(); ok {
+		_spec.SetField(agentnode.FieldRevoked, field.TypeBool, value)
+		_node.Revoked = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(agentnode.FieldStatus, field.TypeEnum, value)
@@ -787,6 +812,18 @@ func (u *AgentNodeUpsert) SetTokenHash(v string) *AgentNodeUpsert {
 // UpdateTokenHash sets the "token_hash" field to the value that was provided on create.
 func (u *AgentNodeUpsert) UpdateTokenHash() *AgentNodeUpsert {
 	u.SetExcluded(agentnode.FieldTokenHash)
+	return u
+}
+
+// SetRevoked sets the "revoked" field.
+func (u *AgentNodeUpsert) SetRevoked(v bool) *AgentNodeUpsert {
+	u.Set(agentnode.FieldRevoked, v)
+	return u
+}
+
+// UpdateRevoked sets the "revoked" field to the value that was provided on create.
+func (u *AgentNodeUpsert) UpdateRevoked() *AgentNodeUpsert {
+	u.SetExcluded(agentnode.FieldRevoked)
 	return u
 }
 
@@ -1373,6 +1410,20 @@ func (u *AgentNodeUpsertOne) SetTokenHash(v string) *AgentNodeUpsertOne {
 func (u *AgentNodeUpsertOne) UpdateTokenHash() *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.UpdateTokenHash()
+	})
+}
+
+// SetRevoked sets the "revoked" field.
+func (u *AgentNodeUpsertOne) SetRevoked(v bool) *AgentNodeUpsertOne {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.SetRevoked(v)
+	})
+}
+
+// UpdateRevoked sets the "revoked" field to the value that was provided on create.
+func (u *AgentNodeUpsertOne) UpdateRevoked() *AgentNodeUpsertOne {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.UpdateRevoked()
 	})
 }
 
@@ -2185,6 +2236,20 @@ func (u *AgentNodeUpsertBulk) SetTokenHash(v string) *AgentNodeUpsertBulk {
 func (u *AgentNodeUpsertBulk) UpdateTokenHash() *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.UpdateTokenHash()
+	})
+}
+
+// SetRevoked sets the "revoked" field.
+func (u *AgentNodeUpsertBulk) SetRevoked(v bool) *AgentNodeUpsertBulk {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.SetRevoked(v)
+	})
+}
+
+// UpdateRevoked sets the "revoked" field to the value that was provided on create.
+func (u *AgentNodeUpsertBulk) UpdateRevoked() *AgentNodeUpsertBulk {
+	return u.Update(func(s *AgentNodeUpsert) {
+		s.UpdateRevoked()
 	})
 }
 

@@ -74,15 +74,20 @@ func NewAuthenticator(
 		}
 	}
 
-	// 生产态拒绝默认/空签名密钥:jwt_signing_key 未设置时 authenticator.yaml
-	// 回落到公开仓库里的默认串,持有它即可离线伪造任意 admin 令牌。
-	// 开发环境保留默认值并告警。
+	// 生产态拒绝默认/空签名密钥:占位符回落到公开仓库里的默认串时,持有它
+	// 即可离线伪造对应端的令牌。admin 与 app 各有独立默认串(app 密钥独立
+	// 配置 jwt_signing_key_app)。开发环境保留默认值并告警。
+	defaultKeys := map[string]struct{}{
+		"":                           {},
+		"dev_only_change_me_in_prod": {},
+		"dev_app_only_change_me":     {},
+	}
 	for name, key := range map[string]string{"admin": cfg.Admin.GetKey(), "app": cfg.App.GetKey()} {
-		if key != "" && key != "dev_only_change_me_in_prod" {
+		if _, isDefault := defaultKeys[key]; !isDefault {
 			continue
 		}
 		if envs.IsProduction() {
-			panic(fmt.Errorf("jwt signing key for %s must be set to a non-default secret in production (set jwt_signing_key env)", name))
+			panic(fmt.Errorf("jwt signing key for %s must be set to a non-default secret in production (set jwt_signing_key / jwt_signing_key_app env)", name))
 		}
 		ctx.NewLoggerHelper("authenticator/data/core-service").Warnf(
 			"jwt signing key for %s is empty/default — tokens can be forged offline; development only", name)

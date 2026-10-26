@@ -232,6 +232,20 @@ func (r *AgentNodeRepo) Enrol(ctx context.Context, agentID, tokenHash string, in
 	return node, nil
 }
 
+// SetRevoked 吊销/恢复节点准入:吊销后 broker 级(webhook)与信令级两层
+// 准入均拒绝;同时置离线,避免运维面仍显示在线。
+func (r *AgentNodeRepo) SetRevoked(ctx context.Context, id uint32, revoked bool) error {
+	builder := r.entClient.Client().AgentNode.UpdateOneID(id).SetRevoked(revoked)
+	if revoked {
+		builder = builder.SetStatus(agentnode.StatusOffline)
+	}
+	if err := builder.Exec(ctx); err != nil {
+		r.log.Errorf("set agent node [%d] revoked=%v failed: %s", id, revoked, err.Error())
+		return opsV1.ErrorInternalServerError("set revoked failed")
+	}
+	return nil
+}
+
 // UpdateAuthSuccess 准入通过:刷新指纹并置在线。
 func (r *AgentNodeRepo) UpdateAuthSuccess(ctx context.Context, nodeID uint32, info *signal.AgentInfo) error {
 	builder := r.entClient.Client().AgentNode.

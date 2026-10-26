@@ -29,6 +29,7 @@ const (
 	AgentNodeService_GetNodeMetricsHistory_FullMethodName    = "/ops.service.v1.AgentNodeService/GetNodeMetricsHistory"
 	AgentNodeService_GetAgentUpgradeUploadUrl_FullMethodName = "/ops.service.v1.AgentNodeService/GetAgentUpgradeUploadUrl"
 	AgentNodeService_UpgradeAgent_FullMethodName             = "/ops.service.v1.AgentNodeService/UpgradeAgent"
+	AgentNodeService_RevokeAgentNode_FullMethodName          = "/ops.service.v1.AgentNodeService/RevokeAgentNode"
 )
 
 // AgentNodeServiceClient is the client API for AgentNodeService service.
@@ -57,6 +58,9 @@ type AgentNodeServiceClient interface {
 	// 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
 	// agent 落地新二进制后自替换重启(过程与结果见指令台账)
 	UpgradeAgent(ctx context.Context, in *UpgradeAgentRequest, opts ...grpc.CallOption) (*UpgradeAgentResponse, error)
+	// 吊销/恢复节点准入:吊销后 broker 级与信令级两层准入均拒绝
+	// (token 泄露应急处置;恢复后 agent 以原 token 重新认证即可)。
+	RevokeAgentNode(ctx context.Context, in *RevokeAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type agentNodeServiceClient struct {
@@ -147,6 +151,16 @@ func (c *agentNodeServiceClient) UpgradeAgent(ctx context.Context, in *UpgradeAg
 	return out, nil
 }
 
+func (c *agentNodeServiceClient) RevokeAgentNode(ctx context.Context, in *RevokeAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AgentNodeService_RevokeAgentNode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentNodeServiceServer is the server API for AgentNodeService service.
 // All implementations must embed UnimplementedAgentNodeServiceServer
 // for forward compatibility.
@@ -173,6 +187,9 @@ type AgentNodeServiceServer interface {
 	// 远程升级 agent:预签名下载 URL 下发 agent_upgrade 指令,
 	// agent 落地新二进制后自替换重启(过程与结果见指令台账)
 	UpgradeAgent(context.Context, *UpgradeAgentRequest) (*UpgradeAgentResponse, error)
+	// 吊销/恢复节点准入:吊销后 broker 级与信令级两层准入均拒绝
+	// (token 泄露应急处置;恢复后 agent 以原 token 重新认证即可)。
+	RevokeAgentNode(context.Context, *RevokeAgentNodeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAgentNodeServiceServer()
 }
 
@@ -206,6 +223,9 @@ func (UnimplementedAgentNodeServiceServer) GetAgentUpgradeUploadUrl(context.Cont
 }
 func (UnimplementedAgentNodeServiceServer) UpgradeAgent(context.Context, *UpgradeAgentRequest) (*UpgradeAgentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpgradeAgent not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) RevokeAgentNode(context.Context, *RevokeAgentNodeRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokeAgentNode not implemented")
 }
 func (UnimplementedAgentNodeServiceServer) mustEmbedUnimplementedAgentNodeServiceServer() {}
 func (UnimplementedAgentNodeServiceServer) testEmbeddedByValue()                          {}
@@ -372,6 +392,24 @@ func _AgentNodeService_UpgradeAgent_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentNodeService_RevokeAgentNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeAgentNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).RevokeAgentNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_RevokeAgentNode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).RevokeAgentNode(ctx, req.(*RevokeAgentNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentNodeService_ServiceDesc is the grpc.ServiceDesc for AgentNodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -410,6 +448,10 @@ var AgentNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpgradeAgent",
 			Handler:    _AgentNodeService_UpgradeAgent_Handler,
+		},
+		{
+			MethodName: "RevokeAgentNode",
+			Handler:    _AgentNodeService_RevokeAgentNode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

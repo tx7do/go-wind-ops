@@ -303,6 +303,10 @@ export interface AgentNodeService {
   Delete(
     request: opsservicev1_DeleteAgentNodeRequest,
   ): Promise<wellKnownEmpty>;
+  // 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+  Revoke(
+    request: opsservicev1_RevokeAgentNodeRequest,
+  ): Promise<wellKnownEmpty>;
   // 向节点下发指令(如 ping),返回幂等 request_id
   SendCommand(
     request: opsservicev1_SendCommandRequest,
@@ -471,6 +475,14 @@ export function createAgentNodeServiceClient(
       return transport.unary(path, 'DELETE', body, {
         service: 'AgentNodeService',
         method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Revoke(request) {
+      const path = `admin/v1/agent-nodes/revoke:send`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AgentNodeService',
+        method: 'Revoke',
       }) as Promise<wellKnownEmpty>;
     },
     SendCommand(request) {
@@ -749,6 +761,9 @@ export type opsservicev1_AgentNode = {
   platformVersion?: string;
   //
   // Behaviors: OUTPUT_ONLY
+  revoked?: boolean;
+  //
+  // Behaviors: OUTPUT_ONLY
   status?: opsservicev1_AgentNodeStatus;
   //
   // Behaviors: OUTPUT_ONLY
@@ -788,6 +803,15 @@ export type opsservicev1_DeleteAgentNodeRequest = {
   //
   // Behaviors: REQUIRED
   id?: number;
+};
+
+// RevokeAgentNodeRequest 吊销/恢复节点准入(id 走 body:触发类 POST
+// 不带 path 参数,见 AGENTS 铁律)。
+export type opsservicev1_RevokeAgentNodeRequest = {
+  //
+  // Behaviors: REQUIRED
+  id: number | undefined;
+  revoked?: boolean;
 };
 
 export type opsservicev1_SendCommandRequest = {
@@ -1797,8 +1821,14 @@ export type opsservicev1_ApiKey = {
   name?: string;
   //
   // Behaviors: OUTPUT_ONLY
+  ownerUserId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
   prefix?: string;
   status?: opsservicev1_ApiKey_Status;
+  //
+  // Behaviors: OUTPUT_ONLY
+  tenantId?: number;
 };
 
 // 状态(嵌套定义避免同包枚举值冲突;值名与 ent 枚举一致按名映射)

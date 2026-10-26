@@ -2,11 +2,8 @@ package service
 
 import (
 	"github.com/redis/go-redis/v9"
-	kratosErrors "github.com/go-kratos/kratos/v2/errors"
-	"go-wind-ops/pkg/serviceid"
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -24,6 +21,7 @@ import (
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 
 	"go-wind-ops/pkg/middleware/auth"
+	"go-wind-ops/pkg/logalock"
 	"go-wind-ops/pkg/netutil"
 )
 
@@ -157,79 +155,9 @@ type AuthenticationService struct {
 
 	captchaClient *captcha.Captcha
 	redisClient   *redis.Client
+	loginLock     *logalock.Locker
 }
 
-// 登录失败锁定(防爆破):同 用户名+来源IP 连续失败 N 次后锁定 M 分钟(Redis 计数)。
-// 复合键而非纯用户名:防止任意攻击者对已知用户名故意失败 5 次即可把该账号
-// 全平台锁死 15 分钟(账号 DoS);按 IP 隔离后,攻击者只能锁死自己来源 IP 的
-// 登录,跨 IP 爆破另受验证码(默认开启)约束。
-const (
-	loginFailKeyPrefix = serviceid.ProjectName + ":login:fail:"
-	loginMaxFailures   = 5
-	loginLockMinutes   = 15
-)
-
-func loginFailKey(username, ip string) string {
-	return loginFailKeyPrefix + strings.ToLower(username) + ":" + ip
-}
-
-// loginClientIP 提取登录来源 IP:优先 X-Forwarded-For 首跳(反代部署),
-// 其次 X-Real-IP,兜底 RemoteAddr。
-func loginClientIP(ctx context.Context) string {
-	tr, ok := ktransport.FromServerContext(ctx)
-	if !ok {
-		return "unknown"
-	}
-	htr, hok := tr.(*khttp.Transport)
-	if !hok || htr.Request() == nil {
-		return "unknown"
-	}
-	r := htr.Request()
-	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		if i := strings.IndexByte(xff, ','); i >= 0 {
-			xff = xff[:i]
-		}
-		if xff = strings.TrimSpace(xff); xff != "" {
-			return xff
-		}
-	}
-	if rip := strings.TrimSpace(r.Header.Get("X-Real-IP")); rip != "" {
-		return rip
-	}
-	if host, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
-		return host
-	}
-	return r.RemoteAddr
-}
-
-func (s *AuthenticationService) loginLockCheck(ctx context.Context, username string) error {
-	if s.redisClient == nil {
-		return nil
-	}
-	if n, err := s.redisClient.Get(ctx, loginFailKey(username, loginClientIP(ctx))).Int(); err == nil && n >= loginMaxFailures {
-		return kratosErrors.New(http.StatusTooManyRequests, "TOO_MANY_REQUESTS",
-			"too many failed logins, retry later")
-	}
-	return nil
-}
-
-func (s *AuthenticationService) loginRecordFailure(ctx context.Context, username string) {
-	if s.redisClient == nil {
-		return
-	}
-	key := loginFailKey(username, loginClientIP(ctx))
-	pipe := s.redisClient.TxPipeline()
-	pipe.Incr(ctx, key)
-	pipe.Expire(ctx, key, loginLockMinutes*time.Minute)
-	_, _ = pipe.Exec(ctx)
-}
-
-func (s *AuthenticationService) loginClearFailures(ctx context.Context, username string) {
-	if s.redisClient == nil {
-		return
-	}
-	s.redisClient.Del(ctx, loginFailKey(username, loginClientIP(ctx)))
-}
 
 func NewAuthenticationService(
 	ctx *bootstrap.Context,
@@ -237,11 +165,13 @@ func NewAuthenticationService(
 	captchaClient *captcha.Captcha,
 	redisClient *redis.Client,
 ) *AuthenticationService {
+	locker := logalock.New(redisClient, log.NewHelper(log.With(ctx.GetLogger(), "module", "login-lock/admin-service")))
 	return &AuthenticationService{
 		log:                         log.NewHelper(log.With(ctx.GetLogger(), "module", "user/service/admin-service")),
 		authenticationServiceClient: authenticationServiceClient,
 		captchaClient:               captchaClient,
 		redisClient:                 redisClient,
+		loginLock:                   locker,
 	}
 }
 
@@ -333,7 +263,7 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 			return nil, authenticationV1.ErrorBadRequest("invalid or missing captcha")
 		}
 		// ===== 失败锁定(防爆破):连续失败达阈值后拒绝,成功即清零 =====
-		if lerr := s.loginLockCheck(ctx, req.GetUsername()); lerr != nil {
+		if lerr := s.loginLock.Check(ctx, req.GetUsername()); lerr != nil {
 			return nil, lerr
 		}
 	}
@@ -342,12 +272,12 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 	if err != nil {
 		// 密码授权失败即计入失败次数(验证码缺失等前置错误不计)
 		if req.GetGrantType() == authenticationV1.GrantType_password {
-			s.loginRecordFailure(ctx, req.GetUsername())
+			s.loginLock.RecordFailure(ctx, req.GetUsername())
 		}
 		return nil, err
 	}
 	if req.GetGrantType() == authenticationV1.GrantType_password {
-		s.loginClearFailures(ctx, req.GetUsername())
+		s.loginLock.Clear(ctx, req.GetUsername())
 	}
 
 	// refresh token 经 HttpOnly Cookie 下发，不再放入响应体（对齐 go-wind-admin 上游）

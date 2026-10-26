@@ -47,6 +47,10 @@ func (AgentNode) Fields() []ent.Field {
 			Comment("接入令牌的 SHA-256 十六进制哈希(明文只存 agent 本机)").
 			NotEmpty(),
 
+		field.Bool("revoked").
+			Comment("已吊销:吊销后 broker/信令两层准入均拒绝(token 泄露应急处置),恢复须解除吊销").
+			Default(false),
+
 		field.Enum("status").
 			Comment("在线状态").
 			NamedValues(

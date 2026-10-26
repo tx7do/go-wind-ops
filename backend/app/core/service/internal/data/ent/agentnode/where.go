@@ -99,6 +99,11 @@ func TokenHash(v string) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldTokenHash, v))
 }
 
+// Revoked applies equality check predicate on the "revoked" field. It's identical to RevokedEQ.
+func Revoked(v bool) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldEQ(FieldRevoked, v))
+}
+
 // Env applies equality check predicate on the "env" field. It's identical to EnvEQ.
 func Env(v string) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldEnv, v))
@@ -677,6 +682,16 @@ func TokenHashEqualFold(v string) predicate.AgentNode {
 // TokenHashContainsFold applies the ContainsFold predicate on the "token_hash" field.
 func TokenHashContainsFold(v string) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldContainsFold(FieldTokenHash, v))
+}
+
+// RevokedEQ applies the EQ predicate on the "revoked" field.
+func RevokedEQ(v bool) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldEQ(FieldRevoked, v))
+}
+
+// RevokedNEQ applies the NEQ predicate on the "revoked" field.
+func RevokedNEQ(v bool) predicate.AgentNode {
+	return predicate.AgentNode(sql.FieldNEQ(FieldRevoked, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

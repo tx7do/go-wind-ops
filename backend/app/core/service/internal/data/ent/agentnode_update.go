@@ -199,6 +199,20 @@ func (_u *AgentNodeUpdate) SetNillableTokenHash(v *string) *AgentNodeUpdate {
 	return _u
 }
 
+// SetRevoked sets the "revoked" field.
+func (_u *AgentNodeUpdate) SetRevoked(v bool) *AgentNodeUpdate {
+	_u.mutation.SetRevoked(v)
+	return _u
+}
+
+// SetNillableRevoked sets the "revoked" field if the given value is not nil.
+func (_u *AgentNodeUpdate) SetNillableRevoked(v *bool) *AgentNodeUpdate {
+	if v != nil {
+		_u.SetRevoked(*v)
+	}
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *AgentNodeUpdate) SetStatus(v agentnode.Status) *AgentNodeUpdate {
 	_u.mutation.SetStatus(v)
@@ -721,6 +735,9 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.TokenHash(); ok {
 		_spec.SetField(agentnode.FieldTokenHash, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Revoked(); ok {
+		_spec.SetField(agentnode.FieldRevoked, field.TypeBool, value)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(agentnode.FieldStatus, field.TypeEnum, value)
 	}
@@ -1044,6 +1061,20 @@ func (_u *AgentNodeUpdateOne) SetTokenHash(v string) *AgentNodeUpdateOne {
 func (_u *AgentNodeUpdateOne) SetNillableTokenHash(v *string) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetTokenHash(*v)
+	}
+	return _u
+}
+
+// SetRevoked sets the "revoked" field.
+func (_u *AgentNodeUpdateOne) SetRevoked(v bool) *AgentNodeUpdateOne {
+	_u.mutation.SetRevoked(v)
+	return _u
+}
+
+// SetNillableRevoked sets the "revoked" field if the given value is not nil.
+func (_u *AgentNodeUpdateOne) SetNillableRevoked(v *bool) *AgentNodeUpdateOne {
+	if v != nil {
+		_u.SetRevoked(*v)
 	}
 	return _u
 }
@@ -1599,6 +1630,9 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 	}
 	if value, ok := _u.mutation.TokenHash(); ok {
 		_spec.SetField(agentnode.FieldTokenHash, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Revoked(); ok {
+		_spec.SetField(agentnode.FieldRevoked, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(agentnode.FieldStatus, field.TypeEnum, value)

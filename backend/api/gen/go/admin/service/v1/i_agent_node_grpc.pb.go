@@ -26,6 +26,7 @@ const (
 	AgentNodeService_Get_FullMethodName                 = "/admin.service.v1.AgentNodeService/Get"
 	AgentNodeService_Update_FullMethodName              = "/admin.service.v1.AgentNodeService/Update"
 	AgentNodeService_Delete_FullMethodName              = "/admin.service.v1.AgentNodeService/Delete"
+	AgentNodeService_Revoke_FullMethodName              = "/admin.service.v1.AgentNodeService/Revoke"
 	AgentNodeService_SendCommand_FullMethodName         = "/admin.service.v1.AgentNodeService/SendCommand"
 	AgentNodeService_GetMetrics_FullMethodName          = "/admin.service.v1.AgentNodeService/GetMetrics"
 	AgentNodeService_GetUpgradeUploadUrl_FullMethodName = "/admin.service.v1.AgentNodeService/GetUpgradeUploadUrl"
@@ -46,6 +47,8 @@ type AgentNodeServiceClient interface {
 	Update(ctx context.Context, in *v11.UpdateAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除节点记录
 	Delete(ctx context.Context, in *v11.DeleteAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+	Revoke(ctx context.Context, in *v11.RevokeAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(ctx context.Context, in *v11.SendCommandRequest, opts ...grpc.CallOption) (*v11.SendCommandResponse, error)
 	// 查询节点心跳指标历史
@@ -98,6 +101,16 @@ func (c *agentNodeServiceClient) Delete(ctx context.Context, in *v11.DeleteAgent
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, AgentNodeService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentNodeServiceClient) Revoke(ctx context.Context, in *v11.RevokeAgentNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AgentNodeService_Revoke_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,6 +171,8 @@ type AgentNodeServiceServer interface {
 	Update(context.Context, *v11.UpdateAgentNodeRequest) (*emptypb.Empty, error)
 	// 删除节点记录
 	Delete(context.Context, *v11.DeleteAgentNodeRequest) (*emptypb.Empty, error)
+	// 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+	Revoke(context.Context, *v11.RevokeAgentNodeRequest) (*emptypb.Empty, error)
 	// 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error)
 	// 查询节点心跳指标历史
@@ -187,6 +202,9 @@ func (UnimplementedAgentNodeServiceServer) Update(context.Context, *v11.UpdateAg
 }
 func (UnimplementedAgentNodeServiceServer) Delete(context.Context, *v11.DeleteAgentNodeRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedAgentNodeServiceServer) Revoke(context.Context, *v11.RevokeAgentNodeRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Revoke not implemented")
 }
 func (UnimplementedAgentNodeServiceServer) SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendCommand not implemented")
@@ -293,6 +311,24 @@ func _AgentNodeService_Delete_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentNodeService_Revoke_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.RevokeAgentNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentNodeServiceServer).Revoke(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentNodeService_Revoke_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentNodeServiceServer).Revoke(ctx, req.(*v11.RevokeAgentNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AgentNodeService_SendCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.SendCommandRequest)
 	if err := dec(in); err != nil {
@@ -387,6 +423,10 @@ var AgentNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AgentNodeService_Delete_Handler,
+		},
+		{
+			MethodName: "Revoke",
+			Handler:    _AgentNodeService_Revoke_Handler,
 		},
 		{
 			MethodName: "SendCommand",

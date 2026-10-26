@@ -100,6 +100,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			agentnode.FieldAgentID:           {Type: field.TypeString, Column: agentnode.FieldAgentID},
 			agentnode.FieldName:              {Type: field.TypeString, Column: agentnode.FieldName},
 			agentnode.FieldTokenHash:         {Type: field.TypeString, Column: agentnode.FieldTokenHash},
+			agentnode.FieldRevoked:           {Type: field.TypeBool, Column: agentnode.FieldRevoked},
 			agentnode.FieldStatus:            {Type: field.TypeEnum, Column: agentnode.FieldStatus},
 			agentnode.FieldEnv:               {Type: field.TypeString, Column: agentnode.FieldEnv},
 			agentnode.FieldHostname:          {Type: field.TypeString, Column: agentnode.FieldHostname},
@@ -2218,6 +2219,11 @@ func (f *AgentNodeFilter) WhereName(p entql.StringP) {
 // WhereTokenHash applies the entql string predicate on the token_hash field.
 func (f *AgentNodeFilter) WhereTokenHash(p entql.StringP) {
 	f.Where(p.Field(agentnode.FieldTokenHash))
+}
+
+// WhereRevoked applies the entql bool predicate on the revoked field.
+func (f *AgentNodeFilter) WhereRevoked(p entql.BoolP) {
+	f.Where(p.Field(agentnode.FieldRevoked))
 }
 
 // WhereStatus applies the entql string predicate on the status field.

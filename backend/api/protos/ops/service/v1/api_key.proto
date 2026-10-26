@@ -70,6 +70,16 @@ message ApiKey {
 
   optional string description = 7 [json_name = "description"]; // 描述
 
+  optional uint32 owner_user_id = 8 [
+    json_name = "ownerUserId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 归属用户(创建者;OpenAPI 网关据此注入操作者归因)
+
+  optional uint32 tenant_id = 9 [
+    json_name = "tenantId",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 归属租户(创建者租户;网关据此把触发的构建/分发/流水线归到租户)
+
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",
     (google.api.field_behavior) = OUTPUT_ONLY

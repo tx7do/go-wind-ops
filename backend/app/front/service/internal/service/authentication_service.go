@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/redis/go-redis/v9"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/go-utils/crypto"
 	"github.com/tx7do/go-utils/trans"
@@ -19,6 +20,7 @@ import (
 	"go-wind-ops/pkg/configenv"
 	entmiddleware "go-wind-ops/pkg/middleware/ent"
 
+	"go-wind-ops/pkg/logalock"
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/netutil"
 )
@@ -29,6 +31,7 @@ type AuthenticationService struct {
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 	tenantClient                identityV1.TenantServiceClient
 	tenantResolve               entmiddleware.TenantResolver
+	loginLock                   *logalock.Locker
 
 	log *log.Helper
 }
@@ -38,12 +41,14 @@ func NewAuthenticationService(
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
 	tenantClient identityV1.TenantServiceClient,
 	tenantResolve entmiddleware.TenantResolver,
+	redisClient *redis.Client,
 ) *AuthenticationService {
 	return &AuthenticationService{
 		log:                         ctx.NewLoggerHelper("authn/service/front-service"),
 		authenticationServiceClient: authenticationServiceClient,
 		tenantClient:                tenantClient,
 		tenantResolve:               tenantResolve,
+		loginLock:                   logalock.New(redisClient, ctx.NewLoggerHelper("login-lock/front-service")),
 	}
 }
 
@@ -61,6 +66,14 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 
 	req.ClientType = trans.Ptr(authenticationV1.ClientType_app)
 
+	// 登录失败锁定(与 admin 同款):同 用户名+来源IP 连续失败 5 次锁 15 分钟
+	// ——C 端此前完全无防爆破。
+	if req.GetGrantType() != authenticationV1.GrantType_refresh_token {
+		if err := s.loginLock.Check(ctx, req.GetUsername()); err != nil {
+			return nil, err
+		}
+	}
+
 	if req.GetGrantType() == authenticationV1.GrantType_refresh_token {
 		operator, err := auth.FromContext(ctx)
 		if err != nil {
@@ -71,7 +84,19 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 		req.UserId = trans.Ptr(operator.GetUserId())
 	}
 
-	return s.authenticationServiceClient.Login(ctx, req)
+	resp, err := s.authenticationServiceClient.Login(ctx, req)
+	if err != nil {
+		// 密码授权失败即计入失败次数(core 对错误凭证返回 400,不能只认 401;
+		// 刷新路径无爆破面不计数)
+		if req.GetGrantType() == authenticationV1.GrantType_password {
+			s.loginLock.RecordFailure(ctx, req.GetUsername())
+		}
+		return nil, err
+	}
+	if req.GetGrantType() == authenticationV1.GrantType_password {
+		s.loginLock.Clear(ctx, req.GetUsername())
+	}
+	return resp, nil
 }
 
 // Logout 登出

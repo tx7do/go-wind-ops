@@ -68,9 +68,11 @@ func NewPermissionService(
 
 func (s *PermissionService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
-	if resp, _ := s.permissionRepo.Count(ctx, nil); resp != nil && resp.Count == 0 {
-		_ = s.createDefaultPermissions(ctx)
-	}
+	// 不以"空表"为条件:菜单/API 同步可能先于本 init 填充权限表,空表判断
+	// 会让后加的运维域权限码(ops:*)永远缺种——新库首个 ops 操作即 403
+	// (2026-10-26 冒烟实锤)。createDefaultPermissions 按 code 幂等,每次
+	// 启动确保缺失码补齐即可。
+	_ = s.createDefaultPermissions(ctx)
 }
 
 func (s *PermissionService) extractRelationIDs(

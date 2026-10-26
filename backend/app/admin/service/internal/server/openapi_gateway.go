@@ -16,6 +16,7 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/subtle"
@@ -31,7 +32,10 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
+	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+
+	appMetadata "go-wind-ops/pkg/metadata"
 )
 
 // OpenApiGateway OpenAPI 网关处理器。
@@ -40,6 +44,7 @@ type OpenApiGateway struct {
 	buildClient    opsV1.BuildServiceClient
 	distClient     opsV1.DistributionServiceClient
 	pipelineClient opsV1.PipelineServiceClient
+	rateLimiter    *apiKeyRateLimiter
 }
 
 // NewOpenApiGateway 构造网关。
@@ -54,6 +59,7 @@ func NewOpenApiGateway(
 		buildClient:    buildClient,
 		distClient:     distClient,
 		pipelineClient: pipelineClient,
+		rateLimiter:    newAPIKeyRateLimiter(),
 	}
 }
 
@@ -77,9 +83,22 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writeJsonError(w, http.StatusUnauthorized, "API_KEY_REQUIRED", "missing X-Api-Key header")
 		return
 	}
-	if _, err := g.apiKeyClient.ValidateApiKey(r.Context(), &opsV1.ValidateApiKeyRequest{Key: &key}); err != nil {
-		writeKratosError(w, err)
+	// 按 key 限流(OPENAPI_RATE_LIMIT 次/分钟,默认 60):防有效 key 无节制刷触发
+	if !g.rateLimiter.Allow(key) {
+		writeJsonError(w, http.StatusTooManyRequests, "RATE_LIMITED", "api key rate limit exceeded")
 		return
+	}
+	info, verr := g.apiKeyClient.ValidateApiKey(r.Context(), &opsV1.ValidateApiKeyRequest{Key: &key})
+	if verr != nil {
+		writeKratosError(w, verr)
+		return
+	}
+	// 归因注入:触发的构建/分发/流水线归属密钥创建者的租户(而非平台)。
+	// 无归属(历史数据 tenant 0)时保持平台视图,行为不变。
+	gctx := r.Context()
+	if info.GetTenantId() > 0 {
+		gctx, _ = appMetadata.NewContext(gctx, appMetadata.NewUserOperator(
+			uint64(info.GetOwnerUserId()), uint64(info.GetTenantId()), 0, identityV1.DataScope_ALL))
 	}
 
 	// ── 路由 ──
@@ -92,7 +111,7 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid id")
 			return
 		}
-		g.trigger(w, r, parts[0], uint32(id))
+		g.trigger(w, gctx, parts[0], uint32(id))
 		return
 	}
 	if len(parts) == 3 && parts[0] == "webhooks" && parts[1] == "git" {
@@ -101,31 +120,31 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid build id")
 			return
 		}
-		g.gitWebhook(w, r, uint32(id))
+		g.gitWebhook(w, r, gctx, uint32(id))
 		return
 	}
 	writeJsonError(w, http.StatusNotFound, "NOT_FOUND", "unknown endpoint")
 }
 
 // trigger 触发构建/分发/流水线。
-func (g *OpenApiGateway) trigger(w http.ResponseWriter, r *http.Request, kind string, id uint32) {
+func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, kind string, id uint32) {
 	var (
 		resp any
 		err  error
 	)
 	switch kind {
 	case "builds":
-		resp, err = g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: id})
+		resp, err = g.buildClient.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerBuildResponse))
 		}
 	case "distributions":
-		resp, err = g.distClient.TriggerDistribution(r.Context(), &opsV1.TriggerDistributionRequest{Id: id})
+		resp, err = g.distClient.TriggerDistribution(ctx, &opsV1.TriggerDistributionRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerDistributionResponse))
 		}
 	case "pipelines":
-		resp, err = g.pipelineClient.TriggerPipeline(r.Context(), &opsV1.TriggerPipelineRequest{Id: id})
+		resp, err = g.pipelineClient.TriggerPipeline(ctx, &opsV1.TriggerPipelineRequest{Id: id})
 		if err == nil {
 			writeJsonProto(w, http.StatusOK, resp.(*opsV1.TriggerPipelineResponse))
 		}
@@ -143,7 +162,7 @@ func (g *OpenApiGateway) trigger(w http.ResponseWriter, r *http.Request, kind st
 // 必须配置 OPENAPI_GIT_WEBHOOK_SECRET(fail-closed):校验 X-Signature:
 // sha256=<HMAC-SHA256(body)>(GitHub/Gitea 兼容的签名格式),防止 webhook
 // 端点被无密钥方刷触发;未配置时一律 403 拒绝。
-func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, buildId uint32) {
+func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, ctx context.Context, buildId uint32) {
 	secret := os.Getenv("OPENAPI_GIT_WEBHOOK_SECRET")
 	if secret == "" {
 		writeJsonError(w, http.StatusForbidden, "WEBHOOK_SECRET_REQUIRED",
@@ -186,7 +205,7 @@ func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, buil
 		}
 	}
 
-	resp, err := g.buildClient.TriggerBuild(r.Context(), &opsV1.TriggerBuildRequest{Id: buildId})
+	resp, err := g.buildClient.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: buildId})
 	if err != nil {
 		writeKratosError(w, err)
 		return

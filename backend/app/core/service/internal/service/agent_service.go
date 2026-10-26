@@ -23,11 +23,10 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/pkg/oss"
+	"go-wind-ops/pkg/envs"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/signal"
 	"go-wind-ops/pkg/topic"
-
-	storageV1 "go-wind-ops/api/gen/go/storage/service/v1"
 )
 
 const (
@@ -235,7 +234,14 @@ func (s *AgentService) HandleAgentAuth(ctx context.Context, topicStr string, _ b
 
 	switch {
 	case node == nil:
-		// TOFU 首连注册
+		// TOFU 首连注册;AGENT_ENROLL_ALLOWLIST 配置后关闭开放注册
+		// (与 broker 级 webhook 的白名单共用同一环境变量)
+		if !envs.EnrollmentAllowed(req.AgentId) {
+			resp.Reason = "enrollment denied (allowlist)"
+			s.log.Warnf("agent [%s] enrollment denied (allowlist)", req.AgentId)
+			s.replyAuth(req.AgentId, resp)
+			return nil
+		}
 		if _, err = s.repo.Enrol(ctx, req.AgentId, tokenHash, &req.Info); err != nil {
 			resp.Reason = "internal error"
 			s.replyAuth(req.AgentId, resp)
@@ -244,6 +250,12 @@ func (s *AgentService) HandleAgentAuth(ctx context.Context, topicStr string, _ b
 		resp.OK = true
 		s.log.Infof("agent [%s] enrolled (TOFU) hostname=%s os=%s/%s version=%s",
 			req.AgentId, req.Info.Hostname, req.Info.OS, req.Info.Arch, req.Info.AgentVersion)
+
+	case node.Revoked:
+		resp.Reason = "node revoked"
+		s.log.Warnf("agent [%s] auth DENIED (revoked)", req.AgentId)
+		s.replyAuth(req.AgentId, resp)
+		return nil
 
 	case node.TokenHash == tokenHash:
 		wasOffline := node.Status != nil && *node.Status == agentnode.StatusOffline
@@ -600,27 +612,6 @@ func (s *AgentService) HashAgentUpgradeObject(ctx context.Context, objectKey str
 		return "", fmt.Errorf("read object: %w", err)
 	}
 	return hex.EncodeToString(h.Sum(nil)), nil
-}
-
-// IssueUploadPresignedUrl 为 agent 签发对象存储预签名上传 URL
-// (文件传输信令的 core 侧一半;业务轮经 file/response 主题下发)。
-func (s *AgentService) IssueUploadPresignedUrl(ctx context.Context, fileName, fileDirectory, contentType string, expireSeconds int32) (url string, objectKey string, err error) {
-	if s.ossClient == nil {
-		return "", "", fmt.Errorf("oss client not configured")
-	}
-	req := &storageV1.GetUploadPresignedUrlRequest{
-		FileName:      &fileName,
-		FileDirectory: &fileDirectory,
-		ExpireSeconds: &expireSeconds,
-	}
-	if contentType != "" {
-		req.ContentType = &contentType
-	}
-	resp, err := s.ossClient.GetUploadPresignedUrl(ctx, req)
-	if err != nil {
-		return "", "", err
-	}
-	return resp.UploadUrl, resp.ObjectName, nil
 }
 
 // ============================================================================

@@ -95,6 +95,7 @@ type AgentNode struct {
 	CpuCores          *int32                 `protobuf:"varint,13,opt,name=cpu_cores,json=cpuCores,proto3,oneof" json:"cpu_cores,omitempty"`                               // 逻辑核数
 	MemTotalBytes     *uint64                `protobuf:"varint,14,opt,name=mem_total_bytes,json=memTotalBytes,proto3,oneof" json:"mem_total_bytes,omitempty"`              // 物理内存总量(字节)
 	Env               *string                `protobuf:"bytes,16,opt,name=env,proto3,oneof" json:"env,omitempty"`                                                          // 环境标签
+	Revoked           *bool                  `protobuf:"varint,17,opt,name=revoked,proto3,oneof" json:"revoked,omitempty"`                                                 // 已吊销(准入拒绝)
 	Labels            []string               `protobuf:"bytes,15,rep,name=labels,proto3" json:"labels,omitempty"`                                                          // 人工标签
 	CpuPercent        *float64               `protobuf:"fixed64,20,opt,name=cpu_percent,json=cpuPercent,proto3,oneof" json:"cpu_percent,omitempty"`                        // CPU 占用百分比
 	MemoryUsedPercent *float64               `protobuf:"fixed64,21,opt,name=memory_used_percent,json=memoryUsedPercent,proto3,oneof" json:"memory_used_percent,omitempty"` // 内存占用百分比
@@ -240,6 +241,13 @@ func (x *AgentNode) GetEnv() string {
 		return *x.Env
 	}
 	return ""
+}
+
+func (x *AgentNode) GetRevoked() bool {
+	if x != nil && x.Revoked != nil {
+		return *x.Revoked
+	}
+	return false
 }
 
 func (x *AgentNode) GetLabels() []string {
@@ -394,6 +402,60 @@ func (x *GetAgentNodeRequest) GetId() uint32 {
 	return 0
 }
 
+// RevokeAgentNodeRequest 吊销/恢复节点准入(id 走 body:触发类 POST
+// 不带 path 参数,见 AGENTS 铁律)。
+type RevokeAgentNodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                 // 节点ID
+	Revoked       *bool                  `protobuf:"varint,2,opt,name=revoked,proto3,oneof" json:"revoked,omitempty"` // true=吊销,false=恢复(缺省 true)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeAgentNodeRequest) Reset() {
+	*x = RevokeAgentNodeRequest{}
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeAgentNodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeAgentNodeRequest) ProtoMessage() {}
+
+func (x *RevokeAgentNodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeAgentNodeRequest.ProtoReflect.Descriptor instead.
+func (*RevokeAgentNodeRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RevokeAgentNodeRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *RevokeAgentNodeRequest) GetRevoked() bool {
+	if x != nil && x.Revoked != nil {
+		return *x.Revoked
+	}
+	return false
+}
+
 type UpdateAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 节点ID
@@ -405,7 +467,7 @@ type UpdateAgentNodeRequest struct {
 
 func (x *UpdateAgentNodeRequest) Reset() {
 	*x = UpdateAgentNodeRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[3]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +479,7 @@ func (x *UpdateAgentNodeRequest) String() string {
 func (*UpdateAgentNodeRequest) ProtoMessage() {}
 
 func (x *UpdateAgentNodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[3]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,7 +492,7 @@ func (x *UpdateAgentNodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAgentNodeRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAgentNodeRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{3}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateAgentNodeRequest) GetId() uint32 {
@@ -463,7 +525,7 @@ type DeleteAgentNodeRequest struct {
 
 func (x *DeleteAgentNodeRequest) Reset() {
 	*x = DeleteAgentNodeRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[4]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +537,7 @@ func (x *DeleteAgentNodeRequest) String() string {
 func (*DeleteAgentNodeRequest) ProtoMessage() {}
 
 func (x *DeleteAgentNodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[4]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +550,7 @@ func (x *DeleteAgentNodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAgentNodeRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAgentNodeRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{4}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeleteAgentNodeRequest) GetId() uint32 {
@@ -511,7 +573,7 @@ type SendCommandRequest struct {
 
 func (x *SendCommandRequest) Reset() {
 	*x = SendCommandRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[5]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -523,7 +585,7 @@ func (x *SendCommandRequest) String() string {
 func (*SendCommandRequest) ProtoMessage() {}
 
 func (x *SendCommandRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[5]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -536,7 +598,7 @@ func (x *SendCommandRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendCommandRequest.ProtoReflect.Descriptor instead.
 func (*SendCommandRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{5}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *SendCommandRequest) GetId() uint32 {
@@ -576,7 +638,7 @@ type SendCommandResponse struct {
 
 func (x *SendCommandResponse) Reset() {
 	*x = SendCommandResponse{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[6]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -588,7 +650,7 @@ func (x *SendCommandResponse) String() string {
 func (*SendCommandResponse) ProtoMessage() {}
 
 func (x *SendCommandResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[6]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -601,7 +663,7 @@ func (x *SendCommandResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendCommandResponse.ProtoReflect.Descriptor instead.
 func (*SendCommandResponse) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{6}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SendCommandResponse) GetRequestId() string {
@@ -621,7 +683,7 @@ type GetNodeMetricsHistoryRequest struct {
 
 func (x *GetNodeMetricsHistoryRequest) Reset() {
 	*x = GetNodeMetricsHistoryRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -633,7 +695,7 @@ func (x *GetNodeMetricsHistoryRequest) String() string {
 func (*GetNodeMetricsHistoryRequest) ProtoMessage() {}
 
 func (x *GetNodeMetricsHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[7]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -646,7 +708,7 @@ func (x *GetNodeMetricsHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNodeMetricsHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetNodeMetricsHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{7}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetNodeMetricsHistoryRequest) GetId() uint32 {
@@ -672,7 +734,7 @@ type GetNodeMetricsHistoryResponse struct {
 
 func (x *GetNodeMetricsHistoryResponse) Reset() {
 	*x = GetNodeMetricsHistoryResponse{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -684,7 +746,7 @@ func (x *GetNodeMetricsHistoryResponse) String() string {
 func (*GetNodeMetricsHistoryResponse) ProtoMessage() {}
 
 func (x *GetNodeMetricsHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[8]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -697,7 +759,7 @@ func (x *GetNodeMetricsHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNodeMetricsHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetNodeMetricsHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetNodeMetricsHistoryResponse) GetPoints() []*GetNodeMetricsHistoryResponse_MetricPoint {
@@ -716,7 +778,7 @@ type GetAgentUpgradeUploadUrlRequest struct {
 
 func (x *GetAgentUpgradeUploadUrlRequest) Reset() {
 	*x = GetAgentUpgradeUploadUrlRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -728,7 +790,7 @@ func (x *GetAgentUpgradeUploadUrlRequest) String() string {
 func (*GetAgentUpgradeUploadUrlRequest) ProtoMessage() {}
 
 func (x *GetAgentUpgradeUploadUrlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[9]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +803,7 @@ func (x *GetAgentUpgradeUploadUrlRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentUpgradeUploadUrlRequest.ProtoReflect.Descriptor instead.
 func (*GetAgentUpgradeUploadUrlRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{9}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetAgentUpgradeUploadUrlRequest) GetFilename() string {
@@ -761,7 +823,7 @@ type GetAgentUpgradeUploadUrlResponse struct {
 
 func (x *GetAgentUpgradeUploadUrlResponse) Reset() {
 	*x = GetAgentUpgradeUploadUrlResponse{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -773,7 +835,7 @@ func (x *GetAgentUpgradeUploadUrlResponse) String() string {
 func (*GetAgentUpgradeUploadUrlResponse) ProtoMessage() {}
 
 func (x *GetAgentUpgradeUploadUrlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[10]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -786,7 +848,7 @@ func (x *GetAgentUpgradeUploadUrlResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentUpgradeUploadUrlResponse.ProtoReflect.Descriptor instead.
 func (*GetAgentUpgradeUploadUrlResponse) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{10}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetAgentUpgradeUploadUrlResponse) GetUploadUrl() string {
@@ -814,7 +876,7 @@ type UpgradeAgentRequest struct {
 
 func (x *UpgradeAgentRequest) Reset() {
 	*x = UpgradeAgentRequest{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -826,7 +888,7 @@ func (x *UpgradeAgentRequest) String() string {
 func (*UpgradeAgentRequest) ProtoMessage() {}
 
 func (x *UpgradeAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[11]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -839,7 +901,7 @@ func (x *UpgradeAgentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpgradeAgentRequest.ProtoReflect.Descriptor instead.
 func (*UpgradeAgentRequest) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{11}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpgradeAgentRequest) GetNodeId() uint32 {
@@ -872,7 +934,7 @@ type UpgradeAgentResponse struct {
 
 func (x *UpgradeAgentResponse) Reset() {
 	*x = UpgradeAgentResponse{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -884,7 +946,7 @@ func (x *UpgradeAgentResponse) String() string {
 func (*UpgradeAgentResponse) ProtoMessage() {}
 
 func (x *UpgradeAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[12]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -897,7 +959,7 @@ func (x *UpgradeAgentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpgradeAgentResponse.ProtoReflect.Descriptor instead.
 func (*UpgradeAgentResponse) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{12}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpgradeAgentResponse) GetRequestId() string {
@@ -919,7 +981,7 @@ type GetNodeMetricsHistoryResponse_MetricPoint struct {
 
 func (x *GetNodeMetricsHistoryResponse_MetricPoint) Reset() {
 	*x = GetNodeMetricsHistoryResponse_MetricPoint{}
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -931,7 +993,7 @@ func (x *GetNodeMetricsHistoryResponse_MetricPoint) String() string {
 func (*GetNodeMetricsHistoryResponse_MetricPoint) ProtoMessage() {}
 
 func (x *GetNodeMetricsHistoryResponse_MetricPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_ops_service_v1_agent_node_proto_msgTypes[13]
+	mi := &file_ops_service_v1_agent_node_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -944,7 +1006,7 @@ func (x *GetNodeMetricsHistoryResponse_MetricPoint) ProtoReflect() protoreflect.
 
 // Deprecated: Use GetNodeMetricsHistoryResponse_MetricPoint.ProtoReflect.Descriptor instead.
 func (*GetNodeMetricsHistoryResponse_MetricPoint) Descriptor() ([]byte, []int) {
-	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8, 0}
+	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{9, 0}
 }
 
 func (x *GetNodeMetricsHistoryResponse_MetricPoint) GetTime() string {
@@ -979,7 +1041,7 @@ var File_ops_service_v1_agent_node_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\n" +
-	"\x1fops/service/v1/agent_node.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xda\f\n" +
+	"\x1fops/service/v1/agent_node.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8a\r\n" +
 	"\tAgentNode\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x03\xbaG\v\x92\x02\b节点IDH\x00R\x02id\x88\x01\x01\x12e\n" +
 	"\bagent_id\x18\x02 \x01(\tBE\xe0A\x03\xbaG?\x92\x02<机器唯一标识(machine-id),MQTT 主题与准入的锚点H\x01R\aagentId\x88\x01\x01\x12R\n" +
@@ -997,18 +1059,19 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\x03ips\x18\f \x03(\tB\x03\xe0A\x03R\x03ips\x12%\n" +
 	"\tcpu_cores\x18\r \x01(\x05B\x03\xe0A\x03H\vR\bcpuCores\x88\x01\x01\x120\n" +
 	"\x0fmem_total_bytes\x18\x0e \x01(\x04B\x03\xe0A\x03H\fR\rmemTotalBytes\x88\x01\x01\x12V\n" +
-	"\x03env\x18\x10 \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\rR\x03env\x88\x01\x01\x129\n" +
+	"\x03env\x18\x10 \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\rR\x03env\x88\x01\x01\x12\"\n" +
+	"\arevoked\x18\x11 \x01(\bB\x03\xe0A\x03H\x0eR\arevoked\x88\x01\x01\x129\n" +
 	"\x06labels\x18\x0f \x03(\tB!\xbaG\x1e\x92\x02\x1b人工标签(分组/筛选)R\x06labels\x12)\n" +
-	"\vcpu_percent\x18\x14 \x01(\x01B\x03\xe0A\x03H\x0eR\n" +
+	"\vcpu_percent\x18\x14 \x01(\x01B\x03\xe0A\x03H\x0fR\n" +
 	"cpuPercent\x88\x01\x01\x128\n" +
-	"\x13memory_used_percent\x18\x15 \x01(\x01B\x03\xe0A\x03H\x0fR\x11memoryUsedPercent\x88\x01\x01\x124\n" +
-	"\x11disk_used_percent\x18\x16 \x01(\x01B\x03\xe0A\x03H\x10R\x0fdiskUsedPercent\x88\x01\x01\x12/\n" +
-	"\x0euptime_seconds\x18\x17 \x01(\x04B\x03\xe0A\x03H\x11R\ruptimeSeconds\x88\x01\x01\x12h\n" +
-	"\x11last_heartbeat_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xe0A\x03\xbaG\x15\x92\x02\x12最后心跳时间H\x12R\x0flastHeartbeatAt\x88\x01\x01\x12C\n" +
+	"\x13memory_used_percent\x18\x15 \x01(\x01B\x03\xe0A\x03H\x10R\x11memoryUsedPercent\x88\x01\x01\x124\n" +
+	"\x11disk_used_percent\x18\x16 \x01(\x01B\x03\xe0A\x03H\x11R\x0fdiskUsedPercent\x88\x01\x01\x12/\n" +
+	"\x0euptime_seconds\x18\x17 \x01(\x04B\x03\xe0A\x03H\x12R\ruptimeSeconds\x88\x01\x01\x12h\n" +
+	"\x11last_heartbeat_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xe0A\x03\xbaG\x15\x92\x02\x12最后心跳时间H\x13R\x0flastHeartbeatAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x13R\tcreatedAt\x88\x01\x01\x12C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x14R\tcreatedAt\x88\x01\x01\x12C\n" +
 	"\n" +
-	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x14R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x15R\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\v\n" +
 	"\t_agent_idB\a\n" +
 	"\x05_nameB\t\n" +
@@ -1023,7 +1086,9 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\n" +
 	"_cpu_coresB\x12\n" +
 	"\x10_mem_total_bytesB\x06\n" +
-	"\x04_envB\x0e\n" +
+	"\x04_envB\n" +
+	"\n" +
+	"\b_revokedB\x0e\n" +
 	"\f_cpu_percentB\x16\n" +
 	"\x14_memory_used_percentB\x14\n" +
 	"\x12_disk_used_percentB\x11\n" +
@@ -1036,7 +1101,12 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\x05items\x18\x02 \x03(\v2\x19.ops.service.v1.AgentNodeR\x05items\"6\n" +
 	"\x13GetAgentNodeRequest\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\xcb\x01\n" +
+	"\x03_id\"X\n" +
+	"\x16RevokeAgentNodeRequest\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x12\x1d\n" +
+	"\arevoked\x18\x02 \x01(\bH\x00R\arevoked\x88\x01\x01B\n" +
+	"\n" +
+	"\b_revoked\"\xcb\x01\n" +
 	"\x16UpdateAgentNodeRequest\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02R\x02id\x122\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.ops.service.v1.AgentNodeB\x03\xe0A\x02R\x04data\x12h\n" +
@@ -1096,7 +1166,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\x1dAGENT_NODE_STATUS_UNSPECIFIED\x10\x00\x12\n" +
 	"\n" +
 	"\x06ONLINE\x10\x01\x12\v\n" +
-	"\aOFFLINE\x10\x022\x94\x06\n" +
+	"\aOFFLINE\x10\x022\xe9\x06\n" +
 	"\x10AgentNodeService\x12T\n" +
 	"\x0eListAgentNodes\x12\x19.pagination.PagingRequest\x1a%.ops.service.v1.ListAgentNodeResponse\"\x00\x12P\n" +
 	"\fGetAgentNode\x12#.ops.service.v1.GetAgentNodeRequest\x1a\x19.ops.service.v1.AgentNode\"\x00\x12S\n" +
@@ -1105,7 +1175,8 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\vSendCommand\x12\".ops.service.v1.SendCommandRequest\x1a#.ops.service.v1.SendCommandResponse\"\x00\x12v\n" +
 	"\x15GetNodeMetricsHistory\x12,.ops.service.v1.GetNodeMetricsHistoryRequest\x1a-.ops.service.v1.GetNodeMetricsHistoryResponse\"\x00\x12\x7f\n" +
 	"\x18GetAgentUpgradeUploadUrl\x12/.ops.service.v1.GetAgentUpgradeUploadUrlRequest\x1a0.ops.service.v1.GetAgentUpgradeUploadUrlResponse\"\x00\x12[\n" +
-	"\fUpgradeAgent\x12#.ops.service.v1.UpgradeAgentRequest\x1a$.ops.service.v1.UpgradeAgentResponse\"\x00B\xab\x01\n" +
+	"\fUpgradeAgent\x12#.ops.service.v1.UpgradeAgentRequest\x1a$.ops.service.v1.UpgradeAgentResponse\"\x00\x12S\n" +
+	"\x0fRevokeAgentNode\x12&.ops.service.v1.RevokeAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\x00B\xab\x01\n" +
 	"\x12com.ops.service.v1B\x0eAgentNodeProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -1121,55 +1192,58 @@ func file_ops_service_v1_agent_node_proto_rawDescGZIP() []byte {
 }
 
 var file_ops_service_v1_agent_node_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_ops_service_v1_agent_node_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_ops_service_v1_agent_node_proto_goTypes = []any{
 	(AgentNodeStatus)(0),                              // 0: ops.service.v1.AgentNodeStatus
 	(*AgentNode)(nil),                                 // 1: ops.service.v1.AgentNode
 	(*ListAgentNodeResponse)(nil),                     // 2: ops.service.v1.ListAgentNodeResponse
 	(*GetAgentNodeRequest)(nil),                       // 3: ops.service.v1.GetAgentNodeRequest
-	(*UpdateAgentNodeRequest)(nil),                    // 4: ops.service.v1.UpdateAgentNodeRequest
-	(*DeleteAgentNodeRequest)(nil),                    // 5: ops.service.v1.DeleteAgentNodeRequest
-	(*SendCommandRequest)(nil),                        // 6: ops.service.v1.SendCommandRequest
-	(*SendCommandResponse)(nil),                       // 7: ops.service.v1.SendCommandResponse
-	(*GetNodeMetricsHistoryRequest)(nil),              // 8: ops.service.v1.GetNodeMetricsHistoryRequest
-	(*GetNodeMetricsHistoryResponse)(nil),             // 9: ops.service.v1.GetNodeMetricsHistoryResponse
-	(*GetAgentUpgradeUploadUrlRequest)(nil),           // 10: ops.service.v1.GetAgentUpgradeUploadUrlRequest
-	(*GetAgentUpgradeUploadUrlResponse)(nil),          // 11: ops.service.v1.GetAgentUpgradeUploadUrlResponse
-	(*UpgradeAgentRequest)(nil),                       // 12: ops.service.v1.UpgradeAgentRequest
-	(*UpgradeAgentResponse)(nil),                      // 13: ops.service.v1.UpgradeAgentResponse
-	(*GetNodeMetricsHistoryResponse_MetricPoint)(nil), // 14: ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
-	(*timestamppb.Timestamp)(nil),                     // 15: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                     // 16: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                          // 17: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                             // 18: google.protobuf.Empty
+	(*RevokeAgentNodeRequest)(nil),                    // 4: ops.service.v1.RevokeAgentNodeRequest
+	(*UpdateAgentNodeRequest)(nil),                    // 5: ops.service.v1.UpdateAgentNodeRequest
+	(*DeleteAgentNodeRequest)(nil),                    // 6: ops.service.v1.DeleteAgentNodeRequest
+	(*SendCommandRequest)(nil),                        // 7: ops.service.v1.SendCommandRequest
+	(*SendCommandResponse)(nil),                       // 8: ops.service.v1.SendCommandResponse
+	(*GetNodeMetricsHistoryRequest)(nil),              // 9: ops.service.v1.GetNodeMetricsHistoryRequest
+	(*GetNodeMetricsHistoryResponse)(nil),             // 10: ops.service.v1.GetNodeMetricsHistoryResponse
+	(*GetAgentUpgradeUploadUrlRequest)(nil),           // 11: ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	(*GetAgentUpgradeUploadUrlResponse)(nil),          // 12: ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	(*UpgradeAgentRequest)(nil),                       // 13: ops.service.v1.UpgradeAgentRequest
+	(*UpgradeAgentResponse)(nil),                      // 14: ops.service.v1.UpgradeAgentResponse
+	(*GetNodeMetricsHistoryResponse_MetricPoint)(nil), // 15: ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	(*timestamppb.Timestamp)(nil),                     // 16: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                     // 17: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                          // 18: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                             // 19: google.protobuf.Empty
 }
 var file_ops_service_v1_agent_node_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.AgentNode.status:type_name -> ops.service.v1.AgentNodeStatus
-	15, // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
-	15, // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
-	15, // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
+	16, // 1: ops.service.v1.AgentNode.last_heartbeat_at:type_name -> google.protobuf.Timestamp
+	16, // 2: ops.service.v1.AgentNode.created_at:type_name -> google.protobuf.Timestamp
+	16, // 3: ops.service.v1.AgentNode.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: ops.service.v1.ListAgentNodeResponse.items:type_name -> ops.service.v1.AgentNode
 	1,  // 5: ops.service.v1.UpdateAgentNodeRequest.data:type_name -> ops.service.v1.AgentNode
-	16, // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
-	14, // 7: ops.service.v1.GetNodeMetricsHistoryResponse.points:type_name -> ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
-	17, // 8: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
+	17, // 6: ops.service.v1.UpdateAgentNodeRequest.update_mask:type_name -> google.protobuf.FieldMask
+	15, // 7: ops.service.v1.GetNodeMetricsHistoryResponse.points:type_name -> ops.service.v1.GetNodeMetricsHistoryResponse.MetricPoint
+	18, // 8: ops.service.v1.AgentNodeService.ListAgentNodes:input_type -> pagination.PagingRequest
 	3,  // 9: ops.service.v1.AgentNodeService.GetAgentNode:input_type -> ops.service.v1.GetAgentNodeRequest
-	4,  // 10: ops.service.v1.AgentNodeService.UpdateAgentNode:input_type -> ops.service.v1.UpdateAgentNodeRequest
-	5,  // 11: ops.service.v1.AgentNodeService.DeleteAgentNode:input_type -> ops.service.v1.DeleteAgentNodeRequest
-	6,  // 12: ops.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
-	8,  // 13: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
-	10, // 14: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:input_type -> ops.service.v1.GetAgentUpgradeUploadUrlRequest
-	12, // 15: ops.service.v1.AgentNodeService.UpgradeAgent:input_type -> ops.service.v1.UpgradeAgentRequest
-	2,  // 16: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
-	1,  // 17: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
-	18, // 18: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
-	18, // 19: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
-	7,  // 20: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
-	9,  // 21: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
-	11, // 22: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:output_type -> ops.service.v1.GetAgentUpgradeUploadUrlResponse
-	13, // 23: ops.service.v1.AgentNodeService.UpgradeAgent:output_type -> ops.service.v1.UpgradeAgentResponse
-	16, // [16:24] is the sub-list for method output_type
-	8,  // [8:16] is the sub-list for method input_type
+	5,  // 10: ops.service.v1.AgentNodeService.UpdateAgentNode:input_type -> ops.service.v1.UpdateAgentNodeRequest
+	6,  // 11: ops.service.v1.AgentNodeService.DeleteAgentNode:input_type -> ops.service.v1.DeleteAgentNodeRequest
+	7,  // 12: ops.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
+	9,  // 13: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
+	11, // 14: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:input_type -> ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	13, // 15: ops.service.v1.AgentNodeService.UpgradeAgent:input_type -> ops.service.v1.UpgradeAgentRequest
+	4,  // 16: ops.service.v1.AgentNodeService.RevokeAgentNode:input_type -> ops.service.v1.RevokeAgentNodeRequest
+	2,  // 17: ops.service.v1.AgentNodeService.ListAgentNodes:output_type -> ops.service.v1.ListAgentNodeResponse
+	1,  // 18: ops.service.v1.AgentNodeService.GetAgentNode:output_type -> ops.service.v1.AgentNode
+	19, // 19: ops.service.v1.AgentNodeService.UpdateAgentNode:output_type -> google.protobuf.Empty
+	19, // 20: ops.service.v1.AgentNodeService.DeleteAgentNode:output_type -> google.protobuf.Empty
+	8,  // 21: ops.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
+	10, // 22: ops.service.v1.AgentNodeService.GetNodeMetricsHistory:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
+	12, // 23: ops.service.v1.AgentNodeService.GetAgentUpgradeUploadUrl:output_type -> ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	14, // 24: ops.service.v1.AgentNodeService.UpgradeAgent:output_type -> ops.service.v1.UpgradeAgentResponse
+	19, // 25: ops.service.v1.AgentNodeService.RevokeAgentNode:output_type -> google.protobuf.Empty
+	17, // [17:26] is the sub-list for method output_type
+	8,  // [8:17] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
 	8,  // [8:8] is the sub-list for extension extendee
 	0,  // [0:8] is the sub-list for field type_name
@@ -1182,19 +1256,20 @@ func file_ops_service_v1_agent_node_proto_init() {
 	}
 	file_ops_service_v1_agent_node_proto_msgTypes[0].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[2].OneofWrappers = []any{}
-	file_ops_service_v1_agent_node_proto_msgTypes[4].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[3].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[5].OneofWrappers = []any{}
-	file_ops_service_v1_agent_node_proto_msgTypes[7].OneofWrappers = []any{}
-	file_ops_service_v1_agent_node_proto_msgTypes[9].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[6].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[8].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[10].OneofWrappers = []any{}
 	file_ops_service_v1_agent_node_proto_msgTypes[11].OneofWrappers = []any{}
+	file_ops_service_v1_agent_node_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_agent_node_proto_rawDesc), len(file_ops_service_v1_agent_node_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -142,6 +142,14 @@ func (m *ApiKey) validate(all bool) error {
 		// no validation rules for Description
 	}
 
+	if m.OwnerUserId != nil {
+		// no validation rules for OwnerUserId
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

@@ -27,6 +27,7 @@ const OperationAgentNodeServiceGet = "/admin.service.v1.AgentNodeService/Get"
 const OperationAgentNodeServiceGetMetrics = "/admin.service.v1.AgentNodeService/GetMetrics"
 const OperationAgentNodeServiceGetUpgradeUploadUrl = "/admin.service.v1.AgentNodeService/GetUpgradeUploadUrl"
 const OperationAgentNodeServiceList = "/admin.service.v1.AgentNodeService/List"
+const OperationAgentNodeServiceRevoke = "/admin.service.v1.AgentNodeService/Revoke"
 const OperationAgentNodeServiceSendCommand = "/admin.service.v1.AgentNodeService/SendCommand"
 const OperationAgentNodeServiceUpdate = "/admin.service.v1.AgentNodeService/Update"
 const OperationAgentNodeServiceUpgrade = "/admin.service.v1.AgentNodeService/Upgrade"
@@ -42,6 +43,8 @@ type AgentNodeServiceHTTPServer interface {
 	GetUpgradeUploadUrl(context.Context, *v11.GetAgentUpgradeUploadUrlRequest) (*v11.GetAgentUpgradeUploadUrlResponse, error)
 	// List 查询节点列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListAgentNodeResponse, error)
+	// Revoke 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+	Revoke(context.Context, *v11.RevokeAgentNodeRequest) (*emptypb.Empty, error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(context.Context, *v11.SendCommandRequest) (*v11.SendCommandResponse, error)
 	// Update 更新节点(显示名/标签)
@@ -56,6 +59,7 @@ func RegisterAgentNodeServiceHTTPServer(s *http.Server, srv AgentNodeServiceHTTP
 	r.GET("/admin/v1/agent-nodes/{id}", _AgentNodeService_Get0_HTTP_Handler(srv))
 	r.PUT("/admin/v1/agent-nodes/{id}", _AgentNodeService_Update0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/agent-nodes/{id}", _AgentNodeService_Delete0_HTTP_Handler(srv))
+	r.POST("/admin/v1/agent-nodes/revoke:send", _AgentNodeService_Revoke0_HTTP_Handler(srv))
 	r.POST("/admin/v1/agent-nodes/{id}/commands:send", _AgentNodeService_SendCommand0_HTTP_Handler(srv))
 	r.GET("/admin/v1/agent-nodes/{id}/metrics", _AgentNodeService_GetMetrics0_HTTP_Handler(srv))
 	r.POST("/admin/v1/agent-nodes/upgrade-upload-url:resolve", _AgentNodeService_GetUpgradeUploadUrl0_HTTP_Handler(srv))
@@ -140,6 +144,28 @@ func _AgentNodeService_Delete0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func
 		http.SetOperation(ctx, OperationAgentNodeServiceDelete)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.Delete(ctx, req.(*v11.DeleteAgentNodeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AgentNodeService_Revoke0_HTTP_Handler(srv AgentNodeServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RevokeAgentNodeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAgentNodeServiceRevoke)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Revoke(ctx, req.(*v11.RevokeAgentNodeRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -252,6 +278,8 @@ type AgentNodeServiceHTTPClient interface {
 	GetUpgradeUploadUrl(ctx context.Context, req *v11.GetAgentUpgradeUploadUrlRequest, opts ...http.CallOption) (rsp *v11.GetAgentUpgradeUploadUrlResponse, err error)
 	// List 查询节点列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListAgentNodeResponse, err error)
+	// Revoke 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+	Revoke(ctx context.Context, req *v11.RevokeAgentNodeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// SendCommand 向节点下发指令(如 ping),返回幂等 request_id
 	SendCommand(ctx context.Context, req *v11.SendCommandRequest, opts ...http.CallOption) (rsp *v11.SendCommandResponse, err error)
 	// Update 更新节点(显示名/标签)
@@ -332,6 +360,20 @@ func (c *AgentNodeServiceHTTPClientImpl) List(ctx context.Context, in *v1.Paging
 	opts = append(opts, http.Operation(OperationAgentNodeServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Revoke 吊销/恢复节点准入(id 走 body:触发类 POST 不带 path 参数)
+func (c *AgentNodeServiceHTTPClientImpl) Revoke(ctx context.Context, in *v11.RevokeAgentNodeRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/agent-nodes/revoke:send"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAgentNodeServiceRevoke))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

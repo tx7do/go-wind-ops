@@ -11,14 +11,14 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/minio/minio-go/v7"
 	"github.com/robfig/cron/v3"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	"go-wind-ops/app/core/service/internal/data"
-	"go-wind-ops/pkg/oss"
-	appViewer "go-wind-ops/pkg/entgo/viewer"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	"go-wind-ops/app/core/service/internal/data"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
+	"go-wind-ops/pkg/oss"
 )
 
 // cronSweepInterval 调度扫描周期;cron 表达式最小粒度为分钟,30s 保证
@@ -31,63 +31,66 @@ const cronSweepInterval = 30 * time.Second
 // 备份锚在 last_cron_at,监控检查锚在 last_check_at;同一规则同一周期只有
 // 抢到锚点的副本执行,探测指令、防抖计数与告警创建随之单份。
 type CronScheduler struct {
-	ctx           *bootstrap.Context
-	buildRepo     *data.BuildRepo
-	scriptRepo    *data.ScriptRepo
-	monitorRepo   *data.MonitorRepo
-	alertRepo     *data.AlertRepo
-	projectRepo   *data.ProjectRepo
-	nodeRepo      *data.AgentNodeRepo
-	backupTaskRepo   *data.BackupTaskRepo
-	buildService     *BuildService
-	scriptService    *ScriptService
-	backupService    *BackupService
-	agentService     *AgentService
-	notifChannelRepo *data.NotificationChannelRepo
-	deliveryRepo     *data.NotificationDeliveryRepo
-	budgetRepo       *data.CloudBudgetRepo
-	budgetService    *CloudBudgetService
-	certRepo         *data.CertRepo
-	certService      *CertService
+	ctx                *bootstrap.Context
+	buildRepo          *data.BuildRepo
+	scriptRepo         *data.ScriptRepo
+	monitorRepo        *data.MonitorRepo
+	alertRepo          *data.AlertRepo
+	projectRepo        *data.ProjectRepo
+	nodeRepo           *data.AgentNodeRepo
+	backupTaskRepo     *data.BackupTaskRepo
+	buildService       *BuildService
+	scriptService      *ScriptService
+	backupService      *BackupService
+	agentService       *AgentService
+	notifChannelRepo   *data.NotificationChannelRepo
+	deliveryRepo       *data.NotificationDeliveryRepo
+	budgetRepo         *data.CloudBudgetRepo
+	budgetService      *CloudBudgetService
+	certRepo           *data.CertRepo
+	certService        *CertService
 	logSnapshotService *LogSnapshotService
-	historyRepo      *data.BuildHistoryRepo
-	pipelineRunRepo  *data.PipelineRunRepo
-	ossClient        *oss.MinIOClient
+	historyRepo        *data.BuildHistoryRepo
+	pipelineRunRepo    *data.PipelineRunRepo
+	ossClient          *oss.MinIOClient
+	auditRetentionRepo *data.AuditRetentionRepo
 
-	lastRetentionSweep time.Time
-	lastOrphanSweep    time.Time
-	lastBudgetCheck    time.Time
-	lastCertCheck      time.Time
-	lastLogSnapshot    time.Time
-	lastTransientSweep time.Time
-	log                *log.Helper
+	lastRetentionSweep      time.Time
+	lastAuditRetentionSweep time.Time
+	lastOrphanSweep         time.Time
+	lastBudgetCheck         time.Time
+	lastCertCheck           time.Time
+	lastLogSnapshot         time.Time
+	lastTransientSweep      time.Time
+	log                     *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
 	return &CronScheduler{
-		ctx:              ctx,
-		buildRepo:        buildRepo,
-		scriptRepo:       scriptRepo,
-		monitorRepo:      monitorRepo,
-		alertRepo:        alertRepo,
-		projectRepo:      projectRepo,
-		nodeRepo:         nodeRepo,
-		backupTaskRepo:   backupTaskRepo,
-		notifChannelRepo: notifChannelRepo,
-		deliveryRepo:     deliveryRepo,
-		budgetRepo:       budgetRepo,
-		budgetService:    budgetService,
-		certRepo:         certRepo,
-		certService:      certService,
+		ctx:                ctx,
+		buildRepo:          buildRepo,
+		scriptRepo:         scriptRepo,
+		monitorRepo:        monitorRepo,
+		alertRepo:          alertRepo,
+		projectRepo:        projectRepo,
+		nodeRepo:           nodeRepo,
+		backupTaskRepo:     backupTaskRepo,
+		notifChannelRepo:   notifChannelRepo,
+		deliveryRepo:       deliveryRepo,
+		budgetRepo:         budgetRepo,
+		budgetService:      budgetService,
+		certRepo:           certRepo,
+		certService:        certService,
 		logSnapshotService: logSnapshotService,
-		historyRepo:      historyRepo,
-		pipelineRunRepo:  pipelineRunRepo,
-		ossClient:        ossClient,
-		buildService:     buildService,
-		scriptService:    scriptService,
-		backupService:    backupService,
-		agentService:     agentService,
-		log:              ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
+		historyRepo:        historyRepo,
+		pipelineRunRepo:    pipelineRunRepo,
+		ossClient:          ossClient,
+		buildService:       buildService,
+		scriptService:      scriptService,
+		backupService:      backupService,
+		agentService:       agentService,
+		auditRetentionRepo: auditRetentionRepo,
+		log:                ctx.NewLoggerHelper("cron-scheduler/service/core-service"),
 	}
 }
 
@@ -110,6 +113,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.runTick(ctx, "certs", s.tickCerts)
 				s.runTick(ctx, "log-snapshots", s.tickLogSnapshots)
 				s.runTick(ctx, "retention", s.tickRetention)
+				s.runTick(ctx, "audit-retention", s.tickAuditRetention)
 				s.runTick(ctx, "transient-objects", s.tickTransientObjects)
 			}
 		}
@@ -163,7 +167,12 @@ func (s *CronScheduler) tickBuilds(ctx context.Context) {
 			continue
 		}
 		s.log.Infof("cron build triggered (build=%d no=%d spec=%s)", b.GetId(), b.GetBuildNo()+1, spec)
-		if _, err = s.buildService.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: b.GetId()}); err != nil {
+		// 租户归因:定时触发的构建归属配置作者的租户(后台路径默认落 tenant 0)。
+		buildCtx := ctx
+		if entity, gerr := s.buildRepo.GetEntity(ctx, b.GetId()); gerr == nil && entity != nil {
+			buildCtx = tenantScopedCtx(ctx, entity.TenantID)
+		}
+		if _, err = s.buildService.TriggerBuild(buildCtx, &opsV1.TriggerBuildRequest{Id: b.GetId()}); err != nil {
 			s.log.Errorf("cron build trigger failed (build=%d): %s", b.GetId(), err.Error())
 		}
 	}
@@ -373,6 +382,36 @@ func (s *CronScheduler) tickTransientObjects(ctx context.Context) {
 
 // retentionSweepInterval 产物保留策略清扫周期(低频重活,每小时一次)。
 const retentionSweepInterval = time.Hour
+
+// auditRetentionSweepInterval 审计留存清扫周期(低频重活,24h 一次)。
+const auditRetentionSweepInterval = 24 * time.Hour
+
+// tickAuditRetention 审计日志留存清扫:AUDIT_RETENTION_DAYS 配置保留天数
+// (默认 90;0/负值=不启用),删除五类审计表中早于留存期的行。
+func (s *CronScheduler) tickAuditRetention(ctx context.Context) {
+	if s.auditRetentionRepo == nil {
+		return
+	}
+	if time.Since(s.lastAuditRetentionSweep) < auditRetentionSweepInterval {
+		return
+	}
+	days := 0
+	if v := strings.TrimSpace(os.Getenv("AUDIT_RETENTION_DAYS")); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			days = n
+		}
+	}
+	if days <= 0 {
+		return
+	}
+	s.lastAuditRetentionSweep = time.Now()
+	cutoff := time.Now().AddDate(0, 0, -days)
+	if n, err := s.auditRetentionRepo.DeleteOlderThan(ctx, cutoff, 1000); err != nil {
+		s.log.Warnf("audit retention sweep failed: %s", err.Error())
+	} else if n > 0 {
+		s.log.Infof("audit retention sweep: removed %d audit row(s) older than %dd", n, days)
+	}
+}
 
 // tickRetention 产物保留策略清扫:对配置了 artifactRetention 的构建,
 // 删除保留数量之外的历史产物对象(MinIO)并清空记录指针。

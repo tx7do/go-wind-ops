@@ -60,6 +60,14 @@ func (s *AgentNodeService) GetMetrics(ctx context.Context, req *opsV1.GetNodeMet
 	return s.agentNodeServiceClient.GetNodeMetricsHistory(ctx, req)
 }
 
+// Revoke 吊销/恢复节点准入(敏感面:node_manage 权限码点查)。
+func (s *AgentNodeService) Revoke(ctx context.Context, req *opsV1.RevokeAgentNodeRequest) (*emptypb.Empty, error) {
+	if err := requirePermission(ctx, constants.OpsNodeManagePermissionCode); err != nil {
+		return nil, err
+	}
+	return s.agentNodeServiceClient.RevokeAgentNode(ctx, req)
+}
+
 func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendCommandRequest) (*opsV1.SendCommandResponse, error) {
 
 	// 权限码门(noop authz 下的真实防线):见 service/permguard.go

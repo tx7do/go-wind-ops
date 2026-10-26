@@ -39,6 +39,24 @@
 
 ### 安全（2026-10-26 审计修复轮·第三批：口令密钥可配 + ops 租户模型）
 
+### 安全（2026-10-26 审计修复轮·第四批：播种治理与运维面收口）
+
+### 安全（2026-10-26 审计修复轮·第五批：归属归因闭环与准入治理）
+
+- **API key 归属租户与归因注入**：ApiKey 暴露创建者（ownerUserId/tenantId）,OpenAPI 网关校验后注入 operator 元数据——外部系统触发的构建/分发/流水线落密钥创建者的租户,租户归因缺口全部闭合(已运行时验证)。
+- **节点准入吊销**：新增 `RevokeAgentNode`（`POST /admin/v1/agent-nodes/revoke:send`,node_manage 码）——吊销后 broker 级与信令级两层准入均拒绝,token 泄露应急处置闭环;恢复后原 token 直接重新认证(运行时验证:吊销→真实 token 被拒→恢复→放行)。
+- **TOFU 白名单模式**：`AGENT_ENROLL_ALLOWLIST`（逗号分隔 agentId）配置后关闭开放注册,仅白名单内允许首连（webhook 与信令两级同检,三态运行时验证通过）。
+- **front C 端登录失败锁定**：与 admin 同款 用户名+IP 锁定（pkg/logalock 共享实现,front 新接 Redis）——C 端此前完全无防爆破。运行时实测:5 次错误密码后第 6 次(即便密码正确)429。**附带勘误:core 对错误凭证返回 400 而非 401,锁定计数必须按"密码授权的任意错误"判断**。
+
+
+- **权限码启动播种改确保语义**（冒烟发现：新库 ops:* 码缺种,首个 ops 操作即 403）：`PermissionService.init` 移除空表条件,`createDefaultPermissions` 按 code 幂等每次启动补齐;`RoleService.ensureDefaultRolePermissions` 对 platform:admin 按差集补绑(已在真实库验证自动补齐)。
+- **审计留存清理**：`AUDIT_RETENTION_DAYS`（默认 90,0=不启用）每日清扫五类审计表,分批限量防长事务——审计表此前无界增长。
+- **租户归因缺口补齐**：cron 触发的构建（按构建配置租户）、分发批次推进补发的指令（按分发记录租户）——冒烟挂账项收口。
+- **admin/app JWT 密钥分离**：app 端独立 `jwt_signing_key_app`,生产守卫覆盖两端默认串;顺带移除 authenticator.yaml 中无代码读取的死配置 aes_key。
+- **API key 网关限流**：`OPENAPI_RATE_LIMIT`（次/分钟/key,默认 60,<=0 不限）滑动窗口,防有效 key 无节制刷触发端点。
+- **清理**：删除无调用方的 `IssueUploadPresignedUrl` 死代码;mqtt-pub broker 口令支持 `MQTT_CORE_PASSWORD` 环境变量。
+
+
 - **口令传输密钥两端可配**：后端新增 `LOGIN_AES_KEY`（`pkg/configenv.LoginAESKey`，替换 core/front 全部硬编码 `DefaultAESKey` 解密点；pass-enc 支持 `-key`/同名 env）↔ 前端既有 `VITE_AES_KEY`，两端必须一致，缺省回落公开默认串（仅限开发）。顺带勘误：口令传输实为 AES-128-CBC（非文档所写 AES-GCM）。
 - **ops 业务表租户模型落地**（产品决策：ops 资源归租户）：30 张 ops 业务表挂 `TenantID` mixin（go-crud TenantPrivacy）——查询按租户行级过滤、Create 按操作者租户落库、Update/Delete 注入租户谓词；平台管理员（tenant 0）与系统视图看全量；`agent_node`/`node_metric` 保持平台级。后台入口系统性注入 viewer（MQTT 回调/清扫循环/构建 goroutine/终端录制/OpenAPI 回写：系统簿记用 SystemViewer，需归因的用 `tenantScopedCtx` 按父实体租户落库）——无 viewer 上下文会被租户策略直接拒绝，不注入即功能断裂。已归因：监控/预算/证书扫描告警、cron 触发脚本、流水线引擎、巡检聚合、终端回放分块。已知缺口（落平台）：cron/OpenAPI 触发的构建、分发批次推进补发指令；存量数据 tenant_id 为空=平台可见，多租户启用前需回填。
 

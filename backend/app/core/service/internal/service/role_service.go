@@ -6,12 +6,13 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/tx7do/go-crud/viewer"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"go-wind-ops/app/core/service/internal/data"
 
@@ -59,6 +60,41 @@ func (s *RoleService) init() {
 	if count, _ := s.roleRepo.Count(ctx, nil); count == 0 {
 		_ = s.createDefaultRoles(ctx)
 	}
+	_ = s.ensureDefaultRolePermissions(ctx)
+}
+
+// ensureDefaultRolePermissions 平台管理员角色补绑运维域权限码:历史库的角色
+// 绑定在种子时代生成,后来新增的权限码(如 ops:*)不会自动追绑——按 ID 差集
+// 幂等补齐(绑定关系由 Update 的 ReplacePermissions 整体替换维护)。
+func (s *RoleService) ensureDefaultRolePermissions(ctx context.Context) error {
+	role, err := s.roleRepo.GetPlatformRoleByCode(ctx, constants.PlatformAdminRoleCode)
+	if err != nil || role == nil {
+		// 角色尚不存在:交由 createDefaultRoles 路径(空库)处理
+		return err
+	}
+	if len(constants.DefaultOpsPermissions) == 0 {
+		return nil
+	}
+	existing := make(map[uint32]struct{}, len(role.GetPermissions()))
+	for _, id := range role.GetPermissions() {
+		existing[id] = struct{}{}
+	}
+	merged := append([]uint32{}, role.GetPermissions()...)
+	for _, p := range constants.DefaultOpsPermissions {
+		if id := p.GetId(); id > 0 {
+			if _, dup := existing[id]; !dup {
+				merged = append(merged, id)
+			}
+		}
+	}
+	if len(merged) == len(role.GetPermissions()) {
+		return nil
+	}
+	return s.roleRepo.Update(ctx, &permissionV1.UpdateRoleRequest{
+		Id:         role.GetId(),
+		Data:       &permissionV1.Role{Permissions: merged},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"permissions"}},
+	})
 }
 
 func (s *RoleService) extractRelationIDs(

@@ -28,12 +28,13 @@ var File_admin_service_v1_i_agent_node_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_agent_node_proto_rawDesc = "" +
 	"\n" +
-	"#admin/service/v1/i_agent_node.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1fops/service/v1/agent_node.proto2\xa9\b\n" +
+	"#admin/service/v1/i_agent_node.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1fops/service/v1/agent_node.proto2\xa1\t\n" +
 	"\x10AgentNodeService\x12g\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a%.ops.service.v1.ListAgentNodeResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/agent-nodes\x12i\n" +
 	"\x03Get\x12#.ops.service.v1.GetAgentNodeRequest\x1a\x19.ops.service.v1.AgentNode\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/admin/v1/agent-nodes/{id}\x12o\n" +
 	"\x06Update\x12&.ops.service.v1.UpdateAgentNodeRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/admin/v1/agent-nodes/{id}\x12l\n" +
-	"\x06Delete\x12&.ops.service.v1.DeleteAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/agent-nodes/{id}\x12\x8b\x01\n" +
+	"\x06Delete\x12&.ops.service.v1.DeleteAgentNodeRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/agent-nodes/{id}\x12v\n" +
+	"\x06Revoke\x12&.ops.service.v1.RevokeAgentNodeRequest\x1a\x16.google.protobuf.Empty\",\x82\xd3\xe4\x93\x02&:\x01*\"!/admin/v1/agent-nodes/revoke:send\x12\x8b\x01\n" +
 	"\vSendCommand\x12\".ops.service.v1.SendCommandRequest\x1a#.ops.service.v1.SendCommandResponse\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/admin/v1/agent-nodes/{id}/commands:send\x12\x95\x01\n" +
 	"\n" +
 	"GetMetrics\x12,.ops.service.v1.GetNodeMetricsHistoryRequest\x1a-.ops.service.v1.GetNodeMetricsHistoryResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/agent-nodes/{id}/metrics\x12\xb5\x01\n" +
@@ -46,37 +47,40 @@ var file_admin_service_v1_i_agent_node_proto_goTypes = []any{
 	(*v11.GetAgentNodeRequest)(nil),              // 1: ops.service.v1.GetAgentNodeRequest
 	(*v11.UpdateAgentNodeRequest)(nil),           // 2: ops.service.v1.UpdateAgentNodeRequest
 	(*v11.DeleteAgentNodeRequest)(nil),           // 3: ops.service.v1.DeleteAgentNodeRequest
-	(*v11.SendCommandRequest)(nil),               // 4: ops.service.v1.SendCommandRequest
-	(*v11.GetNodeMetricsHistoryRequest)(nil),     // 5: ops.service.v1.GetNodeMetricsHistoryRequest
-	(*v11.GetAgentUpgradeUploadUrlRequest)(nil),  // 6: ops.service.v1.GetAgentUpgradeUploadUrlRequest
-	(*v11.UpgradeAgentRequest)(nil),              // 7: ops.service.v1.UpgradeAgentRequest
-	(*v11.ListAgentNodeResponse)(nil),            // 8: ops.service.v1.ListAgentNodeResponse
-	(*v11.AgentNode)(nil),                        // 9: ops.service.v1.AgentNode
-	(*emptypb.Empty)(nil),                        // 10: google.protobuf.Empty
-	(*v11.SendCommandResponse)(nil),              // 11: ops.service.v1.SendCommandResponse
-	(*v11.GetNodeMetricsHistoryResponse)(nil),    // 12: ops.service.v1.GetNodeMetricsHistoryResponse
-	(*v11.GetAgentUpgradeUploadUrlResponse)(nil), // 13: ops.service.v1.GetAgentUpgradeUploadUrlResponse
-	(*v11.UpgradeAgentResponse)(nil),             // 14: ops.service.v1.UpgradeAgentResponse
+	(*v11.RevokeAgentNodeRequest)(nil),           // 4: ops.service.v1.RevokeAgentNodeRequest
+	(*v11.SendCommandRequest)(nil),               // 5: ops.service.v1.SendCommandRequest
+	(*v11.GetNodeMetricsHistoryRequest)(nil),     // 6: ops.service.v1.GetNodeMetricsHistoryRequest
+	(*v11.GetAgentUpgradeUploadUrlRequest)(nil),  // 7: ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	(*v11.UpgradeAgentRequest)(nil),              // 8: ops.service.v1.UpgradeAgentRequest
+	(*v11.ListAgentNodeResponse)(nil),            // 9: ops.service.v1.ListAgentNodeResponse
+	(*v11.AgentNode)(nil),                        // 10: ops.service.v1.AgentNode
+	(*emptypb.Empty)(nil),                        // 11: google.protobuf.Empty
+	(*v11.SendCommandResponse)(nil),              // 12: ops.service.v1.SendCommandResponse
+	(*v11.GetNodeMetricsHistoryResponse)(nil),    // 13: ops.service.v1.GetNodeMetricsHistoryResponse
+	(*v11.GetAgentUpgradeUploadUrlResponse)(nil), // 14: ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	(*v11.UpgradeAgentResponse)(nil),             // 15: ops.service.v1.UpgradeAgentResponse
 }
 var file_admin_service_v1_i_agent_node_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.AgentNodeService.List:input_type -> pagination.PagingRequest
 	1,  // 1: admin.service.v1.AgentNodeService.Get:input_type -> ops.service.v1.GetAgentNodeRequest
 	2,  // 2: admin.service.v1.AgentNodeService.Update:input_type -> ops.service.v1.UpdateAgentNodeRequest
 	3,  // 3: admin.service.v1.AgentNodeService.Delete:input_type -> ops.service.v1.DeleteAgentNodeRequest
-	4,  // 4: admin.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
-	5,  // 5: admin.service.v1.AgentNodeService.GetMetrics:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
-	6,  // 6: admin.service.v1.AgentNodeService.GetUpgradeUploadUrl:input_type -> ops.service.v1.GetAgentUpgradeUploadUrlRequest
-	7,  // 7: admin.service.v1.AgentNodeService.Upgrade:input_type -> ops.service.v1.UpgradeAgentRequest
-	8,  // 8: admin.service.v1.AgentNodeService.List:output_type -> ops.service.v1.ListAgentNodeResponse
-	9,  // 9: admin.service.v1.AgentNodeService.Get:output_type -> ops.service.v1.AgentNode
-	10, // 10: admin.service.v1.AgentNodeService.Update:output_type -> google.protobuf.Empty
-	10, // 11: admin.service.v1.AgentNodeService.Delete:output_type -> google.protobuf.Empty
-	11, // 12: admin.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
-	12, // 13: admin.service.v1.AgentNodeService.GetMetrics:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
-	13, // 14: admin.service.v1.AgentNodeService.GetUpgradeUploadUrl:output_type -> ops.service.v1.GetAgentUpgradeUploadUrlResponse
-	14, // 15: admin.service.v1.AgentNodeService.Upgrade:output_type -> ops.service.v1.UpgradeAgentResponse
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	4,  // 4: admin.service.v1.AgentNodeService.Revoke:input_type -> ops.service.v1.RevokeAgentNodeRequest
+	5,  // 5: admin.service.v1.AgentNodeService.SendCommand:input_type -> ops.service.v1.SendCommandRequest
+	6,  // 6: admin.service.v1.AgentNodeService.GetMetrics:input_type -> ops.service.v1.GetNodeMetricsHistoryRequest
+	7,  // 7: admin.service.v1.AgentNodeService.GetUpgradeUploadUrl:input_type -> ops.service.v1.GetAgentUpgradeUploadUrlRequest
+	8,  // 8: admin.service.v1.AgentNodeService.Upgrade:input_type -> ops.service.v1.UpgradeAgentRequest
+	9,  // 9: admin.service.v1.AgentNodeService.List:output_type -> ops.service.v1.ListAgentNodeResponse
+	10, // 10: admin.service.v1.AgentNodeService.Get:output_type -> ops.service.v1.AgentNode
+	11, // 11: admin.service.v1.AgentNodeService.Update:output_type -> google.protobuf.Empty
+	11, // 12: admin.service.v1.AgentNodeService.Delete:output_type -> google.protobuf.Empty
+	11, // 13: admin.service.v1.AgentNodeService.Revoke:output_type -> google.protobuf.Empty
+	12, // 14: admin.service.v1.AgentNodeService.SendCommand:output_type -> ops.service.v1.SendCommandResponse
+	13, // 15: admin.service.v1.AgentNodeService.GetMetrics:output_type -> ops.service.v1.GetNodeMetricsHistoryResponse
+	14, // 16: admin.service.v1.AgentNodeService.GetUpgradeUploadUrl:output_type -> ops.service.v1.GetAgentUpgradeUploadUrlResponse
+	15, // 17: admin.service.v1.AgentNodeService.Upgrade:output_type -> ops.service.v1.UpgradeAgentResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

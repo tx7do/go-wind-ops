@@ -86,6 +86,8 @@ type ApiKey struct {
 	LastUsedAt    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_used_at,json=lastUsedAt,proto3,oneof" json:"last_used_at,omitempty"`        // 最近使用
 	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`             // 过期时间
 	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                          // 描述
+	OwnerUserId   *uint32                `protobuf:"varint,8,opt,name=owner_user_id,json=ownerUserId,proto3,oneof" json:"owner_user_id,omitempty"`    // 归属用户(创建者;OpenAPI 网关据此注入操作者归因)
+	TenantId      *uint32                `protobuf:"varint,9,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`               // 归属租户(创建者租户;网关据此把触发的构建/分发/流水线归到租户)
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -168,6 +170,20 @@ func (x *ApiKey) GetDescription() string {
 		return *x.Description
 	}
 	return ""
+}
+
+func (x *ApiKey) GetOwnerUserId() uint32 {
+	if x != nil && x.OwnerUserId != nil {
+		return *x.OwnerUserId
+	}
+	return 0
+}
+
+func (x *ApiKey) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
 }
 
 func (x *ApiKey) GetCreatedAt() *timestamppb.Timestamp {
@@ -513,7 +529,7 @@ var File_ops_service_v1_api_key_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xbc\x04\n" +
+	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xb1\x05\n" +
 	"\x06ApiKey\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
 	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04name\x88\x01\x01\x12 \n" +
@@ -523,9 +539,11 @@ const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"lastUsedAt\x88\x01\x01\x12>\n" +
 	"\n" +
 	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x05R\texpiresAt\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\a \x01(\tH\x06R\vdescription\x88\x01\x01\x12C\n" +
+	"\vdescription\x18\a \x01(\tH\x06R\vdescription\x88\x01\x01\x12,\n" +
+	"\rowner_user_id\x18\b \x01(\rB\x03\xe0A\x03H\aR\vownerUserId\x88\x01\x01\x12%\n" +
+	"\ttenant_id\x18\t \x01(\rB\x03\xe0A\x03H\bR\btenantId\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01\"C\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\tcreatedAt\x88\x01\x01\"C\n" +
 	"\x06Status\x12\x1e\n" +
 	"\x1aAPI_KEY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aENABLED\x10\x01\x12\f\n" +
@@ -536,7 +554,10 @@ const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\a_statusB\x0f\n" +
 	"\r_last_used_atB\r\n" +
 	"\v_expires_atB\x0e\n" +
-	"\f_descriptionB\r\n" +
+	"\f_descriptionB\x10\n" +
+	"\x0e_owner_user_idB\f\n" +
+	"\n" +
+	"_tenant_idB\r\n" +
 	"\v_created_at\"X\n" +
 	"\x12ListApiKeyResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x12,\n" +

@@ -37,6 +37,8 @@ type AgentNode struct {
 	Name *string `json:"name,omitempty"`
 	// 接入令牌的 SHA-256 十六进制哈希(明文只存 agent 本机)
 	TokenHash string `json:"token_hash,omitempty"`
+	// 已吊销:吊销后 broker/信令两层准入均拒绝(token 泄露应急处置),恢复须解除吊销
+	Revoked bool `json:"revoked,omitempty"`
 	// 在线状态
 	Status *agentnode.Status `json:"status,omitempty"`
 	// 环境标签(default/dev/staging/prod,登记时指定,用于环境隔离)
@@ -83,6 +85,8 @@ func (*AgentNode) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case agentnode.FieldIps, agentnode.FieldLabels:
 			values[i] = new([]byte)
+		case agentnode.FieldRevoked:
+			values[i] = new(sql.NullBool)
 		case agentnode.FieldCPUPercent, agentnode.FieldMemoryUsedPercent, agentnode.FieldDiskUsedPercent:
 			values[i] = new(sql.NullFloat64)
 		case agentnode.FieldID, agentnode.FieldCreatedBy, agentnode.FieldUpdatedBy, agentnode.FieldDeletedBy, agentnode.FieldCPUCores, agentnode.FieldMemTotalBytes, agentnode.FieldUptimeSeconds:
@@ -172,6 +176,12 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field token_hash", values[i])
 			} else if value.Valid {
 				_m.TokenHash = value.String
+			}
+		case agentnode.FieldRevoked:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field revoked", values[i])
+			} else if value.Valid {
+				_m.Revoked = value.Bool
 			}
 		case agentnode.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -377,6 +387,9 @@ func (_m *AgentNode) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token_hash=")
 	builder.WriteString(_m.TokenHash)
+	builder.WriteString(", ")
+	builder.WriteString("revoked=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Revoked))
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
