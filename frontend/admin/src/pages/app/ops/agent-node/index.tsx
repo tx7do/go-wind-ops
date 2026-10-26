@@ -2,13 +2,21 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Popconfirm, Progress, Tag, Tooltip, App } from 'antd';
-import { DeleteOutlined, EditOutlined, GlobalOutlined, LineChartOutlined, RocketOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  GlobalOutlined,
+  LineChartOutlined,
+  RocketOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_AgentNode as AgentNode } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { ENV_PRESETS, ENV_TAG_COLOR, TABLE } from '@/config/constants';
-import { fetchListAgentNodes, useDeleteAgentNode, useSendAgentCommand } from '@/api/hooks/agent-node';
+import { fetchListAgentNodes, useDeleteAgentNode, useRevokeAgentNode, useSendAgentCommand } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import AgentUpgradeModal from './components/AgentUpgradeModal';
 import AgentEditModal from './components/AgentEditModal';
@@ -48,6 +56,17 @@ const AgentNodeManagement = () => {
     },
   });
 
+  const revokeMutation = useRevokeAgentNode({
+    onSuccess: (_resp, req) => {
+      message.success(req.revoked ? t('revokeSuccess') : t('restoreSuccess'));
+      actionRef.current?.reload();
+      queryClient.invalidateQueries({ queryKey: ['listAgentNodes'] });
+    },
+    onError: (error: Error) => {
+      message.error(error.message || t('revokeFailed'));
+    },
+  });
+
   const [trendNode, setTrendNode] = useState<AgentNode | undefined>();
   const [upgradeNode, setUpgradeNode] = useState<AgentNode | undefined>();
   const [editing, setEditing] = useState<AgentNode | undefined>();
@@ -78,6 +97,14 @@ const AgentNodeManagement = () => {
         ) : (
           <Tag color="default">{t('statusOffline')}</Tag>
         ),
+    },
+    {
+      title: t('admission'),
+      dataIndex: 'revoked',
+      width: 90,
+      hideInSearch: true,
+      render: (_, record) =>
+        record.revoked ? <Tag color="error">{t('revoked')}</Tag> : <Tag color="processing">{t('admitted')}</Tag>,
     },
     {
       title: t('env'),
@@ -165,7 +192,7 @@ const AgentNodeManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 140,
+      width: 170,
       fixed: 'right',
       render: (_, record) => [
         <Tooltip key="edit" title={t('edit')}>
@@ -193,6 +220,26 @@ const AgentNodeManagement = () => {
             <GlobalOutlined />
           </a>
         </Tooltip>,
+        <Popconfirm
+          key="revoke"
+          title={record.revoked ? t('restoreConfirmTitle') : t('revokeConfirmTitle')}
+          description={
+            record.revoked
+              ? t('restoreConfirmDesc', { name: record.name || record.hostname })
+              : t('revokeConfirmDesc', { name: record.name || record.hostname })
+          }
+          onConfirm={() =>
+            record.id && revokeMutation.mutate({ id: record.id, revoked: !record.revoked })
+          }
+          okText={t('common:button.ok')}
+          cancelText={t('common:button.cancel')}
+        >
+          <Tooltip title={record.revoked ? t('restoreTooltip') : t('revokeTooltip')}>
+            <a style={record.revoked ? { color: 'var(--ant-color-success)' } : undefined}>
+              {record.revoked ? <CheckCircleOutlined /> : <StopOutlined />}
+            </a>
+          </Tooltip>
+        </Popconfirm>,
         <Popconfirm
           key="delete"
           title={t('deleteConfirmTitle')}
@@ -265,7 +312,7 @@ const AgentNodeManagement = () => {
           cardBordered={false}
           scroll={{
             y: tableScrollY,
-            x: 1400,
+            x: 1490,
           }}
         />
       </div>

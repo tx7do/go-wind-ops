@@ -9,6 +9,7 @@ import {
   type opsservicev1_DeleteAgentNodeRequest,
   type opsservicev1_GetAgentNodeRequest,
   type opsservicev1_ListAgentNodeResponse,
+  type opsservicev1_RevokeAgentNodeRequest,
   type opsservicev1_SendCommandRequest,
   type opsservicev1_SendCommandResponse,
   type opsservicev1_UpdateAgentNodeRequest,
@@ -73,6 +74,15 @@ export function useDeleteAgentNode(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.agentNodeService.Delete(req),
+    ...options,
+  });
+}
+
+export function useRevokeAgentNode(
+  options?: UseMutationOptions<Record<never, never>, Error, opsservicev1_RevokeAgentNodeRequest>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.agentNodeService.Revoke(req),
     ...options,
   });
 }
