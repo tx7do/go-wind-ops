@@ -42,6 +42,8 @@ type PermissionAuditLog struct {
 	Reason *string `json:"reason,omitempty"`
 	// 日志内容哈希（SHA256，十六进制字符串）
 	LogHash *string `json:"log_hash,omitempty"`
+	// 审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)
+	PrevLogHash string `json:"prev_log_hash,omitempty"`
 	// 日志数字签名
 	Signature    *[]byte `json:"signature,omitempty"`
 	selectValues sql.SelectValues
@@ -56,7 +58,7 @@ func (*PermissionAuditLog) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case permissionauditlog.FieldID, permissionauditlog.FieldTenantID, permissionauditlog.FieldOperatorID:
 			values[i] = new(sql.NullInt64)
-		case permissionauditlog.FieldTargetType, permissionauditlog.FieldTargetID, permissionauditlog.FieldAction, permissionauditlog.FieldOldValue, permissionauditlog.FieldNewValue, permissionauditlog.FieldIPAddress, permissionauditlog.FieldRequestID, permissionauditlog.FieldReason, permissionauditlog.FieldLogHash:
+		case permissionauditlog.FieldTargetType, permissionauditlog.FieldTargetID, permissionauditlog.FieldAction, permissionauditlog.FieldOldValue, permissionauditlog.FieldNewValue, permissionauditlog.FieldIPAddress, permissionauditlog.FieldRequestID, permissionauditlog.FieldReason, permissionauditlog.FieldLogHash, permissionauditlog.FieldPrevLogHash:
 			values[i] = new(sql.NullString)
 		case permissionauditlog.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -165,6 +167,12 @@ func (_m *PermissionAuditLog) assignValues(columns []string, values []any) error
 				_m.LogHash = new(string)
 				*_m.LogHash = value.String
 			}
+		case permissionauditlog.FieldPrevLogHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field prev_log_hash", values[i])
+			} else if value.Valid {
+				_m.PrevLogHash = value.String
+			}
 		case permissionauditlog.FieldSignature:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field signature", values[i])
@@ -266,6 +274,9 @@ func (_m *PermissionAuditLog) String() string {
 		builder.WriteString("log_hash=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("prev_log_hash=")
+	builder.WriteString(_m.PrevLogHash)
 	builder.WriteString(", ")
 	if v := _m.Signature; v != nil {
 		builder.WriteString("signature=")

@@ -217,6 +217,26 @@ func (_u *PermissionAuditLogUpdate) ClearLogHash() *PermissionAuditLogUpdate {
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *PermissionAuditLogUpdate) SetPrevLogHash(v string) *PermissionAuditLogUpdate {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *PermissionAuditLogUpdate) SetNillablePrevLogHash(v *string) *PermissionAuditLogUpdate {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *PermissionAuditLogUpdate) ClearPrevLogHash() *PermissionAuditLogUpdate {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *PermissionAuditLogUpdate) SetSignature(v []byte) *PermissionAuditLogUpdate {
 	_u.mutation.SetSignature(v)
@@ -348,6 +368,12 @@ func (_u *PermissionAuditLogUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(permissionauditlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(permissionauditlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(permissionauditlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(permissionauditlog.FieldSignature, field.TypeBytes, value)
@@ -566,6 +592,26 @@ func (_u *PermissionAuditLogUpdateOne) ClearLogHash() *PermissionAuditLogUpdateO
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *PermissionAuditLogUpdateOne) SetPrevLogHash(v string) *PermissionAuditLogUpdateOne {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *PermissionAuditLogUpdateOne) SetNillablePrevLogHash(v *string) *PermissionAuditLogUpdateOne {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *PermissionAuditLogUpdateOne) ClearPrevLogHash() *PermissionAuditLogUpdateOne {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *PermissionAuditLogUpdateOne) SetSignature(v []byte) *PermissionAuditLogUpdateOne {
 	_u.mutation.SetSignature(v)
@@ -727,6 +773,12 @@ func (_u *PermissionAuditLogUpdateOne) sqlSave(ctx context.Context) (_node *Perm
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(permissionauditlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(permissionauditlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(permissionauditlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(permissionauditlog.FieldSignature, field.TypeBytes, value)

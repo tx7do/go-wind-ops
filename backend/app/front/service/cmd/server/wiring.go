@@ -47,6 +47,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 认证:认证服务客户端 → 访问令牌校验器;租户解析器供中间件解析 Host→租户
 	authenticationServiceClient := data.NewAuthenticationServiceClient(ctx, discovery)
+	mfaServiceClient := data.NewMfaServiceClient(ctx, discovery)
 	accessTokenChecker := auth.NewTokenChecker(ctx, authenticationServiceClient, clientType)
 	tenantServiceClient := data.NewTenantServiceClient(ctx, discovery)
 	tenantResolver := data.NewTenantResolver(tenantServiceClient)
@@ -71,6 +72,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	}
 	cleanups = append(cleanups, cleanupRedis)
 	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, tenantServiceClient, tenantResolver, redisClient)
+	mfaService := service.NewMfaService(ctx, mfaServiceClient, redisClient)
 
 	// 身份
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
@@ -82,7 +84,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, tenantResolver)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
-		authenticationService,
+		authenticationService, mfaService,
 		userProfileService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)

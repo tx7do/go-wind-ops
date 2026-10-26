@@ -78,6 +78,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 认证:认证服务客户端 → 访问令牌校验器
 	authenticationServiceClient := data.NewAuthenticationServiceClient(ctx, discovery)
+	mfaServiceClient := data.NewMfaServiceClient(ctx, discovery)
 	accessTokenChecker := auth.NewTokenChecker(ctx, authenticationServiceClient, clientType)
 
 	// ═══════════════════════ 二、服务客户端(internal/data) ═══════════════════════
@@ -159,6 +160,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 认证与登录策略
 	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha, redisClient)
+	mfaService := service.NewMfaService(ctx, mfaServiceClient, redisClient)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyServiceClient)
 
 	// 身份与组织
@@ -253,7 +255,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		terminalWsHandler, terminalTicketHandler,
 		projectLogWsHandler,
 		openApiGateway,
-		authenticationService, loginPolicyService,
+		authenticationService, mfaService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)

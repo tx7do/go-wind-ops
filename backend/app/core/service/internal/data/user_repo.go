@@ -29,6 +29,7 @@ import (
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/constants"
 	"go-wind-ops/pkg/utils"
 )
@@ -50,6 +51,17 @@ type UserRepo interface {
 	Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error)
 
 	UserExists(ctx context.Context, req *identityV1.UserExistsRequest) (*identityV1.UserExistsResponse, error)
+
+	// ── MFA(TOTP)专用:密钥不入 proto DTO(Sensitive),走专用通道直写 ──
+
+	// SaveMfaSecret 保存待激活的 TOTP 密钥(不改启用状态)。
+	SaveMfaSecret(ctx context.Context, userID uint32, secret string) error
+	// GetMfaState 读密钥与启用状态。
+	GetMfaState(ctx context.Context, userID uint32) (secret *string, enabled bool, err error)
+	// SetMfaEnabled 启用/停用(密钥已存在时)。
+	SetMfaEnabled(ctx context.Context, userID uint32, enabled bool) error
+	// ClearMfa 清除密钥并停用(解绑)。
+	ClearMfa(ctx context.Context, userID uint32) error
 
 	AssignUserRole(ctx context.Context, data *permissionV1.UserRole) error
 	AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) error
@@ -1283,4 +1295,50 @@ func maskHas(paths []string, keys ...string) bool {
 		}
 	}
 	return false
+}
+
+// ── MFA(TOTP)专用实现:系统 viewer 直写(用户行挂租户隐私,无 viewer 的
+// 后台链路会被 EvalMutation 拒绝;操作者身份由服务层显式传入 userID)──
+
+func (r *userRepo) SaveMfaSecret(ctx context.Context, userID uint32, secret string) error {
+	ctx = appViewer.NewSystemViewerContext(ctx)
+	_, err := r.entClient.Client().User.UpdateOneID(userID).
+		SetMfaSecret(secret).
+		SetMfaEnabled(false).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("save mfa secret for user [%d] failed: %s", userID, err.Error())
+	}
+	return err
+}
+
+func (r *userRepo) GetMfaState(ctx context.Context, userID uint32) (*string, bool, error) {
+	e, err := r.entClient.Client().User.Get(ctx, userID)
+	if err != nil {
+		return nil, false, err
+	}
+	return e.MfaSecret, e.MfaEnabled, nil
+}
+
+func (r *userRepo) SetMfaEnabled(ctx context.Context, userID uint32, enabled bool) error {
+	ctx = appViewer.NewSystemViewerContext(ctx)
+	_, err := r.entClient.Client().User.UpdateOneID(userID).
+		SetMfaEnabled(enabled).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("set mfa enabled=%v for user [%d] failed: %s", enabled, userID, err.Error())
+	}
+	return err
+}
+
+func (r *userRepo) ClearMfa(ctx context.Context, userID uint32) error {
+	ctx = appViewer.NewSystemViewerContext(ctx)
+	_, err := r.entClient.Client().User.UpdateOneID(userID).
+		ClearMfaSecret().
+		SetMfaEnabled(false).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("clear mfa for user [%d] failed: %s", userID, err.Error())
+	}
+	return err
 }

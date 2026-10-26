@@ -90,6 +90,10 @@ func (PolicyEvaluationLog) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("prev_log_hash").
+			Comment("审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)").
+			Optional(),
+
 		field.Bytes("signature").
 			Comment("日志数字签名").
 			Optional().
@@ -107,6 +111,7 @@ func (PolicyEvaluationLog) Mixin() []ent.Mixin {
 
 func (PolicyEvaluationLog) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("prev_log_hash").Unique().StorageKey("uidx_sys_policy_evaluation_logs_prev_hash"),
 		// 多租户 + 时间（分页/范围检索）
 		index.Fields("tenant_id", "created_at").
 			StorageKey("idx_policy_eval_tenant_created_at"),

@@ -54,6 +54,27 @@ func hashKey(plain string) string {
 	return hex.EncodeToString(sum[:])
 }
 
+// scopeNamesOf proto 作用域枚举 → 库存值名;出现 UNSPECIFIED/未知值时返回错误,
+// 防止脏作用域让网关校验形同虚设。
+func scopeNamesOf(scopes []opsV1.ApiKey_Scope) ([]string, error) {
+	if len(scopes) == 0 {
+		return nil, nil
+	}
+	names := make([]string, 0, len(scopes))
+	seen := make(map[opsV1.ApiKey_Scope]struct{}, len(scopes))
+	for _, sc := range scopes {
+		if sc == opsV1.ApiKey_API_KEY_SCOPE_UNSPECIFIED {
+			return nil, opsV1.ErrorBadRequest("invalid parameter: scopes contains UNSPECIFIED")
+		}
+		if _, dup := seen[sc]; dup {
+			continue
+		}
+		seen[sc] = struct{}{}
+		names = append(names, sc.String())
+	}
+	return names, nil
+}
+
 func (s *ApiKeyService) ListApiKeys(ctx context.Context, req *paginationV1.PagingRequest) (*opsV1.ListApiKeyResponse, error) {
 	return s.repo.List(ctx, req)
 }
@@ -87,8 +108,12 @@ func (s *ApiKeyService) CreateApiKey(ctx context.Context, req *opsV1.CreateApiKe
 	if req.Data.Status != nil {
 		status = req.Data.GetStatus()
 	}
+	scopes, err := scopeNamesOf(req.Data.GetScopes())
+	if err != nil {
+		return nil, err
+	}
 
-	dto, err := s.repo.Create(ctx, req.Data.GetName(), hash, prefix, status, req.Data.Description, expiresAt, operatorIDOf(ctx))
+	dto, err := s.repo.Create(ctx, req.Data.GetName(), hash, prefix, status, req.Data.Description, expiresAt, scopes, operatorIDOf(ctx))
 	if err != nil {
 		s.log.Errorf("create api key failed: %s", err.Error())
 		return nil, opsV1.ErrorInternalServerError("create failed")
@@ -109,7 +134,15 @@ func (s *ApiKeyService) UpdateApiKey(ctx context.Context, req *opsV1.UpdateApiKe
 		expiresAt = &tt
 		expiresAtPtr = &expiresAt
 	}
-	if _, err := s.repo.Update(ctx, req.GetId(), req.Data.Status, req.Data.Description, expiresAtPtr); err != nil {
+	var scopesPtr *[]string
+	if req.Data.Scopes != nil {
+		names, err := scopeNamesOf(req.Data.Scopes)
+		if err != nil {
+			return nil, err
+		}
+		scopesPtr = &names
+	}
+	if _, err := s.repo.Update(ctx, req.GetId(), req.Data.Status, req.Data.Description, expiresAtPtr, scopesPtr); err != nil {
 		s.log.Errorf("update api key [%d] failed: %s", req.GetId(), err.Error())
 		return nil, opsV1.ErrorInternalServerError("update failed")
 	}

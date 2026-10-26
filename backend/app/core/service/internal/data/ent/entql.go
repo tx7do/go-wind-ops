@@ -212,6 +212,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			apiauditlog.FieldRequestBody:    {Type: field.TypeString, Column: apiauditlog.FieldRequestBody},
 			apiauditlog.FieldResponse:       {Type: field.TypeString, Column: apiauditlog.FieldResponse},
 			apiauditlog.FieldLogHash:        {Type: field.TypeString, Column: apiauditlog.FieldLogHash},
+			apiauditlog.FieldPrevLogHash:    {Type: field.TypeString, Column: apiauditlog.FieldPrevLogHash},
 			apiauditlog.FieldSignature:      {Type: field.TypeBytes, Column: apiauditlog.FieldSignature},
 		},
 	}
@@ -240,6 +241,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			apikey.FieldLastUsedAt:  {Type: field.TypeTime, Column: apikey.FieldLastUsedAt},
 			apikey.FieldExpiresAt:   {Type: field.TypeTime, Column: apikey.FieldExpiresAt},
 			apikey.FieldDescription: {Type: field.TypeString, Column: apikey.FieldDescription},
+			apikey.FieldScopes:      {Type: field.TypeJSON, Column: apikey.FieldScopes},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -680,6 +682,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			dataaccessauditlog.FieldDataCategory:    {Type: field.TypeString, Column: dataaccessauditlog.FieldDataCategory},
 			dataaccessauditlog.FieldDbUser:          {Type: field.TypeString, Column: dataaccessauditlog.FieldDbUser},
 			dataaccessauditlog.FieldLogHash:         {Type: field.TypeString, Column: dataaccessauditlog.FieldLogHash},
+			dataaccessauditlog.FieldPrevLogHash:     {Type: field.TypeString, Column: dataaccessauditlog.FieldPrevLogHash},
 			dataaccessauditlog.FieldSignature:       {Type: field.TypeBytes, Column: dataaccessauditlog.FieldSignature},
 		},
 	}
@@ -930,6 +933,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			loginauditlog.FieldRiskLevel:     {Type: field.TypeEnum, Column: loginauditlog.FieldRiskLevel},
 			loginauditlog.FieldRiskFactors:   {Type: field.TypeJSON, Column: loginauditlog.FieldRiskFactors},
 			loginauditlog.FieldLogHash:       {Type: field.TypeString, Column: loginauditlog.FieldLogHash},
+			loginauditlog.FieldPrevLogHash:   {Type: field.TypeString, Column: loginauditlog.FieldPrevLogHash},
 			loginauditlog.FieldSignature:     {Type: field.TypeBytes, Column: loginauditlog.FieldSignature},
 		},
 	}
@@ -1254,6 +1258,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			operationauditlog.FieldGeoLocation:    {Type: field.TypeJSON, Column: operationauditlog.FieldGeoLocation},
 			operationauditlog.FieldDeviceInfo:     {Type: field.TypeJSON, Column: operationauditlog.FieldDeviceInfo},
 			operationauditlog.FieldLogHash:        {Type: field.TypeString, Column: operationauditlog.FieldLogHash},
+			operationauditlog.FieldPrevLogHash:    {Type: field.TypeString, Column: operationauditlog.FieldPrevLogHash},
 			operationauditlog.FieldSignature:      {Type: field.TypeBytes, Column: operationauditlog.FieldSignature},
 		},
 	}
@@ -1362,19 +1367,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "PermissionAuditLog",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			permissionauditlog.FieldCreatedAt:  {Type: field.TypeTime, Column: permissionauditlog.FieldCreatedAt},
-			permissionauditlog.FieldTenantID:   {Type: field.TypeUint32, Column: permissionauditlog.FieldTenantID},
-			permissionauditlog.FieldOperatorID: {Type: field.TypeUint32, Column: permissionauditlog.FieldOperatorID},
-			permissionauditlog.FieldTargetType: {Type: field.TypeString, Column: permissionauditlog.FieldTargetType},
-			permissionauditlog.FieldTargetID:   {Type: field.TypeString, Column: permissionauditlog.FieldTargetID},
-			permissionauditlog.FieldAction:     {Type: field.TypeEnum, Column: permissionauditlog.FieldAction},
-			permissionauditlog.FieldOldValue:   {Type: field.TypeString, Column: permissionauditlog.FieldOldValue},
-			permissionauditlog.FieldNewValue:   {Type: field.TypeString, Column: permissionauditlog.FieldNewValue},
-			permissionauditlog.FieldIPAddress:  {Type: field.TypeString, Column: permissionauditlog.FieldIPAddress},
-			permissionauditlog.FieldRequestID:  {Type: field.TypeString, Column: permissionauditlog.FieldRequestID},
-			permissionauditlog.FieldReason:     {Type: field.TypeString, Column: permissionauditlog.FieldReason},
-			permissionauditlog.FieldLogHash:    {Type: field.TypeString, Column: permissionauditlog.FieldLogHash},
-			permissionauditlog.FieldSignature:  {Type: field.TypeBytes, Column: permissionauditlog.FieldSignature},
+			permissionauditlog.FieldCreatedAt:   {Type: field.TypeTime, Column: permissionauditlog.FieldCreatedAt},
+			permissionauditlog.FieldTenantID:    {Type: field.TypeUint32, Column: permissionauditlog.FieldTenantID},
+			permissionauditlog.FieldOperatorID:  {Type: field.TypeUint32, Column: permissionauditlog.FieldOperatorID},
+			permissionauditlog.FieldTargetType:  {Type: field.TypeString, Column: permissionauditlog.FieldTargetType},
+			permissionauditlog.FieldTargetID:    {Type: field.TypeString, Column: permissionauditlog.FieldTargetID},
+			permissionauditlog.FieldAction:      {Type: field.TypeEnum, Column: permissionauditlog.FieldAction},
+			permissionauditlog.FieldOldValue:    {Type: field.TypeString, Column: permissionauditlog.FieldOldValue},
+			permissionauditlog.FieldNewValue:    {Type: field.TypeString, Column: permissionauditlog.FieldNewValue},
+			permissionauditlog.FieldIPAddress:   {Type: field.TypeString, Column: permissionauditlog.FieldIPAddress},
+			permissionauditlog.FieldRequestID:   {Type: field.TypeString, Column: permissionauditlog.FieldRequestID},
+			permissionauditlog.FieldReason:      {Type: field.TypeString, Column: permissionauditlog.FieldReason},
+			permissionauditlog.FieldLogHash:     {Type: field.TypeString, Column: permissionauditlog.FieldLogHash},
+			permissionauditlog.FieldPrevLogHash: {Type: field.TypeString, Column: permissionauditlog.FieldPrevLogHash},
+			permissionauditlog.FieldSignature:   {Type: field.TypeBytes, Column: permissionauditlog.FieldSignature},
 		},
 	}
 	graph.Nodes[44] = &sqlgraph.Node{
@@ -1507,6 +1513,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			policyevaluationlog.FieldTraceID:           {Type: field.TypeString, Column: policyevaluationlog.FieldTraceID},
 			policyevaluationlog.FieldEvaluationContext: {Type: field.TypeString, Column: policyevaluationlog.FieldEvaluationContext},
 			policyevaluationlog.FieldLogHash:           {Type: field.TypeString, Column: policyevaluationlog.FieldLogHash},
+			policyevaluationlog.FieldPrevLogHash:       {Type: field.TypeString, Column: policyevaluationlog.FieldPrevLogHash},
 			policyevaluationlog.FieldSignature:         {Type: field.TypeBytes, Column: policyevaluationlog.FieldSignature},
 		},
 	}
@@ -1871,6 +1878,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldRemark:      {Type: field.TypeString, Column: user.FieldRemark},
 			user.FieldTenantID:    {Type: field.TypeUint32, Column: user.FieldTenantID},
 			user.FieldUsername:    {Type: field.TypeString, Column: user.FieldUsername},
+			user.FieldMfaEnabled:  {Type: field.TypeBool, Column: user.FieldMfaEnabled},
+			user.FieldMfaSecret:   {Type: field.TypeString, Column: user.FieldMfaSecret},
 			user.FieldNickname:    {Type: field.TypeString, Column: user.FieldNickname},
 			user.FieldRealname:    {Type: field.TypeString, Column: user.FieldRealname},
 			user.FieldEmail:       {Type: field.TypeString, Column: user.FieldEmail},
@@ -2706,6 +2715,11 @@ func (f *ApiAuditLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(apiauditlog.FieldLogHash))
 }
 
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *ApiAuditLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(apiauditlog.FieldPrevLogHash))
+}
+
 // WhereSignature applies the entql []byte predicate on the signature field.
 func (f *ApiAuditLogFilter) WhereSignature(p entql.BytesP) {
 	f.Where(p.Field(apiauditlog.FieldSignature))
@@ -2819,6 +2833,11 @@ func (f *ApiKeyFilter) WhereExpiresAt(p entql.TimeP) {
 // WhereDescription applies the entql string predicate on the description field.
 func (f *ApiKeyFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(apikey.FieldDescription))
+}
+
+// WhereScopes applies the entql json.RawMessage predicate on the scopes field.
+func (f *ApiKeyFilter) WhereScopes(p entql.BytesP) {
+	f.Where(p.Field(apikey.FieldScopes))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -4646,6 +4665,11 @@ func (f *DataAccessAuditLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(dataaccessauditlog.FieldLogHash))
 }
 
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *DataAccessAuditLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(dataaccessauditlog.FieldPrevLogHash))
+}
+
 // WhereSignature applies the entql []byte predicate on the signature field.
 func (f *DataAccessAuditLogFilter) WhereSignature(p entql.BytesP) {
 	f.Where(p.Field(dataaccessauditlog.FieldSignature))
@@ -5725,6 +5749,11 @@ func (f *LoginAuditLogFilter) WhereRiskFactors(p entql.BytesP) {
 // WhereLogHash applies the entql string predicate on the log_hash field.
 func (f *LoginAuditLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(loginauditlog.FieldLogHash))
+}
+
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *LoginAuditLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(loginauditlog.FieldPrevLogHash))
 }
 
 // WhereSignature applies the entql []byte predicate on the signature field.
@@ -7100,6 +7129,11 @@ func (f *OperationAuditLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(operationauditlog.FieldLogHash))
 }
 
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *OperationAuditLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(operationauditlog.FieldPrevLogHash))
+}
+
 // WhereSignature applies the entql []byte predicate on the signature field.
 func (f *OperationAuditLogFilter) WhereSignature(p entql.BytesP) {
 	f.Where(p.Field(operationauditlog.FieldSignature))
@@ -7626,6 +7660,11 @@ func (f *PermissionAuditLogFilter) WhereReason(p entql.StringP) {
 // WhereLogHash applies the entql string predicate on the log_hash field.
 func (f *PermissionAuditLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(permissionauditlog.FieldLogHash))
+}
+
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *PermissionAuditLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(permissionauditlog.FieldPrevLogHash))
 }
 
 // WhereSignature applies the entql []byte predicate on the signature field.
@@ -8194,6 +8233,11 @@ func (f *PolicyEvaluationLogFilter) WhereEvaluationContext(p entql.StringP) {
 // WhereLogHash applies the entql string predicate on the log_hash field.
 func (f *PolicyEvaluationLogFilter) WhereLogHash(p entql.StringP) {
 	f.Where(p.Field(policyevaluationlog.FieldLogHash))
+}
+
+// WherePrevLogHash applies the entql string predicate on the prev_log_hash field.
+func (f *PolicyEvaluationLogFilter) WherePrevLogHash(p entql.StringP) {
+	f.Where(p.Field(policyevaluationlog.FieldPrevLogHash))
 }
 
 // WhereSignature applies the entql []byte predicate on the signature field.
@@ -9689,6 +9733,16 @@ func (f *UserFilter) WhereTenantID(p entql.Uint32P) {
 // WhereUsername applies the entql string predicate on the username field.
 func (f *UserFilter) WhereUsername(p entql.StringP) {
 	f.Where(p.Field(user.FieldUsername))
+}
+
+// WhereMfaEnabled applies the entql bool predicate on the mfa_enabled field.
+func (f *UserFilter) WhereMfaEnabled(p entql.BoolP) {
+	f.Where(p.Field(user.FieldMfaEnabled))
+}
+
+// WhereMfaSecret applies the entql string predicate on the mfa_secret field.
+func (f *UserFilter) WhereMfaSecret(p entql.StringP) {
+	f.Where(p.Field(user.FieldMfaSecret))
 }
 
 // WhereNickname applies the entql string predicate on the nickname field.

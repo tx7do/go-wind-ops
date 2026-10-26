@@ -101,6 +101,10 @@ func (PermissionAuditLog) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("prev_log_hash").
+			Comment("审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)").
+			Optional(),
+
 		field.Bytes("signature").
 			Comment("日志数字签名").
 			Optional().
@@ -118,6 +122,7 @@ func (PermissionAuditLog) Mixin() []ent.Mixin {
 
 func (PermissionAuditLog) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("prev_log_hash").Unique().StorageKey("uidx_sys_permission_audit_logs_prev_hash"),
 		// 按租户 + 时间，用于时间区间查询（分页/历史检索）
 		index.Fields("tenant_id", "created_at").
 			StorageKey("idx_permission_audit_tenant_created_at"),

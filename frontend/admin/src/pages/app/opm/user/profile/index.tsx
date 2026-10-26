@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from '@/stores';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getGenderOptions } from '../constants';
+import MfaSecurityPanel from './MfaSecurityPanel';
 import { getPresetColor } from '@/utils/color';
 
 /** 格式化 wellKnownTimestamp */
@@ -286,6 +287,10 @@ const UserProfile = () => {
                         </Button>
                       </Form.Item>
                     </Form>
+
+                    <div style={{ marginTop: 40, borderTop: '1px solid var(--ant-color-split)', paddingTop: 24 }}>
+                      <MfaSecurityPanel />
+                    </div>
                 </div>
               ),
             },          ]}

@@ -42,6 +42,8 @@ const (
 	FieldExpiresAt = "expires_at"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldScopes holds the string denoting the scopes field in the database.
+	FieldScopes = "scopes"
 	// Table holds the table name of the apikey in the database.
 	Table = "ops_api_keys"
 )
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldLastUsedAt,
 	FieldExpiresAt,
 	FieldDescription,
+	FieldScopes,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

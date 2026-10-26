@@ -76,19 +76,82 @@ func (ApiKey_Status) EnumDescriptor() ([]byte, []int) {
 	return file_ops_service_v1_api_key_proto_rawDescGZIP(), []int{0, 0}
 }
 
+// 作用域:限定密钥可调用的 OpenAPI 端点类别(嵌套定义避免同包枚举值冲突)。
+// 密钥 scopes 为空 = 不限制(全部端点,存量密钥兼容语义);ALL 为通配,
+// 与空等价——给编辑保存一个可显式写回的"全部"表达(repeated 字段
+// "空数组"与"未携带"在 protojson 下无法区分,故不依赖空数组清空)。
+type ApiKey_Scope int32
+
+const (
+	ApiKey_API_KEY_SCOPE_UNSPECIFIED ApiKey_Scope = 0 // 未知
+	ApiKey_BUILDS                    ApiKey_Scope = 1 // 触发构建(/openapi/v1/builds/{id}/trigger)
+	ApiKey_DISTRIBUTIONS             ApiKey_Scope = 2 // 触发分发(/openapi/v1/distributions/{id}/trigger)
+	ApiKey_PIPELINES                 ApiKey_Scope = 3 // 触发流水线(/openapi/v1/pipelines/{id}/trigger)
+	ApiKey_WEBHOOKS                  ApiKey_Scope = 4 // Git webhook(/openapi/v1/webhooks/git/{buildId})
+	ApiKey_ALL                       ApiKey_Scope = 5 // 全部端点(通配;与空等价)
+)
+
+// Enum value maps for ApiKey_Scope.
+var (
+	ApiKey_Scope_name = map[int32]string{
+		0: "API_KEY_SCOPE_UNSPECIFIED",
+		1: "BUILDS",
+		2: "DISTRIBUTIONS",
+		3: "PIPELINES",
+		4: "WEBHOOKS",
+		5: "ALL",
+	}
+	ApiKey_Scope_value = map[string]int32{
+		"API_KEY_SCOPE_UNSPECIFIED": 0,
+		"BUILDS":                    1,
+		"DISTRIBUTIONS":             2,
+		"PIPELINES":                 3,
+		"WEBHOOKS":                  4,
+		"ALL":                       5,
+	}
+)
+
+func (x ApiKey_Scope) Enum() *ApiKey_Scope {
+	p := new(ApiKey_Scope)
+	*p = x
+	return p
+}
+
+func (x ApiKey_Scope) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ApiKey_Scope) Descriptor() protoreflect.EnumDescriptor {
+	return file_ops_service_v1_api_key_proto_enumTypes[1].Descriptor()
+}
+
+func (ApiKey_Scope) Type() protoreflect.EnumType {
+	return &file_ops_service_v1_api_key_proto_enumTypes[1]
+}
+
+func (x ApiKey_Scope) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ApiKey_Scope.Descriptor instead.
+func (ApiKey_Scope) EnumDescriptor() ([]byte, []int) {
+	return file_ops_service_v1_api_key_proto_rawDescGZIP(), []int{0, 1}
+}
+
 // OpenAPI 密钥
 type ApiKey struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                           // 密钥ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                        // 密钥名
-	Prefix        *string                `protobuf:"bytes,3,opt,name=prefix,proto3,oneof" json:"prefix,omitempty"`                                    // 明文前缀(识别用)
-	Status        *ApiKey_Status         `protobuf:"varint,4,opt,name=status,proto3,enum=ops.service.v1.ApiKey_Status,oneof" json:"status,omitempty"` // 状态
-	LastUsedAt    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_used_at,json=lastUsedAt,proto3,oneof" json:"last_used_at,omitempty"`        // 最近使用
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`             // 过期时间
-	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                          // 描述
-	OwnerUserId   *uint32                `protobuf:"varint,8,opt,name=owner_user_id,json=ownerUserId,proto3,oneof" json:"owner_user_id,omitempty"`    // 归属用户(创建者;OpenAPI 网关据此注入操作者归因)
-	TenantId      *uint32                `protobuf:"varint,9,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`               // 归属租户(创建者租户;网关据此把触发的构建/分发/流水线归到租户)
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 创建时间
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 密钥ID
+	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                         // 密钥名
+	Prefix        *string                `protobuf:"bytes,3,opt,name=prefix,proto3,oneof" json:"prefix,omitempty"`                                     // 明文前缀(识别用)
+	Status        *ApiKey_Status         `protobuf:"varint,4,opt,name=status,proto3,enum=ops.service.v1.ApiKey_Status,oneof" json:"status,omitempty"`  // 状态
+	LastUsedAt    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_used_at,json=lastUsedAt,proto3,oneof" json:"last_used_at,omitempty"`         // 最近使用
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`              // 过期时间
+	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                           // 描述
+	OwnerUserId   *uint32                `protobuf:"varint,8,opt,name=owner_user_id,json=ownerUserId,proto3,oneof" json:"owner_user_id,omitempty"`     // 归属用户(创建者;OpenAPI 网关据此注入操作者归因)
+	TenantId      *uint32                `protobuf:"varint,9,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                // 归属租户(创建者租户;网关据此把触发的构建/分发/流水线归到租户)
+	Scopes        []ApiKey_Scope         `protobuf:"varint,10,rep,packed,name=scopes,proto3,enum=ops.service.v1.ApiKey_Scope" json:"scopes,omitempty"` // 允许的端点类别(空=全部)
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`             // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -184,6 +247,13 @@ func (x *ApiKey) GetTenantId() uint32 {
 		return *x.TenantId
 	}
 	return 0
+}
+
+func (x *ApiKey) GetScopes() []ApiKey_Scope {
+	if x != nil {
+		return x.Scopes
+	}
+	return nil
 }
 
 func (x *ApiKey) GetCreatedAt() *timestamppb.Timestamp {
@@ -529,7 +599,7 @@ var File_ops_service_v1_api_key_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xb1\x05\n" +
+	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xd4\x06\n" +
 	"\x06ApiKey\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
 	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04name\x88\x01\x01\x12 \n" +
@@ -541,13 +611,23 @@ const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x05R\texpiresAt\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\a \x01(\tH\x06R\vdescription\x88\x01\x01\x12,\n" +
 	"\rowner_user_id\x18\b \x01(\rB\x03\xe0A\x03H\aR\vownerUserId\x88\x01\x01\x12%\n" +
-	"\ttenant_id\x18\t \x01(\rB\x03\xe0A\x03H\bR\btenantId\x88\x01\x01\x12C\n" +
+	"\ttenant_id\x18\t \x01(\rB\x03\xe0A\x03H\bR\btenantId\x88\x01\x01\x124\n" +
+	"\x06scopes\x18\n" +
+	" \x03(\x0e2\x1c.ops.service.v1.ApiKey.ScopeR\x06scopes\x12C\n" +
 	"\n" +
 	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\tR\tcreatedAt\x88\x01\x01\"C\n" +
 	"\x06Status\x12\x1e\n" +
 	"\x1aAPI_KEY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aENABLED\x10\x01\x12\f\n" +
-	"\bDISABLED\x10\x02B\x05\n" +
+	"\bDISABLED\x10\x02\"k\n" +
+	"\x05Scope\x12\x1d\n" +
+	"\x19API_KEY_SCOPE_UNSPECIFIED\x10\x00\x12\n" +
+	"\n" +
+	"\x06BUILDS\x10\x01\x12\x11\n" +
+	"\rDISTRIBUTIONS\x10\x02\x12\r\n" +
+	"\tPIPELINES\x10\x03\x12\f\n" +
+	"\bWEBHOOKS\x10\x04\x12\a\n" +
+	"\x03ALL\x10\x05B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_prefixB\t\n" +
@@ -605,48 +685,50 @@ func file_ops_service_v1_api_key_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_api_key_proto_rawDescData
 }
 
-var file_ops_service_v1_api_key_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_ops_service_v1_api_key_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_ops_service_v1_api_key_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_ops_service_v1_api_key_proto_goTypes = []any{
 	(ApiKey_Status)(0),            // 0: ops.service.v1.ApiKey.Status
-	(*ApiKey)(nil),                // 1: ops.service.v1.ApiKey
-	(*ListApiKeyResponse)(nil),    // 2: ops.service.v1.ListApiKeyResponse
-	(*GetApiKeyRequest)(nil),      // 3: ops.service.v1.GetApiKeyRequest
-	(*CreateApiKeyRequest)(nil),   // 4: ops.service.v1.CreateApiKeyRequest
-	(*CreateApiKeyResponse)(nil),  // 5: ops.service.v1.CreateApiKeyResponse
-	(*UpdateApiKeyRequest)(nil),   // 6: ops.service.v1.UpdateApiKeyRequest
-	(*DeleteApiKeyRequest)(nil),   // 7: ops.service.v1.DeleteApiKeyRequest
-	(*ValidateApiKeyRequest)(nil), // 8: ops.service.v1.ValidateApiKeyRequest
-	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
-	(*v1.PagingRequest)(nil),      // 10: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 11: google.protobuf.Empty
+	(ApiKey_Scope)(0),             // 1: ops.service.v1.ApiKey.Scope
+	(*ApiKey)(nil),                // 2: ops.service.v1.ApiKey
+	(*ListApiKeyResponse)(nil),    // 3: ops.service.v1.ListApiKeyResponse
+	(*GetApiKeyRequest)(nil),      // 4: ops.service.v1.GetApiKeyRequest
+	(*CreateApiKeyRequest)(nil),   // 5: ops.service.v1.CreateApiKeyRequest
+	(*CreateApiKeyResponse)(nil),  // 6: ops.service.v1.CreateApiKeyResponse
+	(*UpdateApiKeyRequest)(nil),   // 7: ops.service.v1.UpdateApiKeyRequest
+	(*DeleteApiKeyRequest)(nil),   // 8: ops.service.v1.DeleteApiKeyRequest
+	(*ValidateApiKeyRequest)(nil), // 9: ops.service.v1.ValidateApiKeyRequest
+	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
+	(*v1.PagingRequest)(nil),      // 11: pagination.PagingRequest
+	(*emptypb.Empty)(nil),         // 12: google.protobuf.Empty
 }
 var file_ops_service_v1_api_key_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.ApiKey.status:type_name -> ops.service.v1.ApiKey.Status
-	9,  // 1: ops.service.v1.ApiKey.last_used_at:type_name -> google.protobuf.Timestamp
-	9,  // 2: ops.service.v1.ApiKey.expires_at:type_name -> google.protobuf.Timestamp
-	9,  // 3: ops.service.v1.ApiKey.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 4: ops.service.v1.ListApiKeyResponse.items:type_name -> ops.service.v1.ApiKey
-	1,  // 5: ops.service.v1.CreateApiKeyRequest.data:type_name -> ops.service.v1.ApiKey
-	1,  // 6: ops.service.v1.CreateApiKeyResponse.data:type_name -> ops.service.v1.ApiKey
-	1,  // 7: ops.service.v1.UpdateApiKeyRequest.data:type_name -> ops.service.v1.ApiKey
-	10, // 8: ops.service.v1.ApiKeyService.ListApiKeys:input_type -> pagination.PagingRequest
-	3,  // 9: ops.service.v1.ApiKeyService.GetApiKey:input_type -> ops.service.v1.GetApiKeyRequest
-	4,  // 10: ops.service.v1.ApiKeyService.CreateApiKey:input_type -> ops.service.v1.CreateApiKeyRequest
-	6,  // 11: ops.service.v1.ApiKeyService.UpdateApiKey:input_type -> ops.service.v1.UpdateApiKeyRequest
-	7,  // 12: ops.service.v1.ApiKeyService.DeleteApiKey:input_type -> ops.service.v1.DeleteApiKeyRequest
-	8,  // 13: ops.service.v1.ApiKeyService.ValidateApiKey:input_type -> ops.service.v1.ValidateApiKeyRequest
-	2,  // 14: ops.service.v1.ApiKeyService.ListApiKeys:output_type -> ops.service.v1.ListApiKeyResponse
-	1,  // 15: ops.service.v1.ApiKeyService.GetApiKey:output_type -> ops.service.v1.ApiKey
-	5,  // 16: ops.service.v1.ApiKeyService.CreateApiKey:output_type -> ops.service.v1.CreateApiKeyResponse
-	11, // 17: ops.service.v1.ApiKeyService.UpdateApiKey:output_type -> google.protobuf.Empty
-	11, // 18: ops.service.v1.ApiKeyService.DeleteApiKey:output_type -> google.protobuf.Empty
-	1,  // 19: ops.service.v1.ApiKeyService.ValidateApiKey:output_type -> ops.service.v1.ApiKey
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	10, // 1: ops.service.v1.ApiKey.last_used_at:type_name -> google.protobuf.Timestamp
+	10, // 2: ops.service.v1.ApiKey.expires_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: ops.service.v1.ApiKey.scopes:type_name -> ops.service.v1.ApiKey.Scope
+	10, // 4: ops.service.v1.ApiKey.created_at:type_name -> google.protobuf.Timestamp
+	2,  // 5: ops.service.v1.ListApiKeyResponse.items:type_name -> ops.service.v1.ApiKey
+	2,  // 6: ops.service.v1.CreateApiKeyRequest.data:type_name -> ops.service.v1.ApiKey
+	2,  // 7: ops.service.v1.CreateApiKeyResponse.data:type_name -> ops.service.v1.ApiKey
+	2,  // 8: ops.service.v1.UpdateApiKeyRequest.data:type_name -> ops.service.v1.ApiKey
+	11, // 9: ops.service.v1.ApiKeyService.ListApiKeys:input_type -> pagination.PagingRequest
+	4,  // 10: ops.service.v1.ApiKeyService.GetApiKey:input_type -> ops.service.v1.GetApiKeyRequest
+	5,  // 11: ops.service.v1.ApiKeyService.CreateApiKey:input_type -> ops.service.v1.CreateApiKeyRequest
+	7,  // 12: ops.service.v1.ApiKeyService.UpdateApiKey:input_type -> ops.service.v1.UpdateApiKeyRequest
+	8,  // 13: ops.service.v1.ApiKeyService.DeleteApiKey:input_type -> ops.service.v1.DeleteApiKeyRequest
+	9,  // 14: ops.service.v1.ApiKeyService.ValidateApiKey:input_type -> ops.service.v1.ValidateApiKeyRequest
+	3,  // 15: ops.service.v1.ApiKeyService.ListApiKeys:output_type -> ops.service.v1.ListApiKeyResponse
+	2,  // 16: ops.service.v1.ApiKeyService.GetApiKey:output_type -> ops.service.v1.ApiKey
+	6,  // 17: ops.service.v1.ApiKeyService.CreateApiKey:output_type -> ops.service.v1.CreateApiKeyResponse
+	12, // 18: ops.service.v1.ApiKeyService.UpdateApiKey:output_type -> google.protobuf.Empty
+	12, // 19: ops.service.v1.ApiKeyService.DeleteApiKey:output_type -> google.protobuf.Empty
+	2,  // 20: ops.service.v1.ApiKeyService.ValidateApiKey:output_type -> ops.service.v1.ApiKey
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_api_key_proto_init() }
@@ -666,7 +748,7 @@ func file_ops_service_v1_api_key_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_api_key_proto_rawDesc), len(file_ops_service_v1_api_key_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,

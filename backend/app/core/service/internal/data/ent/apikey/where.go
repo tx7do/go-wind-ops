@@ -869,6 +869,16 @@ func DescriptionContainsFold(v string) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldContainsFold(FieldDescription, v))
 }
 
+// ScopesIsNil applies the IsNil predicate on the "scopes" field.
+func ScopesIsNil() predicate.ApiKey {
+	return predicate.ApiKey(sql.FieldIsNull(FieldScopes))
+}
+
+// ScopesNotNil applies the NotNil predicate on the "scopes" field.
+func ScopesNotNil() predicate.ApiKey {
+	return predicate.ApiKey(sql.FieldNotNull(FieldScopes))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.ApiKey) predicate.ApiKey {
 	return predicate.ApiKey(sql.AndPredicates(predicates...))

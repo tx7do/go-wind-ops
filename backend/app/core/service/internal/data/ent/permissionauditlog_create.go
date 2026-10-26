@@ -166,6 +166,20 @@ func (_c *PermissionAuditLogCreate) SetNillableLogHash(v *string) *PermissionAud
 	return _c
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_c *PermissionAuditLogCreate) SetPrevLogHash(v string) *PermissionAuditLogCreate {
+	_c.mutation.SetPrevLogHash(v)
+	return _c
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_c *PermissionAuditLogCreate) SetNillablePrevLogHash(v *string) *PermissionAuditLogCreate {
+	if v != nil {
+		_c.SetPrevLogHash(*v)
+	}
+	return _c
+}
+
 // SetSignature sets the "signature" field.
 func (_c *PermissionAuditLogCreate) SetSignature(v []byte) *PermissionAuditLogCreate {
 	_c.mutation.SetSignature(v)
@@ -323,6 +337,10 @@ func (_c *PermissionAuditLogCreate) createSpec() (*PermissionAuditLog, *sqlgraph
 	if value, ok := _c.mutation.LogHash(); ok {
 		_spec.SetField(permissionauditlog.FieldLogHash, field.TypeString, value)
 		_node.LogHash = &value
+	}
+	if value, ok := _c.mutation.PrevLogHash(); ok {
+		_spec.SetField(permissionauditlog.FieldPrevLogHash, field.TypeString, value)
+		_node.PrevLogHash = value
 	}
 	if value, ok := _c.mutation.Signature(); ok {
 		_spec.SetField(permissionauditlog.FieldSignature, field.TypeBytes, value)
@@ -545,6 +563,24 @@ func (u *PermissionAuditLogUpsert) UpdateLogHash() *PermissionAuditLogUpsert {
 // ClearLogHash clears the value of the "log_hash" field.
 func (u *PermissionAuditLogUpsert) ClearLogHash() *PermissionAuditLogUpsert {
 	u.SetNull(permissionauditlog.FieldLogHash)
+	return u
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsert) SetPrevLogHash(v string) *PermissionAuditLogUpsert {
+	u.Set(permissionauditlog.FieldPrevLogHash, v)
+	return u
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PermissionAuditLogUpsert) UpdatePrevLogHash() *PermissionAuditLogUpsert {
+	u.SetExcluded(permissionauditlog.FieldPrevLogHash)
+	return u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsert) ClearPrevLogHash() *PermissionAuditLogUpsert {
+	u.SetNull(permissionauditlog.FieldPrevLogHash)
 	return u
 }
 
@@ -813,6 +849,27 @@ func (u *PermissionAuditLogUpsertOne) UpdateLogHash() *PermissionAuditLogUpsertO
 func (u *PermissionAuditLogUpsertOne) ClearLogHash() *PermissionAuditLogUpsertOne {
 	return u.Update(func(s *PermissionAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsertOne) SetPrevLogHash(v string) *PermissionAuditLogUpsertOne {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PermissionAuditLogUpsertOne) UpdatePrevLogHash() *PermissionAuditLogUpsertOne {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsertOne) ClearPrevLogHash() *PermissionAuditLogUpsertOne {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 
@@ -1250,6 +1307,27 @@ func (u *PermissionAuditLogUpsertBulk) UpdateLogHash() *PermissionAuditLogUpsert
 func (u *PermissionAuditLogUpsertBulk) ClearLogHash() *PermissionAuditLogUpsertBulk {
 	return u.Update(func(s *PermissionAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsertBulk) SetPrevLogHash(v string) *PermissionAuditLogUpsertBulk {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PermissionAuditLogUpsertBulk) UpdatePrevLogHash() *PermissionAuditLogUpsertBulk {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PermissionAuditLogUpsertBulk) ClearPrevLogHash() *PermissionAuditLogUpsertBulk {
+	return u.Update(func(s *PermissionAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 

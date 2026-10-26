@@ -5577,6 +5577,7 @@ type ApiAuditLogMutation struct {
 	request_body    *string
 	response        *string
 	log_hash        *string
+	prev_log_hash   *string
 	signature       *[]byte
 	clearedFields   map[string]struct{}
 	done            bool
@@ -7046,6 +7047,55 @@ func (m *ApiAuditLogMutation) ResetLogHash() {
 	delete(m.clearedFields, apiauditlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *ApiAuditLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *ApiAuditLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the ApiAuditLog entity.
+// If the ApiAuditLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiAuditLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *ApiAuditLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[apiauditlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *ApiAuditLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[apiauditlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *ApiAuditLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, apiauditlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *ApiAuditLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -7129,7 +7179,7 @@ func (m *ApiAuditLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApiAuditLogMutation) Fields() []string {
-	fields := make([]string, 0, 27)
+	fields := make([]string, 0, 28)
 	if m.created_at != nil {
 		fields = append(fields, apiauditlog.FieldCreatedAt)
 	}
@@ -7208,6 +7258,9 @@ func (m *ApiAuditLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, apiauditlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, apiauditlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, apiauditlog.FieldSignature)
 	}
@@ -7271,6 +7324,8 @@ func (m *ApiAuditLogMutation) Field(name string) (ent.Value, bool) {
 		return m.Response()
 	case apiauditlog.FieldLogHash:
 		return m.LogHash()
+	case apiauditlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case apiauditlog.FieldSignature:
 		return m.Signature()
 	}
@@ -7334,6 +7389,8 @@ func (m *ApiAuditLogMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldResponse(ctx)
 	case apiauditlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case apiauditlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case apiauditlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -7527,6 +7584,13 @@ func (m *ApiAuditLogMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLogHash(v)
 		return nil
+	case apiauditlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
+		return nil
 	case apiauditlog.FieldSignature:
 		v, ok := value.([]byte)
 		if !ok {
@@ -7693,6 +7757,9 @@ func (m *ApiAuditLogMutation) ClearedFields() []string {
 	if m.FieldCleared(apiauditlog.FieldLogHash) {
 		fields = append(fields, apiauditlog.FieldLogHash)
 	}
+	if m.FieldCleared(apiauditlog.FieldPrevLogHash) {
+		fields = append(fields, apiauditlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(apiauditlog.FieldSignature) {
 		fields = append(fields, apiauditlog.FieldSignature)
 	}
@@ -7788,6 +7855,9 @@ func (m *ApiAuditLogMutation) ClearField(name string) error {
 	case apiauditlog.FieldLogHash:
 		m.ClearLogHash()
 		return nil
+	case apiauditlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
+		return nil
 	case apiauditlog.FieldSignature:
 		m.ClearSignature()
 		return nil
@@ -7877,6 +7947,9 @@ func (m *ApiAuditLogMutation) ResetField(name string) error {
 	case apiauditlog.FieldLogHash:
 		m.ResetLogHash()
 		return nil
+	case apiauditlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
+		return nil
 	case apiauditlog.FieldSignature:
 		m.ResetSignature()
 		return nil
@@ -7956,6 +8029,8 @@ type ApiKeyMutation struct {
 	last_used_at  *time.Time
 	expires_at    *time.Time
 	description   *string
+	scopes        *[]string
+	appendscopes  []string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*ApiKey, error)
@@ -8797,6 +8872,71 @@ func (m *ApiKeyMutation) ResetDescription() {
 	delete(m.clearedFields, apikey.FieldDescription)
 }
 
+// SetScopes sets the "scopes" field.
+func (m *ApiKeyMutation) SetScopes(s []string) {
+	m.scopes = &s
+	m.appendscopes = nil
+}
+
+// Scopes returns the value of the "scopes" field in the mutation.
+func (m *ApiKeyMutation) Scopes() (r []string, exists bool) {
+	v := m.scopes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScopes returns the old "scopes" field's value of the ApiKey entity.
+// If the ApiKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiKeyMutation) OldScopes(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScopes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScopes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScopes: %w", err)
+	}
+	return oldValue.Scopes, nil
+}
+
+// AppendScopes adds s to the "scopes" field.
+func (m *ApiKeyMutation) AppendScopes(s []string) {
+	m.appendscopes = append(m.appendscopes, s...)
+}
+
+// AppendedScopes returns the list of values that were appended to the "scopes" field in this mutation.
+func (m *ApiKeyMutation) AppendedScopes() ([]string, bool) {
+	if len(m.appendscopes) == 0 {
+		return nil, false
+	}
+	return m.appendscopes, true
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (m *ApiKeyMutation) ClearScopes() {
+	m.scopes = nil
+	m.appendscopes = nil
+	m.clearedFields[apikey.FieldScopes] = struct{}{}
+}
+
+// ScopesCleared returns if the "scopes" field was cleared in this mutation.
+func (m *ApiKeyMutation) ScopesCleared() bool {
+	_, ok := m.clearedFields[apikey.FieldScopes]
+	return ok
+}
+
+// ResetScopes resets all changes to the "scopes" field.
+func (m *ApiKeyMutation) ResetScopes() {
+	m.scopes = nil
+	m.appendscopes = nil
+	delete(m.clearedFields, apikey.FieldScopes)
+}
+
 // Where appends a list predicates to the ApiKeyMutation builder.
 func (m *ApiKeyMutation) Where(ps ...predicate.ApiKey) {
 	m.predicates = append(m.predicates, ps...)
@@ -8831,7 +8971,7 @@ func (m *ApiKeyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApiKeyMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.tenant_id != nil {
 		fields = append(fields, apikey.FieldTenantID)
 	}
@@ -8874,6 +9014,9 @@ func (m *ApiKeyMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, apikey.FieldDescription)
 	}
+	if m.scopes != nil {
+		fields = append(fields, apikey.FieldScopes)
+	}
 	return fields
 }
 
@@ -8910,6 +9053,8 @@ func (m *ApiKeyMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiresAt()
 	case apikey.FieldDescription:
 		return m.Description()
+	case apikey.FieldScopes:
+		return m.Scopes()
 	}
 	return nil, false
 }
@@ -8947,6 +9092,8 @@ func (m *ApiKeyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldExpiresAt(ctx)
 	case apikey.FieldDescription:
 		return m.OldDescription(ctx)
+	case apikey.FieldScopes:
+		return m.OldScopes(ctx)
 	}
 	return nil, fmt.Errorf("unknown ApiKey field %s", name)
 }
@@ -9053,6 +9200,13 @@ func (m *ApiKeyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case apikey.FieldScopes:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScopes(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ApiKey field %s", name)
@@ -9168,6 +9322,9 @@ func (m *ApiKeyMutation) ClearedFields() []string {
 	if m.FieldCleared(apikey.FieldDescription) {
 		fields = append(fields, apikey.FieldDescription)
 	}
+	if m.FieldCleared(apikey.FieldScopes) {
+		fields = append(fields, apikey.FieldScopes)
+	}
 	return fields
 }
 
@@ -9214,6 +9371,9 @@ func (m *ApiKeyMutation) ClearField(name string) error {
 		return nil
 	case apikey.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case apikey.FieldScopes:
+		m.ClearScopes()
 		return nil
 	}
 	return fmt.Errorf("unknown ApiKey nullable field %s", name)
@@ -9264,6 +9424,9 @@ func (m *ApiKeyMutation) ResetField(name string) error {
 		return nil
 	case apikey.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case apikey.FieldScopes:
+		m.ResetScopes()
 		return nil
 	}
 	return fmt.Errorf("unknown ApiKey field %s", name)
@@ -30691,6 +30854,7 @@ type DataAccessAuditLogMutation struct {
 	data_category    *string
 	db_user          *string
 	log_hash         *string
+	prev_log_hash    *string
 	signature        *[]byte
 	clearedFields    map[string]struct{}
 	done             bool
@@ -32111,6 +32275,55 @@ func (m *DataAccessAuditLogMutation) ResetLogHash() {
 	delete(m.clearedFields, dataaccessauditlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *DataAccessAuditLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *DataAccessAuditLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the DataAccessAuditLog entity.
+// If the DataAccessAuditLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DataAccessAuditLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *DataAccessAuditLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[dataaccessauditlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *DataAccessAuditLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[dataaccessauditlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *DataAccessAuditLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, dataaccessauditlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *DataAccessAuditLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -32194,7 +32407,7 @@ func (m *DataAccessAuditLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DataAccessAuditLogMutation) Fields() []string {
-	fields := make([]string, 0, 26)
+	fields := make([]string, 0, 27)
 	if m.created_at != nil {
 		fields = append(fields, dataaccessauditlog.FieldCreatedAt)
 	}
@@ -32270,6 +32483,9 @@ func (m *DataAccessAuditLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, dataaccessauditlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, dataaccessauditlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, dataaccessauditlog.FieldSignature)
 	}
@@ -32331,6 +32547,8 @@ func (m *DataAccessAuditLogMutation) Field(name string) (ent.Value, bool) {
 		return m.DbUser()
 	case dataaccessauditlog.FieldLogHash:
 		return m.LogHash()
+	case dataaccessauditlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case dataaccessauditlog.FieldSignature:
 		return m.Signature()
 	}
@@ -32392,6 +32610,8 @@ func (m *DataAccessAuditLogMutation) OldField(ctx context.Context, name string) 
 		return m.OldDbUser(ctx)
 	case dataaccessauditlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case dataaccessauditlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case dataaccessauditlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -32578,6 +32798,13 @@ func (m *DataAccessAuditLogMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetLogHash(v)
 		return nil
+	case dataaccessauditlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
+		return nil
 	case dataaccessauditlog.FieldSignature:
 		v, ok := value.([]byte)
 		if !ok {
@@ -32741,6 +32968,9 @@ func (m *DataAccessAuditLogMutation) ClearedFields() []string {
 	if m.FieldCleared(dataaccessauditlog.FieldLogHash) {
 		fields = append(fields, dataaccessauditlog.FieldLogHash)
 	}
+	if m.FieldCleared(dataaccessauditlog.FieldPrevLogHash) {
+		fields = append(fields, dataaccessauditlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(dataaccessauditlog.FieldSignature) {
 		fields = append(fields, dataaccessauditlog.FieldSignature)
 	}
@@ -32833,6 +33063,9 @@ func (m *DataAccessAuditLogMutation) ClearField(name string) error {
 	case dataaccessauditlog.FieldLogHash:
 		m.ClearLogHash()
 		return nil
+	case dataaccessauditlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
+		return nil
 	case dataaccessauditlog.FieldSignature:
 		m.ClearSignature()
 		return nil
@@ -32918,6 +33151,9 @@ func (m *DataAccessAuditLogMutation) ResetField(name string) error {
 		return nil
 	case dataaccessauditlog.FieldLogHash:
 		m.ResetLogHash()
+		return nil
+	case dataaccessauditlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
 		return nil
 	case dataaccessauditlog.FieldSignature:
 		m.ResetSignature()
@@ -45168,6 +45404,7 @@ type LoginAuditLogMutation struct {
 	risk_factors       *[]string
 	appendrisk_factors []string
 	log_hash           *string
+	prev_log_hash      *string
 	signature          *[]byte
 	clearedFields      map[string]struct{}
 	done               bool
@@ -46289,6 +46526,55 @@ func (m *LoginAuditLogMutation) ResetLogHash() {
 	delete(m.clearedFields, loginauditlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *LoginAuditLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *LoginAuditLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the LoginAuditLog entity.
+// If the LoginAuditLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LoginAuditLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *LoginAuditLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[loginauditlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *LoginAuditLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[loginauditlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *LoginAuditLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, loginauditlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *LoginAuditLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -46372,7 +46658,7 @@ func (m *LoginAuditLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LoginAuditLogMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, loginauditlog.FieldCreatedAt)
 	}
@@ -46430,6 +46716,9 @@ func (m *LoginAuditLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, loginauditlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, loginauditlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, loginauditlog.FieldSignature)
 	}
@@ -46479,6 +46768,8 @@ func (m *LoginAuditLogMutation) Field(name string) (ent.Value, bool) {
 		return m.RiskFactors()
 	case loginauditlog.FieldLogHash:
 		return m.LogHash()
+	case loginauditlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case loginauditlog.FieldSignature:
 		return m.Signature()
 	}
@@ -46528,6 +46819,8 @@ func (m *LoginAuditLogMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldRiskFactors(ctx)
 	case loginauditlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case loginauditlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case loginauditlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -46672,6 +46965,13 @@ func (m *LoginAuditLogMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLogHash(v)
 		return nil
+	case loginauditlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
+		return nil
 	case loginauditlog.FieldSignature:
 		v, ok := value.([]byte)
 		if !ok {
@@ -46805,6 +47105,9 @@ func (m *LoginAuditLogMutation) ClearedFields() []string {
 	if m.FieldCleared(loginauditlog.FieldLogHash) {
 		fields = append(fields, loginauditlog.FieldLogHash)
 	}
+	if m.FieldCleared(loginauditlog.FieldPrevLogHash) {
+		fields = append(fields, loginauditlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(loginauditlog.FieldSignature) {
 		fields = append(fields, loginauditlog.FieldSignature)
 	}
@@ -46879,6 +47182,9 @@ func (m *LoginAuditLogMutation) ClearField(name string) error {
 	case loginauditlog.FieldLogHash:
 		m.ClearLogHash()
 		return nil
+	case loginauditlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
+		return nil
 	case loginauditlog.FieldSignature:
 		m.ClearSignature()
 		return nil
@@ -46946,6 +47252,9 @@ func (m *LoginAuditLogMutation) ResetField(name string) error {
 		return nil
 	case loginauditlog.FieldLogHash:
 		m.ResetLogHash()
+		return nil
+	case loginauditlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
 		return nil
 	case loginauditlog.FieldSignature:
 		m.ResetSignature()
@@ -63421,6 +63730,7 @@ type OperationAuditLogMutation struct {
 	geo_location    **auditpb.GeoLocation
 	device_info     **auditpb.DeviceInfo
 	log_hash        *string
+	prev_log_hash   *string
 	signature       *[]byte
 	clearedFields   map[string]struct{}
 	done            bool
@@ -64456,6 +64766,55 @@ func (m *OperationAuditLogMutation) ResetLogHash() {
 	delete(m.clearedFields, operationauditlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *OperationAuditLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *OperationAuditLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the OperationAuditLog entity.
+// If the OperationAuditLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationAuditLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *OperationAuditLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[operationauditlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *OperationAuditLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[operationauditlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *OperationAuditLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, operationauditlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *OperationAuditLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -64539,7 +64898,7 @@ func (m *OperationAuditLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OperationAuditLogMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, operationauditlog.FieldCreatedAt)
 	}
@@ -64594,6 +64953,9 @@ func (m *OperationAuditLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, operationauditlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, operationauditlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, operationauditlog.FieldSignature)
 	}
@@ -64641,6 +65003,8 @@ func (m *OperationAuditLogMutation) Field(name string) (ent.Value, bool) {
 		return m.DeviceInfo()
 	case operationauditlog.FieldLogHash:
 		return m.LogHash()
+	case operationauditlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case operationauditlog.FieldSignature:
 		return m.Signature()
 	}
@@ -64688,6 +65052,8 @@ func (m *OperationAuditLogMutation) OldField(ctx context.Context, name string) (
 		return m.OldDeviceInfo(ctx)
 	case operationauditlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case operationauditlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case operationauditlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -64825,6 +65191,13 @@ func (m *OperationAuditLogMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetLogHash(v)
 		return nil
+	case operationauditlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
+		return nil
 	case operationauditlog.FieldSignature:
 		v, ok := value.([]byte)
 		if !ok {
@@ -64943,6 +65316,9 @@ func (m *OperationAuditLogMutation) ClearedFields() []string {
 	if m.FieldCleared(operationauditlog.FieldLogHash) {
 		fields = append(fields, operationauditlog.FieldLogHash)
 	}
+	if m.FieldCleared(operationauditlog.FieldPrevLogHash) {
+		fields = append(fields, operationauditlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(operationauditlog.FieldSignature) {
 		fields = append(fields, operationauditlog.FieldSignature)
 	}
@@ -65014,6 +65390,9 @@ func (m *OperationAuditLogMutation) ClearField(name string) error {
 	case operationauditlog.FieldLogHash:
 		m.ClearLogHash()
 		return nil
+	case operationauditlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
+		return nil
 	case operationauditlog.FieldSignature:
 		m.ClearSignature()
 		return nil
@@ -65078,6 +65457,9 @@ func (m *OperationAuditLogMutation) ResetField(name string) error {
 		return nil
 	case operationauditlog.FieldLogHash:
 		m.ResetLogHash()
+		return nil
+	case operationauditlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
 		return nil
 	case operationauditlog.FieldSignature:
 		m.ResetSignature()
@@ -70754,6 +71136,7 @@ type PermissionAuditLogMutation struct {
 	request_id     *string
 	reason         *string
 	log_hash       *string
+	prev_log_hash  *string
 	signature      *[]byte
 	clearedFields  map[string]struct{}
 	done           bool
@@ -71456,6 +71839,55 @@ func (m *PermissionAuditLogMutation) ResetLogHash() {
 	delete(m.clearedFields, permissionauditlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *PermissionAuditLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *PermissionAuditLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the PermissionAuditLog entity.
+// If the PermissionAuditLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionAuditLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *PermissionAuditLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[permissionauditlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *PermissionAuditLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[permissionauditlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *PermissionAuditLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, permissionauditlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *PermissionAuditLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -71539,7 +71971,7 @@ func (m *PermissionAuditLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PermissionAuditLogMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, permissionauditlog.FieldCreatedAt)
 	}
@@ -71576,6 +72008,9 @@ func (m *PermissionAuditLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, permissionauditlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, permissionauditlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, permissionauditlog.FieldSignature)
 	}
@@ -71611,6 +72046,8 @@ func (m *PermissionAuditLogMutation) Field(name string) (ent.Value, bool) {
 		return m.Reason()
 	case permissionauditlog.FieldLogHash:
 		return m.LogHash()
+	case permissionauditlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case permissionauditlog.FieldSignature:
 		return m.Signature()
 	}
@@ -71646,6 +72083,8 @@ func (m *PermissionAuditLogMutation) OldField(ctx context.Context, name string) 
 		return m.OldReason(ctx)
 	case permissionauditlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case permissionauditlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case permissionauditlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -71741,6 +72180,13 @@ func (m *PermissionAuditLogMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetLogHash(v)
 		return nil
+	case permissionauditlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
+		return nil
 	case permissionauditlog.FieldSignature:
 		v, ok := value.([]byte)
 		if !ok {
@@ -71832,6 +72278,9 @@ func (m *PermissionAuditLogMutation) ClearedFields() []string {
 	if m.FieldCleared(permissionauditlog.FieldLogHash) {
 		fields = append(fields, permissionauditlog.FieldLogHash)
 	}
+	if m.FieldCleared(permissionauditlog.FieldPrevLogHash) {
+		fields = append(fields, permissionauditlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(permissionauditlog.FieldSignature) {
 		fields = append(fields, permissionauditlog.FieldSignature)
 	}
@@ -71875,6 +72324,9 @@ func (m *PermissionAuditLogMutation) ClearField(name string) error {
 		return nil
 	case permissionauditlog.FieldLogHash:
 		m.ClearLogHash()
+		return nil
+	case permissionauditlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
 		return nil
 	case permissionauditlog.FieldSignature:
 		m.ClearSignature()
@@ -71922,6 +72374,9 @@ func (m *PermissionAuditLogMutation) ResetField(name string) error {
 		return nil
 	case permissionauditlog.FieldLogHash:
 		m.ResetLogHash()
+		return nil
+	case permissionauditlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
 		return nil
 	case permissionauditlog.FieldSignature:
 		m.ResetSignature()
@@ -77621,6 +78076,7 @@ type PolicyEvaluationLogMutation struct {
 	trace_id           *string
 	evaluation_context *string
 	log_hash           *string
+	prev_log_hash      *string
 	signature          *[]byte
 	clearedFields      map[string]struct{}
 	done               bool
@@ -78517,6 +78973,55 @@ func (m *PolicyEvaluationLogMutation) ResetLogHash() {
 	delete(m.clearedFields, policyevaluationlog.FieldLogHash)
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (m *PolicyEvaluationLogMutation) SetPrevLogHash(s string) {
+	m.prev_log_hash = &s
+}
+
+// PrevLogHash returns the value of the "prev_log_hash" field in the mutation.
+func (m *PolicyEvaluationLogMutation) PrevLogHash() (r string, exists bool) {
+	v := m.prev_log_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrevLogHash returns the old "prev_log_hash" field's value of the PolicyEvaluationLog entity.
+// If the PolicyEvaluationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PolicyEvaluationLogMutation) OldPrevLogHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrevLogHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrevLogHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrevLogHash: %w", err)
+	}
+	return oldValue.PrevLogHash, nil
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (m *PolicyEvaluationLogMutation) ClearPrevLogHash() {
+	m.prev_log_hash = nil
+	m.clearedFields[policyevaluationlog.FieldPrevLogHash] = struct{}{}
+}
+
+// PrevLogHashCleared returns if the "prev_log_hash" field was cleared in this mutation.
+func (m *PolicyEvaluationLogMutation) PrevLogHashCleared() bool {
+	_, ok := m.clearedFields[policyevaluationlog.FieldPrevLogHash]
+	return ok
+}
+
+// ResetPrevLogHash resets all changes to the "prev_log_hash" field.
+func (m *PolicyEvaluationLogMutation) ResetPrevLogHash() {
+	m.prev_log_hash = nil
+	delete(m.clearedFields, policyevaluationlog.FieldPrevLogHash)
+}
+
 // SetSignature sets the "signature" field.
 func (m *PolicyEvaluationLogMutation) SetSignature(b []byte) {
 	m.signature = &b
@@ -78600,7 +79105,7 @@ func (m *PolicyEvaluationLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PolicyEvaluationLogMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, policyevaluationlog.FieldCreatedAt)
 	}
@@ -78646,6 +79151,9 @@ func (m *PolicyEvaluationLogMutation) Fields() []string {
 	if m.log_hash != nil {
 		fields = append(fields, policyevaluationlog.FieldLogHash)
 	}
+	if m.prev_log_hash != nil {
+		fields = append(fields, policyevaluationlog.FieldPrevLogHash)
+	}
 	if m.signature != nil {
 		fields = append(fields, policyevaluationlog.FieldSignature)
 	}
@@ -78687,6 +79195,8 @@ func (m *PolicyEvaluationLogMutation) Field(name string) (ent.Value, bool) {
 		return m.EvaluationContext()
 	case policyevaluationlog.FieldLogHash:
 		return m.LogHash()
+	case policyevaluationlog.FieldPrevLogHash:
+		return m.PrevLogHash()
 	case policyevaluationlog.FieldSignature:
 		return m.Signature()
 	}
@@ -78728,6 +79238,8 @@ func (m *PolicyEvaluationLogMutation) OldField(ctx context.Context, name string)
 		return m.OldEvaluationContext(ctx)
 	case policyevaluationlog.FieldLogHash:
 		return m.OldLogHash(ctx)
+	case policyevaluationlog.FieldPrevLogHash:
+		return m.OldPrevLogHash(ctx)
 	case policyevaluationlog.FieldSignature:
 		return m.OldSignature(ctx)
 	}
@@ -78843,6 +79355,13 @@ func (m *PolicyEvaluationLogMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLogHash(v)
+		return nil
+	case policyevaluationlog.FieldPrevLogHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrevLogHash(v)
 		return nil
 	case policyevaluationlog.FieldSignature:
 		v, ok := value.([]byte)
@@ -78977,6 +79496,9 @@ func (m *PolicyEvaluationLogMutation) ClearedFields() []string {
 	if m.FieldCleared(policyevaluationlog.FieldLogHash) {
 		fields = append(fields, policyevaluationlog.FieldLogHash)
 	}
+	if m.FieldCleared(policyevaluationlog.FieldPrevLogHash) {
+		fields = append(fields, policyevaluationlog.FieldPrevLogHash)
+	}
 	if m.FieldCleared(policyevaluationlog.FieldSignature) {
 		fields = append(fields, policyevaluationlog.FieldSignature)
 	}
@@ -79026,6 +79548,9 @@ func (m *PolicyEvaluationLogMutation) ClearField(name string) error {
 		return nil
 	case policyevaluationlog.FieldLogHash:
 		m.ClearLogHash()
+		return nil
+	case policyevaluationlog.FieldPrevLogHash:
+		m.ClearPrevLogHash()
 		return nil
 	case policyevaluationlog.FieldSignature:
 		m.ClearSignature()
@@ -79082,6 +79607,9 @@ func (m *PolicyEvaluationLogMutation) ResetField(name string) error {
 		return nil
 	case policyevaluationlog.FieldLogHash:
 		m.ResetLogHash()
+		return nil
+	case policyevaluationlog.FieldPrevLogHash:
+		m.ResetPrevLogHash()
 		return nil
 	case policyevaluationlog.FieldSignature:
 		m.ResetSignature()
@@ -97762,6 +98290,8 @@ type UserMutation struct {
 	tenant_id     *uint32
 	addtenant_id  *int32
 	username      *string
+	mfa_enabled   *bool
+	mfa_secret    *string
 	nickname      *string
 	realname      *string
 	email         *string
@@ -98409,6 +98939,91 @@ func (m *UserMutation) UsernameCleared() bool {
 func (m *UserMutation) ResetUsername() {
 	m.username = nil
 	delete(m.clearedFields, user.FieldUsername)
+}
+
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (m *UserMutation) SetMfaEnabled(b bool) {
+	m.mfa_enabled = &b
+}
+
+// MfaEnabled returns the value of the "mfa_enabled" field in the mutation.
+func (m *UserMutation) MfaEnabled() (r bool, exists bool) {
+	v := m.mfa_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMfaEnabled returns the old "mfa_enabled" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMfaEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMfaEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMfaEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMfaEnabled: %w", err)
+	}
+	return oldValue.MfaEnabled, nil
+}
+
+// ResetMfaEnabled resets all changes to the "mfa_enabled" field.
+func (m *UserMutation) ResetMfaEnabled() {
+	m.mfa_enabled = nil
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (m *UserMutation) SetMfaSecret(s string) {
+	m.mfa_secret = &s
+}
+
+// MfaSecret returns the value of the "mfa_secret" field in the mutation.
+func (m *UserMutation) MfaSecret() (r string, exists bool) {
+	v := m.mfa_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMfaSecret returns the old "mfa_secret" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMfaSecret(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMfaSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMfaSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMfaSecret: %w", err)
+	}
+	return oldValue.MfaSecret, nil
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (m *UserMutation) ClearMfaSecret() {
+	m.mfa_secret = nil
+	m.clearedFields[user.FieldMfaSecret] = struct{}{}
+}
+
+// MfaSecretCleared returns if the "mfa_secret" field was cleared in this mutation.
+func (m *UserMutation) MfaSecretCleared() bool {
+	_, ok := m.clearedFields[user.FieldMfaSecret]
+	return ok
+}
+
+// ResetMfaSecret resets all changes to the "mfa_secret" field.
+func (m *UserMutation) ResetMfaSecret() {
+	m.mfa_secret = nil
+	delete(m.clearedFields, user.FieldMfaSecret)
 }
 
 // SetNickname sets the "nickname" field.
@@ -99131,7 +99746,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 25)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -99158,6 +99773,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
+	}
+	if m.mfa_enabled != nil {
+		fields = append(fields, user.FieldMfaEnabled)
+	}
+	if m.mfa_secret != nil {
+		fields = append(fields, user.FieldMfaSecret)
 	}
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
@@ -99227,6 +99848,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.TenantID()
 	case user.FieldUsername:
 		return m.Username()
+	case user.FieldMfaEnabled:
+		return m.MfaEnabled()
+	case user.FieldMfaSecret:
+		return m.MfaSecret()
 	case user.FieldNickname:
 		return m.Nickname()
 	case user.FieldRealname:
@@ -99282,6 +99907,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTenantID(ctx)
 	case user.FieldUsername:
 		return m.OldUsername(ctx)
+	case user.FieldMfaEnabled:
+		return m.OldMfaEnabled(ctx)
+	case user.FieldMfaSecret:
+		return m.OldMfaSecret(ctx)
 	case user.FieldNickname:
 		return m.OldNickname(ctx)
 	case user.FieldRealname:
@@ -99381,6 +100010,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUsername(v)
+		return nil
+	case user.FieldMfaEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMfaEnabled(v)
+		return nil
+	case user.FieldMfaSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMfaSecret(v)
 		return nil
 	case user.FieldNickname:
 		v, ok := value.(string)
@@ -99588,6 +100231,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldUsername) {
 		fields = append(fields, user.FieldUsername)
 	}
+	if m.FieldCleared(user.FieldMfaSecret) {
+		fields = append(fields, user.FieldMfaSecret)
+	}
 	if m.FieldCleared(user.FieldNickname) {
 		fields = append(fields, user.FieldNickname)
 	}
@@ -99671,6 +100317,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldUsername:
 		m.ClearUsername()
 		return nil
+	case user.FieldMfaSecret:
+		m.ClearMfaSecret()
+		return nil
 	case user.FieldNickname:
 		m.ClearNickname()
 		return nil
@@ -99747,6 +100396,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUsername:
 		m.ResetUsername()
+		return nil
+	case user.FieldMfaEnabled:
+		m.ResetMfaEnabled()
+		return nil
+	case user.FieldMfaSecret:
+		m.ResetMfaSecret()
 		return nil
 	case user.FieldNickname:
 		m.ResetNickname()

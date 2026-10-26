@@ -54,6 +54,9 @@ func NewRestMiddleware(
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，
 		// 调用时 bearer 往往已过期，若要求有效 token 刷新将永远 401。
 		appV1.OperationAuthenticationServiceRefreshToken,
+		// MfaService.VerifyMFAChallenge：MFA 二步验证第二步（登录流程内），
+		// 与 Login 同列免鉴权；挑战令牌由 core 一次性签发消费。
+		appV1.OperationMfaServiceVerifyMFAChallenge,
 
 		OperationAuthenticationServiceRegister,
 	)
@@ -94,6 +97,7 @@ func NewRestServer(
 	middlewares []middleware.Middleware,
 
 	authenticationService *service.AuthenticationService,
+	mfaService *service.MfaService,
 	userProfileService *service.UserProfileService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
@@ -110,6 +114,7 @@ func NewRestServer(
 	}
 
 	appV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
+	appV1.RegisterMfaServiceHTTPServer(srv, mfaService)
 
 	// ── 手工挂载:C 端注册 POST /app/v1/register ──
 	// 与生成代码等价的注册方式;操作名须与 AddWhiteList 一致。

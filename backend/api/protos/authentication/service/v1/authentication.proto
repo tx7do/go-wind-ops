@@ -284,6 +284,12 @@ message LoginResponse {
       description: "ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌"
     }
   ]; // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+
+  // MFA(TOTP)二步验证:密码授权命中已绑定用户时,响应不带令牌,改回
+  // mfa_operation_id + 一次性挑战令牌(2 分钟 TTL),凭 MfaService.VerifyMFAChallenge
+  // 换正式令牌(json_name 对齐前端既有读取的字面量)。
+  optional bool mfa_required = 8 [json_name = "mfa_required"]; // 需要 MFA 二步验证
+  optional string mfa_operation_id = 9 [json_name = "mfa_operation_id"]; // MFA 挑战令牌(一次性,换令牌用)
 }
 
 // 用户登出 - 请求
@@ -593,3 +599,4 @@ message VerifyCaptchaResponse {
     }
   ]; // 验证码验证结果，true表示验证成功，false表示验证失败
 }
+

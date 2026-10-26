@@ -549,8 +549,13 @@ type LoginResponse struct {
 	Scope            *string                `protobuf:"bytes,5,opt,name=scope,proto3,oneof" json:"scope,omitempty"`                                               // 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
 	RefreshExpiresIn *int64                 `protobuf:"varint,6,opt,name=refresh_expires_in,proto3,oneof" json:"refresh_expires_in,omitempty"`                    // 刷新令牌过期时间（秒）
 	IdToken          *string                `protobuf:"bytes,7,opt,name=id_token,proto3,oneof" json:"id_token,omitempty"`                                         // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// MFA(TOTP)二步验证:密码授权命中已绑定用户时,响应不带令牌,改回
+	// mfa_operation_id + 一次性挑战令牌(2 分钟 TTL),凭 MfaService.VerifyMFAChallenge
+	// 换正式令牌(json_name 对齐前端既有读取的字面量)。
+	MfaRequired    *bool   `protobuf:"varint,8,opt,name=mfa_required,proto3,oneof" json:"mfa_required,omitempty"`        // 需要 MFA 二步验证
+	MfaOperationId *string `protobuf:"bytes,9,opt,name=mfa_operation_id,proto3,oneof" json:"mfa_operation_id,omitempty"` // MFA 挑战令牌(一次性,换令牌用)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -628,6 +633,20 @@ func (x *LoginResponse) GetRefreshExpiresIn() int64 {
 func (x *LoginResponse) GetIdToken() string {
 	if x != nil && x.IdToken != nil {
 		return *x.IdToken
+	}
+	return ""
+}
+
+func (x *LoginResponse) GetMfaRequired() bool {
+	if x != nil && x.MfaRequired != nil {
+		return *x.MfaRequired
+	}
+	return false
+}
+
+func (x *LoginResponse) GetMfaOperationId() string {
+	if x != nil && x.MfaOperationId != nil {
+		return *x.MfaOperationId
 	}
 	return ""
 }
@@ -1630,7 +1649,8 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\n" +
 	"_device_idB\x06\n" +
 	"\x04_jtiB\x0e\n" +
-	"\f_tenant_code\"\x8c\t\n" +
+	"\f_tenant_code\"\x8c\n" +
+	"\n" +
 	"\rLoginResponse\x12\xdb\x01\n" +
 	"\n" +
 	"token_type\x18\x01 \x01(\x0e2$.authentication.service.v1.TokenTypeB\x94\x01\xbaG\x90\x01\x8a\x02\b\x1a\x06Bearer\x92\x02\x81\x01令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。R\n" +
@@ -1642,11 +1662,15 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\rrefresh_token\x18\x04 \x01(\tB\x96\x02\xbaG\x92\x02\x92\x02\x8e\x02更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。H\x00R\rrefresh_token\x88\x01\x01\x12\x92\x01\n" +
 	"\x05scope\x18\x05 \x01(\tBw\xbaGt\x92\x02q以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。H\x01R\x05scope\x88\x01\x01\x12\\\n" +
 	"\x12refresh_expires_in\x18\x06 \x01(\x03B'\xbaG$\x92\x02!刷新令牌过期时间（秒）H\x02R\x12refresh_expires_in\x88\x01\x01\x12e\n" +
-	"\bid_token\x18\a \x01(\tBD\xbaGA\x92\x02>ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌H\x03R\bid_token\x88\x01\x01B\x10\n" +
+	"\bid_token\x18\a \x01(\tBD\xbaGA\x92\x02>ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌H\x03R\bid_token\x88\x01\x01\x12'\n" +
+	"\fmfa_required\x18\b \x01(\bH\x04R\fmfa_required\x88\x01\x01\x12/\n" +
+	"\x10mfa_operation_id\x18\t \x01(\tH\x05R\x10mfa_operation_id\x88\x01\x01B\x10\n" +
 	"\x0e_refresh_tokenB\b\n" +
 	"\x06_scopeB\x15\n" +
 	"\x13_refresh_expires_inB\v\n" +
-	"\t_id_token\"\x97\x01\n" +
+	"\t_id_tokenB\x0f\n" +
+	"\r_mfa_requiredB\x13\n" +
+	"\x11_mfa_operation_id\"\x97\x01\n" +
 	"\rLogoutRequest\x12'\n" +
 	"\auser_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId\x12]\n" +
 	"\vclient_type\x18\x02 \x01(\x0e2%.authentication.service.v1.ClientTypeB\x15\xbaG\x12\x92\x02\x0f客户端类型R\n" +

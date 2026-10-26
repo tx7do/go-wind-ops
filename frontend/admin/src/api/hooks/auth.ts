@@ -8,6 +8,7 @@ import {
   type authenticationservicev1_GenerateCaptchaResponse,
   type authenticationservicev1_LoginRequest,
   type authenticationservicev1_LoginResponse,
+  type authenticationservicev1_MfaSetupStartResponse,
 } from '@/api/generated/admin/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
@@ -67,6 +68,40 @@ export const verifyMfaMutation = queryClient.getMutationCache().build(queryClien
   },
   retry: 0,
 });
+
+// ------------------------------
+// MFA(TOTP) 绑定管理（Mutation）
+// ------------------------------
+export function useMfaSetupStart(
+  options?: UseMutationOptions<
+    authenticationservicev1_MfaSetupStartResponse,
+    Error,
+    Record<never, never>
+  >,
+) {
+  return useMutation({
+    mutationFn: () => apiClient.mfaService.MfaSetupStart({}),
+    ...options,
+  });
+}
+
+export function useMfaSetupConfirm(
+  options?: UseMutationOptions<Record<never, never>, Error, { code: string }>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.mfaService.MfaSetupConfirm(req),
+    ...options,
+  });
+}
+
+export function useMfaDisable(
+  options?: UseMutationOptions<Record<never, never>, Error, { code: string }>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.mfaService.MfaDisable(req),
+    ...options,
+  });
+}
 
 // ------------------------------
 // 登出（Mutation）

@@ -5,11 +5,11 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/notificationchannel"
@@ -19,9 +19,9 @@ import (
 )
 
 type NotificationChannelRepo struct {
-	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
-	mapper    *mapper.CopierMapper[opsV1.NotificationChannel, ent.NotificationChannel]
+	entClient  *entCrud.EntClient[*ent.Client]
+	log        *log.Helper
+	mapper     *mapper.CopierMapper[opsV1.NotificationChannel, ent.NotificationChannel]
 	repository *entCrud.Repository[
 		ent.NotificationChannelQuery, ent.NotificationChannelSelect,
 		ent.NotificationChannelCreate, ent.NotificationChannelCreateBulk,
@@ -109,17 +109,39 @@ func (r *NotificationChannelRepo) Create(ctx context.Context, req *opsV1.CreateN
 		SetName(req.Data.GetName()).
 		SetType(notificationchannel.Type(req.Data.GetType().String())).
 		SetEnabled(req.Data.GetEnabled())
-	if req.Data.WebhookUrl != nil { builder.SetWebhookURL(req.Data.GetWebhookUrl()) }
-	if req.Data.WebhookSecret != nil { builder.SetWebhookSecret(req.Data.GetWebhookSecret()) }
-	if req.Data.WebhookSignStyle != nil { builder.SetWebhookSignStyle(notificationchannel.WebhookSignStyle(req.Data.GetWebhookSignStyle())) }
-	if req.Data.SmtpHost != nil { builder.SetSMTPHost(req.Data.GetSmtpHost()) }
-	if req.Data.SmtpPort != nil { builder.SetSMTPPort(int(req.Data.GetSmtpPort())) }
-	if req.Data.SmtpUsername != nil { builder.SetSMTPUsername(req.Data.GetSmtpUsername()) }
-	if req.Data.SmtpPassword != nil { builder.SetSMTPPassword(req.Data.GetSmtpPassword()) }
-	if req.Data.SmtpFrom != nil { builder.SetSMTPFrom(req.Data.GetSmtpFrom()) }
-	if req.Data.EmailTo != nil { builder.SetEmailTo(req.Data.GetEmailTo()) }
-	if req.Data.Description != nil { builder.SetDescription(req.Data.GetDescription()) }
-	if operatorID > 0 { builder.SetCreatedBy(operatorID) }
+	if req.Data.WebhookUrl != nil {
+		builder.SetWebhookURL(req.Data.GetWebhookUrl())
+	}
+	if req.Data.WebhookSecret != nil {
+		builder.SetWebhookSecret(req.Data.GetWebhookSecret())
+	}
+	if req.Data.WebhookSignStyle != nil {
+		builder.SetWebhookSignStyle(notificationchannel.WebhookSignStyle(req.Data.GetWebhookSignStyle()))
+	}
+	if req.Data.SmtpHost != nil {
+		builder.SetSMTPHost(req.Data.GetSmtpHost())
+	}
+	if req.Data.SmtpPort != nil {
+		builder.SetSMTPPort(int(req.Data.GetSmtpPort()))
+	}
+	if req.Data.SmtpUsername != nil {
+		builder.SetSMTPUsername(req.Data.GetSmtpUsername())
+	}
+	if req.Data.SmtpPassword != nil {
+		builder.SetSMTPPassword(req.Data.GetSmtpPassword())
+	}
+	if req.Data.SmtpFrom != nil {
+		builder.SetSMTPFrom(req.Data.GetSmtpFrom())
+	}
+	if req.Data.EmailTo != nil {
+		builder.SetEmailTo(req.Data.GetEmailTo())
+	}
+	if req.Data.Description != nil {
+		builder.SetDescription(req.Data.GetDescription())
+	}
+	if operatorID > 0 {
+		builder.SetCreatedBy(operatorID)
+	}
 
 	t, err := builder.Save(ctx)
 	if err != nil {
@@ -149,7 +171,9 @@ func (r *NotificationChannelRepo) Update(ctx context.Context, req *opsV1.UpdateN
 			if req.Data.WebhookSignStyle != nil {
 				builder.SetWebhookSignStyle(notificationchannel.WebhookSignStyle(req.Data.GetWebhookSignStyle()))
 			}
-			if req.Data.SmtpPort != nil { builder.SetSMTPPort(int(req.Data.GetSmtpPort())) }
+			if req.Data.SmtpPort != nil {
+				builder.SetSMTPPort(int(req.Data.GetSmtpPort()))
+			}
 			if req.Data.SmtpPassword != nil && *req.Data.SmtpPassword != "" {
 				builder.SetSMTPPassword(req.Data.GetSmtpPassword())
 			}
@@ -160,11 +184,15 @@ func (r *NotificationChannelRepo) Update(ctx context.Context, req *opsV1.UpdateN
 }
 
 func (r *NotificationChannelRepo) Delete(ctx context.Context, req *opsV1.DeleteNotificationChannelRequest) error {
-	if req == nil { return opsV1.ErrorBadRequest("invalid parameter") }
+	if req == nil {
+		return opsV1.ErrorBadRequest("invalid parameter")
+	}
 	del := r.entClient.Client().NotificationChannel.Delete()
 	del.Where(notificationchannel.IDEQ(req.GetId()))
 	if _, err := del.Exec(ctx); err != nil {
-		if ent.IsNotFound(err) { return opsV1.ErrorNotFound("not found") }
+		if ent.IsNotFound(err) {
+			return opsV1.ErrorNotFound("not found")
+		}
 		return opsV1.ErrorInternalServerError("delete failed")
 	}
 	return nil

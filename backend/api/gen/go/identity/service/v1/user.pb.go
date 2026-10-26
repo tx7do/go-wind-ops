@@ -182,6 +182,9 @@ type User struct {
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`               // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`               // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`               // 删除时间
+	// MFA(TOTP)二步验证状态(绑定管理用;密钥本体不外发——MfaSetupStart 响应
+	// 仅在绑定流程中返回一次,此后只读此布尔)
+	MfaEnabled    *bool `protobuf:"varint,88,opt,name=mfa_enabled,json=mfaEnabled,proto3,oneof" json:"mfa_enabled,omitempty"` // 是否已启用 MFA
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -508,6 +511,13 @@ func (x *User) GetDeletedAt() *timestamppb.Timestamp {
 		return x.DeletedAt
 	}
 	return nil
+}
+
+func (x *User) GetMfaEnabled() bool {
+	if x != nil && x.MfaEnabled != nil {
+		return *x.MfaEnabled
+	}
+	return false
 }
 
 // 获取用户列表 - 答复
@@ -2034,7 +2044,7 @@ var File_identity_service_v1_user_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1epagination/v1/pagination.proto\"\x9e\x18\n" +
+	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1epagination/v1/pagination.proto\"\xfc\x18\n" +
 	"\x04User\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x00R\x02id\x88\x01\x01\x120\n" +
 	"\ttenant_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x128\n" +
@@ -2092,7 +2102,9 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H!R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\"R\tdeletedAt\x88\x01\x01\"*\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\"R\tdeletedAt\x88\x01\x01\x12L\n" +
+	"\vmfa_enabled\x18X \x01(\bB&\xbaG#\x92\x02 是否已启用 MFA 二步验证H#R\n" +
+	"mfaEnabled\x88\x01\x01\"*\n" +
 	"\x06Gender\x12\n" +
 	"\n" +
 	"\x06SECRET\x10\x00\x12\b\n" +
@@ -2149,7 +2161,8 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"Y\n" +
+	"\v_deleted_atB\x0e\n" +
+	"\f_mfa_enabled\"Y\n" +
 	"\x10ListUserResponse\x12/\n" +
 	"\x05items\x18\x01 \x03(\v2\x19.identity.service.v1.UserR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"\xfe\x01\n" +

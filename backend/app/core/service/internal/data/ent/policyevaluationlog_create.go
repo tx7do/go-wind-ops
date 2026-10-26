@@ -208,6 +208,20 @@ func (_c *PolicyEvaluationLogCreate) SetNillableLogHash(v *string) *PolicyEvalua
 	return _c
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_c *PolicyEvaluationLogCreate) SetPrevLogHash(v string) *PolicyEvaluationLogCreate {
+	_c.mutation.SetPrevLogHash(v)
+	return _c
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_c *PolicyEvaluationLogCreate) SetNillablePrevLogHash(v *string) *PolicyEvaluationLogCreate {
+	if v != nil {
+		_c.SetPrevLogHash(*v)
+	}
+	return _c
+}
+
 // SetSignature sets the "signature" field.
 func (_c *PolicyEvaluationLogCreate) SetSignature(v []byte) *PolicyEvaluationLogCreate {
 	_c.mutation.SetSignature(v)
@@ -379,6 +393,10 @@ func (_c *PolicyEvaluationLogCreate) createSpec() (*PolicyEvaluationLog, *sqlgra
 	if value, ok := _c.mutation.LogHash(); ok {
 		_spec.SetField(policyevaluationlog.FieldLogHash, field.TypeString, value)
 		_node.LogHash = &value
+	}
+	if value, ok := _c.mutation.PrevLogHash(); ok {
+		_spec.SetField(policyevaluationlog.FieldPrevLogHash, field.TypeString, value)
+		_node.PrevLogHash = value
 	}
 	if value, ok := _c.mutation.Signature(); ok {
 		_spec.SetField(policyevaluationlog.FieldSignature, field.TypeBytes, value)
@@ -667,6 +685,24 @@ func (u *PolicyEvaluationLogUpsert) UpdateLogHash() *PolicyEvaluationLogUpsert {
 // ClearLogHash clears the value of the "log_hash" field.
 func (u *PolicyEvaluationLogUpsert) ClearLogHash() *PolicyEvaluationLogUpsert {
 	u.SetNull(policyevaluationlog.FieldLogHash)
+	return u
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsert) SetPrevLogHash(v string) *PolicyEvaluationLogUpsert {
+	u.Set(policyevaluationlog.FieldPrevLogHash, v)
+	return u
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PolicyEvaluationLogUpsert) UpdatePrevLogHash() *PolicyEvaluationLogUpsert {
+	u.SetExcluded(policyevaluationlog.FieldPrevLogHash)
+	return u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsert) ClearPrevLogHash() *PolicyEvaluationLogUpsert {
+	u.SetNull(policyevaluationlog.FieldPrevLogHash)
 	return u
 }
 
@@ -1012,6 +1048,27 @@ func (u *PolicyEvaluationLogUpsertOne) UpdateLogHash() *PolicyEvaluationLogUpser
 func (u *PolicyEvaluationLogUpsertOne) ClearLogHash() *PolicyEvaluationLogUpsertOne {
 	return u.Update(func(s *PolicyEvaluationLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsertOne) SetPrevLogHash(v string) *PolicyEvaluationLogUpsertOne {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PolicyEvaluationLogUpsertOne) UpdatePrevLogHash() *PolicyEvaluationLogUpsertOne {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsertOne) ClearPrevLogHash() *PolicyEvaluationLogUpsertOne {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 
@@ -1526,6 +1583,27 @@ func (u *PolicyEvaluationLogUpsertBulk) UpdateLogHash() *PolicyEvaluationLogUpse
 func (u *PolicyEvaluationLogUpsertBulk) ClearLogHash() *PolicyEvaluationLogUpsertBulk {
 	return u.Update(func(s *PolicyEvaluationLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsertBulk) SetPrevLogHash(v string) *PolicyEvaluationLogUpsertBulk {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *PolicyEvaluationLogUpsertBulk) UpdatePrevLogHash() *PolicyEvaluationLogUpsertBulk {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *PolicyEvaluationLogUpsertBulk) ClearPrevLogHash() *PolicyEvaluationLogUpsertBulk {
+	return u.Update(func(s *PolicyEvaluationLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 

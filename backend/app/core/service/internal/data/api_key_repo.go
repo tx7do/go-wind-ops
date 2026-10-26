@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
@@ -55,6 +55,14 @@ func (r *ApiKeyRepo) toDTO(e *ent.ApiKey) *opsV1.ApiKey {
 			status = opsV1.ApiKey_DISABLED
 		}
 		dto.Status = &status
+	}
+	// 作用域:库存枚举值名,按 proto 枚举名转回;未知值跳过并告警(脏数据可见)
+	for _, name := range e.Scopes {
+		if v, ok := opsV1.ApiKey_Scope_value[name]; ok && v != 0 {
+			dto.Scopes = append(dto.Scopes, opsV1.ApiKey_Scope(v))
+		} else {
+			r.log.Warnf("api key [%d] has unknown scope %q, skipped", e.ID, name)
+		}
 	}
 	return dto
 }
@@ -111,8 +119,8 @@ func (r *ApiKeyRepo) IsNameTaken(ctx context.Context, name string, excludeID uin
 	return query.Exist(ctx)
 }
 
-// Create 落库(明文由服务层生成,这里只收哈希与前缀)。
-func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, status opsV1.ApiKey_Status, description *string, expiresAt *time.Time, operatorID uint32) (*opsV1.ApiKey, error) {
+// Create 落库(明文由服务层生成,这里只收哈希与前缀;scopes 为 nil 存空=全部)。
+func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, status opsV1.ApiKey_Status, description *string, expiresAt *time.Time, scopes []string, operatorID uint32) (*opsV1.ApiKey, error) {
 	st := apikey.StatusEnabled
 	if status == opsV1.ApiKey_DISABLED {
 		st = apikey.StatusDisabled
@@ -122,6 +130,9 @@ func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, s
 		SetKeyHash(keyHash).
 		SetPrefix(prefix).
 		SetStatus(st)
+	if len(scopes) > 0 {
+		builder.SetScopes(scopes)
+	}
 	if description != nil {
 		builder.SetDescription(*description)
 	}
@@ -138,8 +149,8 @@ func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, s
 	return r.toDTO(e), nil
 }
 
-// Update 状态/描述/过期时间。
-func (r *ApiKeyRepo) Update(ctx context.Context, id uint32, status *opsV1.ApiKey_Status, description *string, expiresAt **time.Time) (*opsV1.ApiKey, error) {
+// Update 状态/描述/过期时间/作用域(scopes 非 nil 时覆盖,可传空切片清空=全部)。
+func (r *ApiKeyRepo) Update(ctx context.Context, id uint32, status *opsV1.ApiKey_Status, description *string, expiresAt **time.Time, scopes *[]string) (*opsV1.ApiKey, error) {
 	builder := r.entClient.Client().ApiKey.UpdateOneID(id)
 	if status != nil {
 		st := apikey.StatusEnabled
@@ -153,6 +164,13 @@ func (r *ApiKeyRepo) Update(ctx context.Context, id uint32, status *opsV1.ApiKey
 	}
 	if expiresAt != nil {
 		builder.SetExpiresAt(**expiresAt)
+	}
+	if scopes != nil {
+		if len(*scopes) == 0 {
+			builder.ClearScopes()
+		} else {
+			builder.SetScopes(*scopes)
+		}
 	}
 	e, err := builder.Save(ctx)
 	if err != nil {

@@ -23,6 +23,7 @@ import (
 type PermissionAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
+	chain     auditChain
 
 	mapper              *mapper.CopierMapper[auditV1.PermissionAuditLog, ent.PermissionAuditLog]
 	actionTypeConverter *mapper.EnumTypeConverter[auditV1.PermissionAuditLog_ActionType, permissionauditlog.Action]
@@ -46,6 +47,8 @@ func NewPermissionAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntCli
 			auditV1.PermissionAuditLog_ActionType_name, auditV1.PermissionAuditLog_ActionType_value,
 		),
 	}
+
+	repo.chain = auditChain{tail: repo.tailHash, log: repo.log, name: "permission_audit_log"}
 
 	repo.init()
 
@@ -137,6 +140,25 @@ func (r *PermissionAuditLogRepo) Get(ctx context.Context, req *auditV1.GetPermis
 	return dto, err
 }
 
+// tailHash 当前链尾 log_hash(空串=无链尾/存量尾行无哈希,链头语义)。
+func (r *PermissionAuditLogRepo) tailHash(ctx context.Context) string {
+	tail, err := r.entClient.Client().PermissionAuditLog.Query().
+		Order(ent.Desc(permissionauditlog.FieldID)).
+		Limit(1).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ""
+		}
+		r.log.Errorf("audit chain [permission_audit_log] read tail failed: %s", err.Error())
+		return ""
+	}
+	if tail.LogHash == nil {
+		return ""
+	}
+	return *tail.LogHash
+}
+
 func (r *PermissionAuditLogRepo) Create(ctx context.Context, req *auditV1.CreatePermissionAuditLogRequest) error {
 	if req == nil || req.Data == nil {
 		return auditV1.ErrorBadRequest("invalid parameter")
@@ -157,7 +179,9 @@ func (r *PermissionAuditLogRepo) Create(ctx context.Context, req *auditV1.Create
 		SetSignature(req.Data.Signature).
 		SetCreatedAt(time.Now())
 
-	err := builder.Exec(ctx)
+	err := r.chain.execChained(ctx,
+		func(prev string) { builder.SetPrevLogHash(prev) },
+		func() error { return builder.Exec(ctx) })
 	if err != nil {
 		r.log.Errorf("insert permission audit log failed: %s", err.Error())
 		return auditV1.ErrorInternalServerError("insert permission audit log failed")

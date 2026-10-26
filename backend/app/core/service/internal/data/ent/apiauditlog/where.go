@@ -174,6 +174,11 @@ func LogHash(v string) predicate.ApiAuditLog {
 	return predicate.ApiAuditLog(sql.FieldEQ(FieldLogHash, v))
 }
 
+// PrevLogHash applies equality check predicate on the "prev_log_hash" field. It's identical to PrevLogHashEQ.
+func PrevLogHash(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldEQ(FieldPrevLogHash, v))
+}
+
 // Signature applies equality check predicate on the "signature" field. It's identical to SignatureEQ.
 func Signature(v []byte) predicate.ApiAuditLog {
 	return predicate.ApiAuditLog(sql.FieldEQ(FieldSignature, v))
@@ -1817,6 +1822,81 @@ func LogHashEqualFold(v string) predicate.ApiAuditLog {
 // LogHashContainsFold applies the ContainsFold predicate on the "log_hash" field.
 func LogHashContainsFold(v string) predicate.ApiAuditLog {
 	return predicate.ApiAuditLog(sql.FieldContainsFold(FieldLogHash, v))
+}
+
+// PrevLogHashEQ applies the EQ predicate on the "prev_log_hash" field.
+func PrevLogHashEQ(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldEQ(FieldPrevLogHash, v))
+}
+
+// PrevLogHashNEQ applies the NEQ predicate on the "prev_log_hash" field.
+func PrevLogHashNEQ(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldNEQ(FieldPrevLogHash, v))
+}
+
+// PrevLogHashIn applies the In predicate on the "prev_log_hash" field.
+func PrevLogHashIn(vs ...string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldIn(FieldPrevLogHash, vs...))
+}
+
+// PrevLogHashNotIn applies the NotIn predicate on the "prev_log_hash" field.
+func PrevLogHashNotIn(vs ...string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldNotIn(FieldPrevLogHash, vs...))
+}
+
+// PrevLogHashGT applies the GT predicate on the "prev_log_hash" field.
+func PrevLogHashGT(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldGT(FieldPrevLogHash, v))
+}
+
+// PrevLogHashGTE applies the GTE predicate on the "prev_log_hash" field.
+func PrevLogHashGTE(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldGTE(FieldPrevLogHash, v))
+}
+
+// PrevLogHashLT applies the LT predicate on the "prev_log_hash" field.
+func PrevLogHashLT(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldLT(FieldPrevLogHash, v))
+}
+
+// PrevLogHashLTE applies the LTE predicate on the "prev_log_hash" field.
+func PrevLogHashLTE(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldLTE(FieldPrevLogHash, v))
+}
+
+// PrevLogHashContains applies the Contains predicate on the "prev_log_hash" field.
+func PrevLogHashContains(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldContains(FieldPrevLogHash, v))
+}
+
+// PrevLogHashHasPrefix applies the HasPrefix predicate on the "prev_log_hash" field.
+func PrevLogHashHasPrefix(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldHasPrefix(FieldPrevLogHash, v))
+}
+
+// PrevLogHashHasSuffix applies the HasSuffix predicate on the "prev_log_hash" field.
+func PrevLogHashHasSuffix(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldHasSuffix(FieldPrevLogHash, v))
+}
+
+// PrevLogHashIsNil applies the IsNil predicate on the "prev_log_hash" field.
+func PrevLogHashIsNil() predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldIsNull(FieldPrevLogHash))
+}
+
+// PrevLogHashNotNil applies the NotNil predicate on the "prev_log_hash" field.
+func PrevLogHashNotNil() predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldNotNull(FieldPrevLogHash))
+}
+
+// PrevLogHashEqualFold applies the EqualFold predicate on the "prev_log_hash" field.
+func PrevLogHashEqualFold(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldEqualFold(FieldPrevLogHash, v))
+}
+
+// PrevLogHashContainsFold applies the ContainsFold predicate on the "prev_log_hash" field.
+func PrevLogHashContainsFold(v string) predicate.ApiAuditLog {
+	return predicate.ApiAuditLog(sql.FieldContainsFold(FieldPrevLogHash, v))
 }
 
 // SignatureEQ applies the EQ predicate on the "signature" field.

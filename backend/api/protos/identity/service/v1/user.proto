@@ -242,6 +242,13 @@ message User {
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+
+  // MFA(TOTP)二步验证状态(绑定管理用;密钥本体不外发——MfaSetupStart 响应
+  // 仅在绑定流程中返回一次,此后只读此布尔)
+  optional bool mfa_enabled = 88 [
+    json_name = "mfaEnabled",
+    (gnostic.openapi.v3.property) = {description: "是否已启用 MFA 二步验证"}
+  ]; // 是否已启用 MFA
 }
 
 // 获取用户列表 - 答复

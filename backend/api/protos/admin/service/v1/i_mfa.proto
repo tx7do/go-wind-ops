@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "authentication/service/v1/authentication.proto";
+import "authentication/service/v1/mfa.proto";
+
+// MFA(TOTP)二步验证管理
+service MfaService {
+  // 凭密码授权签发的一次性挑战令牌 + TOTP 验证码换正式令牌(免鉴权,登录流程第二步)
+  rpc VerifyMFAChallenge (authentication.service.v1.VerifyMFAChallengeRequest) returns (authentication.service.v1.LoginResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa/verify"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
+  // 发起绑定(鉴权;生成 TOTP 密钥与 otpauth URI,须 Confirm 激活)
+  rpc MfaSetupStart (authentication.service.v1.MfaSetupStartRequest) returns (authentication.service.v1.MfaSetupStartResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa/setup:start"
+      body: "*"
+    };
+  }
+
+  // 确认绑定(鉴权;验证码通过后启用)
+  rpc MfaSetupConfirm (authentication.service.v1.MfaSetupConfirmRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa/setup:confirm"
+      body: "*"
+    };
+  }
+
+  // 解绑(鉴权;验证码通过后清除)
+  rpc MfaDisable (authentication.service.v1.MfaDisableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa:disable"
+      body: "*"
+    };
+  }
+}

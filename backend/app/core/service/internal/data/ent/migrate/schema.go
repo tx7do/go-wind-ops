@@ -183,6 +183,7 @@ var (
 		{Name: "request_body", Type: field.TypeString, Nullable: true, Comment: "请求体"},
 		{Name: "response", Type: field.TypeString, Nullable: true, Comment: "响应信息"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysAPIAuditLogsTable holds the schema information for the "sys_api_audit_logs" table.
@@ -192,6 +193,11 @@ var (
 		Columns:    SysAPIAuditLogsColumns,
 		PrimaryKey: []*schema.Column{SysAPIAuditLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_api_audit_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[27]},
+			},
 			{
 				Name:    "uidx_sys_api_audit_logs_tenant_request_id",
 				Unique:  true,
@@ -266,6 +272,7 @@ var (
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true, Comment: "最近使用时间(异步回写)"},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间(空=永不过期)"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true, Comment: "允许的 OpenAPI 端点类别(ApiKey.Scope 枚举值名 BUILDS/DISTRIBUTIONS/PIPELINES/WEBHOOKS;空=全部,存量密钥兼容)"},
 	}
 	// OpsAPIKeysTable holds the schema information for the "ops_api_keys" table.
 	OpsAPIKeysTable = &schema.Table{
@@ -839,6 +846,7 @@ var (
 		{Name: "data_category", Type: field.TypeString, Nullable: true, Comment: "数据分类标签"},
 		{Name: "db_user", Type: field.TypeString, Nullable: true, Comment: "数据库用户"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysDataAccessAuditLogsTable holds the schema information for the "sys_data_access_audit_logs" table.
@@ -848,6 +856,11 @@ var (
 		Columns:    SysDataAccessAuditLogsColumns,
 		PrimaryKey: []*schema.Column{SysDataAccessAuditLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_data_access_audit_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[26]},
+			},
 			{
 				Name:    "dataaccessauditlog_user_id",
 				Unique:  false,
@@ -1317,6 +1330,7 @@ var (
 		{Name: "risk_level", Type: field.TypeEnum, Nullable: true, Comment: "风险等级（高风险需实时告警）", Enums: []string{"LOW", "MEDIUM", "HIGH"}},
 		{Name: "risk_factors", Type: field.TypeJSON, Nullable: true, Comment: "风险因素（ISO 27001标准，如：异地登录/新设备/密码尝试次数过多）"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysLoginAuditLogsTable holds the schema information for the "sys_login_audit_logs" table.
@@ -1326,6 +1340,11 @@ var (
 		Columns:    SysLoginAuditLogsColumns,
 		PrimaryKey: []*schema.Column{SysLoginAuditLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_login_audit_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[20]},
+			},
 			{
 				Name:    "loginauditlog_user_id",
 				Unique:  false,
@@ -2069,6 +2088,7 @@ var (
 		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
 		{Name: "device_info", Type: field.TypeJSON, Nullable: true, Comment: "设备信息"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysOperationAuditLogsTable holds the schema information for the "sys_operation_audit_logs" table.
@@ -2078,6 +2098,11 @@ var (
 		Columns:    SysOperationAuditLogsColumns,
 		PrimaryKey: []*schema.Column{SysOperationAuditLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_operation_audit_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[19]},
+			},
 			{
 				Name:    "operationauditlog_user_id",
 				Unique:  false,
@@ -2387,6 +2412,7 @@ var (
 		{Name: "request_id", Type: field.TypeString, Comment: "关联全局请求ID"},
 		{Name: "reason", Type: field.TypeString, Comment: "变更原因"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysPermissionAuditLogsTable holds the schema information for the "sys_permission_audit_logs" table.
@@ -2396,6 +2422,11 @@ var (
 		Columns:    SysPermissionAuditLogsColumns,
 		PrimaryKey: []*schema.Column{SysPermissionAuditLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_permission_audit_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[13]},
+			},
 			{
 				Name:    "idx_permission_audit_tenant_created_at",
 				Unique:  false,
@@ -2618,6 +2649,7 @@ var (
 		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
 		{Name: "evaluation_context", Type: field.TypeString, Nullable: true, Comment: "决策上下文快照"},
 		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "prev_log_hash", Type: field.TypeString, Nullable: true, Comment: "审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)"},
 		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
 	}
 	// SysPolicyEvaluationLogsTable holds the schema information for the "sys_policy_evaluation_logs" table.
@@ -2627,6 +2659,11 @@ var (
 		Columns:    SysPolicyEvaluationLogsColumns,
 		PrimaryKey: []*schema.Column{SysPolicyEvaluationLogsColumns[0]},
 		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_policy_evaluation_logs_prev_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[16]},
+			},
 			{
 				Name:    "idx_policy_eval_tenant_created_at",
 				Unique:  false,
@@ -3372,6 +3409,8 @@ var (
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "用户名"},
+		{Name: "mfa_enabled", Type: field.TypeBool, Comment: "已启用 MFA(TOTP)二步验证:登录密码授权后须凭验证码换正式令牌", Default: false},
+		{Name: "mfa_secret", Type: field.TypeString, Nullable: true, Comment: "TOTP Base32 密钥(Sensitive 不落日志;绑定 Confirm 前为待激活态)"},
 		{Name: "nickname", Type: field.TypeString, Nullable: true, Comment: "昵称"},
 		{Name: "realname", Type: field.TypeString, Nullable: true, Comment: "真实名字"},
 		{Name: "email", Type: field.TypeString, Nullable: true, Size: 320, Comment: "电子邮箱"},
@@ -3402,22 +3441,22 @@ var (
 			{
 				Name:    "idx_sys_user_tenant_email",
 				Unique:  true,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[12]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[14]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_mobile",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[13]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[15]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_last_login_at",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[20]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[22]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_last_login_ip",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[21]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[23]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_created_by",

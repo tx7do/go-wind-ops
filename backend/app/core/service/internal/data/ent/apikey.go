@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
 	"strings"
@@ -45,7 +46,9 @@ type ApiKey struct {
 	// 过期时间(空=永不过期)
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	// 描述
-	Description  *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
+	// 允许的 OpenAPI 端点类别(ApiKey.Scope 枚举值名 BUILDS/DISTRIBUTIONS/PIPELINES/WEBHOOKS;空=全部,存量密钥兼容)
+	Scopes       []string `json:"scopes,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -54,6 +57,8 @@ func (*ApiKey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case apikey.FieldScopes:
+			values[i] = new([]byte)
 		case apikey.FieldID, apikey.FieldTenantID, apikey.FieldCreatedBy, apikey.FieldUpdatedBy, apikey.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
 		case apikey.FieldName, apikey.FieldKeyHash, apikey.FieldPrefix, apikey.FieldStatus, apikey.FieldDescription:
@@ -176,6 +181,14 @@ func (_m *ApiKey) assignValues(columns []string, values []any) error {
 				_m.Description = new(string)
 				*_m.Description = value.String
 			}
+		case apikey.FieldScopes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field scopes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Scopes); err != nil {
+					return fmt.Errorf("unmarshal field scopes: %w", err)
+				}
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -274,6 +287,9 @@ func (_m *ApiKey) String() string {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("scopes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Scopes))
 	builder.WriteByte(')')
 	return builder.String()
 }

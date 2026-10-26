@@ -341,6 +341,10 @@ func (m *User) validate(all bool) error {
 
 	}
 
+	if m.MfaEnabled != nil {
+		// no validation rules for MfaEnabled
+	}
+
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}

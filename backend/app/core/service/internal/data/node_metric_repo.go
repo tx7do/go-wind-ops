@@ -90,8 +90,8 @@ func (r *NodeMetricRepo) CleanupOlderThan(ctx context.Context, before time.Time)
 	return n, err
 }
 
-func f64Ptr(v float64) *float64                  { return &v }
-func u64Ptr(v uint64) *uint64                    { return &v }
+func f64Ptr(v float64) *float64 { return &v }
+func u64Ptr(v uint64) *uint64   { return &v }
 func derefF(v *float64) float64 {
 	if v == nil {
 		return 0

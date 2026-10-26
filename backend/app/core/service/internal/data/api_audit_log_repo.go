@@ -28,6 +28,7 @@ import (
 type ApiAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
+	chain     auditChain
 
 	mapper *mapper.CopierMapper[auditV1.ApiAuditLog, ent.ApiAuditLog]
 
@@ -47,6 +48,8 @@ func NewApiAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[auditV1.ApiAuditLog, ent.ApiAuditLog](),
 	}
+
+	repo.chain = auditChain{tail: repo.tailHash, log: repo.log, name: "api_audit_log"}
 
 	repo.init()
 
@@ -148,6 +151,25 @@ func (r *ApiAuditLogRepo) Get(ctx context.Context, req *auditV1.GetApiAuditLogRe
 	return dto, err
 }
 
+// tailHash 当前链尾 log_hash(空串=无链尾/存量尾行无哈希,链头语义)。
+func (r *ApiAuditLogRepo) tailHash(ctx context.Context) string {
+	tail, err := r.entClient.Client().ApiAuditLog.Query().
+		Order(ent.Desc(apiauditlog.FieldID)).
+		Limit(1).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ""
+		}
+		r.log.Errorf("audit chain [api_audit_log] read tail failed: %s", err.Error())
+		return ""
+	}
+	if tail.LogHash == nil {
+		return ""
+	}
+	return *tail.LogHash
+}
+
 func (r *ApiAuditLogRepo) Create(ctx context.Context, req *auditV1.CreateApiAuditLogRequest) error {
 	if req == nil || req.Data == nil {
 		return auditV1.ErrorBadRequest("invalid parameter")
@@ -182,7 +204,9 @@ func (r *ApiAuditLogRepo) Create(ctx context.Context, req *auditV1.CreateApiAudi
 		SetSignature(req.Data.Signature).
 		SetCreatedAt(time.Now())
 
-	err := builder.Exec(ctx)
+	err := r.chain.execChained(ctx,
+		func(prev string) { builder.SetPrevLogHash(prev) },
+		func() error { return builder.Exec(ctx) })
 	if err != nil {
 		r.log.Errorf("insert api audit log failed: %s", err.Error())
 		return auditV1.ErrorInternalServerError("insert api audit log failed")

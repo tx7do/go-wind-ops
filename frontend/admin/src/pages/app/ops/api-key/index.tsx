@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { App, Button, Descriptions, Input, Modal, Popconfirm, Space, Tag, Typography } from 'antd';
+import { App, Button, Descriptions, Input, Modal, Popconfirm, Space, Tag, Tooltip, Typography } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -73,6 +73,30 @@ const ApiKeyManagement = () => {
       hideInSearch: true,
       render: (_, r) =>
         r.status === 'DISABLED' ? <Tag color="error">{t('statusDisabled')}</Tag> : <Tag color="success">{t('statusEnabled')}</Tag>,
+    },
+    {
+      title: t('scopes'),
+      dataIndex: 'scopes',
+      width: 180,
+      hideInSearch: true,
+      render: (_, r) => {
+        const scopes = r.scopes ?? [];
+        if (scopes.length === 0 || scopes.includes('ALL')) {
+          return <Tag color="blue">{t('scopeAll')}</Tag>;
+        }
+        const label = (v: string) =>
+          t(`scope${v.charAt(0)}${v.slice(1).toLowerCase()}`);
+        return (
+          <Tooltip title={scopes.map(label).join('、')}>
+            <span>
+              {scopes.slice(0, 2).map((v) => (
+                <Tag key={v}>{label(v)}</Tag>
+              ))}
+              {scopes.length > 2 && <Tag>+{scopes.length - 2}</Tag>}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     { title: t('description'), dataIndex: 'description', ellipsis: true, hideInSearch: true },
     { title: t('lastUsedAt'), dataIndex: 'lastUsedAt', width: 165, hideInSearch: true, render: fmtTime },
@@ -161,7 +185,7 @@ const ApiKeyManagement = () => {
             ]}
             size="middle"
             bordered
-            scroll={{ y: tableScrollY, x: 1000 }}
+            scroll={{ y: tableScrollY, x: 1180 }}
           />
         </div>
       </ContentContainer>

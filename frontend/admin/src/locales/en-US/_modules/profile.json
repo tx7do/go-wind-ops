@@ -66,5 +66,20 @@
     "saveFailed": "Save failed",
     "transactionalNote": "Transactional emails such as verification codes bypass preference settings and are unaffected by this page."
   },
-  "passwordChangedReLogin": "Password changed, please sign in again"
+  "passwordChangedReLogin": "Password changed, please sign in again",
+  "mfaTitle": "Two-Factor Authentication (TOTP)",
+  "mfaEnabled": "Enabled",
+  "mfaNotEnabled": "Not enabled",
+  "mfaIntro": "Once enabled, signing in requires a 6-digit code from your authenticator app after the password check, adding a second lock to your account.",
+  "mfaSetupStart": "Enable 2FA",
+  "mfaScanHint": "Scan the QR code with an authenticator app (Google Authenticator/1Password, etc.) or enter the secret manually, then type the 6-digit code to confirm binding.",
+  "mfaSecretLabel": "Secret (manual entry if scanning fails)",
+  "mfaCodePlaceholder": "6-digit code",
+  "mfaConfirmBind": "Confirm binding",
+  "mfaCancelBind": "Cancel",
+  "mfaDisableBtn": "Disable 2FA",
+  "mfaEnabledSuccess": "Two-factor authentication enabled",
+  "mfaDisabledSuccess": "Two-factor authentication disabled",
+  "mfaSetupStartFailed": "Failed to start enrollment",
+  "mfaCodeInvalid": "Invalid or expired code"
 }

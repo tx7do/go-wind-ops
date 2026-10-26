@@ -72,6 +72,8 @@ type ApiAuditLog struct {
 	Response *string `json:"response,omitempty"`
 	// 日志内容哈希（SHA256，十六进制字符串）
 	LogHash *string `json:"log_hash,omitempty"`
+	// 审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)
+	PrevLogHash string `json:"prev_log_hash,omitempty"`
 	// 日志数字签名
 	Signature    *[]byte `json:"signature,omitempty"`
 	selectValues sql.SelectValues
@@ -88,7 +90,7 @@ func (*ApiAuditLog) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case apiauditlog.FieldID, apiauditlog.FieldTenantID, apiauditlog.FieldUserID, apiauditlog.FieldLatencyMs, apiauditlog.FieldStatusCode:
 			values[i] = new(sql.NullInt64)
-		case apiauditlog.FieldUsername, apiauditlog.FieldIPAddress, apiauditlog.FieldReferer, apiauditlog.FieldAppVersion, apiauditlog.FieldHTTPMethod, apiauditlog.FieldPath, apiauditlog.FieldRequestURI, apiauditlog.FieldAPIModule, apiauditlog.FieldAPIOperation, apiauditlog.FieldAPIDescription, apiauditlog.FieldRequestID, apiauditlog.FieldTraceID, apiauditlog.FieldSpanID, apiauditlog.FieldReason, apiauditlog.FieldRequestHeader, apiauditlog.FieldRequestBody, apiauditlog.FieldResponse, apiauditlog.FieldLogHash:
+		case apiauditlog.FieldUsername, apiauditlog.FieldIPAddress, apiauditlog.FieldReferer, apiauditlog.FieldAppVersion, apiauditlog.FieldHTTPMethod, apiauditlog.FieldPath, apiauditlog.FieldRequestURI, apiauditlog.FieldAPIModule, apiauditlog.FieldAPIOperation, apiauditlog.FieldAPIDescription, apiauditlog.FieldRequestID, apiauditlog.FieldTraceID, apiauditlog.FieldSpanID, apiauditlog.FieldReason, apiauditlog.FieldRequestHeader, apiauditlog.FieldRequestBody, apiauditlog.FieldResponse, apiauditlog.FieldLogHash, apiauditlog.FieldPrevLogHash:
 			values[i] = new(sql.NullString)
 		case apiauditlog.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -297,6 +299,12 @@ func (_m *ApiAuditLog) assignValues(columns []string, values []any) error {
 				_m.LogHash = new(string)
 				*_m.LogHash = value.String
 			}
+		case apiauditlog.FieldPrevLogHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field prev_log_hash", values[i])
+			} else if value.Valid {
+				_m.PrevLogHash = value.String
+			}
 		case apiauditlog.FieldSignature:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field signature", values[i])
@@ -464,6 +472,9 @@ func (_m *ApiAuditLog) String() string {
 		builder.WriteString("log_hash=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("prev_log_hash=")
+	builder.WriteString(_m.PrevLogHash)
 	builder.WriteString(", ")
 	if v := _m.Signature; v != nil {
 		builder.WriteString("signature=")

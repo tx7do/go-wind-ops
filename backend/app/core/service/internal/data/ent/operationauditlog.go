@@ -56,6 +56,8 @@ type OperationAuditLog struct {
 	DeviceInfo *auditpb.DeviceInfo `json:"device_info,omitempty"`
 	// 日志内容哈希（SHA256，十六进制字符串）
 	LogHash *string `json:"log_hash,omitempty"`
+	// 审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)
+	PrevLogHash string `json:"prev_log_hash,omitempty"`
 	// 日志数字签名
 	Signature    *[]byte `json:"signature,omitempty"`
 	selectValues sql.SelectValues
@@ -72,7 +74,7 @@ func (*OperationAuditLog) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case operationauditlog.FieldID, operationauditlog.FieldTenantID, operationauditlog.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case operationauditlog.FieldUsername, operationauditlog.FieldResourceType, operationauditlog.FieldResourceID, operationauditlog.FieldAction, operationauditlog.FieldBeforeData, operationauditlog.FieldAfterData, operationauditlog.FieldSensitiveLevel, operationauditlog.FieldRequestID, operationauditlog.FieldTraceID, operationauditlog.FieldFailureReason, operationauditlog.FieldIPAddress, operationauditlog.FieldLogHash:
+		case operationauditlog.FieldUsername, operationauditlog.FieldResourceType, operationauditlog.FieldResourceID, operationauditlog.FieldAction, operationauditlog.FieldBeforeData, operationauditlog.FieldAfterData, operationauditlog.FieldSensitiveLevel, operationauditlog.FieldRequestID, operationauditlog.FieldTraceID, operationauditlog.FieldFailureReason, operationauditlog.FieldIPAddress, operationauditlog.FieldLogHash, operationauditlog.FieldPrevLogHash:
 			values[i] = new(sql.NullString)
 		case operationauditlog.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -225,6 +227,12 @@ func (_m *OperationAuditLog) assignValues(columns []string, values []any) error 
 				_m.LogHash = new(string)
 				*_m.LogHash = value.String
 			}
+		case operationauditlog.FieldPrevLogHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field prev_log_hash", values[i])
+			} else if value.Valid {
+				_m.PrevLogHash = value.String
+			}
 		case operationauditlog.FieldSignature:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field signature", values[i])
@@ -352,6 +360,9 @@ func (_m *OperationAuditLog) String() string {
 		builder.WriteString("log_hash=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("prev_log_hash=")
+	builder.WriteString(_m.PrevLogHash)
 	builder.WriteString(", ")
 	if v := _m.Signature; v != nil {
 		builder.WriteString("signature=")

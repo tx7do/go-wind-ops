@@ -150,6 +150,10 @@ func (ApiAuditLog) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("prev_log_hash").
+			Comment("审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)").
+			Optional(),
+
 		field.Bytes("signature").
 			Comment("日志数字签名").
 			Optional().
@@ -169,6 +173,7 @@ func (ApiAuditLog) Mixin() []ent.Mixin {
 // Indexes 索引定义
 func (ApiAuditLog) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("prev_log_hash").Unique().StorageKey("uidx_sys_api_audit_logs_prev_hash"),
 		// 去重：租户维度下 request_id 唯一，防止重复记录
 		index.Fields("tenant_id", "request_id").
 			Unique().

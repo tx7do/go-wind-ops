@@ -292,6 +292,26 @@ func (_u *PolicyEvaluationLogUpdate) ClearLogHash() *PolicyEvaluationLogUpdate {
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *PolicyEvaluationLogUpdate) SetPrevLogHash(v string) *PolicyEvaluationLogUpdate {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *PolicyEvaluationLogUpdate) SetNillablePrevLogHash(v *string) *PolicyEvaluationLogUpdate {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *PolicyEvaluationLogUpdate) ClearPrevLogHash() *PolicyEvaluationLogUpdate {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *PolicyEvaluationLogUpdate) SetSignature(v []byte) *PolicyEvaluationLogUpdate {
 	_u.mutation.SetSignature(v)
@@ -434,6 +454,12 @@ func (_u *PolicyEvaluationLogUpdate) sqlSave(ctx context.Context) (_node int, er
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(policyevaluationlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(policyevaluationlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(policyevaluationlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(policyevaluationlog.FieldSignature, field.TypeBytes, value)
@@ -727,6 +753,26 @@ func (_u *PolicyEvaluationLogUpdateOne) ClearLogHash() *PolicyEvaluationLogUpdat
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *PolicyEvaluationLogUpdateOne) SetPrevLogHash(v string) *PolicyEvaluationLogUpdateOne {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *PolicyEvaluationLogUpdateOne) SetNillablePrevLogHash(v *string) *PolicyEvaluationLogUpdateOne {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *PolicyEvaluationLogUpdateOne) ClearPrevLogHash() *PolicyEvaluationLogUpdateOne {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *PolicyEvaluationLogUpdateOne) SetSignature(v []byte) *PolicyEvaluationLogUpdateOne {
 	_u.mutation.SetSignature(v)
@@ -899,6 +945,12 @@ func (_u *PolicyEvaluationLogUpdateOne) sqlSave(ctx context.Context) (_node *Pol
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(policyevaluationlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(policyevaluationlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(policyevaluationlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(policyevaluationlog.FieldSignature, field.TypeBytes, value)

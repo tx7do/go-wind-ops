@@ -64,6 +64,8 @@ const (
 	FieldDbUser = "db_user"
 	// FieldLogHash holds the string denoting the log_hash field in the database.
 	FieldLogHash = "log_hash"
+	// FieldPrevLogHash holds the string denoting the prev_log_hash field in the database.
+	FieldPrevLogHash = "prev_log_hash"
 	// FieldSignature holds the string denoting the signature field in the database.
 	FieldSignature = "signature"
 	// Table holds the table name of the dataaccessauditlog in the database.
@@ -98,6 +100,7 @@ var Columns = []string{
 	FieldDataCategory,
 	FieldDbUser,
 	FieldLogHash,
+	FieldPrevLogHash,
 	FieldSignature,
 }
 
@@ -307,4 +310,9 @@ func ByDbUser(opts ...sql.OrderTermOption) OrderOption {
 // ByLogHash orders the results by the log_hash field.
 func ByLogHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLogHash, opts...).ToFunc()
+}
+
+// ByPrevLogHash orders the results by the prev_log_hash field.
+func ByPrevLogHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPrevLogHash, opts...).ToFunc()
 }

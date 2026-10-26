@@ -99,6 +99,16 @@ func Username(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUsername, v))
 }
 
+// MfaEnabled applies equality check predicate on the "mfa_enabled" field. It's identical to MfaEnabledEQ.
+func MfaEnabled(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldMfaEnabled, v))
+}
+
+// MfaSecret applies equality check predicate on the "mfa_secret" field. It's identical to MfaSecretEQ.
+func MfaSecret(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldMfaSecret, v))
+}
+
 // Nickname applies equality check predicate on the "nickname" field. It's identical to NicknameEQ.
 func Nickname(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldNickname, v))
@@ -657,6 +667,91 @@ func UsernameEqualFold(v string) predicate.User {
 // UsernameContainsFold applies the ContainsFold predicate on the "username" field.
 func UsernameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldUsername, v))
+}
+
+// MfaEnabledEQ applies the EQ predicate on the "mfa_enabled" field.
+func MfaEnabledEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldMfaEnabled, v))
+}
+
+// MfaEnabledNEQ applies the NEQ predicate on the "mfa_enabled" field.
+func MfaEnabledNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldMfaEnabled, v))
+}
+
+// MfaSecretEQ applies the EQ predicate on the "mfa_secret" field.
+func MfaSecretEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldMfaSecret, v))
+}
+
+// MfaSecretNEQ applies the NEQ predicate on the "mfa_secret" field.
+func MfaSecretNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldMfaSecret, v))
+}
+
+// MfaSecretIn applies the In predicate on the "mfa_secret" field.
+func MfaSecretIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldMfaSecret, vs...))
+}
+
+// MfaSecretNotIn applies the NotIn predicate on the "mfa_secret" field.
+func MfaSecretNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldMfaSecret, vs...))
+}
+
+// MfaSecretGT applies the GT predicate on the "mfa_secret" field.
+func MfaSecretGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldMfaSecret, v))
+}
+
+// MfaSecretGTE applies the GTE predicate on the "mfa_secret" field.
+func MfaSecretGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldMfaSecret, v))
+}
+
+// MfaSecretLT applies the LT predicate on the "mfa_secret" field.
+func MfaSecretLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldMfaSecret, v))
+}
+
+// MfaSecretLTE applies the LTE predicate on the "mfa_secret" field.
+func MfaSecretLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldMfaSecret, v))
+}
+
+// MfaSecretContains applies the Contains predicate on the "mfa_secret" field.
+func MfaSecretContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldMfaSecret, v))
+}
+
+// MfaSecretHasPrefix applies the HasPrefix predicate on the "mfa_secret" field.
+func MfaSecretHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldMfaSecret, v))
+}
+
+// MfaSecretHasSuffix applies the HasSuffix predicate on the "mfa_secret" field.
+func MfaSecretHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldMfaSecret, v))
+}
+
+// MfaSecretIsNil applies the IsNil predicate on the "mfa_secret" field.
+func MfaSecretIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldMfaSecret))
+}
+
+// MfaSecretNotNil applies the NotNil predicate on the "mfa_secret" field.
+func MfaSecretNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldMfaSecret))
+}
+
+// MfaSecretEqualFold applies the EqualFold predicate on the "mfa_secret" field.
+func MfaSecretEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldMfaSecret, v))
+}
+
+// MfaSecretContainsFold applies the ContainsFold predicate on the "mfa_secret" field.
+func MfaSecretContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldMfaSecret, v))
 }
 
 // NicknameEQ applies the EQ predicate on the "nickname" field.

@@ -50,4 +50,5 @@ service AuthenticationService {
       security: {}
     };
   }
+
 }

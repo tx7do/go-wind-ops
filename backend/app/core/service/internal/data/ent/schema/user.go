@@ -38,6 +38,16 @@ func (User) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Bool("mfa_enabled").
+			Comment("已启用 MFA(TOTP)二步验证:登录密码授权后须凭验证码换正式令牌").
+			Default(false),
+
+		field.String("mfa_secret").
+			Sensitive().
+			Comment("TOTP Base32 密钥(Sensitive 不落日志;绑定 Confirm 前为待激活态)").
+			Optional().
+			Nillable(),
+
 		field.String("nickname").
 			Comment("昵称").
 			Optional().

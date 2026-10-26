@@ -49,6 +49,9 @@ type AuthenticationService struct {
 	// redisClient 用于 OIDC 授权码 state 的暂存（防 CSRF，一次性消费）
 	redisClient *redis.Client
 
+	// mfa MFA 服务(装配层注入):密码授权命中已启用用户时签发挑战令牌
+	mfa *MfaService
+
 	log *log.Helper
 }
 
@@ -74,6 +77,9 @@ func NewAuthenticationService(
 		redisClient:        redisClient,
 	}
 }
+
+// SetMfa 装配层注入 MFA 服务。
+func (s *AuthenticationService) SetMfa(m *MfaService) { s.mfa = m }
 
 // Login 登录
 func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
@@ -274,16 +280,41 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		return nil, authenticationV1.ErrorBadRequest("invalid tenant")
 	}
 
+	// ===== MFA 二步验证闸门:已绑定用户密码通过后不发令牌,改发一次性挑战 =====
+	// 挑战令牌 2 分钟 TTL、与客户端类型绑定;正式令牌由 LoginMfa 凭验证码换取。
+	if user.GetMfaEnabled() {
+		challenge, cerr := s.mfa.CreateMfaChallenge(ctx, user.GetId(), user.GetTenantId(), req.GetClientType())
+		if cerr != nil {
+			s.log.Errorf("create mfa challenge for user [%d] failed: %s", user.GetId(), cerr.Error())
+			return nil, authenticationV1.ErrorInternalServerError("mfa challenge failed")
+		}
+		return &authenticationV1.LoginResponse{
+			MfaRequired:    trans.Ptr(true),
+			MfaOperationId: trans.Ptr(challenge),
+		}, nil
+	}
+
+	return s.IssueLoginTokens(ctx, user, req.GetClientType(), req.ClientId, req.DeviceId)
+}
+
+// issueLoginTokens 密码验证通过(或 MFA 挑战兑现)后的令牌签发公共尾部:
+// 权限解析 → 角色码 → 令牌对生成。登录两条路径共用,保证响应形态一致。
+func (s *AuthenticationService) IssueLoginTokens(
+	ctx context.Context,
+	user *identityV1.User,
+	clientType authenticationV1.ClientType,
+	clientId, deviceId *string,
+) (*authenticationV1.LoginResponse, error) {
 	tokenPayload := &authenticationV1.UserTokenPayload{
 		UserId:   user.GetId(),
 		TenantId: user.TenantId,
 		Username: user.Username,
-		ClientId: req.ClientId,
-		DeviceId: req.DeviceId,
+		ClientId: clientId,
+		DeviceId: deviceId,
 	}
 
 	// 验证权限
-	if err = s.resolveUserAuthority(ctx, user, req.GetClientType(), tokenPayload); err != nil {
+	if err := s.resolveUserAuthority(ctx, user, clientType, tokenPayload); err != nil {
 		return nil, err
 	}
 
@@ -296,7 +327,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 
 	// 生成令牌
-	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, clientType, tokenPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -305,10 +336,11 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		TokenType:        authenticationV1.TokenType_bearer,
 		AccessToken:      accessToken,
 		RefreshToken:     trans.Ptr(refreshToken),
-		ExpiresIn:        int64(s.authenticator.GetAccessTokenExpires(req.GetClientType()).Seconds()),
-		RefreshExpiresIn: trans.Ptr(int64(s.authenticator.GetRefreshTokenExpires(req.GetClientType()).Seconds())),
+		ExpiresIn:        int64(s.authenticator.GetAccessTokenExpires(clientType).Seconds()),
+		RefreshExpiresIn: trans.Ptr(int64(s.authenticator.GetRefreshTokenExpires(clientType).Seconds())),
 	}, nil
 }
+
 
 // doGrantTypeRefreshToken 处理授权类型 - 刷新令牌
 func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {

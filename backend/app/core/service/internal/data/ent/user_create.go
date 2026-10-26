@@ -148,6 +148,34 @@ func (_c *UserCreate) SetNillableUsername(v *string) *UserCreate {
 	return _c
 }
 
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (_c *UserCreate) SetMfaEnabled(v bool) *UserCreate {
+	_c.mutation.SetMfaEnabled(v)
+	return _c
+}
+
+// SetNillableMfaEnabled sets the "mfa_enabled" field if the given value is not nil.
+func (_c *UserCreate) SetNillableMfaEnabled(v *bool) *UserCreate {
+	if v != nil {
+		_c.SetMfaEnabled(*v)
+	}
+	return _c
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (_c *UserCreate) SetMfaSecret(v string) *UserCreate {
+	_c.mutation.SetMfaSecret(v)
+	return _c
+}
+
+// SetNillableMfaSecret sets the "mfa_secret" field if the given value is not nil.
+func (_c *UserCreate) SetNillableMfaSecret(v *string) *UserCreate {
+	if v != nil {
+		_c.SetMfaSecret(*v)
+	}
+	return _c
+}
+
 // SetNickname sets the "nickname" field.
 func (_c *UserCreate) SetNickname(v string) *UserCreate {
 	_c.mutation.SetNickname(v)
@@ -391,6 +419,10 @@ func (_c *UserCreate) defaults() error {
 		v := user.DefaultTenantID
 		_c.mutation.SetTenantID(v)
 	}
+	if _, ok := _c.mutation.MfaEnabled(); !ok {
+		v := user.DefaultMfaEnabled
+		_c.mutation.SetMfaEnabled(v)
+	}
 	if _, ok := _c.mutation.Mobile(); !ok {
 		v := user.DefaultMobile
 		_c.mutation.SetMobile(v)
@@ -424,6 +456,9 @@ func (_c *UserCreate) check() error {
 		if err := user.UsernameValidator(v); err != nil {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.MfaEnabled(); !ok {
+		return &ValidationError{Name: "mfa_enabled", err: errors.New(`ent: missing required field "User.mfa_enabled"`)}
 	}
 	if v, ok := _c.mutation.Email(); ok {
 		if err := user.EmailValidator(v); err != nil {
@@ -528,6 +563,14 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 		_node.Username = &value
+	}
+	if value, ok := _c.mutation.MfaEnabled(); ok {
+		_spec.SetField(user.FieldMfaEnabled, field.TypeBool, value)
+		_node.MfaEnabled = value
+	}
+	if value, ok := _c.mutation.MfaSecret(); ok {
+		_spec.SetField(user.FieldMfaSecret, field.TypeString, value)
+		_node.MfaSecret = &value
 	}
 	if value, ok := _c.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
@@ -760,6 +803,36 @@ func (u *UserUpsert) UpdateRemark() *UserUpsert {
 // ClearRemark clears the value of the "remark" field.
 func (u *UserUpsert) ClearRemark() *UserUpsert {
 	u.SetNull(user.FieldRemark)
+	return u
+}
+
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (u *UserUpsert) SetMfaEnabled(v bool) *UserUpsert {
+	u.Set(user.FieldMfaEnabled, v)
+	return u
+}
+
+// UpdateMfaEnabled sets the "mfa_enabled" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMfaEnabled() *UserUpsert {
+	u.SetExcluded(user.FieldMfaEnabled)
+	return u
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (u *UserUpsert) SetMfaSecret(v string) *UserUpsert {
+	u.Set(user.FieldMfaSecret, v)
+	return u
+}
+
+// UpdateMfaSecret sets the "mfa_secret" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMfaSecret() *UserUpsert {
+	u.SetExcluded(user.FieldMfaSecret)
+	return u
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (u *UserUpsert) ClearMfaSecret() *UserUpsert {
+	u.SetNull(user.FieldMfaSecret)
 	return u
 }
 
@@ -1216,6 +1289,41 @@ func (u *UserUpsertOne) UpdateRemark() *UserUpsertOne {
 func (u *UserUpsertOne) ClearRemark() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearRemark()
+	})
+}
+
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (u *UserUpsertOne) SetMfaEnabled(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaEnabled(v)
+	})
+}
+
+// UpdateMfaEnabled sets the "mfa_enabled" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMfaEnabled() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaEnabled()
+	})
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (u *UserUpsertOne) SetMfaSecret(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaSecret(v)
+	})
+}
+
+// UpdateMfaSecret sets the "mfa_secret" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMfaSecret() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaSecret()
+	})
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (u *UserUpsertOne) ClearMfaSecret() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMfaSecret()
 	})
 }
 
@@ -1880,6 +1988,41 @@ func (u *UserUpsertBulk) UpdateRemark() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearRemark() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearRemark()
+	})
+}
+
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (u *UserUpsertBulk) SetMfaEnabled(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaEnabled(v)
+	})
+}
+
+// UpdateMfaEnabled sets the "mfa_enabled" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMfaEnabled() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaEnabled()
+	})
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (u *UserUpsertBulk) SetMfaSecret(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaSecret(v)
+	})
+}
+
+// UpdateMfaSecret sets the "mfa_secret" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMfaSecret() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaSecret()
+	})
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (u *UserUpsertBulk) ClearMfaSecret() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMfaSecret()
 	})
 }
 

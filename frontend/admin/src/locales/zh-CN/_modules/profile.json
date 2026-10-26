@@ -66,5 +66,20 @@
     "saveFailed": "保存失败",
     "transactionalNote": "验证码等事务性邮件不经偏好层，不受本页配置影响。"
   },
-  "passwordChangedReLogin": "密码已修改，请重新登录"
+  "passwordChangedReLogin": "密码已修改，请重新登录",
+  "mfaTitle": "两步验证（TOTP）",
+  "mfaEnabled": "已启用",
+  "mfaNotEnabled": "未启用",
+  "mfaIntro": "启用后,登录在密码校验通过后还需输入验证器 App 的 6 位动态验证码,为账号加上第二道锁。",
+  "mfaSetupStart": "启用两步验证",
+  "mfaScanHint": "用验证器 App(Google Authenticator/1Password 等)扫码,或手动输入密钥后,填入 App 显示的 6 位验证码完成绑定。",
+  "mfaSecretLabel": "密钥(无法扫码时手动输入)",
+  "mfaCodePlaceholder": "6 位验证码",
+  "mfaConfirmBind": "确认绑定",
+  "mfaCancelBind": "取消",
+  "mfaDisableBtn": "解绑两步验证",
+  "mfaEnabledSuccess": "两步验证已启用",
+  "mfaDisabledSuccess": "两步验证已解绑",
+  "mfaSetupStartFailed": "发起绑定失败",
+  "mfaCodeInvalid": "验证码错误或已过期"
 }

@@ -150,7 +150,7 @@ export function createAuthenticationServiceClient(
 ): AuthenticationService {
   return {
     Login(request) {
-      const path = `app/v1/login`;
+      const path = `/app/v1/login`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -158,7 +158,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     Logout(request) {
-      const path = `app/v1/logout`;
+      const path = `/app/v1/logout`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -166,7 +166,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     RefreshToken(request) {
-      const path = `app/v1/refresh-token`;
+      const path = `/app/v1/refresh-token`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -174,7 +174,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     GetOidcAuthorizeUrl(request) {
-      const path = `app/v1/oidc/authorize-url`;
+      const path = `/app/v1/oidc/authorize-url`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -223,6 +223,11 @@ export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
   expires_in: number | undefined;
   id_token?: string;
+  mfa_operation_id?: string;
+  // MFA(TOTP)二步验证:密码授权命中已绑定用户时,响应不带令牌,改回
+  // mfa_operation_id + 一次性挑战令牌(2 分钟 TTL),凭 MfaService.VerifyMFAChallenge
+  // 换正式令牌(json_name 对齐前端既有读取的字面量)。
+  mfa_required?: boolean;
   refresh_expires_in?: number;
   refresh_token?: string;
   scope?: string;
@@ -244,6 +249,93 @@ export type authenticationservicev1_GetOidcAuthorizeUrlRequest = {
 // OIDC 授权跳转地址 - 响应
 export type authenticationservicev1_GetOidcAuthorizeUrlResponse = {
   authorizeUrl?: string;
+};
+
+// C 端 MFA(TOTP)二步验证管理
+export interface MfaService {
+  // 凭密码授权签发的一次性挑战令牌 + TOTP 验证码换正式令牌(免鉴权,登录流程第二步)
+  VerifyMFAChallenge(
+    request: authenticationservicev1_VerifyMFAChallengeRequest,
+  ): Promise<authenticationservicev1_LoginResponse>;
+  // 发起绑定(鉴权;生成 TOTP 密钥与 otpauth URI,须 Confirm 激活)
+  MfaSetupStart(
+    request: authenticationservicev1_MfaSetupStartRequest,
+  ): Promise<authenticationservicev1_MfaSetupStartResponse>;
+  // 确认绑定(鉴权;验证码通过后启用)
+  MfaSetupConfirm(
+    request: authenticationservicev1_MfaSetupConfirmRequest,
+  ): Promise<wellKnownEmpty>;
+  // 解绑(鉴权;验证码通过后清除)
+  MfaDisable(
+    request: authenticationservicev1_MfaDisableRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createMfaServiceClient(
+  transport: ClientTransport,
+): MfaService {
+  return {
+    VerifyMFAChallenge(request) {
+      const path = `/app/v1/mfa/verify`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'VerifyMFAChallenge',
+      }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    MfaSetupStart(request) {
+      const path = `/app/v1/mfa/setup:start`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'MfaSetupStart',
+      }) as Promise<authenticationservicev1_MfaSetupStartResponse>;
+    },
+    MfaSetupConfirm(request) {
+      const path = `/app/v1/mfa/setup:confirm`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'MfaSetupConfirm',
+      }) as Promise<wellKnownEmpty>;
+    },
+    MfaDisable(request) {
+      const path = `/app/v1/mfa:disable`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'MfaDisable',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
+// 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。
+export type authenticationservicev1_VerifyMFAChallengeRequest = {
+  clientId?: string;
+  deviceId?: string;
+  operationId: string | undefined;
+  totpCode: string | undefined;
+};
+
+// MfaSetupStartRequest 发起 MFA 绑定(鉴权端点,操作者=当前用户)
+export type authenticationservicev1_MfaSetupStartRequest = {
+};
+
+// MfaSetupStartResponse 绑定起点:Base32 密钥与 otpauth URI(扫码/手输)
+export type authenticationservicev1_MfaSetupStartResponse = {
+  otpauthUri: string | undefined;
+  secret: string | undefined;
+};
+
+// MfaSetupConfirmRequest 确认绑定:TOTP 验证码
+export type authenticationservicev1_MfaSetupConfirmRequest = {
+  code: string | undefined;
+};
+
+// MfaDisableRequest 解绑:TOTP 验证码(防误触/劫持解绑)
+export type authenticationservicev1_MfaDisableRequest = {
+  code: string | undefined;
 };
 
 // 用户个人资料服务
@@ -275,7 +367,7 @@ export function createUserProfileServiceClient(
 ): UserProfileService {
   return {
     GetUser(_request) {
-      const path = `app/v1/me`;
+      const path = `/app/v1/me`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'UserProfileService',
@@ -283,7 +375,7 @@ export function createUserProfileServiceClient(
       }) as Promise<identityservicev1_User>;
     },
     UpdateUser(request) {
-      const path = `app/v1/me`;
+      const path = `/app/v1/me`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'PUT', body, {
         service: 'UserProfileService',
@@ -291,7 +383,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ChangePassword(request) {
-      const path = `app/v1/me/password`;
+      const path = `/app/v1/me/password`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -299,7 +391,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     BindContact(request) {
-      const path = `app/v1/me/contact`;
+      const path = `/app/v1/me/contact`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -307,7 +399,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     VerifyContact(request) {
-      const path = `app/v1/me/contact/verify`;
+      const path = `/app/v1/me/contact/verify`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -335,6 +427,9 @@ export type identityservicev1_User = {
   lastLoginIp?: string;
   likeCount?: number;
   lockedUntil?: wellKnownTimestamp;
+  // MFA(TOTP)二步验证状态(绑定管理用;密钥本体不外发——MfaSetupStart 响应
+  // 仅在绑定流程中返回一次,此后只读此布尔)
+  mfaEnabled?: boolean;
   mobile?: string;
   nickname?: string;
   orgUnitId?: number;
@@ -465,6 +560,7 @@ export type identityservicev1_EmailVerification = {
 
 export class ApiClient {
   private _authenticationService?: AuthenticationService;
+  private _mfaService?: MfaService;
   private readonly _transport: ClientTransport;
   private _userProfileService?: UserProfileService;
 
@@ -474,6 +570,10 @@ export class ApiClient {
 
   get authenticationService(): AuthenticationService {
     return this._authenticationService ??= createAuthenticationServiceClient(this._transport);
+  }
+
+  get mfaService(): MfaService {
+    return this._mfaService ??= createMfaServiceClient(this._transport);
   }
 
   get userProfileService(): UserProfileService {

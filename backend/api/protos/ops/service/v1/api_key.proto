@@ -44,6 +44,20 @@ message ApiKey {
     DISABLED = 2; // 禁用
   }
 
+  // 作用域:限定密钥可调用的 OpenAPI 端点类别(嵌套定义避免同包枚举值冲突)。
+  // 密钥 scopes 为空 = 不限制(全部端点,存量密钥兼容语义);ALL 为通配,
+  // 与空等价——给编辑保存一个可显式写回的"全部"表达(repeated 字段
+  // "空数组"与"未携带"在 protojson 下无法区分,故不依赖空数组清空)。
+  enum Scope {
+    API_KEY_SCOPE_UNSPECIFIED = 0; // 未知
+
+    BUILDS = 1;       // 触发构建(/openapi/v1/builds/{id}/trigger)
+    DISTRIBUTIONS = 2; // 触发分发(/openapi/v1/distributions/{id}/trigger)
+    PIPELINES = 3;     // 触发流水线(/openapi/v1/pipelines/{id}/trigger)
+    WEBHOOKS = 4;      // Git webhook(/openapi/v1/webhooks/git/{buildId})
+    ALL = 5;           // 全部端点(通配;与空等价)
+  }
+
   optional uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
@@ -79,6 +93,8 @@ message ApiKey {
     json_name = "tenantId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 归属租户(创建者租户;网关据此把触发的构建/分发/流水线归到租户)
+
+  repeated Scope scopes = 10 [json_name = "scopes"]; // 允许的端点类别(空=全部)
 
   optional google.protobuf.Timestamp created_at = 30 [
     json_name = "createdAt",

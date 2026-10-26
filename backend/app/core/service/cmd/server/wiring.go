@@ -174,6 +174,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 认证与登录策略
 	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient)
+	// MFA(TOTP)二步验证:挑战令牌/绑定管理;换证复用认证服务的令牌签发尾部
+	mfaService := service.NewMfaService(ctx, userRepo, redisClient)
+	authenticationService.SetMfa(mfaService)
+	mfaService.SetLoginTokensIssuer(authenticationService.IssueLoginTokens)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyRepo)
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 
@@ -257,7 +261,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, loginPolicyService, userCredentialService,
 		taskService,
 		dictTypeService, dictEntryService, languageService,
 		tenantService, userService, roleService, positionService, orgUnitService,

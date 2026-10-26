@@ -32,6 +32,10 @@ const (
 	FieldTenantID = "tenant_id"
 	// FieldUsername holds the string denoting the username field in the database.
 	FieldUsername = "username"
+	// FieldMfaEnabled holds the string denoting the mfa_enabled field in the database.
+	FieldMfaEnabled = "mfa_enabled"
+	// FieldMfaSecret holds the string denoting the mfa_secret field in the database.
+	FieldMfaSecret = "mfa_secret"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
 	// FieldRealname holds the string denoting the realname field in the database.
@@ -76,6 +80,8 @@ var Columns = []string{
 	FieldRemark,
 	FieldTenantID,
 	FieldUsername,
+	FieldMfaEnabled,
+	FieldMfaSecret,
 	FieldNickname,
 	FieldRealname,
 	FieldEmail,
@@ -114,6 +120,8 @@ var (
 	DefaultTenantID uint32
 	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
 	UsernameValidator func(string) error
+	// DefaultMfaEnabled holds the default value on creation for the "mfa_enabled" field.
+	DefaultMfaEnabled bool
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
 	// DefaultMobile holds the default value on creation for the "mobile" field.
@@ -242,6 +250,16 @@ func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
 // ByUsername orders the results by the username field.
 func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUsername, opts...).ToFunc()
+}
+
+// ByMfaEnabled orders the results by the mfa_enabled field.
+func ByMfaEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMfaEnabled, opts...).ToFunc()
+}
+
+// ByMfaSecret orders the results by the mfa_secret field.
+func ByMfaSecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMfaSecret, opts...).ToFunc()
 }
 
 // ByNickname orders the results by the nickname field.

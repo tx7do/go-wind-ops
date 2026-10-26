@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -272,6 +273,24 @@ func (_u *ApiKeyUpdate) ClearDescription() *ApiKeyUpdate {
 	return _u
 }
 
+// SetScopes sets the "scopes" field.
+func (_u *ApiKeyUpdate) SetScopes(v []string) *ApiKeyUpdate {
+	_u.mutation.SetScopes(v)
+	return _u
+}
+
+// AppendScopes appends value to the "scopes" field.
+func (_u *ApiKeyUpdate) AppendScopes(v []string) *ApiKeyUpdate {
+	_u.mutation.AppendScopes(v)
+	return _u
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (_u *ApiKeyUpdate) ClearScopes() *ApiKeyUpdate {
+	_u.mutation.ClearScopes()
+	return _u
+}
+
 // Mutation returns the ApiKeyMutation object of the builder.
 func (_u *ApiKeyUpdate) Mutation() *ApiKeyMutation {
 	return _u.mutation
@@ -424,6 +443,17 @@ func (_u *ApiKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(apikey.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.Scopes(); ok {
+		_spec.SetField(apikey.FieldScopes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedScopes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, apikey.FieldScopes, value)
+		})
+	}
+	if _u.mutation.ScopesCleared() {
+		_spec.ClearField(apikey.FieldScopes, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -690,6 +720,24 @@ func (_u *ApiKeyUpdateOne) ClearDescription() *ApiKeyUpdateOne {
 	return _u
 }
 
+// SetScopes sets the "scopes" field.
+func (_u *ApiKeyUpdateOne) SetScopes(v []string) *ApiKeyUpdateOne {
+	_u.mutation.SetScopes(v)
+	return _u
+}
+
+// AppendScopes appends value to the "scopes" field.
+func (_u *ApiKeyUpdateOne) AppendScopes(v []string) *ApiKeyUpdateOne {
+	_u.mutation.AppendScopes(v)
+	return _u
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (_u *ApiKeyUpdateOne) ClearScopes() *ApiKeyUpdateOne {
+	_u.mutation.ClearScopes()
+	return _u
+}
+
 // Mutation returns the ApiKeyMutation object of the builder.
 func (_u *ApiKeyUpdateOne) Mutation() *ApiKeyMutation {
 	return _u.mutation
@@ -872,6 +920,17 @@ func (_u *ApiKeyUpdateOne) sqlSave(ctx context.Context) (_node *ApiKey, err erro
 	}
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(apikey.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.Scopes(); ok {
+		_spec.SetField(apikey.FieldScopes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedScopes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, apikey.FieldScopes, value)
+		})
+	}
+	if _u.mutation.ScopesCleared() {
+		_spec.ClearField(apikey.FieldScopes, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &ApiKey{config: _u.config}

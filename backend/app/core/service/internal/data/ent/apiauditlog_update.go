@@ -514,6 +514,26 @@ func (_u *ApiAuditLogUpdate) ClearLogHash() *ApiAuditLogUpdate {
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *ApiAuditLogUpdate) SetPrevLogHash(v string) *ApiAuditLogUpdate {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *ApiAuditLogUpdate) SetNillablePrevLogHash(v *string) *ApiAuditLogUpdate {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *ApiAuditLogUpdate) ClearPrevLogHash() *ApiAuditLogUpdate {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *ApiAuditLogUpdate) SetSignature(v []byte) *ApiAuditLogUpdate {
 	_u.mutation.SetSignature(v)
@@ -731,6 +751,12 @@ func (_u *ApiAuditLogUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(apiauditlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(apiauditlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(apiauditlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(apiauditlog.FieldSignature, field.TypeBytes, value)
@@ -1245,6 +1271,26 @@ func (_u *ApiAuditLogUpdateOne) ClearLogHash() *ApiAuditLogUpdateOne {
 	return _u
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_u *ApiAuditLogUpdateOne) SetPrevLogHash(v string) *ApiAuditLogUpdateOne {
+	_u.mutation.SetPrevLogHash(v)
+	return _u
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_u *ApiAuditLogUpdateOne) SetNillablePrevLogHash(v *string) *ApiAuditLogUpdateOne {
+	if v != nil {
+		_u.SetPrevLogHash(*v)
+	}
+	return _u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (_u *ApiAuditLogUpdateOne) ClearPrevLogHash() *ApiAuditLogUpdateOne {
+	_u.mutation.ClearPrevLogHash()
+	return _u
+}
+
 // SetSignature sets the "signature" field.
 func (_u *ApiAuditLogUpdateOne) SetSignature(v []byte) *ApiAuditLogUpdateOne {
 	_u.mutation.SetSignature(v)
@@ -1492,6 +1538,12 @@ func (_u *ApiAuditLogUpdateOne) sqlSave(ctx context.Context) (_node *ApiAuditLog
 	}
 	if _u.mutation.LogHashCleared() {
 		_spec.ClearField(apiauditlog.FieldLogHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.PrevLogHash(); ok {
+		_spec.SetField(apiauditlog.FieldPrevLogHash, field.TypeString, value)
+	}
+	if _u.mutation.PrevLogHashCleared() {
+		_spec.ClearField(apiauditlog.FieldPrevLogHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.Signature(); ok {
 		_spec.SetField(apiauditlog.FieldSignature, field.TypeBytes, value)

@@ -24,6 +24,7 @@ import (
 type DataAccessAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
+	chain     auditChain
 
 	mapper *mapper.CopierMapper[auditV1.DataAccessAuditLog, ent.DataAccessAuditLog]
 
@@ -51,6 +52,8 @@ func NewDataAccessAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntCli
 			auditV1.SensitiveLevel_name, auditV1.SensitiveLevel_value,
 		),
 	}
+
+	repo.chain = auditChain{tail: repo.tailHash, log: repo.log, name: "data_access_audit_log"}
 
 	repo.init()
 
@@ -142,6 +145,25 @@ func (r *DataAccessAuditLogRepo) Get(ctx context.Context, req *auditV1.GetDataAc
 	return dto, err
 }
 
+// tailHash 当前链尾 log_hash(空串=无链尾/存量尾行无哈希,链头语义)。
+func (r *DataAccessAuditLogRepo) tailHash(ctx context.Context) string {
+	tail, err := r.entClient.Client().DataAccessAuditLog.Query().
+		Order(ent.Desc(dataaccessauditlog.FieldID)).
+		Limit(1).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ""
+		}
+		r.log.Errorf("audit chain [data_access_audit_log] read tail failed: %s", err.Error())
+		return ""
+	}
+	if tail.LogHash == nil {
+		return ""
+	}
+	return *tail.LogHash
+}
+
 func (r *DataAccessAuditLogRepo) Create(ctx context.Context, req *auditV1.CreateDataAccessAuditLogRequest) error {
 	if req == nil || req.Data == nil {
 		return auditV1.ErrorBadRequest("invalid parameter")
@@ -172,7 +194,9 @@ func (r *DataAccessAuditLogRepo) Create(ctx context.Context, req *auditV1.Create
 		SetSignature(req.Data.Signature).
 		SetCreatedAt(time.Now())
 
-	if err := builder.Exec(ctx); err != nil {
+	if err := r.chain.execChained(ctx,
+		func(prev string) { builder.SetPrevLogHash(prev) },
+		func() error { return builder.Exec(ctx) }); err != nil {
 		r.log.Errorf("insert data access audit log failed: %s", err.Error())
 		return auditV1.ErrorInternalServerError("insert data access audit log failed")
 	}

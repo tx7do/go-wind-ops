@@ -265,6 +265,20 @@ func (_c *LoginAuditLogCreate) SetNillableLogHash(v *string) *LoginAuditLogCreat
 	return _c
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_c *LoginAuditLogCreate) SetPrevLogHash(v string) *LoginAuditLogCreate {
+	_c.mutation.SetPrevLogHash(v)
+	return _c
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_c *LoginAuditLogCreate) SetNillablePrevLogHash(v *string) *LoginAuditLogCreate {
+	if v != nil {
+		_c.SetPrevLogHash(*v)
+	}
+	return _c
+}
+
 // SetSignature sets the "signature" field.
 func (_c *LoginAuditLogCreate) SetSignature(v []byte) *LoginAuditLogCreate {
 	_c.mutation.SetSignature(v)
@@ -466,6 +480,10 @@ func (_c *LoginAuditLogCreate) createSpec() (*LoginAuditLog, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.LogHash(); ok {
 		_spec.SetField(loginauditlog.FieldLogHash, field.TypeString, value)
 		_node.LogHash = &value
+	}
+	if value, ok := _c.mutation.PrevLogHash(); ok {
+		_spec.SetField(loginauditlog.FieldPrevLogHash, field.TypeString, value)
+		_node.PrevLogHash = value
 	}
 	if value, ok := _c.mutation.Signature(); ok {
 		_spec.SetField(loginauditlog.FieldSignature, field.TypeBytes, value)
@@ -838,6 +856,24 @@ func (u *LoginAuditLogUpsert) UpdateLogHash() *LoginAuditLogUpsert {
 // ClearLogHash clears the value of the "log_hash" field.
 func (u *LoginAuditLogUpsert) ClearLogHash() *LoginAuditLogUpsert {
 	u.SetNull(loginauditlog.FieldLogHash)
+	return u
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *LoginAuditLogUpsert) SetPrevLogHash(v string) *LoginAuditLogUpsert {
+	u.Set(loginauditlog.FieldPrevLogHash, v)
+	return u
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *LoginAuditLogUpsert) UpdatePrevLogHash() *LoginAuditLogUpsert {
+	u.SetExcluded(loginauditlog.FieldPrevLogHash)
+	return u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *LoginAuditLogUpsert) ClearPrevLogHash() *LoginAuditLogUpsert {
+	u.SetNull(loginauditlog.FieldPrevLogHash)
 	return u
 }
 
@@ -1281,6 +1317,27 @@ func (u *LoginAuditLogUpsertOne) UpdateLogHash() *LoginAuditLogUpsertOne {
 func (u *LoginAuditLogUpsertOne) ClearLogHash() *LoginAuditLogUpsertOne {
 	return u.Update(func(s *LoginAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *LoginAuditLogUpsertOne) SetPrevLogHash(v string) *LoginAuditLogUpsertOne {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *LoginAuditLogUpsertOne) UpdatePrevLogHash() *LoginAuditLogUpsertOne {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *LoginAuditLogUpsertOne) ClearPrevLogHash() *LoginAuditLogUpsertOne {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 
@@ -1893,6 +1950,27 @@ func (u *LoginAuditLogUpsertBulk) UpdateLogHash() *LoginAuditLogUpsertBulk {
 func (u *LoginAuditLogUpsertBulk) ClearLogHash() *LoginAuditLogUpsertBulk {
 	return u.Update(func(s *LoginAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *LoginAuditLogUpsertBulk) SetPrevLogHash(v string) *LoginAuditLogUpsertBulk {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *LoginAuditLogUpsertBulk) UpdatePrevLogHash() *LoginAuditLogUpsertBulk {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *LoginAuditLogUpsertBulk) ClearPrevLogHash() *LoginAuditLogUpsertBulk {
+	return u.Update(func(s *LoginAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 

@@ -36,6 +36,10 @@ type User struct {
 	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 用户名
 	Username *string `json:"username,omitempty"`
+	// 已启用 MFA(TOTP)二步验证:登录密码授权后须凭验证码换正式令牌
+	MfaEnabled bool `json:"mfa_enabled,omitempty"`
+	// TOTP Base32 密钥(Sensitive 不落日志;绑定 Confirm 前为待激活态)
+	MfaSecret *string `json:"-"`
 	// 昵称
 	Nickname *string `json:"nickname,omitempty"`
 	// 真实名字
@@ -72,9 +76,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldMfaEnabled:
+			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldTenantID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldRemark, user.FieldUsername, user.FieldNickname, user.FieldRealname, user.FieldEmail, user.FieldMobile, user.FieldTelephone, user.FieldAvatar, user.FieldAddress, user.FieldRegion, user.FieldDescription, user.FieldGender, user.FieldLastLoginIP, user.FieldStatus:
+		case user.FieldRemark, user.FieldUsername, user.FieldMfaSecret, user.FieldNickname, user.FieldRealname, user.FieldEmail, user.FieldMobile, user.FieldTelephone, user.FieldAvatar, user.FieldAddress, user.FieldRegion, user.FieldDescription, user.FieldGender, user.FieldLastLoginIP, user.FieldStatus:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldLastLoginAt, user.FieldLockedUntil:
 			values[i] = new(sql.NullTime)
@@ -161,6 +167,19 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Username = new(string)
 				*_m.Username = value.String
+			}
+		case user.FieldMfaEnabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field mfa_enabled", values[i])
+			} else if value.Valid {
+				_m.MfaEnabled = value.Bool
+			}
+		case user.FieldMfaSecret:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mfa_secret", values[i])
+			} else if value.Valid {
+				_m.MfaSecret = new(string)
+				*_m.MfaSecret = value.String
 			}
 		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -340,6 +359,11 @@ func (_m *User) String() string {
 		builder.WriteString("username=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("mfa_enabled=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MfaEnabled))
+	builder.WriteString(", ")
+	builder.WriteString("mfa_secret=<sensitive>")
 	builder.WriteString(", ")
 	if v := _m.Nickname; v != nil {
 		builder.WriteString("nickname=")

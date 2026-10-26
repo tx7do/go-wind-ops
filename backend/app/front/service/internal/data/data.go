@@ -96,6 +96,15 @@ func NewAuthorizer() authzEngine.Engine {
 	return noop.State{}
 }
 
+func NewMfaServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.MfaServiceClient {
+	cli, err := newCoreGrpcConn(ctx, r)
+	if err != nil {
+		return nil
+	}
+
+	return authenticationV1.NewMfaServiceClient(cli)
+}
+
 func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.AuthenticationServiceClient {
 	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {

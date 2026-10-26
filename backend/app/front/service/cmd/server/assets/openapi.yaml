@@ -125,6 +125,78 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/mfa/setup:confirm:
+        post:
+            tags:
+                - MfaService
+            description: 确认绑定(鉴权;验证码通过后启用)
+            operationId: MfaService_MfaSetupConfirm
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.MfaSetupConfirmRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mfa/setup:start:
+        post:
+            tags:
+                - MfaService
+            description: 发起绑定(鉴权;生成 TOTP 密钥与 otpauth URI,须 Confirm 激活)
+            operationId: MfaService_MfaSetupStart
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.MfaSetupStartRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.MfaSetupStartResponse'
+    /app/v1/mfa/verify:
+        post:
+            tags:
+                - MfaService
+            description: 凭密码授权签发的一次性挑战令牌 + TOTP 验证码换正式令牌(免鉴权,登录流程第二步)
+            operationId: MfaService_VerifyMFAChallenge
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.VerifyMFAChallengeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+            security:
+                - {}
+    /app/v1/mfa:disable:
+        post:
+            tags:
+                - MfaService
+            description: 解绑(鉴权;验证码通过后清除)
+            operationId: MfaService_MfaDisable
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.MfaDisableRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/oidc/authorize-url:
         post:
             tags:
@@ -300,7 +372,53 @@ components:
                 id_token:
                     type: string
                     description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+                mfa_required:
+                    type: boolean
+                    description: |-
+                        MFA(TOTP)二步验证:密码授权命中已绑定用户时,响应不带令牌,改回
+                         mfa_operation_id + 一次性挑战令牌(2 分钟 TTL),凭 MfaService.VerifyMFAChallenge
+                         换正式令牌(json_name 对齐前端既有读取的字面量)。
+                mfa_operation_id:
+                    type: string
             description: 用户登录 - 回应
+        authentication.service.v1.MfaDisableRequest:
+            type: object
+            properties:
+                code:
+                    type: string
+            description: MfaDisableRequest 解绑:TOTP 验证码(防误触/劫持解绑)
+        authentication.service.v1.MfaSetupConfirmRequest:
+            type: object
+            properties:
+                code:
+                    type: string
+            description: MfaSetupConfirmRequest 确认绑定:TOTP 验证码
+        authentication.service.v1.MfaSetupStartRequest:
+            type: object
+            properties: {}
+            description: MfaSetupStartRequest 发起 MFA 绑定(鉴权端点,操作者=当前用户)
+        authentication.service.v1.MfaSetupStartResponse:
+            type: object
+            properties:
+                secret:
+                    type: string
+                otpauthUri:
+                    type: string
+            description: MfaSetupStartResponse 绑定起点:Base32 密钥与 otpauth URI(扫码/手输)
+        authentication.service.v1.VerifyMFAChallengeRequest:
+            type: object
+            properties:
+                operationId:
+                    type: string
+                totpCode:
+                    type: string
+                clientId:
+                    type: string
+                deviceId:
+                    type: string
+            description: |-
+                VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
+                 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -555,6 +673,9 @@ components:
                     type: string
                     description: 删除时间
                     format: date-time
+                mfaEnabled:
+                    type: boolean
+                    description: 是否已启用 MFA 二步验证
             description: 用户
         identity.service.v1.VerifyContactRequest:
             type: object
@@ -586,5 +707,7 @@ security:
 tags:
     - name: AuthenticationService
       description: 用户前台登录认证服务
+    - name: MfaService
+      description: C 端 MFA(TOTP)二步验证管理
     - name: UserProfileService
       description: 用户个人资料服务

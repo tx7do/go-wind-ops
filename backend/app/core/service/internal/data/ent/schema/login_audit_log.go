@@ -140,6 +140,10 @@ func (LoginAuditLog) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("prev_log_hash").
+			Comment("审计哈希链:前一条记录的 log_hash(空串=链头;唯一索引防分叉;存量行 NULL=链启用前历史)").
+			Optional(),
+
 		field.Bytes("signature").
 			Comment("日志数字签名").
 			Optional().
@@ -159,6 +163,7 @@ func (LoginAuditLog) Mixin() []ent.Mixin {
 // Indexes 索引定义
 func (LoginAuditLog) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("prev_log_hash").Unique().StorageKey("uidx_sys_login_audit_logs_prev_hash"),
 		// 常用于按用户查询
 		index.Fields("user_id"),
 		index.Fields("username"),

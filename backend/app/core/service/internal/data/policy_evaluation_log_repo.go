@@ -22,6 +22,7 @@ import (
 type PolicyEvaluationLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
+	chain     auditChain
 
 	mapper *mapper.CopierMapper[permissionV1.PolicyEvaluationLog, ent.PolicyEvaluationLog]
 
@@ -41,6 +42,8 @@ func NewPolicyEvaluationLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntCl
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.PolicyEvaluationLog, ent.PolicyEvaluationLog](),
 	}
+
+	repo.chain = auditChain{tail: repo.tailHash, log: repo.log, name: "policy_evaluation_log"}
 
 	repo.init()
 
@@ -130,6 +133,25 @@ func (r *PolicyEvaluationLogRepo) Get(ctx context.Context, req *permissionV1.Get
 	return dto, err
 }
 
+// tailHash 当前链尾 log_hash(空串=无链尾/存量尾行无哈希,链头语义)。
+func (r *PolicyEvaluationLogRepo) tailHash(ctx context.Context) string {
+	tail, err := r.entClient.Client().PolicyEvaluationLog.Query().
+		Order(ent.Desc(policyevaluationlog.FieldID)).
+		Limit(1).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ""
+		}
+		r.log.Errorf("audit chain [policy_evaluation_log] read tail failed: %s", err.Error())
+		return ""
+	}
+	if tail.LogHash == nil {
+		return ""
+	}
+	return *tail.LogHash
+}
+
 func (r *PolicyEvaluationLogRepo) Create(ctx context.Context, req *permissionV1.CreatePolicyEvaluationLogRequest) error {
 	if req == nil || req.Data == nil {
 		return permissionV1.ErrorBadRequest("invalid parameter")
@@ -154,7 +176,9 @@ func (r *PolicyEvaluationLogRepo) Create(ctx context.Context, req *permissionV1.
 		SetSignature(req.Data.Signature).
 		SetCreatedAt(time.Now())
 
-	err := builder.Exec(ctx)
+	err := r.chain.execChained(ctx,
+		func(prev string) { builder.SetPrevLogHash(prev) },
+		func() error { return builder.Exec(ctx) })
 	if err != nil {
 		r.log.Errorf("insert policy evaluation log failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("insert policy evaluation log failed")

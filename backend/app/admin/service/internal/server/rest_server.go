@@ -53,6 +53,9 @@ func NewRestMiddleware(
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，
 		// 调用时 bearer 往往已过期，若要求有效 token 刷新将永远 401。
 		adminV1.OperationAuthenticationServiceRefreshToken,
+		// MfaService.VerifyMFAChallenge：MFA 二步验证第二步（登录流程内，
+		// 凭密码授权签发的一次性挑战令牌换正式令牌），与 Login 同列免鉴权。
+		adminV1.OperationMfaServiceVerifyMFAChallenge,
 	)
 
 		ms = append(ms, applogging.Server(
@@ -138,6 +141,7 @@ func NewRestServer(
 	openApiGateway *OpenApiGateway,
 
 	authenticationService *service.AuthenticationService,
+	mfaService *service.MfaService,
 	loginPolicyService *service.LoginPolicyService,
 
 	dictTypeService *service.DictTypeService,
@@ -194,6 +198,7 @@ func NewRestServer(
 	}
 
 	adminV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
+	adminV1.RegisterMfaServiceHTTPServer(srv, mfaService)
 	adminV1.RegisterLoginPolicyServiceHTTPServer(srv, loginPolicyService)
 
 	adminV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)

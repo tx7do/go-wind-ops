@@ -97,6 +97,15 @@ func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	return authenticationV1.NewAuthenticationServiceClient(cli)
 }
 
+func NewMfaServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.MfaServiceClient {
+	cli, err := newCoreGrpcConn(ctx, r)
+	if err != nil {
+		return nil
+	}
+
+	return authenticationV1.NewMfaServiceClient(cli)
+}
+
 func NewUserCredentialServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.UserCredentialServiceClient {
 	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {

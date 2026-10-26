@@ -2387,32 +2387,36 @@ func init() {
 	userDescUsername := userFields[0].Descriptor()
 	// user.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
 	user.UsernameValidator = userDescUsername.Validators[0].(func(string) error)
+	// userDescMfaEnabled is the schema descriptor for mfa_enabled field.
+	userDescMfaEnabled := userFields[1].Descriptor()
+	// user.DefaultMfaEnabled holds the default value on creation for the mfa_enabled field.
+	user.DefaultMfaEnabled = userDescMfaEnabled.Default.(bool)
 	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[3].Descriptor()
+	userDescEmail := userFields[5].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 	// userDescMobile is the schema descriptor for mobile field.
-	userDescMobile := userFields[4].Descriptor()
+	userDescMobile := userFields[6].Descriptor()
 	// user.DefaultMobile holds the default value on creation for the mobile field.
 	user.DefaultMobile = userDescMobile.Default.(string)
 	// user.MobileValidator is a validator for the "mobile" field. It is called by the builders before save.
 	user.MobileValidator = userDescMobile.Validators[0].(func(string) error)
 	// userDescTelephone is the schema descriptor for telephone field.
-	userDescTelephone := userFields[5].Descriptor()
+	userDescTelephone := userFields[7].Descriptor()
 	// user.DefaultTelephone holds the default value on creation for the telephone field.
 	user.DefaultTelephone = userDescTelephone.Default.(string)
 	// user.TelephoneValidator is a validator for the "telephone" field. It is called by the builders before save.
 	user.TelephoneValidator = userDescTelephone.Validators[0].(func(string) error)
 	// userDescAddress is the schema descriptor for address field.
-	userDescAddress := userFields[7].Descriptor()
+	userDescAddress := userFields[9].Descriptor()
 	// user.DefaultAddress holds the default value on creation for the address field.
 	user.DefaultAddress = userDescAddress.Default.(string)
 	// userDescRegion is the schema descriptor for region field.
-	userDescRegion := userFields[8].Descriptor()
+	userDescRegion := userFields[10].Descriptor()
 	// user.DefaultRegion holds the default value on creation for the region field.
 	user.DefaultRegion = userDescRegion.Default.(string)
 	// userDescDescription is the schema descriptor for description field.
-	userDescDescription := userFields[9].Descriptor()
+	userDescDescription := userFields[11].Descriptor()
 	// user.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	user.DescriptionValidator = userDescDescription.Validators[0].(func(string) error)
 	// userDescID is the schema descriptor for id field.

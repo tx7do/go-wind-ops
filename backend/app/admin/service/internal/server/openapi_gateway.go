@@ -93,6 +93,40 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writeKratosError(w, verr)
 		return
 	}
+
+	// ── 路由(先解析出目标端点类别,作用域闸门按类别放行) ──
+	path := strings.TrimPrefix(r.URL.Path, "/openapi/v1/")
+	parts := strings.Split(path, "/")
+	// 期望 {kind}/{id}/trigger 或 webhooks/git/{buildId}
+	var requiredScope opsV1.ApiKey_Scope
+	switch {
+	case len(parts) == 3 && parts[2] == "trigger":
+		switch parts[0] {
+		case "builds":
+			requiredScope = opsV1.ApiKey_BUILDS
+		case "distributions":
+			requiredScope = opsV1.ApiKey_DISTRIBUTIONS
+		case "pipelines":
+			requiredScope = opsV1.ApiKey_PIPELINES
+		default:
+			writeJsonError(w, http.StatusNotFound, "NOT_FOUND", "unknown kind: "+parts[0])
+			return
+		}
+	case len(parts) == 3 && parts[0] == "webhooks" && parts[1] == "git":
+		requiredScope = opsV1.ApiKey_WEBHOOKS
+	default:
+		writeJsonError(w, http.StatusNotFound, "NOT_FOUND", "unknown endpoint")
+		return
+	}
+
+	// 作用域闸门:密钥未限 scope(空)= 全部;含 ALL 通配 = 全部;
+	// 否则必须包含目标端点类别。密钥泄露时把爆炸半径收到签发时勾选的范围。
+	if !scopeAllowed(info.GetScopes(), requiredScope) {
+		writeJsonError(w, http.StatusForbidden, "SCOPE_DENIED",
+			"api key scope does not allow this endpoint")
+		return
+	}
+
 	// 归因注入:触发的构建/分发/流水线归属密钥创建者的租户(而非平台)。
 	// 无归属(历史数据 tenant 0)时保持平台视图,行为不变。
 	gctx := r.Context()
@@ -101,10 +135,6 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			uint64(info.GetOwnerUserId()), uint64(info.GetTenantId()), 0, identityV1.DataScope_ALL))
 	}
 
-	// ── 路由 ──
-	path := strings.TrimPrefix(r.URL.Path, "/openapi/v1/")
-	parts := strings.Split(path, "/")
-	// 期望 {kind}/{id}/trigger 或 webhooks/git/{buildId}
 	if len(parts) == 3 && parts[2] == "trigger" {
 		id, perr := strconv.ParseUint(parts[1], 10, 32)
 		if perr != nil {
@@ -114,16 +144,26 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		g.trigger(w, gctx, parts[0], uint32(id))
 		return
 	}
-	if len(parts) == 3 && parts[0] == "webhooks" && parts[1] == "git" {
-		id, perr := strconv.ParseUint(parts[2], 10, 32)
-		if perr != nil {
-			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid build id")
-			return
-		}
-		g.gitWebhook(w, r, gctx, uint32(id))
+	// 走到此处必为 webhooks/git/{buildId}(requiredScope 解析已排除其余形态)
+	id, perr := strconv.ParseUint(parts[2], 10, 32)
+	if perr != nil {
+		writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid build id")
 		return
 	}
-	writeJsonError(w, http.StatusNotFound, "NOT_FOUND", "unknown endpoint")
+	g.gitWebhook(w, r, gctx, uint32(id))
+}
+
+// scopeAllowed 作用域判定:未限定(空)或含通配 ALL 放行,否则须命中目标类别。
+func scopeAllowed(scopes []opsV1.ApiKey_Scope, required opsV1.ApiKey_Scope) bool {
+	if len(scopes) == 0 {
+		return true
+	}
+	for _, sc := range scopes {
+		if sc == opsV1.ApiKey_ALL || sc == required {
+			return true
+		}
+	}
+	return false
 }
 
 // trigger 触发构建/分发/流水线。

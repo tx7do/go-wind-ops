@@ -20,467 +20,233 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MFAService_GetMFAStatus_FullMethodName        = "/authentication.service.v1.MFAService/GetMFAStatus"
-	MFAService_ListEnrolledMethods_FullMethodName = "/authentication.service.v1.MFAService/ListEnrolledMethods"
-	MFAService_StartEnrollMethod_FullMethodName   = "/authentication.service.v1.MFAService/StartEnrollMethod"
-	MFAService_ConfirmEnrollMethod_FullMethodName = "/authentication.service.v1.MFAService/ConfirmEnrollMethod"
-	MFAService_DisableMFA_FullMethodName          = "/authentication.service.v1.MFAService/DisableMFA"
-	MFAService_StartMFAChallenge_FullMethodName   = "/authentication.service.v1.MFAService/StartMFAChallenge"
-	MFAService_VerifyMFAChallenge_FullMethodName  = "/authentication.service.v1.MFAService/VerifyMFAChallenge"
-	MFAService_GenerateBackupCodes_FullMethodName = "/authentication.service.v1.MFAService/GenerateBackupCodes"
-	MFAService_ListBackupCodes_FullMethodName     = "/authentication.service.v1.MFAService/ListBackupCodes"
-	MFAService_RevokeMFADevice_FullMethodName     = "/authentication.service.v1.MFAService/RevokeMFADevice"
+	MfaService_VerifyMFAChallenge_FullMethodName = "/authentication.service.v1.MfaService/VerifyMFAChallenge"
+	MfaService_MfaSetupStart_FullMethodName      = "/authentication.service.v1.MfaService/MfaSetupStart"
+	MfaService_MfaSetupConfirm_FullMethodName    = "/authentication.service.v1.MfaService/MfaSetupConfirm"
+	MfaService_MfaDisable_FullMethodName         = "/authentication.service.v1.MfaService/MfaDisable"
 )
 
-// MFAServiceClient is the client API for MFAService service.
+// MfaServiceClient is the client API for MfaService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// 多因素认证（MFA）服务：分步注册、挑战/验证、管理已注册凭证与备份码
-type MFAServiceClient interface {
-	// 查询用户 MFA 总览（是否启用、已注册方法列表）
-	GetMFAStatus(ctx context.Context, in *GetMFAStatusRequest, opts ...grpc.CallOption) (*GetMFAStatusResponse, error)
-	// 列出已注册的 MFA 凭证（多设备/多凭证场景）
-	ListEnrolledMethods(ctx context.Context, in *ListEnrolledMethodsRequest, opts ...grpc.CallOption) (*ListEnrolledMethodsResponse, error)
-	// 开始注册某种 MFA 方法（返回 challenge/secret/verification id 等），前端应展示或触发相应流程
-	StartEnrollMethod(ctx context.Context, in *StartEnrollMethodRequest, opts ...grpc.CallOption) (*StartEnrollMethodResponse, error)
-	// 确认注册（用户提交验证码/断言以完成注册），返回已创建的凭证 id
-	ConfirmEnrollMethod(ctx context.Context, in *ConfirmEnrollMethodRequest, opts ...grpc.CallOption) (*ConfirmEnrollMethodResponse, error)
-	// 禁用/移除已注册凭证（可指定凭证 id 或方法）
-	DisableMFA(ctx context.Context, in *DisableMFARequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 发起登录时的 MFA 挑战（多步：Start->Verify）
-	StartMFAChallenge(ctx context.Context, in *StartMFAChallengeRequest, opts ...grpc.CallOption) (*StartMFAChallengeResponse, error)
-	// 验证登录时的 MFA 挑战，返回是否通过及可选 session/token
-	VerifyMFAChallenge(ctx context.Context, in *VerifyMFAChallengeRequest, opts ...grpc.CallOption) (*VerifyMFAChallengeResponse, error)
-	// 生成/刷新一次性备份码（返回明文备份码列表，调用方应仅展示一次并提示用户安全保存）
-	GenerateBackupCodes(ctx context.Context, in *GenerateBackupCodesRequest, opts ...grpc.CallOption) (*GenerateBackupCodesResponse, error)
-	// 列出备份码的元信息（不返回明文）
-	ListBackupCodes(ctx context.Context, in *ListBackupCodesRequest, opts ...grpc.CallOption) (*ListBackupCodesResponse, error)
-	// 撤销指定凭证（按 id）
-	RevokeMFADevice(ctx context.Context, in *RevokeMFADeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+// MfaService MFA(TOTP)二步验证:登录换证与自助绑定管理。
+// 替换基座继承的多方法 MFA 样板(未实现、全仓无引用):平台只落 TOTP 一种,
+// 免鉴权面收敛在 VerifyMFAChallenge 一处;验证通过直接回 LoginResponse,
+// 前端复用登录成功流程(存 token/拉用户信息/跳转)。
+type MfaServiceClient interface {
+	// 凭密码授权签发的一次性挑战令牌(operation_id)+ TOTP 验证码换正式令牌
+	VerifyMFAChallenge(ctx context.Context, in *VerifyMFAChallengeRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	// 发起绑定:生成 TOTP 密钥与 otpauth URI(落库未启用,须 Confirm 激活)
+	MfaSetupStart(ctx context.Context, in *MfaSetupStartRequest, opts ...grpc.CallOption) (*MfaSetupStartResponse, error)
+	// 确认绑定:验证码校验通过后启用
+	MfaSetupConfirm(ctx context.Context, in *MfaSetupConfirmRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 解绑:验证码校验通过后清除密钥并停用
+	MfaDisable(ctx context.Context, in *MfaDisableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type mFAServiceClient struct {
+type mfaServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMFAServiceClient(cc grpc.ClientConnInterface) MFAServiceClient {
-	return &mFAServiceClient{cc}
+func NewMfaServiceClient(cc grpc.ClientConnInterface) MfaServiceClient {
+	return &mfaServiceClient{cc}
 }
 
-func (c *mFAServiceClient) GetMFAStatus(ctx context.Context, in *GetMFAStatusRequest, opts ...grpc.CallOption) (*GetMFAStatusResponse, error) {
+func (c *mfaServiceClient) VerifyMFAChallenge(ctx context.Context, in *VerifyMFAChallengeRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetMFAStatusResponse)
-	err := c.cc.Invoke(ctx, MFAService_GetMFAStatus_FullMethodName, in, out, cOpts...)
+	out := new(LoginResponse)
+	err := c.cc.Invoke(ctx, MfaService_VerifyMFAChallenge_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mFAServiceClient) ListEnrolledMethods(ctx context.Context, in *ListEnrolledMethodsRequest, opts ...grpc.CallOption) (*ListEnrolledMethodsResponse, error) {
+func (c *mfaServiceClient) MfaSetupStart(ctx context.Context, in *MfaSetupStartRequest, opts ...grpc.CallOption) (*MfaSetupStartResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListEnrolledMethodsResponse)
-	err := c.cc.Invoke(ctx, MFAService_ListEnrolledMethods_FullMethodName, in, out, cOpts...)
+	out := new(MfaSetupStartResponse)
+	err := c.cc.Invoke(ctx, MfaService_MfaSetupStart_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mFAServiceClient) StartEnrollMethod(ctx context.Context, in *StartEnrollMethodRequest, opts ...grpc.CallOption) (*StartEnrollMethodResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StartEnrollMethodResponse)
-	err := c.cc.Invoke(ctx, MFAService_StartEnrollMethod_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) ConfirmEnrollMethod(ctx context.Context, in *ConfirmEnrollMethodRequest, opts ...grpc.CallOption) (*ConfirmEnrollMethodResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfirmEnrollMethodResponse)
-	err := c.cc.Invoke(ctx, MFAService_ConfirmEnrollMethod_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) DisableMFA(ctx context.Context, in *DisableMFARequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *mfaServiceClient) MfaSetupConfirm(ctx context.Context, in *MfaSetupConfirmRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, MFAService_DisableMFA_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, MfaService_MfaSetupConfirm_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mFAServiceClient) StartMFAChallenge(ctx context.Context, in *StartMFAChallengeRequest, opts ...grpc.CallOption) (*StartMFAChallengeResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StartMFAChallengeResponse)
-	err := c.cc.Invoke(ctx, MFAService_StartMFAChallenge_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) VerifyMFAChallenge(ctx context.Context, in *VerifyMFAChallengeRequest, opts ...grpc.CallOption) (*VerifyMFAChallengeResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(VerifyMFAChallengeResponse)
-	err := c.cc.Invoke(ctx, MFAService_VerifyMFAChallenge_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) GenerateBackupCodes(ctx context.Context, in *GenerateBackupCodesRequest, opts ...grpc.CallOption) (*GenerateBackupCodesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GenerateBackupCodesResponse)
-	err := c.cc.Invoke(ctx, MFAService_GenerateBackupCodes_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) ListBackupCodes(ctx context.Context, in *ListBackupCodesRequest, opts ...grpc.CallOption) (*ListBackupCodesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListBackupCodesResponse)
-	err := c.cc.Invoke(ctx, MFAService_ListBackupCodes_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mFAServiceClient) RevokeMFADevice(ctx context.Context, in *RevokeMFADeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *mfaServiceClient) MfaDisable(ctx context.Context, in *MfaDisableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, MFAService_RevokeMFADevice_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, MfaService_MfaDisable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MFAServiceServer is the server API for MFAService service.
-// All implementations must embed UnimplementedMFAServiceServer
+// MfaServiceServer is the server API for MfaService service.
+// All implementations must embed UnimplementedMfaServiceServer
 // for forward compatibility.
 //
-// 多因素认证（MFA）服务：分步注册、挑战/验证、管理已注册凭证与备份码
-type MFAServiceServer interface {
-	// 查询用户 MFA 总览（是否启用、已注册方法列表）
-	GetMFAStatus(context.Context, *GetMFAStatusRequest) (*GetMFAStatusResponse, error)
-	// 列出已注册的 MFA 凭证（多设备/多凭证场景）
-	ListEnrolledMethods(context.Context, *ListEnrolledMethodsRequest) (*ListEnrolledMethodsResponse, error)
-	// 开始注册某种 MFA 方法（返回 challenge/secret/verification id 等），前端应展示或触发相应流程
-	StartEnrollMethod(context.Context, *StartEnrollMethodRequest) (*StartEnrollMethodResponse, error)
-	// 确认注册（用户提交验证码/断言以完成注册），返回已创建的凭证 id
-	ConfirmEnrollMethod(context.Context, *ConfirmEnrollMethodRequest) (*ConfirmEnrollMethodResponse, error)
-	// 禁用/移除已注册凭证（可指定凭证 id 或方法）
-	DisableMFA(context.Context, *DisableMFARequest) (*emptypb.Empty, error)
-	// 发起登录时的 MFA 挑战（多步：Start->Verify）
-	StartMFAChallenge(context.Context, *StartMFAChallengeRequest) (*StartMFAChallengeResponse, error)
-	// 验证登录时的 MFA 挑战，返回是否通过及可选 session/token
-	VerifyMFAChallenge(context.Context, *VerifyMFAChallengeRequest) (*VerifyMFAChallengeResponse, error)
-	// 生成/刷新一次性备份码（返回明文备份码列表，调用方应仅展示一次并提示用户安全保存）
-	GenerateBackupCodes(context.Context, *GenerateBackupCodesRequest) (*GenerateBackupCodesResponse, error)
-	// 列出备份码的元信息（不返回明文）
-	ListBackupCodes(context.Context, *ListBackupCodesRequest) (*ListBackupCodesResponse, error)
-	// 撤销指定凭证（按 id）
-	RevokeMFADevice(context.Context, *RevokeMFADeviceRequest) (*emptypb.Empty, error)
-	mustEmbedUnimplementedMFAServiceServer()
+// MfaService MFA(TOTP)二步验证:登录换证与自助绑定管理。
+// 替换基座继承的多方法 MFA 样板(未实现、全仓无引用):平台只落 TOTP 一种,
+// 免鉴权面收敛在 VerifyMFAChallenge 一处;验证通过直接回 LoginResponse,
+// 前端复用登录成功流程(存 token/拉用户信息/跳转)。
+type MfaServiceServer interface {
+	// 凭密码授权签发的一次性挑战令牌(operation_id)+ TOTP 验证码换正式令牌
+	VerifyMFAChallenge(context.Context, *VerifyMFAChallengeRequest) (*LoginResponse, error)
+	// 发起绑定:生成 TOTP 密钥与 otpauth URI(落库未启用,须 Confirm 激活)
+	MfaSetupStart(context.Context, *MfaSetupStartRequest) (*MfaSetupStartResponse, error)
+	// 确认绑定:验证码校验通过后启用
+	MfaSetupConfirm(context.Context, *MfaSetupConfirmRequest) (*emptypb.Empty, error)
+	// 解绑:验证码校验通过后清除密钥并停用
+	MfaDisable(context.Context, *MfaDisableRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedMfaServiceServer()
 }
 
-// UnimplementedMFAServiceServer must be embedded to have
+// UnimplementedMfaServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedMFAServiceServer struct{}
+type UnimplementedMfaServiceServer struct{}
 
-func (UnimplementedMFAServiceServer) GetMFAStatus(context.Context, *GetMFAStatusRequest) (*GetMFAStatusResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetMFAStatus not implemented")
-}
-func (UnimplementedMFAServiceServer) ListEnrolledMethods(context.Context, *ListEnrolledMethodsRequest) (*ListEnrolledMethodsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListEnrolledMethods not implemented")
-}
-func (UnimplementedMFAServiceServer) StartEnrollMethod(context.Context, *StartEnrollMethodRequest) (*StartEnrollMethodResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method StartEnrollMethod not implemented")
-}
-func (UnimplementedMFAServiceServer) ConfirmEnrollMethod(context.Context, *ConfirmEnrollMethodRequest) (*ConfirmEnrollMethodResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ConfirmEnrollMethod not implemented")
-}
-func (UnimplementedMFAServiceServer) DisableMFA(context.Context, *DisableMFARequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method DisableMFA not implemented")
-}
-func (UnimplementedMFAServiceServer) StartMFAChallenge(context.Context, *StartMFAChallengeRequest) (*StartMFAChallengeResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method StartMFAChallenge not implemented")
-}
-func (UnimplementedMFAServiceServer) VerifyMFAChallenge(context.Context, *VerifyMFAChallengeRequest) (*VerifyMFAChallengeResponse, error) {
+func (UnimplementedMfaServiceServer) VerifyMFAChallenge(context.Context, *VerifyMFAChallengeRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyMFAChallenge not implemented")
 }
-func (UnimplementedMFAServiceServer) GenerateBackupCodes(context.Context, *GenerateBackupCodesRequest) (*GenerateBackupCodesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GenerateBackupCodes not implemented")
+func (UnimplementedMfaServiceServer) MfaSetupStart(context.Context, *MfaSetupStartRequest) (*MfaSetupStartResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MfaSetupStart not implemented")
 }
-func (UnimplementedMFAServiceServer) ListBackupCodes(context.Context, *ListBackupCodesRequest) (*ListBackupCodesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListBackupCodes not implemented")
+func (UnimplementedMfaServiceServer) MfaSetupConfirm(context.Context, *MfaSetupConfirmRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method MfaSetupConfirm not implemented")
 }
-func (UnimplementedMFAServiceServer) RevokeMFADevice(context.Context, *RevokeMFADeviceRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method RevokeMFADevice not implemented")
+func (UnimplementedMfaServiceServer) MfaDisable(context.Context, *MfaDisableRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method MfaDisable not implemented")
 }
-func (UnimplementedMFAServiceServer) mustEmbedUnimplementedMFAServiceServer() {}
-func (UnimplementedMFAServiceServer) testEmbeddedByValue()                    {}
+func (UnimplementedMfaServiceServer) mustEmbedUnimplementedMfaServiceServer() {}
+func (UnimplementedMfaServiceServer) testEmbeddedByValue()                    {}
 
-// UnsafeMFAServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MFAServiceServer will
+// UnsafeMfaServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MfaServiceServer will
 // result in compilation errors.
-type UnsafeMFAServiceServer interface {
-	mustEmbedUnimplementedMFAServiceServer()
+type UnsafeMfaServiceServer interface {
+	mustEmbedUnimplementedMfaServiceServer()
 }
 
-func RegisterMFAServiceServer(s grpc.ServiceRegistrar, srv MFAServiceServer) {
-	// If the following call panics, it indicates UnimplementedMFAServiceServer was
+func RegisterMfaServiceServer(s grpc.ServiceRegistrar, srv MfaServiceServer) {
+	// If the following call panics, it indicates UnimplementedMfaServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&MFAService_ServiceDesc, srv)
+	s.RegisterService(&MfaService_ServiceDesc, srv)
 }
 
-func _MFAService_GetMFAStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMFAStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).GetMFAStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_GetMFAStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).GetMFAStatus(ctx, req.(*GetMFAStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_ListEnrolledMethods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListEnrolledMethodsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).ListEnrolledMethods(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_ListEnrolledMethods_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).ListEnrolledMethods(ctx, req.(*ListEnrolledMethodsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_StartEnrollMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartEnrollMethodRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).StartEnrollMethod(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_StartEnrollMethod_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).StartEnrollMethod(ctx, req.(*StartEnrollMethodRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_ConfirmEnrollMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmEnrollMethodRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).ConfirmEnrollMethod(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_ConfirmEnrollMethod_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).ConfirmEnrollMethod(ctx, req.(*ConfirmEnrollMethodRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_DisableMFA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DisableMFARequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).DisableMFA(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_DisableMFA_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).DisableMFA(ctx, req.(*DisableMFARequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_StartMFAChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartMFAChallengeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MFAServiceServer).StartMFAChallenge(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MFAService_StartMFAChallenge_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).StartMFAChallenge(ctx, req.(*StartMFAChallengeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MFAService_VerifyMFAChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MfaService_VerifyMFAChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerifyMFAChallengeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MFAServiceServer).VerifyMFAChallenge(ctx, in)
+		return srv.(MfaServiceServer).VerifyMFAChallenge(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MFAService_VerifyMFAChallenge_FullMethodName,
+		FullMethod: MfaService_VerifyMFAChallenge_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).VerifyMFAChallenge(ctx, req.(*VerifyMFAChallengeRequest))
+		return srv.(MfaServiceServer).VerifyMFAChallenge(ctx, req.(*VerifyMFAChallengeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MFAService_GenerateBackupCodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateBackupCodesRequest)
+func _MfaService_MfaSetupStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MfaSetupStartRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MFAServiceServer).GenerateBackupCodes(ctx, in)
+		return srv.(MfaServiceServer).MfaSetupStart(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MFAService_GenerateBackupCodes_FullMethodName,
+		FullMethod: MfaService_MfaSetupStart_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).GenerateBackupCodes(ctx, req.(*GenerateBackupCodesRequest))
+		return srv.(MfaServiceServer).MfaSetupStart(ctx, req.(*MfaSetupStartRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MFAService_ListBackupCodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListBackupCodesRequest)
+func _MfaService_MfaSetupConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MfaSetupConfirmRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MFAServiceServer).ListBackupCodes(ctx, in)
+		return srv.(MfaServiceServer).MfaSetupConfirm(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MFAService_ListBackupCodes_FullMethodName,
+		FullMethod: MfaService_MfaSetupConfirm_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).ListBackupCodes(ctx, req.(*ListBackupCodesRequest))
+		return srv.(MfaServiceServer).MfaSetupConfirm(ctx, req.(*MfaSetupConfirmRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MFAService_RevokeMFADevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RevokeMFADeviceRequest)
+func _MfaService_MfaDisable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MfaDisableRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MFAServiceServer).RevokeMFADevice(ctx, in)
+		return srv.(MfaServiceServer).MfaDisable(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MFAService_RevokeMFADevice_FullMethodName,
+		FullMethod: MfaService_MfaDisable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MFAServiceServer).RevokeMFADevice(ctx, req.(*RevokeMFADeviceRequest))
+		return srv.(MfaServiceServer).MfaDisable(ctx, req.(*MfaDisableRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MFAService_ServiceDesc is the grpc.ServiceDesc for MFAService service.
+// MfaService_ServiceDesc is the grpc.ServiceDesc for MfaService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MFAService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "authentication.service.v1.MFAService",
-	HandlerType: (*MFAServiceServer)(nil),
+var MfaService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "authentication.service.v1.MfaService",
+	HandlerType: (*MfaServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetMFAStatus",
-			Handler:    _MFAService_GetMFAStatus_Handler,
-		},
-		{
-			MethodName: "ListEnrolledMethods",
-			Handler:    _MFAService_ListEnrolledMethods_Handler,
-		},
-		{
-			MethodName: "StartEnrollMethod",
-			Handler:    _MFAService_StartEnrollMethod_Handler,
-		},
-		{
-			MethodName: "ConfirmEnrollMethod",
-			Handler:    _MFAService_ConfirmEnrollMethod_Handler,
-		},
-		{
-			MethodName: "DisableMFA",
-			Handler:    _MFAService_DisableMFA_Handler,
-		},
-		{
-			MethodName: "StartMFAChallenge",
-			Handler:    _MFAService_StartMFAChallenge_Handler,
-		},
-		{
 			MethodName: "VerifyMFAChallenge",
-			Handler:    _MFAService_VerifyMFAChallenge_Handler,
+			Handler:    _MfaService_VerifyMFAChallenge_Handler,
 		},
 		{
-			MethodName: "GenerateBackupCodes",
-			Handler:    _MFAService_GenerateBackupCodes_Handler,
+			MethodName: "MfaSetupStart",
+			Handler:    _MfaService_MfaSetupStart_Handler,
 		},
 		{
-			MethodName: "ListBackupCodes",
-			Handler:    _MFAService_ListBackupCodes_Handler,
+			MethodName: "MfaSetupConfirm",
+			Handler:    _MfaService_MfaSetupConfirm_Handler,
 		},
 		{
-			MethodName: "RevokeMFADevice",
-			Handler:    _MFAService_RevokeMFADevice_Handler,
+			MethodName: "MfaDisable",
+			Handler:    _MfaService_MfaDisable_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

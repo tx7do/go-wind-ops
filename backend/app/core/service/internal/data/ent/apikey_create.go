@@ -194,6 +194,12 @@ func (_c *ApiKeyCreate) SetNillableDescription(v *string) *ApiKeyCreate {
 	return _c
 }
 
+// SetScopes sets the "scopes" field.
+func (_c *ApiKeyCreate) SetScopes(v []string) *ApiKeyCreate {
+	_c.mutation.SetScopes(v)
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ApiKeyCreate) SetID(v uint32) *ApiKeyCreate {
 	_c.mutation.SetID(v)
@@ -372,6 +378,10 @@ func (_c *ApiKeyCreate) createSpec() (*ApiKey, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(apikey.FieldDescription, field.TypeString, value)
 		_node.Description = &value
+	}
+	if value, ok := _c.mutation.Scopes(); ok {
+		_spec.SetField(apikey.FieldScopes, field.TypeJSON, value)
+		_node.Scopes = value
 	}
 	return _node, _spec
 }
@@ -638,6 +648,24 @@ func (u *ApiKeyUpsert) UpdateDescription() *ApiKeyUpsert {
 // ClearDescription clears the value of the "description" field.
 func (u *ApiKeyUpsert) ClearDescription() *ApiKeyUpsert {
 	u.SetNull(apikey.FieldDescription)
+	return u
+}
+
+// SetScopes sets the "scopes" field.
+func (u *ApiKeyUpsert) SetScopes(v []string) *ApiKeyUpsert {
+	u.Set(apikey.FieldScopes, v)
+	return u
+}
+
+// UpdateScopes sets the "scopes" field to the value that was provided on create.
+func (u *ApiKeyUpsert) UpdateScopes() *ApiKeyUpsert {
+	u.SetExcluded(apikey.FieldScopes)
+	return u
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (u *ApiKeyUpsert) ClearScopes() *ApiKeyUpsert {
+	u.SetNull(apikey.FieldScopes)
 	return u
 }
 
@@ -944,6 +972,27 @@ func (u *ApiKeyUpsertOne) UpdateDescription() *ApiKeyUpsertOne {
 func (u *ApiKeyUpsertOne) ClearDescription() *ApiKeyUpsertOne {
 	return u.Update(func(s *ApiKeyUpsert) {
 		s.ClearDescription()
+	})
+}
+
+// SetScopes sets the "scopes" field.
+func (u *ApiKeyUpsertOne) SetScopes(v []string) *ApiKeyUpsertOne {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.SetScopes(v)
+	})
+}
+
+// UpdateScopes sets the "scopes" field to the value that was provided on create.
+func (u *ApiKeyUpsertOne) UpdateScopes() *ApiKeyUpsertOne {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.UpdateScopes()
+	})
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (u *ApiKeyUpsertOne) ClearScopes() *ApiKeyUpsertOne {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.ClearScopes()
 	})
 }
 
@@ -1416,6 +1465,27 @@ func (u *ApiKeyUpsertBulk) UpdateDescription() *ApiKeyUpsertBulk {
 func (u *ApiKeyUpsertBulk) ClearDescription() *ApiKeyUpsertBulk {
 	return u.Update(func(s *ApiKeyUpsert) {
 		s.ClearDescription()
+	})
+}
+
+// SetScopes sets the "scopes" field.
+func (u *ApiKeyUpsertBulk) SetScopes(v []string) *ApiKeyUpsertBulk {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.SetScopes(v)
+	})
+}
+
+// UpdateScopes sets the "scopes" field to the value that was provided on create.
+func (u *ApiKeyUpsertBulk) UpdateScopes() *ApiKeyUpsertBulk {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.UpdateScopes()
+	})
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (u *ApiKeyUpsertBulk) ClearScopes() *ApiKeyUpsertBulk {
+	return u.Update(func(s *ApiKeyUpsert) {
+		s.ClearScopes()
 	})
 }
 

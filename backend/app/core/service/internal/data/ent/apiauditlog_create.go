@@ -371,6 +371,20 @@ func (_c *ApiAuditLogCreate) SetNillableLogHash(v *string) *ApiAuditLogCreate {
 	return _c
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_c *ApiAuditLogCreate) SetPrevLogHash(v string) *ApiAuditLogCreate {
+	_c.mutation.SetPrevLogHash(v)
+	return _c
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_c *ApiAuditLogCreate) SetNillablePrevLogHash(v *string) *ApiAuditLogCreate {
+	if v != nil {
+		_c.SetPrevLogHash(*v)
+	}
+	return _c
+}
+
 // SetSignature sets the "signature" field.
 func (_c *ApiAuditLogCreate) SetSignature(v []byte) *ApiAuditLogCreate {
 	_c.mutation.SetSignature(v)
@@ -580,6 +594,10 @@ func (_c *ApiAuditLogCreate) createSpec() (*ApiAuditLog, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.LogHash(); ok {
 		_spec.SetField(apiauditlog.FieldLogHash, field.TypeString, value)
 		_node.LogHash = &value
+	}
+	if value, ok := _c.mutation.PrevLogHash(); ok {
+		_spec.SetField(apiauditlog.FieldPrevLogHash, field.TypeString, value)
+		_node.PrevLogHash = value
 	}
 	if value, ok := _c.mutation.Signature(); ok {
 		_spec.SetField(apiauditlog.FieldSignature, field.TypeBytes, value)
@@ -1084,6 +1102,24 @@ func (u *ApiAuditLogUpsert) UpdateLogHash() *ApiAuditLogUpsert {
 // ClearLogHash clears the value of the "log_hash" field.
 func (u *ApiAuditLogUpsert) ClearLogHash() *ApiAuditLogUpsert {
 	u.SetNull(apiauditlog.FieldLogHash)
+	return u
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *ApiAuditLogUpsert) SetPrevLogHash(v string) *ApiAuditLogUpsert {
+	u.Set(apiauditlog.FieldPrevLogHash, v)
+	return u
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *ApiAuditLogUpsert) UpdatePrevLogHash() *ApiAuditLogUpsert {
+	u.SetExcluded(apiauditlog.FieldPrevLogHash)
+	return u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *ApiAuditLogUpsert) ClearPrevLogHash() *ApiAuditLogUpsert {
+	u.SetNull(apiauditlog.FieldPrevLogHash)
 	return u
 }
 
@@ -1681,6 +1717,27 @@ func (u *ApiAuditLogUpsertOne) UpdateLogHash() *ApiAuditLogUpsertOne {
 func (u *ApiAuditLogUpsertOne) ClearLogHash() *ApiAuditLogUpsertOne {
 	return u.Update(func(s *ApiAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *ApiAuditLogUpsertOne) SetPrevLogHash(v string) *ApiAuditLogUpsertOne {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *ApiAuditLogUpsertOne) UpdatePrevLogHash() *ApiAuditLogUpsertOne {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *ApiAuditLogUpsertOne) ClearPrevLogHash() *ApiAuditLogUpsertOne {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 
@@ -2447,6 +2504,27 @@ func (u *ApiAuditLogUpsertBulk) UpdateLogHash() *ApiAuditLogUpsertBulk {
 func (u *ApiAuditLogUpsertBulk) ClearLogHash() *ApiAuditLogUpsertBulk {
 	return u.Update(func(s *ApiAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *ApiAuditLogUpsertBulk) SetPrevLogHash(v string) *ApiAuditLogUpsertBulk {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *ApiAuditLogUpsertBulk) UpdatePrevLogHash() *ApiAuditLogUpsertBulk {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *ApiAuditLogUpsertBulk) ClearPrevLogHash() *ApiAuditLogUpsertBulk {
+	return u.Update(func(s *ApiAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 

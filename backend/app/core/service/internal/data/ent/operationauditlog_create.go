@@ -259,6 +259,20 @@ func (_c *OperationAuditLogCreate) SetNillableLogHash(v *string) *OperationAudit
 	return _c
 }
 
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (_c *OperationAuditLogCreate) SetPrevLogHash(v string) *OperationAuditLogCreate {
+	_c.mutation.SetPrevLogHash(v)
+	return _c
+}
+
+// SetNillablePrevLogHash sets the "prev_log_hash" field if the given value is not nil.
+func (_c *OperationAuditLogCreate) SetNillablePrevLogHash(v *string) *OperationAuditLogCreate {
+	if v != nil {
+		_c.SetPrevLogHash(*v)
+	}
+	return _c
+}
+
 // SetSignature sets the "signature" field.
 func (_c *OperationAuditLogCreate) SetSignature(v []byte) *OperationAuditLogCreate {
 	_c.mutation.SetSignature(v)
@@ -446,6 +460,10 @@ func (_c *OperationAuditLogCreate) createSpec() (*OperationAuditLog, *sqlgraph.C
 	if value, ok := _c.mutation.LogHash(); ok {
 		_spec.SetField(operationauditlog.FieldLogHash, field.TypeString, value)
 		_node.LogHash = &value
+	}
+	if value, ok := _c.mutation.PrevLogHash(); ok {
+		_spec.SetField(operationauditlog.FieldPrevLogHash, field.TypeString, value)
+		_node.PrevLogHash = value
 	}
 	if value, ok := _c.mutation.Signature(); ok {
 		_spec.SetField(operationauditlog.FieldSignature, field.TypeBytes, value)
@@ -794,6 +812,24 @@ func (u *OperationAuditLogUpsert) UpdateLogHash() *OperationAuditLogUpsert {
 // ClearLogHash clears the value of the "log_hash" field.
 func (u *OperationAuditLogUpsert) ClearLogHash() *OperationAuditLogUpsert {
 	u.SetNull(operationauditlog.FieldLogHash)
+	return u
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *OperationAuditLogUpsert) SetPrevLogHash(v string) *OperationAuditLogUpsert {
+	u.Set(operationauditlog.FieldPrevLogHash, v)
+	return u
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *OperationAuditLogUpsert) UpdatePrevLogHash() *OperationAuditLogUpsert {
+	u.SetExcluded(operationauditlog.FieldPrevLogHash)
+	return u
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *OperationAuditLogUpsert) ClearPrevLogHash() *OperationAuditLogUpsert {
+	u.SetNull(operationauditlog.FieldPrevLogHash)
 	return u
 }
 
@@ -1209,6 +1245,27 @@ func (u *OperationAuditLogUpsertOne) UpdateLogHash() *OperationAuditLogUpsertOne
 func (u *OperationAuditLogUpsertOne) ClearLogHash() *OperationAuditLogUpsertOne {
 	return u.Update(func(s *OperationAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *OperationAuditLogUpsertOne) SetPrevLogHash(v string) *OperationAuditLogUpsertOne {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *OperationAuditLogUpsertOne) UpdatePrevLogHash() *OperationAuditLogUpsertOne {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *OperationAuditLogUpsertOne) ClearPrevLogHash() *OperationAuditLogUpsertOne {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 
@@ -1793,6 +1850,27 @@ func (u *OperationAuditLogUpsertBulk) UpdateLogHash() *OperationAuditLogUpsertBu
 func (u *OperationAuditLogUpsertBulk) ClearLogHash() *OperationAuditLogUpsertBulk {
 	return u.Update(func(s *OperationAuditLogUpsert) {
 		s.ClearLogHash()
+	})
+}
+
+// SetPrevLogHash sets the "prev_log_hash" field.
+func (u *OperationAuditLogUpsertBulk) SetPrevLogHash(v string) *OperationAuditLogUpsertBulk {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.SetPrevLogHash(v)
+	})
+}
+
+// UpdatePrevLogHash sets the "prev_log_hash" field to the value that was provided on create.
+func (u *OperationAuditLogUpsertBulk) UpdatePrevLogHash() *OperationAuditLogUpsertBulk {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.UpdatePrevLogHash()
+	})
+}
+
+// ClearPrevLogHash clears the value of the "prev_log_hash" field.
+func (u *OperationAuditLogUpsertBulk) ClearPrevLogHash() *OperationAuditLogUpsertBulk {
+	return u.Update(func(s *OperationAuditLogUpsert) {
+		s.ClearPrevLogHash()
 	})
 }
 

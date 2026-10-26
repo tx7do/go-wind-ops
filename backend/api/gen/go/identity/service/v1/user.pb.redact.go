@@ -275,6 +275,8 @@ func (x *User) Redact() {
 	// Safe field: UpdatedAt
 
 	// Safe field: DeletedAt
+
+	// Safe field: MfaEnabled
 }
 
 // Ensure ListUserResponse implements the Redactor interface at compile time.

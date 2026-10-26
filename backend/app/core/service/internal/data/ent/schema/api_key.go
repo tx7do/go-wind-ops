@@ -70,6 +70,10 @@ func (ApiKey) Fields() []ent.Field {
 			Comment("描述").
 			Optional().
 			Nillable(),
+
+		field.JSON("scopes", []string{}).
+			Comment("允许的 OpenAPI 端点类别(ApiKey.Scope 枚举值名 BUILDS/DISTRIBUTIONS/PIPELINES/WEBHOOKS;空=全部,存量密钥兼容)").
+			Optional(),
 	}
 }
 

@@ -170,6 +170,40 @@ func (_u *UserUpdate) ClearRemark() *UserUpdate {
 	return _u
 }
 
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (_u *UserUpdate) SetMfaEnabled(v bool) *UserUpdate {
+	_u.mutation.SetMfaEnabled(v)
+	return _u
+}
+
+// SetNillableMfaEnabled sets the "mfa_enabled" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableMfaEnabled(v *bool) *UserUpdate {
+	if v != nil {
+		_u.SetMfaEnabled(*v)
+	}
+	return _u
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (_u *UserUpdate) SetMfaSecret(v string) *UserUpdate {
+	_u.mutation.SetMfaSecret(v)
+	return _u
+}
+
+// SetNillableMfaSecret sets the "mfa_secret" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableMfaSecret(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetMfaSecret(*v)
+	}
+	return _u
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (_u *UserUpdate) ClearMfaSecret() *UserUpdate {
+	_u.mutation.ClearMfaSecret()
+	return _u
+}
+
 // SetNickname sets the "nickname" field.
 func (_u *UserUpdate) SetNickname(v string) *UserUpdate {
 	_u.mutation.SetNickname(v)
@@ -589,6 +623,15 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.UsernameCleared() {
 		_spec.ClearField(user.FieldUsername, field.TypeString)
 	}
+	if value, ok := _u.mutation.MfaEnabled(); ok {
+		_spec.SetField(user.FieldMfaEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.MfaSecret(); ok {
+		_spec.SetField(user.FieldMfaSecret, field.TypeString, value)
+	}
+	if _u.mutation.MfaSecretCleared() {
+		_spec.ClearField(user.FieldMfaSecret, field.TypeString)
+	}
 	if value, ok := _u.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
@@ -833,6 +876,40 @@ func (_u *UserUpdateOne) SetNillableRemark(v *string) *UserUpdateOne {
 // ClearRemark clears the value of the "remark" field.
 func (_u *UserUpdateOne) ClearRemark() *UserUpdateOne {
 	_u.mutation.ClearRemark()
+	return _u
+}
+
+// SetMfaEnabled sets the "mfa_enabled" field.
+func (_u *UserUpdateOne) SetMfaEnabled(v bool) *UserUpdateOne {
+	_u.mutation.SetMfaEnabled(v)
+	return _u
+}
+
+// SetNillableMfaEnabled sets the "mfa_enabled" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableMfaEnabled(v *bool) *UserUpdateOne {
+	if v != nil {
+		_u.SetMfaEnabled(*v)
+	}
+	return _u
+}
+
+// SetMfaSecret sets the "mfa_secret" field.
+func (_u *UserUpdateOne) SetMfaSecret(v string) *UserUpdateOne {
+	_u.mutation.SetMfaSecret(v)
+	return _u
+}
+
+// SetNillableMfaSecret sets the "mfa_secret" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableMfaSecret(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetMfaSecret(*v)
+	}
+	return _u
+}
+
+// ClearMfaSecret clears the value of the "mfa_secret" field.
+func (_u *UserUpdateOne) ClearMfaSecret() *UserUpdateOne {
+	_u.mutation.ClearMfaSecret()
 	return _u
 }
 
@@ -1284,6 +1361,15 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.UsernameCleared() {
 		_spec.ClearField(user.FieldUsername, field.TypeString)
+	}
+	if value, ok := _u.mutation.MfaEnabled(); ok {
+		_spec.SetField(user.FieldMfaEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.MfaSecret(); ok {
+		_spec.SetField(user.FieldMfaSecret, field.TypeString, value)
+	}
+	if _u.mutation.MfaSecretCleared() {
+		_spec.ClearField(user.FieldMfaSecret, field.TypeString)
 	}
 	if value, ok := _u.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
