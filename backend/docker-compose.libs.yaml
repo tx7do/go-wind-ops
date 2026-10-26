@@ -69,6 +69,9 @@ services:
   # 安全(已启用 broker 级认证+授权,回调 core 的 webhook,见 mqtt_auth_server.go):
   #   认证 /api/v1/mqtt/auth —— core 账号比对配置;agent 以 agentId+token 校验(TOFU 首连注册)
   #   授权 /api/v1/mqtt/acl —— core 全权 ops/;agent 仅限 ops/agent/{自身用户名}/#;未命中拒绝
+  # TLS:8883 挂 backend/certs/emqx 自签证书(先跑 scripts/maintenance/gen-mqtt-certs.sh 生成;
+  #   未生成证书时 TLS listener 起不来,不影响 1883 明文口)。core/agent 侧 endpoint 改
+  #   ssl://<broker>:8883 + tls.file.ca_path 指向 ca.pem(见各自 configs/server.yaml 注释)。
   # 前提:core 服务已启动(:9500 webhook)。EMQX 在容器、core 在宿主机用
   # host.docker.internal;整栈容器化部署改用服务名(如 http://core-service:9500)。
   emqx:
@@ -82,8 +85,17 @@ services:
       - "18083:18083"
     networks:
       - app-tier
+    volumes:
+      # 自签证书目录( gen-mqtt-certs.sh 产物;不存在时挂载点为空目录,TLS listener 启动失败仅记日志 )
+      - ./certs/emqx:/opt/emqx/etc/mqtt-tls:ro
     environment:
       - EMQX_DASHBOARD__DEFAULT_PASSWORD=${EMQX_DASHBOARD_PASSWORD:-public}
+      # ── TLS listener(8883):服务端证书校验,不验客户端证书(准入仍走账密 webhook)──
+      - EMQX_LISTENERS__SSL__DEFAULT__ENABLE=true
+      - EMQX_LISTENERS__SSL__DEFAULT__BIND=0.0.0.0:8883
+      - EMQX_LISTENERS__SSL__DEFAULT__SSL__VERIFY=verify_none
+      - EMQX_LISTENERS__SSL__DEFAULT__SSL__CERTFILE=/opt/emqx/etc/mqtt-tls/server.pem
+      - EMQX_LISTENERS__SSL__DEFAULT__SSL__KEYFILE=/opt/emqx/etc/mqtt-tls/server.key
       # ── 认证:HTTP 回调 core webhook ──
       - EMQX_AUTHENTICATION__1__ENABLE=true
       - EMQX_AUTHENTICATION__1__MECHANISM=password_based

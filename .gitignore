@@ -38,3 +38,6 @@ go.work.sum
 .windsurfrules
 dist.zip
 .playwright-mcp/
+
+# MQTT 自签证书(gen-mqtt-certs.sh 产物,含私钥,不入库)
+backend/certs/
