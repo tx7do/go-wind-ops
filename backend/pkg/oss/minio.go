@@ -11,6 +11,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/timeutil"
+
+	"go-wind-ops/pkg/configenv"
 	"github.com/tx7do/go-utils/trans"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
@@ -39,6 +41,9 @@ type MinIOClient struct {
 }
 
 func NewMinIoClient(cfg *conf.Bootstrap, logger log.Logger) *MinIOClient {
+	// MinIO 凭据的 env 覆盖在此统一收口:GetConfig() 每次返回深拷贝,
+	// 覆盖必须在消费点做(pkg/configenv,读 MINIO_ACCESS_KEY/MINIO_SECRET_KEY)。
+	configenv.ApplyOSS(cfg)
 	l := log.NewHelper(log.With(logger, "module", "minio/data/admin-service"))
 	return &MinIOClient{
 		log:        l,

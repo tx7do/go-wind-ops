@@ -180,13 +180,14 @@ func (s *FileService) CompleteAgentFilePush(ctx context.Context, req *opsV1.Comp
 	if req == nil || req.GetPath() == "" || req.GetObjectKey() == "" {
 		return nil, opsV1.ErrorBadRequest("path/objectKey required")
 	}
-	// 防越权:对象键必须落在传输前缀下
-	if !strings.HasPrefix(req.GetObjectKey(), fileObjectPrefix+"/") {
-		return nil, opsV1.ErrorBadRequest("invalid objectKey")
-	}
 	agentId, err := s.resolveAgentID(ctx, req.GetAgentId())
 	if err != nil {
 		return nil, err
+	}
+	// 防越权:对象键必须落在请求 agent 自己的传输前缀下
+	// (agent-files/{agentId}/...),防止换签其他 agent 的对象读取其文件。
+	if !strings.HasPrefix(req.GetObjectKey(), fileObjectPrefix+"/"+agentId+"/") {
+		return nil, opsV1.ErrorBadRequest("invalid objectKey")
 	}
 
 	downloadURL, err := s.presignGet(ctx, req.GetObjectKey())

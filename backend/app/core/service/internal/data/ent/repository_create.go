@@ -22,6 +22,20 @@ type RepositoryCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *RepositoryCreate) SetTenantID(v uint32) *RepositoryCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *RepositoryCreate) SetNillableTenantID(v *uint32) *RepositoryCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *RepositoryCreate) SetCreatedAt(v time.Time) *RepositoryCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -193,7 +207,9 @@ func (_c *RepositoryCreate) Mutation() *RepositoryMutation {
 
 // Save creates the Repository in the database.
 func (_c *RepositoryCreate) Save(ctx context.Context) (*Repository, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -220,11 +236,16 @@ func (_c *RepositoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *RepositoryCreate) defaults() {
+func (_c *RepositoryCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := repository.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Branch(); !ok {
 		v := repository.DefaultBranch
 		_c.mutation.SetBranch(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -282,6 +303,10 @@ func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(repository.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(repository.FieldCreatedAt, field.TypeTime, value)
@@ -342,7 +367,7 @@ func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Repository.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -351,7 +376,7 @@ func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.RepositoryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *RepositoryCreate) OnConflict(opts ...sql.ConflictOption) *RepositoryUpsertOne {
@@ -625,6 +650,9 @@ func (u *RepositoryUpsertOne) UpdateNewValues() *RepositoryUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(repository.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(repository.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(repository.FieldCreatedAt)
@@ -1054,7 +1082,7 @@ func (_c *RepositoryCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.RepositoryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *RepositoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *RepositoryUpsertBulk {
@@ -1100,6 +1128,9 @@ func (u *RepositoryUpsertBulk) UpdateNewValues() *RepositoryUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(repository.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(repository.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(repository.FieldCreatedAt)

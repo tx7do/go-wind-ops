@@ -165,6 +165,8 @@ func (s *AlertService) ResolveAlert(ctx context.Context, req *opsV1.ResolveAlert
 // 项目状态规则走同步指令探测;节点指标规则直接读心跳快照判阈值。
 // 由 CronScheduler 在规则 cron 命中时调用。
 func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+	// 后台扫描路径:按监控规则归属租户归因告警/投递(否则落 tenant 0)
+	ctx = tenantScopedCtx(ctx, monitor.TenantID)
 	switch string(monitor.TargetType) {
 	case "NODE_METRIC":
 		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, monitor)

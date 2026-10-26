@@ -390,6 +390,9 @@ func (_u *CloudBudgetUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudbudget.FieldCreatedAt, field.TypeTime)
 	}
@@ -892,6 +895,9 @@ func (_u *CloudBudgetUpdateOne) sqlSave(ctx context.Context) (_node *CloudBudget
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudbudget.FieldCreatedAt, field.TypeTime)

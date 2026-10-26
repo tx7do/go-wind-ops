@@ -380,6 +380,9 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(distributionrecord.FieldCreatedAt, field.TypeTime)
 	}
@@ -863,6 +866,9 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(distributionrecord.FieldCreatedAt, field.TypeTime)

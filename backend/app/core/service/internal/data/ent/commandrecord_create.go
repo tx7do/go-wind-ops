@@ -22,6 +22,20 @@ type CommandRecordCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CommandRecordCreate) SetTenantID(v uint32) *CommandRecordCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CommandRecordCreate) SetNillableTenantID(v *uint32) *CommandRecordCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *CommandRecordCreate) SetCreatedAt(v time.Time) *CommandRecordCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -207,7 +221,9 @@ func (_c *CommandRecordCreate) Mutation() *CommandRecordMutation {
 
 // Save creates the CommandRecord in the database.
 func (_c *CommandRecordCreate) Save(ctx context.Context) (*CommandRecord, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -234,7 +250,11 @@ func (_c *CommandRecordCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CommandRecordCreate) defaults() {
+func (_c *CommandRecordCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := commandrecord.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.NodeID(); !ok {
 		v := commandrecord.DefaultNodeID
 		_c.mutation.SetNodeID(v)
@@ -251,6 +271,7 @@ func (_c *CommandRecordCreate) defaults() {
 		v := commandrecord.DefaultBatchID
 		_c.mutation.SetBatchID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -322,6 +343,10 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(commandrecord.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(commandrecord.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -385,7 +410,7 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 // of the `INSERT` statement. For example:
 //
 //	client.CommandRecord.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -394,7 +419,7 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CommandRecordUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CommandRecordCreate) OnConflict(opts ...sql.ConflictOption) *CommandRecordUpsertOne {
@@ -680,6 +705,9 @@ func (u *CommandRecordUpsertOne) UpdateNewValues() *CommandRecordUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(commandrecord.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(commandrecord.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(commandrecord.FieldCreatedAt)
@@ -1123,7 +1151,7 @@ func (_c *CommandRecordCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CommandRecordUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CommandRecordCreateBulk) OnConflict(opts ...sql.ConflictOption) *CommandRecordUpsertBulk {
@@ -1169,6 +1197,9 @@ func (u *CommandRecordUpsertBulk) UpdateNewValues() *CommandRecordUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(commandrecord.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(commandrecord.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(commandrecord.FieldCreatedAt)

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
@@ -265,12 +266,12 @@ func (_q *ScriptBatchQuery) Clone() *ScriptBatchQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ScriptBatch.Query().
-//		GroupBy(scriptbatch.FieldCreatedAt).
+//		GroupBy(scriptbatch.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ScriptBatchQuery) GroupBy(field string, fields ...string) *ScriptBatchGroupBy {
@@ -288,11 +289,11 @@ func (_q *ScriptBatchQuery) GroupBy(field string, fields ...string) *ScriptBatch
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.ScriptBatch.Query().
-//		Select(scriptbatch.FieldCreatedAt).
+//		Select(scriptbatch.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *ScriptBatchQuery) Select(fields ...string) *ScriptBatchSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *ScriptBatchQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if scriptbatch.Policy == nil {
+		return errors.New("ent: uninitialized scriptbatch.Policy (forgotten import ent/runtime?)")
+	}
+	if err := scriptbatch.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

@@ -2,8 +2,9 @@
 // 先建 PENDING 审批单并拒绝直接执行,审批人(Approve,platform_admin 门)确认
 // 后由审批服务重下发存储的载荷。默认空 = 不启用(行为同旧版)。
 // 仅接入单目标动作(agent_upgrade/script_exec/plugin_exec)——批量/多目标
-// 动作与"审批单重放到单一 agent"的模型不匹配,其防线仍是触发面权限码 +
-// 危险命令确认。
+// 动作与"审批单重放到单一 agent"的模型不匹配:批量入口(ExecuteScriptBatch)
+// 在 script_exec 需审批时直接 fail-closed 拒绝(approvalHoldsAction),
+// 不得成为绕审旁路;其余多目标动作的防线仍是触发面权限码+危险命令确认。
 package service
 
 import (
@@ -45,6 +46,13 @@ func approvalRequiredActions() map[string]struct{} {
 		approvalActions = parseApprovalActions(os.Getenv("APPROVAL_REQUIRED_ACTIONS"))
 	})
 	return approvalActions
+}
+
+// approvalHoldsAction 查询某动作当前是否被审批闸门约束(纯查询,供批量等
+// 无法套用"单目标审批单"模型的入口做 fail-closed 拒绝)。
+func approvalHoldsAction(action string) bool {
+	_, ok := approvalRequiredActions()[action]
+	return ok
 }
 
 // approvalGate 命中需审批清单时创建 PENDING 审批单并返回 403(专用 reason);

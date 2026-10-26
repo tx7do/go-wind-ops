@@ -41,6 +41,10 @@ const (
 // CommandHandler 指令处理器:按 action 注册,返回值作为 CommandResult.Data。
 type CommandHandler func(ctx context.Context, env *signal.CommandEnvelope) (any, error)
 
+// seenRequestIDCap request_id 去重环形容量:同 ID 重复投递(EMQX QoS1 重发/
+// 重放攻击)只执行一次;容量按"指令峰值速率 × 台账超时时长"富余估算。
+const seenRequestIDCap = 4096
+
 // Service agent 应用服务。
 type Service struct {
 	ctx *bootstrap.Context
@@ -55,6 +59,19 @@ type Service struct {
 
 	mqttBroker atomic.Value // broker.Broker
 	authed     atomic.Bool
+	// authedEver 进程生命周期内是否通过过准入:首认证前不接受指令(封死
+	// "未认证也能执行指令"的窗口);重连重认证不回退该标记,断线重连后的
+	// 排队指令不受影响。
+	authedEver atomic.Bool
+
+	// signKey 指令信封 HMAC 签名密钥(COMMAND_SIGN_KEY,空=未签名模式)。
+	signKey string
+
+	// request_id 去重环形缓冲(配合 seenRing 轮转淘汰)。
+	seenMu   sync.Mutex
+	seen     map[string]struct{}
+	seenRing []string
+	seenIdx  int
 
 	terminal *terminalSessionManager
 	plugins  []pluginDef
@@ -81,7 +98,13 @@ func NewService(ctx *bootstrap.Context) *Service {
 		version:   version,
 		tokenPath: tokenPath,
 		handlers:  make(map[signal.CommandAction]CommandHandler),
+		signKey:   signal.SignKeyFromEnv(),
+		seen:      make(map[string]struct{}, seenRequestIDCap),
+		seenRing:  make([]string, seenRequestIDCap),
 		stopCh:    make(chan struct{}),
+	}
+	if s.signKey == "" {
+		ctx.NewLoggerHelper("agent/service").Warnf("%s 未配置,指令不做 HMAC 校验——接受未签名指令,仅限开发环境,生产必须与 core 一致配置", signal.SignKeyEnv)
 	}
 
 	s.RegisterHandler(signal.CommandActionPing, s.handlePing)
@@ -213,6 +236,7 @@ func (s *Service) HandleAuthResponse(ctx context.Context, _ string, _ broker.Hea
 	}
 	if resp.OK {
 		s.authed.Store(true)
+		s.authedEver.Store(true)
 		log.Infof("authenticated by core (server_time=%s)", resp.ServerTime.Format(time.RFC3339))
 		return nil
 	}
@@ -223,11 +247,35 @@ func (s *Service) HandleAuthResponse(ctx context.Context, _ string, _ broker.Hea
 	return nil
 }
 
-// HandleCommand 处理 core 下发的指令信封:分发到 action 处理器并回传结果。
+// HandleCommand 处理 core 下发的指令信封:目标/准入/签名/幂等四道校验
+// 通过后分发到 action 处理器并回传结果。校验失败回执错误(重复投递除外),
+// 让 core 台账及时终态化。
 func (s *Service) HandleCommand(ctx context.Context, topicStr string, _ broker.Headers, env *signal.CommandEnvelope) error {
 	log := s.log()
 	if env == nil || env.RequestId == "" {
 		log.Warn("received nil/invalid command envelope")
+		return nil
+	}
+
+	// 目标校验:信封必须面向本 agent(防误投/改投)。
+	if env.AgentId != "" && env.AgentId != s.agentID {
+		log.Warnf("command agent mismatch (request_id=%s to=%s self=%s)", env.RequestId, env.AgentId, s.agentID)
+		return s.replyResult(env, false, "command rejected: agent mismatch")
+	}
+	// 准入校验:进程首次通过 core 认证前不接受指令。
+	if !s.authedEver.Load() {
+		log.Warnf("command before authentication (request_id=%s)", env.RequestId)
+		return s.replyResult(env, false, "command rejected: not authenticated yet")
+	}
+	// 签名/时效校验:COMMAND_SIGN_KEY 配置后强制(伪造/过期/前拨超限一律拒绝)。
+	if err := signal.VerifyEnvelope(env, s.signKey, time.Now()); err != nil {
+		log.Warnf("command signature rejected (request_id=%s): %v", env.RequestId, err)
+		return s.replyResult(env, false, "command rejected: "+err.Error())
+	}
+	// 幂等去重:同 request_id 只执行一次;重复投递不回执、不执行
+	// (回执会与首次执行的回执竞争台账终态,丢弃由超时链路兜底)。
+	if !s.markSeenRequestID(env.RequestId) {
+		log.Warnf("duplicate command dropped (request_id=%s action=%s)", env.RequestId, env.Action)
 		return nil
 	}
 	log.Infof("command received (request_id=%s action=%s)", env.RequestId, env.Action)
@@ -259,6 +307,34 @@ func (s *Service) HandleCommand(ctx context.Context, topicStr string, _ broker.H
 	}
 
 	return s.publish(topic.MakeMqttTopicCommandResult(s.agentID), &result)
+}
+
+// replyResult 回传一条失败的执行结果(校验拒绝路径用)。
+func (s *Service) replyResult(env *signal.CommandEnvelope, success bool, errMsg string) error {
+	return s.publish(topic.MakeMqttTopicCommandResult(s.agentID), &signal.CommandResult{
+		RequestId:  env.RequestId,
+		AgentId:    s.agentID,
+		Action:     env.Action,
+		Success:    success,
+		Error:      errMsg,
+		FinishedAt: time.Now(),
+	})
+}
+
+// markSeenRequestID 登记并判定 request_id 是否首次出现(环形淘汰最旧记录)。
+func (s *Service) markSeenRequestID(id string) bool {
+	s.seenMu.Lock()
+	defer s.seenMu.Unlock()
+	if _, dup := s.seen[id]; dup {
+		return false
+	}
+	if old := s.seenRing[s.seenIdx]; old != "" {
+		delete(s.seen, old)
+	}
+	s.seenRing[s.seenIdx] = id
+	s.seen[id] = struct{}{}
+	s.seenIdx = (s.seenIdx + 1) % len(s.seenRing)
+	return true
 }
 
 // ============================================================================

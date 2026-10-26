@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/alert"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *AlertQuery) Clone() *AlertQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Alert.Query().
-//		GroupBy(alert.FieldCreatedAt).
+//		GroupBy(alert.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *AlertQuery) GroupBy(field string, fields ...string) *AlertGroupBy {
@@ -288,11 +289,11 @@ func (_q *AlertQuery) GroupBy(field string, fields ...string) *AlertGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Alert.Query().
-//		Select(alert.FieldCreatedAt).
+//		Select(alert.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *AlertQuery) Select(fields ...string) *AlertSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *AlertQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if alert.Policy == nil {
+		return errors.New("ent: uninitialized alert.Policy (forgotten import ent/runtime?)")
+	}
+	if err := alert.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

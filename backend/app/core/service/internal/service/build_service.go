@@ -22,6 +22,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent"
 	pkgcrypto "go-wind-ops/pkg/crypto"
 	"go-wind-ops/pkg/machine"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/shellexec"
 
@@ -192,7 +193,9 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 // ============================================================================
 
 func (s *BuildService) runBuild(historyID uint32) {
-	ctx := context.Background()
+	// 构建历史/构建表已挂租户隐私:后台 goroutine 注入系统 viewer
+	// (历史行在触发请求上下文按用户租户落库,此处仅做终态推进)。
+	ctx := appViewer.NewSystemViewerContext(context.Background())
 	// 日志缓冲由主 goroutine 写、flush goroutine 每 5s 读,统一走互斥锁
 	// (string 复合结构非原子,无锁读写是数据竞争)。
 	var (

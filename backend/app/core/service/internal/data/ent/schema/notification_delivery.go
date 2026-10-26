@@ -75,6 +75,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 func (NotificationDelivery) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

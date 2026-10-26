@@ -82,20 +82,21 @@ services:
     networks:
       - app-tier
     environment:
-      - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
-      # ── 认证:HTTP 回调 core webhook ──
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=${EMQX_DASHBOARD_PASSWORD:-public}
+      # ── 认证:HTTP 回调 core webhook(URL 拼入回调共享密钥,与 core-service
+      #    的 MQTT_AUTH_WEBHOOK_SECRET 同源,生产用 .env 覆盖) ──
       - EMQX_AUTHENTICATION__1__ENABLE=true
       - EMQX_AUTHENTICATION__1__MECHANISM=password_based
       - EMQX_AUTHENTICATION__1__BACKEND=http
       - EMQX_AUTHENTICATION__1__METHOD=post
-      - EMQX_AUTHENTICATION__1__URL=http://core-service:9500/api/v1/mqtt/auth
+      - EMQX_AUTHENTICATION__1__URL=http://core-service:9500/api/v1/mqtt/auth?secret=${MQTT_AUTH_WEBHOOK_SECRET:-dev_only_change_me}
       - EMQX_AUTHENTICATION__1__BODY={"username":"$${username}","password":"$${password}","clientid":"$${clientid}"}
       # ── 授权:HTTP 回调 core webhook ──
       - EMQX_AUTHORIZATION__NO_MATCH=deny
       - EMQX_AUTHORIZATION__SOURCES__1__ENABLE=true
       - EMQX_AUTHORIZATION__SOURCES__1__TYPE=http
       - EMQX_AUTHORIZATION__SOURCES__1__METHOD=post
-      - EMQX_AUTHORIZATION__SOURCES__1__URL=http://core-service:9500/api/v1/mqtt/acl
+      - EMQX_AUTHORIZATION__SOURCES__1__URL=http://core-service:9500/api/v1/mqtt/acl?secret=${MQTT_AUTH_WEBHOOK_SECRET:-dev_only_change_me}
       - EMQX_AUTHORIZATION__SOURCES__1__BODY={"username":"$${username}","topic":"$${topic}","action":"$${action}","clientid":"$${clientid}"}
 
   minio:
@@ -192,6 +193,8 @@ services:
       - jaeger
     environment:
       - TZ=Asia/Shanghai
+      # 内部共享密钥(BFF↔core gRPC),三服务必须一致;生产用 .env 覆盖
+      - CORE_RPC_SECRET=${CORE_RPC_SECRET:-dev_only_change_me}
     build:
       context: ./  # 指定 Dockerfile 所在的上下文路径
       dockerfile: Dockerfile
@@ -216,6 +219,7 @@ services:
       - jaeger
     environment:
       - TZ=Asia/Shanghai
+      - CORE_RPC_SECRET=${CORE_RPC_SECRET:-dev_only_change_me}
     build:
       context: ./  # 指定 Dockerfile 所在的上下文路径
       dockerfile: Dockerfile
@@ -235,6 +239,8 @@ services:
       - emqx
     environment:
       - TZ=Asia/Shanghai
+      # 指令信封 HMAC 签名密钥(core 与 agent 必须一致;生产用 .env 覆盖)
+      - COMMAND_SIGN_KEY=${COMMAND_SIGN_KEY:-dev_only_change_me}
     build:
       context: ./  # 指定 Dockerfile 所在的上下文路径
       dockerfile: Dockerfile
@@ -256,6 +262,15 @@ services:
       - jaeger
     environment:
       - TZ=Asia/Shanghai
+      # 内部共享密钥(BFF↔core gRPC);生产用 .env 覆盖
+      - CORE_RPC_SECRET=${CORE_RPC_SECRET:-dev_only_change_me}
+      # EMQX 认证/授权回调共享密钥(与 emqx 服务的 URL ?secret= 同源)
+      - MQTT_AUTH_WEBHOOK_SECRET=${MQTT_AUTH_WEBHOOK_SECRET:-dev_only_change_me}
+      # core 自身 MQTT 账号(server.yaml 以 ${MQTT_CORE_PASSWORD:...} 插值,
+      # 默认与本地 dev 保持一致;生产必须覆盖)
+      - MQTT_CORE_PASSWORD=${MQTT_CORE_PASSWORD:-core-pass}
+      # 指令信封 HMAC 签名密钥(core 与 agent 必须一致)
+      - COMMAND_SIGN_KEY=${COMMAND_SIGN_KEY:-dev_only_change_me}
     build:
       context: ./  # 指定 Dockerfile 所在的上下文路径
       dockerfile: Dockerfile

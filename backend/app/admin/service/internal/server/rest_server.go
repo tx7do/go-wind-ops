@@ -21,12 +21,11 @@ import (
 
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-ops/api/gen/go/audit/service/v1"
-	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 
 	"go-wind-ops/pkg/metadata"
 	"go-wind-ops/pkg/middleware/auth"
-	applogging "go-wind-ops/pkg/middleware/logging"
 	entmiddleware "go-wind-ops/pkg/middleware/ent"
+	applogging "go-wind-ops/pkg/middleware/logging"
 )
 
 // NewRestMiddleware 创建中间件
@@ -56,25 +55,26 @@ func NewRestMiddleware(
 		adminV1.OperationAuthenticationServiceRefreshToken,
 	)
 
-	ms = append(ms, applogging.Server(
-		applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
-			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
-			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-			_, err := apiAuditLogServiceClient.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
-			return err
-		}),
-		applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
-			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
-			_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
-			return err
-		}),
-		applogging.WithWriteOperationLogFunc(func(ctx context.Context, data *auditV1.OperationAuditLog) error {
-			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
-			_, err := operationAuditLogServiceClient.Create(ctx, &auditV1.CreateOperationAuditLogRequest{Data: data})
-			return err
-		}),
-	))
+		ms = append(ms, applogging.Server(
+			applogging.WithLogger(ctx.NewLoggerHelper("audit-logging/admin-service")),
+			applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
+				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+				// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+				_, err := apiAuditLogServiceClient.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
+				return err
+			}),
+			applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
+				// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+				_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
+				return err
+			}),
+			applogging.WithWriteOperationLogFunc(func(ctx context.Context, data *auditV1.OperationAuditLog) error {
+				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+				_, err := operationAuditLogServiceClient.Create(ctx, &auditV1.CreateOperationAuditLogRequest{Data: data})
+				return err
+			}),
+		))
 
 	// 鉴权必须在 ent.Server() 之前执行：auth.Server 对非白名单请求注入
 	// OperatorMetadata，随后 ent.Server() 才能据此构建带租户作用域的 UserViewer。
@@ -143,7 +143,6 @@ func NewRestServer(
 	dictTypeService *service.DictTypeService,
 	dictEntryService *service.DictEntryService,
 	languageService *service.LanguageService,
-
 
 	apiAuditLogService *service.ApiAuditLogService,
 	dataAccessAuditLogService *service.DataAccessAuditLogService,
@@ -239,7 +238,6 @@ func NewRestServer(
 	adminV1.RegisterOperationAuditLogServiceHTTPServer(srv, operationAuditLogService)
 	adminV1.RegisterPermissionAuditLogServiceHTTPServer(srv, permissionAuditLogService)
 	adminV1.RegisterPolicyEvaluationLogServiceHTTPServer(srv, policyEvaluationLogService)
-
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 	adminV1.RegisterCloudCostServiceHTTPServer(srv, cloudCostService)

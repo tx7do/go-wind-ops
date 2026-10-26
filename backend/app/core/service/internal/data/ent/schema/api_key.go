@@ -77,6 +77,7 @@ func (ApiKey) Fields() []ent.Field {
 func (ApiKey) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

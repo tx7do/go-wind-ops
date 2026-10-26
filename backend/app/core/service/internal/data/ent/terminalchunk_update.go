@@ -225,6 +225,9 @@ func (_u *TerminalChunkUpdate) sqlSave(ctx context.Context) (_node int, err erro
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalchunk.FieldCreatedAt, field.TypeTime)
 	}
@@ -511,6 +514,9 @@ func (_u *TerminalChunkUpdateOne) sqlSave(ctx context.Context) (_node *TerminalC
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalchunk.FieldCreatedAt, field.TypeTime)

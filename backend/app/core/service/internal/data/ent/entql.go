@@ -131,6 +131,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Alert",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			alert.FieldTenantID:   {Type: field.TypeUint32, Column: alert.FieldTenantID},
 			alert.FieldCreatedAt:  {Type: field.TypeTime, Column: alert.FieldCreatedAt},
 			alert.FieldUpdatedAt:  {Type: field.TypeTime, Column: alert.FieldUpdatedAt},
 			alert.FieldDeletedAt:  {Type: field.TypeTime, Column: alert.FieldDeletedAt},
@@ -224,6 +225,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "ApiKey",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			apikey.FieldTenantID:    {Type: field.TypeUint32, Column: apikey.FieldTenantID},
 			apikey.FieldCreatedAt:   {Type: field.TypeTime, Column: apikey.FieldCreatedAt},
 			apikey.FieldUpdatedAt:   {Type: field.TypeTime, Column: apikey.FieldUpdatedAt},
 			apikey.FieldDeletedAt:   {Type: field.TypeTime, Column: apikey.FieldDeletedAt},
@@ -250,6 +252,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Approval",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			approval.FieldTenantID:       {Type: field.TypeUint32, Column: approval.FieldTenantID},
 			approval.FieldCreatedAt:      {Type: field.TypeTime, Column: approval.FieldCreatedAt},
 			approval.FieldUpdatedAt:      {Type: field.TypeTime, Column: approval.FieldUpdatedAt},
 			approval.FieldDeletedAt:      {Type: field.TypeTime, Column: approval.FieldDeletedAt},
@@ -277,6 +280,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "BackupRecord",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			backuprecord.FieldTenantID:         {Type: field.TypeUint32, Column: backuprecord.FieldTenantID},
 			backuprecord.FieldCreatedAt:        {Type: field.TypeTime, Column: backuprecord.FieldCreatedAt},
 			backuprecord.FieldUpdatedAt:        {Type: field.TypeTime, Column: backuprecord.FieldUpdatedAt},
 			backuprecord.FieldDeletedAt:        {Type: field.TypeTime, Column: backuprecord.FieldDeletedAt},
@@ -304,6 +308,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "BackupTask",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			backuptask.FieldTenantID:    {Type: field.TypeUint32, Column: backuptask.FieldTenantID},
 			backuptask.FieldCreatedAt:   {Type: field.TypeTime, Column: backuptask.FieldCreatedAt},
 			backuptask.FieldUpdatedAt:   {Type: field.TypeTime, Column: backuptask.FieldUpdatedAt},
 			backuptask.FieldDeletedAt:   {Type: field.TypeTime, Column: backuptask.FieldDeletedAt},
@@ -331,6 +336,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Build",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			build.FieldTenantID:          {Type: field.TypeUint32, Column: build.FieldTenantID},
 			build.FieldCreatedAt:         {Type: field.TypeTime, Column: build.FieldCreatedAt},
 			build.FieldUpdatedAt:         {Type: field.TypeTime, Column: build.FieldUpdatedAt},
 			build.FieldDeletedAt:         {Type: field.TypeTime, Column: build.FieldDeletedAt},
@@ -362,6 +368,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "BuildHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			buildhistory.FieldTenantID:          {Type: field.TypeUint32, Column: buildhistory.FieldTenantID},
 			buildhistory.FieldCreatedAt:         {Type: field.TypeTime, Column: buildhistory.FieldCreatedAt},
 			buildhistory.FieldUpdatedAt:         {Type: field.TypeTime, Column: buildhistory.FieldUpdatedAt},
 			buildhistory.FieldDeletedAt:         {Type: field.TypeTime, Column: buildhistory.FieldDeletedAt},
@@ -391,6 +398,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "BuildPipeline",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			buildpipeline.FieldTenantID:    {Type: field.TypeUint32, Column: buildpipeline.FieldTenantID},
 			buildpipeline.FieldCreatedAt:   {Type: field.TypeTime, Column: buildpipeline.FieldCreatedAt},
 			buildpipeline.FieldUpdatedAt:   {Type: field.TypeTime, Column: buildpipeline.FieldUpdatedAt},
 			buildpipeline.FieldDeletedAt:   {Type: field.TypeTime, Column: buildpipeline.FieldDeletedAt},
@@ -414,6 +422,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Cert",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			cert.FieldTenantID:         {Type: field.TypeUint32, Column: cert.FieldTenantID},
 			cert.FieldCreatedAt:        {Type: field.TypeTime, Column: cert.FieldCreatedAt},
 			cert.FieldUpdatedAt:        {Type: field.TypeTime, Column: cert.FieldUpdatedAt},
 			cert.FieldDeletedAt:        {Type: field.TypeTime, Column: cert.FieldDeletedAt},
@@ -445,6 +454,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CloudAccount",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			cloudaccount.FieldTenantID:       {Type: field.TypeUint32, Column: cloudaccount.FieldTenantID},
 			cloudaccount.FieldCreatedAt:      {Type: field.TypeTime, Column: cloudaccount.FieldCreatedAt},
 			cloudaccount.FieldUpdatedAt:      {Type: field.TypeTime, Column: cloudaccount.FieldUpdatedAt},
 			cloudaccount.FieldDeletedAt:      {Type: field.TypeTime, Column: cloudaccount.FieldDeletedAt},
@@ -474,6 +484,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CloudBudget",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			cloudbudget.FieldTenantID:         {Type: field.TypeUint32, Column: cloudbudget.FieldTenantID},
 			cloudbudget.FieldCreatedAt:        {Type: field.TypeTime, Column: cloudbudget.FieldCreatedAt},
 			cloudbudget.FieldUpdatedAt:        {Type: field.TypeTime, Column: cloudbudget.FieldUpdatedAt},
 			cloudbudget.FieldDeletedAt:        {Type: field.TypeTime, Column: cloudbudget.FieldDeletedAt},
@@ -503,6 +514,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CloudCost",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			cloudcost.FieldTenantID:         {Type: field.TypeUint32, Column: cloudcost.FieldTenantID},
 			cloudcost.FieldCreatedAt:        {Type: field.TypeTime, Column: cloudcost.FieldCreatedAt},
 			cloudcost.FieldUpdatedAt:        {Type: field.TypeTime, Column: cloudcost.FieldUpdatedAt},
 			cloudcost.FieldDeletedAt:        {Type: field.TypeTime, Column: cloudcost.FieldDeletedAt},
@@ -529,6 +541,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CloudInstance",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			cloudinstance.FieldTenantID:         {Type: field.TypeUint32, Column: cloudinstance.FieldTenantID},
 			cloudinstance.FieldCreatedAt:        {Type: field.TypeTime, Column: cloudinstance.FieldCreatedAt},
 			cloudinstance.FieldUpdatedAt:        {Type: field.TypeTime, Column: cloudinstance.FieldUpdatedAt},
 			cloudinstance.FieldDeletedAt:        {Type: field.TypeTime, Column: cloudinstance.FieldDeletedAt},
@@ -561,6 +574,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CommandRecord",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			commandrecord.FieldTenantID:   {Type: field.TypeUint32, Column: commandrecord.FieldTenantID},
 			commandrecord.FieldCreatedAt:  {Type: field.TypeTime, Column: commandrecord.FieldCreatedAt},
 			commandrecord.FieldUpdatedAt:  {Type: field.TypeTime, Column: commandrecord.FieldUpdatedAt},
 			commandrecord.FieldDeletedAt:  {Type: field.TypeTime, Column: commandrecord.FieldDeletedAt},
@@ -588,6 +602,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "ConfigDistribution",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			configdistribution.FieldTenantID:         {Type: field.TypeUint32, Column: configdistribution.FieldTenantID},
 			configdistribution.FieldCreatedAt:        {Type: field.TypeTime, Column: configdistribution.FieldCreatedAt},
 			configdistribution.FieldUpdatedAt:        {Type: field.TypeTime, Column: configdistribution.FieldUpdatedAt},
 			configdistribution.FieldDeletedAt:        {Type: field.TypeTime, Column: configdistribution.FieldDeletedAt},
@@ -614,6 +629,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "ConfigTemplate",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			configtemplate.FieldTenantID:    {Type: field.TypeUint32, Column: configtemplate.FieldTenantID},
 			configtemplate.FieldCreatedAt:   {Type: field.TypeTime, Column: configtemplate.FieldCreatedAt},
 			configtemplate.FieldUpdatedAt:   {Type: field.TypeTime, Column: configtemplate.FieldUpdatedAt},
 			configtemplate.FieldDeletedAt:   {Type: field.TypeTime, Column: configtemplate.FieldDeletedAt},
@@ -749,6 +765,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Distribution",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			distribution.FieldTenantID:      {Type: field.TypeUint32, Column: distribution.FieldTenantID},
 			distribution.FieldCreatedAt:     {Type: field.TypeTime, Column: distribution.FieldCreatedAt},
 			distribution.FieldUpdatedAt:     {Type: field.TypeTime, Column: distribution.FieldUpdatedAt},
 			distribution.FieldDeletedAt:     {Type: field.TypeTime, Column: distribution.FieldDeletedAt},
@@ -784,6 +801,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "DistributionRecord",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			distributionrecord.FieldTenantID:         {Type: field.TypeUint32, Column: distributionrecord.FieldTenantID},
 			distributionrecord.FieldCreatedAt:        {Type: field.TypeTime, Column: distributionrecord.FieldCreatedAt},
 			distributionrecord.FieldUpdatedAt:        {Type: field.TypeTime, Column: distributionrecord.FieldUpdatedAt},
 			distributionrecord.FieldDeletedAt:        {Type: field.TypeTime, Column: distributionrecord.FieldDeletedAt},
@@ -811,6 +829,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Inspection",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			inspection.FieldTenantID:       {Type: field.TypeUint32, Column: inspection.FieldTenantID},
 			inspection.FieldCreatedAt:      {Type: field.TypeTime, Column: inspection.FieldCreatedAt},
 			inspection.FieldUpdatedAt:      {Type: field.TypeTime, Column: inspection.FieldUpdatedAt},
 			inspection.FieldDeletedAt:      {Type: field.TypeTime, Column: inspection.FieldDeletedAt},
@@ -865,6 +884,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "LogSnapshot",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			logsnapshot.FieldTenantID:    {Type: field.TypeUint32, Column: logsnapshot.FieldTenantID},
 			logsnapshot.FieldCreatedAt:   {Type: field.TypeTime, Column: logsnapshot.FieldCreatedAt},
 			logsnapshot.FieldUpdatedAt:   {Type: field.TypeTime, Column: logsnapshot.FieldUpdatedAt},
 			logsnapshot.FieldDeletedAt:   {Type: field.TypeTime, Column: logsnapshot.FieldDeletedAt},
@@ -1098,6 +1118,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Monitor",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			monitor.FieldTenantID:              {Type: field.TypeUint32, Column: monitor.FieldTenantID},
 			monitor.FieldCreatedAt:             {Type: field.TypeTime, Column: monitor.FieldCreatedAt},
 			monitor.FieldUpdatedAt:             {Type: field.TypeTime, Column: monitor.FieldUpdatedAt},
 			monitor.FieldDeletedAt:             {Type: field.TypeTime, Column: monitor.FieldDeletedAt},
@@ -1156,6 +1177,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "NotificationChannel",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			notificationchannel.FieldTenantID:         {Type: field.TypeUint32, Column: notificationchannel.FieldTenantID},
 			notificationchannel.FieldCreatedAt:        {Type: field.TypeTime, Column: notificationchannel.FieldCreatedAt},
 			notificationchannel.FieldUpdatedAt:        {Type: field.TypeTime, Column: notificationchannel.FieldUpdatedAt},
 			notificationchannel.FieldDeletedAt:        {Type: field.TypeTime, Column: notificationchannel.FieldDeletedAt},
@@ -1188,6 +1210,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "NotificationDelivery",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			notificationdelivery.FieldTenantID:    {Type: field.TypeUint32, Column: notificationdelivery.FieldTenantID},
 			notificationdelivery.FieldCreatedAt:   {Type: field.TypeTime, Column: notificationdelivery.FieldCreatedAt},
 			notificationdelivery.FieldUpdatedAt:   {Type: field.TypeTime, Column: notificationdelivery.FieldUpdatedAt},
 			notificationdelivery.FieldDeletedAt:   {Type: field.TypeTime, Column: notificationdelivery.FieldDeletedAt},
@@ -1440,6 +1463,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "PipelineRun",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			pipelinerun.FieldTenantID:    {Type: field.TypeUint32, Column: pipelinerun.FieldTenantID},
 			pipelinerun.FieldCreatedAt:   {Type: field.TypeTime, Column: pipelinerun.FieldCreatedAt},
 			pipelinerun.FieldUpdatedAt:   {Type: field.TypeTime, Column: pipelinerun.FieldUpdatedAt},
 			pipelinerun.FieldDeletedAt:   {Type: field.TypeTime, Column: pipelinerun.FieldDeletedAt},
@@ -1532,6 +1556,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Project",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			project.FieldTenantID:      {Type: field.TypeUint32, Column: project.FieldTenantID},
 			project.FieldCreatedAt:     {Type: field.TypeTime, Column: project.FieldCreatedAt},
 			project.FieldUpdatedAt:     {Type: field.TypeTime, Column: project.FieldUpdatedAt},
 			project.FieldDeletedAt:     {Type: field.TypeTime, Column: project.FieldDeletedAt},
@@ -1563,6 +1588,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Repository",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			repository.FieldTenantID:    {Type: field.TypeUint32, Column: repository.FieldTenantID},
 			repository.FieldCreatedAt:   {Type: field.TypeTime, Column: repository.FieldCreatedAt},
 			repository.FieldUpdatedAt:   {Type: field.TypeTime, Column: repository.FieldUpdatedAt},
 			repository.FieldDeletedAt:   {Type: field.TypeTime, Column: repository.FieldDeletedAt},
@@ -1671,6 +1697,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Script",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			script.FieldTenantID:       {Type: field.TypeUint32, Column: script.FieldTenantID},
 			script.FieldCreatedAt:      {Type: field.TypeTime, Column: script.FieldCreatedAt},
 			script.FieldUpdatedAt:      {Type: field.TypeTime, Column: script.FieldUpdatedAt},
 			script.FieldDeletedAt:      {Type: field.TypeTime, Column: script.FieldDeletedAt},
@@ -1698,6 +1725,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "ScriptBatch",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			scriptbatch.FieldTenantID:     {Type: field.TypeUint32, Column: scriptbatch.FieldTenantID},
 			scriptbatch.FieldCreatedAt:    {Type: field.TypeTime, Column: scriptbatch.FieldCreatedAt},
 			scriptbatch.FieldUpdatedAt:    {Type: field.TypeTime, Column: scriptbatch.FieldUpdatedAt},
 			scriptbatch.FieldDeletedAt:    {Type: field.TypeTime, Column: scriptbatch.FieldDeletedAt},
@@ -1784,6 +1812,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TerminalChunk",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			terminalchunk.FieldTenantID:          {Type: field.TypeUint32, Column: terminalchunk.FieldTenantID},
 			terminalchunk.FieldCreatedAt:         {Type: field.TypeTime, Column: terminalchunk.FieldCreatedAt},
 			terminalchunk.FieldUpdatedAt:         {Type: field.TypeTime, Column: terminalchunk.FieldUpdatedAt},
 			terminalchunk.FieldDeletedAt:         {Type: field.TypeTime, Column: terminalchunk.FieldDeletedAt},
@@ -1805,6 +1834,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TerminalSession",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			terminalsession.FieldTenantID:    {Type: field.TypeUint32, Column: terminalsession.FieldTenantID},
 			terminalsession.FieldCreatedAt:   {Type: field.TypeTime, Column: terminalsession.FieldCreatedAt},
 			terminalsession.FieldUpdatedAt:   {Type: field.TypeTime, Column: terminalsession.FieldUpdatedAt},
 			terminalsession.FieldDeletedAt:   {Type: field.TypeTime, Column: terminalsession.FieldDeletedAt},
@@ -2320,6 +2350,11 @@ func (f *AlertFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(alert.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *AlertFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(alert.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *AlertFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(alert.FieldCreatedAt))
@@ -2710,6 +2745,11 @@ func (f *ApiKeyFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(apikey.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ApiKeyFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(apikey.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *ApiKeyFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(apikey.FieldCreatedAt))
@@ -2813,6 +2853,11 @@ func (f *ApprovalFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *ApprovalFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(approval.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ApprovalFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(approval.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -2925,6 +2970,11 @@ func (f *BackupRecordFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(backuprecord.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *BackupRecordFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(backuprecord.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *BackupRecordFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(backuprecord.FieldCreatedAt))
@@ -3035,6 +3085,11 @@ func (f *BackupTaskFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(backuptask.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *BackupTaskFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(backuptask.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *BackupTaskFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(backuptask.FieldCreatedAt))
@@ -3143,6 +3198,11 @@ func (f *BuildFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *BuildFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(build.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *BuildFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(build.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -3275,6 +3335,11 @@ func (f *BuildHistoryFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(buildhistory.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *BuildHistoryFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(buildhistory.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *BuildHistoryFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(buildhistory.FieldCreatedAt))
@@ -3395,6 +3460,11 @@ func (f *BuildPipelineFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(buildpipeline.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *BuildPipelineFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(buildpipeline.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *BuildPipelineFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(buildpipeline.FieldCreatedAt))
@@ -3483,6 +3553,11 @@ func (f *CertFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *CertFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(cert.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CertFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(cert.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -3615,6 +3690,11 @@ func (f *CloudAccountFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(cloudaccount.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CloudAccountFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(cloudaccount.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *CloudAccountFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(cloudaccount.FieldCreatedAt))
@@ -3733,6 +3813,11 @@ func (f *CloudBudgetFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *CloudBudgetFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(cloudbudget.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CloudBudgetFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(cloudbudget.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -3855,6 +3940,11 @@ func (f *CloudCostFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(cloudcost.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CloudCostFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(cloudcost.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *CloudCostFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(cloudcost.FieldCreatedAt))
@@ -3958,6 +4048,11 @@ func (f *CloudInstanceFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *CloudInstanceFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(cloudinstance.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CloudInstanceFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(cloudinstance.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -4095,6 +4190,11 @@ func (f *CommandRecordFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(commandrecord.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CommandRecordFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(commandrecord.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *CommandRecordFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(commandrecord.FieldCreatedAt))
@@ -4205,6 +4305,11 @@ func (f *ConfigDistributionFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(configdistribution.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ConfigDistributionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(configdistribution.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *ConfigDistributionFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(configdistribution.FieldCreatedAt))
@@ -4308,6 +4413,11 @@ func (f *ConfigTemplateFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *ConfigTemplateFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(configtemplate.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ConfigTemplateFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(configtemplate.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -4916,6 +5026,11 @@ func (f *DistributionFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(distribution.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *DistributionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(distribution.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *DistributionFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(distribution.FieldCreatedAt))
@@ -5066,6 +5181,11 @@ func (f *DistributionRecordFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(distributionrecord.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *DistributionRecordFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(distributionrecord.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *DistributionRecordFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(distributionrecord.FieldCreatedAt))
@@ -5174,6 +5294,11 @@ func (f *InspectionFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *InspectionFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(inspection.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *InspectionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(inspection.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -5394,6 +5519,11 @@ func (f *LogSnapshotFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *LogSnapshotFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(logsnapshot.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *LogSnapshotFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(logsnapshot.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -6389,6 +6519,11 @@ func (f *MonitorFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(monitor.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *MonitorFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(monitor.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *MonitorFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(monitor.FieldCreatedAt))
@@ -6629,6 +6764,11 @@ func (f *NotificationChannelFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(notificationchannel.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *NotificationChannelFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(notificationchannel.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *NotificationChannelFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(notificationchannel.FieldCreatedAt))
@@ -6762,6 +6902,11 @@ func (f *NotificationDeliveryFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *NotificationDeliveryFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(notificationdelivery.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *NotificationDeliveryFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(notificationdelivery.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -7855,6 +8000,11 @@ func (f *PipelineRunFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(pipelinerun.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PipelineRunFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(pipelinerun.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *PipelineRunFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(pipelinerun.FieldCreatedAt))
@@ -8240,6 +8390,11 @@ func (f *ProjectFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(project.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ProjectFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(project.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *ProjectFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(project.FieldCreatedAt))
@@ -8368,6 +8523,11 @@ func (f *RepositoryFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *RepositoryFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(repository.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *RepositoryFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(repository.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -8810,6 +8970,11 @@ func (f *ScriptFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(script.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ScriptFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(script.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *ScriptFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(script.FieldCreatedAt))
@@ -8918,6 +9083,11 @@ func (f *ScriptBatchFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *ScriptBatchFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(scriptbatch.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ScriptBatchFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(scriptbatch.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -9275,6 +9445,11 @@ func (f *TerminalChunkFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(terminalchunk.FieldID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *TerminalChunkFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(terminalchunk.FieldTenantID))
+}
+
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *TerminalChunkFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(terminalchunk.FieldCreatedAt))
@@ -9353,6 +9528,11 @@ func (f *TerminalSessionFilter) Where(p entql.P) {
 // WhereID applies the entql uint32 predicate on the id field.
 func (f *TerminalSessionFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(terminalsession.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *TerminalSessionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(terminalsession.FieldTenantID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.

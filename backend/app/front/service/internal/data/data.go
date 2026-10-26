@@ -10,6 +10,7 @@ import (
 	"github.com/tx7do/kratos-authz/engine/noop"
 
 	"github.com/go-kratos/kratos/v2/registry"
+	"google.golang.org/grpc"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -21,9 +22,16 @@ import (
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
+	"go-wind-ops/pkg/middleware/rpcsecret"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/serviceid"
 )
+
+// newCoreGrpcConn 拨连 core gRPC 的统一入口:配置了 CORE_RPC_SECRET 时
+// 自动附加内部共享密钥头(与 core 侧 rpcsecret.Server 校验配对)。
+func newCoreGrpcConn(ctx *bootstrap.Context, r registry.Discovery) (grpc.ClientConnInterface, error) {
+	return rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig(), rpcsecret.Client(rpcsecret.SecretFromEnv()))
+}
 
 func NewClientType() authenticationV1.ClientType {
 	return authenticationV1.ClientType_app
@@ -89,7 +97,7 @@ func NewAuthorizer() authzEngine.Engine {
 }
 
 func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.AuthenticationServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -98,7 +106,7 @@ func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery
 }
 
 func NewUserCredentialServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.UserCredentialServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -107,7 +115,7 @@ func NewUserCredentialServiceClient(ctx *bootstrap.Context, r registry.Discovery
 }
 
 func NewUserServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.UserServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -116,7 +124,7 @@ func NewUserServiceClient(ctx *bootstrap.Context, r registry.Discovery) identity
 }
 
 func NewTenantServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.TenantServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -125,7 +133,7 @@ func NewTenantServiceClient(ctx *bootstrap.Context, r registry.Discovery) identi
 }
 
 func NewRoleServiceClient(ctx *bootstrap.Context, r registry.Discovery) permissionV1.RoleServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -134,7 +142,7 @@ func NewRoleServiceClient(ctx *bootstrap.Context, r registry.Discovery) permissi
 }
 
 func NewOrgUnitServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.OrgUnitServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}
@@ -143,7 +151,7 @@ func NewOrgUnitServiceClient(ctx *bootstrap.Context, r registry.Discovery) ident
 }
 
 func NewPositionServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.PositionServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	cli, err := newCoreGrpcConn(ctx, r)
 	if err != nil {
 		return nil
 	}

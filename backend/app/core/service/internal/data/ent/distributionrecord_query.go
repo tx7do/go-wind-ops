@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *DistributionRecordQuery) Clone() *DistributionRecordQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.DistributionRecord.Query().
-//		GroupBy(distributionrecord.FieldCreatedAt).
+//		GroupBy(distributionrecord.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *DistributionRecordQuery) GroupBy(field string, fields ...string) *DistributionRecordGroupBy {
@@ -288,11 +289,11 @@ func (_q *DistributionRecordQuery) GroupBy(field string, fields ...string) *Dist
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.DistributionRecord.Query().
-//		Select(distributionrecord.FieldCreatedAt).
+//		Select(distributionrecord.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *DistributionRecordQuery) Select(fields ...string) *DistributionRecordSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *DistributionRecordQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if distributionrecord.Policy == nil {
+		return errors.New("ent: uninitialized distributionrecord.Policy (forgotten import ent/runtime?)")
+	}
+	if err := distributionrecord.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

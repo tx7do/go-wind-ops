@@ -342,6 +342,9 @@ func (_u *RepositoryUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(repository.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(repository.FieldCreatedAt, field.TypeTime)
 	}
@@ -788,6 +791,9 @@ func (_u *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository, 
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(repository.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(repository.FieldCreatedAt, field.TypeTime)

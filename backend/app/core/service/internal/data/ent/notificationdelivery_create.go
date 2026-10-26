@@ -22,6 +22,20 @@ type NotificationDeliveryCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *NotificationDeliveryCreate) SetTenantID(v uint32) *NotificationDeliveryCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *NotificationDeliveryCreate) SetNillableTenantID(v *uint32) *NotificationDeliveryCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *NotificationDeliveryCreate) SetCreatedAt(v time.Time) *NotificationDeliveryCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -165,7 +179,9 @@ func (_c *NotificationDeliveryCreate) Mutation() *NotificationDeliveryMutation {
 
 // Save creates the NotificationDelivery in the database.
 func (_c *NotificationDeliveryCreate) Save(ctx context.Context) (*NotificationDelivery, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -192,11 +208,16 @@ func (_c *NotificationDeliveryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *NotificationDeliveryCreate) defaults() {
+func (_c *NotificationDeliveryCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := notificationdelivery.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := notificationdelivery.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -271,6 +292,10 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(notificationdelivery.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(notificationdelivery.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -322,7 +347,7 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 // of the `INSERT` statement. For example:
 //
 //	client.NotificationDelivery.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -331,7 +356,7 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationDeliveryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationDeliveryCreate) OnConflict(opts ...sql.ConflictOption) *NotificationDeliveryUpsertOne {
@@ -551,6 +576,9 @@ func (u *NotificationDeliveryUpsertOne) UpdateNewValues() *NotificationDeliveryU
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(notificationdelivery.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(notificationdelivery.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(notificationdelivery.FieldCreatedAt)
@@ -917,7 +945,7 @@ func (_c *NotificationDeliveryCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationDeliveryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationDeliveryCreateBulk) OnConflict(opts ...sql.ConflictOption) *NotificationDeliveryUpsertBulk {
@@ -963,6 +991,9 @@ func (u *NotificationDeliveryUpsertBulk) UpdateNewValues() *NotificationDelivery
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(notificationdelivery.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(notificationdelivery.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(notificationdelivery.FieldCreatedAt)

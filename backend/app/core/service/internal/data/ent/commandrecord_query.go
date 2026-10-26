@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *CommandRecordQuery) Clone() *CommandRecordQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.CommandRecord.Query().
-//		GroupBy(commandrecord.FieldCreatedAt).
+//		GroupBy(commandrecord.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *CommandRecordQuery) GroupBy(field string, fields ...string) *CommandRecordGroupBy {
@@ -288,11 +289,11 @@ func (_q *CommandRecordQuery) GroupBy(field string, fields ...string) *CommandRe
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.CommandRecord.Query().
-//		Select(commandrecord.FieldCreatedAt).
+//		Select(commandrecord.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *CommandRecordQuery) Select(fields ...string) *CommandRecordSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *CommandRecordQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if commandrecord.Policy == nil {
+		return errors.New("ent: uninitialized commandrecord.Policy (forgotten import ent/runtime?)")
+	}
+	if err := commandrecord.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudbudget"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *CloudBudgetQuery) Clone() *CloudBudgetQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.CloudBudget.Query().
-//		GroupBy(cloudbudget.FieldCreatedAt).
+//		GroupBy(cloudbudget.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *CloudBudgetQuery) GroupBy(field string, fields ...string) *CloudBudgetGroupBy {
@@ -288,11 +289,11 @@ func (_q *CloudBudgetQuery) GroupBy(field string, fields ...string) *CloudBudget
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.CloudBudget.Query().
-//		Select(cloudbudget.FieldCreatedAt).
+//		Select(cloudbudget.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *CloudBudgetQuery) Select(fields ...string) *CloudBudgetSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *CloudBudgetQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if cloudbudget.Policy == nil {
+		return errors.New("ent: uninitialized cloudbudget.Policy (forgotten import ent/runtime?)")
+	}
+	if err := cloudbudget.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

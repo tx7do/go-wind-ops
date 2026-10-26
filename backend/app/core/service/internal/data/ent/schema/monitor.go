@@ -126,6 +126,7 @@ func (Monitor) Fields() []ent.Field {
 func (Monitor) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

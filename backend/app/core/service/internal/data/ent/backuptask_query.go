@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/backuptask"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *BackupTaskQuery) Clone() *BackupTaskQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.BackupTask.Query().
-//		GroupBy(backuptask.FieldCreatedAt).
+//		GroupBy(backuptask.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *BackupTaskQuery) GroupBy(field string, fields ...string) *BackupTaskGroupBy {
@@ -288,11 +289,11 @@ func (_q *BackupTaskQuery) GroupBy(field string, fields ...string) *BackupTaskGr
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.BackupTask.Query().
-//		Select(backuptask.FieldCreatedAt).
+//		Select(backuptask.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *BackupTaskQuery) Select(fields ...string) *BackupTaskSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *BackupTaskQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if backuptask.Policy == nil {
+		return errors.New("ent: uninitialized backuptask.Policy (forgotten import ent/runtime?)")
+	}
+	if err := backuptask.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

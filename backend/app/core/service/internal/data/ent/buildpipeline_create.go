@@ -22,6 +22,20 @@ type BuildPipelineCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *BuildPipelineCreate) SetTenantID(v uint32) *BuildPipelineCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *BuildPipelineCreate) SetNillableTenantID(v *uint32) *BuildPipelineCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *BuildPipelineCreate) SetCreatedAt(v time.Time) *BuildPipelineCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -151,6 +165,9 @@ func (_c *BuildPipelineCreate) Mutation() *BuildPipelineMutation {
 
 // Save creates the BuildPipeline in the database.
 func (_c *BuildPipelineCreate) Save(ctx context.Context) (*BuildPipeline, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -174,6 +191,15 @@ func (_c *BuildPipelineCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *BuildPipelineCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := buildpipeline.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -227,6 +253,10 @@ func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpe
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(buildpipeline.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(buildpipeline.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -274,7 +304,7 @@ func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpe
 // of the `INSERT` statement. For example:
 //
 //	client.BuildPipeline.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -283,7 +313,7 @@ func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpe
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildPipelineUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildPipelineCreate) OnConflict(opts ...sql.ConflictOption) *BuildPipelineUpsertOne {
@@ -503,6 +533,9 @@ func (u *BuildPipelineUpsertOne) UpdateNewValues() *BuildPipelineUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(buildpipeline.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(buildpipeline.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(buildpipeline.FieldCreatedAt)
@@ -786,6 +819,7 @@ func (_c *BuildPipelineCreateBulk) Save(ctx context.Context) ([]*BuildPipeline, 
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*BuildPipelineMutation)
 				if !ok {
@@ -868,7 +902,7 @@ func (_c *BuildPipelineCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildPipelineUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildPipelineCreateBulk) OnConflict(opts ...sql.ConflictOption) *BuildPipelineUpsertBulk {
@@ -914,6 +948,9 @@ func (u *BuildPipelineUpsertBulk) UpdateNewValues() *BuildPipelineUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(buildpipeline.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(buildpipeline.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(buildpipeline.FieldCreatedAt)

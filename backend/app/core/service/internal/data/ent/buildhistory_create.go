@@ -22,6 +22,20 @@ type BuildHistoryCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *BuildHistoryCreate) SetTenantID(v uint32) *BuildHistoryCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *BuildHistoryCreate) SetNillableTenantID(v *uint32) *BuildHistoryCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *BuildHistoryCreate) SetCreatedAt(v time.Time) *BuildHistoryCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -243,7 +257,9 @@ func (_c *BuildHistoryCreate) Mutation() *BuildHistoryMutation {
 
 // Save creates the BuildHistory in the database.
 func (_c *BuildHistoryCreate) Save(ctx context.Context) (*BuildHistory, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -270,7 +286,11 @@ func (_c *BuildHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *BuildHistoryCreate) defaults() {
+func (_c *BuildHistoryCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := buildhistory.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := buildhistory.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -287,6 +307,7 @@ func (_c *BuildHistoryCreate) defaults() {
 		v := buildhistory.DefaultRunnerID
 		_c.mutation.SetRunnerID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -349,6 +370,10 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(buildhistory.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(buildhistory.FieldCreatedAt, field.TypeTime, value)
@@ -421,7 +446,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 // of the `INSERT` statement. For example:
 //
 //	client.BuildHistory.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -430,7 +455,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildHistoryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildHistoryCreate) OnConflict(opts ...sql.ConflictOption) *BuildHistoryUpsertOne {
@@ -764,6 +789,9 @@ func (u *BuildHistoryUpsertOne) UpdateNewValues() *BuildHistoryUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(buildhistory.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(buildhistory.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(buildhistory.FieldCreatedAt)
@@ -1263,7 +1291,7 @@ func (_c *BuildHistoryCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildHistoryUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildHistoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *BuildHistoryUpsertBulk {
@@ -1309,6 +1337,9 @@ func (u *BuildHistoryUpsertBulk) UpdateNewValues() *BuildHistoryUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(buildhistory.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(buildhistory.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(buildhistory.FieldCreatedAt)

@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"time"
 
+	kratosErrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -112,9 +114,15 @@ func (s *ScriptBatchService) GetScriptBatch(ctx context.Context, req *opsV1.GetS
 // 台账挂到批次上;单节点下发失败计入 failed,不影响其余节点。
 // 两种模式二选一:脚本模式(script_id+node_ids,经脚本档案)与即席命令模式
 // (command,为多台机器批量执行同一条命令;目标用 agent_ids 免 node 换算)。
+// 审批闸门:批量模式与"审批单重放到单一 agent"模型不匹配,script_exec 被
+// 配置为需审批时本入口直接拒绝(fail-closed),防止批量成为绕审旁路。
 func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.ExecuteScriptBatchRequest) (*opsV1.ExecuteScriptBatchResponse, error) {
 	if req == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+	if approvalHoldsAction(string(signal.CommandActionScriptExec)) {
+		return nil, kratosErrors.New(http.StatusForbidden, ApprovalRequiredReason,
+			"batch script execution is not permitted while script_exec requires approval; use single-target executions")
 	}
 
 	var (

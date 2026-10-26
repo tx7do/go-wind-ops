@@ -85,6 +85,7 @@ func (TerminalSession) Fields() []ent.Field {
 func (TerminalSession) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

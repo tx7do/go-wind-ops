@@ -22,6 +22,20 @@ type TerminalSessionCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *TerminalSessionCreate) SetTenantID(v uint32) *TerminalSessionCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *TerminalSessionCreate) SetNillableTenantID(v *uint32) *TerminalSessionCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *TerminalSessionCreate) SetCreatedAt(v time.Time) *TerminalSessionCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -201,7 +215,9 @@ func (_c *TerminalSessionCreate) Mutation() *TerminalSessionMutation {
 
 // Save creates the TerminalSession in the database.
 func (_c *TerminalSessionCreate) Save(ctx context.Context) (*TerminalSession, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -228,7 +244,11 @@ func (_c *TerminalSessionCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *TerminalSessionCreate) defaults() {
+func (_c *TerminalSessionCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := terminalsession.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.NodeID(); !ok {
 		v := terminalsession.DefaultNodeID
 		_c.mutation.SetNodeID(v)
@@ -257,6 +277,7 @@ func (_c *TerminalSessionCreate) defaults() {
 		v := terminalsession.DefaultTruncated
 		_c.mutation.SetTruncated(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -335,6 +356,10 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(terminalsession.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(terminalsession.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -394,7 +419,7 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 // of the `INSERT` statement. For example:
 //
 //	client.TerminalSession.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -403,7 +428,7 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TerminalSessionUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *TerminalSessionCreate) OnConflict(opts ...sql.ConflictOption) *TerminalSessionUpsertOne {
@@ -659,6 +684,9 @@ func (u *TerminalSessionUpsertOne) UpdateNewValues() *TerminalSessionUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(terminalsession.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(terminalsession.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(terminalsession.FieldCreatedAt)
@@ -1067,7 +1095,7 @@ func (_c *TerminalSessionCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TerminalSessionUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *TerminalSessionCreateBulk) OnConflict(opts ...sql.ConflictOption) *TerminalSessionUpsertBulk {
@@ -1113,6 +1141,9 @@ func (u *TerminalSessionUpsertBulk) UpdateNewValues() *TerminalSessionUpsertBulk
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(terminalsession.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(terminalsession.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(terminalsession.FieldCreatedAt)

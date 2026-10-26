@@ -61,22 +61,29 @@
 
 约定：QoS 1 + JSON 序列化；`request_id`（UUID）为幂等键，回执原样带回；core 上行订阅全部走 `$share/core/` 共享订阅（多副本负载均衡）；指令 action 用小写下划线枚举（现有 `ping`），新增动作在 agent 侧 `RegisterHandler` 注册。agent 未认证前每 5 秒重发准入请求（规避与 core 的启动顺序竞争）。
 
+**指令信封 HMAC 签名（2026-10-26）**：`COMMAND_SIGN_KEY` 配置后（core 与全部 agent 必须一致），core 在 `publish` 唯一漏斗处对信封六元组（request_id/agent_id/action/issued_at/operator_id/payload）做 HMAC-SHA256 签名（`pkg/signal/sign.go`），agent 侧 `HandleCommand` 强制校验：签名缺失/不符、`issued_at` 过期（>15min）或前拨超限（>5min）一律拒收回执错误；同时校验信封目标 agentId、进程首认证前不接受指令（authedEver）、request_id 环形去重（4096，重复投递静默丢弃不回执）。任一端未配置密钥按"未签名模式"运行并告警（仅限开发）；`tools/mqtt-pub` 注入指令须带 `-sign-key`。
+
 准入模型（当前）：SHA-256(token) 与 `ops_agent_nodes.token_hash` 一致放行；agent 首次出现按 TOFU 落库。
 
 **Broker 级认证 + ACL（已启用，compose 默认开）**：EMQX 以 HTTP 认证/授权回调 core 的最小 REST（`core/internal/server/mqtt_auth_server.go`，:9500）：
 - `/api/v1/mqtt/auth`——username=`core` 比对 core 配置的 MQTT 账密；username=agentId 校验 SHA-256(口令) 与 token_hash（**agent 以本机 token 作为 MQTT 口令连接**，首次 CONNECT 按 TOFU 注册，与信令层准入同表同 token）。
 - `/api/v1/mqtt/acl`——core 放行 `ops/` 全部；agent 仅 `ops/agent/{自身用户名}/#`（`$share` 前缀剥壳后判定）；未命中一律 deny。
+- **回调共享密钥（2026-10-26）**：`MQTT_AUTH_WEBHOOK_SECRET` 配置后（compose 已默认装配，EMQX 回调 URL 拼 `?secret=`），两个端点要求携带该密钥（查询参数或 `X-Mqtt-Webhook-Secret` 头，常时比较）——封死"内网直调 :9500 触发 TOFU 注册伪造 agent"的路径；未配置告警放行（仅限开发）。
 - compose 用 `EMQX_AUTHENTICATION__1__*` / `EMQX_AUTHORIZATION__SOURCES__1__*` 环境变量装配（BODY 模板里 `$$` 是 compose 转义）；EMQX 在容器、core 在宿主机时走 `host.docker.internal:9500`（注意放行防火墙）。
-- TLS：两端 server.yaml 的 `server.mqtt.tls`（`ssl://` 端点 + `insecure_skip_verify` 或 `file.ca_path`），dev 自签可 skip，生产配 CA。**遗留升级位**：STS 短令牌轮换。
+- TLS：两端 server.yaml 的 `server.mqtt.tls`（`ssl://` 端点 + `insecure_skip_verify` 或 `file.ca_path`），dev 自签可 skip，生产配 CA。**遗留升级位**：STS 短令牌轮换。core 自身 MQTT 口令经 `MQTT_CORE_PASSWORD` 注入（`pkg/configenv` 装配期覆盖,yaml 的 `${...:core-pass}` 仅作 dev 回落——占位符不读 env）,生产必须设置。
+
+**core gRPC 内部共享密钥（2026-10-26）**：`CORE_RPC_SECRET` 配置后（compose 对 core/admin/front 三服务默认装配同一值），core gRPC 中间件链在 `ent.Server` 之前强制校验 `x-rpc-secret` 请求头（`pkg/middleware/rpcsecret`，常时比较，失败 401），BFF 侧 `newCoreGrpcConn`（admin/front data.go 统一拨连入口）自动附加——封死"内网直达 core gRPC 伪造 `x-md-global-operator` 冒充任意用户/租户、绕过 BFF 全部权限码与审批直接调执行面"的路径；三值不一致 = BFF 全部 401（fail-closed 方向，直观暴露）。未配置时 core 告警放行（仅限开发）。**生产部署铁律：core gRPC 端口仍不得对不受信网络发布，本密钥是纵深防御而非网络隔离的替代品。**
+
+**ops 业务表租户模型（2026-10-26,产品决策:ops 资源归租户）**：30 张 ops 业务表（项目/脚本/构建/分发/流水线/监控/告警/云账单/备份/终端会话与回放/指令台账/审批/API key/巡检/配置/证书/仓库/通知等）挂 `mixin.TenantID[uint32]{}`（go-crud TenantPrivacy）：查询按 viewer 租户行级过滤、Create 按 viewer 租户落 `tenant_id`、Update/Delete 注入租户谓词；**平台管理员（tenant 0）与系统视图看全量**。`agent_node`/`node_metric` 保持平台级（TOFU 机器身份与 agent 上报，属共享基础设施）。**两条铁律**：①无 viewer 的上下文会被 EvalQuery/EvalMutation 直接拒绝——所有后台入口（MQTT 回调、清扫循环、构建 goroutine、终端录制、OpenAPI 回写）必须注入 viewer：系统簿记用 `appViewer.NewSystemViewerContext`，需归因的用 `tenantScopedCtx(ctx, 父实体.TenantID)`（core service 包内通用工具）；②脱离请求生命周期的 goroutine 不能只靠 operator 元数据（元数据不产生 viewer），必须显式 `viewer.WithContext`（见 `pipelineDetachedCtx`）。已归因：监控/预算/证书扫描告警、cron 触发脚本、流水线引擎、巡检聚合、终端回放分块；**已知归因缺口（落 tenant 0=平台可见）**：cron 触发的构建、OpenAPI 触发的构建/分发/流水线、分发批次推进补发的指令——多租户正式使用前需补齐。存量数据 tenant_id 为空=平台可见，多租户启用前需数据回填。
 
 **权限码点查防线（2026-10-20）**：全站 authz 引擎为 noop（admin/front `data.NewAuthorizer()→noop.State{}`，角色→API 策略无数据通道），中间件层鉴权空转——真实防线是：
 - admin BFF 门面的 **PermissionGuard 权限码点查**（`internal/service/permguard.go`，wiring 一次性注入）：31 个触发/敏感入口在方法头校验权限码（脚本执行/构建/分发/流水线 trigger、commands:send、升级收发、项目 Operate/ClearLog、文件域全部、备份触发与记录下载、配置下发、api-key 变更、审批裁决、用户增删改、角色增删改）。**码表限用已播种权限码**：ops:node_manage/project_manage/script_manage/build_manage/distribute + sys:platform_admin/sys:tenant_manager；新码须先入库播种再上门。
 - 两个 WS 端点 + 终端审计接口：握手/方法期点查（`internal/authzcheck`）。
 - core `SendCommand` 仅放行 ping（通用透传面收敛为白名单）。
 - 用户关系型字段（角色/组织/岗位）仅当 update_mask 显式包含才生效（`user_repo.Update`，兼容驼峰/下划线键）；front BFF 自助资料更新按字段白名单重建请求。
-- **真 authz 引擎已装配（2026-10-20,`AUTHZ_MODE` 三档,默认 shadow 影子模式）**：casbin 真实评估"角色→API"策略——数据通道在 `data/authz_engine.go`（角色列表 × 逐角色 `ListPermissionResources([API])` × API 表,method 统一转大写——OpenAPI 入库是小写、请求侧是大写,不转全误报）,每 5 分钟热载。`shadow`=拒绝只打 `[authz-shadow] would DENY` 日志不拦截;`enforce`=真拦截（策略加载失败 fail-closed 全拒）;`noop`=旧行为。**切 enforce 的前提**：在角色管理里配齐"角色→API"授权数据,并观察 shadow 日志无误杀。点查 PermissionGuard 与真引擎并存（点查是兜底细粒度,引擎是全量面）。- **审计/调试/登录面（2026-10-20 第四批）**：五类审计日志查询门面（操作/登录/API/数据访问/权限）→ `sys:audit_logs`（中间件写路径直连 core client,不受影响）；`GET /admin/v1/apis/walk-route` 调试端点→`sys:platform_admin`；登录失败锁定：同用户名连续失败 5 次锁 15 分钟（Redis 计数,`TOO_MANY_REQUESTS` reason）,仅密码授权计数、成功清零。
-- **agent TOFU 抢注（设计性遗留）**：新 agent 首连按先到者注册（MachineID 半可预测）——攻击者需 broker 网络位置+时机；收紧方向为"预注册清单/首连人工确认"模式。
-- **审批闸门已接线（2026-10-20,`APPROVAL_REQUIRED_ACTIONS` 环境变量,默认空=不启用）**：配置如 `agent_upgrade,script_exec,plugin_exec`——命中动作在派发前建 PENDING 审批单并返回 403（reason=`APPROVAL_REQUIRED`,message 含审批单号）,审批人（Approve,`sys:platform_admin` 门）确认后重下发存储载荷并 MarkExecuted 闭环。仅接单目标动作（agent_upgrade/script_exec/plugin_exec）——批量/多目标与"审批单重放到单一 agent"模型不匹配,其防线是触发面权限码+危险命令确认。闸门实现 `approval_gate.go`,接线点 ScriptService.Execute/UpgradeAgent/PluginService.Exec。仓库凭据 CRUD→`ops:build_manage`。
+- **真 authz 引擎已装配（2026-10-20,`AUTHZ_MODE` 三档,默认 shadow 影子模式）**：casbin 真实评估"角色→API"策略——数据通道在 `data/authz_engine.go`（角色列表 × 逐角色 `ListPermissionResources([API])` × API 表,method 统一转大写——OpenAPI 入库是小写、请求侧是大写,不转全误报）,每 5 分钟热载。`shadow`=拒绝只打 `[authz-shadow] would DENY` 日志不拦截;`enforce`=真拦截（策略加载失败 fail-closed 全拒）;`noop`=旧行为。**切 enforce 的前提**：在角色管理里配齐"角色→API"授权数据,并观察 shadow 日志无误杀。点查 PermissionGuard 与真引擎并存（点查是兜底细粒度,引擎是全量面）。- **审计/调试/登录面（2026-10-20 第四批）**：五类审计日志查询门面（操作/登录/API/数据访问/权限）→ `sys:audit_logs`（中间件写路径直连 core client,不受影响）；`GET /admin/v1/apis/walk-route` 调试端点→`sys:platform_admin`；登录失败锁定：同 用户名+来源IP（X-Forwarded-For 首跳→X-Real-IP→RemoteAddr,2026-10-26 由纯用户名改为复合键,防任意者锁死他人账号）连续失败 5 次锁 15 分钟（Redis 计数,`TOO_MANY_REQUESTS` reason）,仅密码授权计数、成功清零。**审计签名密钥持久化（2026-10-26）**：ECDSA 私钥 load-or-generate 到 `AUDIT_SIGN_KEY_FILE`（默认 `data/audit-signing-key.pem`,0600）,重启后签名可继续验证;三类审计写入失败不再吞错,经 `applogging.WithLogger` 注入的日志器报原始错误。**生产态守卫（2026-10-26）**：`APP_ENV=production` 时,JWT 签名密钥为空/公开默认串（core）或 `ENCRYPTION_KEY` 未配置（core/admin）直接拒绝启动;开发环境维持降级+告警。**OpenAPI git webhook 改为 fail-closed（2026-10-26）**：`OPENAPI_GIT_WEBHOOK_SECRET` 未配置时端点一律 403（原先空=无签名放行）,配置后校验 `X-Signature: sha256=<HMAC>`。
+- **agent TOFU 抢注（设计性遗留）**：新 agent 首连按先到者注册（MachineID 半可预测）——攻击者需 broker 网络位置+时机；:9500 webhook 已要求回调密钥（`MQTT_AUTH_WEBHOOK_SECRET`，2026-10-26），直调注册路径已封，剩余暴露面收敛为"broker 网络位置+时机"；收紧方向为"预注册清单/首连人工确认"模式。
+- **审批闸门已接线（2026-10-20,`APPROVAL_REQUIRED_ACTIONS` 环境变量,默认空=不启用）**：配置如 `agent_upgrade,script_exec,plugin_exec`——命中动作在派发前建 PENDING 审批单并返回 403（reason=`APPROVAL_REQUIRED`,message 含审批单号）,审批人（Approve,`sys:platform_admin` 门）确认后重下发存储载荷并 MarkExecuted 闭环。仅接单目标动作（agent_upgrade/script_exec/plugin_exec）——**批量旁路已封（2026-10-26）**：`script_exec` 被配置为需审批时,批量入口 ExecuteScriptBatch 直接 fail-closed 403（批量与"审批单重放到单一 agent"模型不匹配,不得绕审）;原始 SendCommand 已是 ping-only 白名单,无旁路。闸门实现 `approval_gate.go`,接线点 ScriptService.Execute/UpgradeAgent/PluginService.Exec。仓库凭据 CRUD→`ops:build_manage`。
 - **遗留大工程**：API key 作用域/限流/归因、admin/app JWT 密钥分离、front BFF 真 authz（front 仍 noop,但其路由仅登录/个人资料）。
 
 **配置面与身份面收口（2026-10-20 第三批）**：权限码门从"触发面"扩展到"配置面"——**定义执行内容的 CRUD 与触发入口同码**：脚本/流水线 CRUD→`ops:script_manage`、分发 CRUD→`ops:distribute`、构建 CRUD→`ops:build_manage`、配置模板 CRUD→`ops:project_manage`（防"改内容等他人触发"的内容投毒链）；补三个漏门：插件执行/清单（`ops:node_manage`）、日志快照 Capture/Delete、巡检 Run（`ops:project_manage`）；监控 CRUD→`ops:project_manage`。身份面：菜单/权限点 CRUD+SyncPermissions、租户 CRUD、API 表同步→`sys:platform_admin`，组织单元 CRUD→`sys:tenant_manager`（**启动自同步已抽内部方法绕过公开入口的门**，见 api_service/permission_service 的 init）。通知渠道 CRUD→`sys:platform_admin` + webhook URL 基础校验（仅 http/https,拒环回/元数据地址）。项目日志 WS 与终端 WS 统一走一次性票据（kind=project-log,绑定 projectId）。
@@ -136,7 +143,7 @@
 ## 开发调试工具
 
 - `go run ./tools/mqtt-pub -topic ops/agent/<agentId>/command -payload '{"request_id":"t1","action":"ping"}'`：手动注入 MQTT 指令
-- `go run ./tools/pass-enc admin`：按前端约定（AES-GCM + DefaultAESKey + base64）加密密码——登录接口的 `password` 字段传的是密文，不是明文
+- `go run ./tools/pass-enc admin`：按前端约定（AES-128-CBC，key=iv=传输密钥，base64）加密密码——登录接口的 `password` 字段传的是密文，不是明文。密钥两端配对：后端 `LOGIN_AES_KEY`（`pkg/configenv.LoginAESKey`）↔ 前端 `VITE_AES_KEY`，工具用 `-key` 参数或同名 env 指定；缺省回落 go-utils 公开默认串（仅限开发），生产两端必须同步改为一致的非默认值，否则登录解密全部失败
 - 登录：`POST /admin/v1/login {"grant_type":"password","username":"admin","password":"<pass-enc 输出>"}`；验证码默认开启，开发可设 `ADMIN_CAPTCHA_DISABLED=true` 跳过
 
 ## 分层与装配约定
@@ -157,7 +164,7 @@
 ## 配置
 
 - 每服务一套 `configs/*.yaml`（server/data/oss/registry/logger/trace；core 另有 authenticator.yaml；agent 仅 server/logger）
-- `${jwt_signing_key:dev_default}` 语法支持 env 插值；敏感项走环境变量（`ENCRYPTION_KEY`、`MQTT_*`）
+- ⚠️ **配置占位符 `${VAR:default}` 只解析"配置键",不读环境变量**(2026-10-26 实测勘误,此前文档错误声称支持 env 插值,`jwt_signing_key` 环境变量从未真正生效);**且 `GetConfig()` 每次返回 proto 深拷贝,"装配前统一覆盖"必然丢失**——env 覆盖必须在每个消费点调用:MQTT 口令 `configenv.ApplyMqtt`（core 的 broker 连接与 :9500 回调两处各自调用,保证两端一致）;MinIO 凭据 `configenv.ApplyOSS`（`oss.NewMinIoClient` 内部收口）;登录口令密钥 `configenv.LoginAESKey`（各解密点直调,对应前端 `VITE_AES_KEY`）;JWT 签名密钥在 core `data.NewAuthenticator` 开头覆盖。其余敏感项直接 `os.Getenv`（`ENCRYPTION_KEY`、`CORE_RPC_SECRET`、`COMMAND_SIGN_KEY`、`MQTT_AUTH_WEBHOOK_SECRET`、`APP_ENV` 等）。**MQTT 首连竞态（2026-10-26 冒烟发现并修复）**：EMQX 认证回调资源有健康检查周期,冷启动时 core/agent 先于资源恢复的首连会被拒,传输库对首连失败零重试、失败状态固化在实例内不可原地重试,且 kratos 视 Start 错误为致命——`pkg/mqttwrap.WrapFactory` 按工厂模式重建实例重试（3s 间隔/最长 2m）,两端 MQTT server 均已包装。
 - MQTT 段在 server.yaml 的 `server.mqtt`（endpoint/codec/username/password/clean_session/auto_reconnect/resume_subs）
 - 生产可用 `cfgexp` 导出到 etcd（`make export`），服务经 registry/etcd 空导入拉取
 

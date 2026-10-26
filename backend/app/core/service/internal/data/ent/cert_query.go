@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/cert"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *CertQuery) Clone() *CertQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Cert.Query().
-//		GroupBy(cert.FieldCreatedAt).
+//		GroupBy(cert.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *CertQuery) GroupBy(field string, fields ...string) *CertGroupBy {
@@ -288,11 +289,11 @@ func (_q *CertQuery) GroupBy(field string, fields ...string) *CertGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Cert.Query().
-//		Select(cert.FieldCreatedAt).
+//		Select(cert.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *CertQuery) Select(fields ...string) *CertSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *CertQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if cert.Policy == nil {
+		return errors.New("ent: uninitialized cert.Policy (forgotten import ent/runtime?)")
+	}
+	if err := cert.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

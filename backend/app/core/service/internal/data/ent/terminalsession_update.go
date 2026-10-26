@@ -332,6 +332,9 @@ func (_u *TerminalSessionUpdate) sqlSave(ctx context.Context) (_node int, err er
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalsession.FieldCreatedAt, field.TypeTime)
 	}
@@ -755,6 +758,9 @@ func (_u *TerminalSessionUpdateOne) sqlSave(ctx context.Context) (_node *Termina
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalsession.FieldCreatedAt, field.TypeTime)

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
@@ -265,12 +266,12 @@ func (_q *ScriptQuery) Clone() *ScriptQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Script.Query().
-//		GroupBy(script.FieldCreatedAt).
+//		GroupBy(script.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ScriptQuery) GroupBy(field string, fields ...string) *ScriptGroupBy {
@@ -288,11 +289,11 @@ func (_q *ScriptQuery) GroupBy(field string, fields ...string) *ScriptGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Script.Query().
-//		Select(script.FieldCreatedAt).
+//		Select(script.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *ScriptQuery) Select(fields ...string) *ScriptSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *ScriptQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if script.Policy == nil {
+		return errors.New("ent: uninitialized script.Policy (forgotten import ent/runtime?)")
+	}
+	if err := script.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

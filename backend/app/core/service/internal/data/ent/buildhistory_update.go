@@ -415,6 +415,9 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(buildhistory.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildhistory.FieldCreatedAt, field.TypeTime)
 	}
@@ -951,6 +954,9 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(buildhistory.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildhistory.FieldCreatedAt, field.TypeTime)

@@ -439,6 +439,9 @@ func (_u *CertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cert.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cert.FieldCreatedAt, field.TypeTime)
 	}
@@ -1005,6 +1008,9 @@ func (_u *CertUpdateOne) sqlSave(ctx context.Context) (_node *Cert, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cert.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cert.FieldCreatedAt, field.TypeTime)

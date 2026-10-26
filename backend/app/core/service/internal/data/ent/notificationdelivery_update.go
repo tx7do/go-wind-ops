@@ -294,6 +294,9 @@ func (_u *NotificationDeliveryUpdate) sqlSave(ctx context.Context) (_node int, e
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(notificationdelivery.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(notificationdelivery.FieldCreatedAt, field.TypeTime)
 	}
@@ -667,6 +670,9 @@ func (_u *NotificationDeliveryUpdateOne) sqlSave(ctx context.Context) (_node *No
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(notificationdelivery.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(notificationdelivery.FieldCreatedAt, field.TypeTime)

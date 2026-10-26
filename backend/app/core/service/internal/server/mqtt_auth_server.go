@@ -9,6 +9,11 @@
 //     → core:放行 ops/ 前缀全部主题;agent:仅放行 ops/agent/{自身用户名}/#
 //     → 其余(含 $SYS)一律拒绝
 //
+// 回调密钥:MQTT_AUTH_WEBHOOK_SECRET 非空时,两个端点要求携带共享密钥
+// (URL 查询参数 ?secret= 或请求头 X-Mqtt-Webhook-Secret,常时比较),
+// 防止内网直达 :9500 直调 TOFU 注册伪造 agent;为空则跳过(仅限开发)。
+// compose 里 EMQX 回调 URL 已拼入 ?secret=,两端经同一环境变量装配。
+//
 // 回执契约(EMQX 5.x HTTP 认证/授权):{"result":"allow"} / {"result":"deny"}。
 package server
 
@@ -18,6 +23,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -25,7 +31,14 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/configenv"
 )
+
+// MqttAuthWebhookSecretEnv 回调共享密钥的环境变量名。
+const MqttAuthWebhookSecretEnv = "MQTT_AUTH_WEBHOOK_SECRET"
+
+// mqttWebhookSecretHeader 与 URL 查询参数二选一的请求头名。
+const mqttWebhookSecretHeader = "X-Mqtt-Webhook-Secret"
 
 // MqttAuthServer EMQX Broker 级认证/授权 webhook。
 type MqttAuthServer struct {
@@ -34,6 +47,7 @@ type MqttAuthServer struct {
 
 	coreMqttUsername string
 	coreMqttPassword string
+	webhookSecret    string
 }
 
 func NewMqttAuthServer(ctx *bootstrap.Context, repo *data.AgentNodeRepo) *kratosHTTP.Server {
@@ -43,9 +57,16 @@ func NewMqttAuthServer(ctx *bootstrap.Context, repo *data.AgentNodeRepo) *kratos
 	}
 
 	h := &MqttAuthServer{repo: repo, log: ctx.NewLoggerHelper("mqtt-auth/core-service")}
+	// env 覆盖必须在消费点做(GetConfig() 返回深拷贝);与 broker 连接消费点
+	// 各自调用同一 env,保证回调比对值与连接凭证一致。
+	configenv.ApplyMqtt(cfg)
 	if cfg.Server.Mqtt != nil {
 		h.coreMqttUsername = cfg.Server.Mqtt.GetUsername()
 		h.coreMqttPassword = cfg.Server.Mqtt.GetPassword()
+	}
+	h.webhookSecret = strings.TrimSpace(os.Getenv(MqttAuthWebhookSecretEnv))
+	if h.webhookSecret == "" {
+		h.log.Warnf("%s 未配置,EMQX 认证/授权回调未启用共享密钥——仅限开发环境,生产必须配置", MqttAuthWebhookSecretEnv)
 	}
 
 	mux := http.NewServeMux()
@@ -58,7 +79,26 @@ func NewMqttAuthServer(ctx *bootstrap.Context, repo *data.AgentNodeRepo) *kratos
 	return srv
 }
 
+// checkWebhookSecret 校验回调共享密钥:未配置即放行(开发模式);已配置时
+// 接受 URL 查询参数 ?secret= 或请求头,常时比较,不符拒绝。
+func (h *MqttAuthServer) checkWebhookSecret(r *http.Request) bool {
+	if h.webhookSecret == "" {
+		return true
+	}
+	got := r.URL.Query().Get("secret")
+	if got == "" {
+		got = r.Header.Get(mqttWebhookSecretHeader)
+	}
+	return subtle.ConstantTimeCompare([]byte(got), []byte(h.webhookSecret)) == 1
+}
+
 func (h *MqttAuthServer) handleAuth(w http.ResponseWriter, r *http.Request) {
+	if !h.checkWebhookSecret(r) {
+		h.log.Warnf("mqtt broker auth: webhook secret mismatch (remote=%s)", r.RemoteAddr)
+		h.writeDeny(w)
+		return
+	}
+
 	var req mqttAuthBody
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Username == "" || req.Password == "" {
 		h.writeDeny(w)
@@ -106,6 +146,12 @@ func (h *MqttAuthServer) handleAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MqttAuthServer) handleAcl(w http.ResponseWriter, r *http.Request) {
+	if !h.checkWebhookSecret(r) {
+		h.log.Warnf("mqtt broker acl: webhook secret mismatch (remote=%s)", r.RemoteAddr)
+		h.writeDeny(w)
+		return
+	}
+
 	var req mqttAclBody
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Topic == "" {
 		h.writeDeny(w)

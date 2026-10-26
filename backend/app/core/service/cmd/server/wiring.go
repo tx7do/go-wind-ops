@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -9,6 +10,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	pkgcrypto "go-wind-ops/pkg/crypto"
+	"go-wind-ops/pkg/envs"
 
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/client"
@@ -46,12 +48,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ═══════════════════════ 一、基础设施 ═══════════════════════
 
+
 	// 全局存储加密器(AES-256-GCM, pkg/crypto):凭据类字段落库加密的总开关。
-	// key 从 ENCRYPTION_KEY 环境变量读取;未配置时降级明文并告警(生产必须配置)。
+	// key 从 ENCRYPTION_KEY 环境变量读取;生产态未配置直接拒绝启动(明文凭据
+	// 落库=拖库即泄露),开发环境降级明文并告警。
 	if encKey := os.Getenv("ENCRYPTION_KEY"); encKey != "" {
 		if err := pkgcrypto.InitGlobalEncryptor(encKey, true); err != nil {
 			return nil, nil, err
 		}
+	} else if envs.IsProduction() {
+		return nil, nil, fmt.Errorf("ENCRYPTION_KEY must be set in production (credential encryption is mandatory)")
 	} else {
 		log.Warnf("ENCRYPTION_KEY not set: credential encryption DISABLED (secrets stored in plaintext)")
 	}

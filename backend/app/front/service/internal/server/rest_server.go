@@ -24,8 +24,8 @@ import (
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 
 	"go-wind-ops/pkg/middleware/auth"
-	applogging "go-wind-ops/pkg/middleware/logging"
 	entmiddleware "go-wind-ops/pkg/middleware/ent"
+	applogging "go-wind-ops/pkg/middleware/logging"
 )
 
 // OperationAuthenticationServiceRegister 手工挂载的 C 端注册路由操作名。
@@ -59,6 +59,7 @@ func NewRestMiddleware(
 	)
 
 	ms = append(ms, applogging.Server(
+		applogging.WithLogger(ctx.NewLoggerHelper("audit-logging/front-service")),
 		applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
 			return nil
 		}),

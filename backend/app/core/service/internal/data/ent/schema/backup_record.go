@@ -92,6 +92,7 @@ func (BackupRecord) Fields() []ent.Field {
 func (BackupRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

@@ -22,6 +22,20 @@ type ApiKeyCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *ApiKeyCreate) SetTenantID(v uint32) *ApiKeyCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *ApiKeyCreate) SetNillableTenantID(v *uint32) *ApiKeyCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *ApiKeyCreate) SetCreatedAt(v time.Time) *ApiKeyCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -193,7 +207,9 @@ func (_c *ApiKeyCreate) Mutation() *ApiKeyMutation {
 
 // Save creates the ApiKey in the database.
 func (_c *ApiKeyCreate) Save(ctx context.Context) (*ApiKey, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -220,11 +236,16 @@ func (_c *ApiKeyCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *ApiKeyCreate) defaults() {
+func (_c *ApiKeyCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := apikey.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := apikey.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -296,6 +317,10 @@ func (_c *ApiKeyCreate) createSpec() (*ApiKey, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(apikey.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(apikey.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -355,7 +380,7 @@ func (_c *ApiKeyCreate) createSpec() (*ApiKey, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.ApiKey.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -364,7 +389,7 @@ func (_c *ApiKeyCreate) createSpec() (*ApiKey, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ApiKeyUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ApiKeyCreate) OnConflict(opts ...sql.ConflictOption) *ApiKeyUpsertOne {
@@ -632,6 +657,9 @@ func (u *ApiKeyUpsertOne) UpdateNewValues() *ApiKeyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(apikey.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(apikey.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(apikey.FieldCreatedAt)
@@ -1054,7 +1082,7 @@ func (_c *ApiKeyCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ApiKeyUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ApiKeyCreateBulk) OnConflict(opts ...sql.ConflictOption) *ApiKeyUpsertBulk {
@@ -1100,6 +1128,9 @@ func (u *ApiKeyUpsertBulk) UpdateNewValues() *ApiKeyUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(apikey.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(apikey.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(apikey.FieldCreatedAt)

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/monitor"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *MonitorQuery) Clone() *MonitorQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Monitor.Query().
-//		GroupBy(monitor.FieldCreatedAt).
+//		GroupBy(monitor.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *MonitorQuery) GroupBy(field string, fields ...string) *MonitorGroupBy {
@@ -288,11 +289,11 @@ func (_q *MonitorQuery) GroupBy(field string, fields ...string) *MonitorGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Monitor.Query().
-//		Select(monitor.FieldCreatedAt).
+//		Select(monitor.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *MonitorQuery) Select(fields ...string) *MonitorSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *MonitorQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if monitor.Policy == nil {
+		return errors.New("ent: uninitialized monitor.Policy (forgotten import ent/runtime?)")
+	}
+	if err := monitor.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

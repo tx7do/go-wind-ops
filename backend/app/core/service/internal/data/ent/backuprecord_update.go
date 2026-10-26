@@ -360,6 +360,9 @@ func (_u *BackupRecordUpdate) sqlSave(ctx context.Context) (_node int, err error
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuprecord.FieldCreatedAt, field.TypeTime)
 	}
@@ -814,6 +817,9 @@ func (_u *BackupRecordUpdateOne) sqlSave(ctx context.Context) (_node *BackupReco
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuprecord.FieldCreatedAt, field.TypeTime)

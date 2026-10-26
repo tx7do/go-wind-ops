@@ -16,6 +16,7 @@ import (
 	appV1 "go-wind-ops/api/gen/go/app/service/v1"
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
+	"go-wind-ops/pkg/configenv"
 	entmiddleware "go-wind-ops/pkg/middleware/ent"
 
 	"go-wind-ops/pkg/middleware/auth"
@@ -157,7 +158,7 @@ func (s *AuthenticationService) Register(ctx context.Context, req *authenticatio
 	if err != nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid password encoding")
 	}
-	plain, err := crypto.AesDecrypt(raw, crypto.DefaultAESKey, nil)
+	plain, err := crypto.AesDecrypt(raw, configenv.LoginAESKey(), nil)
 	if err != nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid password encoding")
 	}

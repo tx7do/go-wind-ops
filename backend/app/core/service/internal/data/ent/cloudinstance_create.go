@@ -22,6 +22,20 @@ type CloudInstanceCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CloudInstanceCreate) SetTenantID(v uint32) *CloudInstanceCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CloudInstanceCreate) SetNillableTenantID(v *uint32) *CloudInstanceCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *CloudInstanceCreate) SetCreatedAt(v time.Time) *CloudInstanceCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -269,7 +283,9 @@ func (_c *CloudInstanceCreate) Mutation() *CloudInstanceMutation {
 
 // Save creates the CloudInstance in the database.
 func (_c *CloudInstanceCreate) Save(ctx context.Context) (*CloudInstance, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -296,11 +312,16 @@ func (_c *CloudInstanceCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CloudInstanceCreate) defaults() {
+func (_c *CloudInstanceCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := cloudinstance.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Matched(); !ok {
 		v := cloudinstance.DefaultMatched
 		_c.mutation.SetMatched(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -377,6 +398,10 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(cloudinstance.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(cloudinstance.FieldCreatedAt, field.TypeTime, value)
@@ -461,7 +486,7 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 // of the `INSERT` statement. For example:
 //
 //	client.CloudInstance.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -470,7 +495,7 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CloudInstanceUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CloudInstanceCreate) OnConflict(opts ...sql.ConflictOption) *CloudInstanceUpsertOne {
@@ -828,6 +853,9 @@ func (u *CloudInstanceUpsertOne) UpdateNewValues() *CloudInstanceUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(cloudinstance.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(cloudinstance.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(cloudinstance.FieldCreatedAt)
@@ -1355,7 +1383,7 @@ func (_c *CloudInstanceCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CloudInstanceUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CloudInstanceCreateBulk) OnConflict(opts ...sql.ConflictOption) *CloudInstanceUpsertBulk {
@@ -1401,6 +1429,9 @@ func (u *CloudInstanceUpsertBulk) UpdateNewValues() *CloudInstanceUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(cloudinstance.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(cloudinstance.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(cloudinstance.FieldCreatedAt)

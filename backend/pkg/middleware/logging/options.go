@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/ecdsa"
 
+	"github.com/go-kratos/kratos/v2/log"
+
 	auditV1 "go-wind-ops/api/gen/go/audit/service/v1"
 )
 
@@ -20,8 +22,10 @@ type options struct {
 	loginOperation  string // 登录操作名称
 	logoutOperation string // 登出操作名称
 
-	ecPrivateKey *ecdsa.PrivateKey // 私钥（加密存储）
-	ecPublicKey  *ecdsa.PublicKey  // 公钥（可公开）
+	ecPrivateKey *ecdsa.PrivateKey // 私钥(审计签名;未注入时按 AUDIT_SIGN_KEY_FILE 持久化加载/生成)
+	ecPublicKey  *ecdsa.PublicKey  // 公钥(可公开)
+
+	logger *log.Helper // 审计写入失败等内部告警(nil=静默)
 }
 
 type Option func(*options)
@@ -65,5 +69,12 @@ func WithECPrivateKey(key *ecdsa.PrivateKey) Option {
 func WithECPublicKey(key *ecdsa.PublicKey) Option {
 	return func(opts *options) {
 		opts.ecPublicKey = key
+	}
+}
+
+// WithLogger 注入内部告警日志器(审计写入失败时使用,不注入则静默)。
+func WithLogger(l *log.Helper) Option {
+	return func(opts *options) {
+		opts.logger = l
 	}
 }

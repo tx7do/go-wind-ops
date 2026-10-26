@@ -107,6 +107,7 @@ func (NotificationChannel) Fields() []ent.Field {
 func (NotificationChannel) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

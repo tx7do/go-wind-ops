@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/cloudinstance"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *CloudInstanceQuery) Clone() *CloudInstanceQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.CloudInstance.Query().
-//		GroupBy(cloudinstance.FieldCreatedAt).
+//		GroupBy(cloudinstance.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *CloudInstanceQuery) GroupBy(field string, fields ...string) *CloudInstanceGroupBy {
@@ -288,11 +289,11 @@ func (_q *CloudInstanceQuery) GroupBy(field string, fields ...string) *CloudInst
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.CloudInstance.Query().
-//		Select(cloudinstance.FieldCreatedAt).
+//		Select(cloudinstance.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *CloudInstanceQuery) Select(fields ...string) *CloudInstanceSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *CloudInstanceQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if cloudinstance.Policy == nil {
+		return errors.New("ent: uninitialized cloudinstance.Policy (forgotten import ent/runtime?)")
+	}
+	if err := cloudinstance.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

@@ -18,6 +18,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 )
 
 const (
@@ -75,9 +76,12 @@ func envBool(key string, def bool) bool {
 // 由 TerminalService.Channel 在会话建立时构造,流结束时 Close。
 type TerminalRecorder struct {
 	sessionRowID uint32
-	sessionRepo  *data.TerminalSessionRepo
-	chunkRepo    *data.TerminalChunkRepo
-	log          *log.Helper
+	// tenantID 会话归属租户:分块由后台 goroutine 异步落库,显式带上,
+	// 否则落 tenant 0 租户用户看不到回放。
+	tenantID    uint32
+	sessionRepo *data.TerminalSessionRepo
+	chunkRepo   *data.TerminalChunkRepo
+	log         *log.Helper
 
 	policy terminalRecordPolicy
 
@@ -111,6 +115,7 @@ func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionR
 	}
 	rec := &TerminalRecorder{
 		sessionRowID: row.ID,
+		tenantID:     uint32Val(row.TenantID),
 		sessionRepo:  sessionRepo,
 		chunkRepo:    chunkRepo,
 		log:          log,
@@ -177,7 +182,8 @@ func (r *TerminalRecorder) Close() {
 	r.mu.Unlock()
 	r.wg.Wait()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// 会话表已挂租户隐私:终态化注入系统 viewer(平台视图绕过租户过滤)
+	ctx, cancel := context.WithTimeout(appViewer.NewSystemViewerContext(context.Background()), 10*time.Second)
 	defer cancel()
 	_ = r.sessionRepo.Finalize(ctx, r.sessionRowID, r.inputB.Load(), r.outputB.Load(),
 		int(r.chunkCnt.Load()), r.truncated.Load())
@@ -211,6 +217,7 @@ func (r *TerminalRecorder) flush() {
 			batch = append(batch, <-r.pending)
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx = tenantScopedCtx(ctx, &r.tenantID)
 		if err := r.chunkRepo.CreateBulk(ctx, batch); err != nil {
 			r.log.Warnf("terminal record flush failed (session_row=%d count=%d): %s",
 				r.sessionRowID, len(batch), err.Error())

@@ -22,6 +22,20 @@ type PipelineRunCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PipelineRunCreate) SetTenantID(v uint32) *PipelineRunCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PipelineRunCreate) SetNillableTenantID(v *uint32) *PipelineRunCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *PipelineRunCreate) SetCreatedAt(v time.Time) *PipelineRunCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -223,7 +237,9 @@ func (_c *PipelineRunCreate) Mutation() *PipelineRunMutation {
 
 // Save creates the PipelineRun in the database.
 func (_c *PipelineRunCreate) Save(ctx context.Context) (*PipelineRun, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -250,7 +266,11 @@ func (_c *PipelineRunCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PipelineRunCreate) defaults() {
+func (_c *PipelineRunCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := pipelinerun.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := pipelinerun.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -267,6 +287,7 @@ func (_c *PipelineRunCreate) defaults() {
 		v := pipelinerun.DefaultRunnerID
 		_c.mutation.SetRunnerID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -324,6 +345,10 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(pipelinerun.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(pipelinerun.FieldCreatedAt, field.TypeTime, value)
@@ -388,7 +413,7 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.PipelineRun.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -397,7 +422,7 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PipelineRunUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *PipelineRunCreate) OnConflict(opts ...sql.ConflictOption) *PipelineRunUpsertOne {
@@ -689,6 +714,9 @@ func (u *PipelineRunUpsertOne) UpdateNewValues() *PipelineRunUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(pipelinerun.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(pipelinerun.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(pipelinerun.FieldCreatedAt)
@@ -1139,7 +1167,7 @@ func (_c *PipelineRunCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PipelineRunUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *PipelineRunCreateBulk) OnConflict(opts ...sql.ConflictOption) *PipelineRunUpsertBulk {
@@ -1185,6 +1213,9 @@ func (u *PipelineRunUpsertBulk) UpdateNewValues() *PipelineRunUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(pipelinerun.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(pipelinerun.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(pipelinerun.FieldCreatedAt)

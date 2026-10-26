@@ -22,6 +22,20 @@ type NotificationChannelCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *NotificationChannelCreate) SetTenantID(v uint32) *NotificationChannelCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableTenantID(v *uint32) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *NotificationChannelCreate) SetCreatedAt(v time.Time) *NotificationChannelCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -293,7 +307,9 @@ func (_c *NotificationChannelCreate) Mutation() *NotificationChannelMutation {
 
 // Save creates the NotificationChannel in the database.
 func (_c *NotificationChannelCreate) Save(ctx context.Context) (*NotificationChannel, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -320,7 +336,11 @@ func (_c *NotificationChannelCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *NotificationChannelCreate) defaults() {
+func (_c *NotificationChannelCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := notificationchannel.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		v := notificationchannel.DefaultType
 		_c.mutation.SetType(v)
@@ -337,6 +357,7 @@ func (_c *NotificationChannelCreate) defaults() {
 		v := notificationchannel.DefaultEnabled
 		_c.mutation.SetEnabled(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -402,6 +423,10 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(notificationchannel.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(notificationchannel.FieldCreatedAt, field.TypeTime, value)
@@ -486,7 +511,7 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 // of the `INSERT` statement. For example:
 //
 //	client.NotificationChannel.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -495,7 +520,7 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationChannelUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationChannelCreate) OnConflict(opts ...sql.ConflictOption) *NotificationChannelUpsertOne {
@@ -877,6 +902,9 @@ func (u *NotificationChannelUpsertOne) UpdateNewValues() *NotificationChannelUps
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(notificationchannel.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(notificationchannel.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(notificationchannel.FieldCreatedAt)
@@ -1432,7 +1460,7 @@ func (_c *NotificationChannelCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationChannelUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationChannelCreateBulk) OnConflict(opts ...sql.ConflictOption) *NotificationChannelUpsertBulk {
@@ -1478,6 +1506,9 @@ func (u *NotificationChannelUpsertBulk) UpdateNewValues() *NotificationChannelUp
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(notificationchannel.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(notificationchannel.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(notificationchannel.FieldCreatedAt)

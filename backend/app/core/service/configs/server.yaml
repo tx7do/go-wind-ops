@@ -26,9 +26,12 @@ server:
     endpoint: "tcp://127.0.0.1:1883"
     codec: "json"
     # core 自身的 MQTT 账号:EMQX HTTP 认证回调 /api/v1/mqtt/auth 时,
-    # username==core 按这对凭证比对(不出现在 agent 表);务必改掉默认口令。
+    # username==core 按这对凭证比对(不出现在 agent 表)。口令经
+    # MQTT_CORE_PASSWORD 由 pkg/configenv 在装配期注入(持有此口令即可向
+    # 全部 agent 下发指令,生产必须设置强口令;配置占位符不读 env,
+    # ${...} 的 default 仅作 dev 回落)。
     username: "core"
-    password: "core-pass"
+    password: "${MQTT_CORE_PASSWORD:core-pass}"
     clean_session: false
     auto_reconnect: true
     resume_subs: true

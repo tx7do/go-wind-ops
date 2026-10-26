@@ -25,6 +25,8 @@ import (
 
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
+
+	"go-wind-ops/pkg/configenv"
 )
 
 type UserCredentialRepo struct {
@@ -417,7 +419,7 @@ func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID ui
 			r.log.Errorf("decode base64 credential failed: %s", err.Error())
 			return 0, authenticationV1.ErrorBadRequest("invalid credential format")
 		}
-		decrypted, err := crypto.AesDecrypt(bytesPass, crypto.DefaultAESKey, nil)
+		decrypted, err := crypto.AesDecrypt(bytesPass, configenv.LoginAESKey(), nil)
 		if err != nil {
 			r.log.Errorf("decrypt credential failed: %s", err.Error())
 			return 0, authenticationV1.ErrorBadRequest("decrypt credential failed")
@@ -475,7 +477,7 @@ func (r *UserCredentialRepo) FindUserCredentialAcrossTenants(ctx context.Context
 			r.log.Errorf("decode base64 credential failed: %s", err.Error())
 			return 0, 0, authenticationV1.ErrorBadRequest("invalid credential format")
 		}
-		decrypted, err := crypto.AesDecrypt(bytesPass, crypto.DefaultAESKey, nil)
+		decrypted, err := crypto.AesDecrypt(bytesPass, configenv.LoginAESKey(), nil)
 		if err != nil {
 			r.log.Errorf("decrypt credential failed: %s", err.Error())
 			return 0, 0, authenticationV1.ErrorBadRequest("decrypt credential failed")
@@ -558,7 +560,10 @@ func (r *UserCredentialRepo) verifyCredential(credentialType *usercredential.Cre
 		}
 		return ok
 	default:
-		return plainCredential == targetCredential
+		// 非 PASSWORD_HASH 类型在本应用零使用(枚举为 CMS 基座遗留):宁拒不
+		// 不错——原 default 分支是明文比对,等价于库存明文,封死。
+		r.log.Errorf("unsupported credential type %q, reject verification", credentialType.String())
+		return false
 	}
 }
 
@@ -575,7 +580,8 @@ func (r *UserCredentialRepo) prepareCredential(credentialType *usercredential.Cr
 		}
 
 	default:
-		newCredential = plainCredential
+		// 同 verifyCredential:拒绝非哈希类型的凭据写入,不再明文落库。
+		return "", authenticationV1.ErrorBadRequest("unsupported credential type: %s", credentialType.String())
 	}
 
 	return newCredential, nil
@@ -589,7 +595,7 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("invalid old credential format")
 		}
-		plainPassword, err := crypto.AesDecrypt(bytesPass, crypto.DefaultAESKey, nil)
+		plainPassword, err := crypto.AesDecrypt(bytesPass, configenv.LoginAESKey(), nil)
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("decrypt old credential failed")
 		}
@@ -600,7 +606,7 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("invalid new credential format")
 		}
-		plainPassword, err = crypto.AesDecrypt(bytesPass, crypto.DefaultAESKey, nil)
+		plainPassword, err = crypto.AesDecrypt(bytesPass, configenv.LoginAESKey(), nil)
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("decrypt new credential failed")
 		}
@@ -675,7 +681,7 @@ func (r *UserCredentialRepo) ResetCredential(ctx context.Context, req *authentic
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("invalid new credential format")
 		}
-		plainPassword, err := crypto.AesDecrypt(bytesPass, crypto.DefaultAESKey, nil)
+		plainPassword, err := crypto.AesDecrypt(bytesPass, configenv.LoginAESKey(), nil)
 		if err != nil {
 			return authenticationV1.ErrorBadRequest("decrypt new credential failed")
 		}

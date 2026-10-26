@@ -18,6 +18,8 @@ type NotificationChannel struct {
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -66,7 +68,7 @@ func (*NotificationChannel) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case notificationchannel.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case notificationchannel.FieldID, notificationchannel.FieldCreatedBy, notificationchannel.FieldUpdatedBy, notificationchannel.FieldDeletedBy, notificationchannel.FieldSMTPPort:
+		case notificationchannel.FieldID, notificationchannel.FieldTenantID, notificationchannel.FieldCreatedBy, notificationchannel.FieldUpdatedBy, notificationchannel.FieldDeletedBy, notificationchannel.FieldSMTPPort:
 			values[i] = new(sql.NullInt64)
 		case notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookSecret, notificationchannel.FieldWebhookSignStyle, notificationchannel.FieldSMTPHost, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldSMTPFrom, notificationchannel.FieldEmailTo, notificationchannel.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -93,6 +95,13 @@ func (_m *NotificationChannel) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = uint32(value.Int64)
+		case notificationchannel.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
+			}
 		case notificationchannel.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -259,6 +268,11 @@ func (_m *NotificationChannel) String() string {
 	var builder strings.Builder
 	builder.WriteString("NotificationChannel(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))

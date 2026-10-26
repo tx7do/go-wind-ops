@@ -94,6 +94,7 @@ func (DistributionRecord) Fields() []ent.Field {
 func (DistributionRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

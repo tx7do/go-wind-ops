@@ -995,7 +995,8 @@ func (c *AlertClient) GetX(ctx context.Context, id uint32) *Alert {
 
 // Hooks returns the client hooks.
 func (c *AlertClient) Hooks() []Hook {
-	return c.hooks.Alert
+	hooks := c.hooks.Alert
+	return append(hooks[:len(hooks):len(hooks)], alert.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1396,7 +1397,8 @@ func (c *ApiKeyClient) GetX(ctx context.Context, id uint32) *ApiKey {
 
 // Hooks returns the client hooks.
 func (c *ApiKeyClient) Hooks() []Hook {
-	return c.hooks.ApiKey
+	hooks := c.hooks.ApiKey
+	return append(hooks[:len(hooks):len(hooks)], apikey.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1529,7 +1531,8 @@ func (c *ApprovalClient) GetX(ctx context.Context, id uint32) *Approval {
 
 // Hooks returns the client hooks.
 func (c *ApprovalClient) Hooks() []Hook {
-	return c.hooks.Approval
+	hooks := c.hooks.Approval
+	return append(hooks[:len(hooks):len(hooks)], approval.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1662,7 +1665,8 @@ func (c *BackupRecordClient) GetX(ctx context.Context, id uint32) *BackupRecord 
 
 // Hooks returns the client hooks.
 func (c *BackupRecordClient) Hooks() []Hook {
-	return c.hooks.BackupRecord
+	hooks := c.hooks.BackupRecord
+	return append(hooks[:len(hooks):len(hooks)], backuprecord.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1795,7 +1799,8 @@ func (c *BackupTaskClient) GetX(ctx context.Context, id uint32) *BackupTask {
 
 // Hooks returns the client hooks.
 func (c *BackupTaskClient) Hooks() []Hook {
-	return c.hooks.BackupTask
+	hooks := c.hooks.BackupTask
+	return append(hooks[:len(hooks):len(hooks)], backuptask.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1928,7 +1933,8 @@ func (c *BuildClient) GetX(ctx context.Context, id uint32) *Build {
 
 // Hooks returns the client hooks.
 func (c *BuildClient) Hooks() []Hook {
-	return c.hooks.Build
+	hooks := c.hooks.Build
+	return append(hooks[:len(hooks):len(hooks)], build.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2061,7 +2067,8 @@ func (c *BuildHistoryClient) GetX(ctx context.Context, id uint32) *BuildHistory 
 
 // Hooks returns the client hooks.
 func (c *BuildHistoryClient) Hooks() []Hook {
-	return c.hooks.BuildHistory
+	hooks := c.hooks.BuildHistory
+	return append(hooks[:len(hooks):len(hooks)], buildhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2194,7 +2201,8 @@ func (c *BuildPipelineClient) GetX(ctx context.Context, id uint32) *BuildPipelin
 
 // Hooks returns the client hooks.
 func (c *BuildPipelineClient) Hooks() []Hook {
-	return c.hooks.BuildPipeline
+	hooks := c.hooks.BuildPipeline
+	return append(hooks[:len(hooks):len(hooks)], buildpipeline.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2327,7 +2335,8 @@ func (c *CertClient) GetX(ctx context.Context, id uint32) *Cert {
 
 // Hooks returns the client hooks.
 func (c *CertClient) Hooks() []Hook {
-	return c.hooks.Cert
+	hooks := c.hooks.Cert
+	return append(hooks[:len(hooks):len(hooks)], cert.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2460,7 +2469,8 @@ func (c *CloudAccountClient) GetX(ctx context.Context, id uint32) *CloudAccount 
 
 // Hooks returns the client hooks.
 func (c *CloudAccountClient) Hooks() []Hook {
-	return c.hooks.CloudAccount
+	hooks := c.hooks.CloudAccount
+	return append(hooks[:len(hooks):len(hooks)], cloudaccount.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2593,7 +2603,8 @@ func (c *CloudBudgetClient) GetX(ctx context.Context, id uint32) *CloudBudget {
 
 // Hooks returns the client hooks.
 func (c *CloudBudgetClient) Hooks() []Hook {
-	return c.hooks.CloudBudget
+	hooks := c.hooks.CloudBudget
+	return append(hooks[:len(hooks):len(hooks)], cloudbudget.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2726,7 +2737,8 @@ func (c *CloudCostClient) GetX(ctx context.Context, id uint32) *CloudCost {
 
 // Hooks returns the client hooks.
 func (c *CloudCostClient) Hooks() []Hook {
-	return c.hooks.CloudCost
+	hooks := c.hooks.CloudCost
+	return append(hooks[:len(hooks):len(hooks)], cloudcost.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2859,7 +2871,8 @@ func (c *CloudInstanceClient) GetX(ctx context.Context, id uint32) *CloudInstanc
 
 // Hooks returns the client hooks.
 func (c *CloudInstanceClient) Hooks() []Hook {
-	return c.hooks.CloudInstance
+	hooks := c.hooks.CloudInstance
+	return append(hooks[:len(hooks):len(hooks)], cloudinstance.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2992,7 +3005,8 @@ func (c *CommandRecordClient) GetX(ctx context.Context, id uint32) *CommandRecor
 
 // Hooks returns the client hooks.
 func (c *CommandRecordClient) Hooks() []Hook {
-	return c.hooks.CommandRecord
+	hooks := c.hooks.CommandRecord
+	return append(hooks[:len(hooks):len(hooks)], commandrecord.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3125,7 +3139,8 @@ func (c *ConfigDistributionClient) GetX(ctx context.Context, id uint32) *ConfigD
 
 // Hooks returns the client hooks.
 func (c *ConfigDistributionClient) Hooks() []Hook {
-	return c.hooks.ConfigDistribution
+	hooks := c.hooks.ConfigDistribution
+	return append(hooks[:len(hooks):len(hooks)], configdistribution.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3258,7 +3273,8 @@ func (c *ConfigTemplateClient) GetX(ctx context.Context, id uint32) *ConfigTempl
 
 // Hooks returns the client hooks.
 func (c *ConfigTemplateClient) Hooks() []Hook {
-	return c.hooks.ConfigTemplate
+	hooks := c.hooks.ConfigTemplate
+	return append(hooks[:len(hooks):len(hooks)], configtemplate.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3991,7 +4007,8 @@ func (c *DistributionClient) GetX(ctx context.Context, id uint32) *Distribution 
 
 // Hooks returns the client hooks.
 func (c *DistributionClient) Hooks() []Hook {
-	return c.hooks.Distribution
+	hooks := c.hooks.Distribution
+	return append(hooks[:len(hooks):len(hooks)], distribution.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4124,7 +4141,8 @@ func (c *DistributionRecordClient) GetX(ctx context.Context, id uint32) *Distrib
 
 // Hooks returns the client hooks.
 func (c *DistributionRecordClient) Hooks() []Hook {
-	return c.hooks.DistributionRecord
+	hooks := c.hooks.DistributionRecord
+	return append(hooks[:len(hooks):len(hooks)], distributionrecord.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4257,7 +4275,8 @@ func (c *InspectionClient) GetX(ctx context.Context, id uint32) *Inspection {
 
 // Hooks returns the client hooks.
 func (c *InspectionClient) Hooks() []Hook {
-	return c.hooks.Inspection
+	hooks := c.hooks.Inspection
+	return append(hooks[:len(hooks):len(hooks)], inspection.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4523,7 +4542,8 @@ func (c *LogSnapshotClient) GetX(ctx context.Context, id uint32) *LogSnapshot {
 
 // Hooks returns the client hooks.
 func (c *LogSnapshotClient) Hooks() []Hook {
-	return c.hooks.LogSnapshot
+	hooks := c.hooks.LogSnapshot
+	return append(hooks[:len(hooks):len(hooks)], logsnapshot.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5626,7 +5646,8 @@ func (c *MonitorClient) GetX(ctx context.Context, id uint32) *Monitor {
 
 // Hooks returns the client hooks.
 func (c *MonitorClient) Hooks() []Hook {
-	return c.hooks.Monitor
+	hooks := c.hooks.Monitor
+	return append(hooks[:len(hooks):len(hooks)], monitor.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5892,7 +5913,8 @@ func (c *NotificationChannelClient) GetX(ctx context.Context, id uint32) *Notifi
 
 // Hooks returns the client hooks.
 func (c *NotificationChannelClient) Hooks() []Hook {
-	return c.hooks.NotificationChannel
+	hooks := c.hooks.NotificationChannel
+	return append(hooks[:len(hooks):len(hooks)], notificationchannel.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6025,7 +6047,8 @@ func (c *NotificationDeliveryClient) GetX(ctx context.Context, id uint32) *Notif
 
 // Hooks returns the client hooks.
 func (c *NotificationDeliveryClient) Hooks() []Hook {
-	return c.hooks.NotificationDelivery
+	hooks := c.hooks.NotificationDelivery
+	return append(hooks[:len(hooks):len(hooks)], notificationdelivery.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7294,7 +7317,8 @@ func (c *PipelineRunClient) GetX(ctx context.Context, id uint32) *PipelineRun {
 
 // Hooks returns the client hooks.
 func (c *PipelineRunClient) Hooks() []Hook {
-	return c.hooks.PipelineRun
+	hooks := c.hooks.PipelineRun
+	return append(hooks[:len(hooks):len(hooks)], pipelinerun.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7695,7 +7719,8 @@ func (c *ProjectClient) GetX(ctx context.Context, id uint32) *Project {
 
 // Hooks returns the client hooks.
 func (c *ProjectClient) Hooks() []Hook {
-	return c.hooks.Project
+	hooks := c.hooks.Project
+	return append(hooks[:len(hooks):len(hooks)], project.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7828,7 +7853,8 @@ func (c *RepositoryClient) GetX(ctx context.Context, id uint32) *Repository {
 
 // Hooks returns the client hooks.
 func (c *RepositoryClient) Hooks() []Hook {
-	return c.hooks.Repository
+	hooks := c.hooks.Repository
+	return append(hooks[:len(hooks):len(hooks)], repository.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -8363,7 +8389,8 @@ func (c *ScriptClient) GetX(ctx context.Context, id uint32) *Script {
 
 // Hooks returns the client hooks.
 func (c *ScriptClient) Hooks() []Hook {
-	return c.hooks.Script
+	hooks := c.hooks.Script
+	return append(hooks[:len(hooks):len(hooks)], script.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -8496,7 +8523,8 @@ func (c *ScriptBatchClient) GetX(ctx context.Context, id uint32) *ScriptBatch {
 
 // Hooks returns the client hooks.
 func (c *ScriptBatchClient) Hooks() []Hook {
-	return c.hooks.ScriptBatch
+	hooks := c.hooks.ScriptBatch
+	return append(hooks[:len(hooks):len(hooks)], scriptbatch.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -8896,7 +8924,8 @@ func (c *TerminalChunkClient) GetX(ctx context.Context, id uint32) *TerminalChun
 
 // Hooks returns the client hooks.
 func (c *TerminalChunkClient) Hooks() []Hook {
-	return c.hooks.TerminalChunk
+	hooks := c.hooks.TerminalChunk
+	return append(hooks[:len(hooks):len(hooks)], terminalchunk.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -9029,7 +9058,8 @@ func (c *TerminalSessionClient) GetX(ctx context.Context, id uint32) *TerminalSe
 
 // Hooks returns the client hooks.
 func (c *TerminalSessionClient) Hooks() []Hook {
-	return c.hooks.TerminalSession
+	hooks := c.hooks.TerminalSession
+	return append(hooks[:len(hooks):len(hooks)], terminalsession.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

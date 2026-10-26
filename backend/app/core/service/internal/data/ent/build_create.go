@@ -22,6 +22,20 @@ type BuildCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *BuildCreate) SetTenantID(v uint32) *BuildCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *BuildCreate) SetNillableTenantID(v *uint32) *BuildCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *BuildCreate) SetCreatedAt(v time.Time) *BuildCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -247,7 +261,9 @@ func (_c *BuildCreate) Mutation() *BuildMutation {
 
 // Save creates the Build in the database.
 func (_c *BuildCreate) Save(ctx context.Context) (*Build, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -274,7 +290,11 @@ func (_c *BuildCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *BuildCreate) defaults() {
+func (_c *BuildCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := build.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.TimeoutSeconds(); !ok {
 		v := build.DefaultTimeoutSeconds
 		_c.mutation.SetTimeoutSeconds(v)
@@ -287,6 +307,7 @@ func (_c *BuildCreate) defaults() {
 		v := build.DefaultBuildNo
 		_c.mutation.SetBuildNo(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -363,6 +384,10 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(build.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(build.FieldCreatedAt, field.TypeTime, value)
@@ -443,7 +468,7 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Build.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -452,7 +477,7 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildCreate) OnConflict(opts ...sql.ConflictOption) *BuildUpsertOne {
@@ -822,6 +847,9 @@ func (u *BuildUpsertOne) UpdateNewValues() *BuildUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(build.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(build.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(build.FieldCreatedAt)
@@ -1363,7 +1391,7 @@ func (_c *BuildCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BuildUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BuildCreateBulk) OnConflict(opts ...sql.ConflictOption) *BuildUpsertBulk {
@@ -1409,6 +1437,9 @@ func (u *BuildUpsertBulk) UpdateNewValues() *BuildUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(build.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(build.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(build.FieldCreatedAt)

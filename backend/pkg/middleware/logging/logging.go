@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -22,7 +23,17 @@ func Server(opts ...Option) middleware.Middleware {
 	}
 
 	if op.ecPrivateKey == nil || op.ecPublicKey == nil {
-		op.ecPrivateKey, op.ecPublicKey, _ = generateECDSAKeyPair()
+		keyLogger := op.logger
+		if keyLogger == nil {
+			keyLogger = log.NewHelper(log.DefaultLogger)
+		}
+		priv, pub, err := loadOrGenerateECDSAKeyPair(keyLogger)
+		if err != nil {
+			// 生成失败仍退回临时密钥对(签发能力不中断,错误经全局日志暴露)。
+			log.Errorf("load/generate audit signing key failed: %v", err)
+			priv, pub, _ = generateECDSAKeyPair()
+		}
+		op.ecPrivateKey, op.ecPublicKey = priv, pub
 	}
 
 	loginAuditLogMiddleware := NewLoginAuditLogMiddleware(&op)

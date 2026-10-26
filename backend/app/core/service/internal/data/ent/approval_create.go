@@ -22,6 +22,20 @@ type ApprovalCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *ApprovalCreate) SetTenantID(v uint32) *ApprovalCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *ApprovalCreate) SetNillableTenantID(v *uint32) *ApprovalCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *ApprovalCreate) SetCreatedAt(v time.Time) *ApprovalCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -199,7 +213,9 @@ func (_c *ApprovalCreate) Mutation() *ApprovalMutation {
 
 // Save creates the Approval in the database.
 func (_c *ApprovalCreate) Save(ctx context.Context) (*Approval, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -226,7 +242,11 @@ func (_c *ApprovalCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *ApprovalCreate) defaults() {
+func (_c *ApprovalCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := approval.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.RequesterID(); !ok {
 		v := approval.DefaultRequesterID
 		_c.mutation.SetRequesterID(v)
@@ -239,6 +259,7 @@ func (_c *ApprovalCreate) defaults() {
 		v := approval.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -321,6 +342,10 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(approval.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(approval.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -384,7 +409,7 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Approval.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -393,7 +418,7 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ApprovalUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ApprovalCreate) OnConflict(opts ...sql.ConflictOption) *ApprovalUpsertOne {
@@ -667,6 +692,9 @@ func (u *ApprovalUpsertOne) UpdateNewValues() *ApprovalUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(approval.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(approval.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(approval.FieldCreatedAt)
@@ -1096,7 +1124,7 @@ func (_c *ApprovalCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ApprovalUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ApprovalCreateBulk) OnConflict(opts ...sql.ConflictOption) *ApprovalUpsertBulk {
@@ -1142,6 +1170,9 @@ func (u *ApprovalUpsertBulk) UpdateNewValues() *ApprovalUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(approval.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(approval.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(approval.FieldCreatedAt)

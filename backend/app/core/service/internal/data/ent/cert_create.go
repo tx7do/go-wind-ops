@@ -22,6 +22,20 @@ type CertCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CertCreate) SetTenantID(v uint32) *CertCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CertCreate) SetNillableTenantID(v *uint32) *CertCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *CertCreate) SetCreatedAt(v time.Time) *CertCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -271,7 +285,9 @@ func (_c *CertCreate) Mutation() *CertMutation {
 
 // Save creates the Cert in the database.
 func (_c *CertCreate) Save(ctx context.Context) (*Cert, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -298,7 +314,11 @@ func (_c *CertCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CertCreate) defaults() {
+func (_c *CertCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := cert.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Port(); !ok {
 		v := cert.DefaultPort
 		_c.mutation.SetPort(v)
@@ -315,6 +335,7 @@ func (_c *CertCreate) defaults() {
 		v := cert.DefaultEnabled
 		_c.mutation.SetEnabled(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -381,6 +402,10 @@ func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(cert.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(cert.FieldCreatedAt, field.TypeTime, value)
@@ -461,7 +486,7 @@ func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Cert.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -470,7 +495,7 @@ func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CertUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CertCreate) OnConflict(opts ...sql.ConflictOption) *CertUpsertOne {
@@ -828,6 +853,9 @@ func (u *CertUpsertOne) UpdateNewValues() *CertUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(cert.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(cert.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(cert.FieldCreatedAt)
@@ -1355,7 +1383,7 @@ func (_c *CertCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CertUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CertCreateBulk) OnConflict(opts ...sql.ConflictOption) *CertUpsertBulk {
@@ -1401,6 +1429,9 @@ func (u *CertUpsertBulk) UpdateNewValues() *CertUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(cert.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(cert.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(cert.FieldCreatedAt)

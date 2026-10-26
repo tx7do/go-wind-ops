@@ -111,6 +111,7 @@ func (BuildHistory) Fields() []ent.Field {
 func (BuildHistory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

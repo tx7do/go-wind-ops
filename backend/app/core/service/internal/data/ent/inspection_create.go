@@ -22,6 +22,20 @@ type InspectionCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *InspectionCreate) SetTenantID(v uint32) *InspectionCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *InspectionCreate) SetNillableTenantID(v *uint32) *InspectionCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *InspectionCreate) SetCreatedAt(v time.Time) *InspectionCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -259,7 +273,9 @@ func (_c *InspectionCreate) Mutation() *InspectionMutation {
 
 // Save creates the Inspection in the database.
 func (_c *InspectionCreate) Save(ctx context.Context) (*Inspection, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -286,7 +302,11 @@ func (_c *InspectionCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *InspectionCreate) defaults() {
+func (_c *InspectionCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := inspection.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := inspection.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -315,6 +335,7 @@ func (_c *InspectionCreate) defaults() {
 		v := inspection.DefaultCertExpiring
 		_c.mutation.SetCertExpiring(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -382,6 +403,10 @@ func (_c *InspectionCreate) createSpec() (*Inspection, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(inspection.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(inspection.FieldCreatedAt, field.TypeTime, value)
@@ -454,7 +479,7 @@ func (_c *InspectionCreate) createSpec() (*Inspection, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Inspection.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -463,7 +488,7 @@ func (_c *InspectionCreate) createSpec() (*Inspection, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.InspectionUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *InspectionCreate) OnConflict(opts ...sql.ConflictOption) *InspectionUpsertOne {
@@ -797,6 +822,9 @@ func (u *InspectionUpsertOne) UpdateNewValues() *InspectionUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(inspection.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(inspection.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(inspection.FieldCreatedAt)
@@ -1296,7 +1324,7 @@ func (_c *InspectionCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.InspectionUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *InspectionCreateBulk) OnConflict(opts ...sql.ConflictOption) *InspectionUpsertBulk {
@@ -1342,6 +1370,9 @@ func (u *InspectionUpsertBulk) UpdateNewValues() *InspectionUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(inspection.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(inspection.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(inspection.FieldCreatedAt)

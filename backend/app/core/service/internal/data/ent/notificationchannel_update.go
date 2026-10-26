@@ -469,6 +469,9 @@ func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, er
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(notificationchannel.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(notificationchannel.FieldCreatedAt, field.TypeTime)
 	}
@@ -1074,6 +1077,9 @@ func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *Not
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(notificationchannel.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(notificationchannel.FieldCreatedAt, field.TypeTime)

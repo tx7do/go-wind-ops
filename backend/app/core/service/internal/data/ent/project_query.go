@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
@@ -265,12 +266,12 @@ func (_q *ProjectQuery) Clone() *ProjectQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		GroupBy(project.FieldCreatedAt).
+//		GroupBy(project.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy {
@@ -288,11 +289,11 @@ func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		Select(project.FieldCreatedAt).
+//		Select(project.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) Select(fields ...string) *ProjectSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *ProjectQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if project.Policy == nil {
+		return errors.New("ent: uninitialized project.Policy (forgotten import ent/runtime?)")
+	}
+	if err := project.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

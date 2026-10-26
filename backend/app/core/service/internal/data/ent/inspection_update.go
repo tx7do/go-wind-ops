@@ -410,6 +410,9 @@ func (_u *InspectionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(inspection.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(inspection.FieldCreatedAt, field.TypeTime)
 	}
@@ -941,6 +944,9 @@ func (_u *InspectionUpdateOne) sqlSave(ctx context.Context) (_node *Inspection, 
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(inspection.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(inspection.FieldCreatedAt, field.TypeTime)

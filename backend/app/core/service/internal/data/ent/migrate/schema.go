@@ -57,6 +57,7 @@ var (
 	// OpsAlertsColumns holds the columns for the "ops_alerts" table.
 	OpsAlertsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -80,17 +81,17 @@ var (
 			{
 				Name:    "idx_ops_alert_monitor",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[4]},
+				Columns: []*schema.Column{OpsAlertsColumns[5]},
 			},
 			{
 				Name:    "idx_ops_alert_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[7]},
+				Columns: []*schema.Column{OpsAlertsColumns[8]},
 			},
 			{
 				Name:    "idx_ops_alert_resolved",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAlertsColumns[10]},
+				Columns: []*schema.Column{OpsAlertsColumns[11]},
 			},
 		},
 	}
@@ -250,6 +251,7 @@ var (
 	// OpsAPIKeysColumns holds the columns for the "ops_api_keys" table.
 	OpsAPIKeysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -274,13 +276,14 @@ var (
 			{
 				Name:    "uidx_ops_api_key_hash",
 				Unique:  false,
-				Columns: []*schema.Column{OpsAPIKeysColumns[8]},
+				Columns: []*schema.Column{OpsAPIKeysColumns[9]},
 			},
 		},
 	}
 	// OpsApprovalsColumns holds the columns for the "ops_approvals" table.
 	OpsApprovalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -306,18 +309,19 @@ var (
 			{
 				Name:    "idx_ops_approval_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsApprovalsColumns[11]},
+				Columns: []*schema.Column{OpsApprovalsColumns[12]},
 			},
 			{
 				Name:    "idx_ops_approval_requester",
 				Unique:  false,
-				Columns: []*schema.Column{OpsApprovalsColumns[9]},
+				Columns: []*schema.Column{OpsApprovalsColumns[10]},
 			},
 		},
 	}
 	// OpsBackupRecordsColumns holds the columns for the "ops_backup_records" table.
 	OpsBackupRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -343,23 +347,24 @@ var (
 			{
 				Name:    "idx_ops_backup_record_task",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBackupRecordsColumns[4]},
+				Columns: []*schema.Column{OpsBackupRecordsColumns[5]},
 			},
 			{
 				Name:    "idx_ops_backup_record_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBackupRecordsColumns[10]},
+				Columns: []*schema.Column{OpsBackupRecordsColumns[11]},
 			},
 			{
 				Name:    "uidx_ops_backup_record_req",
 				Unique:  true,
-				Columns: []*schema.Column{OpsBackupRecordsColumns[12]},
+				Columns: []*schema.Column{OpsBackupRecordsColumns[13]},
 			},
 		},
 	}
 	// OpsBackupTasksColumns holds the columns for the "ops_backup_tasks" table.
 	OpsBackupTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -385,18 +390,19 @@ var (
 			{
 				Name:    "idx_ops_backup_task_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBackupTasksColumns[8]},
+				Columns: []*schema.Column{OpsBackupTasksColumns[9]},
 			},
 			{
 				Name:    "idx_ops_backup_task_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBackupTasksColumns[12]},
+				Columns: []*schema.Column{OpsBackupTasksColumns[13]},
 			},
 		},
 	}
 	// OpsBuildsColumns holds the columns for the "ops_builds" table.
 	OpsBuildsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -426,13 +432,14 @@ var (
 			{
 				Name:    "idx_ops_build_repo",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBuildsColumns[8]},
+				Columns: []*schema.Column{OpsBuildsColumns[9]},
 			},
 		},
 	}
 	// OpsBuildHistoriesColumns holds the columns for the "ops_build_histories" table.
 	OpsBuildHistoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -460,18 +467,19 @@ var (
 			{
 				Name:    "uidx_ops_build_history_build_no",
 				Unique:  true,
-				Columns: []*schema.Column{OpsBuildHistoriesColumns[4], OpsBuildHistoriesColumns[5]},
+				Columns: []*schema.Column{OpsBuildHistoriesColumns[5], OpsBuildHistoriesColumns[6]},
 			},
 			{
 				Name:    "idx_ops_build_history_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBuildHistoriesColumns[6]},
+				Columns: []*schema.Column{OpsBuildHistoriesColumns[7]},
 			},
 		},
 	}
 	// OpsBuildPipelinesColumns holds the columns for the "ops_build_pipelines" table.
 	OpsBuildPipelinesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -493,13 +501,14 @@ var (
 			{
 				Name:    "uidx_ops_pipeline_name",
 				Unique:  false,
-				Columns: []*schema.Column{OpsBuildPipelinesColumns[7]},
+				Columns: []*schema.Column{OpsBuildPipelinesColumns[8]},
 			},
 		},
 	}
 	// OpsCertsColumns holds the columns for the "ops_certs" table.
 	OpsCertsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -529,13 +538,14 @@ var (
 			{
 				Name:    "idx_ops_cert_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCertsColumns[17]},
+				Columns: []*schema.Column{OpsCertsColumns[18]},
 			},
 		},
 	}
 	// OpsCloudAccountsColumns holds the columns for the "ops_cloud_accounts" table.
 	OpsCloudAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -563,6 +573,7 @@ var (
 	// OpsCloudBudgetsColumns holds the columns for the "ops_cloud_budgets" table.
 	OpsCloudBudgetsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -590,18 +601,19 @@ var (
 			{
 				Name:    "uidx_ops_cloud_budget_key",
 				Unique:  true,
-				Columns: []*schema.Column{OpsCloudBudgetsColumns[7], OpsCloudBudgetsColumns[8]},
+				Columns: []*schema.Column{OpsCloudBudgetsColumns[8], OpsCloudBudgetsColumns[9]},
 			},
 			{
 				Name:    "idx_ops_cloud_budget_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCloudBudgetsColumns[15]},
+				Columns: []*schema.Column{OpsCloudBudgetsColumns[16]},
 			},
 		},
 	}
 	// OpsCloudCostsColumns holds the columns for the "ops_cloud_costs" table.
 	OpsCloudCostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -626,18 +638,19 @@ var (
 			{
 				Name:    "uidx_ops_cloud_cost_key",
 				Unique:  true,
-				Columns: []*schema.Column{OpsCloudCostsColumns[7], OpsCloudCostsColumns[10]},
+				Columns: []*schema.Column{OpsCloudCostsColumns[8], OpsCloudCostsColumns[11]},
 			},
 			{
 				Name:    "idx_ops_cloud_cost_month",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCloudCostsColumns[10]},
+				Columns: []*schema.Column{OpsCloudCostsColumns[11]},
 			},
 		},
 	}
 	// OpsCloudInstancesColumns holds the columns for the "ops_cloud_instances" table.
 	OpsCloudInstancesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -668,18 +681,19 @@ var (
 			{
 				Name:    "uidx_ops_cloud_instance_key",
 				Unique:  true,
-				Columns: []*schema.Column{OpsCloudInstancesColumns[4], OpsCloudInstancesColumns[7], OpsCloudInstancesColumns[9]},
+				Columns: []*schema.Column{OpsCloudInstancesColumns[5], OpsCloudInstancesColumns[8], OpsCloudInstancesColumns[10]},
 			},
 			{
 				Name:    "idx_ops_cloud_instance_account",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCloudInstancesColumns[4]},
+				Columns: []*schema.Column{OpsCloudInstancesColumns[5]},
 			},
 		},
 	}
 	// OpsCommandRecordsColumns holds the columns for the "ops_command_records" table.
 	OpsCommandRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -705,28 +719,29 @@ var (
 			{
 				Name:    "idx_ops_cmd_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCommandRecordsColumns[5]},
+				Columns: []*schema.Column{OpsCommandRecordsColumns[6]},
 			},
 			{
 				Name:    "idx_ops_cmd_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCommandRecordsColumns[9]},
+				Columns: []*schema.Column{OpsCommandRecordsColumns[10]},
 			},
 			{
 				Name:    "idx_ops_cmd_batch",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCommandRecordsColumns[13]},
+				Columns: []*schema.Column{OpsCommandRecordsColumns[14]},
 			},
 			{
 				Name:    "idx_ops_cmd_agent_action",
 				Unique:  false,
-				Columns: []*schema.Column{OpsCommandRecordsColumns[6], OpsCommandRecordsColumns[7]},
+				Columns: []*schema.Column{OpsCommandRecordsColumns[7], OpsCommandRecordsColumns[8]},
 			},
 		},
 	}
 	// OpsConfigDistributionsColumns holds the columns for the "ops_config_distributions" table.
 	OpsConfigDistributionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -751,23 +766,24 @@ var (
 			{
 				Name:    "idx_ops_config_dist_tpl",
 				Unique:  false,
-				Columns: []*schema.Column{OpsConfigDistributionsColumns[4]},
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[5]},
 			},
 			{
 				Name:    "idx_ops_config_dist_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsConfigDistributionsColumns[9]},
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[10]},
 			},
 			{
 				Name:    "uidx_ops_config_dist_req",
 				Unique:  true,
-				Columns: []*schema.Column{OpsConfigDistributionsColumns[10]},
+				Columns: []*schema.Column{OpsConfigDistributionsColumns[11]},
 			},
 		},
 	}
 	// OpsConfigTemplatesColumns holds the columns for the "ops_config_templates" table.
 	OpsConfigTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -790,7 +806,7 @@ var (
 			{
 				Name:    "idx_ops_config_tpl_env",
 				Unique:  false,
-				Columns: []*schema.Column{OpsConfigTemplatesColumns[8]},
+				Columns: []*schema.Column{OpsConfigTemplatesColumns[9]},
 			},
 		},
 	}
@@ -1056,6 +1072,7 @@ var (
 	// OpsDistributionsColumns holds the columns for the "ops_distributions" table.
 	OpsDistributionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1089,23 +1106,24 @@ var (
 			{
 				Name:    "uidx_ops_distribution_name",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionsColumns[7]},
+				Columns: []*schema.Column{OpsDistributionsColumns[8]},
 			},
 			{
 				Name:    "idx_ops_distribution_build",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionsColumns[8]},
+				Columns: []*schema.Column{OpsDistributionsColumns[9]},
 			},
 			{
 				Name:    "idx_ops_distribution_projects",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionsColumns[9]},
+				Columns: []*schema.Column{OpsDistributionsColumns[10]},
 			},
 		},
 	}
 	// OpsDistributionRecordsColumns holds the columns for the "ops_distribution_records" table.
 	OpsDistributionRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1131,23 +1149,24 @@ var (
 			{
 				Name:    "idx_ops_dist_record_dist",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionRecordsColumns[4]},
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[5]},
 			},
 			{
 				Name:    "uidx_ops_dist_record_req",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionRecordsColumns[8]},
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[9]},
 			},
 			{
 				Name:    "idx_ops_dist_record_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsDistributionRecordsColumns[10]},
+				Columns: []*schema.Column{OpsDistributionRecordsColumns[11]},
 			},
 		},
 	}
 	// OpsInspectionsColumns holds the columns for the "ops_inspections" table.
 	OpsInspectionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1175,7 +1194,7 @@ var (
 			{
 				Name:    "idx_ops_inspection_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsInspectionsColumns[7]},
+				Columns: []*schema.Column{OpsInspectionsColumns[8]},
 			},
 		},
 	}
@@ -1247,6 +1266,7 @@ var (
 	// OpsLogSnapshotsColumns holds the columns for the "ops_log_snapshots" table.
 	OpsLogSnapshotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1270,7 +1290,7 @@ var (
 			{
 				Name:    "idx_ops_log_snapshot_project",
 				Unique:  false,
-				Columns: []*schema.Column{OpsLogSnapshotsColumns[7]},
+				Columns: []*schema.Column{OpsLogSnapshotsColumns[8]},
 			},
 		},
 	}
@@ -1878,6 +1898,7 @@ var (
 	// OpsMonitorsColumns holds the columns for the "ops_monitors" table.
 	OpsMonitorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1912,17 +1933,17 @@ var (
 			{
 				Name:    "idx_ops_monitor_project",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[8]},
+				Columns: []*schema.Column{OpsMonitorsColumns[9]},
 			},
 			{
 				Name:    "idx_ops_monitor_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[10]},
+				Columns: []*schema.Column{OpsMonitorsColumns[11]},
 			},
 			{
 				Name:    "idx_ops_monitor_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{OpsMonitorsColumns[22]},
+				Columns: []*schema.Column{OpsMonitorsColumns[23]},
 			},
 		},
 	}
@@ -1956,6 +1977,7 @@ var (
 	// OpsNotificationChannelsColumns holds the columns for the "ops_notification_channels" table.
 	OpsNotificationChannelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -1986,13 +2008,14 @@ var (
 			{
 				Name:    "uidx_ops_notif_channel_name",
 				Unique:  false,
-				Columns: []*schema.Column{OpsNotificationChannelsColumns[7]},
+				Columns: []*schema.Column{OpsNotificationChannelsColumns[8]},
 			},
 		},
 	}
 	// OpsNotificationDeliveriesColumns holds the columns for the "ops_notification_deliveries" table.
 	OpsNotificationDeliveriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -2015,12 +2038,12 @@ var (
 			{
 				Name:    "idx_ops_notif_delivery_alert",
 				Unique:  false,
-				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[4]},
+				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[5]},
 			},
 			{
 				Name:    "idx_ops_notif_delivery_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[8]},
+				Columns: []*schema.Column{OpsNotificationDeliveriesColumns[9]},
 			},
 		},
 	}
@@ -2541,6 +2564,7 @@ var (
 	// OpsPipelineRunsColumns holds the columns for the "ops_pipeline_runs" table.
 	OpsPipelineRunsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -2566,12 +2590,12 @@ var (
 			{
 				Name:    "idx_ops_pipeline_run_pipeline",
 				Unique:  false,
-				Columns: []*schema.Column{OpsPipelineRunsColumns[4]},
+				Columns: []*schema.Column{OpsPipelineRunsColumns[5]},
 			},
 			{
 				Name:    "idx_ops_pipeline_run_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsPipelineRunsColumns[5]},
+				Columns: []*schema.Column{OpsPipelineRunsColumns[6]},
 			},
 		},
 	}
@@ -2793,6 +2817,7 @@ var (
 	// OpsProjectsColumns holds the columns for the "ops_projects" table.
 	OpsProjectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -2822,18 +2847,19 @@ var (
 			{
 				Name:    "uidx_ops_project_node_name",
 				Unique:  true,
-				Columns: []*schema.Column{OpsProjectsColumns[7], OpsProjectsColumns[8]},
+				Columns: []*schema.Column{OpsProjectsColumns[8], OpsProjectsColumns[9]},
 			},
 			{
 				Name:    "idx_ops_project_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsProjectsColumns[7]},
+				Columns: []*schema.Column{OpsProjectsColumns[8]},
 			},
 		},
 	}
 	// OpsRepositoriesColumns holds the columns for the "ops_repositories" table.
 	OpsRepositoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -2858,7 +2884,7 @@ var (
 			{
 				Name:    "uidx_ops_repository_name",
 				Unique:  false,
-				Columns: []*schema.Column{OpsRepositoriesColumns[7]},
+				Columns: []*schema.Column{OpsRepositoriesColumns[8]},
 			},
 		},
 	}
@@ -3067,6 +3093,7 @@ var (
 	// OpsScriptsColumns holds the columns for the "ops_scripts" table.
 	OpsScriptsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -3092,13 +3119,14 @@ var (
 			{
 				Name:    "uidx_ops_script_name",
 				Unique:  false,
-				Columns: []*schema.Column{OpsScriptsColumns[7]},
+				Columns: []*schema.Column{OpsScriptsColumns[8]},
 			},
 		},
 	}
 	// OpsScriptBatchesColumns holds the columns for the "ops_script_batches" table.
 	OpsScriptBatchesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -3123,12 +3151,12 @@ var (
 			{
 				Name:    "idx_ops_script_batch_script",
 				Unique:  false,
-				Columns: []*schema.Column{OpsScriptBatchesColumns[7]},
+				Columns: []*schema.Column{OpsScriptBatchesColumns[8]},
 			},
 			{
 				Name:    "idx_ops_script_batch_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsScriptBatchesColumns[13]},
+				Columns: []*schema.Column{OpsScriptBatchesColumns[14]},
 			},
 		},
 	}
@@ -3270,6 +3298,7 @@ var (
 	// OpsTerminalChunksColumns holds the columns for the "ops_terminal_chunks" table.
 	OpsTerminalChunksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -3289,13 +3318,14 @@ var (
 			{
 				Name:    "uidx_ops_term_chunk_seq",
 				Unique:  true,
-				Columns: []*schema.Column{OpsTerminalChunksColumns[4], OpsTerminalChunksColumns[5]},
+				Columns: []*schema.Column{OpsTerminalChunksColumns[5], OpsTerminalChunksColumns[6]},
 			},
 		},
 	}
 	// OpsTerminalSessionsColumns holds the columns for the "ops_terminal_sessions" table.
 	OpsTerminalSessionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
@@ -3320,12 +3350,12 @@ var (
 			{
 				Name:    "idx_ops_term_session_node",
 				Unique:  false,
-				Columns: []*schema.Column{OpsTerminalSessionsColumns[5]},
+				Columns: []*schema.Column{OpsTerminalSessionsColumns[6]},
 			},
 			{
 				Name:    "idx_ops_term_session_status",
 				Unique:  false,
-				Columns: []*schema.Column{OpsTerminalSessionsColumns[8]},
+				Columns: []*schema.Column{OpsTerminalSessionsColumns[9]},
 			},
 		},
 	}

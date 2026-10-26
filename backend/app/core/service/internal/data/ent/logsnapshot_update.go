@@ -331,6 +331,9 @@ func (_u *LogSnapshotUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(logsnapshot.FieldCreatedAt, field.TypeTime)
 	}
@@ -756,6 +759,9 @@ func (_u *LogSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *LogSnapshot
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(logsnapshot.FieldCreatedAt, field.TypeTime)

@@ -175,6 +175,8 @@ func (s *CertService) RunScheduledProbes(ctx context.Context) error {
 	}
 	now := time.Now()
 	for _, row := range rows {
+		// 后台扫描路径:按证书归属租户归因告警(否则落 tenant 0);每轮覆盖重建
+		ctx = tenantScopedCtx(ctx, row.TenantID)
 		spec := row.ProbeCron
 		if spec == "" {
 			continue
@@ -207,6 +209,8 @@ func (s *CertService) RunExpiryCheck(ctx context.Context) error {
 		if row.NotAfter == nil {
 			continue
 		}
+		// 后台扫描路径:按证书归属租户归因告警(否则落 tenant 0);每轮覆盖重建
+		ctx = tenantScopedCtx(ctx, row.TenantID)
 		remaining := time.Until(*row.NotAfter)
 		name := row.Name
 		if name == "" {

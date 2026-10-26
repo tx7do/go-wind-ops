@@ -19,11 +19,19 @@ import (
 	taskV1 "go-wind-ops/api/gen/go/task/service/v1"
 
 	"go-wind-ops/pkg/middleware/ent"
+	"go-wind-ops/pkg/middleware/rpcsecret"
 )
 
 func NewGrpcMiddleware(ctx *bootstrap.Context) []middleware.Middleware {
 	var ms []middleware.Middleware
 	ms = append(ms, logging.Server(ctx.GetLogger()))
+	// 内部共享密钥校验必须先于 ent.Server:未通过密钥校验的请求不允许
+	// 构建 x-md-global-operator 租户上下文(否则内网直达即可冒充任意用户)。
+	if sec := rpcsecret.SecretFromEnv(); sec != "" {
+		ms = append(ms, rpcsecret.Server(sec))
+	} else {
+		ctx.NewLoggerHelper("grpc/core-service").Warnf("%s 未配置,core gRPC 未启用内部共享密钥校验——仅限开发环境,生产必须配置", rpcsecret.EnvKey)
+	}
 	ms = append(ms, ent.Server())
 	return ms
 }

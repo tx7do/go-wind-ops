@@ -88,6 +88,7 @@ func (s *Service) handleFileList(_ context.Context, env *signal.CommandEnvelope)
 	}
 	p.Dir = normalizeFilePath(p.Dir)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: p.Dir}); err != nil { return nil, err }
+	if err := s.ensureResolvedWithinAllowedDirs(p.Dir); err != nil { return nil, err }
 
 	entries, err := os.ReadDir(p.Dir)
 	if err != nil { return nil, fmt.Errorf("read dir: %w", err) }
@@ -119,6 +120,7 @@ func (s *Service) handleFileRead(_ context.Context, env *signal.CommandEnvelope)
 	if p.Path == "" { return nil, fmt.Errorf("path required") }
 	p.Path = normalizeFilePath(p.Path)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+	if err := s.ensureResolvedWithinAllowedDirs(p.Path); err != nil { return nil, err }
 
 	data, err := os.ReadFile(p.Path)
 	if err != nil { return nil, fmt.Errorf("read: %w", err) }
@@ -158,8 +160,23 @@ func (s *Service) handleFileDelete(ctx context.Context, env *signal.CommandEnvel
 	if p.Path == "" { return nil, fmt.Errorf("path required") }
 	p.Path = normalizeFilePath(p.Path)
 	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+	if err := s.ensureResolvedWithinAllowedDirs(p.Path); err != nil { return nil, err }
 	if err := os.RemoveAll(p.Path); err != nil { return nil, err }
 	return map[string]any{"deleted": p.Path}, nil
+}
+
+// ensureResolvedWithinAllowedDirs 读/删/列路径的符号链接复核:全路径经
+// EvalSymlinks 解析真实落点后重新过授权目录校验(checkDir 是词法比对,
+// 不解析链接——白名单内预置的目录/文件符号链接可能指向授权目录之外)。
+func (s *Service) ensureResolvedWithinAllowedDirs(path string) error {
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		resolved = path // 目标尚不存在,无链接可解析
+	}
+	return s.checkDir(&signal.ProjectOperationPayload{Dir: resolved})
 }
 
 // ensureWritableTarget 写入前的符号链接复核:

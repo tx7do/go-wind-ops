@@ -104,6 +104,7 @@ func (Project) Fields() []ent.Field {
 func (Project) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

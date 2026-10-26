@@ -35,6 +35,18 @@ func (s *Service) handleDockerDeploy(ctx context.Context, env *signal.CommandEnv
 	if payload.Image == "" || payload.ContainerName == "" {
 		return nil, fmt.Errorf("payload.image/container_name are required")
 	}
+	// argv 选项注入防御:以 - 开头的值会被 docker 当作自身选项解析
+	// (如 --privileged);虽载荷来自 core 分发配置而非终端用户,仍一律拒绝。
+	for name, val := range map[string]string{
+		"image":          payload.Image,
+		"container_name": payload.ContainerName,
+		"restart":        payload.Restart,
+		"network":        payload.Network,
+	} {
+		if strings.HasPrefix(val, "-") {
+			return nil, fmt.Errorf("payload.%s must not start with '-'", name)
+		}
+	}
 
 	// ── 1. 拉取镜像 ──
 	code, out, timedOut, err := shellexec.RunArgv(ctx, "", dockerPullTimeout, "docker", "pull", payload.Image)

@@ -22,6 +22,20 @@ type TerminalChunkCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *TerminalChunkCreate) SetTenantID(v uint32) *TerminalChunkCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *TerminalChunkCreate) SetNillableTenantID(v *uint32) *TerminalChunkCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *TerminalChunkCreate) SetCreatedAt(v time.Time) *TerminalChunkCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -123,7 +137,9 @@ func (_c *TerminalChunkCreate) Mutation() *TerminalChunkMutation {
 
 // Save creates the TerminalChunk in the database.
 func (_c *TerminalChunkCreate) Save(ctx context.Context) (*TerminalChunk, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -150,7 +166,11 @@ func (_c *TerminalChunkCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *TerminalChunkCreate) defaults() {
+func (_c *TerminalChunkCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := terminalchunk.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Direction(); !ok {
 		v := terminalchunk.DefaultDirection
 		_c.mutation.SetDirection(v)
@@ -159,6 +179,7 @@ func (_c *TerminalChunkCreate) defaults() {
 		v := terminalchunk.DefaultByteLen
 		_c.mutation.SetByteLen(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -226,6 +247,10 @@ func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpe
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(terminalchunk.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(terminalchunk.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -265,7 +290,7 @@ func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpe
 // of the `INSERT` statement. For example:
 //
 //	client.TerminalChunk.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -274,7 +299,7 @@ func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpe
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TerminalChunkUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *TerminalChunkCreate) OnConflict(opts ...sql.ConflictOption) *TerminalChunkUpsertOne {
@@ -440,6 +465,9 @@ func (u *TerminalChunkUpsertOne) UpdateNewValues() *TerminalChunkUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(terminalchunk.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(terminalchunk.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(terminalchunk.FieldCreatedAt)
@@ -743,7 +771,7 @@ func (_c *TerminalChunkCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TerminalChunkUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *TerminalChunkCreateBulk) OnConflict(opts ...sql.ConflictOption) *TerminalChunkUpsertBulk {
@@ -789,6 +817,9 @@ func (u *TerminalChunkUpsertBulk) UpdateNewValues() *TerminalChunkUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(terminalchunk.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(terminalchunk.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(terminalchunk.FieldCreatedAt)

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/configdistribution"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *ConfigDistributionQuery) Clone() *ConfigDistributionQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ConfigDistribution.Query().
-//		GroupBy(configdistribution.FieldCreatedAt).
+//		GroupBy(configdistribution.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ConfigDistributionQuery) GroupBy(field string, fields ...string) *ConfigDistributionGroupBy {
@@ -288,11 +289,11 @@ func (_q *ConfigDistributionQuery) GroupBy(field string, fields ...string) *Conf
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.ConfigDistribution.Query().
-//		Select(configdistribution.FieldCreatedAt).
+//		Select(configdistribution.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *ConfigDistributionQuery) Select(fields ...string) *ConfigDistributionSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *ConfigDistributionQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if configdistribution.Policy == nil {
+		return errors.New("ent: uninitialized configdistribution.Policy (forgotten import ent/runtime?)")
+	}
+	if err := configdistribution.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

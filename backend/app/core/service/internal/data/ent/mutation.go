@@ -2723,6 +2723,8 @@ type AlertMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -2846,6 +2848,76 @@ func (m *AlertMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *AlertMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *AlertMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Alert entity.
+// If the Alert object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlertMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *AlertMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *AlertMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *AlertMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[alert.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *AlertMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[alert.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *AlertMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, alert.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -3468,7 +3540,10 @@ func (m *AlertMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AlertMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
+	if m.tenant_id != nil {
+		fields = append(fields, alert.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, alert.FieldCreatedAt)
 	}
@@ -3513,6 +3588,8 @@ func (m *AlertMutation) Fields() []string {
 // schema.
 func (m *AlertMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case alert.FieldTenantID:
+		return m.TenantID()
 	case alert.FieldCreatedAt:
 		return m.CreatedAt()
 	case alert.FieldUpdatedAt:
@@ -3546,6 +3623,8 @@ func (m *AlertMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *AlertMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case alert.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case alert.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case alert.FieldUpdatedAt:
@@ -3579,6 +3658,13 @@ func (m *AlertMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *AlertMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case alert.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case alert.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -3671,6 +3757,9 @@ func (m *AlertMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *AlertMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, alert.FieldTenantID)
+	}
 	if m.addmonitor_id != nil {
 		fields = append(fields, alert.FieldMonitorID)
 	}
@@ -3688,6 +3777,8 @@ func (m *AlertMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *AlertMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case alert.FieldTenantID:
+		return m.AddedTenantID()
 	case alert.FieldMonitorID:
 		return m.AddedMonitorID()
 	case alert.FieldProjectID:
@@ -3703,6 +3794,13 @@ func (m *AlertMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *AlertMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case alert.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case alert.FieldMonitorID:
 		v, ok := value.(int32)
 		if !ok {
@@ -3732,6 +3830,9 @@ func (m *AlertMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *AlertMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(alert.FieldTenantID) {
+		fields = append(fields, alert.FieldTenantID)
+	}
 	if m.FieldCleared(alert.FieldCreatedAt) {
 		fields = append(fields, alert.FieldCreatedAt)
 	}
@@ -3767,6 +3868,9 @@ func (m *AlertMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *AlertMutation) ClearField(name string) error {
 	switch name {
+	case alert.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case alert.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -3796,6 +3900,9 @@ func (m *AlertMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *AlertMutation) ResetField(name string) error {
 	switch name {
+	case alert.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case alert.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -7777,6 +7884,8 @@ type ApiKeyMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -7901,6 +8010,76 @@ func (m *ApiKeyMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ApiKeyMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ApiKeyMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ApiKey entity.
+// If the ApiKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiKeyMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ApiKeyMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ApiKeyMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ApiKeyMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[apikey.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ApiKeyMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[apikey.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ApiKeyMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, apikey.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -8598,7 +8777,10 @@ func (m *ApiKeyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApiKeyMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, apikey.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, apikey.FieldCreatedAt)
 	}
@@ -8646,6 +8828,8 @@ func (m *ApiKeyMutation) Fields() []string {
 // schema.
 func (m *ApiKeyMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case apikey.FieldTenantID:
+		return m.TenantID()
 	case apikey.FieldCreatedAt:
 		return m.CreatedAt()
 	case apikey.FieldUpdatedAt:
@@ -8681,6 +8865,8 @@ func (m *ApiKeyMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ApiKeyMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case apikey.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case apikey.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case apikey.FieldUpdatedAt:
@@ -8716,6 +8902,13 @@ func (m *ApiKeyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 // type.
 func (m *ApiKeyMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case apikey.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case apikey.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -8815,6 +9008,9 @@ func (m *ApiKeyMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ApiKeyMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, apikey.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, apikey.FieldCreatedBy)
 	}
@@ -8832,6 +9028,8 @@ func (m *ApiKeyMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ApiKeyMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case apikey.FieldTenantID:
+		return m.AddedTenantID()
 	case apikey.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case apikey.FieldUpdatedBy:
@@ -8847,6 +9045,13 @@ func (m *ApiKeyMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ApiKeyMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case apikey.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case apikey.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -8876,6 +9081,9 @@ func (m *ApiKeyMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ApiKeyMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(apikey.FieldTenantID) {
+		fields = append(fields, apikey.FieldTenantID)
+	}
 	if m.FieldCleared(apikey.FieldCreatedAt) {
 		fields = append(fields, apikey.FieldCreatedAt)
 	}
@@ -8920,6 +9128,9 @@ func (m *ApiKeyMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ApiKeyMutation) ClearField(name string) error {
 	switch name {
+	case apikey.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case apikey.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -8958,6 +9169,9 @@ func (m *ApiKeyMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ApiKeyMutation) ResetField(name string) error {
 	switch name {
+	case apikey.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case apikey.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -9055,6 +9269,8 @@ type ApprovalMutation struct {
 	op                  Op
 	typ                 string
 	id                  *uint32
+	tenant_id           *uint32
+	addtenant_id        *int32
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
@@ -9180,6 +9396,76 @@ func (m *ApprovalMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ApprovalMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ApprovalMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Approval entity.
+// If the Approval object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApprovalMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ApprovalMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ApprovalMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ApprovalMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[approval.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ApprovalMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[approval.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ApprovalMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, approval.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -9899,7 +10185,10 @@ func (m *ApprovalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApprovalMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, approval.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, approval.FieldCreatedAt)
 	}
@@ -9950,6 +10239,8 @@ func (m *ApprovalMutation) Fields() []string {
 // schema.
 func (m *ApprovalMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case approval.FieldTenantID:
+		return m.TenantID()
 	case approval.FieldCreatedAt:
 		return m.CreatedAt()
 	case approval.FieldUpdatedAt:
@@ -9987,6 +10278,8 @@ func (m *ApprovalMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ApprovalMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case approval.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case approval.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case approval.FieldUpdatedAt:
@@ -10024,6 +10317,13 @@ func (m *ApprovalMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *ApprovalMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case approval.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case approval.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -10130,6 +10430,9 @@ func (m *ApprovalMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ApprovalMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, approval.FieldTenantID)
+	}
 	if m.addoperation_ref_id != nil {
 		fields = append(fields, approval.FieldOperationRefID)
 	}
@@ -10147,6 +10450,8 @@ func (m *ApprovalMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ApprovalMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case approval.FieldTenantID:
+		return m.AddedTenantID()
 	case approval.FieldOperationRefID:
 		return m.AddedOperationRefID()
 	case approval.FieldRequesterID:
@@ -10162,6 +10467,13 @@ func (m *ApprovalMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ApprovalMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case approval.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case approval.FieldOperationRefID:
 		v, ok := value.(int32)
 		if !ok {
@@ -10191,6 +10503,9 @@ func (m *ApprovalMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ApprovalMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(approval.FieldTenantID) {
+		fields = append(fields, approval.FieldTenantID)
+	}
 	if m.FieldCleared(approval.FieldCreatedAt) {
 		fields = append(fields, approval.FieldCreatedAt)
 	}
@@ -10232,6 +10547,9 @@ func (m *ApprovalMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ApprovalMutation) ClearField(name string) error {
 	switch name {
+	case approval.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case approval.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -10267,6 +10585,9 @@ func (m *ApprovalMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ApprovalMutation) ResetField(name string) error {
 	switch name {
+	case approval.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case approval.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -10367,6 +10688,8 @@ type BackupRecordMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint32
+	tenant_id          *uint32
+	addtenant_id       *int32
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
@@ -10493,6 +10816,76 @@ func (m *BackupRecordMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *BackupRecordMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *BackupRecordMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the BackupRecord entity.
+// If the BackupRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BackupRecordMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *BackupRecordMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *BackupRecordMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *BackupRecordMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[backuprecord.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *BackupRecordMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[backuprecord.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *BackupRecordMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, backuprecord.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -11205,7 +11598,10 @@ func (m *BackupRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BackupRecordMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, backuprecord.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, backuprecord.FieldCreatedAt)
 	}
@@ -11256,6 +11652,8 @@ func (m *BackupRecordMutation) Fields() []string {
 // schema.
 func (m *BackupRecordMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case backuprecord.FieldTenantID:
+		return m.TenantID()
 	case backuprecord.FieldCreatedAt:
 		return m.CreatedAt()
 	case backuprecord.FieldUpdatedAt:
@@ -11293,6 +11691,8 @@ func (m *BackupRecordMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BackupRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case backuprecord.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case backuprecord.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case backuprecord.FieldUpdatedAt:
@@ -11330,6 +11730,13 @@ func (m *BackupRecordMutation) OldField(ctx context.Context, name string) (ent.V
 // type.
 func (m *BackupRecordMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case backuprecord.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case backuprecord.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -11436,6 +11843,9 @@ func (m *BackupRecordMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BackupRecordMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, backuprecord.FieldTenantID)
+	}
 	if m.addtask_id != nil {
 		fields = append(fields, backuprecord.FieldTaskID)
 	}
@@ -11456,6 +11866,8 @@ func (m *BackupRecordMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BackupRecordMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case backuprecord.FieldTenantID:
+		return m.AddedTenantID()
 	case backuprecord.FieldTaskID:
 		return m.AddedTaskID()
 	case backuprecord.FieldNodeID:
@@ -11473,6 +11885,13 @@ func (m *BackupRecordMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BackupRecordMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case backuprecord.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case backuprecord.FieldTaskID:
 		v, ok := value.(int32)
 		if !ok {
@@ -11509,6 +11928,9 @@ func (m *BackupRecordMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *BackupRecordMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(backuprecord.FieldTenantID) {
+		fields = append(fields, backuprecord.FieldTenantID)
+	}
 	if m.FieldCleared(backuprecord.FieldCreatedAt) {
 		fields = append(fields, backuprecord.FieldCreatedAt)
 	}
@@ -11544,6 +11966,9 @@ func (m *BackupRecordMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *BackupRecordMutation) ClearField(name string) error {
 	switch name {
+	case backuprecord.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case backuprecord.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -11573,6 +11998,9 @@ func (m *BackupRecordMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BackupRecordMutation) ResetField(name string) error {
 	switch name {
+	case backuprecord.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case backuprecord.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -11673,6 +12101,8 @@ type BackupTaskMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -11800,6 +12230,76 @@ func (m *BackupTaskMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *BackupTaskMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *BackupTaskMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the BackupTask entity.
+// If the BackupTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BackupTaskMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *BackupTaskMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *BackupTaskMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *BackupTaskMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[backuptask.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *BackupTaskMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[backuptask.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *BackupTaskMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, backuptask.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -12560,7 +13060,10 @@ func (m *BackupTaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BackupTaskMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, backuptask.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, backuptask.FieldCreatedAt)
 	}
@@ -12611,6 +13114,8 @@ func (m *BackupTaskMutation) Fields() []string {
 // schema.
 func (m *BackupTaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case backuptask.FieldTenantID:
+		return m.TenantID()
 	case backuptask.FieldCreatedAt:
 		return m.CreatedAt()
 	case backuptask.FieldUpdatedAt:
@@ -12648,6 +13153,8 @@ func (m *BackupTaskMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BackupTaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case backuptask.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case backuptask.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case backuptask.FieldUpdatedAt:
@@ -12685,6 +13192,13 @@ func (m *BackupTaskMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *BackupTaskMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case backuptask.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case backuptask.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -12791,6 +13305,9 @@ func (m *BackupTaskMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BackupTaskMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, backuptask.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, backuptask.FieldCreatedBy)
 	}
@@ -12814,6 +13331,8 @@ func (m *BackupTaskMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BackupTaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case backuptask.FieldTenantID:
+		return m.AddedTenantID()
 	case backuptask.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case backuptask.FieldUpdatedBy:
@@ -12833,6 +13352,13 @@ func (m *BackupTaskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BackupTaskMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case backuptask.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case backuptask.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -12876,6 +13402,9 @@ func (m *BackupTaskMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *BackupTaskMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(backuptask.FieldTenantID) {
+		fields = append(fields, backuptask.FieldTenantID)
+	}
 	if m.FieldCleared(backuptask.FieldCreatedAt) {
 		fields = append(fields, backuptask.FieldCreatedAt)
 	}
@@ -12917,6 +13446,9 @@ func (m *BackupTaskMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *BackupTaskMutation) ClearField(name string) error {
 	switch name {
+	case backuptask.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case backuptask.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -12952,6 +13484,9 @@ func (m *BackupTaskMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BackupTaskMutation) ResetField(name string) error {
 	switch name {
+	case backuptask.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case backuptask.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -13052,6 +13587,8 @@ type BuildMutation struct {
 	op                    Op
 	typ                   string
 	id                    *uint32
+	tenant_id             *uint32
+	addtenant_id          *int32
 	created_at            *time.Time
 	updated_at            *time.Time
 	deleted_at            *time.Time
@@ -13186,6 +13723,76 @@ func (m *BuildMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *BuildMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *BuildMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Build entity.
+// If the Build object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *BuildMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *BuildMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *BuildMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[build.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *BuildMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[build.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *BuildMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, build.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -14200,7 +14807,10 @@ func (m *BuildMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BuildMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
+	if m.tenant_id != nil {
+		fields = append(fields, build.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, build.FieldCreatedAt)
 	}
@@ -14263,6 +14873,8 @@ func (m *BuildMutation) Fields() []string {
 // schema.
 func (m *BuildMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case build.FieldTenantID:
+		return m.TenantID()
 	case build.FieldCreatedAt:
 		return m.CreatedAt()
 	case build.FieldUpdatedAt:
@@ -14308,6 +14920,8 @@ func (m *BuildMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BuildMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case build.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case build.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case build.FieldUpdatedAt:
@@ -14353,6 +14967,13 @@ func (m *BuildMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *BuildMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case build.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case build.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -14487,6 +15108,9 @@ func (m *BuildMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BuildMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, build.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, build.FieldCreatedBy)
 	}
@@ -14516,6 +15140,8 @@ func (m *BuildMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BuildMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case build.FieldTenantID:
+		return m.AddedTenantID()
 	case build.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case build.FieldUpdatedBy:
@@ -14539,6 +15165,13 @@ func (m *BuildMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BuildMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case build.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case build.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -14596,6 +15229,9 @@ func (m *BuildMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *BuildMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(build.FieldTenantID) {
+		fields = append(fields, build.FieldTenantID)
+	}
 	if m.FieldCleared(build.FieldCreatedAt) {
 		fields = append(fields, build.FieldCreatedAt)
 	}
@@ -14649,6 +15285,9 @@ func (m *BuildMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *BuildMutation) ClearField(name string) error {
 	switch name {
+	case build.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case build.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -14696,6 +15335,9 @@ func (m *BuildMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BuildMutation) ResetField(name string) error {
 	switch name {
+	case build.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case build.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -14808,6 +15450,8 @@ type BuildHistoryMutation struct {
 	op                  Op
 	typ                 string
 	id                  *uint32
+	tenant_id           *uint32
+	addtenant_id        *int32
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
@@ -14936,6 +15580,76 @@ func (m *BuildHistoryMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *BuildHistoryMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *BuildHistoryMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the BuildHistory entity.
+// If the BuildHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildHistoryMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *BuildHistoryMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *BuildHistoryMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *BuildHistoryMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[buildhistory.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *BuildHistoryMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[buildhistory.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *BuildHistoryMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, buildhistory.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -15812,7 +16526,10 @@ func (m *BuildHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BuildHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
+	if m.tenant_id != nil {
+		fields = append(fields, buildhistory.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, buildhistory.FieldCreatedAt)
 	}
@@ -15869,6 +16586,8 @@ func (m *BuildHistoryMutation) Fields() []string {
 // schema.
 func (m *BuildHistoryMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case buildhistory.FieldTenantID:
+		return m.TenantID()
 	case buildhistory.FieldCreatedAt:
 		return m.CreatedAt()
 	case buildhistory.FieldUpdatedAt:
@@ -15910,6 +16629,8 @@ func (m *BuildHistoryMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BuildHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case buildhistory.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case buildhistory.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case buildhistory.FieldUpdatedAt:
@@ -15951,6 +16672,13 @@ func (m *BuildHistoryMutation) OldField(ctx context.Context, name string) (ent.V
 // type.
 func (m *BuildHistoryMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case buildhistory.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case buildhistory.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -16071,6 +16799,9 @@ func (m *BuildHistoryMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BuildHistoryMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, buildhistory.FieldTenantID)
+	}
 	if m.addbuild_id != nil {
 		fields = append(fields, buildhistory.FieldBuildID)
 	}
@@ -16091,6 +16822,8 @@ func (m *BuildHistoryMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BuildHistoryMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case buildhistory.FieldTenantID:
+		return m.AddedTenantID()
 	case buildhistory.FieldBuildID:
 		return m.AddedBuildID()
 	case buildhistory.FieldBuildNo:
@@ -16108,6 +16841,13 @@ func (m *BuildHistoryMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BuildHistoryMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case buildhistory.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case buildhistory.FieldBuildID:
 		v, ok := value.(int32)
 		if !ok {
@@ -16144,6 +16884,9 @@ func (m *BuildHistoryMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *BuildHistoryMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(buildhistory.FieldTenantID) {
+		fields = append(fields, buildhistory.FieldTenantID)
+	}
 	if m.FieldCleared(buildhistory.FieldCreatedAt) {
 		fields = append(fields, buildhistory.FieldCreatedAt)
 	}
@@ -16200,6 +16943,9 @@ func (m *BuildHistoryMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *BuildHistoryMutation) ClearField(name string) error {
 	switch name {
+	case buildhistory.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case buildhistory.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -16250,6 +16996,9 @@ func (m *BuildHistoryMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BuildHistoryMutation) ResetField(name string) error {
 	switch name {
+	case buildhistory.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case buildhistory.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -16356,6 +17105,8 @@ type BuildPipelineMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -16478,6 +17229,76 @@ func (m *BuildPipelineMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *BuildPipelineMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *BuildPipelineMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the BuildPipeline entity.
+// If the BuildPipeline object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BuildPipelineMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *BuildPipelineMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *BuildPipelineMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *BuildPipelineMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[buildpipeline.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *BuildPipelineMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[buildpipeline.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *BuildPipelineMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, buildpipeline.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -17057,7 +17878,10 @@ func (m *BuildPipelineMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BuildPipelineMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
+	if m.tenant_id != nil {
+		fields = append(fields, buildpipeline.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, buildpipeline.FieldCreatedAt)
 	}
@@ -17096,6 +17920,8 @@ func (m *BuildPipelineMutation) Fields() []string {
 // schema.
 func (m *BuildPipelineMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		return m.TenantID()
 	case buildpipeline.FieldCreatedAt:
 		return m.CreatedAt()
 	case buildpipeline.FieldUpdatedAt:
@@ -17125,6 +17951,8 @@ func (m *BuildPipelineMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BuildPipelineMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case buildpipeline.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case buildpipeline.FieldUpdatedAt:
@@ -17154,6 +17982,13 @@ func (m *BuildPipelineMutation) OldField(ctx context.Context, name string) (ent.
 // type.
 func (m *BuildPipelineMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case buildpipeline.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -17232,6 +18067,9 @@ func (m *BuildPipelineMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BuildPipelineMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, buildpipeline.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, buildpipeline.FieldCreatedBy)
 	}
@@ -17249,6 +18087,8 @@ func (m *BuildPipelineMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BuildPipelineMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		return m.AddedTenantID()
 	case buildpipeline.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case buildpipeline.FieldUpdatedBy:
@@ -17264,6 +18104,13 @@ func (m *BuildPipelineMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BuildPipelineMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case buildpipeline.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -17293,6 +18140,9 @@ func (m *BuildPipelineMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *BuildPipelineMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(buildpipeline.FieldTenantID) {
+		fields = append(fields, buildpipeline.FieldTenantID)
+	}
 	if m.FieldCleared(buildpipeline.FieldCreatedAt) {
 		fields = append(fields, buildpipeline.FieldCreatedAt)
 	}
@@ -17331,6 +18181,9 @@ func (m *BuildPipelineMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *BuildPipelineMutation) ClearField(name string) error {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case buildpipeline.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -17363,6 +18216,9 @@ func (m *BuildPipelineMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BuildPipelineMutation) ResetField(name string) error {
 	switch name {
+	case buildpipeline.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case buildpipeline.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -17451,6 +18307,8 @@ type CertMutation struct {
 	op                    Op
 	typ                   string
 	id                    *uint32
+	tenant_id             *uint32
+	addtenant_id          *int32
 	created_at            *time.Time
 	updated_at            *time.Time
 	deleted_at            *time.Time
@@ -17582,6 +18440,76 @@ func (m *CertMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CertMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CertMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Cert entity.
+// If the Cert object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CertMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CertMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CertMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CertMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[cert.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CertMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[cert.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CertMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, cert.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -18538,7 +19466,10 @@ func (m *CertMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CertMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
+	if m.tenant_id != nil {
+		fields = append(fields, cert.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, cert.FieldCreatedAt)
 	}
@@ -18601,6 +19532,8 @@ func (m *CertMutation) Fields() []string {
 // schema.
 func (m *CertMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case cert.FieldTenantID:
+		return m.TenantID()
 	case cert.FieldCreatedAt:
 		return m.CreatedAt()
 	case cert.FieldUpdatedAt:
@@ -18646,6 +19579,8 @@ func (m *CertMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CertMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case cert.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case cert.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case cert.FieldUpdatedAt:
@@ -18691,6 +19626,13 @@ func (m *CertMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *CertMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case cert.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case cert.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -18825,6 +19767,9 @@ func (m *CertMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CertMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, cert.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, cert.FieldCreatedBy)
 	}
@@ -18848,6 +19793,8 @@ func (m *CertMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CertMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case cert.FieldTenantID:
+		return m.AddedTenantID()
 	case cert.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case cert.FieldUpdatedBy:
@@ -18867,6 +19814,13 @@ func (m *CertMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CertMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case cert.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case cert.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -18910,6 +19864,9 @@ func (m *CertMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CertMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(cert.FieldTenantID) {
+		fields = append(fields, cert.FieldTenantID)
+	}
 	if m.FieldCleared(cert.FieldCreatedAt) {
 		fields = append(fields, cert.FieldCreatedAt)
 	}
@@ -18963,6 +19920,9 @@ func (m *CertMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CertMutation) ClearField(name string) error {
 	switch name {
+	case cert.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case cert.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -19010,6 +19970,9 @@ func (m *CertMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CertMutation) ResetField(name string) error {
 	switch name {
+	case cert.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case cert.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -19122,6 +20085,8 @@ type CloudAccountMutation struct {
 	op               Op
 	typ              string
 	id               *uint32
+	tenant_id        *uint32
+	addtenant_id     *int32
 	created_at       *time.Time
 	updated_at       *time.Time
 	deleted_at       *time.Time
@@ -19249,6 +20214,76 @@ func (m *CloudAccountMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CloudAccountMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CloudAccountMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CloudAccount entity.
+// If the CloudAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudAccountMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CloudAccountMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CloudAccountMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CloudAccountMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[cloudaccount.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CloudAccountMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[cloudaccount.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CloudAccountMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, cloudaccount.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -20119,7 +21154,10 @@ func (m *CloudAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CloudAccountMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
+	if m.tenant_id != nil {
+		fields = append(fields, cloudaccount.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, cloudaccount.FieldCreatedAt)
 	}
@@ -20176,6 +21214,8 @@ func (m *CloudAccountMutation) Fields() []string {
 // schema.
 func (m *CloudAccountMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		return m.TenantID()
 	case cloudaccount.FieldCreatedAt:
 		return m.CreatedAt()
 	case cloudaccount.FieldUpdatedAt:
@@ -20217,6 +21257,8 @@ func (m *CloudAccountMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CloudAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case cloudaccount.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case cloudaccount.FieldUpdatedAt:
@@ -20258,6 +21300,13 @@ func (m *CloudAccountMutation) OldField(ctx context.Context, name string) (ent.V
 // type.
 func (m *CloudAccountMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case cloudaccount.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -20378,6 +21427,9 @@ func (m *CloudAccountMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CloudAccountMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, cloudaccount.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, cloudaccount.FieldCreatedBy)
 	}
@@ -20395,6 +21447,8 @@ func (m *CloudAccountMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CloudAccountMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		return m.AddedTenantID()
 	case cloudaccount.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case cloudaccount.FieldUpdatedBy:
@@ -20410,6 +21464,13 @@ func (m *CloudAccountMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CloudAccountMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case cloudaccount.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -20439,6 +21500,9 @@ func (m *CloudAccountMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CloudAccountMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(cloudaccount.FieldTenantID) {
+		fields = append(fields, cloudaccount.FieldTenantID)
+	}
 	if m.FieldCleared(cloudaccount.FieldCreatedAt) {
 		fields = append(fields, cloudaccount.FieldCreatedAt)
 	}
@@ -20498,6 +21562,9 @@ func (m *CloudAccountMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CloudAccountMutation) ClearField(name string) error {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case cloudaccount.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -20551,6 +21618,9 @@ func (m *CloudAccountMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CloudAccountMutation) ResetField(name string) error {
 	switch name {
+	case cloudaccount.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case cloudaccount.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -20657,6 +21727,8 @@ type CloudBudgetMutation struct {
 	op                   Op
 	typ                  string
 	id                   *uint32
+	tenant_id            *uint32
+	addtenant_id         *int32
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
@@ -20788,6 +21860,76 @@ func (m *CloudBudgetMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CloudBudgetMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CloudBudgetMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CloudBudget entity.
+// If the CloudBudget object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudBudgetMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CloudBudgetMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CloudBudgetMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CloudBudgetMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[cloudbudget.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CloudBudgetMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[cloudbudget.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CloudBudgetMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, cloudbudget.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -21648,7 +22790,10 @@ func (m *CloudBudgetMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CloudBudgetMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
+	if m.tenant_id != nil {
+		fields = append(fields, cloudbudget.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, cloudbudget.FieldCreatedAt)
 	}
@@ -21705,6 +22850,8 @@ func (m *CloudBudgetMutation) Fields() []string {
 // schema.
 func (m *CloudBudgetMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		return m.TenantID()
 	case cloudbudget.FieldCreatedAt:
 		return m.CreatedAt()
 	case cloudbudget.FieldUpdatedAt:
@@ -21746,6 +22893,8 @@ func (m *CloudBudgetMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CloudBudgetMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case cloudbudget.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case cloudbudget.FieldUpdatedAt:
@@ -21787,6 +22936,13 @@ func (m *CloudBudgetMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *CloudBudgetMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case cloudbudget.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -21907,6 +23063,9 @@ func (m *CloudBudgetMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CloudBudgetMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, cloudbudget.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, cloudbudget.FieldCreatedBy)
 	}
@@ -21936,6 +23095,8 @@ func (m *CloudBudgetMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CloudBudgetMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		return m.AddedTenantID()
 	case cloudbudget.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case cloudbudget.FieldUpdatedBy:
@@ -21959,6 +23120,13 @@ func (m *CloudBudgetMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CloudBudgetMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case cloudbudget.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -22016,6 +23184,9 @@ func (m *CloudBudgetMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CloudBudgetMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(cloudbudget.FieldTenantID) {
+		fields = append(fields, cloudbudget.FieldTenantID)
+	}
 	if m.FieldCleared(cloudbudget.FieldCreatedAt) {
 		fields = append(fields, cloudbudget.FieldCreatedAt)
 	}
@@ -22054,6 +23225,9 @@ func (m *CloudBudgetMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CloudBudgetMutation) ClearField(name string) error {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case cloudbudget.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -22086,6 +23260,9 @@ func (m *CloudBudgetMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CloudBudgetMutation) ResetField(name string) error {
 	switch name {
+	case cloudbudget.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case cloudbudget.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -22192,6 +23369,8 @@ type CloudCostMutation struct {
 	op                  Op
 	typ                 string
 	id                  *uint32
+	tenant_id           *uint32
+	addtenant_id        *int32
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
@@ -22318,6 +23497,76 @@ func (m *CloudCostMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CloudCostMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CloudCostMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CloudCost entity.
+// If the CloudCost object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudCostMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CloudCostMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CloudCostMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CloudCostMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[cloudcost.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CloudCostMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[cloudcost.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CloudCostMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, cloudcost.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -23042,7 +24291,10 @@ func (m *CloudCostMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CloudCostMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, cloudcost.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, cloudcost.FieldCreatedAt)
 	}
@@ -23090,6 +24342,8 @@ func (m *CloudCostMutation) Fields() []string {
 // schema.
 func (m *CloudCostMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case cloudcost.FieldTenantID:
+		return m.TenantID()
 	case cloudcost.FieldCreatedAt:
 		return m.CreatedAt()
 	case cloudcost.FieldUpdatedAt:
@@ -23125,6 +24379,8 @@ func (m *CloudCostMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CloudCostMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case cloudcost.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case cloudcost.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case cloudcost.FieldUpdatedAt:
@@ -23160,6 +24416,13 @@ func (m *CloudCostMutation) OldField(ctx context.Context, name string) (ent.Valu
 // type.
 func (m *CloudCostMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case cloudcost.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case cloudcost.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -23259,6 +24522,9 @@ func (m *CloudCostMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CloudCostMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, cloudcost.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, cloudcost.FieldCreatedBy)
 	}
@@ -23282,6 +24548,8 @@ func (m *CloudCostMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CloudCostMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case cloudcost.FieldTenantID:
+		return m.AddedTenantID()
 	case cloudcost.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case cloudcost.FieldUpdatedBy:
@@ -23301,6 +24569,13 @@ func (m *CloudCostMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CloudCostMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case cloudcost.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case cloudcost.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -23344,6 +24619,9 @@ func (m *CloudCostMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CloudCostMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(cloudcost.FieldTenantID) {
+		fields = append(fields, cloudcost.FieldTenantID)
+	}
 	if m.FieldCleared(cloudcost.FieldCreatedAt) {
 		fields = append(fields, cloudcost.FieldCreatedAt)
 	}
@@ -23385,6 +24663,9 @@ func (m *CloudCostMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CloudCostMutation) ClearField(name string) error {
 	switch name {
+	case cloudcost.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case cloudcost.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -23420,6 +24701,9 @@ func (m *CloudCostMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CloudCostMutation) ResetField(name string) error {
 	switch name {
+	case cloudcost.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case cloudcost.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -23517,6 +24801,8 @@ type CloudInstanceMutation struct {
 	op                  Op
 	typ                 string
 	id                  *uint32
+	tenant_id           *uint32
+	addtenant_id        *int32
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
@@ -23646,6 +24932,76 @@ func (m *CloudInstanceMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CloudInstanceMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CloudInstanceMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CloudInstance entity.
+// If the CloudInstance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudInstanceMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CloudInstanceMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CloudInstanceMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CloudInstanceMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[cloudinstance.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CloudInstanceMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[cloudinstance.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CloudInstanceMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, cloudinstance.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -24589,7 +25945,10 @@ func (m *CloudInstanceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CloudInstanceMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
+	if m.tenant_id != nil {
+		fields = append(fields, cloudinstance.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, cloudinstance.FieldCreatedAt)
 	}
@@ -24655,6 +26014,8 @@ func (m *CloudInstanceMutation) Fields() []string {
 // schema.
 func (m *CloudInstanceMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		return m.TenantID()
 	case cloudinstance.FieldCreatedAt:
 		return m.CreatedAt()
 	case cloudinstance.FieldUpdatedAt:
@@ -24702,6 +26063,8 @@ func (m *CloudInstanceMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CloudInstanceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case cloudinstance.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case cloudinstance.FieldUpdatedAt:
@@ -24749,6 +26112,13 @@ func (m *CloudInstanceMutation) OldField(ctx context.Context, name string) (ent.
 // type.
 func (m *CloudInstanceMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case cloudinstance.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -24890,6 +26260,9 @@ func (m *CloudInstanceMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CloudInstanceMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, cloudinstance.FieldTenantID)
+	}
 	if m.addcloud_account_id != nil {
 		fields = append(fields, cloudinstance.FieldCloudAccountID)
 	}
@@ -24904,6 +26277,8 @@ func (m *CloudInstanceMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CloudInstanceMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		return m.AddedTenantID()
 	case cloudinstance.FieldCloudAccountID:
 		return m.AddedCloudAccountID()
 	case cloudinstance.FieldAgentNodeID:
@@ -24917,6 +26292,13 @@ func (m *CloudInstanceMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CloudInstanceMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case cloudinstance.FieldCloudAccountID:
 		v, ok := value.(int32)
 		if !ok {
@@ -24939,6 +26321,9 @@ func (m *CloudInstanceMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CloudInstanceMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(cloudinstance.FieldTenantID) {
+		fields = append(fields, cloudinstance.FieldTenantID)
+	}
 	if m.FieldCleared(cloudinstance.FieldCreatedAt) {
 		fields = append(fields, cloudinstance.FieldCreatedAt)
 	}
@@ -24995,6 +26380,9 @@ func (m *CloudInstanceMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CloudInstanceMutation) ClearField(name string) error {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case cloudinstance.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -25045,6 +26433,9 @@ func (m *CloudInstanceMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CloudInstanceMutation) ResetField(name string) error {
 	switch name {
+	case cloudinstance.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case cloudinstance.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -25160,6 +26551,8 @@ type CommandRecordMutation struct {
 	op             Op
 	typ            string
 	id             *uint32
+	tenant_id      *uint32
+	addtenant_id   *int32
 	created_at     *time.Time
 	updated_at     *time.Time
 	deleted_at     *time.Time
@@ -25285,6 +26678,76 @@ func (m *CommandRecordMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CommandRecordMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CommandRecordMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CommandRecord entity.
+// If the CommandRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommandRecordMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CommandRecordMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CommandRecordMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CommandRecordMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[commandrecord.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CommandRecordMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[commandrecord.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CommandRecordMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, commandrecord.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -26031,7 +27494,10 @@ func (m *CommandRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommandRecordMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, commandrecord.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, commandrecord.FieldCreatedAt)
 	}
@@ -26082,6 +27548,8 @@ func (m *CommandRecordMutation) Fields() []string {
 // schema.
 func (m *CommandRecordMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case commandrecord.FieldTenantID:
+		return m.TenantID()
 	case commandrecord.FieldCreatedAt:
 		return m.CreatedAt()
 	case commandrecord.FieldUpdatedAt:
@@ -26119,6 +27587,8 @@ func (m *CommandRecordMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CommandRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case commandrecord.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case commandrecord.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case commandrecord.FieldUpdatedAt:
@@ -26156,6 +27626,13 @@ func (m *CommandRecordMutation) OldField(ctx context.Context, name string) (ent.
 // type.
 func (m *CommandRecordMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case commandrecord.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case commandrecord.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -26262,6 +27739,9 @@ func (m *CommandRecordMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *CommandRecordMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, commandrecord.FieldTenantID)
+	}
 	if m.addnode_id != nil {
 		fields = append(fields, commandrecord.FieldNodeID)
 	}
@@ -26279,6 +27759,8 @@ func (m *CommandRecordMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *CommandRecordMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case commandrecord.FieldTenantID:
+		return m.AddedTenantID()
 	case commandrecord.FieldNodeID:
 		return m.AddedNodeID()
 	case commandrecord.FieldOperatorID:
@@ -26294,6 +27776,13 @@ func (m *CommandRecordMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *CommandRecordMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case commandrecord.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case commandrecord.FieldNodeID:
 		v, ok := value.(int32)
 		if !ok {
@@ -26323,6 +27812,9 @@ func (m *CommandRecordMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CommandRecordMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(commandrecord.FieldTenantID) {
+		fields = append(fields, commandrecord.FieldTenantID)
+	}
 	if m.FieldCleared(commandrecord.FieldCreatedAt) {
 		fields = append(fields, commandrecord.FieldCreatedAt)
 	}
@@ -26370,6 +27862,9 @@ func (m *CommandRecordMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CommandRecordMutation) ClearField(name string) error {
 	switch name {
+	case commandrecord.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case commandrecord.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -26411,6 +27906,9 @@ func (m *CommandRecordMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CommandRecordMutation) ResetField(name string) error {
 	switch name {
+	case commandrecord.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case commandrecord.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -26511,6 +28009,8 @@ type ConfigDistributionMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint32
+	tenant_id          *uint32
+	addtenant_id       *int32
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
@@ -26636,6 +28136,76 @@ func (m *ConfigDistributionMutation) IDs(ctx context.Context) ([]uint32, error) 
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ConfigDistributionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ConfigDistributionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ConfigDistribution entity.
+// If the ConfigDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ConfigDistributionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ConfigDistributionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ConfigDistributionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ConfigDistributionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[configdistribution.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ConfigDistributionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[configdistribution.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ConfigDistributionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, configdistribution.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -27313,7 +28883,10 @@ func (m *ConfigDistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ConfigDistributionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, configdistribution.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, configdistribution.FieldCreatedAt)
 	}
@@ -27361,6 +28934,8 @@ func (m *ConfigDistributionMutation) Fields() []string {
 // schema.
 func (m *ConfigDistributionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case configdistribution.FieldTenantID:
+		return m.TenantID()
 	case configdistribution.FieldCreatedAt:
 		return m.CreatedAt()
 	case configdistribution.FieldUpdatedAt:
@@ -27396,6 +28971,8 @@ func (m *ConfigDistributionMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ConfigDistributionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case configdistribution.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case configdistribution.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case configdistribution.FieldUpdatedAt:
@@ -27431,6 +29008,13 @@ func (m *ConfigDistributionMutation) OldField(ctx context.Context, name string) 
 // type.
 func (m *ConfigDistributionMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case configdistribution.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case configdistribution.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -27530,6 +29114,9 @@ func (m *ConfigDistributionMutation) SetField(name string, value ent.Value) erro
 // this mutation.
 func (m *ConfigDistributionMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, configdistribution.FieldTenantID)
+	}
 	if m.addtemplate_id != nil {
 		fields = append(fields, configdistribution.FieldTemplateID)
 	}
@@ -27550,6 +29137,8 @@ func (m *ConfigDistributionMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ConfigDistributionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case configdistribution.FieldTenantID:
+		return m.AddedTenantID()
 	case configdistribution.FieldTemplateID:
 		return m.AddedTemplateID()
 	case configdistribution.FieldNodeID:
@@ -27567,6 +29156,13 @@ func (m *ConfigDistributionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ConfigDistributionMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case configdistribution.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case configdistribution.FieldTemplateID:
 		v, ok := value.(int32)
 		if !ok {
@@ -27603,6 +29199,9 @@ func (m *ConfigDistributionMutation) AddField(name string, value ent.Value) erro
 // mutation.
 func (m *ConfigDistributionMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(configdistribution.FieldTenantID) {
+		fields = append(fields, configdistribution.FieldTenantID)
+	}
 	if m.FieldCleared(configdistribution.FieldCreatedAt) {
 		fields = append(fields, configdistribution.FieldCreatedAt)
 	}
@@ -27638,6 +29237,9 @@ func (m *ConfigDistributionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ConfigDistributionMutation) ClearField(name string) error {
 	switch name {
+	case configdistribution.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case configdistribution.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -27667,6 +29269,9 @@ func (m *ConfigDistributionMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ConfigDistributionMutation) ResetField(name string) error {
 	switch name {
+	case configdistribution.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case configdistribution.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -27764,6 +29369,8 @@ type ConfigTemplateMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -27886,6 +29493,76 @@ func (m *ConfigTemplateMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ConfigTemplateMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ConfigTemplateMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ConfigTemplate entity.
+// If the ConfigTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ConfigTemplateMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ConfigTemplateMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ConfigTemplateMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ConfigTemplateMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[configtemplate.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ConfigTemplateMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[configtemplate.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ConfigTemplateMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, configtemplate.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -28485,7 +30162,10 @@ func (m *ConfigTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ConfigTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
+	if m.tenant_id != nil {
+		fields = append(fields, configtemplate.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, configtemplate.FieldCreatedAt)
 	}
@@ -28527,6 +30207,8 @@ func (m *ConfigTemplateMutation) Fields() []string {
 // schema.
 func (m *ConfigTemplateMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case configtemplate.FieldTenantID:
+		return m.TenantID()
 	case configtemplate.FieldCreatedAt:
 		return m.CreatedAt()
 	case configtemplate.FieldUpdatedAt:
@@ -28558,6 +30240,8 @@ func (m *ConfigTemplateMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ConfigTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case configtemplate.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case configtemplate.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case configtemplate.FieldUpdatedAt:
@@ -28589,6 +30273,13 @@ func (m *ConfigTemplateMutation) OldField(ctx context.Context, name string) (ent
 // type.
 func (m *ConfigTemplateMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case configtemplate.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case configtemplate.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -28674,6 +30365,9 @@ func (m *ConfigTemplateMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ConfigTemplateMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, configtemplate.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, configtemplate.FieldCreatedBy)
 	}
@@ -28691,6 +30385,8 @@ func (m *ConfigTemplateMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ConfigTemplateMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case configtemplate.FieldTenantID:
+		return m.AddedTenantID()
 	case configtemplate.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case configtemplate.FieldUpdatedBy:
@@ -28706,6 +30402,13 @@ func (m *ConfigTemplateMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ConfigTemplateMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case configtemplate.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case configtemplate.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -28735,6 +30438,9 @@ func (m *ConfigTemplateMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ConfigTemplateMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(configtemplate.FieldTenantID) {
+		fields = append(fields, configtemplate.FieldTenantID)
+	}
 	if m.FieldCleared(configtemplate.FieldCreatedAt) {
 		fields = append(fields, configtemplate.FieldCreatedAt)
 	}
@@ -28773,6 +30479,9 @@ func (m *ConfigTemplateMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ConfigTemplateMutation) ClearField(name string) error {
 	switch name {
+	case configtemplate.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case configtemplate.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -28805,6 +30514,9 @@ func (m *ConfigTemplateMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ConfigTemplateMutation) ResetField(name string) error {
 	switch name {
+	case configtemplate.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case configtemplate.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -35312,6 +37024,8 @@ type DistributionMutation struct {
 	op                   Op
 	typ                  string
 	id                   *uint32
+	tenant_id            *uint32
+	addtenant_id         *int32
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
@@ -35452,6 +37166,76 @@ func (m *DistributionMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *DistributionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *DistributionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Distribution entity.
+// If the Distribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *DistributionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *DistributionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *DistributionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[distribution.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *DistributionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[distribution.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *DistributionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, distribution.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -36697,7 +38481,10 @@ func (m *DistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DistributionMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
+	if m.tenant_id != nil {
+		fields = append(fields, distribution.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, distribution.FieldCreatedAt)
 	}
@@ -36772,6 +38559,8 @@ func (m *DistributionMutation) Fields() []string {
 // schema.
 func (m *DistributionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case distribution.FieldTenantID:
+		return m.TenantID()
 	case distribution.FieldCreatedAt:
 		return m.CreatedAt()
 	case distribution.FieldUpdatedAt:
@@ -36825,6 +38614,8 @@ func (m *DistributionMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *DistributionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case distribution.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case distribution.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case distribution.FieldUpdatedAt:
@@ -36878,6 +38669,13 @@ func (m *DistributionMutation) OldField(ctx context.Context, name string) (ent.V
 // type.
 func (m *DistributionMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case distribution.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case distribution.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -37040,6 +38838,9 @@ func (m *DistributionMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *DistributionMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, distribution.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, distribution.FieldCreatedBy)
 	}
@@ -37063,6 +38864,8 @@ func (m *DistributionMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *DistributionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case distribution.FieldTenantID:
+		return m.AddedTenantID()
 	case distribution.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case distribution.FieldUpdatedBy:
@@ -37082,6 +38885,13 @@ func (m *DistributionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *DistributionMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case distribution.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case distribution.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -37125,6 +38935,9 @@ func (m *DistributionMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *DistributionMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(distribution.FieldTenantID) {
+		fields = append(fields, distribution.FieldTenantID)
+	}
 	if m.FieldCleared(distribution.FieldCreatedAt) {
 		fields = append(fields, distribution.FieldCreatedAt)
 	}
@@ -37193,6 +39006,9 @@ func (m *DistributionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *DistributionMutation) ClearField(name string) error {
 	switch name {
+	case distribution.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case distribution.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -37255,6 +39071,9 @@ func (m *DistributionMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *DistributionMutation) ResetField(name string) error {
 	switch name {
+	case distribution.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case distribution.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -37379,6 +39198,8 @@ type DistributionRecordMutation struct {
 	op                  Op
 	typ                 string
 	id                  *uint32
+	tenant_id           *uint32
+	addtenant_id        *int32
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
@@ -37507,6 +39328,76 @@ func (m *DistributionRecordMutation) IDs(ctx context.Context) ([]uint32, error) 
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *DistributionRecordMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *DistributionRecordMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the DistributionRecord entity.
+// If the DistributionRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DistributionRecordMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *DistributionRecordMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *DistributionRecordMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *DistributionRecordMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[distributionrecord.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *DistributionRecordMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[distributionrecord.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *DistributionRecordMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, distributionrecord.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -38272,7 +40163,10 @@ func (m *DistributionRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DistributionRecordMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, distributionrecord.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, distributionrecord.FieldCreatedAt)
 	}
@@ -38323,6 +40217,8 @@ func (m *DistributionRecordMutation) Fields() []string {
 // schema.
 func (m *DistributionRecordMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		return m.TenantID()
 	case distributionrecord.FieldCreatedAt:
 		return m.CreatedAt()
 	case distributionrecord.FieldUpdatedAt:
@@ -38360,6 +40256,8 @@ func (m *DistributionRecordMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *DistributionRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case distributionrecord.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case distributionrecord.FieldUpdatedAt:
@@ -38397,6 +40295,13 @@ func (m *DistributionRecordMutation) OldField(ctx context.Context, name string) 
 // type.
 func (m *DistributionRecordMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case distributionrecord.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -38503,6 +40408,9 @@ func (m *DistributionRecordMutation) SetField(name string, value ent.Value) erro
 // this mutation.
 func (m *DistributionRecordMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, distributionrecord.FieldTenantID)
+	}
 	if m.adddistribution_id != nil {
 		fields = append(fields, distributionrecord.FieldDistributionID)
 	}
@@ -38529,6 +40437,8 @@ func (m *DistributionRecordMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *DistributionRecordMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		return m.AddedTenantID()
 	case distributionrecord.FieldDistributionID:
 		return m.AddedDistributionID()
 	case distributionrecord.FieldBuildHistoryID:
@@ -38550,6 +40460,13 @@ func (m *DistributionRecordMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *DistributionRecordMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case distributionrecord.FieldDistributionID:
 		v, ok := value.(int32)
 		if !ok {
@@ -38600,6 +40517,9 @@ func (m *DistributionRecordMutation) AddField(name string, value ent.Value) erro
 // mutation.
 func (m *DistributionRecordMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(distributionrecord.FieldTenantID) {
+		fields = append(fields, distributionrecord.FieldTenantID)
+	}
 	if m.FieldCleared(distributionrecord.FieldCreatedAt) {
 		fields = append(fields, distributionrecord.FieldCreatedAt)
 	}
@@ -38638,6 +40558,9 @@ func (m *DistributionRecordMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *DistributionRecordMutation) ClearField(name string) error {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case distributionrecord.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -38670,6 +40593,9 @@ func (m *DistributionRecordMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *DistributionRecordMutation) ResetField(name string) error {
 	switch name {
+	case distributionrecord.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case distributionrecord.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -38770,6 +40696,8 @@ type InspectionMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint32
+	tenant_id          *uint32
+	addtenant_id       *int32
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
@@ -38903,6 +40831,76 @@ func (m *InspectionMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *InspectionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *InspectionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Inspection entity.
+// If the Inspection object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InspectionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *InspectionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *InspectionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *InspectionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[inspection.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *InspectionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[inspection.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *InspectionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, inspection.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -39815,7 +41813,10 @@ func (m *InspectionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InspectionMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
+	if m.tenant_id != nil {
+		fields = append(fields, inspection.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, inspection.FieldCreatedAt)
 	}
@@ -39872,6 +41873,8 @@ func (m *InspectionMutation) Fields() []string {
 // schema.
 func (m *InspectionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case inspection.FieldTenantID:
+		return m.TenantID()
 	case inspection.FieldCreatedAt:
 		return m.CreatedAt()
 	case inspection.FieldUpdatedAt:
@@ -39913,6 +41916,8 @@ func (m *InspectionMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *InspectionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case inspection.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case inspection.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case inspection.FieldUpdatedAt:
@@ -39954,6 +41959,13 @@ func (m *InspectionMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *InspectionMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case inspection.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case inspection.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -40074,6 +42086,9 @@ func (m *InspectionMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *InspectionMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, inspection.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, inspection.FieldCreatedBy)
 	}
@@ -40109,6 +42124,8 @@ func (m *InspectionMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *InspectionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case inspection.FieldTenantID:
+		return m.AddedTenantID()
 	case inspection.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case inspection.FieldUpdatedBy:
@@ -40136,6 +42153,13 @@ func (m *InspectionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *InspectionMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case inspection.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case inspection.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -40207,6 +42231,9 @@ func (m *InspectionMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *InspectionMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(inspection.FieldTenantID) {
+		fields = append(fields, inspection.FieldTenantID)
+	}
 	if m.FieldCleared(inspection.FieldCreatedAt) {
 		fields = append(fields, inspection.FieldCreatedAt)
 	}
@@ -40248,6 +42275,9 @@ func (m *InspectionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *InspectionMutation) ClearField(name string) error {
 	switch name {
+	case inspection.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case inspection.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -40283,6 +42313,9 @@ func (m *InspectionMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *InspectionMutation) ResetField(name string) error {
 	switch name {
+	case inspection.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case inspection.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -41685,6 +43718,8 @@ type LogSnapshotMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -41811,6 +43846,76 @@ func (m *LogSnapshotMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *LogSnapshotMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *LogSnapshotMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the LogSnapshot entity.
+// If the LogSnapshot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LogSnapshotMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *LogSnapshotMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *LogSnapshotMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *LogSnapshotMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[logsnapshot.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *LogSnapshotMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[logsnapshot.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *LogSnapshotMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, logsnapshot.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -42493,7 +44598,10 @@ func (m *LogSnapshotMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LogSnapshotMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
+	if m.tenant_id != nil {
+		fields = append(fields, logsnapshot.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, logsnapshot.FieldCreatedAt)
 	}
@@ -42538,6 +44646,8 @@ func (m *LogSnapshotMutation) Fields() []string {
 // schema.
 func (m *LogSnapshotMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		return m.TenantID()
 	case logsnapshot.FieldCreatedAt:
 		return m.CreatedAt()
 	case logsnapshot.FieldUpdatedAt:
@@ -42571,6 +44681,8 @@ func (m *LogSnapshotMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *LogSnapshotMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case logsnapshot.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case logsnapshot.FieldUpdatedAt:
@@ -42604,6 +44716,13 @@ func (m *LogSnapshotMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *LogSnapshotMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case logsnapshot.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -42696,6 +44815,9 @@ func (m *LogSnapshotMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *LogSnapshotMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, logsnapshot.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, logsnapshot.FieldCreatedBy)
 	}
@@ -42722,6 +44844,8 @@ func (m *LogSnapshotMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *LogSnapshotMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		return m.AddedTenantID()
 	case logsnapshot.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case logsnapshot.FieldUpdatedBy:
@@ -42743,6 +44867,13 @@ func (m *LogSnapshotMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *LogSnapshotMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case logsnapshot.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -42793,6 +44924,9 @@ func (m *LogSnapshotMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *LogSnapshotMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(logsnapshot.FieldTenantID) {
+		fields = append(fields, logsnapshot.FieldTenantID)
+	}
 	if m.FieldCleared(logsnapshot.FieldCreatedAt) {
 		fields = append(fields, logsnapshot.FieldCreatedAt)
 	}
@@ -42828,6 +44962,9 @@ func (m *LogSnapshotMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *LogSnapshotMutation) ClearField(name string) error {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case logsnapshot.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -42857,6 +44994,9 @@ func (m *LogSnapshotMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *LogSnapshotMutation) ResetField(name string) error {
 	switch name {
+	case logsnapshot.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case logsnapshot.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -54878,6 +57018,8 @@ type MonitorMutation struct {
 	op                         Op
 	typ                        string
 	id                         *uint32
+	tenant_id                  *uint32
+	addtenant_id               *int32
 	created_at                 *time.Time
 	updated_at                 *time.Time
 	deleted_at                 *time.Time
@@ -55018,6 +57160,76 @@ func (m *MonitorMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *MonitorMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *MonitorMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Monitor entity.
+// If the Monitor object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *MonitorMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *MonitorMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *MonitorMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[monitor.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *MonitorMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[monitor.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *MonitorMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, monitor.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -56223,7 +58435,10 @@ func (m *MonitorMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MonitorMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
+	if m.tenant_id != nil {
+		fields = append(fields, monitor.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, monitor.FieldCreatedAt)
 	}
@@ -56301,6 +58516,8 @@ func (m *MonitorMutation) Fields() []string {
 // schema.
 func (m *MonitorMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case monitor.FieldTenantID:
+		return m.TenantID()
 	case monitor.FieldCreatedAt:
 		return m.CreatedAt()
 	case monitor.FieldUpdatedAt:
@@ -56356,6 +58573,8 @@ func (m *MonitorMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *MonitorMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case monitor.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case monitor.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case monitor.FieldUpdatedAt:
@@ -56411,6 +58630,13 @@ func (m *MonitorMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *MonitorMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case monitor.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case monitor.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -56580,6 +58806,9 @@ func (m *MonitorMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *MonitorMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, monitor.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, monitor.FieldCreatedBy)
 	}
@@ -56615,6 +58844,8 @@ func (m *MonitorMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *MonitorMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case monitor.FieldTenantID:
+		return m.AddedTenantID()
 	case monitor.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case monitor.FieldUpdatedBy:
@@ -56642,6 +58873,13 @@ func (m *MonitorMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *MonitorMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case monitor.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case monitor.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -56713,6 +58951,9 @@ func (m *MonitorMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *MonitorMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(monitor.FieldTenantID) {
+		fields = append(fields, monitor.FieldTenantID)
+	}
 	if m.FieldCleared(monitor.FieldCreatedAt) {
 		fields = append(fields, monitor.FieldCreatedAt)
 	}
@@ -56763,6 +59004,9 @@ func (m *MonitorMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *MonitorMutation) ClearField(name string) error {
 	switch name {
+	case monitor.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case monitor.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -56807,6 +59051,9 @@ func (m *MonitorMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *MonitorMutation) ResetField(name string) error {
 	switch name {
+	case monitor.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case monitor.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -58059,6 +60306,8 @@ type NotificationChannelMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint32
+	tenant_id          *uint32
+	addtenant_id       *int32
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
@@ -58190,6 +60439,76 @@ func (m *NotificationChannelMutation) IDs(ctx context.Context) ([]uint32, error)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *NotificationChannelMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *NotificationChannelMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *NotificationChannelMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *NotificationChannelMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *NotificationChannelMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[notificationchannel.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *NotificationChannelMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *NotificationChannelMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, notificationchannel.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -59202,7 +61521,10 @@ func (m *NotificationChannelMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationChannelMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
+	if m.tenant_id != nil {
+		fields = append(fields, notificationchannel.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, notificationchannel.FieldCreatedAt)
 	}
@@ -59268,6 +61590,8 @@ func (m *NotificationChannelMutation) Fields() []string {
 // schema.
 func (m *NotificationChannelMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		return m.TenantID()
 	case notificationchannel.FieldCreatedAt:
 		return m.CreatedAt()
 	case notificationchannel.FieldUpdatedAt:
@@ -59315,6 +61639,8 @@ func (m *NotificationChannelMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *NotificationChannelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case notificationchannel.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case notificationchannel.FieldUpdatedAt:
@@ -59362,6 +61688,13 @@ func (m *NotificationChannelMutation) OldField(ctx context.Context, name string)
 // type.
 func (m *NotificationChannelMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case notificationchannel.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -59503,6 +61836,9 @@ func (m *NotificationChannelMutation) SetField(name string, value ent.Value) err
 // this mutation.
 func (m *NotificationChannelMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, notificationchannel.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, notificationchannel.FieldCreatedBy)
 	}
@@ -59523,6 +61859,8 @@ func (m *NotificationChannelMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *NotificationChannelMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		return m.AddedTenantID()
 	case notificationchannel.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case notificationchannel.FieldUpdatedBy:
@@ -59540,6 +61878,13 @@ func (m *NotificationChannelMutation) AddedField(name string) (ent.Value, bool) 
 // type.
 func (m *NotificationChannelMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case notificationchannel.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -59576,6 +61921,9 @@ func (m *NotificationChannelMutation) AddField(name string, value ent.Value) err
 // mutation.
 func (m *NotificationChannelMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(notificationchannel.FieldTenantID) {
+		fields = append(fields, notificationchannel.FieldTenantID)
+	}
 	if m.FieldCleared(notificationchannel.FieldCreatedAt) {
 		fields = append(fields, notificationchannel.FieldCreatedAt)
 	}
@@ -59638,6 +61986,9 @@ func (m *NotificationChannelMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *NotificationChannelMutation) ClearField(name string) error {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case notificationchannel.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -59694,6 +62045,9 @@ func (m *NotificationChannelMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *NotificationChannelMutation) ResetField(name string) error {
 	switch name {
+	case notificationchannel.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case notificationchannel.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -59809,6 +62163,8 @@ type NotificationDeliveryMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -59930,6 +62286,76 @@ func (m *NotificationDeliveryMutation) IDs(ctx context.Context) ([]uint32, error
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *NotificationDeliveryMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *NotificationDeliveryMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *NotificationDeliveryMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *NotificationDeliveryMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *NotificationDeliveryMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[notificationdelivery.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *NotificationDeliveryMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, notificationdelivery.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -60493,7 +62919,10 @@ func (m *NotificationDeliveryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationDeliveryMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
+	if m.tenant_id != nil {
+		fields = append(fields, notificationdelivery.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, notificationdelivery.FieldCreatedAt)
 	}
@@ -60535,6 +62964,8 @@ func (m *NotificationDeliveryMutation) Fields() []string {
 // schema.
 func (m *NotificationDeliveryMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		return m.TenantID()
 	case notificationdelivery.FieldCreatedAt:
 		return m.CreatedAt()
 	case notificationdelivery.FieldUpdatedAt:
@@ -60566,6 +62997,8 @@ func (m *NotificationDeliveryMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *NotificationDeliveryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case notificationdelivery.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case notificationdelivery.FieldUpdatedAt:
@@ -60597,6 +63030,13 @@ func (m *NotificationDeliveryMutation) OldField(ctx context.Context, name string
 // type.
 func (m *NotificationDeliveryMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case notificationdelivery.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -60682,6 +63122,9 @@ func (m *NotificationDeliveryMutation) SetField(name string, value ent.Value) er
 // this mutation.
 func (m *NotificationDeliveryMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, notificationdelivery.FieldTenantID)
+	}
 	if m.addalert_id != nil {
 		fields = append(fields, notificationdelivery.FieldAlertID)
 	}
@@ -60696,6 +63139,8 @@ func (m *NotificationDeliveryMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *NotificationDeliveryMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		return m.AddedTenantID()
 	case notificationdelivery.FieldAlertID:
 		return m.AddedAlertID()
 	case notificationdelivery.FieldChannelID:
@@ -60709,6 +63154,13 @@ func (m *NotificationDeliveryMutation) AddedField(name string) (ent.Value, bool)
 // type.
 func (m *NotificationDeliveryMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case notificationdelivery.FieldAlertID:
 		v, ok := value.(int32)
 		if !ok {
@@ -60731,6 +63183,9 @@ func (m *NotificationDeliveryMutation) AddField(name string, value ent.Value) er
 // mutation.
 func (m *NotificationDeliveryMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(notificationdelivery.FieldTenantID) {
+		fields = append(fields, notificationdelivery.FieldTenantID)
+	}
 	if m.FieldCleared(notificationdelivery.FieldCreatedAt) {
 		fields = append(fields, notificationdelivery.FieldCreatedAt)
 	}
@@ -60766,6 +63221,9 @@ func (m *NotificationDeliveryMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *NotificationDeliveryMutation) ClearField(name string) error {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case notificationdelivery.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -60795,6 +63253,9 @@ func (m *NotificationDeliveryMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *NotificationDeliveryMutation) ResetField(name string) error {
 	switch name {
+	case notificationdelivery.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case notificationdelivery.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -73611,6 +76072,8 @@ type PipelineRunMutation struct {
 	op              Op
 	typ             string
 	id              *uint32
+	tenant_id       *uint32
+	addtenant_id    *int32
 	created_at      *time.Time
 	updated_at      *time.Time
 	deleted_at      *time.Time
@@ -73736,6 +76199,76 @@ func (m *PipelineRunMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PipelineRunMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PipelineRunMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PipelineRun entity.
+// If the PipelineRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PipelineRunMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PipelineRunMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PipelineRunMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PipelineRunMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[pipelinerun.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PipelineRunMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[pipelinerun.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PipelineRunMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, pipelinerun.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -74493,7 +77026,10 @@ func (m *PipelineRunMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PipelineRunMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, pipelinerun.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, pipelinerun.FieldCreatedAt)
 	}
@@ -74544,6 +77080,8 @@ func (m *PipelineRunMutation) Fields() []string {
 // schema.
 func (m *PipelineRunMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		return m.TenantID()
 	case pipelinerun.FieldCreatedAt:
 		return m.CreatedAt()
 	case pipelinerun.FieldUpdatedAt:
@@ -74581,6 +77119,8 @@ func (m *PipelineRunMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PipelineRunMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case pipelinerun.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case pipelinerun.FieldUpdatedAt:
@@ -74618,6 +77158,13 @@ func (m *PipelineRunMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *PipelineRunMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case pipelinerun.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -74724,6 +77271,9 @@ func (m *PipelineRunMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *PipelineRunMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, pipelinerun.FieldTenantID)
+	}
 	if m.addpipeline_id != nil {
 		fields = append(fields, pipelinerun.FieldPipelineID)
 	}
@@ -74741,6 +77291,8 @@ func (m *PipelineRunMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *PipelineRunMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		return m.AddedTenantID()
 	case pipelinerun.FieldPipelineID:
 		return m.AddedPipelineID()
 	case pipelinerun.FieldCurrentStep:
@@ -74756,6 +77308,13 @@ func (m *PipelineRunMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *PipelineRunMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case pipelinerun.FieldPipelineID:
 		v, ok := value.(int32)
 		if !ok {
@@ -74785,6 +77344,9 @@ func (m *PipelineRunMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *PipelineRunMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(pipelinerun.FieldTenantID) {
+		fields = append(fields, pipelinerun.FieldTenantID)
+	}
 	if m.FieldCleared(pipelinerun.FieldCreatedAt) {
 		fields = append(fields, pipelinerun.FieldCreatedAt)
 	}
@@ -74835,6 +77397,9 @@ func (m *PipelineRunMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *PipelineRunMutation) ClearField(name string) error {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case pipelinerun.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -74879,6 +77444,9 @@ func (m *PipelineRunMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PipelineRunMutation) ResetField(name string) error {
 	switch name {
+	case pipelinerun.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case pipelinerun.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -78656,6 +81224,8 @@ type ProjectMutation struct {
 	op             Op
 	typ            string
 	id             *uint32
+	tenant_id      *uint32
+	addtenant_id   *int32
 	created_at     *time.Time
 	updated_at     *time.Time
 	deleted_at     *time.Time
@@ -78788,6 +81358,76 @@ func (m *ProjectMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ProjectMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ProjectMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Project entity.
+// If the Project object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProjectMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ProjectMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ProjectMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ProjectMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[project.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ProjectMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[project.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ProjectMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, project.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -79787,7 +82427,10 @@ func (m *ProjectMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProjectMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
+	if m.tenant_id != nil {
+		fields = append(fields, project.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, project.FieldCreatedAt)
 	}
@@ -79850,6 +82493,8 @@ func (m *ProjectMutation) Fields() []string {
 // schema.
 func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case project.FieldTenantID:
+		return m.TenantID()
 	case project.FieldCreatedAt:
 		return m.CreatedAt()
 	case project.FieldUpdatedAt:
@@ -79895,6 +82540,8 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case project.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case project.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case project.FieldUpdatedAt:
@@ -79940,6 +82587,13 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case project.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case project.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -80074,6 +82728,9 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ProjectMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, project.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, project.FieldCreatedBy)
 	}
@@ -80097,6 +82754,8 @@ func (m *ProjectMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ProjectMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case project.FieldTenantID:
+		return m.AddedTenantID()
 	case project.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case project.FieldUpdatedBy:
@@ -80116,6 +82775,13 @@ func (m *ProjectMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case project.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case project.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -80159,6 +82825,9 @@ func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ProjectMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(project.FieldTenantID) {
+		fields = append(fields, project.FieldTenantID)
+	}
 	if m.FieldCleared(project.FieldCreatedAt) {
 		fields = append(fields, project.FieldCreatedAt)
 	}
@@ -80218,6 +82887,9 @@ func (m *ProjectMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ProjectMutation) ClearField(name string) error {
 	switch name {
+	case project.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case project.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -80271,6 +82943,9 @@ func (m *ProjectMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ProjectMutation) ResetField(name string) error {
 	switch name {
+	case project.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case project.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -80383,6 +83058,8 @@ type RepositoryMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -80508,6 +83185,76 @@ func (m *RepositoryMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *RepositoryMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *RepositoryMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Repository entity.
+// If the Repository object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RepositoryMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *RepositoryMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *RepositoryMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *RepositoryMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[repository.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *RepositoryMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[repository.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *RepositoryMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, repository.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -81234,7 +83981,10 @@ func (m *RepositoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RepositoryMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, repository.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, repository.FieldCreatedAt)
 	}
@@ -81282,6 +84032,8 @@ func (m *RepositoryMutation) Fields() []string {
 // schema.
 func (m *RepositoryMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case repository.FieldTenantID:
+		return m.TenantID()
 	case repository.FieldCreatedAt:
 		return m.CreatedAt()
 	case repository.FieldUpdatedAt:
@@ -81317,6 +84069,8 @@ func (m *RepositoryMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *RepositoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case repository.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case repository.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case repository.FieldUpdatedAt:
@@ -81352,6 +84106,13 @@ func (m *RepositoryMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *RepositoryMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case repository.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case repository.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -81451,6 +84212,9 @@ func (m *RepositoryMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *RepositoryMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, repository.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, repository.FieldCreatedBy)
 	}
@@ -81468,6 +84232,8 @@ func (m *RepositoryMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *RepositoryMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case repository.FieldTenantID:
+		return m.AddedTenantID()
 	case repository.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case repository.FieldUpdatedBy:
@@ -81483,6 +84249,13 @@ func (m *RepositoryMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RepositoryMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case repository.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case repository.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -81512,6 +84285,9 @@ func (m *RepositoryMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *RepositoryMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(repository.FieldTenantID) {
+		fields = append(fields, repository.FieldTenantID)
+	}
 	if m.FieldCleared(repository.FieldCreatedAt) {
 		fields = append(fields, repository.FieldCreatedAt)
 	}
@@ -81559,6 +84335,9 @@ func (m *RepositoryMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *RepositoryMutation) ClearField(name string) error {
 	switch name {
+	case repository.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case repository.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -81600,6 +84379,9 @@ func (m *RepositoryMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *RepositoryMutation) ResetField(name string) error {
 	switch name {
+	case repository.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case repository.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -86199,6 +88981,8 @@ type ScriptMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint32
+	tenant_id          *uint32
+	addtenant_id       *int32
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
@@ -86327,6 +89111,76 @@ func (m *ScriptMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ScriptMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ScriptMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Script entity.
+// If the Script object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScriptMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ScriptMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ScriptMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ScriptMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[script.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ScriptMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[script.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ScriptMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, script.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -87144,7 +89998,10 @@ func (m *ScriptMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScriptMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
+	if m.tenant_id != nil {
+		fields = append(fields, script.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, script.FieldCreatedAt)
 	}
@@ -87195,6 +90052,8 @@ func (m *ScriptMutation) Fields() []string {
 // schema.
 func (m *ScriptMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case script.FieldTenantID:
+		return m.TenantID()
 	case script.FieldCreatedAt:
 		return m.CreatedAt()
 	case script.FieldUpdatedAt:
@@ -87232,6 +90091,8 @@ func (m *ScriptMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScriptMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case script.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case script.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case script.FieldUpdatedAt:
@@ -87269,6 +90130,13 @@ func (m *ScriptMutation) OldField(ctx context.Context, name string) (ent.Value, 
 // type.
 func (m *ScriptMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case script.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case script.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -87375,6 +90243,9 @@ func (m *ScriptMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ScriptMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, script.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, script.FieldCreatedBy)
 	}
@@ -87398,6 +90269,8 @@ func (m *ScriptMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ScriptMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case script.FieldTenantID:
+		return m.AddedTenantID()
 	case script.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case script.FieldUpdatedBy:
@@ -87417,6 +90290,13 @@ func (m *ScriptMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ScriptMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case script.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case script.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -87460,6 +90340,9 @@ func (m *ScriptMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ScriptMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(script.FieldTenantID) {
+		fields = append(fields, script.FieldTenantID)
+	}
 	if m.FieldCleared(script.FieldCreatedAt) {
 		fields = append(fields, script.FieldCreatedAt)
 	}
@@ -87510,6 +90393,9 @@ func (m *ScriptMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScriptMutation) ClearField(name string) error {
 	switch name {
+	case script.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case script.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -87554,6 +90440,9 @@ func (m *ScriptMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScriptMutation) ResetField(name string) error {
 	switch name {
+	case script.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case script.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -87654,6 +90543,8 @@ type ScriptBatchMutation struct {
 	op               Op
 	typ              string
 	id               *uint32
+	tenant_id        *uint32
+	addtenant_id     *int32
 	created_at       *time.Time
 	updated_at       *time.Time
 	deleted_at       *time.Time
@@ -87783,6 +90674,76 @@ func (m *ScriptBatchMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ScriptBatchMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ScriptBatchMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ScriptBatch entity.
+// If the ScriptBatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScriptBatchMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ScriptBatchMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ScriptBatchMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ScriptBatchMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[scriptbatch.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ScriptBatchMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[scriptbatch.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ScriptBatchMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, scriptbatch.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -88537,7 +91498,10 @@ func (m *ScriptBatchMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScriptBatchMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, scriptbatch.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, scriptbatch.FieldCreatedAt)
 	}
@@ -88585,6 +91549,8 @@ func (m *ScriptBatchMutation) Fields() []string {
 // schema.
 func (m *ScriptBatchMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		return m.TenantID()
 	case scriptbatch.FieldCreatedAt:
 		return m.CreatedAt()
 	case scriptbatch.FieldUpdatedAt:
@@ -88620,6 +91586,8 @@ func (m *ScriptBatchMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScriptBatchMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case scriptbatch.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case scriptbatch.FieldUpdatedAt:
@@ -88655,6 +91623,13 @@ func (m *ScriptBatchMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *ScriptBatchMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case scriptbatch.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -88754,6 +91729,9 @@ func (m *ScriptBatchMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ScriptBatchMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, scriptbatch.FieldTenantID)
+	}
 	if m.addcreated_by != nil {
 		fields = append(fields, scriptbatch.FieldCreatedBy)
 	}
@@ -88783,6 +91761,8 @@ func (m *ScriptBatchMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ScriptBatchMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		return m.AddedTenantID()
 	case scriptbatch.FieldCreatedBy:
 		return m.AddedCreatedBy()
 	case scriptbatch.FieldUpdatedBy:
@@ -88806,6 +91786,13 @@ func (m *ScriptBatchMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ScriptBatchMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case scriptbatch.FieldCreatedBy:
 		v, ok := value.(int32)
 		if !ok {
@@ -88863,6 +91850,9 @@ func (m *ScriptBatchMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ScriptBatchMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(scriptbatch.FieldTenantID) {
+		fields = append(fields, scriptbatch.FieldTenantID)
+	}
 	if m.FieldCleared(scriptbatch.FieldCreatedAt) {
 		fields = append(fields, scriptbatch.FieldCreatedAt)
 	}
@@ -88898,6 +91888,9 @@ func (m *ScriptBatchMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScriptBatchMutation) ClearField(name string) error {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case scriptbatch.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -88927,6 +91920,9 @@ func (m *ScriptBatchMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScriptBatchMutation) ResetField(name string) error {
 	switch name {
+	case scriptbatch.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case scriptbatch.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -92346,6 +95342,8 @@ type TerminalChunkMutation struct {
 	op                     Op
 	typ                    string
 	id                     *uint32
+	tenant_id              *uint32
+	addtenant_id           *int32
 	created_at             *time.Time
 	updated_at             *time.Time
 	deleted_at             *time.Time
@@ -92465,6 +95463,76 @@ func (m *TerminalChunkMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *TerminalChunkMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *TerminalChunkMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the TerminalChunk entity.
+// If the TerminalChunk object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TerminalChunkMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *TerminalChunkMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *TerminalChunkMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *TerminalChunkMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[terminalchunk.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *TerminalChunkMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[terminalchunk.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *TerminalChunkMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, terminalchunk.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -92888,7 +95956,10 @@ func (m *TerminalChunkMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TerminalChunkMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
+	if m.tenant_id != nil {
+		fields = append(fields, terminalchunk.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, terminalchunk.FieldCreatedAt)
 	}
@@ -92921,6 +95992,8 @@ func (m *TerminalChunkMutation) Fields() []string {
 // schema.
 func (m *TerminalChunkMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		return m.TenantID()
 	case terminalchunk.FieldCreatedAt:
 		return m.CreatedAt()
 	case terminalchunk.FieldUpdatedAt:
@@ -92946,6 +96019,8 @@ func (m *TerminalChunkMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TerminalChunkMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case terminalchunk.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case terminalchunk.FieldUpdatedAt:
@@ -92971,6 +96046,13 @@ func (m *TerminalChunkMutation) OldField(ctx context.Context, name string) (ent.
 // type.
 func (m *TerminalChunkMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case terminalchunk.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -93035,6 +96117,9 @@ func (m *TerminalChunkMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TerminalChunkMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, terminalchunk.FieldTenantID)
+	}
 	if m.addterminal_session_id != nil {
 		fields = append(fields, terminalchunk.FieldTerminalSessionID)
 	}
@@ -93052,6 +96137,8 @@ func (m *TerminalChunkMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TerminalChunkMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		return m.AddedTenantID()
 	case terminalchunk.FieldTerminalSessionID:
 		return m.AddedTerminalSessionID()
 	case terminalchunk.FieldSeq:
@@ -93067,6 +96154,13 @@ func (m *TerminalChunkMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TerminalChunkMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case terminalchunk.FieldTerminalSessionID:
 		v, ok := value.(int32)
 		if !ok {
@@ -93096,6 +96190,9 @@ func (m *TerminalChunkMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TerminalChunkMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(terminalchunk.FieldTenantID) {
+		fields = append(fields, terminalchunk.FieldTenantID)
+	}
 	if m.FieldCleared(terminalchunk.FieldCreatedAt) {
 		fields = append(fields, terminalchunk.FieldCreatedAt)
 	}
@@ -93119,6 +96216,9 @@ func (m *TerminalChunkMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TerminalChunkMutation) ClearField(name string) error {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case terminalchunk.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -93136,6 +96236,9 @@ func (m *TerminalChunkMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TerminalChunkMutation) ResetField(name string) error {
 	switch name {
+	case terminalchunk.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case terminalchunk.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -93218,6 +96321,8 @@ type TerminalSessionMutation struct {
 	op              Op
 	typ             string
 	id              *uint32
+	tenant_id       *uint32
+	addtenant_id    *int32
 	created_at      *time.Time
 	updated_at      *time.Time
 	deleted_at      *time.Time
@@ -93344,6 +96449,76 @@ func (m *TerminalSessionMutation) IDs(ctx context.Context) ([]uint32, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *TerminalSessionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *TerminalSessionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the TerminalSession entity.
+// If the TerminalSession object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TerminalSessionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *TerminalSessionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *TerminalSessionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *TerminalSessionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[terminalsession.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *TerminalSessionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[terminalsession.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *TerminalSessionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, terminalsession.FieldTenantID)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -94028,7 +97203,10 @@ func (m *TerminalSessionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TerminalSessionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
+	if m.tenant_id != nil {
+		fields = append(fields, terminalsession.FieldTenantID)
+	}
 	if m.created_at != nil {
 		fields = append(fields, terminalsession.FieldCreatedAt)
 	}
@@ -94076,6 +97254,8 @@ func (m *TerminalSessionMutation) Fields() []string {
 // schema.
 func (m *TerminalSessionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case terminalsession.FieldTenantID:
+		return m.TenantID()
 	case terminalsession.FieldCreatedAt:
 		return m.CreatedAt()
 	case terminalsession.FieldUpdatedAt:
@@ -94111,6 +97291,8 @@ func (m *TerminalSessionMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TerminalSessionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case terminalsession.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case terminalsession.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case terminalsession.FieldUpdatedAt:
@@ -94146,6 +97328,13 @@ func (m *TerminalSessionMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *TerminalSessionMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case terminalsession.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case terminalsession.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -94245,6 +97434,9 @@ func (m *TerminalSessionMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TerminalSessionMutation) AddedFields() []string {
 	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, terminalsession.FieldTenantID)
+	}
 	if m.addnode_id != nil {
 		fields = append(fields, terminalsession.FieldNodeID)
 	}
@@ -94268,6 +97460,8 @@ func (m *TerminalSessionMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TerminalSessionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case terminalsession.FieldTenantID:
+		return m.AddedTenantID()
 	case terminalsession.FieldNodeID:
 		return m.AddedNodeID()
 	case terminalsession.FieldOperatorID:
@@ -94287,6 +97481,13 @@ func (m *TerminalSessionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TerminalSessionMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case terminalsession.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case terminalsession.FieldNodeID:
 		v, ok := value.(int32)
 		if !ok {
@@ -94330,6 +97531,9 @@ func (m *TerminalSessionMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TerminalSessionMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(terminalsession.FieldTenantID) {
+		fields = append(fields, terminalsession.FieldTenantID)
+	}
 	if m.FieldCleared(terminalsession.FieldCreatedAt) {
 		fields = append(fields, terminalsession.FieldCreatedAt)
 	}
@@ -94362,6 +97566,9 @@ func (m *TerminalSessionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TerminalSessionMutation) ClearField(name string) error {
 	switch name {
+	case terminalsession.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case terminalsession.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
@@ -94388,6 +97595,9 @@ func (m *TerminalSessionMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TerminalSessionMutation) ResetField(name string) error {
 	switch name {
+	case terminalsession.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case terminalsession.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil

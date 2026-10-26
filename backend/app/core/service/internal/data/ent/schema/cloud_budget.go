@@ -79,6 +79,7 @@ func (CloudBudget) Fields() []ent.Field {
 func (CloudBudget) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

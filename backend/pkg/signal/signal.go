@@ -100,6 +100,8 @@ const (
 
 // CommandEnvelope core 下发给 agent 的统一指令信封。
 // RequestId 为幂等键(UUID),agent 必须在 CommandResult 中原样回传。
+// COMMAND_SIGN_KEY 配置时 core 会对信封整体签名、agent 强制校验
+// (见 sign.go),未配置则按未签名模式运行(仅限开发)。
 type CommandEnvelope struct {
 	RequestId  string          `json:"request_id"`
 	AgentId    string          `json:"agent_id"`
@@ -107,6 +109,7 @@ type CommandEnvelope struct {
 	Payload    json.RawMessage `json:"payload,omitempty"`
 	IssuedAt   time.Time       `json:"issued_at,omitempty"`
 	OperatorId uint32          `json:"operator_id,omitempty"` // 触发指令的用户(审计用)
+	Signature  string          `json:"signature,omitempty"`   // HMAC-SHA256(未配置 COMMAND_SIGN_KEY 时为空)
 }
 
 // CommandResult agent 对指令的执行结果回执。

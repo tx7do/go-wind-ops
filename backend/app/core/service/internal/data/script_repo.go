@@ -118,6 +118,14 @@ func (r *ScriptRepo) Get(ctx context.Context, req *opsV1.GetScriptRequest) (*ops
 	return dto, nil
 }
 
+// GetEntity 读取 ent 实体(后台归因用:cron 触发时取脚本租户)。
+func (r *ScriptRepo) GetEntity(ctx context.Context, id uint32) (*ent.Script, error) {
+	return r.entClient.Client().Script.
+		Query().
+		Where(script.IDEQ(id)).
+		First(ctx)
+}
+
 // IsNameTaken 校验脚本名唯一性(excludeID>0 时排除自身,供更新用)。
 func (r *ScriptRepo) IsNameTaken(ctx context.Context, name string, excludeID uint32) (bool, error) {
 	query := r.entClient.Client().Script.Query().Where(script.NameEQ(name))

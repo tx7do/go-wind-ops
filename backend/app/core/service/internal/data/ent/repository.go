@@ -19,6 +19,8 @@ type Repository struct {
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -55,7 +57,7 @@ func (*Repository) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case repository.FieldLabels:
 			values[i] = new([]byte)
-		case repository.FieldID, repository.FieldCreatedBy, repository.FieldUpdatedBy, repository.FieldDeletedBy:
+		case repository.FieldID, repository.FieldTenantID, repository.FieldCreatedBy, repository.FieldUpdatedBy, repository.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
 		case repository.FieldName, repository.FieldGitURL, repository.FieldBranch, repository.FieldUsername, repository.FieldPassword, repository.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -82,6 +84,13 @@ func (_m *Repository) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = uint32(value.Int64)
+		case repository.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
+			}
 		case repository.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -208,6 +217,11 @@ func (_m *Repository) String() string {
 	var builder strings.Builder
 	builder.WriteString("Repository(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))

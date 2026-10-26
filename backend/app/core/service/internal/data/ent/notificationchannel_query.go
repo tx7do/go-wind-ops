@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/notificationchannel"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *NotificationChannelQuery) Clone() *NotificationChannelQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.NotificationChannel.Query().
-//		GroupBy(notificationchannel.FieldCreatedAt).
+//		GroupBy(notificationchannel.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *NotificationChannelQuery) GroupBy(field string, fields ...string) *NotificationChannelGroupBy {
@@ -288,11 +289,11 @@ func (_q *NotificationChannelQuery) GroupBy(field string, fields ...string) *Not
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.NotificationChannel.Query().
-//		Select(notificationchannel.FieldCreatedAt).
+//		Select(notificationchannel.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *NotificationChannelQuery) Select(fields ...string) *NotificationChannelSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *NotificationChannelQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if notificationchannel.Policy == nil {
+		return errors.New("ent: uninitialized notificationchannel.Policy (forgotten import ent/runtime?)")
+	}
+	if err := notificationchannel.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

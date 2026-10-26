@@ -106,10 +106,12 @@ func (l *LoginAuditLogMiddleware) Handle(ctx context.Context, htr *http.Transpor
 	loginAuditLog.LogHash = trans.Ptr(l.hashLog(loginAuditLog))
 	loginAuditLog.Signature = l.signature(loginAuditLog)
 
-	// 写入日志
+	// 写入日志(失败必须带原始错误暴露,不允许静默吞掉——不吞错铁律)
 	if l.op.writeLoginLogFunc != nil {
 		ctx = appViewer.NewSystemViewerContext(ctx)
-		_ = l.op.writeLoginLogFunc(ctx, loginAuditLog)
+		if err := l.op.writeLoginLogFunc(ctx, loginAuditLog); err != nil && l.op.logger != nil {
+			l.op.logger.Errorf("write login audit log: %v", err)
+		}
 	}
 }
 

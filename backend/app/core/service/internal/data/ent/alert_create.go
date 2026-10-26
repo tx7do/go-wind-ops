@@ -22,6 +22,20 @@ type AlertCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *AlertCreate) SetTenantID(v uint32) *AlertCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *AlertCreate) SetNillableTenantID(v *uint32) *AlertCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *AlertCreate) SetCreatedAt(v time.Time) *AlertCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -195,7 +209,9 @@ func (_c *AlertCreate) Mutation() *AlertMutation {
 
 // Save creates the Alert in the database.
 func (_c *AlertCreate) Save(ctx context.Context) (*Alert, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -222,7 +238,11 @@ func (_c *AlertCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *AlertCreate) defaults() {
+func (_c *AlertCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := alert.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.MonitorID(); !ok {
 		v := alert.DefaultMonitorID
 		_c.mutation.SetMonitorID(v)
@@ -251,6 +271,7 @@ func (_c *AlertCreate) defaults() {
 		v := alert.DefaultNotified
 		_c.mutation.SetNotified(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -318,6 +339,10 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(alert.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(alert.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -373,7 +398,7 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Alert.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -382,7 +407,7 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.AlertUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *AlertCreate) OnConflict(opts ...sql.ConflictOption) *AlertUpsertOne {
@@ -620,6 +645,9 @@ func (u *AlertUpsertOne) UpdateNewValues() *AlertUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(alert.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(alert.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(alert.FieldCreatedAt)
@@ -1007,7 +1035,7 @@ func (_c *AlertCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.AlertUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *AlertCreateBulk) OnConflict(opts ...sql.ConflictOption) *AlertUpsertBulk {
@@ -1053,6 +1081,9 @@ func (u *AlertUpsertBulk) UpdateNewValues() *AlertUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(alert.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(alert.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(alert.FieldCreatedAt)

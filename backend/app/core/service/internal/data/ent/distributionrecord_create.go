@@ -22,6 +22,20 @@ type DistributionRecordCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *DistributionRecordCreate) SetTenantID(v uint32) *DistributionRecordCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *DistributionRecordCreate) SetNillableTenantID(v *uint32) *DistributionRecordCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *DistributionRecordCreate) SetCreatedAt(v time.Time) *DistributionRecordCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -191,7 +205,9 @@ func (_c *DistributionRecordCreate) Mutation() *DistributionRecordMutation {
 
 // Save creates the DistributionRecord in the database.
 func (_c *DistributionRecordCreate) Save(ctx context.Context) (*DistributionRecord, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -218,7 +234,11 @@ func (_c *DistributionRecordCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *DistributionRecordCreate) defaults() {
+func (_c *DistributionRecordCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := distributionrecord.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.BatchNo(); !ok {
 		v := distributionrecord.DefaultBatchNo
 		_c.mutation.SetBatchNo(v)
@@ -231,6 +251,7 @@ func (_c *DistributionRecordCreate) defaults() {
 		v := distributionrecord.DefaultOperatorID
 		_c.mutation.SetOperatorID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -321,6 +342,10 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(distributionrecord.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(distributionrecord.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -384,7 +409,7 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 // of the `INSERT` statement. For example:
 //
 //	client.DistributionRecord.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -393,7 +418,7 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.DistributionRecordUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *DistributionRecordCreate) OnConflict(opts ...sql.ConflictOption) *DistributionRecordUpsertOne {
@@ -679,6 +704,9 @@ func (u *DistributionRecordUpsertOne) UpdateNewValues() *DistributionRecordUpser
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(distributionrecord.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(distributionrecord.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(distributionrecord.FieldCreatedAt)
@@ -1122,7 +1150,7 @@ func (_c *DistributionRecordCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.DistributionRecordUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *DistributionRecordCreateBulk) OnConflict(opts ...sql.ConflictOption) *DistributionRecordUpsertBulk {
@@ -1168,6 +1196,9 @@ func (u *DistributionRecordUpsertBulk) UpdateNewValues() *DistributionRecordUpse
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(distributionrecord.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(distributionrecord.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(distributionrecord.FieldCreatedAt)

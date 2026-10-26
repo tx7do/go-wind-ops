@@ -39,6 +39,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ═══════════════════════ 一、基础设施 ═══════════════════════
 
+
 	// 服务发现与鉴权基建
 	discovery := data.NewDiscovery(ctx)
 	clientType := data.NewClientType()

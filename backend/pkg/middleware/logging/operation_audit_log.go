@@ -72,7 +72,10 @@ func (o *OperationAuditLogMiddleware) Handle(ctx context.Context, htr *http.Tran
 	}
 
 	ctx = appViewer.NewSystemViewerContext(ctx)
-	_ = o.op.writeOperationLogFunc(ctx, operationLog)
+	// 写入失败必须带原始错误暴露,不允许静默吞掉(不吞错铁律)
+	if err := o.op.writeOperationLogFunc(ctx, operationLog); err != nil && o.op.logger != nil {
+		o.op.logger.Errorf("write operation audit log: %v", err)
+	}
 }
 
 // operationActionByMethod 将 HTTP 方法映射为操作审计动作类型

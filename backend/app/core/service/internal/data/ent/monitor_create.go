@@ -22,6 +22,20 @@ type MonitorCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *MonitorCreate) SetTenantID(v uint32) *MonitorCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableTenantID(v *uint32) *MonitorCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *MonitorCreate) SetCreatedAt(v time.Time) *MonitorCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -341,7 +355,9 @@ func (_c *MonitorCreate) Mutation() *MonitorMutation {
 
 // Save creates the Monitor in the database.
 func (_c *MonitorCreate) Save(ctx context.Context) (*Monitor, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -368,7 +384,11 @@ func (_c *MonitorCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *MonitorCreate) defaults() {
+func (_c *MonitorCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := monitor.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.ProjectID(); !ok {
 		v := monitor.DefaultProjectID
 		_c.mutation.SetProjectID(v)
@@ -417,6 +437,7 @@ func (_c *MonitorCreate) defaults() {
 		v := monitor.DefaultEnabled
 		_c.mutation.SetEnabled(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -511,6 +532,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(monitor.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(monitor.FieldCreatedAt, field.TypeTime, value)
@@ -611,7 +636,7 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Monitor.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -620,7 +645,7 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.MonitorUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *MonitorCreate) OnConflict(opts ...sql.ConflictOption) *MonitorUpsertOne {
@@ -1056,6 +1081,9 @@ func (u *MonitorUpsertOne) UpdateNewValues() *MonitorUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(monitor.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(monitor.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(monitor.FieldCreatedAt)
@@ -1674,7 +1702,7 @@ func (_c *MonitorCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.MonitorUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *MonitorCreateBulk) OnConflict(opts ...sql.ConflictOption) *MonitorUpsertBulk {
@@ -1720,6 +1748,9 @@ func (u *MonitorUpsertBulk) UpdateNewValues() *MonitorUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(monitor.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(monitor.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(monitor.FieldCreatedAt)

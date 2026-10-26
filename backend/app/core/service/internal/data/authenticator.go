@@ -3,6 +3,8 @@ package data
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -17,6 +19,7 @@ import (
 
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 
+	"go-wind-ops/pkg/envs"
 	"go-wind-ops/pkg/jwt"
 )
 
@@ -57,6 +60,32 @@ func NewAuthenticator(
 ) *Authenticator {
 	if cfg == nil {
 		return nil
+	}
+
+	// 环境变量显式覆盖签名密钥:配置占位符 ${jwt_signing_key:default} 只解析
+	// 配置键、不读环境变量(实测),env 覆盖必须在此代码完成——此前的同类
+	// 写法从未真正生效。
+	if v := strings.TrimSpace(os.Getenv("jwt_signing_key")); v != "" {
+		if cfg.Admin != nil {
+			cfg.Admin.Key = v
+		}
+		if cfg.App != nil {
+			cfg.App.Key = v
+		}
+	}
+
+	// 生产态拒绝默认/空签名密钥:jwt_signing_key 未设置时 authenticator.yaml
+	// 回落到公开仓库里的默认串,持有它即可离线伪造任意 admin 令牌。
+	// 开发环境保留默认值并告警。
+	for name, key := range map[string]string{"admin": cfg.Admin.GetKey(), "app": cfg.App.GetKey()} {
+		if key != "" && key != "dev_only_change_me_in_prod" {
+			continue
+		}
+		if envs.IsProduction() {
+			panic(fmt.Errorf("jwt signing key for %s must be set to a non-default secret in production (set jwt_signing_key env)", name))
+		}
+		ctx.NewLoggerHelper("authenticator/data/core-service").Warnf(
+			"jwt signing key for %s is empty/default — tokens can be forged offline; development only", name)
 	}
 
 	//log.Infof("Authenticator Config: %+v", cfg)

@@ -98,6 +98,7 @@ func (CommandRecord) Fields() []ent.Field {
 func (CommandRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

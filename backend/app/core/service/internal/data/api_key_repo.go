@@ -11,6 +11,7 @@ import (
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/apikey"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
@@ -164,7 +165,10 @@ func (r *ApiKeyRepo) GetByHash(ctx context.Context, keyHash string) (*ent.ApiKey
 }
 
 // TouchLastUsed 异步回写最近使用时间。
+// 调用方是 OpenAPI 网关(无操作者上下文);api_key 已挂租户隐私,注入系统
+// viewer 避免无 viewer 上下文被 EvalMutation 拒绝。
 func (r *ApiKeyRepo) TouchLastUsed(ctx context.Context, id uint32) {
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	_, _ = r.entClient.Client().ApiKey.UpdateOneID(id).
 		SetLastUsedAt(time.Now()).
 		Save(ctx)

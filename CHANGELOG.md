@@ -13,6 +13,35 @@
 从节点/项目/脚本/构建分发四大核心业务域，到安全准入、可观测性、终端与文件、
 平台化（OpenAPI/插件），再到三个梯队的治理增强与 v1 收尾治理。
 
+### 安全（2026-10-26 审计修复轮：信任边界与默认配置收口）
+
+- **core gRPC 内部共享密钥**（`CORE_RPC_SECRET`，compose 三服务默认装配）：core gRPC 在租户上下文构建前强制校验 `x-rpc-secret` 请求头，BFF 统一拨连入口自动附加——封死内网直达 core 冒充任意用户/租户、绕过 BFF 权限码与审批直接调执行面的路径。
+- **EMQX 回调共享密钥**（`MQTT_AUTH_WEBHOOK_SECRET`，compose 默认装配）：:9500 认证/授权 webhook 要求携带密钥（URL `?secret=` 或 `X-Mqtt-Webhook-Secret`），封死直调触发 TOFU 抢注伪造 agent 的路径。
+- **指令信封 HMAC 签名**（`COMMAND_SIGN_KEY`，core 与 agent 一致配置）：信封六元组（含 issued_at、目标 agentId）HMAC-SHA256 签名，agent 强制校验签名 + 时效（15min/前拨 5min）+ 目标一致性 + 进程首认证门 + `request_id` 环形去重——持有 core MQTT 口令或攻破 broker 不再等价于可在任意 agent 执行任意指令；`tools/mqtt-pub` 增加 `-sign-key`。
+- **core MQTT 口令出仓**：`server.yaml` 支持 `${MQTT_CORE_PASSWORD:...}` 环境插值，生产不再依赖仓库默认值。
+- **OpenAPI git webhook 改为 fail-closed**：`OPENAPI_GIT_WEBHOOK_SECRET` 未配置时端点一律 403（原先空=无签名可刷触发构建）。
+- **审批闸门批量旁路封死**：`script_exec` 需审批时，批量执行入口（ExecuteScriptBatch）直接 403（`approvalHoldsAction` fail-closed）；原始 SendCommand 复核确认为 ping-only 白名单。
+- **生产态守卫**（`APP_ENV=production`）：JWT 签名密钥为空/公开默认串（core）或 `ENCRYPTION_KEY` 未配置（core/admin）拒绝启动，开发环境维持降级+告警。
+- **审计签名密钥持久化**（`AUDIT_SIGN_KEY_FILE`，默认 `data/audit-signing-key.pem`）：ECDSA 私钥跨重启沿用，历史审计签名可验证；三类审计写入失败不再静默吞错。
+- **登录失败锁定改 用户名+IP 复合键**：任意者无法再对已知用户名故意失败 5 次即全平台锁死他人账号。
+- **agent 执行面杂项**：`file_push` 对象键校验收紧到 `agent-files/{agentId}/` 自有前缀（防换签他 agent 对象）；`file_read/file_list/file_delete` 补全路径符号链接复核；`docker_deploy` 的 image/containerName/restart/network 拒绝 `-` 前缀（argv 选项注入防御）。
+
+### 安全（2026-10-26 审计修复轮·第二批）
+
+- ⚠️ **配置占位符勘误与真实 env 覆盖**：实测确认 kratos config 的 `${VAR:default}` 只解析配置键、**不读环境变量**——既有的 `jwt_signing_key` 环境变量覆盖从未真正生效，上一批的 `MQTT_CORE_PASSWORD` 注入机制同样无效；冒烟进一步发现 `GetConfig()` 每次返回 proto 深拷贝，装配期统一覆盖必然丢失。新增 `pkg/configenv`：`ApplyMqtt`（core 的 broker 连接与 :9500 回调两个消费点各自调用）/`ApplyOSS`（`oss.NewMinIoClient` 内部收口）覆盖 `MQTT_CORE_PASSWORD`/`MINIO_ACCESS_KEY`/`MINIO_SECRET_KEY`，core authenticator 装配点覆盖 `jwt_signing_key`；配置文件里的 `${...:default}` 保留为 dev 回落。
+- **MQTT 首连竞态修复**（冒烟发现）：EMQX 认证回调资源有健康检查周期，冷启动时先于资源恢复的首连被拒，而传输库对首连失败零重试、失败状态固化在实例内、kratos 视 Start 错误为致命——core 整体退出/agent panic。新增 `pkg/mqttwrap.WrapFactory`（按工厂模式重建实例重试，3s 间隔/最长 2m），两端 MQTT server 均已包装。
+- **冒烟验证记录（2026-10-26）**：真实环境全链路通过——三密钥配对与失配（webhook 对/错/缺密钥三态、RPC_SECRET 失配时 BFF 全 401 且错误自解释、指令无签名被 agent 拒收/带签名放行/重放去重）、项目生命周期（START→RUNNING→STOP→台账全终态）、审批闭环（单目标建单→Approve→重下发→脚本执行→台账 SUCCESS）、批量执行 fail-closed 403、OpenAPI webhook 缺密钥 403、终端一次性票据签发、租户列落库（平台操作 tenant_id=0）。
+- **审计随操作者租户落库**：admin 三个审计写闭包改用 auth 中间件注入的真实操作者元数据（`auditWriteOperator`，未认证路径回落零值系统操作者）——操作/API/登录审计不再恒落 tenant 0，租户管理员按租户过滤可见本租户日志。
+- **非 PASSWORD_HASH 凭据分支 fail-closed**：`verifyCredential`/`prepareCredential` 的 default 分支由明文比对/明文落库改为拒绝（枚举为基座遗留，应用内零使用）。
+- **agent 生产态守卫**：`APP_ENV=production` 时 `AGENT_DOWNLOAD_ALLOWED_HOSTS` 未配置直接拒绝启动（预签名出站=无约束 SSRF/外带通道）；`AGENT_ALLOWED_DIRS` 未配置强报错（fail-closed 已有，仅提示）。
+- **对象键卫生**：`oss.JoinObjectName` 对调用方提供的目录/文件名清理（拒 `..` 段、剥绝对前缀、文件名单段化），防共享桶内任意键路径覆盖。
+- **配置机密出仓**：`docker-compose.libs.yaml` 的 PG/Redis/MinIO 密码与 EMQX 控制台密码、`docker-compose.yaml` 的 EMQX 控制台密码、三服务 `oss.yaml` 的 MinIO 凭据全部支持环境变量注入（默认值不变，dev/smoke 行为不受影响）。
+
+### 安全（2026-10-26 审计修复轮·第三批：口令密钥可配 + ops 租户模型）
+
+- **口令传输密钥两端可配**：后端新增 `LOGIN_AES_KEY`（`pkg/configenv.LoginAESKey`，替换 core/front 全部硬编码 `DefaultAESKey` 解密点；pass-enc 支持 `-key`/同名 env）↔ 前端既有 `VITE_AES_KEY`，两端必须一致，缺省回落公开默认串（仅限开发）。顺带勘误：口令传输实为 AES-128-CBC（非文档所写 AES-GCM）。
+- **ops 业务表租户模型落地**（产品决策：ops 资源归租户）：30 张 ops 业务表挂 `TenantID` mixin（go-crud TenantPrivacy）——查询按租户行级过滤、Create 按操作者租户落库、Update/Delete 注入租户谓词；平台管理员（tenant 0）与系统视图看全量；`agent_node`/`node_metric` 保持平台级。后台入口系统性注入 viewer（MQTT 回调/清扫循环/构建 goroutine/终端录制/OpenAPI 回写：系统簿记用 SystemViewer，需归因的用 `tenantScopedCtx` 按父实体租户落库）——无 viewer 上下文会被租户策略直接拒绝，不注入即功能断裂。已归因：监控/预算/证书扫描告警、cron 触发脚本、流水线引擎、巡检聚合、终端回放分块。已知缺口（落平台）：cron/OpenAPI 触发的构建、分发批次推进补发指令；存量数据 tenant_id 为空=平台可见，多租户启用前需回填。
+
 ### 新增
 
 #### 节点与项目

@@ -23,6 +23,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
 	"go-wind-ops/pkg/oss"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/signal"
 	"go-wind-ops/pkg/topic"
 
@@ -75,13 +76,16 @@ type AgentService struct {
 	// waiters 同步指令的等待队列:request_id → 回执投递通道。
 	waiters sync.Map
 
+	// signKey 指令信封 HMAC 签名密钥(COMMAND_SIGN_KEY,空=未签名模式)。
+	signKey string
+
 	// terminalRoutes Web 终端输出路由:"agentId/sessionId" → 流输出通道。
 	terminalRoutesMu sync.Mutex
 	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
 func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, ossClient *oss.MinIOClient) *AgentService {
-	return &AgentService{
+	s := &AgentService{
 		ctx:              ctx,
 		repo:             repo,
 		recordRepo:       recordRepo,
@@ -98,8 +102,13 @@ func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRep
 		ossClient:        ossClient,
 		log:              ctx.NewLoggerHelper("agent/service/core-service"),
 
+		signKey:        signal.SignKeyFromEnv(),
 		terminalRoutes: make(map[string]chan *signal.TerminalIO),
 	}
+	if s.signKey == "" {
+		s.log.Warnf("%s 未配置,下发指令不做 HMAC 签名(agent 将接受未签名指令)——仅限开发环境,生产必须配置", signal.SignKeyEnv)
+	}
+	return s
 }
 
 // RegisterMqttBroker 注入共享 MQTT 连接(publish 用)。
@@ -122,6 +131,9 @@ func (s *AgentService) notifyDistAdvance(ctx context.Context, distributionID uin
 // (mqtt_server 装配时调用;多副本并发执行幂等。)
 func (s *AgentService) Start(ctx context.Context) {
 	go func() {
+		// 后台清扫注入系统 viewer:指令台账/分发/批次等已挂租户隐私策略,
+		// 无 viewer 的上下文会被 EvalQuery/EvalMutation 直接拒绝。
+		ctx = appViewer.NewSystemViewerContext(ctx)
 		ticker := time.NewTicker(offlineSweepInterval)
 		defer ticker.Stop()
 		for {
@@ -308,6 +320,9 @@ func nodeIDFromHeartbeat(s *AgentService, agentID string) uint32 {
 // HandleCommandResult 处理指令执行回执:按 request_id 回写指令台账终态;
 // 项目类指令同时把 agent 判定的运行状态回填项目表。
 func (s *AgentService) HandleCommandResult(ctx context.Context, topicStr string, _ broker.Headers, res *signal.CommandResult) error {
+	// MQTT 回调无操作者上下文:台账/批次/分发/备份终态化等已挂租户隐私,
+	// 注入系统 viewer(平台视图绕过租户过滤;归因字段由回执内容自带)。
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	if res == nil || res.RequestId == "" {
 		return nil
 	}
@@ -510,6 +525,9 @@ func (s *AgentService) publish(ctx context.Context, nodeID uint32, agentId strin
 		env.Payload = encoded
 		payloadJSON = string(encoded)
 	}
+	// 信封 HMAC 签名:COMMAND_SIGN_KEY 配置时对五元组(request_id/agent_id/
+	// action/issued_at/payload)签名,agent 侧强制校验(见 pkg/signal/sign.go)。
+	signal.SignEnvelope(env, s.signKey)
 
 	if _, err := s.recordRepo.Create(ctx, requestId, nodeID, agentId, string(action), payloadJSON, operatorId); err != nil {
 		return "", fmt.Errorf("create command record: %w", err)
@@ -616,7 +634,8 @@ func (s *AgentService) fireNodeOfflineAlert(node *ent.AgentNode) {
 	if s.alertRepo == nil {
 		return
 	}
-	ctx := context.Background()
+	// 告警表已挂租户隐私:后台路径注入系统 viewer(NODE_OFFLINE 属平台级)
+	ctx := appViewer.NewSystemViewerContext(context.Background())
 	if already, _ := s.alertRepo.HasUnresolvedAlert(ctx, node.ID, "NODE_OFFLINE"); already {
 		return
 	}
@@ -637,7 +656,8 @@ func (s *AgentService) fireNodeOnlineRecovery(agentID string) {
 	if s.alertRepo == nil {
 		return
 	}
-	ctx := context.Background()
+	// 告警表已挂租户隐私:后台路径注入系统 viewer
+	ctx := appViewer.NewSystemViewerContext(context.Background())
 	node, err := s.repo.GetByAgentID(ctx, agentID)
 	if err != nil || node == nil {
 		return

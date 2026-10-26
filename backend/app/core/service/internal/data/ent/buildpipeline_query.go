@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/buildpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *BuildPipelineQuery) Clone() *BuildPipelineQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.BuildPipeline.Query().
-//		GroupBy(buildpipeline.FieldCreatedAt).
+//		GroupBy(buildpipeline.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *BuildPipelineQuery) GroupBy(field string, fields ...string) *BuildPipelineGroupBy {
@@ -288,11 +289,11 @@ func (_q *BuildPipelineQuery) GroupBy(field string, fields ...string) *BuildPipe
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.BuildPipeline.Query().
-//		Select(buildpipeline.FieldCreatedAt).
+//		Select(buildpipeline.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *BuildPipelineQuery) Select(fields ...string) *BuildPipelineSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *BuildPipelineQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if buildpipeline.Policy == nil {
+		return errors.New("ent: uninitialized buildpipeline.Policy (forgotten import ent/runtime?)")
+	}
+	if err := buildpipeline.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

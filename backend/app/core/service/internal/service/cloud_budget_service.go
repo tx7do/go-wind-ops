@@ -143,6 +143,9 @@ func (s *CloudBudgetService) RunBudgetCheck(ctx context.Context, force bool) err
 		if b.Month != curMonth {
 			continue
 		}
+		// 后台扫描路径:按预算归属租户归因告警/投递(否则落 tenant 0);
+		// 每轮覆盖重建,租户间不串。
+		ctx = tenantScopedCtx(ctx, b.TenantID)
 		if force {
 			_ = s.budgetRepo.SetNotified(ctx, b.ID, false)
 			_ = s.budgetRepo.SetAnomalyNotified(ctx, b.ID, false)

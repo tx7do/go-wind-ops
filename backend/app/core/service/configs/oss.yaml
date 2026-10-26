@@ -3,7 +3,9 @@ oss:
     endpoint: "127.0.0.1:9000"
     upload_host: "127.0.0.1:9000"
     download_host: "http://127.0.0.1:9000"
-    access_key: "root"
-    secret_key: "*Abcd123456"
+    # 生产经 MINIO_ACCESS_KEY/MINIO_SECRET_KEY 环境变量注入(pkg/configenv 在装配期覆盖;
+    # 注意配置占位符 ${...} 不读 env,这里的 default 仅作 dev 回落)
+    access_key: "${MINIO_ACCESS_KEY:root}"
+    secret_key: "${MINIO_SECRET_KEY:*Abcd123456}"
     token: ""
     use_ssl: false

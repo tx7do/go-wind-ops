@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -436,7 +437,29 @@ func EnsureObjectName(fileDirectory, sourceFileName, contentType string, typ Gen
 	return GenerateObjectName(fileDirectory, fileExt, typ)
 }
 
-// JoinObjectName 拼接对象名
+// SanitizeObjectPathDir 清理调用方提供的对象键目录段:拒绝 `..` 段、剥掉
+// 首尾与连续斜杠、反斜杠转斜杠——对象键是字面量,允许任意键等于允许在共享
+// 桶内覆盖他人对象(如 agent-uploads/、backups/ 前缀)。
+func SanitizeObjectPathDir(dir string) string {
+	dir = strings.ReplaceAll(strings.TrimSpace(dir), `\`, "/")
+	segs := strings.Split(dir, "/")
+	out := make([]string, 0, len(segs))
+	for _, seg := range segs {
+		switch seg {
+		case "", ".":
+			continue
+		case "..":
+			if len(out) > 0 {
+				out = out[:len(out)-1] // 弹出上一段,最终不会逃出顶层前缀
+			}
+			continue
+		}
+		out = append(out, seg)
+	}
+	return strings.Join(out, "/")
+}
+
+// JoinObjectName 拼接对象名(filePath/fileName 调用方提供,经键卫生清理)
 func JoinObjectName(contentType string, filePath, fileName *string) (string, string) {
 	fileSuffix := ContentTypeToFileExtension(contentType)
 
@@ -444,12 +467,21 @@ func JoinObjectName(contentType string, filePath, fileName *string) (string, str
 	if fileName == nil {
 		_fileName = uuid.New().String() + fileSuffix
 	} else {
-		_fileName = *fileName
+		// 文件名单段化:去掉任何路径分隔符与父目录引用,只留基础名
+		base := filepath.Base(strings.ReplaceAll(strings.TrimSpace(*fileName), `\`, "/"))
+		if base == "" || base == "." || base == ".." || base == "/" {
+			base = uuid.New().String() + fileSuffix
+		}
+		_fileName = base
 	}
 
 	var objectName string
 	if filePath != nil {
-		objectName = *filePath + "/" + _fileName
+		if dir := SanitizeObjectPathDir(*filePath); dir != "" {
+			objectName = dir + "/" + _fileName
+		} else {
+			objectName = _fileName
+		}
 	} else {
 		objectName = _fileName
 	}

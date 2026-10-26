@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,6 +21,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/commandrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/distributionrecord"
 	"go-wind-ops/app/core/service/internal/data/ent/pipelinerun"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/machine"
 	pkgMetadata "go-wind-ops/pkg/metadata"
 
@@ -199,28 +201,36 @@ func (s *PipelineService) TriggerPipeline(ctx context.Context, req *opsV1.Trigge
 		return nil, opsV1.ErrorInternalServerError("%s", err.Error())
 	}
 	operatorID := operatorIDOf(ctx)
+	// 租户归因:执行 goroutine 脱离请求生命周期,显式带上触发者的租户,
+	// 步骤指令台账/脚本执行数据才能落对租户(否则落 tenant 0)。
+	tid := viewerTenantOf(ctx)
 	run, err := s.runRepo.Create(ctx, pipeline.GetId(), stepsJSON, operatorID, s.runnerID)
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("create run failed")
 	}
 
-	go s.executeRun(run.ID, pipeline.GetSteps(), operatorID)
+	go s.executeRun(run.ID, pipeline.GetSteps(), operatorID, tid)
 
-	s.log.Infof("pipeline triggered (pipeline=%d run=%d steps=%d operator=%d)",
-		pipeline.GetId(), run.ID, len(pipeline.GetSteps()), operatorID)
+	s.log.Infof("pipeline triggered (pipeline=%d run=%d steps=%d operator=%d tenant=%d)",
+		pipeline.GetId(), run.ID, len(pipeline.GetSteps()), operatorID, tid)
 	return &opsV1.TriggerPipelineResponse{RunId: &run.ID}, nil
 }
 
-// pipelineDetachedCtx 执行 goroutine 的上下文:脱离请求生命周期,保留操作人。
-func pipelineDetachedCtx(operatorID uint32) context.Context {
+// pipelineDetachedCtx 执行 goroutine 的上下文:脱离请求生命周期,保留操作人
+// 与租户。注意 metadata 只供 operatorIDOf 归因读取,viewer 必须显式注入——
+// 直连调用不经 ent.Server 中间件,没有 viewer 会兜底 SystemViewer(tenant 0)。
+func pipelineDetachedCtx(operatorID, tenantID uint32) context.Context {
 	c, _ := pkgMetadata.NewContext(context.Background(),
-		pkgMetadata.NewUserOperator(uint64(operatorID), 0, 0, identityV1.DataScope_ALL))
+		pkgMetadata.NewUserOperator(uint64(operatorID), uint64(tenantID), 0, identityV1.DataScope_ALL))
+	if tenantID > 0 {
+		c = viewer.WithContext(c, appViewer.NewUserViewer(uint64(operatorID), uint64(tenantID), 0, "", identityV1.DataScope_ALL))
+	}
 	return c
 }
 
 // executeRun 按序推进步骤,失败即中止;结果与日志增量落库。
-func (s *PipelineService) executeRun(runID uint32, steps []*opsV1.PipelineStep, operatorID uint32) {
-	ctx := pipelineDetachedCtx(operatorID)
+func (s *PipelineService) executeRun(runID uint32, steps []*opsV1.PipelineStep, operatorID, tenantID uint32) {
+	ctx := pipelineDetachedCtx(operatorID, tenantID)
 
 	if err := s.runRepo.MarkRunning(ctx, runID); err != nil {
 		s.log.Errorf("pipeline run mark running failed (run=%d): %s", runID, err.Error())

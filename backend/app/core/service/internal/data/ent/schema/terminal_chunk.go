@@ -59,6 +59,7 @@ func (TerminalChunk) Fields() []ent.Field {
 func (TerminalChunk) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

@@ -80,10 +80,12 @@ func (a *ApiAuditLogMiddleware) Handle(ctx context.Context, htr *http.Transport,
 	apiAuditLog.LogHash = trans.Ptr(a.hashLog(apiAuditLog))
 	apiAuditLog.Signature = a.signature(apiAuditLog)
 
-	// 写入日志
+	// 写入日志(失败必须带原始错误暴露,不允许静默吞掉——不吞错铁律)
 	if a.op.writeApiLogFunc != nil {
 		ctx = appViewer.NewSystemViewerContext(ctx)
-		_ = a.op.writeApiLogFunc(ctx, apiAuditLog)
+		if err := a.op.writeApiLogFunc(ctx, apiAuditLog); err != nil && a.op.logger != nil {
+			a.op.logger.Errorf("write api audit log: %v", err)
+		}
 	}
 }
 

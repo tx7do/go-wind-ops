@@ -24,6 +24,7 @@ import (
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/pkg/oss"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/signal"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
@@ -77,7 +78,9 @@ func (s *InspectionService) RunInspection(ctx context.Context, req *opsV1.RunIns
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("create inspection failed")
 	}
-	go s.execute(context.Background(), row.ID)
+	// 巡检记录已挂租户隐私:后台聚合 goroutine 按记录租户归因
+	// (tenantScopedCtx 覆盖系统兜底 viewer,平台级记录保持系统视图)
+	go s.execute(tenantScopedCtx(appViewer.NewSystemViewerContext(context.Background()), row.TenantID), row.ID)
 	return inspectionToDTO(mustInspection(s, ctx, row.ID)), nil
 }
 

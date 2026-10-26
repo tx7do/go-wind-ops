@@ -371,6 +371,9 @@ func (_u *ScriptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(script.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(script.FieldCreatedAt, field.TypeTime)
 	}
@@ -858,6 +861,9 @@ func (_u *ScriptUpdateOne) sqlSave(ctx context.Context) (_node *Script, err erro
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(script.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(script.FieldCreatedAt, field.TypeTime)

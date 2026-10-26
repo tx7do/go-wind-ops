@@ -18,6 +18,8 @@ type DistributionRecord struct {
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -54,7 +56,7 @@ func (*DistributionRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case distributionrecord.FieldID, distributionrecord.FieldDistributionID, distributionrecord.FieldBuildHistoryID, distributionrecord.FieldProjectID, distributionrecord.FieldNodeID, distributionrecord.FieldBatchNo, distributionrecord.FieldOperatorID:
+		case distributionrecord.FieldID, distributionrecord.FieldTenantID, distributionrecord.FieldDistributionID, distributionrecord.FieldBuildHistoryID, distributionrecord.FieldProjectID, distributionrecord.FieldNodeID, distributionrecord.FieldBatchNo, distributionrecord.FieldOperatorID:
 			values[i] = new(sql.NullInt64)
 		case distributionrecord.FieldCommandRequestID, distributionrecord.FieldStatus, distributionrecord.FieldError, distributionrecord.FieldResult:
 			values[i] = new(sql.NullString)
@@ -81,6 +83,13 @@ func (_m *DistributionRecord) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = uint32(value.Int64)
+		case distributionrecord.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
+			}
 		case distributionrecord.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -209,6 +218,11 @@ func (_m *DistributionRecord) String() string {
 	var builder strings.Builder
 	builder.WriteString("DistributionRecord(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))

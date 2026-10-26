@@ -6,6 +6,7 @@ import (
 	"go-wind-ops/pkg/serviceid"
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -158,22 +159,54 @@ type AuthenticationService struct {
 	redisClient   *redis.Client
 }
 
-// 登录失败锁定(防爆破):同用户名连续失败 N 次后锁定 M 分钟(Redis 计数)。
+// 登录失败锁定(防爆破):同 用户名+来源IP 连续失败 N 次后锁定 M 分钟(Redis 计数)。
+// 复合键而非纯用户名:防止任意攻击者对已知用户名故意失败 5 次即可把该账号
+// 全平台锁死 15 分钟(账号 DoS);按 IP 隔离后,攻击者只能锁死自己来源 IP 的
+// 登录,跨 IP 爆破另受验证码(默认开启)约束。
 const (
 	loginFailKeyPrefix = serviceid.ProjectName + ":login:fail:"
 	loginMaxFailures   = 5
 	loginLockMinutes   = 15
 )
 
-func loginFailKey(username string) string {
-	return loginFailKeyPrefix + strings.ToLower(username)
+func loginFailKey(username, ip string) string {
+	return loginFailKeyPrefix + strings.ToLower(username) + ":" + ip
+}
+
+// loginClientIP 提取登录来源 IP:优先 X-Forwarded-For 首跳(反代部署),
+// 其次 X-Real-IP,兜底 RemoteAddr。
+func loginClientIP(ctx context.Context) string {
+	tr, ok := ktransport.FromServerContext(ctx)
+	if !ok {
+		return "unknown"
+	}
+	htr, hok := tr.(*khttp.Transport)
+	if !hok || htr.Request() == nil {
+		return "unknown"
+	}
+	r := htr.Request()
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		if i := strings.IndexByte(xff, ','); i >= 0 {
+			xff = xff[:i]
+		}
+		if xff = strings.TrimSpace(xff); xff != "" {
+			return xff
+		}
+	}
+	if rip := strings.TrimSpace(r.Header.Get("X-Real-IP")); rip != "" {
+		return rip
+	}
+	if host, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
+		return host
+	}
+	return r.RemoteAddr
 }
 
 func (s *AuthenticationService) loginLockCheck(ctx context.Context, username string) error {
 	if s.redisClient == nil {
 		return nil
 	}
-	if n, err := s.redisClient.Get(ctx, loginFailKey(username)).Int(); err == nil && n >= loginMaxFailures {
+	if n, err := s.redisClient.Get(ctx, loginFailKey(username, loginClientIP(ctx))).Int(); err == nil && n >= loginMaxFailures {
 		return kratosErrors.New(http.StatusTooManyRequests, "TOO_MANY_REQUESTS",
 			"too many failed logins, retry later")
 	}
@@ -184,7 +217,7 @@ func (s *AuthenticationService) loginRecordFailure(ctx context.Context, username
 	if s.redisClient == nil {
 		return
 	}
-	key := loginFailKey(username)
+	key := loginFailKey(username, loginClientIP(ctx))
 	pipe := s.redisClient.TxPipeline()
 	pipe.Incr(ctx, key)
 	pipe.Expire(ctx, key, loginLockMinutes*time.Minute)
@@ -195,7 +228,7 @@ func (s *AuthenticationService) loginClearFailures(ctx context.Context, username
 	if s.redisClient == nil {
 		return
 	}
-	s.redisClient.Del(ctx, loginFailKey(username))
+	s.redisClient.Del(ctx, loginFailKey(username, loginClientIP(ctx)))
 }
 
 func NewAuthenticationService(

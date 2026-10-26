@@ -119,6 +119,7 @@ func (CloudInstance) Fields() []ent.Field {
 func (CloudInstance) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 	}
 }

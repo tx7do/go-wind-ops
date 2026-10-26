@@ -18,6 +18,8 @@ type LogSnapshot struct {
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -50,7 +52,7 @@ func (*LogSnapshot) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case logsnapshot.FieldID, logsnapshot.FieldCreatedBy, logsnapshot.FieldUpdatedBy, logsnapshot.FieldDeletedBy, logsnapshot.FieldProjectID, logsnapshot.FieldNodeID, logsnapshot.FieldSizeBytes:
+		case logsnapshot.FieldID, logsnapshot.FieldTenantID, logsnapshot.FieldCreatedBy, logsnapshot.FieldUpdatedBy, logsnapshot.FieldDeletedBy, logsnapshot.FieldProjectID, logsnapshot.FieldNodeID, logsnapshot.FieldSizeBytes:
 			values[i] = new(sql.NullInt64)
 		case logsnapshot.FieldProjectName, logsnapshot.FieldContent, logsnapshot.FieldTrigger:
 			values[i] = new(sql.NullString)
@@ -77,6 +79,13 @@ func (_m *LogSnapshot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = uint32(value.Int64)
+		case logsnapshot.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
+			}
 		case logsnapshot.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -191,6 +200,11 @@ func (_m *LogSnapshot) String() string {
 	var builder strings.Builder
 	builder.WriteString("LogSnapshot(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))

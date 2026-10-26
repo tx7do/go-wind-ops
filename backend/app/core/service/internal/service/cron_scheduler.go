@@ -17,6 +17,7 @@ import (
 
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/pkg/oss"
+	appViewer "go-wind-ops/pkg/entgo/viewer"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 )
 
@@ -202,8 +203,14 @@ func (s *CronScheduler) tickScripts(ctx context.Context) {
 			continue
 		}
 		s.log.Infof("cron script triggered (script=%d node=%d spec=%s)", sc.GetId(), nodeID, spec)
+		// 租户归因:定时触发的脚本执行/指令台账归属脚本作者的租户
+		// (后台路径无操作者上下文,默认会落 tenant 0)。
+		execCtx := ctx
+		if entity, gerr := s.scriptRepo.GetEntity(ctx, sc.GetId()); gerr == nil && entity != nil {
+			execCtx = tenantScopedCtx(ctx, entity.TenantID)
+		}
 		// 自动化链路:定时脚本入库时已被作者审阅,显式确认通过危险命令门槛。
-		if _, err = s.scriptService.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{
+		if _, err = s.scriptService.ExecuteScript(execCtx, &opsV1.ExecuteScriptRequest{
 			Id:               sc.GetId(),
 			NodeId:           &nodeID,
 			ConfirmDangerous: trans.Ptr(true),
@@ -458,7 +465,9 @@ func (s *CronScheduler) tickLogSnapshots(ctx context.Context) {
 	}
 	s.lastLogSnapshot = time.Now()
 	go func() {
-		bgCtx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+		// 扫描涉及大量已挂租户隐私的表(脚本锚点推进/监控防抖/证书探测...),
+		// 先注入系统 viewer;租户归因由各 tick 内 tenantScopedCtx 覆盖。
+		bgCtx, cancel := context.WithTimeout(appViewer.NewSystemViewerContext(context.Background()), 30*time.Minute)
 		defer cancel()
 		if err := s.logSnapshotService.CaptureAll(bgCtx); err != nil {
 			s.log.Warnf("scheduled log snapshot: %s", err.Error())

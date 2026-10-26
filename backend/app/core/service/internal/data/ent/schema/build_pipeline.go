@@ -54,6 +54,7 @@ func (BuildPipeline) Fields() []ent.Field {
 func (BuildPipeline) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

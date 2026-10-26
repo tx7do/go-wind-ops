@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/inspection"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *InspectionQuery) Clone() *InspectionQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Inspection.Query().
-//		GroupBy(inspection.FieldCreatedAt).
+//		GroupBy(inspection.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *InspectionQuery) GroupBy(field string, fields ...string) *InspectionGroupBy {
@@ -288,11 +289,11 @@ func (_q *InspectionQuery) GroupBy(field string, fields ...string) *InspectionGr
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Inspection.Query().
-//		Select(inspection.FieldCreatedAt).
+//		Select(inspection.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *InspectionQuery) Select(fields ...string) *InspectionSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *InspectionQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if inspection.Policy == nil {
+		return errors.New("ent: uninitialized inspection.Policy (forgotten import ent/runtime?)")
+	}
+	if err := inspection.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

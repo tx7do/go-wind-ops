@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
@@ -265,12 +266,12 @@ func (_q *TerminalChunkQuery) Clone() *TerminalChunkQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.TerminalChunk.Query().
-//		GroupBy(terminalchunk.FieldCreatedAt).
+//		GroupBy(terminalchunk.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *TerminalChunkQuery) GroupBy(field string, fields ...string) *TerminalChunkGroupBy {
@@ -288,11 +289,11 @@ func (_q *TerminalChunkQuery) GroupBy(field string, fields ...string) *TerminalC
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.TerminalChunk.Query().
-//		Select(terminalchunk.FieldCreatedAt).
+//		Select(terminalchunk.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *TerminalChunkQuery) Select(fields ...string) *TerminalChunkSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *TerminalChunkQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if terminalchunk.Policy == nil {
+		return errors.New("ent: uninitialized terminalchunk.Policy (forgotten import ent/runtime?)")
+	}
+	if err := terminalchunk.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

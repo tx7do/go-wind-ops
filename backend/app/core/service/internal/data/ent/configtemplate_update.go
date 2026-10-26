@@ -297,6 +297,9 @@ func (_u *ConfigTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configtemplate.FieldCreatedAt, field.TypeTime)
 	}
@@ -679,6 +682,9 @@ func (_u *ConfigTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ConfigTe
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configtemplate.FieldCreatedAt, field.TypeTime)

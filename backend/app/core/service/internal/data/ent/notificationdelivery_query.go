@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/notificationdelivery"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *NotificationDeliveryQuery) Clone() *NotificationDeliveryQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.NotificationDelivery.Query().
-//		GroupBy(notificationdelivery.FieldCreatedAt).
+//		GroupBy(notificationdelivery.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *NotificationDeliveryQuery) GroupBy(field string, fields ...string) *NotificationDeliveryGroupBy {
@@ -288,11 +289,11 @@ func (_q *NotificationDeliveryQuery) GroupBy(field string, fields ...string) *No
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.NotificationDelivery.Query().
-//		Select(notificationdelivery.FieldCreatedAt).
+//		Select(notificationdelivery.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *NotificationDeliveryQuery) Select(fields ...string) *NotificationDeliverySelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *NotificationDeliveryQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if notificationdelivery.Policy == nil {
+		return errors.New("ent: uninitialized notificationdelivery.Policy (forgotten import ent/runtime?)")
+	}
+	if err := notificationdelivery.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

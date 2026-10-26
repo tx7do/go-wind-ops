@@ -22,6 +22,20 @@ type LogSnapshotCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *LogSnapshotCreate) SetTenantID(v uint32) *LogSnapshotCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *LogSnapshotCreate) SetNillableTenantID(v *uint32) *LogSnapshotCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *LogSnapshotCreate) SetCreatedAt(v time.Time) *LogSnapshotCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -179,7 +193,9 @@ func (_c *LogSnapshotCreate) Mutation() *LogSnapshotMutation {
 
 // Save creates the LogSnapshot in the database.
 func (_c *LogSnapshotCreate) Save(ctx context.Context) (*LogSnapshot, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -206,7 +222,11 @@ func (_c *LogSnapshotCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *LogSnapshotCreate) defaults() {
+func (_c *LogSnapshotCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := logsnapshot.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.SizeBytes(); !ok {
 		v := logsnapshot.DefaultSizeBytes
 		_c.mutation.SetSizeBytes(v)
@@ -215,6 +235,7 @@ func (_c *LogSnapshotCreate) defaults() {
 		v := logsnapshot.DefaultTrigger
 		_c.mutation.SetTrigger(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -287,6 +308,10 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(logsnapshot.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(logsnapshot.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
@@ -342,7 +367,7 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.LogSnapshot.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -351,7 +376,7 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.LogSnapshotUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *LogSnapshotCreate) OnConflict(opts ...sql.ConflictOption) *LogSnapshotUpsertOne {
@@ -607,6 +632,9 @@ func (u *LogSnapshotUpsertOne) UpdateNewValues() *LogSnapshotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(logsnapshot.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(logsnapshot.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(logsnapshot.FieldCreatedAt)
@@ -1015,7 +1043,7 @@ func (_c *LogSnapshotCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.LogSnapshotUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *LogSnapshotCreateBulk) OnConflict(opts ...sql.ConflictOption) *LogSnapshotUpsertBulk {
@@ -1061,6 +1089,9 @@ func (u *LogSnapshotUpsertBulk) UpdateNewValues() *LogSnapshotUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(logsnapshot.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(logsnapshot.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(logsnapshot.FieldCreatedAt)

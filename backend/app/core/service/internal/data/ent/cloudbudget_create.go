@@ -22,6 +22,20 @@ type CloudBudgetCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CloudBudgetCreate) SetTenantID(v uint32) *CloudBudgetCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CloudBudgetCreate) SetNillableTenantID(v *uint32) *CloudBudgetCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *CloudBudgetCreate) SetCreatedAt(v time.Time) *CloudBudgetCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -251,7 +265,9 @@ func (_c *CloudBudgetCreate) Mutation() *CloudBudgetMutation {
 
 // Save creates the CloudBudget in the database.
 func (_c *CloudBudgetCreate) Save(ctx context.Context) (*CloudBudget, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -278,7 +294,11 @@ func (_c *CloudBudgetCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CloudBudgetCreate) defaults() {
+func (_c *CloudBudgetCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := cloudbudget.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.CloudAccountID(); !ok {
 		v := cloudbudget.DefaultCloudAccountID
 		_c.mutation.SetCloudAccountID(v)
@@ -311,6 +331,7 @@ func (_c *CloudBudgetCreate) defaults() {
 		v := cloudbudget.DefaultEnabled
 		_c.mutation.SetEnabled(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -381,6 +402,10 @@ func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(cloudbudget.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(cloudbudget.FieldCreatedAt, field.TypeTime, value)
@@ -453,7 +478,7 @@ func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.CloudBudget.Create().
-//		SetCreatedAt(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -462,7 +487,7 @@ func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CloudBudgetUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CloudBudgetCreate) OnConflict(opts ...sql.ConflictOption) *CloudBudgetUpsertOne {
@@ -778,6 +803,9 @@ func (u *CloudBudgetUpsertOne) UpdateNewValues() *CloudBudgetUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(cloudbudget.FieldID)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(cloudbudget.FieldTenantID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(cloudbudget.FieldCreatedAt)
@@ -1256,7 +1284,7 @@ func (_c *CloudBudgetCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CloudBudgetUpsert) {
-//			SetCreatedAt(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *CloudBudgetCreateBulk) OnConflict(opts ...sql.ConflictOption) *CloudBudgetUpsertBulk {
@@ -1302,6 +1330,9 @@ func (u *CloudBudgetUpsertBulk) UpdateNewValues() *CloudBudgetUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(cloudbudget.FieldID)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(cloudbudget.FieldTenantID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(cloudbudget.FieldCreatedAt)

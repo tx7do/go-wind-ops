@@ -74,6 +74,7 @@ func (BackupTask) Fields() []ent.Field {
 func (BackupTask) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
+		mixin.TenantID[uint32]{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 	}

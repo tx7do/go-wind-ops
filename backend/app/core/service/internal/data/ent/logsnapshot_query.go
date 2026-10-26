@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
 	"go-wind-ops/app/core/service/internal/data/ent/predicate"
@@ -265,12 +266,12 @@ func (_q *LogSnapshotQuery) Clone() *LogSnapshotQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.LogSnapshot.Query().
-//		GroupBy(logsnapshot.FieldCreatedAt).
+//		GroupBy(logsnapshot.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *LogSnapshotQuery) GroupBy(field string, fields ...string) *LogSnapshotGroupBy {
@@ -288,11 +289,11 @@ func (_q *LogSnapshotQuery) GroupBy(field string, fields ...string) *LogSnapshot
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		TenantID uint32 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.LogSnapshot.Query().
-//		Select(logsnapshot.FieldCreatedAt).
+//		Select(logsnapshot.FieldTenantID).
 //		Scan(ctx, &v)
 func (_q *LogSnapshotQuery) Select(fields ...string) *LogSnapshotSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -329,6 +330,12 @@ func (_q *LogSnapshotQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if logsnapshot.Policy == nil {
+		return errors.New("ent: uninitialized logsnapshot.Policy (forgotten import ent/runtime?)")
+	}
+	if err := logsnapshot.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

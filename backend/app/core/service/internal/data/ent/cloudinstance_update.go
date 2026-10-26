@@ -448,6 +448,9 @@ func (_u *CloudInstanceUpdate) sqlSave(ctx context.Context) (_node int, err erro
 			}
 		}
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint32)
+	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudinstance.FieldCreatedAt, field.TypeTime)
 	}
@@ -1020,6 +1023,9 @@ func (_u *CloudInstanceUpdateOne) sqlSave(ctx context.Context) (_node *CloudInst
 				ps[i](selector)
 			}
 		}
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint32)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudinstance.FieldCreatedAt, field.TypeTime)
