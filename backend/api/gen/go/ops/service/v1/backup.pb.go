@@ -773,6 +773,119 @@ func (x *GetBackupRecordDownloadUrlResponse) GetSizeBytes() int64 {
 	return 0
 }
 
+// RestoreBackupRecordRequest 恢复备份到节点
+type RestoreBackupRecordRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RecordId      uint32                 `protobuf:"varint,1,opt,name=record_id,json=recordId,proto3" json:"record_id,omitempty"`   // 备份记录ID(id 走 body:触发类 POST 不带 path 参数)
+	NodeId        uint32                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`         // 目标节点
+	TargetDir     string                 `protobuf:"bytes,3,opt,name=target_dir,json=targetDir,proto3" json:"target_dir,omitempty"` // 目标目录(须在授权目录内;包以 <recordId>.zip 落在该目录)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestoreBackupRecordRequest) Reset() {
+	*x = RestoreBackupRecordRequest{}
+	mi := &file_ops_service_v1_backup_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreBackupRecordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreBackupRecordRequest) ProtoMessage() {}
+
+func (x *RestoreBackupRecordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_backup_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestoreBackupRecordRequest.ProtoReflect.Descriptor instead.
+func (*RestoreBackupRecordRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_backup_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RestoreBackupRecordRequest) GetRecordId() uint32 {
+	if x != nil {
+		return x.RecordId
+	}
+	return 0
+}
+
+func (x *RestoreBackupRecordRequest) GetNodeId() uint32 {
+	if x != nil {
+		return x.NodeId
+	}
+	return 0
+}
+
+func (x *RestoreBackupRecordRequest) GetTargetDir() string {
+	if x != nil {
+		return x.TargetDir
+	}
+	return ""
+}
+
+type RestoreBackupRecordResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // 指令幂等键(结果见指令台账)
+	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`    // 落盘文件名
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestoreBackupRecordResponse) Reset() {
+	*x = RestoreBackupRecordResponse{}
+	mi := &file_ops_service_v1_backup_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreBackupRecordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreBackupRecordResponse) ProtoMessage() {}
+
+func (x *RestoreBackupRecordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_backup_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestoreBackupRecordResponse.ProtoReflect.Descriptor instead.
+func (*RestoreBackupRecordResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_backup_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *RestoreBackupRecordResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *RestoreBackupRecordResponse) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
 var File_ops_service_v1_backup_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_backup_proto_rawDesc = "" +
@@ -880,14 +993,24 @@ const file_ops_service_v1_backup_proto_rawDesc = "" +
 	"size_bytes\x18\x03 \x01(\x03H\x02R\tsizeBytes\x88\x01\x01B\x06\n" +
 	"\x04_urlB\r\n" +
 	"\v_object_keyB\r\n" +
-	"\v_size_bytes2\x89\x06\n" +
+	"\v_size_bytes\"\x80\x01\n" +
+	"\x1aRestoreBackupRecordRequest\x12 \n" +
+	"\trecord_id\x18\x01 \x01(\rB\x03\xe0A\x02R\brecordId\x12\x1c\n" +
+	"\anode_id\x18\x02 \x01(\rB\x03\xe0A\x02R\x06nodeId\x12\"\n" +
+	"\n" +
+	"target_dir\x18\x03 \x01(\tB\x03\xe0A\x02R\ttargetDir\"Y\n" +
+	"\x1bRestoreBackupRecordResponse\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12\x1b\n" +
+	"\tfile_name\x18\x02 \x01(\tR\bfileName2\xfb\x06\n" +
 	"\rBackupService\x12V\n" +
 	"\x0fListBackupTasks\x12\x19.pagination.PagingRequest\x1a&.ops.service.v1.ListBackupTaskResponse\"\x00\x12S\n" +
 	"\rGetBackupTask\x12$.ops.service.v1.GetBackupTaskRequest\x1a\x1a.ops.service.v1.BackupTask\"\x00\x12Y\n" +
 	"\x10CreateBackupTask\x12'.ops.service.v1.CreateBackupTaskRequest\x1a\x1a.ops.service.v1.BackupTask\"\x00\x12U\n" +
 	"\x10UpdateBackupTask\x12'.ops.service.v1.UpdateBackupTaskRequest\x1a\x16.google.protobuf.Empty\"\x00\x12U\n" +
 	"\x10DeleteBackupTask\x12'.ops.service.v1.DeleteBackupTaskRequest\x1a\x16.google.protobuf.Empty\"\x00\x12^\n" +
-	"\rTriggerBackup\x12$.ops.service.v1.TriggerBackupRequest\x1a%.ops.service.v1.TriggerBackupResponse\"\x00\x12Z\n" +
+	"\rTriggerBackup\x12$.ops.service.v1.TriggerBackupRequest\x1a%.ops.service.v1.TriggerBackupResponse\"\x00\x12p\n" +
+	"\x13RestoreBackupRecord\x12*.ops.service.v1.RestoreBackupRecordRequest\x1a+.ops.service.v1.RestoreBackupRecordResponse\"\x00\x12Z\n" +
 	"\x11ListBackupRecords\x12\x19.pagination.PagingRequest\x1a(.ops.service.v1.ListBackupRecordResponse\"\x00\x12\x85\x01\n" +
 	"\x1aGetBackupRecordDownloadUrl\x121.ops.service.v1.GetBackupRecordDownloadUrlRequest\x1a2.ops.service.v1.GetBackupRecordDownloadUrlResponse\"\x00B\xa8\x01\n" +
 	"\x12com.ops.service.v1B\vBackupProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
@@ -904,7 +1027,7 @@ func file_ops_service_v1_backup_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_backup_proto_rawDescData
 }
 
-var file_ops_service_v1_backup_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_ops_service_v1_backup_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_ops_service_v1_backup_proto_goTypes = []any{
 	(*BackupTask)(nil),                         // 0: ops.service.v1.BackupTask
 	(*ListBackupTaskResponse)(nil),             // 1: ops.service.v1.ListBackupTaskResponse
@@ -918,40 +1041,44 @@ var file_ops_service_v1_backup_proto_goTypes = []any{
 	(*ListBackupRecordResponse)(nil),           // 9: ops.service.v1.ListBackupRecordResponse
 	(*GetBackupRecordDownloadUrlRequest)(nil),  // 10: ops.service.v1.GetBackupRecordDownloadUrlRequest
 	(*GetBackupRecordDownloadUrlResponse)(nil), // 11: ops.service.v1.GetBackupRecordDownloadUrlResponse
-	(*timestamppb.Timestamp)(nil),              // 12: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),              // 13: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                   // 14: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                      // 15: google.protobuf.Empty
+	(*RestoreBackupRecordRequest)(nil),         // 12: ops.service.v1.RestoreBackupRecordRequest
+	(*RestoreBackupRecordResponse)(nil),        // 13: ops.service.v1.RestoreBackupRecordResponse
+	(*timestamppb.Timestamp)(nil),              // 14: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),              // 15: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                   // 16: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                      // 17: google.protobuf.Empty
 }
 var file_ops_service_v1_backup_proto_depIdxs = []int32{
-	12, // 0: ops.service.v1.BackupTask.last_cron_at:type_name -> google.protobuf.Timestamp
-	12, // 1: ops.service.v1.BackupTask.created_at:type_name -> google.protobuf.Timestamp
-	12, // 2: ops.service.v1.BackupTask.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 0: ops.service.v1.BackupTask.last_cron_at:type_name -> google.protobuf.Timestamp
+	14, // 1: ops.service.v1.BackupTask.created_at:type_name -> google.protobuf.Timestamp
+	14, // 2: ops.service.v1.BackupTask.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: ops.service.v1.ListBackupTaskResponse.items:type_name -> ops.service.v1.BackupTask
 	0,  // 4: ops.service.v1.CreateBackupTaskRequest.data:type_name -> ops.service.v1.BackupTask
 	0,  // 5: ops.service.v1.UpdateBackupTaskRequest.data:type_name -> ops.service.v1.BackupTask
-	13, // 6: ops.service.v1.UpdateBackupTaskRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 7: ops.service.v1.BackupRecord.finished_at:type_name -> google.protobuf.Timestamp
-	12, // 8: ops.service.v1.BackupRecord.created_at:type_name -> google.protobuf.Timestamp
+	15, // 6: ops.service.v1.UpdateBackupTaskRequest.update_mask:type_name -> google.protobuf.FieldMask
+	14, // 7: ops.service.v1.BackupRecord.finished_at:type_name -> google.protobuf.Timestamp
+	14, // 8: ops.service.v1.BackupRecord.created_at:type_name -> google.protobuf.Timestamp
 	8,  // 9: ops.service.v1.ListBackupRecordResponse.items:type_name -> ops.service.v1.BackupRecord
-	14, // 10: ops.service.v1.BackupService.ListBackupTasks:input_type -> pagination.PagingRequest
+	16, // 10: ops.service.v1.BackupService.ListBackupTasks:input_type -> pagination.PagingRequest
 	2,  // 11: ops.service.v1.BackupService.GetBackupTask:input_type -> ops.service.v1.GetBackupTaskRequest
 	3,  // 12: ops.service.v1.BackupService.CreateBackupTask:input_type -> ops.service.v1.CreateBackupTaskRequest
 	4,  // 13: ops.service.v1.BackupService.UpdateBackupTask:input_type -> ops.service.v1.UpdateBackupTaskRequest
 	5,  // 14: ops.service.v1.BackupService.DeleteBackupTask:input_type -> ops.service.v1.DeleteBackupTaskRequest
 	6,  // 15: ops.service.v1.BackupService.TriggerBackup:input_type -> ops.service.v1.TriggerBackupRequest
-	14, // 16: ops.service.v1.BackupService.ListBackupRecords:input_type -> pagination.PagingRequest
-	10, // 17: ops.service.v1.BackupService.GetBackupRecordDownloadUrl:input_type -> ops.service.v1.GetBackupRecordDownloadUrlRequest
-	1,  // 18: ops.service.v1.BackupService.ListBackupTasks:output_type -> ops.service.v1.ListBackupTaskResponse
-	0,  // 19: ops.service.v1.BackupService.GetBackupTask:output_type -> ops.service.v1.BackupTask
-	0,  // 20: ops.service.v1.BackupService.CreateBackupTask:output_type -> ops.service.v1.BackupTask
-	15, // 21: ops.service.v1.BackupService.UpdateBackupTask:output_type -> google.protobuf.Empty
-	15, // 22: ops.service.v1.BackupService.DeleteBackupTask:output_type -> google.protobuf.Empty
-	7,  // 23: ops.service.v1.BackupService.TriggerBackup:output_type -> ops.service.v1.TriggerBackupResponse
-	9,  // 24: ops.service.v1.BackupService.ListBackupRecords:output_type -> ops.service.v1.ListBackupRecordResponse
-	11, // 25: ops.service.v1.BackupService.GetBackupRecordDownloadUrl:output_type -> ops.service.v1.GetBackupRecordDownloadUrlResponse
-	18, // [18:26] is the sub-list for method output_type
-	10, // [10:18] is the sub-list for method input_type
+	12, // 16: ops.service.v1.BackupService.RestoreBackupRecord:input_type -> ops.service.v1.RestoreBackupRecordRequest
+	16, // 17: ops.service.v1.BackupService.ListBackupRecords:input_type -> pagination.PagingRequest
+	10, // 18: ops.service.v1.BackupService.GetBackupRecordDownloadUrl:input_type -> ops.service.v1.GetBackupRecordDownloadUrlRequest
+	1,  // 19: ops.service.v1.BackupService.ListBackupTasks:output_type -> ops.service.v1.ListBackupTaskResponse
+	0,  // 20: ops.service.v1.BackupService.GetBackupTask:output_type -> ops.service.v1.BackupTask
+	0,  // 21: ops.service.v1.BackupService.CreateBackupTask:output_type -> ops.service.v1.BackupTask
+	17, // 22: ops.service.v1.BackupService.UpdateBackupTask:output_type -> google.protobuf.Empty
+	17, // 23: ops.service.v1.BackupService.DeleteBackupTask:output_type -> google.protobuf.Empty
+	7,  // 24: ops.service.v1.BackupService.TriggerBackup:output_type -> ops.service.v1.TriggerBackupResponse
+	13, // 25: ops.service.v1.BackupService.RestoreBackupRecord:output_type -> ops.service.v1.RestoreBackupRecordResponse
+	9,  // 26: ops.service.v1.BackupService.ListBackupRecords:output_type -> ops.service.v1.ListBackupRecordResponse
+	11, // 27: ops.service.v1.BackupService.GetBackupRecordDownloadUrl:output_type -> ops.service.v1.GetBackupRecordDownloadUrlResponse
+	19, // [19:28] is the sub-list for method output_type
+	10, // [10:19] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -976,7 +1103,7 @@ func file_ops_service_v1_backup_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_backup_proto_rawDesc), len(file_ops_service_v1_backup_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

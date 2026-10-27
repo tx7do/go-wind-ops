@@ -91,3 +91,8 @@ func (s *BackupService) GetRecordDownloadUrl(ctx context.Context, req *opsV1.Get
 	}
 	return s.backupServiceClient.GetBackupRecordDownloadUrl(ctx, req)
 }
+
+// RestoreBackupRecord 恢复备份到节点(透传 core)。
+func (s *BackupService) RestoreBackupRecord(ctx context.Context, req *opsV1.RestoreBackupRecordRequest) (*opsV1.RestoreBackupRecordResponse, error) {
+	return s.backupServiceClient.RestoreBackupRecord(ctx, req)
+}

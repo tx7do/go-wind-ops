@@ -23,14 +23,49 @@ type PromotionPipelineService struct {
 	log                 *log.Helper
 	repo                *data.PromotionPipelineRepo
 	distributionService *DistributionService
+	recordRepo          *data.DistributionRecordRepo
 }
 
-func NewPromotionPipelineService(ctx *bootstrap.Context, repo *data.PromotionPipelineRepo, distributionService *DistributionService) *PromotionPipelineService {
+func NewPromotionPipelineService(ctx *bootstrap.Context, repo *data.PromotionPipelineRepo, distributionService *DistributionService, recordRepo *data.DistributionRecordRepo) *PromotionPipelineService {
 	return &PromotionPipelineService{
 		log:                 ctx.NewLoggerHelper("promotion-pipeline/service/core-service"),
 		repo:                repo,
 		distributionService: distributionService,
+		recordRepo:          recordRepo,
 	}
+}
+
+// GetPromotionStatus 发布台视图:逐阶段取分发配置最新记录的状态。
+// 记录量小(每阶段取全量再挑最大 id),不值得为展示加专用索引。
+func (s *PromotionPipelineService) GetPromotionStatus(ctx context.Context, req *opsV1.GetPromotionStatusRequest) (*opsV1.GetPromotionStatusResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+	e, err := s.repo.GetEntity(ctx, req.GetId())
+	if err != nil {
+		return nil, opsV1.ErrorNotFound("promotion pipeline not found")
+	}
+
+	resp := &opsV1.GetPromotionStatusResponse{}
+	for i, stageEnt := range e.Stages {
+		st := &opsV1.PromotionStageStatus{
+			StageIndex:     uint32(i),
+			Env:            stageEnt.Env,
+			Name:           stageEnt.Name,
+			DistributionId: stageEnt.DistributionID,
+		}
+		if records, rerr := s.recordRepo.ListByDistribution(ctx, stageEnt.DistributionID); rerr == nil && len(records) > 0 {
+			latest := records[len(records)-1] // repo 按批次/id 升序,末位即最新
+			if latest.Status != nil {
+				status := latest.Status.String()
+				st.LatestStatus = &status
+			}
+			st.LatestRecordId = &latest.ID
+			st.LatestAt = timestamppbOfPtr(latest.CreatedAt)
+		}
+		resp.Stages = append(resp.Stages, st)
+	}
+	return resp, nil
 }
 
 // validate 归一校验:名称必填 + 阶段非空。

@@ -1142,6 +1142,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.GetBackupRecordDownloadUrlResponse'
+    /admin/v1/backup-records:restore:
+        post:
+            tags:
+                - BackupService
+            description: 恢复备份到节点(id 走 body)
+            operationId: BackupService_RestoreBackupRecord
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.RestoreBackupRecordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.RestoreBackupRecordResponse'
     /admin/v1/backup-tasks:
         get:
             tags:
@@ -6857,6 +6876,26 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
+    /admin/v1/promotion-pipelines/{id}/status:
+        get:
+            tags:
+                - PromotionPipelineService
+            description: 阶段状态(发布台视图)
+            operationId: PromotionPipelineService_GetPromotionStatus
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.GetPromotionStatusResponse'
     /admin/v1/promotion-pipelines:delete:
         post:
             tags:
@@ -12015,6 +12054,13 @@ components:
                     format: bytes
                 offset:
                     type: string
+        ops.service.v1.GetPromotionStatusResponse:
+            type: object
+            properties:
+                stages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.PromotionStageStatus'
         ops.service.v1.ImportCloudCostsRequest:
             required:
                 - rows
@@ -12958,6 +13004,28 @@ components:
                 name:
                     type: string
             description: 晋升阶段
+        ops.service.v1.PromotionStageStatus:
+            type: object
+            properties:
+                stageIndex:
+                    type: integer
+                    format: uint32
+                env:
+                    type: string
+                name:
+                    type: string
+                distributionId:
+                    type: integer
+                    format: uint32
+                latestStatus:
+                    type: string
+                latestRecordId:
+                    type: integer
+                    format: uint32
+                latestAt:
+                    type: string
+                    format: date-time
+            description: PromotionStageStatus 单阶段状态
         ops.service.v1.PullAgentFileRequest:
             required:
                 - agentId
@@ -13056,6 +13124,29 @@ components:
                 id:
                     type: integer
                     format: uint32
+        ops.service.v1.RestoreBackupRecordRequest:
+            required:
+                - recordId
+                - nodeId
+                - targetDir
+            type: object
+            properties:
+                recordId:
+                    type: integer
+                    format: uint32
+                nodeId:
+                    type: integer
+                    format: uint32
+                targetDir:
+                    type: string
+            description: RestoreBackupRecordRequest 恢复备份到节点
+        ops.service.v1.RestoreBackupRecordResponse:
+            type: object
+            properties:
+                requestId:
+                    type: string
+                fileName:
+                    type: string
         ops.service.v1.RevokeAgentNodeRequest:
             required:
                 - id

@@ -24,5 +24,9 @@
   "updateFailed": "更新失败",
   "deleteSuccess": "已删除",
   "deleteFailed": "删除失败",
-  "deleteConfirmTitle": "确认删除该流水线?不影响其引用的分发配置。"
+  "deleteConfirmTitle": "确认删除该流水线?不影响其引用的分发配置。",
+  "statusAction": "阶段状态",
+  "latestStatus": "最新部署状态",
+  "latestRecord": "记录 ID",
+  "neverDeployed": "未部署过"
 }

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strings"
+	"path"
 	"context"
 	"fmt"
 	"time"
@@ -210,5 +212,57 @@ func (s *BackupService) GetBackupRecordDownloadUrl(ctx context.Context, req *ops
 		Url:       trans.Ptr(u.String()),
 		ObjectKey: trans.Ptr(record.GetObjectKey()),
 		SizeBytes: trans.Ptr(record.GetSizeBytes()),
+	}, nil
+}
+
+// RestoreBackupRecord 恢复备份包到指定节点:预签名下载 URL 经 file_push
+// 下发,agent 落盘到 target_dir/<recordId>.zip(目录须在 AGENT_ALLOWED_DIRS
+// 授权白名单内,agent 侧强制校验)。v1 只做"送达",解压/替换由使用者在
+// 目标机执行——恢复属于低频敏感动作,不静默自动化。
+func (s *BackupService) RestoreBackupRecord(ctx context.Context, req *opsV1.RestoreBackupRecordRequest) (*opsV1.RestoreBackupRecordResponse, error) {
+	if req == nil || req.GetRecordId() == 0 || req.GetNodeId() == 0 || strings.TrimSpace(req.GetTargetDir()) == "" {
+		return nil, opsV1.ErrorBadRequest("invalid parameter: recordId/nodeId/targetDir required")
+	}
+
+	record, err := s.recordRepo.Get(ctx, &opsV1.GetBackupRecordDownloadUrlRequest{Id: trans.Ptr(req.GetRecordId())})
+	if err != nil {
+		return nil, err
+	}
+	if record.GetStatus() != "SUCCESS" {
+		return nil, opsV1.ErrorBadRequest("backup record is not successful")
+	}
+	if s.ossClient == nil || s.ossClient.GetClient() == nil {
+		return nil, opsV1.ErrorServiceUnavailable("oss client not configured")
+	}
+
+	node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: trans.Ptr(req.GetNodeId())})
+	if err != nil || node == nil {
+		return nil, opsV1.ErrorNotFound("target node not found")
+	}
+
+	u, err := s.ossClient.GetClient().PresignedGetObject(ctx, record.GetBucket(), record.GetObjectKey(), backupDownloadExpiry, nil)
+	if err != nil {
+		s.log.Errorf("presign restore url (record=%d): %s", record.GetId(), err.Error())
+		return nil, opsV1.ErrorInternalServerError("presign url failed")
+	}
+
+	fileName := fmt.Sprintf("restore-%d.zip", record.GetId())
+	payload := &signal.FilePushPayload{
+		Path: path.Join(strings.TrimRight(req.GetTargetDir(), "/\\"), fileName),
+		Url:  u.String(),
+	}
+	operatorID := operatorIDOf(ctx)
+	requestId, err := s.agentService.PublishCommand(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionFilePush, payload, operatorID)
+	if err != nil {
+		s.log.Errorf("dispatch restore failed (record=%d node=%d): %s", record.GetId(), node.GetId(), err.Error())
+		return nil, opsV1.ErrorServiceUnavailable("dispatch command failed: mqtt channel unavailable")
+	}
+	s.log.Infof("backup restore dispatched (record=%d node=%d dir=%s requestId=%s)",
+		record.GetId(), node.GetId(), req.GetTargetDir(), requestId)
+
+	return &opsV1.RestoreBackupRecordResponse{
+		RequestId: requestId,
+		FileName:  fileName,
 	}, nil
 }

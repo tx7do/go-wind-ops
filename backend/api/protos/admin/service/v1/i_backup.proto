@@ -55,6 +55,14 @@ service BackupService {
     };
   }
 
+  // 恢复备份到节点(id 走 body)
+  rpc RestoreBackupRecord (ops.service.v1.RestoreBackupRecordRequest) returns (ops.service.v1.RestoreBackupRecordResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/backup-records:restore"
+      body: "*"
+    };
+  }
+
   // 查询备份记录列表(按 taskId 过滤)
   rpc ListRecords (pagination.PagingRequest) returns (ops.service.v1.ListBackupRecordResponse) {
     option (google.api.http) = {

@@ -28,14 +28,15 @@ var File_admin_service_v1_i_promotion_pipeline_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_promotion_pipeline_proto_rawDesc = "" +
 	"\n" +
-	"+admin/service/v1/i_promotion_pipeline.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a'ops/service/v1/promotion_pipeline.proto2\x98\a\n" +
+	"+admin/service/v1/i_promotion_pipeline.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a'ops/service/v1/promotion_pipeline.proto2\xb9\b\n" +
 	"\x18PromotionPipelineService\x12\x89\x01\n" +
 	"\x16ListPromotionPipelines\x12\x19.pagination.PagingRequest\x1a-.ops.service.v1.ListPromotionPipelineResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/promotion-pipelines\x12\x92\x01\n" +
 	"\x14GetPromotionPipeline\x12+.ops.service.v1.GetPromotionPipelineRequest\x1a!.ops.service.v1.PromotionPipeline\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/promotion-pipelines/{id}\x12\x96\x01\n" +
 	"\x17CreatePromotionPipeline\x12..ops.service.v1.CreatePromotionPipelineRequest\x1a!.ops.service.v1.PromotionPipeline\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/admin/v1/promotion-pipelines\x12\x92\x01\n" +
 	"\x17UpdatePromotionPipeline\x12..ops.service.v1.UpdatePromotionPipelineRequest\x1a\x16.google.protobuf.Empty\"/\x82\xd3\xe4\x93\x02):\x01*\"$/admin/v1/promotion-pipelines:update\x12\x92\x01\n" +
 	"\x17DeletePromotionPipeline\x12..ops.service.v1.DeletePromotionPipelineRequest\x1a\x16.google.protobuf.Empty\"/\x82\xd3\xe4\x93\x02):\x01*\"$/admin/v1/promotion-pipelines:delete\x12\x97\x01\n" +
-	"\x10PromotePromotion\x12'.ops.service.v1.PromotePromotionRequest\x1a(.ops.service.v1.PromotePromotionResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/admin/v1/promotion-pipelines:promoteB\xc2\x01\n" +
+	"\x10PromotePromotion\x12'.ops.service.v1.PromotePromotionRequest\x1a(.ops.service.v1.PromotePromotionResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/admin/v1/promotion-pipelines:promote\x12\x9e\x01\n" +
+	"\x12GetPromotionStatus\x12).ops.service.v1.GetPromotionStatusRequest\x1a*.ops.service.v1.GetPromotionStatusResponse\"1\x82\xd3\xe4\x93\x02+\x12)/admin/v1/promotion-pipelines/{id}/statusB\xc2\x01\n" +
 	"\x14com.admin.service.v1B\x17IPromotionPipelineProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_promotion_pipeline_proto_goTypes = []any{
@@ -45,29 +46,33 @@ var file_admin_service_v1_i_promotion_pipeline_proto_goTypes = []any{
 	(*v11.UpdatePromotionPipelineRequest)(nil), // 3: ops.service.v1.UpdatePromotionPipelineRequest
 	(*v11.DeletePromotionPipelineRequest)(nil), // 4: ops.service.v1.DeletePromotionPipelineRequest
 	(*v11.PromotePromotionRequest)(nil),        // 5: ops.service.v1.PromotePromotionRequest
-	(*v11.ListPromotionPipelineResponse)(nil),  // 6: ops.service.v1.ListPromotionPipelineResponse
-	(*v11.PromotionPipeline)(nil),              // 7: ops.service.v1.PromotionPipeline
-	(*emptypb.Empty)(nil),                      // 8: google.protobuf.Empty
-	(*v11.PromotePromotionResponse)(nil),       // 9: ops.service.v1.PromotePromotionResponse
+	(*v11.GetPromotionStatusRequest)(nil),      // 6: ops.service.v1.GetPromotionStatusRequest
+	(*v11.ListPromotionPipelineResponse)(nil),  // 7: ops.service.v1.ListPromotionPipelineResponse
+	(*v11.PromotionPipeline)(nil),              // 8: ops.service.v1.PromotionPipeline
+	(*emptypb.Empty)(nil),                      // 9: google.protobuf.Empty
+	(*v11.PromotePromotionResponse)(nil),       // 10: ops.service.v1.PromotePromotionResponse
+	(*v11.GetPromotionStatusResponse)(nil),     // 11: ops.service.v1.GetPromotionStatusResponse
 }
 var file_admin_service_v1_i_promotion_pipeline_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.PromotionPipelineService.ListPromotionPipelines:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.PromotionPipelineService.GetPromotionPipeline:input_type -> ops.service.v1.GetPromotionPipelineRequest
-	2, // 2: admin.service.v1.PromotionPipelineService.CreatePromotionPipeline:input_type -> ops.service.v1.CreatePromotionPipelineRequest
-	3, // 3: admin.service.v1.PromotionPipelineService.UpdatePromotionPipeline:input_type -> ops.service.v1.UpdatePromotionPipelineRequest
-	4, // 4: admin.service.v1.PromotionPipelineService.DeletePromotionPipeline:input_type -> ops.service.v1.DeletePromotionPipelineRequest
-	5, // 5: admin.service.v1.PromotionPipelineService.PromotePromotion:input_type -> ops.service.v1.PromotePromotionRequest
-	6, // 6: admin.service.v1.PromotionPipelineService.ListPromotionPipelines:output_type -> ops.service.v1.ListPromotionPipelineResponse
-	7, // 7: admin.service.v1.PromotionPipelineService.GetPromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
-	7, // 8: admin.service.v1.PromotionPipelineService.CreatePromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
-	8, // 9: admin.service.v1.PromotionPipelineService.UpdatePromotionPipeline:output_type -> google.protobuf.Empty
-	8, // 10: admin.service.v1.PromotionPipelineService.DeletePromotionPipeline:output_type -> google.protobuf.Empty
-	9, // 11: admin.service.v1.PromotionPipelineService.PromotePromotion:output_type -> ops.service.v1.PromotePromotionResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.PromotionPipelineService.ListPromotionPipelines:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.PromotionPipelineService.GetPromotionPipeline:input_type -> ops.service.v1.GetPromotionPipelineRequest
+	2,  // 2: admin.service.v1.PromotionPipelineService.CreatePromotionPipeline:input_type -> ops.service.v1.CreatePromotionPipelineRequest
+	3,  // 3: admin.service.v1.PromotionPipelineService.UpdatePromotionPipeline:input_type -> ops.service.v1.UpdatePromotionPipelineRequest
+	4,  // 4: admin.service.v1.PromotionPipelineService.DeletePromotionPipeline:input_type -> ops.service.v1.DeletePromotionPipelineRequest
+	5,  // 5: admin.service.v1.PromotionPipelineService.PromotePromotion:input_type -> ops.service.v1.PromotePromotionRequest
+	6,  // 6: admin.service.v1.PromotionPipelineService.GetPromotionStatus:input_type -> ops.service.v1.GetPromotionStatusRequest
+	7,  // 7: admin.service.v1.PromotionPipelineService.ListPromotionPipelines:output_type -> ops.service.v1.ListPromotionPipelineResponse
+	8,  // 8: admin.service.v1.PromotionPipelineService.GetPromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
+	8,  // 9: admin.service.v1.PromotionPipelineService.CreatePromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
+	9,  // 10: admin.service.v1.PromotionPipelineService.UpdatePromotionPipeline:output_type -> google.protobuf.Empty
+	9,  // 11: admin.service.v1.PromotionPipelineService.DeletePromotionPipeline:output_type -> google.protobuf.Empty
+	10, // 12: admin.service.v1.PromotionPipelineService.PromotePromotion:output_type -> ops.service.v1.PromotePromotionResponse
+	11, // 13: admin.service.v1.PromotionPipelineService.GetPromotionStatus:output_type -> ops.service.v1.GetPromotionStatusResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_promotion_pipeline_proto_init() }

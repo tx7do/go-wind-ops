@@ -1688,3 +1688,218 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetBackupRecordDownloadUrlResponseValidationError{}
+
+// Validate checks the field values on RestoreBackupRecordRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RestoreBackupRecordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RestoreBackupRecordRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RestoreBackupRecordRequestMultiError, or nil if none found.
+func (m *RestoreBackupRecordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RestoreBackupRecordRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RecordId
+
+	// no validation rules for NodeId
+
+	// no validation rules for TargetDir
+
+	if len(errors) > 0 {
+		return RestoreBackupRecordRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RestoreBackupRecordRequestMultiError is an error wrapping multiple
+// validation errors returned by RestoreBackupRecordRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RestoreBackupRecordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RestoreBackupRecordRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RestoreBackupRecordRequestMultiError) AllErrors() []error { return m }
+
+// RestoreBackupRecordRequestValidationError is the validation error returned
+// by RestoreBackupRecordRequest.Validate if the designated constraints aren't met.
+type RestoreBackupRecordRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RestoreBackupRecordRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RestoreBackupRecordRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RestoreBackupRecordRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RestoreBackupRecordRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RestoreBackupRecordRequestValidationError) ErrorName() string {
+	return "RestoreBackupRecordRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RestoreBackupRecordRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRestoreBackupRecordRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RestoreBackupRecordRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RestoreBackupRecordRequestValidationError{}
+
+// Validate checks the field values on RestoreBackupRecordResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RestoreBackupRecordResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RestoreBackupRecordResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RestoreBackupRecordResponseMultiError, or nil if none found.
+func (m *RestoreBackupRecordResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RestoreBackupRecordResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RequestId
+
+	// no validation rules for FileName
+
+	if len(errors) > 0 {
+		return RestoreBackupRecordResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RestoreBackupRecordResponseMultiError is an error wrapping multiple
+// validation errors returned by RestoreBackupRecordResponse.ValidateAll() if
+// the designated constraints aren't met.
+type RestoreBackupRecordResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RestoreBackupRecordResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RestoreBackupRecordResponseMultiError) AllErrors() []error { return m }
+
+// RestoreBackupRecordResponseValidationError is the validation error returned
+// by RestoreBackupRecordResponse.Validate if the designated constraints
+// aren't met.
+type RestoreBackupRecordResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RestoreBackupRecordResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RestoreBackupRecordResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RestoreBackupRecordResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RestoreBackupRecordResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RestoreBackupRecordResponseValidationError) ErrorName() string {
+	return "RestoreBackupRecordResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RestoreBackupRecordResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRestoreBackupRecordResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RestoreBackupRecordResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RestoreBackupRecordResponseValidationError{}

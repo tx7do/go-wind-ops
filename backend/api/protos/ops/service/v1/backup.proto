@@ -34,6 +34,10 @@ service BackupService {
   // 立即触发一次备份(异步,回执驱动记录终态)
   rpc TriggerBackup (TriggerBackupRequest) returns (TriggerBackupResponse) {}
 
+  // 恢复备份包到指定节点目录(经预签名 URL 下发 file_push;目标须在
+  // AGENT_ALLOWED_DIRS 授权目录内,agent 侧强制校验)
+  rpc RestoreBackupRecord (RestoreBackupRecordRequest) returns (RestoreBackupRecordResponse) {}
+
   // 查询备份记录列表(按 taskId 过滤)
   rpc ListBackupRecords (pagination.PagingRequest) returns (ListBackupRecordResponse) {}
 
@@ -233,4 +237,27 @@ message GetBackupRecordDownloadUrlResponse {
   optional string object_key = 2 [json_name = "objectKey"]; // 对象键
 
   optional int64 size_bytes = 3 [json_name = "sizeBytes"]; // 备份包大小
+}
+
+// RestoreBackupRecordRequest 恢复备份到节点
+message RestoreBackupRecordRequest {
+  uint32 record_id = 1 [
+    json_name = "recordId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 备份记录ID(id 走 body:触发类 POST 不带 path 参数)
+
+  uint32 node_id = 2 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标节点
+
+  string target_dir = 3 [
+    json_name = "targetDir",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标目录(须在授权目录内;包以 <recordId>.zip 落在该目录)
+}
+
+message RestoreBackupRecordResponse {
+  string request_id = 1 [json_name = "requestId"]; // 指令幂等键(结果见指令台账)
+  string file_name = 2 [json_name = "fileName"]; // 落盘文件名
 }

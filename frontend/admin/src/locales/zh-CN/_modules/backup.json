@@ -35,5 +35,14 @@
   "recordError": "失败原因",
   "download": "下载",
   "downloadFailed": "获取下载链接失败",
-  "action": "操作"
+  "action": "操作",
+  "restore": "恢复",
+  "restoreTitle": "恢复备份 #{{id}} 到节点",
+  "restoreNode": "目标节点",
+  "restoreNodePlaceholder": "选择节点",
+  "restoreDir": "目标目录",
+  "restoreHint": "备份包将以 restore-<记录ID>.zip 落到目标目录(须在 agent 授权目录内);送达后解压/替换需在目标机执行。结果见指令台账。",
+  "restoreGo": "恢复",
+  "restoreSent": "恢复指令已下发(文件 {{fileName}},requestId: {{requestId}})",
+  "restoreFailed": "恢复下发失败"
 }

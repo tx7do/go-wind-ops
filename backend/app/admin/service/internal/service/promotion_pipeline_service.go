@@ -55,3 +55,8 @@ func (s *PromotionPipelineService) DeletePromotionPipeline(ctx context.Context, 
 func (s *PromotionPipelineService) PromotePromotion(ctx context.Context, req *opsV1.PromotePromotionRequest) (*opsV1.PromotePromotionResponse, error) {
 	return s.promotionPipelineServiceClient.PromotePromotion(ctx, req)
 }
+
+// GetPromotionStatus 阶段状态(发布台视图)。
+func (s *PromotionPipelineService) GetPromotionStatus(ctx context.Context, req *opsV1.GetPromotionStatusRequest) (*opsV1.GetPromotionStatusResponse, error) {
+	return s.promotionPipelineServiceClient.GetPromotionStatus(ctx, req)
+}

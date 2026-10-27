@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
-import { App, Drawer, Tag } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { App, Drawer, Modal, Select, Space, Tag, Typography } from 'antd';
+import { DownloadOutlined, UndoOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_BackupRecord as BackupRecord } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import ListTable from '@/components/common/ListTable';
-import { fetchListBackupRecords, useGetBackupRecordDownloadUrl } from '@/api/hooks/backup';
+import { fetchListBackupRecords, useGetBackupRecordDownloadUrl, useRestoreBackupRecord } from '@/api/hooks/backup';
+import { useListAgentNodes } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 
 interface Props {
@@ -36,6 +38,21 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
       if (pollTimer.current) clearTimeout(pollTimer.current);
     };
   }, [taskId]);
+
+  const { data: nodeData } = useListAgentNodes(new PaginationQuery({ paging: { page: 1, pageSize: 500 } }));
+  const nodes = nodeData?.items ?? [];
+
+  const [restoreFor, setRestoreFor] = useState<BackupRecord | undefined>();
+  const [restoreNodeId, setRestoreNodeId] = useState<number | undefined>();
+  const [restoreDir, setRestoreDir] = useState('');
+
+  const restoreMutation = useRestoreBackupRecord({
+    onSuccess: (resp) => {
+      message.success(t('restoreSent', { fileName: resp.fileName || '', requestId: resp.requestId || '' }));
+      setRestoreFor(undefined);
+    },
+    onError: (e: Error) => message.error(e.message || t('restoreFailed')),
+  });
 
   const downloadMutation = useGetBackupRecordDownloadUrl({
     onSuccess: (resp) => {
@@ -91,9 +108,15 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
       width: 90,
       render: (_, r) =>
         r.status === 'SUCCESS' ? (
-          <a onClick={() => r.id && downloadMutation.mutate({ id: r.id })}>
-            <DownloadOutlined /> {t('download')}
-          </a>
+          <>
+            <a onClick={() => r.id && downloadMutation.mutate({ id: r.id })}>
+              <DownloadOutlined /> {t('download')}
+            </a>
+            {' '}
+            <a onClick={() => setRestoreFor(r)}>
+              <UndoOutlined /> {t('restore')}
+            </a>
+          </>
         ) : (
           <span>-</span>
         ),
@@ -101,6 +124,7 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
   ];
 
   return (
+    <>
     <Drawer
       title={t('recordsTitle', { name: taskName })}
       open={open}
@@ -134,6 +158,40 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
         />
       </div>
     </Drawer>
+      <Modal
+        title={t('restoreTitle', { id: restoreFor?.id ?? '' })}
+        open={!!restoreFor}
+        onCancel={() => setRestoreFor(undefined)}
+        onOk={() => {
+          if (restoreFor?.id && restoreNodeId && restoreDir.trim()) {
+            restoreMutation.mutate({ recordId: restoreFor.id, nodeId: restoreNodeId, targetDir: restoreDir.trim() });
+          }
+        }}
+        okButtonProps={{ disabled: !restoreNodeId || !restoreDir.trim() }}
+        okText={t('restoreGo')}
+        width={480}
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <div>
+            <div style={{ marginBottom: 4 }}>{t('restoreNode')}</div>
+            <Select
+              style={{ width: '100%' }}
+              showSearch
+              optionFilterProp="label"
+              placeholder={t('restoreNodePlaceholder')}
+              value={restoreNodeId}
+              onChange={setRestoreNodeId}
+              options={(nodes ?? []).map((n: any) => ({ value: n.id, label: n.name || n.hostname }))}
+            />
+          </div>
+          <div>
+            <div style={{ marginBottom: 4 }}>{t('restoreDir')}</div>
+            <Input value={restoreDir} onChange={(e) => setRestoreDir(e.target.value)} placeholder="/opt/restore" />
+          </div>
+          <Typography.Text type="secondary">{t('restoreHint')}</Typography.Text>
+        </Space>
+      </Modal>
+    </>
   );
 };
 

@@ -521,6 +521,188 @@ func (x *PromotePromotionResponse) GetEnv() string {
 	return ""
 }
 
+// GetPromotionStatusRequest 阶段状态查询
+type GetPromotionStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPromotionStatusRequest) Reset() {
+	*x = GetPromotionStatusRequest{}
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPromotionStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPromotionStatusRequest) ProtoMessage() {}
+
+func (x *GetPromotionStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPromotionStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetPromotionStatusRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetPromotionStatusRequest) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+// PromotionStageStatus 单阶段状态
+type PromotionStageStatus struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	StageIndex     uint32                 `protobuf:"varint,1,opt,name=stage_index,json=stageIndex,proto3" json:"stage_index,omitempty"`                     // 阶段下标
+	Env            string                 `protobuf:"bytes,2,opt,name=env,proto3" json:"env,omitempty"`                                                      // 环境标签
+	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`                                                    // 阶段名
+	DistributionId uint32                 `protobuf:"varint,4,opt,name=distribution_id,json=distributionId,proto3" json:"distribution_id,omitempty"`         // 分发配置
+	LatestStatus   *string                `protobuf:"bytes,5,opt,name=latest_status,json=latestStatus,proto3,oneof" json:"latest_status,omitempty"`          // 最新记录状态(空=未部署过)
+	LatestRecordId *uint32                `protobuf:"varint,6,opt,name=latest_record_id,json=latestRecordId,proto3,oneof" json:"latest_record_id,omitempty"` // 最新记录ID
+	LatestAt       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=latest_at,json=latestAt,proto3,oneof" json:"latest_at,omitempty"`                      // 最新记录时间
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *PromotionStageStatus) Reset() {
+	*x = PromotionStageStatus{}
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PromotionStageStatus) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PromotionStageStatus) ProtoMessage() {}
+
+func (x *PromotionStageStatus) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PromotionStageStatus.ProtoReflect.Descriptor instead.
+func (*PromotionStageStatus) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *PromotionStageStatus) GetStageIndex() uint32 {
+	if x != nil {
+		return x.StageIndex
+	}
+	return 0
+}
+
+func (x *PromotionStageStatus) GetEnv() string {
+	if x != nil {
+		return x.Env
+	}
+	return ""
+}
+
+func (x *PromotionStageStatus) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *PromotionStageStatus) GetDistributionId() uint32 {
+	if x != nil {
+		return x.DistributionId
+	}
+	return 0
+}
+
+func (x *PromotionStageStatus) GetLatestStatus() string {
+	if x != nil && x.LatestStatus != nil {
+		return *x.LatestStatus
+	}
+	return ""
+}
+
+func (x *PromotionStageStatus) GetLatestRecordId() uint32 {
+	if x != nil && x.LatestRecordId != nil {
+		return *x.LatestRecordId
+	}
+	return 0
+}
+
+func (x *PromotionStageStatus) GetLatestAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LatestAt
+	}
+	return nil
+}
+
+type GetPromotionStatusResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Stages        []*PromotionStageStatus `protobuf:"bytes,1,rep,name=stages,proto3" json:"stages,omitempty"` // 逐阶段状态
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPromotionStatusResponse) Reset() {
+	*x = GetPromotionStatusResponse{}
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPromotionStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPromotionStatusResponse) ProtoMessage() {}
+
+func (x *GetPromotionStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_promotion_pipeline_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPromotionStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetPromotionStatusResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetPromotionStatusResponse) GetStages() []*PromotionStageStatus {
+	if x != nil {
+		return x.Stages
+	}
+	return nil
+}
+
 var File_ops_service_v1_promotion_pipeline_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_promotion_pipeline_proto_rawDesc = "" +
@@ -570,14 +752,33 @@ const file_ops_service_v1_promotion_pipeline_proto_rawDesc = "" +
 	"\x18PromotePromotionResponse\x12\x1d\n" +
 	"\n" +
 	"record_ids\x18\x01 \x03(\rR\trecordIds\x12\x10\n" +
-	"\x03env\x18\x02 \x01(\tR\x03env2\x8d\x05\n" +
+	"\x03env\x18\x02 \x01(\tR\x03env\"<\n" +
+	"\x19GetPromotionStatusRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x03_id\"\xd2\x02\n" +
+	"\x14PromotionStageStatus\x12\x1f\n" +
+	"\vstage_index\x18\x01 \x01(\rR\n" +
+	"stageIndex\x12\x10\n" +
+	"\x03env\x18\x02 \x01(\tR\x03env\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12'\n" +
+	"\x0fdistribution_id\x18\x04 \x01(\rR\x0edistributionId\x12(\n" +
+	"\rlatest_status\x18\x05 \x01(\tH\x00R\flatestStatus\x88\x01\x01\x12-\n" +
+	"\x10latest_record_id\x18\x06 \x01(\rH\x01R\x0elatestRecordId\x88\x01\x01\x12<\n" +
+	"\tlatest_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\blatestAt\x88\x01\x01B\x10\n" +
+	"\x0e_latest_statusB\x13\n" +
+	"\x11_latest_record_idB\f\n" +
+	"\n" +
+	"_latest_at\"Z\n" +
+	"\x1aGetPromotionStatusResponse\x12<\n" +
+	"\x06stages\x18\x01 \x03(\v2$.ops.service.v1.PromotionStageStatusR\x06stages2\xfc\x05\n" +
 	"\x18PromotionPipelineService\x12d\n" +
 	"\x16ListPromotionPipelines\x12\x19.pagination.PagingRequest\x1a-.ops.service.v1.ListPromotionPipelineResponse\"\x00\x12h\n" +
 	"\x14GetPromotionPipeline\x12+.ops.service.v1.GetPromotionPipelineRequest\x1a!.ops.service.v1.PromotionPipeline\"\x00\x12n\n" +
 	"\x17CreatePromotionPipeline\x12..ops.service.v1.CreatePromotionPipelineRequest\x1a!.ops.service.v1.PromotionPipeline\"\x00\x12c\n" +
 	"\x17UpdatePromotionPipeline\x12..ops.service.v1.UpdatePromotionPipelineRequest\x1a\x16.google.protobuf.Empty\"\x00\x12c\n" +
 	"\x17DeletePromotionPipeline\x12..ops.service.v1.DeletePromotionPipelineRequest\x1a\x16.google.protobuf.Empty\"\x00\x12g\n" +
-	"\x10PromotePromotion\x12'.ops.service.v1.PromotePromotionRequest\x1a(.ops.service.v1.PromotePromotionResponse\"\x00B\xb3\x01\n" +
+	"\x10PromotePromotion\x12'.ops.service.v1.PromotePromotionRequest\x1a(.ops.service.v1.PromotePromotionResponse\"\x00\x12m\n" +
+	"\x12GetPromotionStatus\x12).ops.service.v1.GetPromotionStatusRequest\x1a*.ops.service.v1.GetPromotionStatusResponse\"\x00B\xb3\x01\n" +
 	"\x12com.ops.service.v1B\x16PromotionPipelineProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
 var (
@@ -592,7 +793,7 @@ func file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescData
 }
 
-var file_ops_service_v1_promotion_pipeline_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_ops_service_v1_promotion_pipeline_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_ops_service_v1_promotion_pipeline_proto_goTypes = []any{
 	(*PromotionStage)(nil),                 // 0: ops.service.v1.PromotionStage
 	(*PromotionPipeline)(nil),              // 1: ops.service.v1.PromotionPipeline
@@ -603,35 +804,42 @@ var file_ops_service_v1_promotion_pipeline_proto_goTypes = []any{
 	(*DeletePromotionPipelineRequest)(nil), // 6: ops.service.v1.DeletePromotionPipelineRequest
 	(*PromotePromotionRequest)(nil),        // 7: ops.service.v1.PromotePromotionRequest
 	(*PromotePromotionResponse)(nil),       // 8: ops.service.v1.PromotePromotionResponse
-	(*timestamppb.Timestamp)(nil),          // 9: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),          // 10: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),               // 11: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                  // 12: google.protobuf.Empty
+	(*GetPromotionStatusRequest)(nil),      // 9: ops.service.v1.GetPromotionStatusRequest
+	(*PromotionStageStatus)(nil),           // 10: ops.service.v1.PromotionStageStatus
+	(*GetPromotionStatusResponse)(nil),     // 11: ops.service.v1.GetPromotionStatusResponse
+	(*timestamppb.Timestamp)(nil),          // 12: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),          // 13: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),               // 14: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                  // 15: google.protobuf.Empty
 }
 var file_ops_service_v1_promotion_pipeline_proto_depIdxs = []int32{
 	0,  // 0: ops.service.v1.PromotionPipeline.stages:type_name -> ops.service.v1.PromotionStage
-	9,  // 1: ops.service.v1.PromotionPipeline.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: ops.service.v1.PromotionPipeline.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: ops.service.v1.ListPromotionPipelineResponse.items:type_name -> ops.service.v1.PromotionPipeline
 	1,  // 3: ops.service.v1.CreatePromotionPipelineRequest.data:type_name -> ops.service.v1.PromotionPipeline
 	1,  // 4: ops.service.v1.UpdatePromotionPipelineRequest.data:type_name -> ops.service.v1.PromotionPipeline
-	10, // 5: ops.service.v1.UpdatePromotionPipelineRequest.update_mask:type_name -> google.protobuf.FieldMask
-	11, // 6: ops.service.v1.PromotionPipelineService.ListPromotionPipelines:input_type -> pagination.PagingRequest
-	3,  // 7: ops.service.v1.PromotionPipelineService.GetPromotionPipeline:input_type -> ops.service.v1.GetPromotionPipelineRequest
-	4,  // 8: ops.service.v1.PromotionPipelineService.CreatePromotionPipeline:input_type -> ops.service.v1.CreatePromotionPipelineRequest
-	5,  // 9: ops.service.v1.PromotionPipelineService.UpdatePromotionPipeline:input_type -> ops.service.v1.UpdatePromotionPipelineRequest
-	6,  // 10: ops.service.v1.PromotionPipelineService.DeletePromotionPipeline:input_type -> ops.service.v1.DeletePromotionPipelineRequest
-	7,  // 11: ops.service.v1.PromotionPipelineService.PromotePromotion:input_type -> ops.service.v1.PromotePromotionRequest
-	2,  // 12: ops.service.v1.PromotionPipelineService.ListPromotionPipelines:output_type -> ops.service.v1.ListPromotionPipelineResponse
-	1,  // 13: ops.service.v1.PromotionPipelineService.GetPromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
-	1,  // 14: ops.service.v1.PromotionPipelineService.CreatePromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
-	12, // 15: ops.service.v1.PromotionPipelineService.UpdatePromotionPipeline:output_type -> google.protobuf.Empty
-	12, // 16: ops.service.v1.PromotionPipelineService.DeletePromotionPipeline:output_type -> google.protobuf.Empty
-	8,  // 17: ops.service.v1.PromotionPipelineService.PromotePromotion:output_type -> ops.service.v1.PromotePromotionResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	13, // 5: ops.service.v1.UpdatePromotionPipelineRequest.update_mask:type_name -> google.protobuf.FieldMask
+	12, // 6: ops.service.v1.PromotionStageStatus.latest_at:type_name -> google.protobuf.Timestamp
+	10, // 7: ops.service.v1.GetPromotionStatusResponse.stages:type_name -> ops.service.v1.PromotionStageStatus
+	14, // 8: ops.service.v1.PromotionPipelineService.ListPromotionPipelines:input_type -> pagination.PagingRequest
+	3,  // 9: ops.service.v1.PromotionPipelineService.GetPromotionPipeline:input_type -> ops.service.v1.GetPromotionPipelineRequest
+	4,  // 10: ops.service.v1.PromotionPipelineService.CreatePromotionPipeline:input_type -> ops.service.v1.CreatePromotionPipelineRequest
+	5,  // 11: ops.service.v1.PromotionPipelineService.UpdatePromotionPipeline:input_type -> ops.service.v1.UpdatePromotionPipelineRequest
+	6,  // 12: ops.service.v1.PromotionPipelineService.DeletePromotionPipeline:input_type -> ops.service.v1.DeletePromotionPipelineRequest
+	7,  // 13: ops.service.v1.PromotionPipelineService.PromotePromotion:input_type -> ops.service.v1.PromotePromotionRequest
+	9,  // 14: ops.service.v1.PromotionPipelineService.GetPromotionStatus:input_type -> ops.service.v1.GetPromotionStatusRequest
+	2,  // 15: ops.service.v1.PromotionPipelineService.ListPromotionPipelines:output_type -> ops.service.v1.ListPromotionPipelineResponse
+	1,  // 16: ops.service.v1.PromotionPipelineService.GetPromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
+	1,  // 17: ops.service.v1.PromotionPipelineService.CreatePromotionPipeline:output_type -> ops.service.v1.PromotionPipeline
+	15, // 18: ops.service.v1.PromotionPipelineService.UpdatePromotionPipeline:output_type -> google.protobuf.Empty
+	15, // 19: ops.service.v1.PromotionPipelineService.DeletePromotionPipeline:output_type -> google.protobuf.Empty
+	8,  // 20: ops.service.v1.PromotionPipelineService.PromotePromotion:output_type -> ops.service.v1.PromotePromotionResponse
+	11, // 21: ops.service.v1.PromotionPipelineService.GetPromotionStatus:output_type -> ops.service.v1.GetPromotionStatusResponse
+	15, // [15:22] is the sub-list for method output_type
+	8,  // [8:15] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_promotion_pipeline_proto_init() }
@@ -645,13 +853,15 @@ func file_ops_service_v1_promotion_pipeline_proto_init() {
 	file_ops_service_v1_promotion_pipeline_proto_msgTypes[5].OneofWrappers = []any{}
 	file_ops_service_v1_promotion_pipeline_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_promotion_pipeline_proto_msgTypes[7].OneofWrappers = []any{}
+	file_ops_service_v1_promotion_pipeline_proto_msgTypes[9].OneofWrappers = []any{}
+	file_ops_service_v1_promotion_pipeline_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_promotion_pipeline_proto_rawDesc), len(file_ops_service_v1_promotion_pipeline_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

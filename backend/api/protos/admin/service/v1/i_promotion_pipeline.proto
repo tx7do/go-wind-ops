@@ -55,4 +55,11 @@ service PromotionPipelineService {
       body: "*"
     };
   }
+
+  // 阶段状态(发布台视图)
+  rpc GetPromotionStatus (ops.service.v1.GetPromotionStatusRequest) returns (ops.service.v1.GetPromotionStatusResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/promotion-pipelines/{id}/status"
+    };
+  }
 }

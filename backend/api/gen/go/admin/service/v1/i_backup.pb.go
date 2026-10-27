@@ -28,14 +28,15 @@ var File_admin_service_v1_i_backup_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_backup_proto_rawDesc = "" +
 	"\n" +
-	"\x1fadmin/service/v1/i_backup.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1bops/service/v1/backup.proto2\xf0\a\n" +
+	"\x1fadmin/service/v1/i_backup.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1bops/service/v1/backup.proto2\x8e\t\n" +
 	"\rBackupService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a&.ops.service.v1.ListBackupTaskResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/admin/v1/backup-tasks\x12l\n" +
 	"\x03Get\x12$.ops.service.v1.GetBackupTaskRequest\x1a\x1a.ops.service.v1.BackupTask\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/admin/v1/backup-tasks/{id}\x12p\n" +
 	"\x06Create\x12'.ops.service.v1.CreateBackupTaskRequest\x1a\x1a.ops.service.v1.BackupTask\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/admin/v1/backup-tasks\x12q\n" +
 	"\x06Update\x12'.ops.service.v1.UpdateBackupTaskRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/admin/v1/backup-tasks/{id}\x12n\n" +
 	"\x06Delete\x12'.ops.service.v1.DeleteBackupTaskRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/admin/v1/backup-tasks/{id}\x12\x86\x01\n" +
-	"\aTrigger\x12$.ops.service.v1.TriggerBackupRequest\x1a%.ops.service.v1.TriggerBackupResponse\".\x82\xd3\xe4\x93\x02(:\x01*\"#/admin/v1/backup-tasks/trigger:send\x12t\n" +
+	"\aTrigger\x12$.ops.service.v1.TriggerBackupRequest\x1a%.ops.service.v1.TriggerBackupResponse\".\x82\xd3\xe4\x93\x02(:\x01*\"#/admin/v1/backup-tasks/trigger:send\x12\x9b\x01\n" +
+	"\x13RestoreBackupRecord\x12*.ops.service.v1.RestoreBackupRecordRequest\x1a+.ops.service.v1.RestoreBackupRecordResponse\"+\x82\xd3\xe4\x93\x02%:\x01*\" /admin/v1/backup-records:restore\x12t\n" +
 	"\vListRecords\x12\x19.pagination.PagingRequest\x1a(.ops.service.v1.ListBackupRecordResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/backup-records\x12\xb1\x01\n" +
 	"\x14GetRecordDownloadUrl\x121.ops.service.v1.GetBackupRecordDownloadUrlRequest\x1a2.ops.service.v1.GetBackupRecordDownloadUrlResponse\"2\x82\xd3\xe4\x93\x02,\x12*/admin/v1/backup-records/{id}/download-urlB\xb7\x01\n" +
 	"\x14com.admin.service.v1B\fIBackupProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
@@ -47,13 +48,15 @@ var file_admin_service_v1_i_backup_proto_goTypes = []any{
 	(*v11.UpdateBackupTaskRequest)(nil),            // 3: ops.service.v1.UpdateBackupTaskRequest
 	(*v11.DeleteBackupTaskRequest)(nil),            // 4: ops.service.v1.DeleteBackupTaskRequest
 	(*v11.TriggerBackupRequest)(nil),               // 5: ops.service.v1.TriggerBackupRequest
-	(*v11.GetBackupRecordDownloadUrlRequest)(nil),  // 6: ops.service.v1.GetBackupRecordDownloadUrlRequest
-	(*v11.ListBackupTaskResponse)(nil),             // 7: ops.service.v1.ListBackupTaskResponse
-	(*v11.BackupTask)(nil),                         // 8: ops.service.v1.BackupTask
-	(*emptypb.Empty)(nil),                          // 9: google.protobuf.Empty
-	(*v11.TriggerBackupResponse)(nil),              // 10: ops.service.v1.TriggerBackupResponse
-	(*v11.ListBackupRecordResponse)(nil),           // 11: ops.service.v1.ListBackupRecordResponse
-	(*v11.GetBackupRecordDownloadUrlResponse)(nil), // 12: ops.service.v1.GetBackupRecordDownloadUrlResponse
+	(*v11.RestoreBackupRecordRequest)(nil),         // 6: ops.service.v1.RestoreBackupRecordRequest
+	(*v11.GetBackupRecordDownloadUrlRequest)(nil),  // 7: ops.service.v1.GetBackupRecordDownloadUrlRequest
+	(*v11.ListBackupTaskResponse)(nil),             // 8: ops.service.v1.ListBackupTaskResponse
+	(*v11.BackupTask)(nil),                         // 9: ops.service.v1.BackupTask
+	(*emptypb.Empty)(nil),                          // 10: google.protobuf.Empty
+	(*v11.TriggerBackupResponse)(nil),              // 11: ops.service.v1.TriggerBackupResponse
+	(*v11.RestoreBackupRecordResponse)(nil),        // 12: ops.service.v1.RestoreBackupRecordResponse
+	(*v11.ListBackupRecordResponse)(nil),           // 13: ops.service.v1.ListBackupRecordResponse
+	(*v11.GetBackupRecordDownloadUrlResponse)(nil), // 14: ops.service.v1.GetBackupRecordDownloadUrlResponse
 }
 var file_admin_service_v1_i_backup_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.BackupService.List:input_type -> pagination.PagingRequest
@@ -62,18 +65,20 @@ var file_admin_service_v1_i_backup_proto_depIdxs = []int32{
 	3,  // 3: admin.service.v1.BackupService.Update:input_type -> ops.service.v1.UpdateBackupTaskRequest
 	4,  // 4: admin.service.v1.BackupService.Delete:input_type -> ops.service.v1.DeleteBackupTaskRequest
 	5,  // 5: admin.service.v1.BackupService.Trigger:input_type -> ops.service.v1.TriggerBackupRequest
-	0,  // 6: admin.service.v1.BackupService.ListRecords:input_type -> pagination.PagingRequest
-	6,  // 7: admin.service.v1.BackupService.GetRecordDownloadUrl:input_type -> ops.service.v1.GetBackupRecordDownloadUrlRequest
-	7,  // 8: admin.service.v1.BackupService.List:output_type -> ops.service.v1.ListBackupTaskResponse
-	8,  // 9: admin.service.v1.BackupService.Get:output_type -> ops.service.v1.BackupTask
-	8,  // 10: admin.service.v1.BackupService.Create:output_type -> ops.service.v1.BackupTask
-	9,  // 11: admin.service.v1.BackupService.Update:output_type -> google.protobuf.Empty
-	9,  // 12: admin.service.v1.BackupService.Delete:output_type -> google.protobuf.Empty
-	10, // 13: admin.service.v1.BackupService.Trigger:output_type -> ops.service.v1.TriggerBackupResponse
-	11, // 14: admin.service.v1.BackupService.ListRecords:output_type -> ops.service.v1.ListBackupRecordResponse
-	12, // 15: admin.service.v1.BackupService.GetRecordDownloadUrl:output_type -> ops.service.v1.GetBackupRecordDownloadUrlResponse
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	6,  // 6: admin.service.v1.BackupService.RestoreBackupRecord:input_type -> ops.service.v1.RestoreBackupRecordRequest
+	0,  // 7: admin.service.v1.BackupService.ListRecords:input_type -> pagination.PagingRequest
+	7,  // 8: admin.service.v1.BackupService.GetRecordDownloadUrl:input_type -> ops.service.v1.GetBackupRecordDownloadUrlRequest
+	8,  // 9: admin.service.v1.BackupService.List:output_type -> ops.service.v1.ListBackupTaskResponse
+	9,  // 10: admin.service.v1.BackupService.Get:output_type -> ops.service.v1.BackupTask
+	9,  // 11: admin.service.v1.BackupService.Create:output_type -> ops.service.v1.BackupTask
+	10, // 12: admin.service.v1.BackupService.Update:output_type -> google.protobuf.Empty
+	10, // 13: admin.service.v1.BackupService.Delete:output_type -> google.protobuf.Empty
+	11, // 14: admin.service.v1.BackupService.Trigger:output_type -> ops.service.v1.TriggerBackupResponse
+	12, // 15: admin.service.v1.BackupService.RestoreBackupRecord:output_type -> ops.service.v1.RestoreBackupRecordResponse
+	13, // 16: admin.service.v1.BackupService.ListRecords:output_type -> ops.service.v1.ListBackupRecordResponse
+	14, // 17: admin.service.v1.BackupService.GetRecordDownloadUrl:output_type -> ops.service.v1.GetBackupRecordDownloadUrlResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

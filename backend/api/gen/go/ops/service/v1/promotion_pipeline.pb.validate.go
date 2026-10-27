@@ -1195,3 +1195,396 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PromotePromotionResponseValidationError{}
+
+// Validate checks the field values on GetPromotionStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPromotionStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPromotionStatusRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPromotionStatusRequestMultiError, or nil if none found.
+func (m *GetPromotionStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPromotionStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if len(errors) > 0 {
+		return GetPromotionStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPromotionStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by GetPromotionStatusRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetPromotionStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPromotionStatusRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPromotionStatusRequestMultiError) AllErrors() []error { return m }
+
+// GetPromotionStatusRequestValidationError is the validation error returned by
+// GetPromotionStatusRequest.Validate if the designated constraints aren't met.
+type GetPromotionStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPromotionStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPromotionStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPromotionStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPromotionStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPromotionStatusRequestValidationError) ErrorName() string {
+	return "GetPromotionStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPromotionStatusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPromotionStatusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPromotionStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPromotionStatusRequestValidationError{}
+
+// Validate checks the field values on PromotionStageStatus with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PromotionStageStatus) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PromotionStageStatus with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PromotionStageStatusMultiError, or nil if none found.
+func (m *PromotionStageStatus) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PromotionStageStatus) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for StageIndex
+
+	// no validation rules for Env
+
+	// no validation rules for Name
+
+	// no validation rules for DistributionId
+
+	if m.LatestStatus != nil {
+		// no validation rules for LatestStatus
+	}
+
+	if m.LatestRecordId != nil {
+		// no validation rules for LatestRecordId
+	}
+
+	if m.LatestAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetLatestAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PromotionStageStatusValidationError{
+						field:  "LatestAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PromotionStageStatusValidationError{
+						field:  "LatestAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLatestAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PromotionStageStatusValidationError{
+					field:  "LatestAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PromotionStageStatusMultiError(errors)
+	}
+
+	return nil
+}
+
+// PromotionStageStatusMultiError is an error wrapping multiple validation
+// errors returned by PromotionStageStatus.ValidateAll() if the designated
+// constraints aren't met.
+type PromotionStageStatusMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PromotionStageStatusMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PromotionStageStatusMultiError) AllErrors() []error { return m }
+
+// PromotionStageStatusValidationError is the validation error returned by
+// PromotionStageStatus.Validate if the designated constraints aren't met.
+type PromotionStageStatusValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PromotionStageStatusValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PromotionStageStatusValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PromotionStageStatusValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PromotionStageStatusValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PromotionStageStatusValidationError) ErrorName() string {
+	return "PromotionStageStatusValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PromotionStageStatusValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPromotionStageStatus.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PromotionStageStatusValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PromotionStageStatusValidationError{}
+
+// Validate checks the field values on GetPromotionStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPromotionStatusResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPromotionStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPromotionStatusResponseMultiError, or nil if none found.
+func (m *GetPromotionStatusResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPromotionStatusResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetStages() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetPromotionStatusResponseValidationError{
+						field:  fmt.Sprintf("Stages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetPromotionStatusResponseValidationError{
+						field:  fmt.Sprintf("Stages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetPromotionStatusResponseValidationError{
+					field:  fmt.Sprintf("Stages[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetPromotionStatusResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPromotionStatusResponseMultiError is an error wrapping multiple
+// validation errors returned by GetPromotionStatusResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetPromotionStatusResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPromotionStatusResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPromotionStatusResponseMultiError) AllErrors() []error { return m }
+
+// GetPromotionStatusResponseValidationError is the validation error returned
+// by GetPromotionStatusResponse.Validate if the designated constraints aren't met.
+type GetPromotionStatusResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPromotionStatusResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPromotionStatusResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPromotionStatusResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPromotionStatusResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPromotionStatusResponseValidationError) ErrorName() string {
+	return "GetPromotionStatusResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPromotionStatusResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPromotionStatusResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPromotionStatusResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPromotionStatusResponseValidationError{}

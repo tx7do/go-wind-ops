@@ -28,6 +28,7 @@ const OperationBackupServiceGet = "/admin.service.v1.BackupService/Get"
 const OperationBackupServiceGetRecordDownloadUrl = "/admin.service.v1.BackupService/GetRecordDownloadUrl"
 const OperationBackupServiceList = "/admin.service.v1.BackupService/List"
 const OperationBackupServiceListRecords = "/admin.service.v1.BackupService/ListRecords"
+const OperationBackupServiceRestoreBackupRecord = "/admin.service.v1.BackupService/RestoreBackupRecord"
 const OperationBackupServiceTrigger = "/admin.service.v1.BackupService/Trigger"
 const OperationBackupServiceUpdate = "/admin.service.v1.BackupService/Update"
 
@@ -44,6 +45,8 @@ type BackupServiceHTTPServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListBackupTaskResponse, error)
 	// ListRecords 查询备份记录列表(按 taskId 过滤)
 	ListRecords(context.Context, *v1.PagingRequest) (*v11.ListBackupRecordResponse, error)
+	// RestoreBackupRecord 恢复备份到节点(id 走 body)
+	RestoreBackupRecord(context.Context, *v11.RestoreBackupRecordRequest) (*v11.RestoreBackupRecordResponse, error)
 	// Trigger 立即触发一次备份
 	Trigger(context.Context, *v11.TriggerBackupRequest) (*v11.TriggerBackupResponse, error)
 	// Update 更新备份任务
@@ -58,6 +61,7 @@ func RegisterBackupServiceHTTPServer(s *http.Server, srv BackupServiceHTTPServer
 	r.PUT("/admin/v1/backup-tasks/{id}", _BackupService_Update3_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/backup-tasks/{id}", _BackupService_Delete3_HTTP_Handler(srv))
 	r.POST("/admin/v1/backup-tasks/trigger:send", _BackupService_Trigger0_HTTP_Handler(srv))
+	r.POST("/admin/v1/backup-records:restore", _BackupService_RestoreBackupRecord0_HTTP_Handler(srv))
 	r.GET("/admin/v1/backup-records", _BackupService_ListRecords0_HTTP_Handler(srv))
 	r.GET("/admin/v1/backup-records/{id}/download-url", _BackupService_GetRecordDownloadUrl0_HTTP_Handler(srv))
 }
@@ -194,6 +198,28 @@ func _BackupService_Trigger0_HTTP_Handler(srv BackupServiceHTTPServer) func(ctx 
 	}
 }
 
+func _BackupService_RestoreBackupRecord0_HTTP_Handler(srv BackupServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RestoreBackupRecordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBackupServiceRestoreBackupRecord)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RestoreBackupRecord(ctx, req.(*v11.RestoreBackupRecordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.RestoreBackupRecordResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _BackupService_ListRecords0_HTTP_Handler(srv BackupServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
@@ -248,6 +274,8 @@ type BackupServiceHTTPClient interface {
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListBackupTaskResponse, err error)
 	// ListRecords 查询备份记录列表(按 taskId 过滤)
 	ListRecords(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListBackupRecordResponse, err error)
+	// RestoreBackupRecord 恢复备份到节点(id 走 body)
+	RestoreBackupRecord(ctx context.Context, req *v11.RestoreBackupRecordRequest, opts ...http.CallOption) (rsp *v11.RestoreBackupRecordResponse, err error)
 	// Trigger 立即触发一次备份
 	Trigger(ctx context.Context, req *v11.TriggerBackupRequest, opts ...http.CallOption) (rsp *v11.TriggerBackupResponse, err error)
 	// Update 更新备份任务
@@ -340,6 +368,20 @@ func (c *BackupServiceHTTPClientImpl) ListRecords(ctx context.Context, in *v1.Pa
 	opts = append(opts, http.Operation(OperationBackupServiceListRecords))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RestoreBackupRecord 恢复备份到节点(id 走 body)
+func (c *BackupServiceHTTPClientImpl) RestoreBackupRecord(ctx context.Context, in *v11.RestoreBackupRecordRequest, opts ...http.CallOption) (*v11.RestoreBackupRecordResponse, error) {
+	var out v11.RestoreBackupRecordResponse
+	pattern := "/admin/v1/backup-records:restore"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationBackupServiceRestoreBackupRecord))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

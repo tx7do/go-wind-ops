@@ -8,7 +8,7 @@ import {
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { App, Button, InputNumber, Modal, Popconfirm, Space, Tag } from 'antd';
+import { App, Button, InputNumber, Modal, Popconfirm, Space, Table, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, RocketOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import {
   fetchListPromotionPipelines,
   useCreatePromotionPipeline,
   useDeletePromotionPipeline,
+  useGetPromotionStatus,
   usePromotePromotion,
   useUpdatePromotionPipeline,
 } from '@/api/hooks/promotion-pipeline';
@@ -42,6 +43,7 @@ const PromotionPipelineManagement = () => {
   const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [editing, setEditing] = useState<Pipeline | undefined>();
   const [promoting, setPromoting] = useState<Pipeline | undefined>();
+  const [statusOf, setStatusOf] = useState<Pipeline | undefined>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listPromotionPipelines'] });
 
@@ -100,6 +102,9 @@ const PromotionPipelineManagement = () => {
       width: 160,
       fixed: 'right',
       render: (_, record) => [
+        <a key="status" onClick={() => setStatusOf(record)}>
+          {t('statusAction')}
+        </a>,
         <a
           key="promote"
           style={{ color: 'var(--ant-color-primary)' }}
@@ -218,6 +223,8 @@ const PromotionPipelineManagement = () => {
         )}
       </DrawerForm>
 
+      <StatusModal pipeline={statusOf} onClose={() => setStatusOf(undefined)} />
+
       <Modal
         title={`${t('promote')}: ${promoting?.name ?? ''}`}
         open={!!promoting}
@@ -282,3 +289,47 @@ const PromoteForm: React.FC<{
 };
 
 export default PromotionPipelineManagement;
+
+const StatusModal: React.FC<{ pipeline?: Pipeline; onClose: () => void }> = ({ pipeline, onClose }) => {
+  const { t } = useTranslation('promotion-pipeline');
+  const { data, isLoading } = useGetPromotionStatus(pipeline?.id);
+
+  return (
+    <Modal
+      title={`${t('statusAction')}: ${pipeline?.name ?? ''}`}
+      open={!!pipeline}
+      onCancel={onClose}
+      footer={<Button onClick={onClose}>{t('common:button.ok')}</Button>}
+      width={620}
+    >
+      <Table
+        size="small"
+        loading={isLoading}
+        rowKey={(r) => String(r.stageIndex)}
+        dataSource={data?.stages ?? []}
+        pagination={false}
+        columns={[
+          { title: '#', dataIndex: 'stageIndex', width: 48 },
+          { title: t('stageName'), dataIndex: 'name' },
+          { title: t('stageEnv'), dataIndex: 'env', width: 90 },
+          {
+            title: t('latestStatus'),
+            render: (_, r) =>
+              r.latestStatus ? (
+                <Tag
+                  color={
+                    r.latestStatus === 'SUCCESS' ? 'success' : r.latestStatus === 'FAILED' || r.latestStatus === 'SKIPPED' ? 'error' : 'processing'
+                  }
+                >
+                  {r.latestStatus}
+                </Tag>
+              ) : (
+                <Tag>{t('neverDeployed')}</Tag>
+              ),
+          },
+          { title: t('latestRecord'), dataIndex: 'latestRecordId', width: 100, render: (v) => v || '-' },
+        ]}
+      />
+    </Modal>
+  );
+};

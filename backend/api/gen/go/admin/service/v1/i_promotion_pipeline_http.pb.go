@@ -25,6 +25,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationPromotionPipelineServiceCreatePromotionPipeline = "/admin.service.v1.PromotionPipelineService/CreatePromotionPipeline"
 const OperationPromotionPipelineServiceDeletePromotionPipeline = "/admin.service.v1.PromotionPipelineService/DeletePromotionPipeline"
 const OperationPromotionPipelineServiceGetPromotionPipeline = "/admin.service.v1.PromotionPipelineService/GetPromotionPipeline"
+const OperationPromotionPipelineServiceGetPromotionStatus = "/admin.service.v1.PromotionPipelineService/GetPromotionStatus"
 const OperationPromotionPipelineServiceListPromotionPipelines = "/admin.service.v1.PromotionPipelineService/ListPromotionPipelines"
 const OperationPromotionPipelineServicePromotePromotion = "/admin.service.v1.PromotionPipelineService/PromotePromotion"
 const OperationPromotionPipelineServiceUpdatePromotionPipeline = "/admin.service.v1.PromotionPipelineService/UpdatePromotionPipeline"
@@ -36,6 +37,8 @@ type PromotionPipelineServiceHTTPServer interface {
 	DeletePromotionPipeline(context.Context, *v11.DeletePromotionPipelineRequest) (*emptypb.Empty, error)
 	// GetPromotionPipeline 查询流水线详情
 	GetPromotionPipeline(context.Context, *v11.GetPromotionPipelineRequest) (*v11.PromotionPipeline, error)
+	// GetPromotionStatus 阶段状态(发布台视图)
+	GetPromotionStatus(context.Context, *v11.GetPromotionStatusRequest) (*v11.GetPromotionStatusResponse, error)
 	// ListPromotionPipelines 查询流水线列表
 	ListPromotionPipelines(context.Context, *v1.PagingRequest) (*v11.ListPromotionPipelineResponse, error)
 	// PromotePromotion 晋升(触发指定阶段分发;id 走 body)
@@ -52,6 +55,7 @@ func RegisterPromotionPipelineServiceHTTPServer(s *http.Server, srv PromotionPip
 	r.POST("/admin/v1/promotion-pipelines:update", _PromotionPipelineService_UpdatePromotionPipeline0_HTTP_Handler(srv))
 	r.POST("/admin/v1/promotion-pipelines:delete", _PromotionPipelineService_DeletePromotionPipeline0_HTTP_Handler(srv))
 	r.POST("/admin/v1/promotion-pipelines:promote", _PromotionPipelineService_PromotePromotion0_HTTP_Handler(srv))
+	r.GET("/admin/v1/promotion-pipelines/{id}/status", _PromotionPipelineService_GetPromotionStatus0_HTTP_Handler(srv))
 }
 
 func _PromotionPipelineService_ListPromotionPipelines0_HTTP_Handler(srv PromotionPipelineServiceHTTPServer) func(ctx http.Context) error {
@@ -183,6 +187,28 @@ func _PromotionPipelineService_PromotePromotion0_HTTP_Handler(srv PromotionPipel
 	}
 }
 
+func _PromotionPipelineService_GetPromotionStatus0_HTTP_Handler(srv PromotionPipelineServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetPromotionStatusRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPromotionPipelineServiceGetPromotionStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetPromotionStatus(ctx, req.(*v11.GetPromotionStatusRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.GetPromotionStatusResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PromotionPipelineServiceHTTPClient interface {
 	// CreatePromotionPipeline 创建流水线
 	CreatePromotionPipeline(ctx context.Context, req *v11.CreatePromotionPipelineRequest, opts ...http.CallOption) (rsp *v11.PromotionPipeline, err error)
@@ -190,6 +216,8 @@ type PromotionPipelineServiceHTTPClient interface {
 	DeletePromotionPipeline(ctx context.Context, req *v11.DeletePromotionPipelineRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// GetPromotionPipeline 查询流水线详情
 	GetPromotionPipeline(ctx context.Context, req *v11.GetPromotionPipelineRequest, opts ...http.CallOption) (rsp *v11.PromotionPipeline, err error)
+	// GetPromotionStatus 阶段状态(发布台视图)
+	GetPromotionStatus(ctx context.Context, req *v11.GetPromotionStatusRequest, opts ...http.CallOption) (rsp *v11.GetPromotionStatusResponse, err error)
 	// ListPromotionPipelines 查询流水线列表
 	ListPromotionPipelines(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPromotionPipelineResponse, err error)
 	// PromotePromotion 晋升(触发指定阶段分发;id 走 body)
@@ -240,6 +268,20 @@ func (c *PromotionPipelineServiceHTTPClientImpl) GetPromotionPipeline(ctx contex
 	pattern := "/admin/v1/promotion-pipelines/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPromotionPipelineServiceGetPromotionPipeline))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetPromotionStatus 阶段状态(发布台视图)
+func (c *PromotionPipelineServiceHTTPClientImpl) GetPromotionStatus(ctx context.Context, in *v11.GetPromotionStatusRequest, opts ...http.CallOption) (*v11.GetPromotionStatusResponse, error) {
+	var out v11.GetPromotionStatusResponse
+	pattern := "/admin/v1/promotion-pipelines/{id}/status"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPromotionPipelineServiceGetPromotionStatus))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

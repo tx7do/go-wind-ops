@@ -2108,6 +2108,10 @@ export interface BackupService {
   Trigger(
     request: opsservicev1_TriggerBackupRequest,
   ): Promise<opsservicev1_TriggerBackupResponse>;
+  // 恢复备份到节点(id 走 body)
+  RestoreBackupRecord(
+    request: opsservicev1_RestoreBackupRecordRequest,
+  ): Promise<opsservicev1_RestoreBackupRecordResponse>;
   // 查询备份记录列表(按 taskId 过滤)
   ListRecords(
     request: pagination_PagingRequest,
@@ -2240,6 +2244,14 @@ export function createBackupServiceClient(
         service: 'BackupService',
         method: 'Trigger',
       }) as Promise<opsservicev1_TriggerBackupResponse>;
+    },
+    RestoreBackupRecord(request) {
+      const path = `/admin/v1/backup-records:restore`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BackupService',
+        method: 'RestoreBackupRecord',
+      }) as Promise<opsservicev1_RestoreBackupRecordResponse>;
     },
     ListRecords(request) {
       const path = `/admin/v1/backup-records`;
@@ -2393,6 +2405,24 @@ export type opsservicev1_TriggerBackupRequest = {
 export type opsservicev1_TriggerBackupResponse = {
   commandRequestId?: string;
   recordId?: number;
+};
+
+// RestoreBackupRecordRequest 恢复备份到节点
+export type opsservicev1_RestoreBackupRecordRequest = {
+  //
+  // Behaviors: REQUIRED
+  nodeId: number | undefined;
+  //
+  // Behaviors: REQUIRED
+  recordId: number | undefined;
+  //
+  // Behaviors: REQUIRED
+  targetDir: string | undefined;
+};
+
+export type opsservicev1_RestoreBackupRecordResponse = {
+  fileName: string | undefined;
+  requestId: string | undefined;
 };
 
 export type opsservicev1_ListBackupRecordResponse = {
@@ -10070,6 +10100,10 @@ export interface PromotionPipelineService {
   PromotePromotion(
     request: opsservicev1_PromotePromotionRequest,
   ): Promise<opsservicev1_PromotePromotionResponse>;
+  // 阶段状态(发布台视图)
+  GetPromotionStatus(
+    request: opsservicev1_GetPromotionStatusRequest,
+  ): Promise<opsservicev1_GetPromotionStatusResponse>;
 }
 
 export function createPromotionPipelineServiceClient(
@@ -10187,6 +10221,17 @@ export function createPromotionPipelineServiceClient(
         method: 'PromotePromotion',
       }) as Promise<opsservicev1_PromotePromotionResponse>;
     },
+    GetPromotionStatus(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/promotion-pipelines/${request.id}/status`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PromotionPipelineService',
+        method: 'GetPromotionStatus',
+      }) as Promise<opsservicev1_GetPromotionStatusResponse>;
+    },
   };
 }
 export type opsservicev1_ListPromotionPipelineResponse = {
@@ -10257,6 +10302,28 @@ export type opsservicev1_PromotePromotionRequest = {
 export type opsservicev1_PromotePromotionResponse = {
   env: string | undefined;
   recordIds: number[] | undefined;
+};
+
+// GetPromotionStatusRequest 阶段状态查询
+export type opsservicev1_GetPromotionStatusRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_GetPromotionStatusResponse = {
+  stages: opsservicev1_PromotionStageStatus[] | undefined;
+};
+
+// PromotionStageStatus 单阶段状态
+export type opsservicev1_PromotionStageStatus = {
+  distributionId: number | undefined;
+  env: string | undefined;
+  latestAt?: wellKnownTimestamp;
+  latestRecordId?: number;
+  latestStatus?: string;
+  name: string | undefined;
+  stageIndex: number | undefined;
 };
 
 // RepositoryService 构建源仓库管理

@@ -35,5 +35,14 @@
   "recordError": "Error",
   "download": "Download",
   "downloadFailed": "Failed to get download URL",
-  "action": "Actions"
+  "action": "Actions",
+  "restore": "Restore",
+  "restoreTitle": "Restore backup #{{id}} to node",
+  "restoreNode": "Target node",
+  "restoreNodePlaceholder": "Select a node",
+  "restoreDir": "Target directory",
+  "restoreHint": "The archive lands as restore-<recordID>.zip under the target directory (must be inside agent allowed dirs); unzip/replace on the target afterwards. Track progress in command records.",
+  "restoreGo": "Restore",
+  "restoreSent": "Restore dispatched (file {{fileName}}, requestId: {{requestId}})",
+  "restoreFailed": "Failed to dispatch restore"
 }

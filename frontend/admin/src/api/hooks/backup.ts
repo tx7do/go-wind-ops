@@ -1,10 +1,13 @@
 import {
+
+
   useMutation,
   type UseMutationOptions,
   useQuery,
   type UseQueryOptions,
 } from '@tanstack/react-query';
 import {
+  type opsservicev1_RestoreBackupRecordResponse,
   type opsservicev1_BackupRecord,
   type opsservicev1_BackupTask,
   type opsservicev1_GetBackupRecordDownloadUrlResponse,
@@ -109,3 +112,16 @@ export function useGetBackupRecordDownloadUrl(
 }
 
 export type { opsservicev1_BackupRecord };
+
+export function useRestoreBackupRecord(
+  options?: UseMutationOptions<
+    opsservicev1_RestoreBackupRecordResponse,
+    Error,
+    { recordId: number; nodeId: number; targetDir: string }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.backupService.RestoreBackupRecord(req as never),
+    ...options,
+  });
+}

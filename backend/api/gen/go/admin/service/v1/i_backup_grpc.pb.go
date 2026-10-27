@@ -28,6 +28,7 @@ const (
 	BackupService_Update_FullMethodName               = "/admin.service.v1.BackupService/Update"
 	BackupService_Delete_FullMethodName               = "/admin.service.v1.BackupService/Delete"
 	BackupService_Trigger_FullMethodName              = "/admin.service.v1.BackupService/Trigger"
+	BackupService_RestoreBackupRecord_FullMethodName  = "/admin.service.v1.BackupService/RestoreBackupRecord"
 	BackupService_ListRecords_FullMethodName          = "/admin.service.v1.BackupService/ListRecords"
 	BackupService_GetRecordDownloadUrl_FullMethodName = "/admin.service.v1.BackupService/GetRecordDownloadUrl"
 )
@@ -50,6 +51,8 @@ type BackupServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeleteBackupTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 立即触发一次备份
 	Trigger(ctx context.Context, in *v11.TriggerBackupRequest, opts ...grpc.CallOption) (*v11.TriggerBackupResponse, error)
+	// 恢复备份到节点(id 走 body)
+	RestoreBackupRecord(ctx context.Context, in *v11.RestoreBackupRecordRequest, opts ...grpc.CallOption) (*v11.RestoreBackupRecordResponse, error)
 	// 查询备份记录列表(按 taskId 过滤)
 	ListRecords(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListBackupRecordResponse, error)
 	// 获取备份包下载预签名 URL
@@ -124,6 +127,16 @@ func (c *backupServiceClient) Trigger(ctx context.Context, in *v11.TriggerBackup
 	return out, nil
 }
 
+func (c *backupServiceClient) RestoreBackupRecord(ctx context.Context, in *v11.RestoreBackupRecordRequest, opts ...grpc.CallOption) (*v11.RestoreBackupRecordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.RestoreBackupRecordResponse)
+	err := c.cc.Invoke(ctx, BackupService_RestoreBackupRecord_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *backupServiceClient) ListRecords(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListBackupRecordResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.ListBackupRecordResponse)
@@ -162,6 +175,8 @@ type BackupServiceServer interface {
 	Delete(context.Context, *v11.DeleteBackupTaskRequest) (*emptypb.Empty, error)
 	// 立即触发一次备份
 	Trigger(context.Context, *v11.TriggerBackupRequest) (*v11.TriggerBackupResponse, error)
+	// 恢复备份到节点(id 走 body)
+	RestoreBackupRecord(context.Context, *v11.RestoreBackupRecordRequest) (*v11.RestoreBackupRecordResponse, error)
 	// 查询备份记录列表(按 taskId 过滤)
 	ListRecords(context.Context, *v1.PagingRequest) (*v11.ListBackupRecordResponse, error)
 	// 获取备份包下载预签名 URL
@@ -193,6 +208,9 @@ func (UnimplementedBackupServiceServer) Delete(context.Context, *v11.DeleteBacku
 }
 func (UnimplementedBackupServiceServer) Trigger(context.Context, *v11.TriggerBackupRequest) (*v11.TriggerBackupResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Trigger not implemented")
+}
+func (UnimplementedBackupServiceServer) RestoreBackupRecord(context.Context, *v11.RestoreBackupRecordRequest) (*v11.RestoreBackupRecordResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RestoreBackupRecord not implemented")
 }
 func (UnimplementedBackupServiceServer) ListRecords(context.Context, *v1.PagingRequest) (*v11.ListBackupRecordResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRecords not implemented")
@@ -329,6 +347,24 @@ func _BackupService_Trigger_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BackupService_RestoreBackupRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.RestoreBackupRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackupServiceServer).RestoreBackupRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BackupService_RestoreBackupRecord_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackupServiceServer).RestoreBackupRecord(ctx, req.(*v11.RestoreBackupRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BackupService_ListRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.PagingRequest)
 	if err := dec(in); err != nil {
@@ -395,6 +431,10 @@ var BackupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Trigger",
 			Handler:    _BackupService_Trigger_Handler,
+		},
+		{
+			MethodName: "RestoreBackupRecord",
+			Handler:    _BackupService_RestoreBackupRecord_Handler,
 		},
 		{
 			MethodName: "ListRecords",

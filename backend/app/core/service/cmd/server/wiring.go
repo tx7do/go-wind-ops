@@ -257,7 +257,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 	cloudCostService := service.NewCloudCostService(ctx, cloudCostRepo, cloudAccountRepo)
 	maintenanceWindowService := service.NewMaintenanceWindowService(ctx, maintenanceWindowRepo)
-	promotionPipelineService := service.NewPromotionPipelineService(ctx, promotionPipelineRepo, distributionService)
+	promotionPipelineService := service.NewPromotionPipelineService(ctx, promotionPipelineRepo, distributionService, distributionRecordRepo)
 	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceRepo, cloudAccountRepo)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountRepo)
 

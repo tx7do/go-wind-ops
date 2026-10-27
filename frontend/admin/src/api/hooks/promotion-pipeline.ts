@@ -7,6 +7,7 @@ import {
 import {
   type opsservicev1_ListPromotionPipelineResponse,
   type opsservicev1_PromotePromotionResponse,
+  type opsservicev1_GetPromotionStatusResponse,
   type opsservicev1_PromotionPipeline,
 } from '@/api/generated/admin/service/v1';
 import { PaginationQuery, queryClient } from '@/core';
@@ -62,6 +63,18 @@ export function useDeletePromotionPipeline(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.promotionPipelineService.DeletePromotionPipeline(req as never),
+    ...options,
+  });
+}
+
+export function useGetPromotionStatus(
+  id: number | undefined,
+  options?: Partial<UseQueryOptions<opsservicev1_GetPromotionStatusResponse, Error, opsservicev1_GetPromotionStatusResponse, readonly unknown[]>>,
+) {
+  return useQuery({
+    queryKey: ['promotionStatus', id],
+    queryFn: () => apiClient.promotionPipelineService.GetPromotionStatus({ id } as never),
+    enabled: !!id,
     ...options,
   });
 }

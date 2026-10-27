@@ -28,6 +28,7 @@ const (
 	PromotionPipelineService_UpdatePromotionPipeline_FullMethodName = "/admin.service.v1.PromotionPipelineService/UpdatePromotionPipeline"
 	PromotionPipelineService_DeletePromotionPipeline_FullMethodName = "/admin.service.v1.PromotionPipelineService/DeletePromotionPipeline"
 	PromotionPipelineService_PromotePromotion_FullMethodName        = "/admin.service.v1.PromotionPipelineService/PromotePromotion"
+	PromotionPipelineService_GetPromotionStatus_FullMethodName      = "/admin.service.v1.PromotionPipelineService/GetPromotionStatus"
 )
 
 // PromotionPipelineServiceClient is the client API for PromotionPipelineService service.
@@ -48,6 +49,8 @@ type PromotionPipelineServiceClient interface {
 	DeletePromotionPipeline(ctx context.Context, in *v11.DeletePromotionPipelineRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 晋升(触发指定阶段分发;id 走 body)
 	PromotePromotion(ctx context.Context, in *v11.PromotePromotionRequest, opts ...grpc.CallOption) (*v11.PromotePromotionResponse, error)
+	// 阶段状态(发布台视图)
+	GetPromotionStatus(ctx context.Context, in *v11.GetPromotionStatusRequest, opts ...grpc.CallOption) (*v11.GetPromotionStatusResponse, error)
 }
 
 type promotionPipelineServiceClient struct {
@@ -118,6 +121,16 @@ func (c *promotionPipelineServiceClient) PromotePromotion(ctx context.Context, i
 	return out, nil
 }
 
+func (c *promotionPipelineServiceClient) GetPromotionStatus(ctx context.Context, in *v11.GetPromotionStatusRequest, opts ...grpc.CallOption) (*v11.GetPromotionStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.GetPromotionStatusResponse)
+	err := c.cc.Invoke(ctx, PromotionPipelineService_GetPromotionStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PromotionPipelineServiceServer is the server API for PromotionPipelineService service.
 // All implementations must embed UnimplementedPromotionPipelineServiceServer
 // for forward compatibility.
@@ -136,6 +149,8 @@ type PromotionPipelineServiceServer interface {
 	DeletePromotionPipeline(context.Context, *v11.DeletePromotionPipelineRequest) (*emptypb.Empty, error)
 	// 晋升(触发指定阶段分发;id 走 body)
 	PromotePromotion(context.Context, *v11.PromotePromotionRequest) (*v11.PromotePromotionResponse, error)
+	// 阶段状态(发布台视图)
+	GetPromotionStatus(context.Context, *v11.GetPromotionStatusRequest) (*v11.GetPromotionStatusResponse, error)
 	mustEmbedUnimplementedPromotionPipelineServiceServer()
 }
 
@@ -163,6 +178,9 @@ func (UnimplementedPromotionPipelineServiceServer) DeletePromotionPipeline(conte
 }
 func (UnimplementedPromotionPipelineServiceServer) PromotePromotion(context.Context, *v11.PromotePromotionRequest) (*v11.PromotePromotionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PromotePromotion not implemented")
+}
+func (UnimplementedPromotionPipelineServiceServer) GetPromotionStatus(context.Context, *v11.GetPromotionStatusRequest) (*v11.GetPromotionStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPromotionStatus not implemented")
 }
 func (UnimplementedPromotionPipelineServiceServer) mustEmbedUnimplementedPromotionPipelineServiceServer() {
 }
@@ -294,6 +312,24 @@ func _PromotionPipelineService_PromotePromotion_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PromotionPipelineService_GetPromotionStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPromotionStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionPipelineServiceServer).GetPromotionStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PromotionPipelineService_GetPromotionStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionPipelineServiceServer).GetPromotionStatus(ctx, req.(*v11.GetPromotionStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PromotionPipelineService_ServiceDesc is the grpc.ServiceDesc for PromotionPipelineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +360,10 @@ var PromotionPipelineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PromotePromotion",
 			Handler:    _PromotionPipelineService_PromotePromotion_Handler,
+		},
+		{
+			MethodName: "GetPromotionStatus",
+			Handler:    _PromotionPipelineService_GetPromotionStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

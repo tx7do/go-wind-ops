@@ -24,5 +24,9 @@
   "updateFailed": "Update failed",
   "deleteSuccess": "Deleted",
   "deleteFailed": "Delete failed",
-  "deleteConfirmTitle": "Delete this pipeline? Referenced distributions are not affected."
+  "deleteConfirmTitle": "Delete this pipeline? Referenced distributions are not affected.",
+  "statusAction": "Stage Status",
+  "latestStatus": "Latest Deploy Status",
+  "latestRecord": "Record ID",
+  "neverDeployed": "Never deployed"
 }
