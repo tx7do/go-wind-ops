@@ -85,10 +85,18 @@ func (s *NotificationChannelService) DeleteChannel(ctx context.Context, req *ops
 }
 
 // SendAlertToChannels 向所有启用的通知渠道(WEBHOOK/EMAIL)发送告警,
-// 逐渠道落投递台账(deliveryRepo 非空时)。由监控/预算/证书告警路径调用。
-func SendAlertToChannels(ctx context.Context, repo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, alertID uint32, title, content string) {
+// 逐渠道落投递台账(deliveryRepo 非空时)。由监控/预算/证书/节点离线路径调用。
+// mwRepo 非空且 suppressible 时:维护窗口激活期间跳过外呼(告警行已落库留痕,
+// 不落投递行);恢复通知传 suppressible=false 不受窗口影响。
+func SendAlertToChannels(ctx context.Context, repo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, mwRepo *data.MaintenanceWindowRepo, alertID uint32, title, content string, suppressible bool) {
 	if repo == nil {
 		return
+	}
+	if suppressible && mwRepo != nil {
+		if name := mwRepo.ActiveWindowName(ctx, time.Now()); name != "" {
+			log.Infof("alert notification suppressed by maintenance window [%s] (alert=%d title=%s)", name, alertID, title)
+			return
+		}
 	}
 	channels, err := repo.ListEnabled(ctx)
 	if err != nil {

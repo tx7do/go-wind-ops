@@ -311,6 +311,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'maintenance-windows',
+        path: '/ops/maintenance-windows',
+        element: createLazyRoute(() => import('@/pages/app/ops/maintenance-window')),
+        meta: {
+          title: 'routes:maintenanceWindows',
+          icon: 'lucide:calendar-clock',
+          order: 4,
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
         name: 'api-keys',
         path: '/ops/api-keys',
         element: createLazyRoute(() => import('@/pages/app/ops/api-key')),

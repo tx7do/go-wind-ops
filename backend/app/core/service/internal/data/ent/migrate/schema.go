@@ -1443,6 +1443,35 @@ var (
 			},
 		},
 	}
+	// OpsMaintenanceWindowsColumns holds the columns for the "ops_maintenance_windows" table.
+	OpsMaintenanceWindowsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Comment: "窗口名(如:周六发布停机)"},
+		{Name: "starts_at", Type: field.TypeTime, Comment: "开始时间"},
+		{Name: "ends_at", Type: field.TypeTime, Comment: "结束时间(>= starts_at,服务层校验)"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用(停用即失效,不必删)", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsMaintenanceWindowsTable holds the schema information for the "ops_maintenance_windows" table.
+	OpsMaintenanceWindowsTable = &schema.Table{
+		Name:       "ops_maintenance_windows",
+		Comment:    "告警维护窗口表",
+		Columns:    OpsMaintenanceWindowsColumns,
+		PrimaryKey: []*schema.Column{OpsMaintenanceWindowsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_ops_maint_window_active",
+				Unique:  false,
+				Columns: []*schema.Column{OpsMaintenanceWindowsColumns[10], OpsMaintenanceWindowsColumns[8]},
+			},
+		},
+	}
 	// SysMembershipsColumns holds the columns for the "sys_memberships" table.
 	SysMembershipsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3853,6 +3882,7 @@ var (
 		OpsLogSnapshotsTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
+		OpsMaintenanceWindowsTable,
 		SysMembershipsTable,
 		SysMembershipOrgUnitsTable,
 		SysMembershipPositionsTable,
@@ -4042,6 +4072,11 @@ func init() {
 	}
 	SysLoginPoliciesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_login_policies",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsMaintenanceWindowsTable.Annotation = &entsql.Annotation{
+		Table:     "ops_maintenance_windows",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

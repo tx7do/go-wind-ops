@@ -155,6 +155,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
+	maintenanceWindowRepo := data.NewMaintenanceWindowRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
 	scriptBatchRepo := data.NewScriptBatchRepo(ctx, entClient)
@@ -212,7 +213,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// Agent 信令(节点准入/心跳/指令下发;MinIO 预签名签发经 pkg/oss)
 	metricRepo := data.NewNodeMetricRepo(ctx, entClient)
-	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, scriptBatchRepo, backupRecordRepo, backupTaskRepo, configDistRepo, metricRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo, minIOClient)
+	agentService := service.NewAgentService(ctx, agentNodeRepo, commandRecordRepo, projectRepo, distributionRecordRepo, scriptBatchRepo, backupRecordRepo, backupTaskRepo, configDistRepo, metricRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, minIOClient)
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, metricRepo, agentService, approvalRepo)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
@@ -234,15 +235,15 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	pluginService := service.NewPluginService(ctx, agentService, agentNodeRepo, approvalRepo)
 	backupService := service.NewBackupService(ctx, backupTaskRepo, backupRecordRepo, agentNodeRepo, minIOClient, agentService)
 	notificationDeliveryService := service.NewNotificationDeliveryService(ctx, notificationDeliveryRepo)
-	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetRepo, cloudCostRepo, cloudAccountRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
-	certService := service.NewCertService(ctx, certRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo)
+	cloudBudgetService := service.NewCloudBudgetService(ctx, cloudBudgetRepo, cloudCostRepo, cloudAccountRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo)
+	certService := service.NewCertService(ctx, certRepo, alertRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo)
 	inspectionService := service.NewInspectionService(ctx, inspectionRepo, agentNodeRepo, projectRepo, alertRepo, certRepo, backupRecordRepo)
 	logSnapshotService := service.NewLogSnapshotService(ctx, logSnapshotRepo, projectRepo, agentNodeRepo, agentService)
 	configService := service.NewConfigService(ctx, configTemplateRepo, configDistRepo, agentNodeRepo, projectRepo, minIOClient, agentService)
 
 	// 定时调度(构建/脚本/监控/备份/预算/证书 cron + 孤儿构建清扫)
 	auditRetentionRepo := data.NewAuditRetentionRepo(ctx, entClient)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
 	cronScheduler.Start(ctx.Context())
 
 	// 终端录制留存清理(TERMINAL_RETENTION_DAYS,默认 30 天,0=永久)
@@ -253,6 +254,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 	cloudCostService := service.NewCloudCostService(ctx, cloudCostRepo, cloudAccountRepo)
+	maintenanceWindowService := service.NewMaintenanceWindowService(ctx, maintenanceWindowRepo)
 	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceRepo, cloudAccountRepo)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountRepo)
 
@@ -261,7 +263,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, mfaService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, maintenanceWindowService, loginPolicyService, userCredentialService,
 		taskService,
 		dictTypeService, dictEntryService, languageService,
 		tenantService, userService, roleService, positionService, orgUnitService,

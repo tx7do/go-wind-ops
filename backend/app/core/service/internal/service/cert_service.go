@@ -33,15 +33,17 @@ type CertService struct {
 	alertRepo        *data.AlertRepo
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
+	maintenanceRepo   *data.MaintenanceWindowRepo
 }
 
-func NewCertService(ctx *bootstrap.Context, certRepo *data.CertRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo) *CertService {
+func NewCertService(ctx *bootstrap.Context, certRepo *data.CertRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *CertService {
 	return &CertService{
 		log:              ctx.NewLoggerHelper("cert/service/core-service"),
 		certRepo:         certRepo,
 		alertRepo:        alertRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
+		maintenanceRepo:   maintenanceRepo,
 	}
 }
 
@@ -246,7 +248,7 @@ func (s *CertService) RunExpiryCheck(ctx context.Context) error {
 		if a, err := s.alertRepo.CreateRecovery(ctx, row.ID, 0, 0, "CERT", msg); err != nil {
 			s.log.Errorf("create cert recovery alert failed: %s", err.Error())
 		} else {
-			SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "证书恢复: "+name, msg)
+			SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "证书恢复: "+name, msg, false)
 		}
 	}
 	return nil
@@ -263,7 +265,7 @@ func (s *CertService) fireCertAlert(ctx context.Context, row *ent.Cert, msg stri
 	if name == "" {
 		name = row.Host
 	}
-	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "证书告警: "+name, msg)
+	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "证书告警: "+name, msg, true)
 	s.log.Warnf("CERT ALERT: %s", msg)
 }
 

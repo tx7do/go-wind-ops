@@ -35,6 +35,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
+	"go-wind-ops/app/core/service/internal/data/ent/maintenancewindow"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -1285,6 +1286,23 @@ func init() {
 	loginpolicyDescID := loginpolicyMixinFields0[0].Descriptor()
 	// loginpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	loginpolicy.IDValidator = loginpolicyDescID.Validators[0].(func(uint32) error)
+	maintenancewindowMixin := schema.MaintenanceWindow{}.Mixin()
+	maintenancewindowMixinFields0 := maintenancewindowMixin[0].Fields()
+	_ = maintenancewindowMixinFields0
+	maintenancewindowFields := schema.MaintenanceWindow{}.Fields()
+	_ = maintenancewindowFields
+	// maintenancewindowDescName is the schema descriptor for name field.
+	maintenancewindowDescName := maintenancewindowFields[0].Descriptor()
+	// maintenancewindow.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	maintenancewindow.NameValidator = maintenancewindowDescName.Validators[0].(func(string) error)
+	// maintenancewindowDescEnabled is the schema descriptor for enabled field.
+	maintenancewindowDescEnabled := maintenancewindowFields[3].Descriptor()
+	// maintenancewindow.DefaultEnabled holds the default value on creation for the enabled field.
+	maintenancewindow.DefaultEnabled = maintenancewindowDescEnabled.Default.(bool)
+	// maintenancewindowDescID is the schema descriptor for id field.
+	maintenancewindowDescID := maintenancewindowMixinFields0[0].Descriptor()
+	// maintenancewindow.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	maintenancewindow.IDValidator = maintenancewindowDescID.Validators[0].(func(uint32) error)
 	membershipMixin := schema.Membership{}.Mixin()
 	membership.Policy = privacy.NewPolicies(membershipMixin[3], schema.Membership{})
 	membership.Hooks[0] = func(next ent.Mutator) ent.Mutator {

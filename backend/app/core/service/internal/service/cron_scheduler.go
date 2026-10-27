@@ -45,6 +45,7 @@ type CronScheduler struct {
 	agentService       *AgentService
 	notifChannelRepo   *data.NotificationChannelRepo
 	deliveryRepo       *data.NotificationDeliveryRepo
+	maintenanceRepo   *data.MaintenanceWindowRepo
 	budgetRepo         *data.CloudBudgetRepo
 	budgetService      *CloudBudgetService
 	certRepo           *data.CertRepo
@@ -65,7 +66,7 @@ type CronScheduler struct {
 	log                     *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
 	return &CronScheduler{
 		ctx:                ctx,
 		buildRepo:          buildRepo,
@@ -77,6 +78,7 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		backupTaskRepo:     backupTaskRepo,
 		notifChannelRepo:   notifChannelRepo,
 		deliveryRepo:       deliveryRepo,
+		maintenanceRepo:   maintenanceRepo,
 		budgetRepo:         budgetRepo,
 		budgetService:      budgetService,
 		certRepo:           certRepo,
@@ -260,7 +262,7 @@ func (s *CronScheduler) tickMonitors(ctx context.Context) {
 		if err != nil || !ok {
 			continue
 		}
-		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.deliveryRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, m)
+		CheckMonitor(ctx, s.log, s.alertRepo, s.notifChannelRepo, s.deliveryRepo, s.projectRepo, s.nodeRepo, s.monitorRepo, s.agentService, s.maintenanceRepo, m)
 	}
 }
 

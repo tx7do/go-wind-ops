@@ -6662,6 +6662,196 @@ export type authenticationservicev1_DeleteLoginPolicyRequest = {
   id?: number;
 };
 
+// 告警维护窗口管理
+export interface MaintenanceWindowService {
+  // 查询维护窗口列表
+  ListMaintenanceWindows(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListMaintenanceWindowResponse>;
+  // 查询维护窗口详情
+  GetMaintenanceWindow(
+    request: opsservicev1_GetMaintenanceWindowRequest,
+  ): Promise<opsservicev1_MaintenanceWindow>;
+  // 创建维护窗口
+  CreateMaintenanceWindow(
+    request: opsservicev1_CreateMaintenanceWindowRequest,
+  ): Promise<opsservicev1_MaintenanceWindow>;
+  // 更新维护窗口(id 走 body,不带 path 参数)
+  UpdateMaintenanceWindow(
+    request: opsservicev1_UpdateMaintenanceWindowRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除维护窗口(id 走 body,不带 path 参数)
+  DeleteMaintenanceWindow(
+    request: opsservicev1_DeleteMaintenanceWindowRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createMaintenanceWindowServiceClient(
+  transport: ClientTransport,
+): MaintenanceWindowService {
+  return {
+    ListMaintenanceWindows(request) {
+      const path = `/admin/v1/maintenance-windows`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MaintenanceWindowService',
+        method: 'ListMaintenanceWindows',
+      }) as Promise<opsservicev1_ListMaintenanceWindowResponse>;
+    },
+    GetMaintenanceWindow(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/maintenance-windows/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MaintenanceWindowService',
+        method: 'GetMaintenanceWindow',
+      }) as Promise<opsservicev1_MaintenanceWindow>;
+    },
+    CreateMaintenanceWindow(request) {
+      const path = `/admin/v1/maintenance-windows`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MaintenanceWindowService',
+        method: 'CreateMaintenanceWindow',
+      }) as Promise<opsservicev1_MaintenanceWindow>;
+    },
+    UpdateMaintenanceWindow(request) {
+      const path = `/admin/v1/maintenance-windows:update`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MaintenanceWindowService',
+        method: 'UpdateMaintenanceWindow',
+      }) as Promise<wellKnownEmpty>;
+    },
+    DeleteMaintenanceWindow(request) {
+      const path = `/admin/v1/maintenance-windows:delete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MaintenanceWindowService',
+        method: 'DeleteMaintenanceWindow',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type opsservicev1_ListMaintenanceWindowResponse = {
+  items: opsservicev1_MaintenanceWindow[] | undefined;
+  total: number | undefined;
+};
+
+// 维护窗口
+export type opsservicev1_MaintenanceWindow = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  //
+  // Behaviors: REQUIRED
+  endsAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  //
+  // Behaviors: REQUIRED
+  startsAt?: wellKnownTimestamp;
+};
+
+export type opsservicev1_GetMaintenanceWindowRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreateMaintenanceWindowRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_MaintenanceWindow;
+};
+
+export type opsservicev1_UpdateMaintenanceWindowRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_MaintenanceWindow;
+  //
+  // Behaviors: REQUIRED
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type opsservicev1_DeleteMaintenanceWindowRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
 // 后台菜单管理服务
 export interface MenuService {
   // 查询菜单列表
@@ -12077,6 +12267,7 @@ export class ApiClient {
   private _logSnapshotService?: LogSnapshotService;
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
+  private _maintenanceWindowService?: MaintenanceWindowService;
   private _menuService?: MenuService;
   private _mfaService?: MfaService;
   private _monitorService?: MonitorService;
@@ -12217,6 +12408,10 @@ export class ApiClient {
 
   get loginPolicyService(): LoginPolicyService {
     return this._loginPolicyService ??= createLoginPolicyServiceClient(this._transport);
+  }
+
+  get maintenanceWindowService(): MaintenanceWindowService {
+    return this._maintenanceWindowService ??= createMaintenanceWindowServiceClient(this._transport);
   }
 
   get menuService(): MenuService {

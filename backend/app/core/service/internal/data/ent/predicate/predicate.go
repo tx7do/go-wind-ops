@@ -96,6 +96,9 @@ type LoginAuditLog func(*sql.Selector)
 // LoginPolicy is the predicate function for loginpolicy builders.
 type LoginPolicy func(*sql.Selector)
 
+// MaintenanceWindow is the predicate function for maintenancewindow builders.
+type MaintenanceWindow func(*sql.Selector)
+
 // Membership is the predicate function for membership builders.
 type Membership func(*sql.Selector)
 

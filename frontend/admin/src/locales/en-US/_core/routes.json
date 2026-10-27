@@ -140,5 +140,6 @@
   "certs": "Certificates",
   "inspections": "Inspections",
   "log-snapshots": "Log Snapshots",
-  "config-center": "Config Center"
+  "config-center": "Config Center",
+  "maintenanceWindows": "Maintenance Windows"
 }

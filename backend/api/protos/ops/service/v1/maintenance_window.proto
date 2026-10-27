@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// MaintenanceWindowService 告警维护窗口:计划停机/发布窗口期静默告警通知。
+// 窗口激活期间告警行仍落库留痕,仅渠道外呼被跳过;恢复通知不受影响。
+service MaintenanceWindowService {
+  // 查询维护窗口列表
+  rpc ListMaintenanceWindows (pagination.PagingRequest) returns (ListMaintenanceWindowResponse) {}
+
+  // 查询维护窗口详情
+  rpc GetMaintenanceWindow (GetMaintenanceWindowRequest) returns (MaintenanceWindow) {}
+
+  // 创建维护窗口
+  rpc CreateMaintenanceWindow (CreateMaintenanceWindowRequest) returns (MaintenanceWindow) {}
+
+  // 更新维护窗口
+  rpc UpdateMaintenanceWindow (UpdateMaintenanceWindowRequest) returns (google.protobuf.Empty) {}
+
+  // 删除维护窗口
+  rpc DeleteMaintenanceWindow (DeleteMaintenanceWindowRequest) returns (google.protobuf.Empty) {}
+}
+
+// 维护窗口
+message MaintenanceWindow {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 窗口ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 窗口名
+
+  optional google.protobuf.Timestamp starts_at = 3 [
+    json_name = "startsAt",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 开始时间
+
+  optional google.protobuf.Timestamp ends_at = 4 [
+    json_name = "endsAt",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 结束时间
+
+  optional bool enabled = 5 [json_name = "enabled"]; // 是否启用
+
+  optional string description = 6 [json_name = "description"]; // 描述
+
+  optional uint32 created_by = 20 [
+    json_name = "createdBy",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建人
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+message ListMaintenanceWindowResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated MaintenanceWindow items = 2 [json_name = "items"]; // 窗口列表
+}
+
+message GetMaintenanceWindowRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 窗口ID
+}
+
+message CreateMaintenanceWindowRequest {
+  optional MaintenanceWindow data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 创建数据
+}
+
+message UpdateMaintenanceWindowRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 窗口ID(id 走 body:触发类 POST 不带 path 参数)
+
+  optional MaintenanceWindow data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 更新数据
+
+  optional google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"]; // 更新掩码
+}
+
+message DeleteMaintenanceWindowRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 窗口ID
+}

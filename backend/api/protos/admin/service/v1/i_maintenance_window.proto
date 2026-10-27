@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "ops/service/v1/maintenance_window.proto";
+
+// 告警维护窗口管理
+service MaintenanceWindowService {
+  // 查询维护窗口列表
+  rpc ListMaintenanceWindows (pagination.PagingRequest) returns (ops.service.v1.ListMaintenanceWindowResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/maintenance-windows"
+    };
+  }
+
+  // 查询维护窗口详情
+  rpc GetMaintenanceWindow (ops.service.v1.GetMaintenanceWindowRequest) returns (ops.service.v1.MaintenanceWindow) {
+    option (google.api.http) = {
+      get: "/admin/v1/maintenance-windows/{id}"
+    };
+  }
+
+  // 创建维护窗口
+  rpc CreateMaintenanceWindow (ops.service.v1.CreateMaintenanceWindowRequest) returns (ops.service.v1.MaintenanceWindow) {
+    option (google.api.http) = {
+      post: "/admin/v1/maintenance-windows"
+      body: "*"
+    };
+  }
+
+  // 更新维护窗口(id 走 body,不带 path 参数)
+  rpc UpdateMaintenanceWindow (ops.service.v1.UpdateMaintenanceWindowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/maintenance-windows:update"
+      body: "*"
+    };
+  }
+
+  // 删除维护窗口(id 走 body,不带 path 参数)
+  rpc DeleteMaintenanceWindow (ops.service.v1.DeleteMaintenanceWindowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/maintenance-windows:delete"
+      body: "*"
+    };
+  }
+}

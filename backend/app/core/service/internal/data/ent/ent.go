@@ -36,6 +36,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
+	"go-wind-ops/app/core/service/internal/data/ent/maintenancewindow"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -168,6 +169,7 @@ func checkColumn(t, c string) error {
 			logsnapshot.Table:          logsnapshot.ValidColumn,
 			loginauditlog.Table:        loginauditlog.ValidColumn,
 			loginpolicy.Table:          loginpolicy.ValidColumn,
+			maintenancewindow.Table:    maintenancewindow.ValidColumn,
 			membership.Table:           membership.ValidColumn,
 			membershiporgunit.Table:    membershiporgunit.ValidColumn,
 			membershipposition.Table:   membershipposition.ValidColumn,

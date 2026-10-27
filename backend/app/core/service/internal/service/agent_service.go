@@ -63,6 +63,7 @@ type AgentService struct {
 	alertRepo        *data.AlertRepo
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
+	maintenanceRepo   *data.MaintenanceWindowRepo
 	ossClient        *oss.MinIOClient
 	log              *log.Helper
 
@@ -83,7 +84,7 @@ type AgentService struct {
 	terminalRoutes   map[string]chan *signal.TerminalIO
 }
 
-func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, ossClient *oss.MinIOClient) *AgentService {
+func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRepo *data.CommandRecordRepo, projectRepo *data.ProjectRepo, distRecordRepo *data.DistributionRecordRepo, batchRepo *data.ScriptBatchRepo, backupRecordRepo *data.BackupRecordRepo, backupTaskRepo *data.BackupTaskRepo, configDistRepo *data.ConfigDistributionRepo, metricRepo *data.NodeMetricRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, ossClient *oss.MinIOClient) *AgentService {
 	s := &AgentService{
 		ctx:              ctx,
 		repo:             repo,
@@ -98,6 +99,7 @@ func NewAgentService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, recordRep
 		alertRepo:        alertRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
+		maintenanceRepo:   maintenanceRepo,
 		ossClient:        ossClient,
 		log:              ctx.NewLoggerHelper("agent/service/core-service"),
 
@@ -637,7 +639,7 @@ func (s *AgentService) fireNodeOfflineAlert(node *ent.AgentNode) {
 		s.log.Errorf("create node offline alert [%d]: %s", node.ID, err.Error())
 		return
 	}
-	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "告警: 节点离线", msg)
+	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "告警: 节点离线", msg, true)
 	s.log.Warnf("ALERT: %s", msg)
 }
 
@@ -666,7 +668,7 @@ func (s *AgentService) fireNodeOnlineRecovery(agentID string) {
 		s.log.Errorf("create node online recovery alert [%d]: %s", node.ID, err.Error())
 		return
 	} else {
-		SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "恢复: 节点上线", msg)
+		SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "恢复: 节点上线", msg, false)
 	}
 	s.log.Infof("RECOVERED: %s", msg)
 }

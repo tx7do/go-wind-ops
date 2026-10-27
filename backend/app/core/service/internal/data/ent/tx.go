@@ -72,6 +72,8 @@ type Tx struct {
 	LoginAuditLog *LoginAuditLogClient
 	// LoginPolicy is the client for interacting with the LoginPolicy builders.
 	LoginPolicy *LoginPolicyClient
+	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
+	MaintenanceWindow *MaintenanceWindowClient
 	// Membership is the client for interacting with the Membership builders.
 	Membership *MembershipClient
 	// MembershipOrgUnit is the client for interacting with the MembershipOrgUnit builders.
@@ -305,6 +307,7 @@ func (tx *Tx) init() {
 	tx.LogSnapshot = NewLogSnapshotClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)
+	tx.MaintenanceWindow = NewMaintenanceWindowClient(tx.config)
 	tx.Membership = NewMembershipClient(tx.config)
 	tx.MembershipOrgUnit = NewMembershipOrgUnitClient(tx.config)
 	tx.MembershipPosition = NewMembershipPositionClient(tx.config)

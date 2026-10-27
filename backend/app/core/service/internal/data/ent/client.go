@@ -41,6 +41,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
+	"go-wind-ops/app/core/service/internal/data/ent/maintenancewindow"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -149,6 +150,8 @@ type Client struct {
 	LoginAuditLog *LoginAuditLogClient
 	// LoginPolicy is the client for interacting with the LoginPolicy builders.
 	LoginPolicy *LoginPolicyClient
+	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
+	MaintenanceWindow *MaintenanceWindowClient
 	// Membership is the client for interacting with the Membership builders.
 	Membership *MembershipClient
 	// MembershipOrgUnit is the client for interacting with the MembershipOrgUnit builders.
@@ -262,6 +265,7 @@ func (c *Client) init() {
 	c.LogSnapshot = NewLogSnapshotClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
+	c.MaintenanceWindow = NewMaintenanceWindowClient(c.config)
 	c.Membership = NewMembershipClient(c.config)
 	c.MembershipOrgUnit = NewMembershipOrgUnitClient(c.config)
 	c.MembershipPosition = NewMembershipPositionClient(c.config)
@@ -420,6 +424,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		LogSnapshot:          NewLogSnapshotClient(cfg),
 		LoginAuditLog:        NewLoginAuditLogClient(cfg),
 		LoginPolicy:          NewLoginPolicyClient(cfg),
+		MaintenanceWindow:    NewMaintenanceWindowClient(cfg),
 		Membership:           NewMembershipClient(cfg),
 		MembershipOrgUnit:    NewMembershipOrgUnitClient(cfg),
 		MembershipPosition:   NewMembershipPositionClient(cfg),
@@ -505,6 +510,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		LogSnapshot:          NewLogSnapshotClient(cfg),
 		LoginAuditLog:        NewLoginAuditLogClient(cfg),
 		LoginPolicy:          NewLoginPolicyClient(cfg),
+		MaintenanceWindow:    NewMaintenanceWindowClient(cfg),
 		Membership:           NewMembershipClient(cfg),
 		MembershipOrgUnit:    NewMembershipOrgUnitClient(cfg),
 		MembershipPosition:   NewMembershipPositionClient(cfg),
@@ -576,14 +582,14 @@ func (c *Client) Use(hooks ...Hook) {
 		c.ConfigDistribution, c.ConfigTemplate, c.DataAccessAuditLog, c.DictEntry,
 		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
 		c.Inspection, c.Language, c.LogSnapshot, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
-		c.Tenant, c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.MaintenanceWindow, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk, c.TerminalSession, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -599,14 +605,14 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.ConfigDistribution, c.ConfigTemplate, c.DataAccessAuditLog, c.DictEntry,
 		c.DictEntryI18n, c.DictType, c.Distribution, c.DistributionRecord,
 		c.Inspection, c.Language, c.LogSnapshot, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel, c.NotificationDelivery,
-		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PipelineRun, c.PolicyEvaluationLog, c.Position, c.Project, c.Repository,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Script, c.ScriptBatch, c.Task,
-		c.Tenant, c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.MaintenanceWindow, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
+		c.MembershipRole, c.Menu, c.Monitor, c.NodeMetric, c.NotificationChannel,
+		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
+		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
+		c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk, c.TerminalSession, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -675,6 +681,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.LoginAuditLog.mutate(ctx, m)
 	case *LoginPolicyMutation:
 		return c.LoginPolicy.mutate(ctx, m)
+	case *MaintenanceWindowMutation:
+		return c.MaintenanceWindow.mutate(ctx, m)
 	case *MembershipMutation:
 		return c.Membership.mutate(ctx, m)
 	case *MembershipOrgUnitMutation:
@@ -4831,6 +4839,139 @@ func (c *LoginPolicyClient) mutate(ctx context.Context, m *LoginPolicyMutation) 
 		return (&LoginPolicyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown LoginPolicy mutation op: %q", m.Op())
+	}
+}
+
+// MaintenanceWindowClient is a client for the MaintenanceWindow schema.
+type MaintenanceWindowClient struct {
+	config
+}
+
+// NewMaintenanceWindowClient returns a client for the MaintenanceWindow from the given config.
+func NewMaintenanceWindowClient(c config) *MaintenanceWindowClient {
+	return &MaintenanceWindowClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `maintenancewindow.Hooks(f(g(h())))`.
+func (c *MaintenanceWindowClient) Use(hooks ...Hook) {
+	c.hooks.MaintenanceWindow = append(c.hooks.MaintenanceWindow, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `maintenancewindow.Intercept(f(g(h())))`.
+func (c *MaintenanceWindowClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MaintenanceWindow = append(c.inters.MaintenanceWindow, interceptors...)
+}
+
+// Create returns a builder for creating a MaintenanceWindow entity.
+func (c *MaintenanceWindowClient) Create() *MaintenanceWindowCreate {
+	mutation := newMaintenanceWindowMutation(c.config, OpCreate)
+	return &MaintenanceWindowCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MaintenanceWindow entities.
+func (c *MaintenanceWindowClient) CreateBulk(builders ...*MaintenanceWindowCreate) *MaintenanceWindowCreateBulk {
+	return &MaintenanceWindowCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MaintenanceWindowClient) MapCreateBulk(slice any, setFunc func(*MaintenanceWindowCreate, int)) *MaintenanceWindowCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MaintenanceWindowCreateBulk{err: fmt.Errorf("calling to MaintenanceWindowClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MaintenanceWindowCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MaintenanceWindowCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Update() *MaintenanceWindowUpdate {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdate)
+	return &MaintenanceWindowUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MaintenanceWindowClient) UpdateOne(_m *MaintenanceWindow) *MaintenanceWindowUpdateOne {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdateOne, withMaintenanceWindow(_m))
+	return &MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MaintenanceWindowClient) UpdateOneID(id uint32) *MaintenanceWindowUpdateOne {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdateOne, withMaintenanceWindowID(id))
+	return &MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Delete() *MaintenanceWindowDelete {
+	mutation := newMaintenanceWindowMutation(c.config, OpDelete)
+	return &MaintenanceWindowDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MaintenanceWindowClient) DeleteOne(_m *MaintenanceWindow) *MaintenanceWindowDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MaintenanceWindowClient) DeleteOneID(id uint32) *MaintenanceWindowDeleteOne {
+	builder := c.Delete().Where(maintenancewindow.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MaintenanceWindowDeleteOne{builder}
+}
+
+// Query returns a query builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Query() *MaintenanceWindowQuery {
+	return &MaintenanceWindowQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMaintenanceWindow},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MaintenanceWindow entity by its id.
+func (c *MaintenanceWindowClient) Get(ctx context.Context, id uint32) (*MaintenanceWindow, error) {
+	return c.Query().Where(maintenancewindow.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MaintenanceWindowClient) GetX(ctx context.Context, id uint32) *MaintenanceWindow {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MaintenanceWindowClient) Hooks() []Hook {
+	return c.hooks.MaintenanceWindow
+}
+
+// Interceptors returns the client interceptors.
+func (c *MaintenanceWindowClient) Interceptors() []Interceptor {
+	return c.inters.MaintenanceWindow
+}
+
+func (c *MaintenanceWindowClient) mutate(ctx context.Context, m *MaintenanceWindowMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MaintenanceWindowCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MaintenanceWindowUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MaintenanceWindowDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MaintenanceWindow mutation op: %q", m.Op())
 	}
 }
 
@@ -9760,14 +9901,14 @@ type (
 		CloudInstance, CommandRecord, ConfigDistribution, ConfigTemplate,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Inspection, Language, LogSnapshot, LoginAuditLog,
-		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
-		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, ScriptBatch, Task, Tenant, TerminalChunk,
-		TerminalSession, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		LoginPolicy, MaintenanceWindow, Membership, MembershipOrgUnit,
+		MembershipPosition, MembershipRole, Menu, Monitor, NodeMetric,
+		NotificationChannel, NotificationDelivery, OperationAuditLog, OrgUnit,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
+		Repository, Role, RoleMetadata, RolePermission, Script, ScriptBatch, Task,
+		Tenant, TerminalChunk, TerminalSession, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
@@ -9775,13 +9916,13 @@ type (
 		CloudInstance, CommandRecord, ConfigDistribution, ConfigTemplate,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, Distribution,
 		DistributionRecord, Inspection, Language, LogSnapshot, LoginAuditLog,
-		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
-		Menu, Monitor, NodeMetric, NotificationChannel, NotificationDelivery,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PipelineRun,
-		PolicyEvaluationLog, Position, Project, Repository, Role, RoleMetadata,
-		RolePermission, Script, ScriptBatch, Task, Tenant, TerminalChunk,
-		TerminalSession, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		LoginPolicy, MaintenanceWindow, Membership, MembershipOrgUnit,
+		MembershipPosition, MembershipRole, Menu, Monitor, NodeMetric,
+		NotificationChannel, NotificationDelivery, OperationAuditLog, OrgUnit,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
+		Repository, Role, RoleMetadata, RolePermission, Script, ScriptBatch, Task,
+		Tenant, TerminalChunk, TerminalSession, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole []ent.Interceptor
 	}
 )

@@ -139,5 +139,6 @@
   "certs": "证书台账",
   "inspections": "巡检报告",
   "log-snapshots": "日志快照",
-  "config-center": "配置中心"
+  "config-center": "配置中心",
+  "maintenanceWindows": "维护窗口"
 }

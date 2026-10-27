@@ -164,16 +164,16 @@ func (s *AlertService) ResolveAlert(ctx context.Context, req *opsV1.ResolveAlert
 // CheckMonitor 对单个监控规则执行一次状态检查:
 // 项目状态规则走同步指令探测;节点指标规则直接读心跳快照判阈值。
 // 由 CronScheduler 在规则 cron 命中时调用。
-func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+func CheckMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, maintenanceRepo *data.MaintenanceWindowRepo, monitor *ent.Monitor) {
 	// 后台扫描路径:按监控规则归属租户归因告警/投递(否则落 tenant 0)
 	ctx = tenantScopedCtx(ctx, monitor.TenantID)
 	switch string(monitor.TargetType) {
 	case "NODE_METRIC":
-		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, monitor)
+		CheckNodeMetricMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, maintenanceRepo, monitor)
 	case "PROCESS":
-		CheckProcessMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, agentSvc, monitor)
+		CheckProcessMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, nodeRepo, monitorRepo, agentSvc, maintenanceRepo, monitor)
 	default:
-		checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, projectRepo, nodeRepo, agentSvc, monitor)
+		checkProjectMonitor(ctx, log, alertRepo, notifChannelRepo, deliveryRepo, projectRepo, nodeRepo, agentSvc, maintenanceRepo, monitor)
 	}
 }
 
@@ -216,7 +216,7 @@ func ptrFloatOrZero(v *float64) float64 {
 // 指标)读 CPU/内存/磁盘百分比,连续 N 个周期 ≥ 阈值才告警(防抖),恢复时
 // 自动落 RECOVERY 记录并通知。节点离线跳过(离线告警由 AgentService
 // 离线扫描的 NODE_OFFLINE 告警负责)。
-func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, monitor *ent.Monitor) {
+func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, maintenanceRepo *data.MaintenanceWindowRepo, monitor *ent.Monitor) {
 	nodeID := monitor.NodeID
 	if nodeID == 0 {
 		return
@@ -291,7 +291,7 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 				}
 			}
 		}
-		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
+		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, alertID, "告警: "+monitor.Name, msg, true)
 		log.Warnf("ALERT: %s", msg)
 		return
 	}
@@ -319,7 +319,7 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, "MONITOR", msg); err != nil {
 			log.Errorf("create recovery alert failed: %s", err.Error())
 		} else {
-			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
+			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, a.ID, "恢复: "+monitor.Name, msg, false)
 		}
 		log.Infof("RECOVERED: %s", msg)
 	}
@@ -329,7 +329,7 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 // 按关键字(大小写不敏感包含)找进程,找不到视为异常命中(防抖与节点指标
 // 规则同款);重新发现进程时统一 resolve + RECOVERY 记录 + 通知。探测失败
 // (节点离线/超时)不告警——节点失联由 NODE_OFFLINE 告警负责。
-func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, nodeRepo *data.AgentNodeRepo, monitorRepo *data.MonitorRepo, agentSvc *AgentService, maintenanceRepo *data.MaintenanceWindowRepo, monitor *ent.Monitor) {
 	nodeID := monitor.NodeID
 	if nodeID == 0 || monitor.ProcessName == "" {
 		return
@@ -402,7 +402,7 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 				}
 			}
 		}
-		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
+		SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, alertID, "告警: "+monitor.Name, msg, true)
 		log.Warnf("ALERT: %s", msg)
 		return
 	}
@@ -428,7 +428,7 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 		if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, 0, nodeID, "MONITOR", msg); err != nil {
 			log.Errorf("create recovery alert failed: %s", err.Error())
 		} else {
-			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
+			SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, a.ID, "恢复: "+monitor.Name, msg, false)
 		}
 		log.Infof("RECOVERED: %s", msg)
 	}
@@ -437,7 +437,7 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 // checkProjectMonitor 项目状态规则检查:同步指令探测项目状态 → 异常按
 // 重复间隔落告警 → 可选自动重启 → 渠道外呼;恢复正常时统一 resolve +
 // RECOVERY 记录 + 恢复通知(与节点指标规则对齐)。
-func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, monitor *ent.Monitor) {
+func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, agentSvc *AgentService, maintenanceRepo *data.MaintenanceWindowRepo, monitor *ent.Monitor) {
 	projectID := monitor.ProjectID
 
 	project, err := projectRepo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID})
@@ -488,7 +488,7 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 			if a, err := alertRepo.CreateRecovery(ctx, monitor.ID, projectID, 0, "MONITOR", msg); err != nil {
 				log.Errorf("create recovery alert failed: %s", err.Error())
 			} else {
-				SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, a.ID, "恢复: "+monitor.Name, msg)
+				SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, a.ID, "恢复: "+monitor.Name, msg, false)
 				log.Infof("RECOVERED: %s", msg)
 			}
 		}
@@ -526,7 +526,7 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 			}
 		}
 	}
-	SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, alertID, "告警: "+monitor.Name, msg)
+	SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, alertID, "告警: "+monitor.Name, msg, true)
 	log.Warnf("ALERT: %s", msg)
 
 	// 自动重启:仅随新告警触发一次,异常持续期间不逐周期重启;重启效果由

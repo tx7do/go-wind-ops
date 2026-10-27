@@ -39,6 +39,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-ops/app/core/service/internal/data/ent/loginpolicy"
 	"go-wind-ops/app/core/service/internal/data/ent/logsnapshot"
+	"go-wind-ops/app/core/service/internal/data/ent/maintenancewindow"
 	"go-wind-ops/app/core/service/internal/data/ent/membership"
 	"go-wind-ops/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-ops/app/core/service/internal/data/ent/membershipposition"
@@ -122,6 +123,7 @@ const (
 	TypeLogSnapshot          = "LogSnapshot"
 	TypeLoginAuditLog        = "LoginAuditLog"
 	TypeLoginPolicy          = "LoginPolicy"
+	TypeMaintenanceWindow    = "MaintenanceWindow"
 	TypeMembership           = "Membership"
 	TypeMembershipOrgUnit    = "MembershipOrgUnit"
 	TypeMembershipPosition   = "MembershipPosition"
@@ -48712,6 +48714,1119 @@ func (m *LoginPolicyMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *LoginPolicyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown LoginPolicy edge %s", name)
+}
+
+// MaintenanceWindowMutation represents an operation that mutates the MaintenanceWindow nodes in the graph.
+type MaintenanceWindowMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	name          *string
+	starts_at     *time.Time
+	ends_at       *time.Time
+	enabled       *bool
+	description   *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*MaintenanceWindow, error)
+	predicates    []predicate.MaintenanceWindow
+}
+
+var _ ent.Mutation = (*MaintenanceWindowMutation)(nil)
+
+// maintenancewindowOption allows management of the mutation configuration using functional options.
+type maintenancewindowOption func(*MaintenanceWindowMutation)
+
+// newMaintenanceWindowMutation creates new mutation for the MaintenanceWindow entity.
+func newMaintenanceWindowMutation(c config, op Op, opts ...maintenancewindowOption) *MaintenanceWindowMutation {
+	m := &MaintenanceWindowMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMaintenanceWindow,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMaintenanceWindowID sets the ID field of the mutation.
+func withMaintenanceWindowID(id uint32) maintenancewindowOption {
+	return func(m *MaintenanceWindowMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MaintenanceWindow
+		)
+		m.oldValue = func(ctx context.Context) (*MaintenanceWindow, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MaintenanceWindow.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMaintenanceWindow sets the old MaintenanceWindow of the mutation.
+func withMaintenanceWindow(node *MaintenanceWindow) maintenancewindowOption {
+	return func(m *MaintenanceWindowMutation) {
+		m.oldValue = func(context.Context) (*MaintenanceWindow, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MaintenanceWindowMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MaintenanceWindowMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MaintenanceWindow entities.
+func (m *MaintenanceWindowMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MaintenanceWindowMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MaintenanceWindowMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MaintenanceWindow.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MaintenanceWindowMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MaintenanceWindowMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *MaintenanceWindowMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[maintenancewindow.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MaintenanceWindowMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, maintenancewindow.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MaintenanceWindowMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MaintenanceWindowMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *MaintenanceWindowMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[maintenancewindow.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MaintenanceWindowMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, maintenancewindow.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MaintenanceWindowMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MaintenanceWindowMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MaintenanceWindowMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[maintenancewindow.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MaintenanceWindowMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, maintenancewindow.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MaintenanceWindowMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MaintenanceWindowMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *MaintenanceWindowMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MaintenanceWindowMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *MaintenanceWindowMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[maintenancewindow.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MaintenanceWindowMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, maintenancewindow.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MaintenanceWindowMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MaintenanceWindowMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *MaintenanceWindowMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MaintenanceWindowMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *MaintenanceWindowMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[maintenancewindow.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MaintenanceWindowMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, maintenancewindow.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *MaintenanceWindowMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *MaintenanceWindowMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *MaintenanceWindowMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *MaintenanceWindowMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *MaintenanceWindowMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[maintenancewindow.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *MaintenanceWindowMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, maintenancewindow.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *MaintenanceWindowMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *MaintenanceWindowMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *MaintenanceWindowMutation) ResetName() {
+	m.name = nil
+}
+
+// SetStartsAt sets the "starts_at" field.
+func (m *MaintenanceWindowMutation) SetStartsAt(t time.Time) {
+	m.starts_at = &t
+}
+
+// StartsAt returns the value of the "starts_at" field in the mutation.
+func (m *MaintenanceWindowMutation) StartsAt() (r time.Time, exists bool) {
+	v := m.starts_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartsAt returns the old "starts_at" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldStartsAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartsAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartsAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartsAt: %w", err)
+	}
+	return oldValue.StartsAt, nil
+}
+
+// ResetStartsAt resets all changes to the "starts_at" field.
+func (m *MaintenanceWindowMutation) ResetStartsAt() {
+	m.starts_at = nil
+}
+
+// SetEndsAt sets the "ends_at" field.
+func (m *MaintenanceWindowMutation) SetEndsAt(t time.Time) {
+	m.ends_at = &t
+}
+
+// EndsAt returns the value of the "ends_at" field in the mutation.
+func (m *MaintenanceWindowMutation) EndsAt() (r time.Time, exists bool) {
+	v := m.ends_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndsAt returns the old "ends_at" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldEndsAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndsAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndsAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndsAt: %w", err)
+	}
+	return oldValue.EndsAt, nil
+}
+
+// ResetEndsAt resets all changes to the "ends_at" field.
+func (m *MaintenanceWindowMutation) ResetEndsAt() {
+	m.ends_at = nil
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *MaintenanceWindowMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *MaintenanceWindowMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *MaintenanceWindowMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *MaintenanceWindowMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *MaintenanceWindowMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the MaintenanceWindow entity.
+// If the MaintenanceWindow object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceWindowMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *MaintenanceWindowMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[maintenancewindow.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *MaintenanceWindowMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[maintenancewindow.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *MaintenanceWindowMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, maintenancewindow.FieldDescription)
+}
+
+// Where appends a list predicates to the MaintenanceWindowMutation builder.
+func (m *MaintenanceWindowMutation) Where(ps ...predicate.MaintenanceWindow) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MaintenanceWindowMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MaintenanceWindowMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MaintenanceWindow, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MaintenanceWindowMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MaintenanceWindowMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MaintenanceWindow).
+func (m *MaintenanceWindowMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MaintenanceWindowMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, maintenancewindow.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, maintenancewindow.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, maintenancewindow.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, maintenancewindow.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, maintenancewindow.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, maintenancewindow.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, maintenancewindow.FieldName)
+	}
+	if m.starts_at != nil {
+		fields = append(fields, maintenancewindow.FieldStartsAt)
+	}
+	if m.ends_at != nil {
+		fields = append(fields, maintenancewindow.FieldEndsAt)
+	}
+	if m.enabled != nil {
+		fields = append(fields, maintenancewindow.FieldEnabled)
+	}
+	if m.description != nil {
+		fields = append(fields, maintenancewindow.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MaintenanceWindowMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case maintenancewindow.FieldCreatedAt:
+		return m.CreatedAt()
+	case maintenancewindow.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case maintenancewindow.FieldDeletedAt:
+		return m.DeletedAt()
+	case maintenancewindow.FieldCreatedBy:
+		return m.CreatedBy()
+	case maintenancewindow.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case maintenancewindow.FieldDeletedBy:
+		return m.DeletedBy()
+	case maintenancewindow.FieldName:
+		return m.Name()
+	case maintenancewindow.FieldStartsAt:
+		return m.StartsAt()
+	case maintenancewindow.FieldEndsAt:
+		return m.EndsAt()
+	case maintenancewindow.FieldEnabled:
+		return m.Enabled()
+	case maintenancewindow.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MaintenanceWindowMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case maintenancewindow.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case maintenancewindow.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case maintenancewindow.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case maintenancewindow.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case maintenancewindow.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case maintenancewindow.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case maintenancewindow.FieldName:
+		return m.OldName(ctx)
+	case maintenancewindow.FieldStartsAt:
+		return m.OldStartsAt(ctx)
+	case maintenancewindow.FieldEndsAt:
+		return m.OldEndsAt(ctx)
+	case maintenancewindow.FieldEnabled:
+		return m.OldEnabled(ctx)
+	case maintenancewindow.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown MaintenanceWindow field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MaintenanceWindowMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case maintenancewindow.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case maintenancewindow.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case maintenancewindow.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case maintenancewindow.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case maintenancewindow.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case maintenancewindow.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case maintenancewindow.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case maintenancewindow.FieldStartsAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartsAt(v)
+		return nil
+	case maintenancewindow.FieldEndsAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndsAt(v)
+		return nil
+	case maintenancewindow.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	case maintenancewindow.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenanceWindow field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MaintenanceWindowMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, maintenancewindow.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, maintenancewindow.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, maintenancewindow.FieldDeletedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MaintenanceWindowMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case maintenancewindow.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case maintenancewindow.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case maintenancewindow.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MaintenanceWindowMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case maintenancewindow.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case maintenancewindow.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case maintenancewindow.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenanceWindow numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MaintenanceWindowMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(maintenancewindow.FieldCreatedAt) {
+		fields = append(fields, maintenancewindow.FieldCreatedAt)
+	}
+	if m.FieldCleared(maintenancewindow.FieldUpdatedAt) {
+		fields = append(fields, maintenancewindow.FieldUpdatedAt)
+	}
+	if m.FieldCleared(maintenancewindow.FieldDeletedAt) {
+		fields = append(fields, maintenancewindow.FieldDeletedAt)
+	}
+	if m.FieldCleared(maintenancewindow.FieldCreatedBy) {
+		fields = append(fields, maintenancewindow.FieldCreatedBy)
+	}
+	if m.FieldCleared(maintenancewindow.FieldUpdatedBy) {
+		fields = append(fields, maintenancewindow.FieldUpdatedBy)
+	}
+	if m.FieldCleared(maintenancewindow.FieldDeletedBy) {
+		fields = append(fields, maintenancewindow.FieldDeletedBy)
+	}
+	if m.FieldCleared(maintenancewindow.FieldDescription) {
+		fields = append(fields, maintenancewindow.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MaintenanceWindowMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MaintenanceWindowMutation) ClearField(name string) error {
+	switch name {
+	case maintenancewindow.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case maintenancewindow.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case maintenancewindow.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case maintenancewindow.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case maintenancewindow.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case maintenancewindow.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case maintenancewindow.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenanceWindow nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MaintenanceWindowMutation) ResetField(name string) error {
+	switch name {
+	case maintenancewindow.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case maintenancewindow.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case maintenancewindow.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case maintenancewindow.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case maintenancewindow.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case maintenancewindow.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case maintenancewindow.FieldName:
+		m.ResetName()
+		return nil
+	case maintenancewindow.FieldStartsAt:
+		m.ResetStartsAt()
+		return nil
+	case maintenancewindow.FieldEndsAt:
+		m.ResetEndsAt()
+		return nil
+	case maintenancewindow.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	case maintenancewindow.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenanceWindow field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MaintenanceWindowMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MaintenanceWindowMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MaintenanceWindowMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MaintenanceWindowMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MaintenanceWindowMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MaintenanceWindowMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MaintenanceWindowMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MaintenanceWindow unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MaintenanceWindowMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MaintenanceWindow edge %s", name)
 }
 
 // MembershipMutation represents an operation that mutates the Membership nodes in the graph.

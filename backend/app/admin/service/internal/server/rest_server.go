@@ -142,6 +142,7 @@ func NewRestServer(
 
 	authenticationService *service.AuthenticationService,
 	mfaService *service.MfaService,
+	maintenanceWindowService *service.MaintenanceWindowService,
 	loginPolicyService *service.LoginPolicyService,
 
 	dictTypeService *service.DictTypeService,
@@ -199,6 +200,7 @@ func NewRestServer(
 
 	adminV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
 	adminV1.RegisterMfaServiceHTTPServer(srv, mfaService)
+	adminV1.RegisterMaintenanceWindowServiceHTTPServer(srv, maintenanceWindowService)
 	adminV1.RegisterLoginPolicyServiceHTTPServer(srv, loginPolicyService)
 
 	adminV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)

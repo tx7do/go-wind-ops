@@ -29,9 +29,10 @@ type CloudBudgetService struct {
 	alertRepo  *data.AlertRepo
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
+	maintenanceRepo   *data.MaintenanceWindowRepo
 }
 
-func NewCloudBudgetService(ctx *bootstrap.Context, budgetRepo *data.CloudBudgetRepo, costRepo *data.CloudCostRepo, accountRepo *data.CloudAccountRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo) *CloudBudgetService {
+func NewCloudBudgetService(ctx *bootstrap.Context, budgetRepo *data.CloudBudgetRepo, costRepo *data.CloudCostRepo, accountRepo *data.CloudAccountRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *CloudBudgetService {
 	return &CloudBudgetService{
 		log:              ctx.NewLoggerHelper("cloud-budget/service/core-service"),
 		budgetRepo:       budgetRepo,
@@ -40,6 +41,7 @@ func NewCloudBudgetService(ctx *bootstrap.Context, budgetRepo *data.CloudBudgetR
 		alertRepo:        alertRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
+		maintenanceRepo:   maintenanceRepo,
 	}
 }
 
@@ -199,7 +201,7 @@ func (s *CloudBudgetService) fireBudgetAlert(ctx context.Context, b *ent.CloudBu
 		s.log.Errorf("create budget alert failed: %s", err.Error())
 		return
 	}
-	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, a.ID, "云成本告警: "+subject, msg)
+	SendAlertToChannels(ctx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "云成本告警: "+subject, msg, true)
 	s.log.Warnf("BUDGET ALERT: %s", msg)
 }
 

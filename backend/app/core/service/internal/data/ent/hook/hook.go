@@ -368,6 +368,18 @@ func (f LoginPolicyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LoginPolicyMutation", m)
 }
 
+// The MaintenanceWindowFunc type is an adapter to allow the use of ordinary
+// function as MaintenanceWindow mutator.
+type MaintenanceWindowFunc func(context.Context, *ent.MaintenanceWindowMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MaintenanceWindowFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MaintenanceWindowMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MaintenanceWindowMutation", m)
+}
+
 // The MembershipFunc type is an adapter to allow the use of ordinary
 // function as Membership mutator.
 type MembershipFunc func(context.Context, *ent.MembershipMutation) (ent.Value, error)
