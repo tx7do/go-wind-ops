@@ -280,10 +280,10 @@ func (s *LogSnapshotService) CaptureLogSnapshot(ctx context.Context, req *opsV1.
 	if err = json.Unmarshal(res.Data, &out); err != nil {
 		return nil, opsV1.ErrorInternalServerError("decode project log result")
 	}
-	content := logContentToUTF8(out)
+	content, contentB64 := logSnapshotContent(out)
 
 	row, err := s.snapshotRepo.Create(ctx, project.GetId(), nodeID, project.GetName(),
-		content, "MANUAL", operatorIDOf(ctx))
+		content, contentB64, "MANUAL", operatorIDOf(ctx))
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("save log snapshot failed")
 	}
@@ -320,8 +320,9 @@ func (s *LogSnapshotService) CaptureAll(ctx context.Context) error {
 			failCount++
 			continue
 		}
+		content, contentB64 := logSnapshotContent(out)
 		if _, cerr := s.snapshotRepo.Create(ctx, projectID, nodeID, p.GetName(),
-			logContentToUTF8(out), "SCHEDULED", 0); cerr != nil {
+			content, contentB64, "SCHEDULED", 0); cerr != nil {
 			failCount++
 			continue
 		}
@@ -331,23 +332,28 @@ func (s *LogSnapshotService) CaptureAll(ctx context.Context) error {
 	return nil
 }
 
-// logContentToUTF8 快照落库内容:优先取 ContentB64 原始字节,UTF-8 校验
-// 失败(Windows 控制台 GBK 输出)按 GBK 解码转 UTF-8,避免有损字符串入库。
-func logContentToUTF8(out signal.ProjectLogResult) string {
+// logSnapshotContent 快照落库内容对:(content, contentB64)。content 为
+// UTF-8 归一文本(原始字节 UTF-8 校验失败按 GBK 解码),供关键字检索;
+// contentB64 为原始字节 base64 原样透传,供查看端 UTF-8→GBK 保真解码
+// (归一解码不可逆,保真以字节为准)。旧 agent 无 ContentB64 通道时
+// contentB64 返回空串,查看端回退 content。
+func logSnapshotContent(out signal.ProjectLogResult) (string, string) {
 	if out.ContentB64 == "" {
-		return out.Content
+		return out.Content, ""
 	}
 	raw, err := base64.StdEncoding.DecodeString(out.ContentB64)
 	if err != nil {
-		return out.Content
+		return out.Content, ""
 	}
-	if utf8.Valid(raw) {
-		return string(raw)
+	content := string(raw)
+	if !utf8.Valid(raw) {
+		if decoded, derr := simplifiedchinese.GBK.NewDecoder().Bytes(raw); derr == nil {
+			content = string(decoded)
+		} else {
+			content = out.Content
+		}
 	}
-	if decoded, err := simplifiedchinese.GBK.NewDecoder().Bytes(raw); err == nil {
-		return string(decoded)
-	}
-	return out.Content
+	return content, out.ContentB64
 }
 
 // SearchLogSnapshots 关键字检索:ILIKE 命中最近 50 份快照,每份生成命中
@@ -422,7 +428,7 @@ func logSnapshotToDTO(row *ent.LogSnapshot) *opsV1.LogSnapshot {
 	if row == nil {
 		return nil
 	}
-	return &opsV1.LogSnapshot{
+	dto := &opsV1.LogSnapshot{
 		Id:          &row.ID,
 		ProjectId:   uint32Ptr(row.ProjectID),
 		NodeId:      uint32Ptr(row.NodeID),
@@ -432,6 +438,10 @@ func logSnapshotToDTO(row *ent.LogSnapshot) *opsV1.LogSnapshot {
 		Trigger:     strPtr(row.Trigger),
 		CreatedAt:   timestamppbOfPtr(row.CreatedAt),
 	}
+	if row.ContentB64 != "" {
+		dto.ContentB64 = &row.ContentB64
+	}
+	return dto
 }
 
 // ═══════════════════════════ 配置文件中心 ═══════════════════════════

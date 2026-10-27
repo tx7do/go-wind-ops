@@ -42,6 +42,8 @@ type LogSnapshot struct {
 	SizeBytes int64 `json:"size_bytes,omitempty"`
 	// 日志内容(尾部,≤256KB)
 	Content string `json:"content,omitempty"`
+	// 原始日志字节 base64(UTF-8/GBK 保真;检索走 content,查看优先本字段)
+	ContentB64 string `json:"content_b64,omitempty"`
 	// 触发方式:MANUAL=手动 / SCHEDULED=定时
 	Trigger      string `json:"trigger,omitempty"`
 	selectValues sql.SelectValues
@@ -54,7 +56,7 @@ func (*LogSnapshot) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case logsnapshot.FieldID, logsnapshot.FieldTenantID, logsnapshot.FieldCreatedBy, logsnapshot.FieldUpdatedBy, logsnapshot.FieldDeletedBy, logsnapshot.FieldProjectID, logsnapshot.FieldNodeID, logsnapshot.FieldSizeBytes:
 			values[i] = new(sql.NullInt64)
-		case logsnapshot.FieldProjectName, logsnapshot.FieldContent, logsnapshot.FieldTrigger:
+		case logsnapshot.FieldProjectName, logsnapshot.FieldContent, logsnapshot.FieldContentB64, logsnapshot.FieldTrigger:
 			values[i] = new(sql.NullString)
 		case logsnapshot.FieldCreatedAt, logsnapshot.FieldUpdatedAt, logsnapshot.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -158,6 +160,12 @@ func (_m *LogSnapshot) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Content = value.String
 			}
+		case logsnapshot.FieldContentB64:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content_b64", values[i])
+			} else if value.Valid {
+				_m.ContentB64 = value.String
+			}
 		case logsnapshot.FieldTrigger:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field trigger", values[i])
@@ -249,6 +257,9 @@ func (_m *LogSnapshot) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
+	builder.WriteString(", ")
+	builder.WriteString("content_b64=")
+	builder.WriteString(_m.ContentB64)
 	builder.WriteString(", ")
 	builder.WriteString("trigger=")
 	builder.WriteString(_m.Trigger)

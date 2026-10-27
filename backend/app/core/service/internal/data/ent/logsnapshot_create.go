@@ -166,6 +166,20 @@ func (_c *LogSnapshotCreate) SetNillableContent(v *string) *LogSnapshotCreate {
 	return _c
 }
 
+// SetContentB64 sets the "content_b64" field.
+func (_c *LogSnapshotCreate) SetContentB64(v string) *LogSnapshotCreate {
+	_c.mutation.SetContentB64(v)
+	return _c
+}
+
+// SetNillableContentB64 sets the "content_b64" field if the given value is not nil.
+func (_c *LogSnapshotCreate) SetNillableContentB64(v *string) *LogSnapshotCreate {
+	if v != nil {
+		_c.SetContentB64(*v)
+	}
+	return _c
+}
+
 // SetTrigger sets the "trigger" field.
 func (_c *LogSnapshotCreate) SetTrigger(v string) *LogSnapshotCreate {
 	_c.mutation.SetTrigger(v)
@@ -355,6 +369,10 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(logsnapshot.FieldContent, field.TypeString, value)
 		_node.Content = value
+	}
+	if value, ok := _c.mutation.ContentB64(); ok {
+		_spec.SetField(logsnapshot.FieldContentB64, field.TypeString, value)
+		_node.ContentB64 = value
 	}
 	if value, ok := _c.mutation.Trigger(); ok {
 		_spec.SetField(logsnapshot.FieldTrigger, field.TypeString, value)
@@ -601,6 +619,24 @@ func (u *LogSnapshotUpsert) UpdateContent() *LogSnapshotUpsert {
 // ClearContent clears the value of the "content" field.
 func (u *LogSnapshotUpsert) ClearContent() *LogSnapshotUpsert {
 	u.SetNull(logsnapshot.FieldContent)
+	return u
+}
+
+// SetContentB64 sets the "content_b64" field.
+func (u *LogSnapshotUpsert) SetContentB64(v string) *LogSnapshotUpsert {
+	u.Set(logsnapshot.FieldContentB64, v)
+	return u
+}
+
+// UpdateContentB64 sets the "content_b64" field to the value that was provided on create.
+func (u *LogSnapshotUpsert) UpdateContentB64() *LogSnapshotUpsert {
+	u.SetExcluded(logsnapshot.FieldContentB64)
+	return u
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (u *LogSnapshotUpsert) ClearContentB64() *LogSnapshotUpsert {
+	u.SetNull(logsnapshot.FieldContentB64)
 	return u
 }
 
@@ -891,6 +927,27 @@ func (u *LogSnapshotUpsertOne) UpdateContent() *LogSnapshotUpsertOne {
 func (u *LogSnapshotUpsertOne) ClearContent() *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.ClearContent()
+	})
+}
+
+// SetContentB64 sets the "content_b64" field.
+func (u *LogSnapshotUpsertOne) SetContentB64(v string) *LogSnapshotUpsertOne {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.SetContentB64(v)
+	})
+}
+
+// UpdateContentB64 sets the "content_b64" field to the value that was provided on create.
+func (u *LogSnapshotUpsertOne) UpdateContentB64() *LogSnapshotUpsertOne {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.UpdateContentB64()
+	})
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (u *LogSnapshotUpsertOne) ClearContentB64() *LogSnapshotUpsertOne {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.ClearContentB64()
 	})
 }
 
@@ -1349,6 +1406,27 @@ func (u *LogSnapshotUpsertBulk) UpdateContent() *LogSnapshotUpsertBulk {
 func (u *LogSnapshotUpsertBulk) ClearContent() *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.ClearContent()
+	})
+}
+
+// SetContentB64 sets the "content_b64" field.
+func (u *LogSnapshotUpsertBulk) SetContentB64(v string) *LogSnapshotUpsertBulk {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.SetContentB64(v)
+	})
+}
+
+// UpdateContentB64 sets the "content_b64" field to the value that was provided on create.
+func (u *LogSnapshotUpsertBulk) UpdateContentB64() *LogSnapshotUpsertBulk {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.UpdateContentB64()
+	})
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (u *LogSnapshotUpsertBulk) ClearContentB64() *LogSnapshotUpsertBulk {
+	return u.Update(func(s *LogSnapshotUpsert) {
+		s.ClearContentB64()
 	})
 }
 

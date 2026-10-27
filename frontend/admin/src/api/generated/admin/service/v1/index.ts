@@ -6218,6 +6218,9 @@ export type opsservicev1_ListLogSnapshotResponse = {
 // 日志快照
 export type opsservicev1_LogSnapshot = {
   content?: string;
+  // 原始字节 base64(GBK 保真查看用;采集自 ContentB64 通道,存量行可能为空,
+  // 展示侧回退 content)。检索仍走 content(UTF-8 归一后 ILIKE)。
+  contentB64?: string;
   //
   // Behaviors: OUTPUT_ONLY
   createdAt?: wellKnownTimestamp;

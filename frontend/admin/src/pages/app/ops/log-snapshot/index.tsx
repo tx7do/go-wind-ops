@@ -27,6 +27,40 @@ import ContentContainer from '@/layouts/components/PageContainer/ContentContaine
 /**
  * 日志快照页:采集项目日志尾部 + 跨项目关键字检索
  */
+/** proto bytes(TS 端为 base64 字符串)→ 原始字节。 */
+function b64ToBytes(v: unknown): Uint8Array {
+  if (typeof v === 'string' && v.length > 0) {
+    try {
+      const bin = atob(v);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    } catch {
+      return new Uint8Array();
+    }
+  }
+  return new Uint8Array();
+}
+
+/** 字节 → 展示文本:UTF-8 严格解码失败(Windows GBK 输出)回落 GBK。 */
+function bytesToText(bytes: Uint8Array): string {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    try {
+      return new TextDecoder('gbk').decode(bytes);
+    } catch {
+      return new TextDecoder().decode(bytes);
+    }
+  }
+}
+
+/** 快照内容:优先原始字节 base64 保真解码(UTF-8→GBK),存量行回退 content。 */
+function snapshotText(row: LogSnapshot): string {
+  const fromB64 = bytesToText(b64ToBytes(row.contentB64));
+  return fromB64 || row.content || '';
+}
+
 const LogSnapshotManagement = () => {
   const { t } = useTranslation('log-snapshot');
   const actionRef = useRef<ActionType>(null);
@@ -111,7 +145,7 @@ const LogSnapshotManagement = () => {
             borderRadius: 8,
           }}
         >
-          {row.content || t('noContent')}
+          {snapshotText(row) || t('noContent')}
         </pre>
       ),
       okText: t('common:button.ok'),

@@ -247,6 +247,26 @@ func (_u *LogSnapshotUpdate) ClearContent() *LogSnapshotUpdate {
 	return _u
 }
 
+// SetContentB64 sets the "content_b64" field.
+func (_u *LogSnapshotUpdate) SetContentB64(v string) *LogSnapshotUpdate {
+	_u.mutation.SetContentB64(v)
+	return _u
+}
+
+// SetNillableContentB64 sets the "content_b64" field if the given value is not nil.
+func (_u *LogSnapshotUpdate) SetNillableContentB64(v *string) *LogSnapshotUpdate {
+	if v != nil {
+		_u.SetContentB64(*v)
+	}
+	return _u
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (_u *LogSnapshotUpdate) ClearContentB64() *LogSnapshotUpdate {
+	_u.mutation.ClearContentB64()
+	return _u
+}
+
 // SetTrigger sets the "trigger" field.
 func (_u *LogSnapshotUpdate) SetTrigger(v string) *LogSnapshotUpdate {
 	_u.mutation.SetTrigger(v)
@@ -402,6 +422,12 @@ func (_u *LogSnapshotUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.ContentCleared() {
 		_spec.ClearField(logsnapshot.FieldContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContentB64(); ok {
+		_spec.SetField(logsnapshot.FieldContentB64, field.TypeString, value)
+	}
+	if _u.mutation.ContentB64Cleared() {
+		_spec.ClearField(logsnapshot.FieldContentB64, field.TypeString)
 	}
 	if value, ok := _u.mutation.Trigger(); ok {
 		_spec.SetField(logsnapshot.FieldTrigger, field.TypeString, value)
@@ -646,6 +672,26 @@ func (_u *LogSnapshotUpdateOne) ClearContent() *LogSnapshotUpdateOne {
 	return _u
 }
 
+// SetContentB64 sets the "content_b64" field.
+func (_u *LogSnapshotUpdateOne) SetContentB64(v string) *LogSnapshotUpdateOne {
+	_u.mutation.SetContentB64(v)
+	return _u
+}
+
+// SetNillableContentB64 sets the "content_b64" field if the given value is not nil.
+func (_u *LogSnapshotUpdateOne) SetNillableContentB64(v *string) *LogSnapshotUpdateOne {
+	if v != nil {
+		_u.SetContentB64(*v)
+	}
+	return _u
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (_u *LogSnapshotUpdateOne) ClearContentB64() *LogSnapshotUpdateOne {
+	_u.mutation.ClearContentB64()
+	return _u
+}
+
 // SetTrigger sets the "trigger" field.
 func (_u *LogSnapshotUpdateOne) SetTrigger(v string) *LogSnapshotUpdateOne {
 	_u.mutation.SetTrigger(v)
@@ -831,6 +877,12 @@ func (_u *LogSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *LogSnapshot
 	}
 	if _u.mutation.ContentCleared() {
 		_spec.ClearField(logsnapshot.FieldContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContentB64(); ok {
+		_spec.SetField(logsnapshot.FieldContentB64, field.TypeString, value)
+	}
+	if _u.mutation.ContentB64Cleared() {
+		_spec.ClearField(logsnapshot.FieldContentB64, field.TypeString)
 	}
 	if value, ok := _u.mutation.Trigger(); ok {
 		_spec.SetField(logsnapshot.FieldTrigger, field.TypeString, value)

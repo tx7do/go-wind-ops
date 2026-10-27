@@ -114,6 +114,11 @@ func Content(v string) predicate.LogSnapshot {
 	return predicate.LogSnapshot(sql.FieldEQ(FieldContent, v))
 }
 
+// ContentB64 applies equality check predicate on the "content_b64" field. It's identical to ContentB64EQ.
+func ContentB64(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldEQ(FieldContentB64, v))
+}
+
 // Trigger applies equality check predicate on the "trigger" field. It's identical to TriggerEQ.
 func Trigger(v string) predicate.LogSnapshot {
 	return predicate.LogSnapshot(sql.FieldEQ(FieldTrigger, v))
@@ -727,6 +732,81 @@ func ContentEqualFold(v string) predicate.LogSnapshot {
 // ContentContainsFold applies the ContainsFold predicate on the "content" field.
 func ContentContainsFold(v string) predicate.LogSnapshot {
 	return predicate.LogSnapshot(sql.FieldContainsFold(FieldContent, v))
+}
+
+// ContentB64EQ applies the EQ predicate on the "content_b64" field.
+func ContentB64EQ(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldEQ(FieldContentB64, v))
+}
+
+// ContentB64NEQ applies the NEQ predicate on the "content_b64" field.
+func ContentB64NEQ(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldNEQ(FieldContentB64, v))
+}
+
+// ContentB64In applies the In predicate on the "content_b64" field.
+func ContentB64In(vs ...string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldIn(FieldContentB64, vs...))
+}
+
+// ContentB64NotIn applies the NotIn predicate on the "content_b64" field.
+func ContentB64NotIn(vs ...string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldNotIn(FieldContentB64, vs...))
+}
+
+// ContentB64GT applies the GT predicate on the "content_b64" field.
+func ContentB64GT(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldGT(FieldContentB64, v))
+}
+
+// ContentB64GTE applies the GTE predicate on the "content_b64" field.
+func ContentB64GTE(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldGTE(FieldContentB64, v))
+}
+
+// ContentB64LT applies the LT predicate on the "content_b64" field.
+func ContentB64LT(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldLT(FieldContentB64, v))
+}
+
+// ContentB64LTE applies the LTE predicate on the "content_b64" field.
+func ContentB64LTE(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldLTE(FieldContentB64, v))
+}
+
+// ContentB64Contains applies the Contains predicate on the "content_b64" field.
+func ContentB64Contains(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldContains(FieldContentB64, v))
+}
+
+// ContentB64HasPrefix applies the HasPrefix predicate on the "content_b64" field.
+func ContentB64HasPrefix(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldHasPrefix(FieldContentB64, v))
+}
+
+// ContentB64HasSuffix applies the HasSuffix predicate on the "content_b64" field.
+func ContentB64HasSuffix(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldHasSuffix(FieldContentB64, v))
+}
+
+// ContentB64IsNil applies the IsNil predicate on the "content_b64" field.
+func ContentB64IsNil() predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldIsNull(FieldContentB64))
+}
+
+// ContentB64NotNil applies the NotNil predicate on the "content_b64" field.
+func ContentB64NotNil() predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldNotNull(FieldContentB64))
+}
+
+// ContentB64EqualFold applies the EqualFold predicate on the "content_b64" field.
+func ContentB64EqualFold(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldEqualFold(FieldContentB64, v))
+}
+
+// ContentB64ContainsFold applies the ContainsFold predicate on the "content_b64" field.
+func ContentB64ContainsFold(v string) predicate.LogSnapshot {
+	return predicate.LogSnapshot(sql.FieldContainsFold(FieldContentB64, v))
 }
 
 // TriggerEQ applies the EQ predicate on the "trigger" field.

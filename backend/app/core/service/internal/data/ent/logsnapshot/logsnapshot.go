@@ -36,6 +36,8 @@ const (
 	FieldSizeBytes = "size_bytes"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// FieldContentB64 holds the string denoting the content_b64 field in the database.
+	FieldContentB64 = "content_b64"
 	// FieldTrigger holds the string denoting the trigger field in the database.
 	FieldTrigger = "trigger"
 	// Table holds the table name of the logsnapshot in the database.
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldProjectName,
 	FieldSizeBytes,
 	FieldContent,
+	FieldContentB64,
 	FieldTrigger,
 }
 
@@ -160,6 +163,11 @@ func BySizeBytes(opts ...sql.OrderTermOption) OrderOption {
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
+}
+
+// ByContentB64 orders the results by the content_b64 field.
+func ByContentB64(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContentB64, opts...).ToFunc()
 }
 
 // ByTrigger orders the results by the trigger field.

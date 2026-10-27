@@ -1292,6 +1292,7 @@ var (
 		{Name: "project_name", Type: field.TypeString, Comment: "项目名快照"},
 		{Name: "size_bytes", Type: field.TypeInt64, Comment: "日志快照大小(字节)", Default: 0},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "日志内容(尾部,≤256KB)"},
+		{Name: "content_b64", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "原始日志字节 base64(UTF-8/GBK 保真;检索走 content,查看优先本字段)"},
 		{Name: "trigger", Type: field.TypeString, Comment: "触发方式:MANUAL=手动 / SCHEDULED=定时", Default: "MANUAL"},
 	}
 	// OpsLogSnapshotsTable holds the schema information for the "ops_log_snapshots" table.

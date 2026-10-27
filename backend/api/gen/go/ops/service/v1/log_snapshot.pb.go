@@ -28,15 +28,18 @@ const (
 
 // 日志快照
 type LogSnapshot struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                     // 快照ID
-	ProjectId     *uint32                `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
-	NodeId        *uint32                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`               // 节点
-	ProjectName   *string                `protobuf:"bytes,4,opt,name=project_name,json=projectName,proto3,oneof" json:"project_name,omitempty"` // 项目名
-	SizeBytes     *int64                 `protobuf:"varint,5,opt,name=size_bytes,json=sizeBytes,proto3,oneof" json:"size_bytes,omitempty"`      // 大小
-	Content       *string                `protobuf:"bytes,6,opt,name=content,proto3,oneof" json:"content,omitempty"`                            // 日志内容
-	Trigger       *string                `protobuf:"bytes,7,opt,name=trigger,proto3,oneof" json:"trigger,omitempty"`                            // 触发方式(MANUAL/SCHEDULED)
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`      // 采集时间
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                     // 快照ID
+	ProjectId   *uint32                `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
+	NodeId      *uint32                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`               // 节点
+	ProjectName *string                `protobuf:"bytes,4,opt,name=project_name,json=projectName,proto3,oneof" json:"project_name,omitempty"` // 项目名
+	SizeBytes   *int64                 `protobuf:"varint,5,opt,name=size_bytes,json=sizeBytes,proto3,oneof" json:"size_bytes,omitempty"`      // 大小
+	Content     *string                `protobuf:"bytes,6,opt,name=content,proto3,oneof" json:"content,omitempty"`                            // 日志内容
+	Trigger     *string                `protobuf:"bytes,7,opt,name=trigger,proto3,oneof" json:"trigger,omitempty"`                            // 触发方式(MANUAL/SCHEDULED)
+	// 原始字节 base64(GBK 保真查看用;采集自 ContentB64 通道,存量行可能为空,
+	// 展示侧回退 content)。检索仍走 content(UTF-8 归一后 ILIKE)。
+	ContentB64    *string                `protobuf:"bytes,8,opt,name=content_b64,json=contentB64,proto3,oneof" json:"content_b64,omitempty"` // 原始日志字节 base64
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`   // 采集时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -116,6 +119,13 @@ func (x *LogSnapshot) GetContent() string {
 func (x *LogSnapshot) GetTrigger() string {
 	if x != nil && x.Trigger != nil {
 		return *x.Trigger
+	}
+	return ""
+}
+
+func (x *LogSnapshot) GetContentB64() string {
+	if x != nil && x.ContentB64 != nil {
+		return *x.ContentB64
 	}
 	return ""
 }
@@ -503,7 +513,7 @@ var File_ops_service_v1_log_snapshot_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\n" +
-	"!ops/service/v1/log_snapshot.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xa1\x03\n" +
+	"!ops/service/v1/log_snapshot.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xd7\x03\n" +
 	"\vLogSnapshot\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -513,9 +523,11 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\n" +
 	"size_bytes\x18\x05 \x01(\x03H\x04R\tsizeBytes\x88\x01\x01\x12\x1d\n" +
 	"\acontent\x18\x06 \x01(\tH\x05R\acontent\x88\x01\x01\x12\x1d\n" +
-	"\atrigger\x18\a \x01(\tH\x06R\atrigger\x88\x01\x01\x12C\n" +
+	"\atrigger\x18\a \x01(\tH\x06R\atrigger\x88\x01\x01\x12$\n" +
+	"\vcontent_b64\x18\b \x01(\tH\aR\n" +
+	"contentB64\x88\x01\x01\x12C\n" +
 	"\n" +
-	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01B\x05\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\bR\tcreatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_project_idB\n" +
 	"\n" +
@@ -525,7 +537,8 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\n" +
 	"\b_contentB\n" +
 	"\n" +
-	"\b_triggerB\r\n" +
+	"\b_triggerB\x0e\n" +
+	"\f_content_b64B\r\n" +
 	"\v_created_at\"b\n" +
 	"\x17ListLogSnapshotResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x121\n" +

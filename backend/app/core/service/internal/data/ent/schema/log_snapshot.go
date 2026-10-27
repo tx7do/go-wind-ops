@@ -51,6 +51,10 @@ func (LogSnapshot) Fields() []ent.Field {
 			Comment("日志内容(尾部,≤256KB)").
 			Optional(),
 
+		field.Text("content_b64").
+			Comment("原始日志字节 base64(UTF-8/GBK 保真;检索走 content,查看优先本字段)").
+			Optional(),
+
 		field.String("trigger").
 			Comment("触发方式:MANUAL=手动 / SCHEDULED=定时").
 			Default("MANUAL"),

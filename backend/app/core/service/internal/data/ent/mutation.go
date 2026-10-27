@@ -44027,6 +44027,7 @@ type LogSnapshotMutation struct {
 	size_bytes    *int64
 	addsize_bytes *int64
 	content       *string
+	content_b64   *string
 	trigger       *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -44818,6 +44819,55 @@ func (m *LogSnapshotMutation) ResetContent() {
 	delete(m.clearedFields, logsnapshot.FieldContent)
 }
 
+// SetContentB64 sets the "content_b64" field.
+func (m *LogSnapshotMutation) SetContentB64(s string) {
+	m.content_b64 = &s
+}
+
+// ContentB64 returns the value of the "content_b64" field in the mutation.
+func (m *LogSnapshotMutation) ContentB64() (r string, exists bool) {
+	v := m.content_b64
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContentB64 returns the old "content_b64" field's value of the LogSnapshot entity.
+// If the LogSnapshot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LogSnapshotMutation) OldContentB64(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContentB64 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContentB64 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContentB64: %w", err)
+	}
+	return oldValue.ContentB64, nil
+}
+
+// ClearContentB64 clears the value of the "content_b64" field.
+func (m *LogSnapshotMutation) ClearContentB64() {
+	m.content_b64 = nil
+	m.clearedFields[logsnapshot.FieldContentB64] = struct{}{}
+}
+
+// ContentB64Cleared returns if the "content_b64" field was cleared in this mutation.
+func (m *LogSnapshotMutation) ContentB64Cleared() bool {
+	_, ok := m.clearedFields[logsnapshot.FieldContentB64]
+	return ok
+}
+
+// ResetContentB64 resets all changes to the "content_b64" field.
+func (m *LogSnapshotMutation) ResetContentB64() {
+	m.content_b64 = nil
+	delete(m.clearedFields, logsnapshot.FieldContentB64)
+}
+
 // SetTrigger sets the "trigger" field.
 func (m *LogSnapshotMutation) SetTrigger(s string) {
 	m.trigger = &s
@@ -44888,7 +44938,7 @@ func (m *LogSnapshotMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LogSnapshotMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.tenant_id != nil {
 		fields = append(fields, logsnapshot.FieldTenantID)
 	}
@@ -44925,6 +44975,9 @@ func (m *LogSnapshotMutation) Fields() []string {
 	if m.content != nil {
 		fields = append(fields, logsnapshot.FieldContent)
 	}
+	if m.content_b64 != nil {
+		fields = append(fields, logsnapshot.FieldContentB64)
+	}
 	if m.trigger != nil {
 		fields = append(fields, logsnapshot.FieldTrigger)
 	}
@@ -44960,6 +45013,8 @@ func (m *LogSnapshotMutation) Field(name string) (ent.Value, bool) {
 		return m.SizeBytes()
 	case logsnapshot.FieldContent:
 		return m.Content()
+	case logsnapshot.FieldContentB64:
+		return m.ContentB64()
 	case logsnapshot.FieldTrigger:
 		return m.Trigger()
 	}
@@ -44995,6 +45050,8 @@ func (m *LogSnapshotMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldSizeBytes(ctx)
 	case logsnapshot.FieldContent:
 		return m.OldContent(ctx)
+	case logsnapshot.FieldContentB64:
+		return m.OldContentB64(ctx)
 	case logsnapshot.FieldTrigger:
 		return m.OldTrigger(ctx)
 	}
@@ -45089,6 +45146,13 @@ func (m *LogSnapshotMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetContent(v)
+		return nil
+	case logsnapshot.FieldContentB64:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContentB64(v)
 		return nil
 	case logsnapshot.FieldTrigger:
 		v, ok := value.(string)
@@ -45238,6 +45302,9 @@ func (m *LogSnapshotMutation) ClearedFields() []string {
 	if m.FieldCleared(logsnapshot.FieldContent) {
 		fields = append(fields, logsnapshot.FieldContent)
 	}
+	if m.FieldCleared(logsnapshot.FieldContentB64) {
+		fields = append(fields, logsnapshot.FieldContentB64)
+	}
 	return fields
 }
 
@@ -45275,6 +45342,9 @@ func (m *LogSnapshotMutation) ClearField(name string) error {
 		return nil
 	case logsnapshot.FieldContent:
 		m.ClearContent()
+		return nil
+	case logsnapshot.FieldContentB64:
+		m.ClearContentB64()
 		return nil
 	}
 	return fmt.Errorf("unknown LogSnapshot nullable field %s", name)
@@ -45319,6 +45389,9 @@ func (m *LogSnapshotMutation) ResetField(name string) error {
 		return nil
 	case logsnapshot.FieldContent:
 		m.ResetContent()
+		return nil
+	case logsnapshot.FieldContentB64:
+		m.ResetContentB64()
 		return nil
 	case logsnapshot.FieldTrigger:
 		m.ResetTrigger()

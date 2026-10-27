@@ -203,8 +203,9 @@ func (r *LogSnapshotRepo) SearchByKeyword(ctx context.Context, keyword string, p
 		All(ctx)
 }
 
-// Create 落一条快照。
-func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID uint32, projectName, content, trigger string, operatorID uint32) (*ent.LogSnapshot, error) {
+// Create 落一条快照(content 为 UTF-8 归一文本供检索;contentB64 为原始
+// 字节 base64 供保真查看,空串不落)。
+func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID uint32, projectName, content, contentB64, trigger string, operatorID uint32) (*ent.LogSnapshot, error) {
 	builder := r.entClient.Client().LogSnapshot.
 		Create().
 		SetProjectID(projectID).
@@ -213,6 +214,9 @@ func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID uint32, 
 		SetContent(content).
 		SetSizeBytes(int64(len(content))).
 		SetTrigger(trigger)
+	if contentB64 != "" {
+		builder.SetContentB64(contentB64)
+	}
 	if operatorID > 0 {
 		builder.SetCreatedBy(operatorID)
 	}

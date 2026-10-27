@@ -85,6 +85,10 @@ func (m *LogSnapshot) validate(all bool) error {
 		// no validation rules for Trigger
 	}
 
+	if m.ContentB64 != nil {
+		// no validation rules for ContentB64
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

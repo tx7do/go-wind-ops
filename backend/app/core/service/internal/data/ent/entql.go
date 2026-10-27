@@ -900,6 +900,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			logsnapshot.FieldProjectName: {Type: field.TypeString, Column: logsnapshot.FieldProjectName},
 			logsnapshot.FieldSizeBytes:   {Type: field.TypeInt64, Column: logsnapshot.FieldSizeBytes},
 			logsnapshot.FieldContent:     {Type: field.TypeString, Column: logsnapshot.FieldContent},
+			logsnapshot.FieldContentB64:  {Type: field.TypeString, Column: logsnapshot.FieldContentB64},
 			logsnapshot.FieldTrigger:     {Type: field.TypeString, Column: logsnapshot.FieldTrigger},
 		},
 	}
@@ -5609,6 +5610,11 @@ func (f *LogSnapshotFilter) WhereSizeBytes(p entql.Int64P) {
 // WhereContent applies the entql string predicate on the content field.
 func (f *LogSnapshotFilter) WhereContent(p entql.StringP) {
 	f.Where(p.Field(logsnapshot.FieldContent))
+}
+
+// WhereContentB64 applies the entql string predicate on the content_b64 field.
+func (f *LogSnapshotFilter) WhereContentB64(p entql.StringP) {
+	f.Where(p.Field(logsnapshot.FieldContentB64))
 }
 
 // WhereTrigger applies the entql string predicate on the trigger field.

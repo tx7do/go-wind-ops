@@ -1230,7 +1230,7 @@ func init() {
 	// logsnapshot.DefaultSizeBytes holds the default value on creation for the size_bytes field.
 	logsnapshot.DefaultSizeBytes = logsnapshotDescSizeBytes.Default.(int64)
 	// logsnapshotDescTrigger is the schema descriptor for trigger field.
-	logsnapshotDescTrigger := logsnapshotFields[5].Descriptor()
+	logsnapshotDescTrigger := logsnapshotFields[6].Descriptor()
 	// logsnapshot.DefaultTrigger holds the default value on creation for the trigger field.
 	logsnapshot.DefaultTrigger = logsnapshotDescTrigger.Default.(string)
 	// logsnapshotDescID is the schema descriptor for id field.
