@@ -156,6 +156,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
 	maintenanceWindowRepo := data.NewMaintenanceWindowRepo(ctx, entClient)
+	promotionPipelineRepo := data.NewPromotionPipelineRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
 	scriptBatchRepo := data.NewScriptBatchRepo(ctx, entClient)
@@ -255,6 +256,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 	cloudCostService := service.NewCloudCostService(ctx, cloudCostRepo, cloudAccountRepo)
 	maintenanceWindowService := service.NewMaintenanceWindowService(ctx, maintenanceWindowRepo)
+	promotionPipelineService := service.NewPromotionPipelineService(ctx, promotionPipelineRepo, distributionService)
 	cloudInstanceService := service.NewCloudInstanceService(ctx, cloudInstanceRepo, cloudAccountRepo)
 	cloudAccountService := service.NewCloudAccountService(ctx, cloudAccountRepo)
 
@@ -263,7 +265,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, mfaService, maintenanceWindowService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, maintenanceWindowService, promotionPipelineService, loginPolicyService, userCredentialService,
 		taskService,
 		dictTypeService, dictEntryService, languageService,
 		tenantService, userService, roleService, positionService, orgUnitService,

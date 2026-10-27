@@ -2925,6 +2925,27 @@ var (
 			},
 		},
 	}
+	// OpsPromotionPipelinesColumns holds the columns for the "ops_promotion_pipelines" table.
+	OpsPromotionPipelinesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Comment: "流水线名"},
+		{Name: "stages", Type: field.TypeJSON, Comment: "有序阶段列表(每阶段=分发配置+环境标签)"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+	}
+	// OpsPromotionPipelinesTable holds the schema information for the "ops_promotion_pipelines" table.
+	OpsPromotionPipelinesTable = &schema.Table{
+		Name:       "ops_promotion_pipelines",
+		Comment:    "环境晋升流水线表",
+		Columns:    OpsPromotionPipelinesColumns,
+		PrimaryKey: []*schema.Column{OpsPromotionPipelinesColumns[0]},
+	}
 	// OpsRepositoriesColumns holds the columns for the "ops_repositories" table.
 	OpsRepositoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3905,6 +3926,7 @@ var (
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
 		OpsProjectsTable,
+		OpsPromotionPipelinesTable,
 		OpsRepositoriesTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
@@ -4186,6 +4208,11 @@ func init() {
 	}
 	OpsProjectsTable.Annotation = &entsql.Annotation{
 		Table:     "ops_projects",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	OpsPromotionPipelinesTable.Annotation = &entsql.Annotation{
+		Table:     "ops_promotion_pipelines",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

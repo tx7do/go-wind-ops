@@ -57,6 +57,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
+	"go-wind-ops/app/core/service/internal/data/ent/promotionpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/repository"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
@@ -2026,6 +2027,34 @@ func init() {
 	projectDescID := projectMixinFields0[0].Descriptor()
 	// project.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	project.IDValidator = projectDescID.Validators[0].(func(uint32) error)
+	promotionpipelineMixin := schema.PromotionPipeline{}.Mixin()
+	promotionpipeline.Policy = privacy.NewPolicies(promotionpipelineMixin[1], schema.PromotionPipeline{})
+	promotionpipeline.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := promotionpipeline.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	promotionpipelineMixinFields0 := promotionpipelineMixin[0].Fields()
+	_ = promotionpipelineMixinFields0
+	promotionpipelineMixinFields1 := promotionpipelineMixin[1].Fields()
+	_ = promotionpipelineMixinFields1
+	promotionpipelineFields := schema.PromotionPipeline{}.Fields()
+	_ = promotionpipelineFields
+	// promotionpipelineDescTenantID is the schema descriptor for tenant_id field.
+	promotionpipelineDescTenantID := promotionpipelineMixinFields1[0].Descriptor()
+	// promotionpipeline.DefaultTenantID holds the default value on creation for the tenant_id field.
+	promotionpipeline.DefaultTenantID = promotionpipelineDescTenantID.Default.(uint32)
+	// promotionpipelineDescName is the schema descriptor for name field.
+	promotionpipelineDescName := promotionpipelineFields[0].Descriptor()
+	// promotionpipeline.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	promotionpipeline.NameValidator = promotionpipelineDescName.Validators[0].(func(string) error)
+	// promotionpipelineDescID is the schema descriptor for id field.
+	promotionpipelineDescID := promotionpipelineMixinFields0[0].Descriptor()
+	// promotionpipeline.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	promotionpipeline.IDValidator = promotionpipelineDescID.Validators[0].(func(uint32) error)
 	repositoryMixin := schema.Repository{}.Mixin()
 	repository.Policy = privacy.NewPolicies(repositoryMixin[1], schema.Repository{})
 	repository.Hooks[0] = func(next ent.Mutator) ent.Mutator {

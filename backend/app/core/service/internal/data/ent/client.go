@@ -63,6 +63,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
+	"go-wind-ops/app/core/service/internal/data/ent/promotionpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/repository"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
@@ -194,6 +195,8 @@ type Client struct {
 	Position *PositionClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// PromotionPipeline is the client for interacting with the PromotionPipeline builders.
+	PromotionPipeline *PromotionPipelineClient
 	// Repository is the client for interacting with the Repository builders.
 	Repository *RepositoryClient
 	// Role is the client for interacting with the Role builders.
@@ -287,6 +290,7 @@ func (c *Client) init() {
 	c.PolicyEvaluationLog = NewPolicyEvaluationLogClient(c.config)
 	c.Position = NewPositionClient(c.config)
 	c.Project = NewProjectClient(c.config)
+	c.PromotionPipeline = NewPromotionPipelineClient(c.config)
 	c.Repository = NewRepositoryClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
@@ -446,6 +450,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
 		Position:             NewPositionClient(cfg),
 		Project:              NewProjectClient(cfg),
+		PromotionPipeline:    NewPromotionPipelineClient(cfg),
 		Repository:           NewRepositoryClient(cfg),
 		Role:                 NewRoleClient(cfg),
 		RoleMetadata:         NewRoleMetadataClient(cfg),
@@ -532,6 +537,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PolicyEvaluationLog:  NewPolicyEvaluationLogClient(cfg),
 		Position:             NewPositionClient(cfg),
 		Project:              NewProjectClient(cfg),
+		PromotionPipeline:    NewPromotionPipelineClient(cfg),
 		Repository:           NewRepositoryClient(cfg),
 		Role:                 NewRoleClient(cfg),
 		RoleMetadata:         NewRoleMetadataClient(cfg),
@@ -587,9 +593,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk, c.TerminalSession, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Project, c.PromotionPipeline, c.Repository, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Script, c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk,
+		c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -610,9 +617,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.NotificationDelivery, c.OperationAuditLog, c.OrgUnit, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
-		c.Project, c.Repository, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk, c.TerminalSession, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Project, c.PromotionPipeline, c.Repository, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Script, c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk,
+		c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -725,6 +733,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Position.mutate(ctx, m)
 	case *ProjectMutation:
 		return c.Project.mutate(ctx, m)
+	case *PromotionPipelineMutation:
+		return c.PromotionPipeline.mutate(ctx, m)
 	case *RepositoryMutation:
 		return c.Repository.mutate(ctx, m)
 	case *RoleMutation:
@@ -7884,6 +7894,140 @@ func (c *ProjectClient) mutate(ctx context.Context, m *ProjectMutation) (Value, 
 	}
 }
 
+// PromotionPipelineClient is a client for the PromotionPipeline schema.
+type PromotionPipelineClient struct {
+	config
+}
+
+// NewPromotionPipelineClient returns a client for the PromotionPipeline from the given config.
+func NewPromotionPipelineClient(c config) *PromotionPipelineClient {
+	return &PromotionPipelineClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `promotionpipeline.Hooks(f(g(h())))`.
+func (c *PromotionPipelineClient) Use(hooks ...Hook) {
+	c.hooks.PromotionPipeline = append(c.hooks.PromotionPipeline, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `promotionpipeline.Intercept(f(g(h())))`.
+func (c *PromotionPipelineClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PromotionPipeline = append(c.inters.PromotionPipeline, interceptors...)
+}
+
+// Create returns a builder for creating a PromotionPipeline entity.
+func (c *PromotionPipelineClient) Create() *PromotionPipelineCreate {
+	mutation := newPromotionPipelineMutation(c.config, OpCreate)
+	return &PromotionPipelineCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PromotionPipeline entities.
+func (c *PromotionPipelineClient) CreateBulk(builders ...*PromotionPipelineCreate) *PromotionPipelineCreateBulk {
+	return &PromotionPipelineCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PromotionPipelineClient) MapCreateBulk(slice any, setFunc func(*PromotionPipelineCreate, int)) *PromotionPipelineCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PromotionPipelineCreateBulk{err: fmt.Errorf("calling to PromotionPipelineClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PromotionPipelineCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PromotionPipelineCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PromotionPipeline.
+func (c *PromotionPipelineClient) Update() *PromotionPipelineUpdate {
+	mutation := newPromotionPipelineMutation(c.config, OpUpdate)
+	return &PromotionPipelineUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PromotionPipelineClient) UpdateOne(_m *PromotionPipeline) *PromotionPipelineUpdateOne {
+	mutation := newPromotionPipelineMutation(c.config, OpUpdateOne, withPromotionPipeline(_m))
+	return &PromotionPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PromotionPipelineClient) UpdateOneID(id uint32) *PromotionPipelineUpdateOne {
+	mutation := newPromotionPipelineMutation(c.config, OpUpdateOne, withPromotionPipelineID(id))
+	return &PromotionPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PromotionPipeline.
+func (c *PromotionPipelineClient) Delete() *PromotionPipelineDelete {
+	mutation := newPromotionPipelineMutation(c.config, OpDelete)
+	return &PromotionPipelineDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PromotionPipelineClient) DeleteOne(_m *PromotionPipeline) *PromotionPipelineDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PromotionPipelineClient) DeleteOneID(id uint32) *PromotionPipelineDeleteOne {
+	builder := c.Delete().Where(promotionpipeline.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PromotionPipelineDeleteOne{builder}
+}
+
+// Query returns a query builder for PromotionPipeline.
+func (c *PromotionPipelineClient) Query() *PromotionPipelineQuery {
+	return &PromotionPipelineQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePromotionPipeline},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PromotionPipeline entity by its id.
+func (c *PromotionPipelineClient) Get(ctx context.Context, id uint32) (*PromotionPipeline, error) {
+	return c.Query().Where(promotionpipeline.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PromotionPipelineClient) GetX(ctx context.Context, id uint32) *PromotionPipeline {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PromotionPipelineClient) Hooks() []Hook {
+	hooks := c.hooks.PromotionPipeline
+	return append(hooks[:len(hooks):len(hooks)], promotionpipeline.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PromotionPipelineClient) Interceptors() []Interceptor {
+	return c.inters.PromotionPipeline
+}
+
+func (c *PromotionPipelineClient) mutate(ctx context.Context, m *PromotionPipelineMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PromotionPipelineCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PromotionPipelineUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PromotionPipelineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PromotionPipelineDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PromotionPipeline mutation op: %q", m.Op())
+	}
+}
+
 // RepositoryClient is a client for the Repository schema.
 type RepositoryClient struct {
 	config
@@ -9906,9 +10050,9 @@ type (
 		NotificationChannel, NotificationDelivery, OperationAuditLog, OrgUnit,
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
-		Repository, Role, RoleMetadata, RolePermission, Script, ScriptBatch, Task,
-		Tenant, TerminalChunk, TerminalSession, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Hook
+		PromotionPipeline, Repository, Role, RoleMetadata, RolePermission, Script,
+		ScriptBatch, Task, Tenant, TerminalChunk, TerminalSession, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AgentNode, Alert, Api, ApiAuditLog, ApiKey, Approval, BackupRecord, BackupTask,
@@ -9921,8 +10065,8 @@ type (
 		NotificationChannel, NotificationDelivery, OperationAuditLog, OrgUnit,
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
-		Repository, Role, RoleMetadata, RolePermission, Script, ScriptBatch, Task,
-		Tenant, TerminalChunk, TerminalSession, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Interceptor
+		PromotionPipeline, Repository, Role, RoleMetadata, RolePermission, Script,
+		ScriptBatch, Task, Tenant, TerminalChunk, TerminalSession, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

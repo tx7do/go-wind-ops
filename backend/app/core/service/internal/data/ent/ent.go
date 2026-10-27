@@ -58,6 +58,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-ops/app/core/service/internal/data/ent/position"
 	"go-wind-ops/app/core/service/internal/data/ent/project"
+	"go-wind-ops/app/core/service/internal/data/ent/promotionpipeline"
 	"go-wind-ops/app/core/service/internal/data/ent/repository"
 	"go-wind-ops/app/core/service/internal/data/ent/role"
 	"go-wind-ops/app/core/service/internal/data/ent/rolemetadata"
@@ -191,6 +192,7 @@ func checkColumn(t, c string) error {
 			policyevaluationlog.Table:  policyevaluationlog.ValidColumn,
 			position.Table:             position.ValidColumn,
 			project.Table:              project.ValidColumn,
+			promotionpipeline.Table:    promotionpipeline.ValidColumn,
 			repository.Table:           repository.ValidColumn,
 			role.Table:                 role.ValidColumn,
 			rolemetadata.Table:         rolemetadata.ValidColumn,

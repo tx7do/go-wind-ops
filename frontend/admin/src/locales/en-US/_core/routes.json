@@ -141,5 +141,6 @@
   "inspections": "Inspections",
   "log-snapshots": "Log Snapshots",
   "config-center": "Config Center",
-  "maintenanceWindows": "Maintenance Windows"
+  "maintenanceWindows": "Maintenance Windows",
+  "promotionPipelines": "Promotion Pipelines"
 }

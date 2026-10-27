@@ -1359,6 +1359,30 @@ func (f ProjectMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProjectMutation", m)
 }
 
+// The PromotionPipelineQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PromotionPipelineQueryRuleFunc func(context.Context, *ent.PromotionPipelineQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PromotionPipelineQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PromotionPipelineQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PromotionPipelineQuery", q)
+}
+
+// The PromotionPipelineMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PromotionPipelineMutationRuleFunc func(context.Context, *ent.PromotionPipelineMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PromotionPipelineMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PromotionPipelineMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PromotionPipelineMutation", m)
+}
+
 // The RepositoryQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RepositoryQueryRuleFunc func(context.Context, *ent.RepositoryQuery) error
@@ -1858,6 +1882,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ProjectQuery:
 		return q.Filter(), nil
+	case *ent.PromotionPipelineQuery:
+		return q.Filter(), nil
 	case *ent.RepositoryQuery:
 		return q.Filter(), nil
 	case *ent.RoleQuery:
@@ -1998,6 +2024,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PositionMutation:
 		return m.Filter(), nil
 	case *ent.ProjectMutation:
+		return m.Filter(), nil
+	case *ent.PromotionPipelineMutation:
 		return m.Filter(), nil
 	case *ent.RepositoryMutation:
 		return m.Filter(), nil

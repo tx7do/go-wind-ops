@@ -162,6 +162,9 @@ type Position func(*sql.Selector)
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
 
+// PromotionPipeline is the predicate function for promotionpipeline builders.
+type PromotionPipeline func(*sql.Selector)
+
 // Repository is the predicate function for repository builders.
 type Repository func(*sql.Selector)
 

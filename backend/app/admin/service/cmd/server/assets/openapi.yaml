@@ -6679,6 +6679,173 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ops.service.v1.OperateProjectResponse'
+    /admin/v1/promotion-pipelines:
+        get:
+            tags:
+                - PromotionPipelineService
+            description: 查询流水线列表
+            operationId: PromotionPipelineService_ListPromotionPipelines
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.ListPromotionPipelineResponse'
+        post:
+            tags:
+                - PromotionPipelineService
+            description: 创建流水线
+            operationId: PromotionPipelineService_CreatePromotionPipeline
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.CreatePromotionPipelineRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
+    /admin/v1/promotion-pipelines/{id}:
+        get:
+            tags:
+                - PromotionPipelineService
+            description: 查询流水线详情
+            operationId: PromotionPipelineService_GetPromotionPipeline
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
+    /admin/v1/promotion-pipelines:delete:
+        post:
+            tags:
+                - PromotionPipelineService
+            description: 删除流水线(id 走 body,不带 path 参数)
+            operationId: PromotionPipelineService_DeletePromotionPipeline
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.DeletePromotionPipelineRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/promotion-pipelines:promote:
+        post:
+            tags:
+                - PromotionPipelineService
+            description: 晋升(触发指定阶段分发;id 走 body)
+            operationId: PromotionPipelineService_PromotePromotion
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.PromotePromotionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ops.service.v1.PromotePromotionResponse'
+    /admin/v1/promotion-pipelines:update:
+        post:
+            tags:
+                - PromotionPipelineService
+            description: 更新流水线(id 走 body,不带 path 参数)
+            operationId: PromotionPipelineService_UpdatePromotionPipeline
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ops.service.v1.UpdatePromotionPipelineRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/refresh-token:
         post:
             tags:
@@ -11318,6 +11485,13 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/ops.service.v1.Project'
+        ops.service.v1.CreatePromotionPipelineRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
         ops.service.v1.CreateRepositoryRequest:
             required:
                 - data
@@ -11349,6 +11523,14 @@ components:
                     readOnly: true
                     type: string
         ops.service.v1.DeleteMaintenanceWindowRequest:
+            required:
+                - id
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        ops.service.v1.DeletePromotionPipelineRequest:
             required:
                 - id
             type: object
@@ -12068,6 +12250,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ops.service.v1.Project'
+        ops.service.v1.ListPromotionPipelineResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
         ops.service.v1.ListRepositoryResponse:
             type: object
             properties:
@@ -12606,6 +12797,64 @@ components:
                     type: string
                     format: date-time
             description: 受管机器上的应用项目
+        ops.service.v1.PromotePromotionRequest:
+            required:
+                - id
+                - stageIndex
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                stageIndex:
+                    type: integer
+                    format: uint32
+                historyId:
+                    type: integer
+                    format: uint32
+        ops.service.v1.PromotePromotionResponse:
+            type: object
+            properties:
+                recordIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                env:
+                    type: string
+        ops.service.v1.PromotionPipeline:
+            required:
+                - name
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                stages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ops.service.v1.PromotionStage'
+                description:
+                    type: string
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+            description: 晋升流水线
+        ops.service.v1.PromotionStage:
+            type: object
+            properties:
+                distributionId:
+                    type: integer
+                    format: uint32
+                env:
+                    type: string
+                name:
+                    type: string
+            description: 晋升阶段
         ops.service.v1.PullAgentFileRequest:
             required:
                 - agentId
@@ -13249,6 +13498,20 @@ components:
                 updateMask:
                     type: string
                     description: 要更新的字段列表
+                    format: field-mask
+        ops.service.v1.UpdatePromotionPipelineRequest:
+            required:
+                - id
+                - data
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/ops.service.v1.PromotionPipeline'
+                updateMask:
+                    type: string
                     format: field-mask
         ops.service.v1.UpdateRepositoryRequest:
             required:
@@ -14361,6 +14624,8 @@ tags:
       description: 职位管理服务
     - name: ProjectService
       description: ProjectService 受管机器应用项目管理
+    - name: PromotionPipelineService
+      description: 环境晋升流水线管理
     - name: RepositoryService
       description: RepositoryService 构建源仓库管理
     - name: RoleService

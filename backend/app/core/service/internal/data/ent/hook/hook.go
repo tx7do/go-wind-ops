@@ -632,6 +632,18 @@ func (f ProjectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectMutation", m)
 }
 
+// The PromotionPipelineFunc type is an adapter to allow the use of ordinary
+// function as PromotionPipeline mutator.
+type PromotionPipelineFunc func(context.Context, *ent.PromotionPipelineMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PromotionPipelineFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PromotionPipelineMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PromotionPipelineMutation", m)
+}
+
 // The RepositoryFunc type is an adapter to allow the use of ordinary
 // function as Repository mutator.
 type RepositoryFunc func(context.Context, *ent.RepositoryMutation) (ent.Value, error)

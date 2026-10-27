@@ -9964,6 +9964,221 @@ export type opsservicev1_ClearProjectLogRequest = {
   id?: number;
 };
 
+// 环境晋升流水线管理
+export interface PromotionPipelineService {
+  // 查询流水线列表
+  ListPromotionPipelines(
+    request: pagination_PagingRequest,
+  ): Promise<opsservicev1_ListPromotionPipelineResponse>;
+  // 查询流水线详情
+  GetPromotionPipeline(
+    request: opsservicev1_GetPromotionPipelineRequest,
+  ): Promise<opsservicev1_PromotionPipeline>;
+  // 创建流水线
+  CreatePromotionPipeline(
+    request: opsservicev1_CreatePromotionPipelineRequest,
+  ): Promise<opsservicev1_PromotionPipeline>;
+  // 更新流水线(id 走 body,不带 path 参数)
+  UpdatePromotionPipeline(
+    request: opsservicev1_UpdatePromotionPipelineRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除流水线(id 走 body,不带 path 参数)
+  DeletePromotionPipeline(
+    request: opsservicev1_DeletePromotionPipelineRequest,
+  ): Promise<wellKnownEmpty>;
+  // 晋升(触发指定阶段分发;id 走 body)
+  PromotePromotion(
+    request: opsservicev1_PromotePromotionRequest,
+  ): Promise<opsservicev1_PromotePromotionResponse>;
+}
+
+export function createPromotionPipelineServiceClient(
+  transport: ClientTransport,
+): PromotionPipelineService {
+  return {
+    ListPromotionPipelines(request) {
+      const path = `/admin/v1/promotion-pipelines`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PromotionPipelineService',
+        method: 'ListPromotionPipelines',
+      }) as Promise<opsservicev1_ListPromotionPipelineResponse>;
+    },
+    GetPromotionPipeline(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/promotion-pipelines/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PromotionPipelineService',
+        method: 'GetPromotionPipeline',
+      }) as Promise<opsservicev1_PromotionPipeline>;
+    },
+    CreatePromotionPipeline(request) {
+      const path = `/admin/v1/promotion-pipelines`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionPipelineService',
+        method: 'CreatePromotionPipeline',
+      }) as Promise<opsservicev1_PromotionPipeline>;
+    },
+    UpdatePromotionPipeline(request) {
+      const path = `/admin/v1/promotion-pipelines:update`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionPipelineService',
+        method: 'UpdatePromotionPipeline',
+      }) as Promise<wellKnownEmpty>;
+    },
+    DeletePromotionPipeline(request) {
+      const path = `/admin/v1/promotion-pipelines:delete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionPipelineService',
+        method: 'DeletePromotionPipeline',
+      }) as Promise<wellKnownEmpty>;
+    },
+    PromotePromotion(request) {
+      const path = `/admin/v1/promotion-pipelines:promote`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionPipelineService',
+        method: 'PromotePromotion',
+      }) as Promise<opsservicev1_PromotePromotionResponse>;
+    },
+  };
+}
+export type opsservicev1_ListPromotionPipelineResponse = {
+  items: opsservicev1_PromotionPipeline[] | undefined;
+  total: number | undefined;
+};
+
+// 晋升流水线
+export type opsservicev1_PromotionPipeline = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  stages: opsservicev1_PromotionStage[] | undefined;
+};
+
+// 晋升阶段
+export type opsservicev1_PromotionStage = {
+  distributionId: number | undefined;
+  env: string | undefined;
+  name: string | undefined;
+};
+
+export type opsservicev1_GetPromotionPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_CreatePromotionPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_PromotionPipeline;
+};
+
+export type opsservicev1_UpdatePromotionPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  data?: opsservicev1_PromotionPipeline;
+  //
+  // Behaviors: REQUIRED
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type opsservicev1_DeletePromotionPipelineRequest = {
+  //
+  // Behaviors: REQUIRED
+  id?: number;
+};
+
+export type opsservicev1_PromotePromotionRequest = {
+  historyId?: number;
+  //
+  // Behaviors: REQUIRED
+  id: number | undefined;
+  //
+  // Behaviors: REQUIRED
+  stageIndex: number | undefined;
+};
+
+export type opsservicev1_PromotePromotionResponse = {
+  env: string | undefined;
+  recordIds: number[] | undefined;
+};
+
 // RepositoryService 构建源仓库管理
 export interface RepositoryService {
   // 查询仓库列表
@@ -12286,6 +12501,7 @@ export class ApiClient {
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _projectService?: ProjectService;
+  private _promotionPipelineService?: PromotionPipelineService;
   private _repositoryService?: RepositoryService;
   private _roleService?: RoleService;
   private _scriptBatchService?: ScriptBatchService;
@@ -12475,6 +12691,10 @@ export class ApiClient {
 
   get projectService(): ProjectService {
     return this._projectService ??= createProjectServiceClient(this._transport);
+  }
+
+  get promotionPipelineService(): PromotionPipelineService {
+    return this._promotionPipelineService ??= createPromotionPipelineServiceClient(this._transport);
   }
 
   get repositoryService(): RepositoryService {

@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package ops.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// PromotionPipelineService 环境晋升流水线:同一构建产物按有序阶段
+// (每阶段=既有分发配置)逐环境晋升。Promote = 按指定构建历史触发该阶段
+// 分发;跨阶段节奏由人把握,产物可追溯复用分发记录。
+service PromotionPipelineService {
+  // 查询流水线列表
+  rpc ListPromotionPipelines (pagination.PagingRequest) returns (ListPromotionPipelineResponse) {}
+
+  // 查询流水线详情
+  rpc GetPromotionPipeline (GetPromotionPipelineRequest) returns (PromotionPipeline) {}
+
+  // 创建流水线
+  rpc CreatePromotionPipeline (CreatePromotionPipelineRequest) returns (PromotionPipeline) {}
+
+  // 更新流水线
+  rpc UpdatePromotionPipeline (UpdatePromotionPipelineRequest) returns (google.protobuf.Empty) {}
+
+  // 删除流水线
+  rpc DeletePromotionPipeline (DeletePromotionPipelineRequest) returns (google.protobuf.Empty) {}
+
+  // 晋升:触发指定阶段的分发(缺省取该分发配置的最新成功构建)
+  rpc PromotePromotion (PromotePromotionRequest) returns (PromotePromotionResponse) {}
+}
+
+// 晋升阶段
+message PromotionStage {
+  uint32 distribution_id = 1 [json_name = "distributionId"]; // 该阶段的分发配置
+  string env = 2 [json_name = "env"]; // 环境标签(展示)
+  string name = 3 [json_name = "name"]; // 阶段名(展示)
+}
+
+// 晋升流水线
+message PromotionPipeline {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 流水线ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线名
+
+  repeated PromotionStage stages = 3 [json_name = "stages"]; // 有序阶段
+
+  optional string description = 4 [json_name = "description"]; // 描述
+
+  optional google.protobuf.Timestamp created_at = 30 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建时间
+}
+
+message ListPromotionPipelineResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated PromotionPipeline items = 2 [json_name = "items"]; // 流水线列表
+}
+
+message GetPromotionPipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+}
+
+message CreatePromotionPipelineRequest {
+  optional PromotionPipeline data = 1 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 创建数据
+}
+
+message UpdatePromotionPipelineRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID(id 走 body:触发类 POST 不带 path 参数)
+
+  optional PromotionPipeline data = 2 [
+    json_name = "data",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 更新数据
+
+  optional google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"]; // 更新掩码
+}
+
+message DeletePromotionPipelineRequest {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID
+}
+
+message PromotePromotionRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 流水线ID(id 走 body)
+
+  uint32 stage_index = 2 [
+    json_name = "stageIndex",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标阶段下标(0 起)
+
+  optional uint32 history_id = 3 [json_name = "historyId"]; // 指定构建历史(缺省该分发配置最新成功构建)
+}
+
+message PromotePromotionResponse {
+  repeated uint32 record_ids = 1 [json_name = "recordIds"]; // 分发记录ID(透传分发触发结果)
+  string env = 2 [json_name = "env"]; // 晋升目标环境
+}

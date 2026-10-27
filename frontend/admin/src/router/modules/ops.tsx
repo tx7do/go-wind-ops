@@ -311,6 +311,17 @@ export const opsRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'promotion-pipelines',
+        path: '/ops/promotion-pipelines',
+        element: createLazyRoute(() => import('@/pages/app/ops/promotion-pipeline')),
+        meta: {
+          title: 'routes:promotionPipelines',
+          icon: 'lucide:git-branch',
+          order: 3,
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
         name: 'maintenance-windows',
         path: '/ops/maintenance-windows',
         element: createLazyRoute(() => import('@/pages/app/ops/maintenance-window')),

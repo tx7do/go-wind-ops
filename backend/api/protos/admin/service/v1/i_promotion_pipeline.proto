@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "ops/service/v1/promotion_pipeline.proto";
+
+// 环境晋升流水线管理
+service PromotionPipelineService {
+  // 查询流水线列表
+  rpc ListPromotionPipelines (pagination.PagingRequest) returns (ops.service.v1.ListPromotionPipelineResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/promotion-pipelines"
+    };
+  }
+
+  // 查询流水线详情
+  rpc GetPromotionPipeline (ops.service.v1.GetPromotionPipelineRequest) returns (ops.service.v1.PromotionPipeline) {
+    option (google.api.http) = {
+      get: "/admin/v1/promotion-pipelines/{id}"
+    };
+  }
+
+  // 创建流水线
+  rpc CreatePromotionPipeline (ops.service.v1.CreatePromotionPipelineRequest) returns (ops.service.v1.PromotionPipeline) {
+    option (google.api.http) = {
+      post: "/admin/v1/promotion-pipelines"
+      body: "*"
+    };
+  }
+
+  // 更新流水线(id 走 body,不带 path 参数)
+  rpc UpdatePromotionPipeline (ops.service.v1.UpdatePromotionPipelineRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/promotion-pipelines:update"
+      body: "*"
+    };
+  }
+
+  // 删除流水线(id 走 body,不带 path 参数)
+  rpc DeletePromotionPipeline (ops.service.v1.DeletePromotionPipelineRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/promotion-pipelines:delete"
+      body: "*"
+    };
+  }
+
+  // 晋升(触发指定阶段分发;id 走 body)
+  rpc PromotePromotion (ops.service.v1.PromotePromotionRequest) returns (ops.service.v1.PromotePromotionResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/promotion-pipelines:promote"
+      body: "*"
+    };
+  }
+}

@@ -116,6 +116,8 @@ type Tx struct {
 	Position *PositionClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// PromotionPipeline is the client for interacting with the PromotionPipeline builders.
+	PromotionPipeline *PromotionPipelineClient
 	// Repository is the client for interacting with the Repository builders.
 	Repository *RepositoryClient
 	// Role is the client for interacting with the Role builders.
@@ -329,6 +331,7 @@ func (tx *Tx) init() {
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
+	tx.PromotionPipeline = NewPromotionPipelineClient(tx.config)
 	tx.Repository = NewRepositoryClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
