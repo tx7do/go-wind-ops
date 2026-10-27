@@ -9506,6 +9506,7 @@ type ApprovalMutation struct {
 	status              *approval.Status
 	reject_reason       *string
 	result              *string
+	expires_at          *time.Time
 	resolved_at         *time.Time
 	clearedFields       map[string]struct{}
 	done                bool
@@ -10321,6 +10322,55 @@ func (m *ApprovalMutation) ResetResult() {
 	delete(m.clearedFields, approval.FieldResult)
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (m *ApprovalMutation) SetExpiresAt(t time.Time) {
+	m.expires_at = &t
+}
+
+// ExpiresAt returns the value of the "expires_at" field in the mutation.
+func (m *ApprovalMutation) ExpiresAt() (r time.Time, exists bool) {
+	v := m.expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresAt returns the old "expires_at" field's value of the Approval entity.
+// If the Approval object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApprovalMutation) OldExpiresAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
+	}
+	return oldValue.ExpiresAt, nil
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (m *ApprovalMutation) ClearExpiresAt() {
+	m.expires_at = nil
+	m.clearedFields[approval.FieldExpiresAt] = struct{}{}
+}
+
+// ExpiresAtCleared returns if the "expires_at" field was cleared in this mutation.
+func (m *ApprovalMutation) ExpiresAtCleared() bool {
+	_, ok := m.clearedFields[approval.FieldExpiresAt]
+	return ok
+}
+
+// ResetExpiresAt resets all changes to the "expires_at" field.
+func (m *ApprovalMutation) ResetExpiresAt() {
+	m.expires_at = nil
+	delete(m.clearedFields, approval.FieldExpiresAt)
+}
+
 // SetResolvedAt sets the "resolved_at" field.
 func (m *ApprovalMutation) SetResolvedAt(t time.Time) {
 	m.resolved_at = &t
@@ -10404,7 +10454,7 @@ func (m *ApprovalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApprovalMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.tenant_id != nil {
 		fields = append(fields, approval.FieldTenantID)
 	}
@@ -10447,6 +10497,9 @@ func (m *ApprovalMutation) Fields() []string {
 	if m.result != nil {
 		fields = append(fields, approval.FieldResult)
 	}
+	if m.expires_at != nil {
+		fields = append(fields, approval.FieldExpiresAt)
+	}
 	if m.resolved_at != nil {
 		fields = append(fields, approval.FieldResolvedAt)
 	}
@@ -10486,6 +10539,8 @@ func (m *ApprovalMutation) Field(name string) (ent.Value, bool) {
 		return m.RejectReason()
 	case approval.FieldResult:
 		return m.Result()
+	case approval.FieldExpiresAt:
+		return m.ExpiresAt()
 	case approval.FieldResolvedAt:
 		return m.ResolvedAt()
 	}
@@ -10525,6 +10580,8 @@ func (m *ApprovalMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldRejectReason(ctx)
 	case approval.FieldResult:
 		return m.OldResult(ctx)
+	case approval.FieldExpiresAt:
+		return m.OldExpiresAt(ctx)
 	case approval.FieldResolvedAt:
 		return m.OldResolvedAt(ctx)
 	}
@@ -10633,6 +10690,13 @@ func (m *ApprovalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetResult(v)
+		return nil
+	case approval.FieldExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresAt(v)
 		return nil
 	case approval.FieldResolvedAt:
 		v, ok := value.(time.Time)
@@ -10749,6 +10813,9 @@ func (m *ApprovalMutation) ClearedFields() []string {
 	if m.FieldCleared(approval.FieldResult) {
 		fields = append(fields, approval.FieldResult)
 	}
+	if m.FieldCleared(approval.FieldExpiresAt) {
+		fields = append(fields, approval.FieldExpiresAt)
+	}
 	if m.FieldCleared(approval.FieldResolvedAt) {
 		fields = append(fields, approval.FieldResolvedAt)
 	}
@@ -10792,6 +10859,9 @@ func (m *ApprovalMutation) ClearField(name string) error {
 		return nil
 	case approval.FieldResult:
 		m.ClearResult()
+		return nil
+	case approval.FieldExpiresAt:
+		m.ClearExpiresAt()
 		return nil
 	case approval.FieldResolvedAt:
 		m.ClearResolvedAt()
@@ -10845,6 +10915,9 @@ func (m *ApprovalMutation) ResetField(name string) error {
 		return nil
 	case approval.FieldResult:
 		m.ResetResult()
+		return nil
+	case approval.FieldExpiresAt:
+		m.ResetExpiresAt()
 		return nil
 	case approval.FieldResolvedAt:
 		m.ResetResolvedAt()

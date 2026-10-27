@@ -20,5 +20,6 @@
   "approveSuccess": "已通过并执行",
   "approveFailed": "操作失败",
   "rejectSuccess": "已驳回",
-  "rejectFailed": "操作失败"
+  "rejectFailed": "操作失败",
+  "statusExpired": "已过期"
 }

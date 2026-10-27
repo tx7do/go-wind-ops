@@ -15,6 +15,9 @@ import (
 	"strings"
 	"sync"
 
+	"fmt"
+	"time"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 
@@ -55,12 +58,25 @@ func approvalHoldsAction(action string) bool {
 	return ok
 }
 
+// approvalExpireHours 建单默认审批时长(APPROVAL_EXPIRE_HOURS,缺省 24;
+// 0 或负 = 永不过期)。到期由 cron 扫描置 EXPIRED,须重新发起。
+func approvalExpireHours() int {
+	if v, err := strconv.Atoi(strings.TrimSpace(os.Getenv("APPROVAL_EXPIRE_HOURS"))); err == nil {
+		return v
+	}
+	return 24
+}
+
 // approvalGate 命中需审批清单时创建 PENDING 审批单并返回 403(专用 reason);
-// 未启用/未命中返回 nil(照常下发)。
+// 未启用/未命中返回 nil(照常下发)。建单即走通知渠道外呼(恢复类语义,
+// 不受维护窗口静默影响——待办提醒必须可达)。
 func approvalGate(
 	ctx context.Context,
 	log *log.Helper,
 	repo *data.ApprovalRepo,
+	notifChannelRepo *data.NotificationChannelRepo,
+	deliveryRepo *data.NotificationDeliveryRepo,
+	maintenanceRepo *data.MaintenanceWindowRepo,
 	action string,
 	refID uint32,
 	agentID, opName, payloadJSON string,
@@ -69,13 +85,32 @@ func approvalGate(
 	if _, ok := approvalRequiredActions()[action]; !ok {
 		return nil
 	}
-	rec, err := repo.Create(ctx, action, refID, agentID, opName, payloadJSON, operatorID)
+	var expiresAt *time.Time
+	if h := approvalExpireHours(); h > 0 {
+		t := time.Now().Add(time.Duration(h) * time.Hour)
+		expiresAt = &t
+	}
+	rec, err := repo.Create(ctx, action, refID, agentID, opName, payloadJSON, operatorID, expiresAt)
 	if err != nil {
 		return err
 	}
-	log.Warnf("approval gate: operation held for approval (id=%d action=%s agent=%s operator=%d)",
-		rec.ID, action, agentID, operatorID)
+	log.Warnf("approval gate: operation held for approval (id=%d action=%s agent=%s operator=%d expires_at=%s)",
+		rec.ID, action, agentID, operatorID, expiresAt)
+
+	// 待办外呼:标题带单号与动作,便于审批人定位
+	title := "审批待办 #" + strconv.Itoa(int(rec.ID)) + ": " + opName
+	content := fmt.Sprintf("动作 %s 在节点 %s 上等待审批(单号 %d%s),经审批页通过后执行。",
+		action, agentID, rec.ID, expiryHint(expiresAt))
+	SendAlertToChannels(ctx, notifChannelRepo, deliveryRepo, maintenanceRepo, rec.ID, title, content, false)
+
 	return errors.New(http.StatusForbidden, ApprovalRequiredReason,
 		"approval #"+strconv.Itoa(int(rec.ID))+" required for "+action)
+}
+
+func expiryHint(t *time.Time) string {
+	if t == nil {
+		return ",永不过期"
+	}
+	return ",截止 "+t.Format("2006-01-02 15:04")
 }
 

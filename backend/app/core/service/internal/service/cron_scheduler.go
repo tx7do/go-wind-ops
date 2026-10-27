@@ -46,6 +46,7 @@ type CronScheduler struct {
 	notifChannelRepo   *data.NotificationChannelRepo
 	deliveryRepo       *data.NotificationDeliveryRepo
 	maintenanceRepo   *data.MaintenanceWindowRepo
+	approvalRepo      *data.ApprovalRepo
 	budgetRepo         *data.CloudBudgetRepo
 	budgetService      *CloudBudgetService
 	certRepo           *data.CertRepo
@@ -58,6 +59,7 @@ type CronScheduler struct {
 
 	lastRetentionSweep      time.Time
 	lastAuditRetentionSweep time.Time
+	lastApprovalExpirySweep time.Time
 	lastOrphanSweep         time.Time
 	lastBudgetCheck         time.Time
 	lastCertCheck           time.Time
@@ -66,7 +68,7 @@ type CronScheduler struct {
 	log                     *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
 	return &CronScheduler{
 		ctx:                ctx,
 		buildRepo:          buildRepo,
@@ -79,6 +81,7 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		notifChannelRepo:   notifChannelRepo,
 		deliveryRepo:       deliveryRepo,
 		maintenanceRepo:   maintenanceRepo,
+		approvalRepo:      approvalRepo,
 		budgetRepo:         budgetRepo,
 		budgetService:      budgetService,
 		certRepo:           certRepo,
@@ -117,6 +120,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.runTick(ctx, "retention", s.tickRetention)
 				s.runTick(ctx, "audit-retention", s.tickAuditRetention)
 				s.runTick(ctx, "transient-objects", s.tickTransientObjects)
+				s.runTick(ctx, "approval-expiry", s.tickApprovalExpiry)
 			}
 		}
 	}()
@@ -390,6 +394,27 @@ const auditRetentionSweepInterval = 24 * time.Hour
 
 // tickAuditRetention 审计日志留存清扫:AUDIT_RETENTION_DAYS 配置保留天数
 // (默认 90;0/负值=不启用),删除五类审计表中早于留存期的行。
+// tickApprovalExpiry 审批到期扫描:节拍 30s,10 分钟节流(PENDING 超时
+// 分钟级精度足够)。repo 为空直接返回(wiring 未注入时不启用)。
+func (s *CronScheduler) tickApprovalExpiry(ctx context.Context) {
+	if s.approvalRepo == nil {
+		return
+	}
+	if time.Since(s.lastApprovalExpirySweep) < 10*time.Minute {
+		return
+	}
+	s.lastApprovalExpirySweep = time.Now()
+
+	n, err := s.approvalRepo.ExpireStale(ctx, time.Now())
+	if err != nil {
+		s.log.Errorf("approval expiry sweep failed: %s", err.Error())
+		return
+	}
+	if n > 0 {
+		s.log.Infof("approval expiry: %d pending approval(s) expired", n)
+	}
+}
+
 func (s *CronScheduler) tickAuditRetention(ctx context.Context) {
 	if s.auditRetentionRepo == nil {
 		return

@@ -81,11 +81,12 @@ type Approval struct {
 	Payload        *string                `protobuf:"bytes,5,opt,name=payload,proto3,oneof" json:"payload,omitempty"`                                        // 操作载荷快照(JSON)
 	RequesterId    *uint32                `protobuf:"varint,6,opt,name=requester_id,json=requesterId,proto3,oneof" json:"requester_id,omitempty"`            // 发起人
 	ApproverId     *uint32                `protobuf:"varint,7,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`               // 审批人
-	Status         *string                `protobuf:"bytes,8,opt,name=status,proto3,oneof" json:"status,omitempty"`                                          // 审批状态(PENDING/APPROVED/REJECTED)
+	Status         *string                `protobuf:"bytes,8,opt,name=status,proto3,oneof" json:"status,omitempty"`                                          // 审批状态(PENDING/APPROVED/REJECTED/EXPIRED)
 	RejectReason   *string                `protobuf:"bytes,9,opt,name=reject_reason,json=rejectReason,proto3,oneof" json:"reject_reason,omitempty"`          // 驳回原因
 	Result         *string                `protobuf:"bytes,10,opt,name=result,proto3,oneof" json:"result,omitempty"`                                         // 执行结果(JSON)
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                  // 发起时间
 	ResolvedAt     *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=resolved_at,json=resolvedAt,proto3,oneof" json:"resolved_at,omitempty"`               // 审批时间
+	ExpiresAt      *timestamppb.Timestamp `protobuf:"bytes,32,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`                  // 审批截止(空=永不过期;到期扫描置 EXPIRED)
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -200,6 +201,13 @@ func (x *Approval) GetCreatedAt() *timestamppb.Timestamp {
 func (x *Approval) GetResolvedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ResolvedAt
+	}
+	return nil
+}
+
+func (x *Approval) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
 	}
 	return nil
 }
@@ -403,7 +411,7 @@ const file_ops_service_v1_approval_proto_rawDesc = "" +
 	"\x1dops/service/v1/approval.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"3\n" +
 	"\x12op_approval_result\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\"\xeb\x05\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xbf\x06\n" +
 	"\bApproval\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12/\n" +
 	"\x0eoperation_type\x18\x02 \x01(\tB\x03\xe0A\x03H\x01R\roperationType\x88\x01\x01\x122\n" +
@@ -421,7 +429,9 @@ const file_ops_service_v1_approval_proto_rawDesc = "" +
 	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
 	"R\tcreatedAt\x88\x01\x01\x12E\n" +
 	"\vresolved_at\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\vR\n" +
-	"resolvedAt\x88\x01\x01B\x05\n" +
+	"resolvedAt\x88\x01\x01\x12C\n" +
+	"\n" +
+	"expires_at\x18  \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\fR\texpiresAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\x11\n" +
 	"\x0f_operation_typeB\x13\n" +
 	"\x11_operation_ref_idB\x11\n" +
@@ -434,7 +444,8 @@ const file_ops_service_v1_approval_proto_rawDesc = "" +
 	"\x0e_reject_reasonB\t\n" +
 	"\a_resultB\r\n" +
 	"\v_created_atB\x0e\n" +
-	"\f_resolved_at\"\\\n" +
+	"\f_resolved_atB\r\n" +
+	"\v_expires_at\"\\\n" +
 	"\x14ListApprovalResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x12.\n" +
 	"\x05items\x18\x02 \x03(\v2\x18.ops.service.v1.ApprovalR\x05items\"5\n" +
@@ -481,20 +492,21 @@ var file_ops_service_v1_approval_proto_goTypes = []any{
 var file_ops_service_v1_approval_proto_depIdxs = []int32{
 	6, // 0: ops.service.v1.Approval.created_at:type_name -> google.protobuf.Timestamp
 	6, // 1: ops.service.v1.Approval.resolved_at:type_name -> google.protobuf.Timestamp
-	1, // 2: ops.service.v1.ListApprovalResponse.items:type_name -> ops.service.v1.Approval
-	7, // 3: ops.service.v1.ApprovalService.ListApprovals:input_type -> pagination.PagingRequest
-	3, // 4: ops.service.v1.ApprovalService.GetApproval:input_type -> ops.service.v1.GetApprovalRequest
-	4, // 5: ops.service.v1.ApprovalService.ApproveApproval:input_type -> ops.service.v1.ApproveApprovalRequest
-	5, // 6: ops.service.v1.ApprovalService.RejectApproval:input_type -> ops.service.v1.RejectApprovalRequest
-	2, // 7: ops.service.v1.ApprovalService.ListApprovals:output_type -> ops.service.v1.ListApprovalResponse
-	1, // 8: ops.service.v1.ApprovalService.GetApproval:output_type -> ops.service.v1.Approval
-	0, // 9: ops.service.v1.ApprovalService.ApproveApproval:output_type -> ops.service.v1.op_approval_result
-	8, // 10: ops.service.v1.ApprovalService.RejectApproval:output_type -> google.protobuf.Empty
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 2: ops.service.v1.Approval.expires_at:type_name -> google.protobuf.Timestamp
+	1, // 3: ops.service.v1.ListApprovalResponse.items:type_name -> ops.service.v1.Approval
+	7, // 4: ops.service.v1.ApprovalService.ListApprovals:input_type -> pagination.PagingRequest
+	3, // 5: ops.service.v1.ApprovalService.GetApproval:input_type -> ops.service.v1.GetApprovalRequest
+	4, // 6: ops.service.v1.ApprovalService.ApproveApproval:input_type -> ops.service.v1.ApproveApprovalRequest
+	5, // 7: ops.service.v1.ApprovalService.RejectApproval:input_type -> ops.service.v1.RejectApprovalRequest
+	2, // 8: ops.service.v1.ApprovalService.ListApprovals:output_type -> ops.service.v1.ListApprovalResponse
+	1, // 9: ops.service.v1.ApprovalService.GetApproval:output_type -> ops.service.v1.Approval
+	0, // 10: ops.service.v1.ApprovalService.ApproveApproval:output_type -> ops.service.v1.op_approval_result
+	8, // 11: ops.service.v1.ApprovalService.RejectApproval:output_type -> google.protobuf.Empty
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_approval_proto_init() }

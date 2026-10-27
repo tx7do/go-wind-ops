@@ -35,6 +35,7 @@ const ApprovalManagement = () => {
       case 'APPROVED': return <Tag color="success">{t('statusApproved')}</Tag>;
       case 'REJECTED': return <Tag color="error">{t('statusRejected')}</Tag>;
       case 'PENDING': return <Tag color="processing">{t('statusPending')}</Tag>;
+      case 'EXPIRED': return <Tag color="warning">{t('statusExpired')}</Tag>;
       default: return <Tag>{v}</Tag>;
     }
   };

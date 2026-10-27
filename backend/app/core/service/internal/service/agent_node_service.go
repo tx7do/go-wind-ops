@@ -28,16 +28,22 @@ type AgentNodeService struct {
 	metricRepo *data.NodeMetricRepo
 
 	agentService *AgentService
+	notifChannelRepo *data.NotificationChannelRepo
+	deliveryRepo     *data.NotificationDeliveryRepo
+	maintenanceRepo  *data.MaintenanceWindowRepo
 	approvalRepo *data.ApprovalRepo
 }
 
-func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, metricRepo *data.NodeMetricRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo) *AgentNodeService {
+func NewAgentNodeService(ctx *bootstrap.Context, repo *data.AgentNodeRepo, metricRepo *data.NodeMetricRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *AgentNodeService {
 	return &AgentNodeService{
 		log:          ctx.NewLoggerHelper("agent-node/service/core-service"),
 		repo:         repo,
 		metricRepo:   metricRepo,
 		agentService: agentService,
 		approvalRepo: approvalRepo,
+		notifChannelRepo: notifChannelRepo,
+		deliveryRepo:     deliveryRepo,
+		maintenanceRepo:  maintenanceRepo,
 	}
 }
 
@@ -226,7 +232,7 @@ func (s *AgentNodeService) UpgradeAgent(ctx context.Context, req *opsV1.UpgradeA
 
 	// 审批闸门:APPROVAL_REQUIRED_ACTIONS 含 agent_upgrade 时先建审批单待批
 	if upJSON, merr := json.Marshal(payload); merr == nil {
-		if aerr := approvalGate(ctx, s.log, s.approvalRepo, string(signal.CommandActionAgentUpgrade),
+		if aerr := approvalGate(ctx, s.log, s.approvalRepo, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, string(signal.CommandActionAgentUpgrade),
 			node.GetId(), node.GetAgentId(), req.GetVersion(), string(upJSON), s.operatorID(ctx)); aerr != nil {
 			return nil, aerr
 		}

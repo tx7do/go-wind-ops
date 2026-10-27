@@ -70,6 +70,7 @@ func (Approval) Fields() []ent.Field {
 				"Pending", "PENDING",
 				"Approved", "APPROVED",
 				"Rejected", "REJECTED",
+				"Expired", "EXPIRED",
 			).
 			Default("PENDING"),
 
@@ -80,6 +81,11 @@ func (Approval) Fields() []ent.Field {
 
 		field.Text("result").
 			Comment("执行结果数据(JSON)").
+			Optional().
+			Nillable(),
+
+		field.Time("expires_at").
+			Comment("审批截止时间(空=永不过期;到期 cron 扫描置 EXPIRED)").
 			Optional().
 			Nillable(),
 

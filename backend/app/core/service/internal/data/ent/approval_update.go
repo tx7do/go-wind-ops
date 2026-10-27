@@ -260,6 +260,26 @@ func (_u *ApprovalUpdate) ClearResult() *ApprovalUpdate {
 	return _u
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (_u *ApprovalUpdate) SetExpiresAt(v time.Time) *ApprovalUpdate {
+	_u.mutation.SetExpiresAt(v)
+	return _u
+}
+
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (_u *ApprovalUpdate) SetNillableExpiresAt(v *time.Time) *ApprovalUpdate {
+	if v != nil {
+		_u.SetExpiresAt(*v)
+	}
+	return _u
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (_u *ApprovalUpdate) ClearExpiresAt() *ApprovalUpdate {
+	_u.mutation.ClearExpiresAt()
+	return _u
+}
+
 // SetResolvedAt sets the "resolved_at" field.
 func (_u *ApprovalUpdate) SetResolvedAt(v time.Time) *ApprovalUpdate {
 	_u.mutation.SetResolvedAt(v)
@@ -431,6 +451,12 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ResultCleared() {
 		_spec.ClearField(approval.FieldResult, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExpiresAt(); ok {
+		_spec.SetField(approval.FieldExpiresAt, field.TypeTime, value)
+	}
+	if _u.mutation.ExpiresAtCleared() {
+		_spec.ClearField(approval.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.ResolvedAt(); ok {
 		_spec.SetField(approval.FieldResolvedAt, field.TypeTime, value)
@@ -691,6 +717,26 @@ func (_u *ApprovalUpdateOne) ClearResult() *ApprovalUpdateOne {
 	return _u
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (_u *ApprovalUpdateOne) SetExpiresAt(v time.Time) *ApprovalUpdateOne {
+	_u.mutation.SetExpiresAt(v)
+	return _u
+}
+
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (_u *ApprovalUpdateOne) SetNillableExpiresAt(v *time.Time) *ApprovalUpdateOne {
+	if v != nil {
+		_u.SetExpiresAt(*v)
+	}
+	return _u
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (_u *ApprovalUpdateOne) ClearExpiresAt() *ApprovalUpdateOne {
+	_u.mutation.ClearExpiresAt()
+	return _u
+}
+
 // SetResolvedAt sets the "resolved_at" field.
 func (_u *ApprovalUpdateOne) SetResolvedAt(v time.Time) *ApprovalUpdateOne {
 	_u.mutation.SetResolvedAt(v)
@@ -892,6 +938,12 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 	}
 	if _u.mutation.ResultCleared() {
 		_spec.ClearField(approval.FieldResult, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExpiresAt(); ok {
+		_spec.SetField(approval.FieldExpiresAt, field.TypeTime, value)
+	}
+	if _u.mutation.ExpiresAtCleared() {
+		_spec.ClearField(approval.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.ResolvedAt(); ok {
 		_spec.SetField(approval.FieldResolvedAt, field.TypeTime, value)

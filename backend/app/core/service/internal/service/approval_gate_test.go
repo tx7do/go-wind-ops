@@ -19,7 +19,7 @@ func TestParseApprovalActions(t *testing.T) {
 
 func TestApprovalRequiredActionsDisabledByDefault(t *testing.T) {
 	// 默认(APPROVAL_REQUIRED_ACTIONS 未设置)闸门不启用:直接放行
-	if err := approvalGate(nil, nil, nil, "agent_upgrade", 0, "a", "n", "{}", 0); err != nil {
+	if err := approvalGate(nil, nil, nil, nil, nil, nil, "agent_upgrade", 0, "a", "n", "{}", 0); err != nil {
 		t.Fatalf("gate must be no-op when env unset, got %v", err)
 	}
 }

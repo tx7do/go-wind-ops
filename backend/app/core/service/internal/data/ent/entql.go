@@ -270,6 +270,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			approval.FieldStatus:         {Type: field.TypeEnum, Column: approval.FieldStatus},
 			approval.FieldRejectReason:   {Type: field.TypeString, Column: approval.FieldRejectReason},
 			approval.FieldResult:         {Type: field.TypeString, Column: approval.FieldResult},
+			approval.FieldExpiresAt:      {Type: field.TypeTime, Column: approval.FieldExpiresAt},
 			approval.FieldResolvedAt:     {Type: field.TypeTime, Column: approval.FieldResolvedAt},
 		},
 	}
@@ -2974,6 +2975,11 @@ func (f *ApprovalFilter) WhereRejectReason(p entql.StringP) {
 // WhereResult applies the entql string predicate on the result field.
 func (f *ApprovalFilter) WhereResult(p entql.StringP) {
 	f.Where(p.Field(approval.FieldResult))
+}
+
+// WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
+func (f *ApprovalFilter) WhereExpiresAt(p entql.TimeP) {
+	f.Where(p.Field(approval.FieldExpiresAt))
 }
 
 // WhereResolvedAt applies the entql time.Time predicate on the resolved_at field.

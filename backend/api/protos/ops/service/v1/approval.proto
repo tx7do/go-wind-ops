@@ -72,7 +72,7 @@ message Approval {
   optional string status = 8 [
     json_name = "status",
     (google.api.field_behavior) = OUTPUT_ONLY
-  ]; // 审批状态(PENDING/APPROVED/REJECTED)
+  ]; // 审批状态(PENDING/APPROVED/REJECTED/EXPIRED)
 
   optional string reject_reason = 9 [
     json_name = "rejectReason",
@@ -93,6 +93,11 @@ message Approval {
     json_name = "resolvedAt",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 审批时间
+
+  optional google.protobuf.Timestamp expires_at = 32 [
+    json_name = "expiresAt",
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 审批截止(空=永不过期;到期扫描置 EXPIRED)
 }
 
 message ListApprovalResponse {

@@ -186,6 +186,20 @@ func (_c *ApprovalCreate) SetNillableResult(v *string) *ApprovalCreate {
 	return _c
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (_c *ApprovalCreate) SetExpiresAt(v time.Time) *ApprovalCreate {
+	_c.mutation.SetExpiresAt(v)
+	return _c
+}
+
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (_c *ApprovalCreate) SetNillableExpiresAt(v *time.Time) *ApprovalCreate {
+	if v != nil {
+		_c.SetExpiresAt(*v)
+	}
+	return _c
+}
+
 // SetResolvedAt sets the "resolved_at" field.
 func (_c *ApprovalCreate) SetResolvedAt(v time.Time) *ApprovalCreate {
 	_c.mutation.SetResolvedAt(v)
@@ -397,6 +411,10 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Result(); ok {
 		_spec.SetField(approval.FieldResult, field.TypeString, value)
 		_node.Result = &value
+	}
+	if value, ok := _c.mutation.ExpiresAt(); ok {
+		_spec.SetField(approval.FieldExpiresAt, field.TypeTime, value)
+		_node.ExpiresAt = &value
 	}
 	if value, ok := _c.mutation.ResolvedAt(); ok {
 		_spec.SetField(approval.FieldResolvedAt, field.TypeTime, value)
@@ -655,6 +673,24 @@ func (u *ApprovalUpsert) UpdateResult() *ApprovalUpsert {
 // ClearResult clears the value of the "result" field.
 func (u *ApprovalUpsert) ClearResult() *ApprovalUpsert {
 	u.SetNull(approval.FieldResult)
+	return u
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (u *ApprovalUpsert) SetExpiresAt(v time.Time) *ApprovalUpsert {
+	u.Set(approval.FieldExpiresAt, v)
+	return u
+}
+
+// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
+func (u *ApprovalUpsert) UpdateExpiresAt() *ApprovalUpsert {
+	u.SetExcluded(approval.FieldExpiresAt)
+	return u
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (u *ApprovalUpsert) ClearExpiresAt() *ApprovalUpsert {
+	u.SetNull(approval.FieldExpiresAt)
 	return u
 }
 
@@ -965,6 +1001,27 @@ func (u *ApprovalUpsertOne) UpdateResult() *ApprovalUpsertOne {
 func (u *ApprovalUpsertOne) ClearResult() *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.ClearResult()
+	})
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (u *ApprovalUpsertOne) SetExpiresAt(v time.Time) *ApprovalUpsertOne {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.SetExpiresAt(v)
+	})
+}
+
+// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
+func (u *ApprovalUpsertOne) UpdateExpiresAt() *ApprovalUpsertOne {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.UpdateExpiresAt()
+	})
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (u *ApprovalUpsertOne) ClearExpiresAt() *ApprovalUpsertOne {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.ClearExpiresAt()
 	})
 }
 
@@ -1444,6 +1501,27 @@ func (u *ApprovalUpsertBulk) UpdateResult() *ApprovalUpsertBulk {
 func (u *ApprovalUpsertBulk) ClearResult() *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.ClearResult()
+	})
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (u *ApprovalUpsertBulk) SetExpiresAt(v time.Time) *ApprovalUpsertBulk {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.SetExpiresAt(v)
+	})
+}
+
+// UpdateExpiresAt sets the "expires_at" field to the value that was provided on create.
+func (u *ApprovalUpsertBulk) UpdateExpiresAt() *ApprovalUpsertBulk {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.UpdateExpiresAt()
+	})
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (u *ApprovalUpsertBulk) ClearExpiresAt() *ApprovalUpsertBulk {
+	return u.Update(func(s *ApprovalUpsert) {
+		s.ClearExpiresAt()
 	})
 }
 

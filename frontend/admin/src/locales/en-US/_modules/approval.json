@@ -20,5 +20,6 @@
   "approveSuccess": "Approved and executed",
   "approveFailed": "Operation failed",
   "rejectSuccess": "Rejected",
-  "rejectFailed": "Operation failed"
+  "rejectFailed": "Operation failed",
+  "statusExpired": "Expired"
 }

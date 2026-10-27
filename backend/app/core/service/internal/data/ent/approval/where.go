@@ -119,6 +119,11 @@ func Result(v string) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldResult, v))
 }
 
+// ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
+func ExpiresAt(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldEQ(FieldExpiresAt, v))
+}
+
 // ResolvedAt applies equality check predicate on the "resolved_at" field. It's identical to ResolvedAtEQ.
 func ResolvedAt(v time.Time) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldResolvedAt, v))
@@ -902,6 +907,56 @@ func ResultEqualFold(v string) predicate.Approval {
 // ResultContainsFold applies the ContainsFold predicate on the "result" field.
 func ResultContainsFold(v string) predicate.Approval {
 	return predicate.Approval(sql.FieldContainsFold(FieldResult, v))
+}
+
+// ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
+func ExpiresAtEQ(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldEQ(FieldExpiresAt, v))
+}
+
+// ExpiresAtNEQ applies the NEQ predicate on the "expires_at" field.
+func ExpiresAtNEQ(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldNEQ(FieldExpiresAt, v))
+}
+
+// ExpiresAtIn applies the In predicate on the "expires_at" field.
+func ExpiresAtIn(vs ...time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldIn(FieldExpiresAt, vs...))
+}
+
+// ExpiresAtNotIn applies the NotIn predicate on the "expires_at" field.
+func ExpiresAtNotIn(vs ...time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldNotIn(FieldExpiresAt, vs...))
+}
+
+// ExpiresAtGT applies the GT predicate on the "expires_at" field.
+func ExpiresAtGT(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldGT(FieldExpiresAt, v))
+}
+
+// ExpiresAtGTE applies the GTE predicate on the "expires_at" field.
+func ExpiresAtGTE(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldGTE(FieldExpiresAt, v))
+}
+
+// ExpiresAtLT applies the LT predicate on the "expires_at" field.
+func ExpiresAtLT(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldLT(FieldExpiresAt, v))
+}
+
+// ExpiresAtLTE applies the LTE predicate on the "expires_at" field.
+func ExpiresAtLTE(v time.Time) predicate.Approval {
+	return predicate.Approval(sql.FieldLTE(FieldExpiresAt, v))
+}
+
+// ExpiresAtIsNil applies the IsNil predicate on the "expires_at" field.
+func ExpiresAtIsNil() predicate.Approval {
+	return predicate.Approval(sql.FieldIsNull(FieldExpiresAt))
+}
+
+// ExpiresAtNotNil applies the NotNil predicate on the "expires_at" field.
+func ExpiresAtNotNil() predicate.Approval {
+	return predicate.Approval(sql.FieldNotNull(FieldExpiresAt))
 }
 
 // ResolvedAtEQ applies the EQ predicate on the "resolved_at" field.

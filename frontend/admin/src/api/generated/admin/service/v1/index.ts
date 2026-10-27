@@ -1805,6 +1805,9 @@ export type opsservicev1_Approval = {
   createdAt?: wellKnownTimestamp;
   //
   // Behaviors: OUTPUT_ONLY
+  expiresAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OUTPUT_ONLY
   id?: number;
   //
   // Behaviors: OUTPUT_ONLY

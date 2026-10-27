@@ -42,6 +42,8 @@ const (
 	FieldRejectReason = "reject_reason"
 	// FieldResult holds the string denoting the result field in the database.
 	FieldResult = "result"
+	// FieldExpiresAt holds the string denoting the expires_at field in the database.
+	FieldExpiresAt = "expires_at"
 	// FieldResolvedAt holds the string denoting the resolved_at field in the database.
 	FieldResolvedAt = "resolved_at"
 	// Table holds the table name of the approval in the database.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldStatus,
 	FieldRejectReason,
 	FieldResult,
+	FieldExpiresAt,
 	FieldResolvedAt,
 }
 
@@ -115,6 +118,7 @@ const (
 	StatusPending  Status = "PENDING"
 	StatusApproved Status = "APPROVED"
 	StatusRejected Status = "REJECTED"
+	StatusExpired  Status = "EXPIRED"
 )
 
 func (s Status) String() string {
@@ -124,7 +128,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPending, StatusApproved, StatusRejected:
+	case StatusPending, StatusApproved, StatusRejected, StatusExpired:
 		return nil
 	default:
 		return fmt.Errorf("approval: invalid enum value for status field: %q", s)
@@ -207,6 +211,11 @@ func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
 // ByResult orders the results by the result field.
 func ByResult(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldResult, opts...).ToFunc()
+}
+
+// ByExpiresAt orders the results by the expires_at field.
+func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiresAt, opts...).ToFunc()
 }
 
 // ByResolvedAt orders the results by the resolved_at field.

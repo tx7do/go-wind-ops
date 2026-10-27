@@ -302,9 +302,10 @@ var (
 		{Name: "payload", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "操作载荷快照(JSON,审批通过后按此执行)"},
 		{Name: "requester_id", Type: field.TypeUint32, Nullable: true, Comment: "发起人", Default: 0},
 		{Name: "approver_id", Type: field.TypeUint32, Nullable: true, Comment: "审批人", Default: 0},
-		{Name: "status", Type: field.TypeEnum, Comment: "审批状态", Enums: []string{"PENDING", "APPROVED", "REJECTED"}, Default: "PENDING"},
+		{Name: "status", Type: field.TypeEnum, Comment: "审批状态", Enums: []string{"PENDING", "APPROVED", "REJECTED", "EXPIRED"}, Default: "PENDING"},
 		{Name: "reject_reason", Type: field.TypeString, Nullable: true, Comment: "驳回原因"},
 		{Name: "result", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "执行结果数据(JSON)"},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true, Comment: "审批截止时间(空=永不过期;到期 cron 扫描置 EXPIRED)"},
 		{Name: "resolved_at", Type: field.TypeTime, Nullable: true, Comment: "审批时间"},
 	}
 	// OpsApprovalsTable holds the schema information for the "ops_approvals" table.

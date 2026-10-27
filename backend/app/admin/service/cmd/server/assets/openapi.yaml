@@ -10568,6 +10568,10 @@ components:
                     readOnly: true
                     type: string
                     format: date-time
+                expiresAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
             description: 审批单
         ops.service.v1.ApproveApprovalRequest:
             required:

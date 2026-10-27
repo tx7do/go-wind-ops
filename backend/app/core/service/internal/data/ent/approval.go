@@ -46,6 +46,8 @@ type Approval struct {
 	RejectReason *string `json:"reject_reason,omitempty"`
 	// 执行结果数据(JSON)
 	Result *string `json:"result,omitempty"`
+	// 审批截止时间(空=永不过期;到期 cron 扫描置 EXPIRED)
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	// 审批时间
 	ResolvedAt   *time.Time `json:"resolved_at,omitempty"`
 	selectValues sql.SelectValues
@@ -60,7 +62,7 @@ func (*Approval) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case approval.FieldOperationType, approval.FieldAgentID, approval.FieldOperationName, approval.FieldPayload, approval.FieldStatus, approval.FieldRejectReason, approval.FieldResult:
 			values[i] = new(sql.NullString)
-		case approval.FieldCreatedAt, approval.FieldUpdatedAt, approval.FieldDeletedAt, approval.FieldResolvedAt:
+		case approval.FieldCreatedAt, approval.FieldUpdatedAt, approval.FieldDeletedAt, approval.FieldExpiresAt, approval.FieldResolvedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -176,6 +178,13 @@ func (_m *Approval) assignValues(columns []string, values []any) error {
 				_m.Result = new(string)
 				*_m.Result = value.String
 			}
+		case approval.FieldExpiresAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
+			} else if value.Valid {
+				_m.ExpiresAt = new(time.Time)
+				*_m.ExpiresAt = value.Time
+			}
 		case approval.FieldResolvedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field resolved_at", values[i])
@@ -277,6 +286,11 @@ func (_m *Approval) String() string {
 	if v := _m.Result; v != nil {
 		builder.WriteString("result=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.ExpiresAt; v != nil {
+		builder.WriteString("expires_at=")
+		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
 	if v := _m.ResolvedAt; v != nil {

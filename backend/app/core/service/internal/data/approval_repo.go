@@ -127,7 +127,7 @@ func (r *ApprovalRepo) GetEntity(ctx context.Context, id uint32) (*ent.Approval,
 }
 
 // Create 创建审批单(PENDING)。operationType 为字符串(distribute/script_exec)。
-func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint32, agentID, opName, payload string, requesterID uint32) (*ent.Approval, error) {
+func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint32, agentID, opName, payload string, requesterID uint32, expiresAt *time.Time) (*ent.Approval, error) {
 	builder := r.entClient.Client().Approval.
 		Create().
 		SetOperationType(operationType).
@@ -142,6 +142,9 @@ func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operati
 	if requesterID > 0 {
 		builder.SetRequesterID(requesterID)
 	}
+	if expiresAt != nil {
+		builder.SetExpiresAt(*expiresAt)
+	}
 
 	record, err := builder.Save(ctx)
 	if err != nil {
@@ -149,6 +152,25 @@ func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operati
 		return nil, opsV1.ErrorInternalServerError("create approval failed")
 	}
 	return record, nil
+}
+
+// ExpireStale 到期扫描:PENDING 且 expires_at 已过 → EXPIRED(终态,回填
+// resolved_at)。条件更新按行原子翻转,多副本重复执行各得 0 行,恰一次。
+func (r *ApprovalRepo) ExpireStale(ctx context.Context, now time.Time) (int, error) {
+	n, err := r.entClient.Client().Approval.Update().
+		Where(
+			approval.StatusEQ(approval.StatusPending),
+			approval.ExpiresAtNotNil(),
+			approval.ExpiresAtLT(now),
+		).
+		SetStatus(approval.StatusExpired).
+		SetResolvedAt(now).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("expire stale approvals: %s", err.Error())
+		return 0, err
+	}
+	return n, nil
 }
 
 // Resolve 审批(通过/驳回)。仅 PENDING 可审批(CAS 去重)。

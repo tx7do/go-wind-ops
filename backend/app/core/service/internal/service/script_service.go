@@ -26,16 +26,22 @@ type ScriptService struct {
 	nodeRepo *data.AgentNodeRepo
 
 	agentService *AgentService
+	notifChannelRepo *data.NotificationChannelRepo
+	deliveryRepo     *data.NotificationDeliveryRepo
+	maintenanceRepo  *data.MaintenanceWindowRepo
 	approvalRepo *data.ApprovalRepo
 }
 
-func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo) *ScriptService {
+func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *ScriptService {
 	return &ScriptService{
 		log:          ctx.NewLoggerHelper("script/service/core-service"),
 		repo:         repo,
 		nodeRepo:     nodeRepo,
 		agentService: agentService,
 		approvalRepo: approvalRepo,
+		notifChannelRepo: notifChannelRepo,
+		deliveryRepo:     deliveryRepo,
+		maintenanceRepo:  maintenanceRepo,
 	}
 }
 
@@ -145,7 +151,7 @@ func (s *ScriptService) ExecuteScript(ctx context.Context, req *opsV1.ExecuteScr
 
 	// 审批闸门:APPROVAL_REQUIRED_ACTIONS 含 script_exec 时先建审批单待批
 	if pbJSON, merr := json.Marshal(payload); merr == nil {
-		if aerr := approvalGate(ctx, s.log, s.approvalRepo, string(signal.CommandActionScriptExec),
+		if aerr := approvalGate(ctx, s.log, s.approvalRepo, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, string(signal.CommandActionScriptExec),
 			sc.GetId(), agentId, sc.GetName(), string(pbJSON), s.operatorID(ctx)); aerr != nil {
 			return nil, aerr
 		}
