@@ -45,10 +45,10 @@ const NotificationChannelDrawer: React.FC<Props> = ({ open, mode, data, onClose,
         <ProFormText name="webhookSecret" label={t('webhookSecret')} placeholder={t('webhookSecretPlaceholder')} initialValue={data?.webhookSecret} />
         <ProFormSelect name="webhookSignStyle" label={t('webhookSignStyle')}
           options={[
-            { label: 'None', value: 'NONE' },
-            { label: 'DingTalk', value: 'DINGTALK' },
-            { label: 'Feishu', value: 'FEISHU' },
-            { label: 'WeCom', value: 'WECOM' },
+            { label: t('signStyleOptions.none'), value: 'NONE' },
+            { label: t('signStyleOptions.dingtalk'), value: 'DINGTALK' },
+            { label: t('signStyleOptions.feishu'), value: 'FEISHU' },
+            { label: t('signStyleOptions.wecom'), value: 'WECOM' },
           ]}
           initialValue={data?.webhookSignStyle ?? 'NONE'}
         />

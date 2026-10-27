@@ -26,5 +26,11 @@
   "deleteSuccess": "Channel deleted",
   "deleteFailed": "Delete failed",
   "deleteConfirmTitle": "Delete channel",
-  "action": "Actions"
+  "action": "Actions",
+  "signStyleOptions": {
+    "none": "No signing",
+    "dingtalk": "DingTalk sign",
+    "feishu": "Feishu sign",
+    "wecom": "WeCom"
+  }
 }

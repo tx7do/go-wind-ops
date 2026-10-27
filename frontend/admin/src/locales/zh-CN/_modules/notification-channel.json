@@ -26,5 +26,11 @@
   "deleteSuccess": "渠道已删除",
   "deleteFailed": "删除失败",
   "deleteConfirmTitle": "确认删除渠道",
-  "action": "操作"
+  "action": "操作",
+  "signStyleOptions": {
+    "none": "不签名",
+    "dingtalk": "钉钉加签",
+    "feishu": "飞书加签",
+    "wecom": "企业微信"
+  }
 }

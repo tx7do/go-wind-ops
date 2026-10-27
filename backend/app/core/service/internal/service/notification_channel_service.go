@@ -159,30 +159,55 @@ func recordDelivery(ctx context.Context, deliveryRepo *data.NotificationDelivery
 	}
 }
 
-// sendWebhookAlert 发送 webhook 告警(支持钉钉/飞书/企微群机器人签名)。
-func sendWebhookAlert(webhookURL, signStyle, secret, title, content string) error {
-	var body []byte
+// buildWebhookBody 构造各风格群机器人的请求体与最终 URL(纯函数,便于单测):
+//   - DINGTALK:文本消息,secret 非空时 URL 追加 timestamp+sign(加签)
+//   - FEISHU:文本消息,secret 非空时 body 注入 timestamp+sign(加签)
+//   - WECOM:文本消息(无签名机制,secret 忽略)
+//   - 其它:通用 JSON(title/content)
+func buildWebhookBody(webhookURL, signStyle, secret, title, content string, now time.Time) ([]byte, string) {
+	text := title + "\n" + content
+	var bodyMap map[string]any
 	switch signStyle {
 	case "DINGTALK":
-		body = []byte(fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s\n%s"}}`, jsonEscape(title), jsonEscape(content)))
+		bodyMap = map[string]any{"msgtype": "text", "text": map[string]string{"content": text}}
 	case "FEISHU":
-		body = []byte(fmt.Sprintf(`{"msg_type":"text","content":{"text":"%s\n%s"}}`, jsonEscape(title), jsonEscape(content)))
+		bodyMap = map[string]any{"msg_type": "text", "content": map[string]string{"text": text}}
 	case "WECOM":
-		body = []byte(fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s\n%s"}}`, jsonEscape(title), jsonEscape(content)))
+		bodyMap = map[string]any{"msgtype": "text", "text": map[string]string{"content": text}}
 	default:
-		body, _ = json.Marshal(map[string]string{"title": title, "content": content})
+		bodyMap = map[string]any{"title": title, "content": content}
 	}
 
-	// 钉钉加签
-	if signStyle == "DINGTALK" && secret != "" {
-		ts := fmt.Sprint(time.Now().UnixMilli())
+	switch {
+	case signStyle == "DINGTALK" && secret != "":
+		ts := now.UnixMilli()
 		mac := hmac.New(sha256.New, []byte(secret))
-		mac.Write([]byte(ts + "\n" + secret))
+		mac.Write([]byte(fmt.Sprint(ts) + "\n" + secret))
 		sign := url.QueryEscape(base64.StdEncoding.EncodeToString(mac.Sum(nil)))
-		webhookURL = fmt.Sprintf("%s&timestamp=%s&sign=%s", webhookURL, ts, sign)
+		sep := "?"
+		if strings.Contains(webhookURL, "?") {
+			sep = "&"
+		}
+		webhookURL = fmt.Sprintf("%s%stimestamp=%d&sign=%s", webhookURL, sep, ts, sign)
+	case signStyle == "FEISHU" && secret != "":
+		ts := now.Unix()
+		mac := hmac.New(sha256.New, []byte(fmt.Sprint(ts)+"\n"+secret))
+		bodyMap["timestamp"] = fmt.Sprint(ts)
+		bodyMap["sign"] = base64.StdEncoding.EncodeToString(mac.Sum(nil))
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, webhookURL, bytes.NewReader(body))
+	body, err := json.Marshal(bodyMap)
+	if err != nil {
+		return []byte("{}"), webhookURL
+	}
+	return body, webhookURL
+}
+
+// sendWebhookAlert 发送 webhook 告警(支持钉钉/飞书/企微群机器人及其加签)。
+func sendWebhookAlert(webhookURL, signStyle, secret, title, content string) error {
+	body, finalURL := buildWebhookBody(webhookURL, signStyle, secret, title, content, time.Now())
+
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, finalURL, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
@@ -269,11 +294,6 @@ func splitEmails(s string) []string {
 		}
 	}
 	return out
-}
-
-func jsonEscape(s string) string {
-	b, _ := json.Marshal(s)
-	return string(b[1 : len(b)-1])
 }
 
 func derefStr(s *string) string {
