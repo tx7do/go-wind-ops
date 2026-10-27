@@ -8,6 +8,7 @@ import {
   type opsservicev1_ConfigDistribution,
   type opsservicev1_ConfigTemplate,
   type opsservicev1_ListConfigTemplateResponse,
+  type opsservicev1_ConfigDriftReport,
 } from '@/api/generated/admin/service/v1';
 import { makeUpdateMask, PaginationQuery, queryClient } from '@/core';
 import { apiClient } from '@/api/client';
@@ -92,6 +93,19 @@ export function useListConfigDistributions(
       return (resp as never as { items?: opsservicev1_ConfigDistribution[] }).items || [];
     },
     enabled: !!templateId,
+    ...options,
+  });
+}
+
+export function useCheckConfigDrift(
+  options?: UseMutationOptions<
+    opsservicev1_ConfigDriftReport,
+    Error,
+    { templateId: number; nodeId: number; projectId?: number }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.configService.CheckConfigDrift(req as never),
     ...options,
   });
 }

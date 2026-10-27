@@ -8,6 +8,9 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/pkg/metadata"
@@ -29,10 +32,11 @@ type ScriptService struct {
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
 	maintenanceRepo  *data.MaintenanceWindowRepo
+	versionRepo      *data.ScriptVersionRepo
 	approvalRepo *data.ApprovalRepo
 }
 
-func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *ScriptService {
+func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, versionRepo *data.ScriptVersionRepo) *ScriptService {
 	return &ScriptService{
 		log:          ctx.NewLoggerHelper("script/service/core-service"),
 		repo:         repo,
@@ -42,6 +46,7 @@ func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *d
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
 		maintenanceRepo:  maintenanceRepo,
+		versionRepo:      versionRepo,
 	}
 }
 
@@ -93,9 +98,62 @@ func (s *ScriptService) UpdateScript(ctx context.Context, req *opsV1.UpdateScrip
 		}
 	}
 
+	// 内容变更前快照旧版本(历史永不丢;快照失败仅告警不阻塞更新——
+	// 版本化是增强能力,不能反过来挡主流程)
+	if req.Data.Content != nil {
+		if old, gerr := s.repo.Get(ctx, &opsV1.GetScriptRequest{Id: trans.Ptr(req.GetId())}); gerr == nil && old != nil && old.GetContent() != "" {
+			if serr := s.versionRepo.Snapshot(ctx, req.GetId(), old.GetContent(), "auto", s.operatorID(ctx)); serr != nil {
+				s.log.Warnf("snapshot old script content failed (script=%d): %s", req.GetId(), serr.Error())
+			}
+		}
+	}
+
 	if err := s.repo.Update(ctx, req); err != nil {
 		return nil, err
 	}
+	return &emptypb.Empty{}, nil
+}
+
+// ListScriptVersions 版本历史(新→旧)。
+func (s *ScriptService) ListScriptVersions(ctx context.Context, req *opsV1.ListScriptVersionsRequest) (*opsV1.ListScriptVersionsResponse, error) {
+	if req == nil || req.GetScriptId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+	rows, err := s.versionRepo.ListByScript(ctx, req.GetScriptId())
+	if err != nil {
+		return nil, opsV1.ErrorInternalServerError("list versions failed")
+	}
+	resp := &opsV1.ListScriptVersionsResponse{Total: uint64(len(rows))}
+	for _, e := range rows {
+		resp.Items = append(resp.Items, &opsV1.ScriptVersion{
+			Id:        &e.ID,
+			ScriptId:  &e.ScriptID,
+			Content:   &e.Content,
+			Remark:    &e.Remark,
+			CreatedBy: e.CreatedBy,
+			CreatedAt: timestamppb.New(*e.CreatedAt),
+		})
+	}
+	return resp, nil
+}
+
+// RestoreScriptVersion 恢复到指定版本:先快照当前内容(remark=restore),
+// 再把目标版本内容写回脚本——历史链条永不丢。
+func (s *ScriptService) RestoreScriptVersion(ctx context.Context, req *opsV1.RestoreScriptVersionRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetScriptId() == 0 || req.GetVersionId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter")
+	}
+	ver, err := s.versionRepo.Get(ctx, req.GetVersionId())
+	if err != nil || ver.ScriptID != req.GetScriptId() {
+		return nil, opsV1.ErrorNotFound("script version not found")
+	}
+	if old, gerr := s.repo.Get(ctx, &opsV1.GetScriptRequest{Id: trans.Ptr(req.GetScriptId())}); gerr == nil && old != nil && old.GetContent() != "" {
+		_ = s.versionRepo.Snapshot(ctx, req.GetScriptId(), old.GetContent(), "restore", s.operatorID(ctx))
+	}
+	if err = s.repo.UpdateContent(ctx, req.GetScriptId(), ver.Content); err != nil {
+		return nil, opsV1.ErrorInternalServerError("restore failed")
+	}
+	s.log.Infof("script [%d] restored to version [%d]", req.GetScriptId(), req.GetVersionId())
 	return &emptypb.Empty{}, nil
 }
 

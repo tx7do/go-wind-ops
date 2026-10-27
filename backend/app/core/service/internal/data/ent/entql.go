@@ -63,6 +63,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptversion"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
@@ -81,7 +82,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 68)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 69)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   agentnode.Table,
@@ -1802,6 +1803,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[59] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scriptversion.Table,
+			Columns: scriptversion.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: scriptversion.FieldID,
+			},
+		},
+		Type: "ScriptVersion",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scriptversion.FieldTenantID:  {Type: field.TypeUint32, Column: scriptversion.FieldTenantID},
+			scriptversion.FieldCreatedAt: {Type: field.TypeTime, Column: scriptversion.FieldCreatedAt},
+			scriptversion.FieldUpdatedAt: {Type: field.TypeTime, Column: scriptversion.FieldUpdatedAt},
+			scriptversion.FieldDeletedAt: {Type: field.TypeTime, Column: scriptversion.FieldDeletedAt},
+			scriptversion.FieldScriptID:  {Type: field.TypeUint32, Column: scriptversion.FieldScriptID},
+			scriptversion.FieldContent:   {Type: field.TypeString, Column: scriptversion.FieldContent},
+			scriptversion.FieldRemark:    {Type: field.TypeString, Column: scriptversion.FieldRemark},
+			scriptversion.FieldCreatedBy: {Type: field.TypeUint32, Column: scriptversion.FieldCreatedBy},
+		},
+	}
+	graph.Nodes[60] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   task.Table,
 			Columns: task.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -1827,7 +1849,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			task.FieldEnable:      {Type: field.TypeBool, Column: task.FieldEnable},
 		},
 	}
-	graph.Nodes[60] = &sqlgraph.Node{
+	graph.Nodes[61] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tenant.Table,
 			Columns: tenant.Columns,
@@ -1860,7 +1882,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tenant.FieldExpiredAt:        {Type: field.TypeTime, Column: tenant.FieldExpiredAt},
 		},
 	}
-	graph.Nodes[61] = &sqlgraph.Node{
+	graph.Nodes[62] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   terminalchunk.Table,
 			Columns: terminalchunk.Columns,
@@ -1882,7 +1904,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			terminalchunk.FieldByteLen:           {Type: field.TypeInt, Column: terminalchunk.FieldByteLen},
 		},
 	}
-	graph.Nodes[62] = &sqlgraph.Node{
+	graph.Nodes[63] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   terminalsession.Table,
 			Columns: terminalsession.Columns,
@@ -1909,7 +1931,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			terminalsession.FieldClosedAt:    {Type: field.TypeTime, Column: terminalsession.FieldClosedAt},
 		},
 	}
-	graph.Nodes[63] = &sqlgraph.Node{
+	graph.Nodes[64] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -1948,7 +1970,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldStatus:         {Type: field.TypeEnum, Column: user.FieldStatus},
 		},
 	}
-	graph.Nodes[64] = &sqlgraph.Node{
+	graph.Nodes[65] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usercredential.Table,
 			Columns: usercredential.Columns,
@@ -1981,7 +2003,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercredential.FieldResetTokenUsedAt:       {Type: field.TypeTime, Column: usercredential.FieldResetTokenUsedAt},
 		},
 	}
-	graph.Nodes[65] = &sqlgraph.Node{
+	graph.Nodes[66] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userorgunit.Table,
 			Columns: userorgunit.Columns,
@@ -2011,7 +2033,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userorgunit.FieldStatus:     {Type: field.TypeEnum, Column: userorgunit.FieldStatus},
 		},
 	}
-	graph.Nodes[66] = &sqlgraph.Node{
+	graph.Nodes[67] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userposition.Table,
 			Columns: userposition.Columns,
@@ -2040,7 +2062,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userposition.FieldStatus:     {Type: field.TypeEnum, Column: userposition.FieldStatus},
 		},
 	}
-	graph.Nodes[67] = &sqlgraph.Node{
+	graph.Nodes[68] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userrole.Table,
 			Columns: userrole.Columns,
@@ -9453,6 +9475,86 @@ func (f *ScriptBatchFilter) WhereStatus(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *ScriptVersionQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScriptVersionQuery builder.
+func (_q *ScriptVersionQuery) Filter() *ScriptVersionFilter {
+	return &ScriptVersionFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScriptVersionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScriptVersionMutation builder.
+func (m *ScriptVersionMutation) Filter() *ScriptVersionFilter {
+	return &ScriptVersionFilter{config: m.config, predicateAdder: m}
+}
+
+// ScriptVersionFilter provides a generic filtering capability at runtime for ScriptVersionQuery.
+type ScriptVersionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScriptVersionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[59].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *ScriptVersionFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(scriptversion.FieldID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *ScriptVersionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(scriptversion.FieldTenantID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *ScriptVersionFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(scriptversion.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *ScriptVersionFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(scriptversion.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *ScriptVersionFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(scriptversion.FieldDeletedAt))
+}
+
+// WhereScriptID applies the entql uint32 predicate on the script_id field.
+func (f *ScriptVersionFilter) WhereScriptID(p entql.Uint32P) {
+	f.Where(p.Field(scriptversion.FieldScriptID))
+}
+
+// WhereContent applies the entql string predicate on the content field.
+func (f *ScriptVersionFilter) WhereContent(p entql.StringP) {
+	f.Where(p.Field(scriptversion.FieldContent))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *ScriptVersionFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(scriptversion.FieldRemark))
+}
+
+// WhereCreatedBy applies the entql uint32 predicate on the created_by field.
+func (f *ScriptVersionFilter) WhereCreatedBy(p entql.Uint32P) {
+	f.Where(p.Field(scriptversion.FieldCreatedBy))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *TaskQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -9481,7 +9583,7 @@ type TaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[59].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[60].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -9591,7 +9693,7 @@ type TenantFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TenantFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[60].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[61].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -9731,7 +9833,7 @@ type TerminalChunkFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TerminalChunkFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[61].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[62].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -9816,7 +9918,7 @@ type TerminalSessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TerminalSessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[62].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[63].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -9926,7 +10028,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[63].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[64].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10096,7 +10198,7 @@ type UserCredentialFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserCredentialFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[64].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[65].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10236,7 +10338,7 @@ type UserOrgUnitFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserOrgUnitFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[65].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[66].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10361,7 +10463,7 @@ type UserPositionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserPositionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[66].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[67].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10481,7 +10583,7 @@ type UserRoleFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserRoleFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[67].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[68].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

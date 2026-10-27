@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Popconfirm, Tag, App } from 'antd';
@@ -6,12 +6,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { opsservicev1_Approval as Approval } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
+import { Segmented } from 'antd';
+import { useAuthStore } from '@/stores';
 import { TABLE } from '@/config/constants';
 import { fetchListApprovals, useApproveApproval, useRejectApproval } from '@/api/hooks/approval';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 
 const ApprovalManagement = () => {
+  const userId = useAuthStore((s) => s.userInfo?.id);
+  const [approvalFilter, setApprovalFilter] = useState<'all' | 'pending' | 'mine'>('all');
   const { t } = useTranslation('approval');
   const actionRef = useRef<ActionType>(null);
   const queryClient = useQueryClient();
@@ -70,15 +74,31 @@ const ApprovalManagement = () => {
           actionRef={actionRef} columns={columns} rowKey="id"
           headerTitle={t('moduleName')}
           request={async (params, sorter) => {
+            const formValues =
+              approvalFilter === 'pending' ? { status: 'PENDING' }
+              : approvalFilter === 'mine' && userId ? { requesterId: userId }
+              : undefined;
             const q = new PaginationQuery({
               paging: { page: params.current || 1, pageSize: params.pageSize || 10 },
+              formValues,
               orderBy: sorter && Object.keys(sorter).length > 0 ? Object.entries(sorter).map(([k, v]) => v === 'ascend' ? k : `-${k}`) : ['-createdAt'],
             });
             const resp = await fetchListApprovals(q);
             return { data: resp.items || [], total: resp.total || 0, success: true };
           }}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
-          toolBarRender={() => []}
+          toolBarRender={() => [
+            <Segmented
+              key="filter"
+              value={approvalFilter}
+              onChange={(v) => { setApprovalFilter(v as typeof approvalFilter); actionRef.current?.reload(); }}
+              options={[
+                { label: t('filterAll'), value: 'all' },
+                { label: t('filterPending'), value: 'pending' },
+                { label: t('filterMine'), value: 'mine' },
+              ]}
+            />,
+          ]}
           options={{ density: true, fullScreen: true, setting: true, reload: true }}
           size="middle" bordered scroll={{ y: tableScrollY, x: 1300 }}
         />

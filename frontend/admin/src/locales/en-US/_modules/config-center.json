@@ -36,5 +36,18 @@
   "distPending": "Running",
   "distError": "Error",
   "action": "Actions",
-  "updatedAt": "Updated At"
+  "updatedAt": "Updated At",
+  "driftCheck": "Drift Check",
+  "driftTitle": "Drift Check: {{name}}",
+  "driftNode": "Target node",
+  "driftNodePlaceholder": "Select a node",
+  "driftTargetPath": "Target path",
+  "driftExpected": "Expected SHA-256 (rendered)",
+  "driftActual": "Actual SHA-256 (node file)",
+  "driftFileMissing": "File missing",
+  "driftResult": "Verdict",
+  "driftedYes": "Drifted",
+  "driftedNo": "In sync",
+  "driftRun": "Run check",
+  "driftFailed": "Check failed"
 }

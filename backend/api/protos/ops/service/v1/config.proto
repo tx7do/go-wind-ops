@@ -34,6 +34,9 @@ service ConfigService {
   // 下发模板到目标节点(同步等回执)
   rpc DistributeConfig (DistributeConfigRequest) returns (ConfigDistribution) {}
 
+  // 配置漂移校验:模板渲染内容与节点实际文件的 SHA-256 比对
+  rpc CheckConfigDrift (CheckConfigDriftRequest) returns (ConfigDriftReport) {}
+
   // 查询下发记录列表(按模板过滤)
   rpc ListConfigDistributions (ListConfigDistributionsRequest) returns (ListConfigDistributionResponse) {}
 }
@@ -202,4 +205,30 @@ message ListConfigDistributionsRequest {
 message ListConfigDistributionResponse {
   uint64 total = 1 [json_name = "total"]; // 总数
   repeated ConfigDistribution items = 2 [json_name = "items"]; // 记录列表
+}
+
+// CheckConfigDriftRequest 漂移校验(同步指令,秒级返回)
+message CheckConfigDriftRequest {
+  uint32 template_id = 1 [
+    json_name = "templateId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 模板ID(id 走 body:触发类 POST 不带 path 参数)
+
+  uint32 node_id = 2 [
+    json_name = "nodeId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标节点
+
+  optional uint32 project_id = 3 [json_name = "projectId"]; // 项目(占位符渲染用,可空)
+}
+
+// ConfigDriftReport 漂移报告
+message ConfigDriftReport {
+  uint32 template_id = 1 [json_name = "templateId"]; // 模板
+  uint32 node_id = 2 [json_name = "nodeId"]; // 节点
+  string target_path = 3 [json_name = "targetPath"]; // 目标路径
+  string expected_sha256 = 4 [json_name = "expectedSha256"]; // 期望哈希(渲染内容)
+  optional string actual_sha256 = 5 [json_name = "actualSha256"]; // 实际哈希(文件不存在时空)
+  bool exists = 6 [json_name = "exists"]; // 节点文件是否存在
+  bool drifted = 7 [json_name = "drifted"]; // 是否漂移(不存在或哈希不一致)
 }

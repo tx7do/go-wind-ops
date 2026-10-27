@@ -87,3 +87,13 @@ func (s *ScriptService) Execute(ctx context.Context, req *opsV1.ExecuteScriptReq
 	}
 	return s.scriptServiceClient.ExecuteScript(ctx, req)
 }
+
+// ListScriptVersions 脚本内容版本历史(透传 core)。
+func (s *ScriptService) ListScriptVersions(ctx context.Context, req *opsV1.ListScriptVersionsRequest) (*opsV1.ListScriptVersionsResponse, error) {
+	return s.scriptServiceClient.ListScriptVersions(ctx, req)
+}
+
+// RestoreScriptVersion 恢复到指定版本(透传 core)。
+func (s *ScriptService) RestoreScriptVersion(ctx context.Context, req *opsV1.RestoreScriptVersionRequest) (*emptypb.Empty, error) {
+	return s.scriptServiceClient.RestoreScriptVersion(ctx, req)
+}

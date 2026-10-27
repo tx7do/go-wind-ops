@@ -81,6 +81,13 @@ func (r *InspectionRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	return &opsV1.ListInspectionResponse{Total: ret.Total, Items: ret.Items}, nil
 }
 
+// CountSince 统计 t 之后创建的巡检数(cron 自检建单前查重,多副本去重兜底)。
+func (r *InspectionRepo) CountSince(ctx context.Context, t time.Time) (int, error) {
+	return r.entClient.Client().Inspection.Query().
+		Where(inspection.CreatedAtGTE(t)).
+		Count(ctx)
+}
+
 func (r *InspectionRepo) GetEntity(ctx context.Context, id uint32) (*ent.Inspection, error) {
 	return r.entClient.Client().Inspection.
 		Query().

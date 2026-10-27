@@ -22,12 +22,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ScriptService_List_FullMethodName    = "/admin.service.v1.ScriptService/List"
-	ScriptService_Get_FullMethodName     = "/admin.service.v1.ScriptService/Get"
-	ScriptService_Create_FullMethodName  = "/admin.service.v1.ScriptService/Create"
-	ScriptService_Update_FullMethodName  = "/admin.service.v1.ScriptService/Update"
-	ScriptService_Delete_FullMethodName  = "/admin.service.v1.ScriptService/Delete"
-	ScriptService_Execute_FullMethodName = "/admin.service.v1.ScriptService/Execute"
+	ScriptService_List_FullMethodName                 = "/admin.service.v1.ScriptService/List"
+	ScriptService_Get_FullMethodName                  = "/admin.service.v1.ScriptService/Get"
+	ScriptService_Create_FullMethodName               = "/admin.service.v1.ScriptService/Create"
+	ScriptService_Update_FullMethodName               = "/admin.service.v1.ScriptService/Update"
+	ScriptService_ListScriptVersions_FullMethodName   = "/admin.service.v1.ScriptService/ListScriptVersions"
+	ScriptService_RestoreScriptVersion_FullMethodName = "/admin.service.v1.ScriptService/RestoreScriptVersion"
+	ScriptService_Delete_FullMethodName               = "/admin.service.v1.ScriptService/Delete"
+	ScriptService_Execute_FullMethodName              = "/admin.service.v1.ScriptService/Execute"
 )
 
 // ScriptServiceClient is the client API for ScriptService service.
@@ -44,6 +46,10 @@ type ScriptServiceClient interface {
 	Create(ctx context.Context, in *v11.CreateScriptRequest, opts ...grpc.CallOption) (*v11.Script, error)
 	// 更新脚本
 	Update(ctx context.Context, in *v11.UpdateScriptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 脚本内容版本历史
+	ListScriptVersions(ctx context.Context, in *v11.ListScriptVersionsRequest, opts ...grpc.CallOption) (*v11.ListScriptVersionsResponse, error)
+	// 恢复到指定版本(id 走 body)
+	RestoreScriptVersion(ctx context.Context, in *v11.RestoreScriptVersionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除脚本
 	Delete(ctx context.Context, in *v11.DeleteScriptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 在目标节点执行脚本,返回幂等 request_id
@@ -98,6 +104,26 @@ func (c *scriptServiceClient) Update(ctx context.Context, in *v11.UpdateScriptRe
 	return out, nil
 }
 
+func (c *scriptServiceClient) ListScriptVersions(ctx context.Context, in *v11.ListScriptVersionsRequest, opts ...grpc.CallOption) (*v11.ListScriptVersionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListScriptVersionsResponse)
+	err := c.cc.Invoke(ctx, ScriptService_ListScriptVersions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scriptServiceClient) RestoreScriptVersion(ctx context.Context, in *v11.RestoreScriptVersionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ScriptService_RestoreScriptVersion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *scriptServiceClient) Delete(ctx context.Context, in *v11.DeleteScriptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -132,6 +158,10 @@ type ScriptServiceServer interface {
 	Create(context.Context, *v11.CreateScriptRequest) (*v11.Script, error)
 	// 更新脚本
 	Update(context.Context, *v11.UpdateScriptRequest) (*emptypb.Empty, error)
+	// 脚本内容版本历史
+	ListScriptVersions(context.Context, *v11.ListScriptVersionsRequest) (*v11.ListScriptVersionsResponse, error)
+	// 恢复到指定版本(id 走 body)
+	RestoreScriptVersion(context.Context, *v11.RestoreScriptVersionRequest) (*emptypb.Empty, error)
 	// 删除脚本
 	Delete(context.Context, *v11.DeleteScriptRequest) (*emptypb.Empty, error)
 	// 在目标节点执行脚本,返回幂等 request_id
@@ -157,6 +187,12 @@ func (UnimplementedScriptServiceServer) Create(context.Context, *v11.CreateScrip
 }
 func (UnimplementedScriptServiceServer) Update(context.Context, *v11.UpdateScriptRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedScriptServiceServer) ListScriptVersions(context.Context, *v11.ListScriptVersionsRequest) (*v11.ListScriptVersionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListScriptVersions not implemented")
+}
+func (UnimplementedScriptServiceServer) RestoreScriptVersion(context.Context, *v11.RestoreScriptVersionRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method RestoreScriptVersion not implemented")
 }
 func (UnimplementedScriptServiceServer) Delete(context.Context, *v11.DeleteScriptRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -257,6 +293,42 @@ func _ScriptService_Update_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ScriptService_ListScriptVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListScriptVersionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScriptServiceServer).ListScriptVersions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScriptService_ListScriptVersions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScriptServiceServer).ListScriptVersions(ctx, req.(*v11.ListScriptVersionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScriptService_RestoreScriptVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.RestoreScriptVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScriptServiceServer).RestoreScriptVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScriptService_RestoreScriptVersion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScriptServiceServer).RestoreScriptVersion(ctx, req.(*v11.RestoreScriptVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ScriptService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.DeleteScriptRequest)
 	if err := dec(in); err != nil {
@@ -315,6 +387,14 @@ var ScriptService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _ScriptService_Update_Handler,
+		},
+		{
+			MethodName: "ListScriptVersions",
+			Handler:    _ScriptService_ListScriptVersions_Handler,
+		},
+		{
+			MethodName: "RestoreScriptVersion",
+			Handler:    _ScriptService_RestoreScriptVersion_Handler,
 		},
 		{
 			MethodName: "Delete",

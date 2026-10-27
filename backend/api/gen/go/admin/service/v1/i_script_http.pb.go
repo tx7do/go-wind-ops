@@ -27,6 +27,8 @@ const OperationScriptServiceDelete = "/admin.service.v1.ScriptService/Delete"
 const OperationScriptServiceExecute = "/admin.service.v1.ScriptService/Execute"
 const OperationScriptServiceGet = "/admin.service.v1.ScriptService/Get"
 const OperationScriptServiceList = "/admin.service.v1.ScriptService/List"
+const OperationScriptServiceListScriptVersions = "/admin.service.v1.ScriptService/ListScriptVersions"
+const OperationScriptServiceRestoreScriptVersion = "/admin.service.v1.ScriptService/RestoreScriptVersion"
 const OperationScriptServiceUpdate = "/admin.service.v1.ScriptService/Update"
 
 type ScriptServiceHTTPServer interface {
@@ -40,6 +42,10 @@ type ScriptServiceHTTPServer interface {
 	Get(context.Context, *v11.GetScriptRequest) (*v11.Script, error)
 	// List 查询脚本列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListScriptResponse, error)
+	// ListScriptVersions 脚本内容版本历史
+	ListScriptVersions(context.Context, *v11.ListScriptVersionsRequest) (*v11.ListScriptVersionsResponse, error)
+	// RestoreScriptVersion 恢复到指定版本(id 走 body)
+	RestoreScriptVersion(context.Context, *v11.RestoreScriptVersionRequest) (*emptypb.Empty, error)
 	// Update 更新脚本
 	Update(context.Context, *v11.UpdateScriptRequest) (*emptypb.Empty, error)
 }
@@ -50,6 +56,8 @@ func RegisterScriptServiceHTTPServer(s *http.Server, srv ScriptServiceHTTPServer
 	r.GET("/admin/v1/scripts/{id}", _ScriptService_Get38_HTTP_Handler(srv))
 	r.POST("/admin/v1/scripts", _ScriptService_Create24_HTTP_Handler(srv))
 	r.PUT("/admin/v1/scripts/{id}", _ScriptService_Update25_HTTP_Handler(srv))
+	r.GET("/admin/v1/scripts/versions", _ScriptService_ListScriptVersions0_HTTP_Handler(srv))
+	r.POST("/admin/v1/scripts/versions:restore", _ScriptService_RestoreScriptVersion0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/scripts/{id}", _ScriptService_Delete27_HTTP_Handler(srv))
 	r.POST("/admin/v1/scripts/{id}/executions:send", _ScriptService_Execute0_HTTP_Handler(srv))
 }
@@ -142,6 +150,47 @@ func _ScriptService_Update25_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx 
 	}
 }
 
+func _ScriptService_ListScriptVersions0_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListScriptVersionsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationScriptServiceListScriptVersions)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListScriptVersions(ctx, req.(*v11.ListScriptVersionsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListScriptVersionsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ScriptService_RestoreScriptVersion0_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RestoreScriptVersionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationScriptServiceRestoreScriptVersion)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RestoreScriptVersion(ctx, req.(*v11.RestoreScriptVersionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _ScriptService_Delete27_HTTP_Handler(srv ScriptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteScriptRequest
@@ -200,6 +249,10 @@ type ScriptServiceHTTPClient interface {
 	Get(ctx context.Context, req *v11.GetScriptRequest, opts ...http.CallOption) (rsp *v11.Script, err error)
 	// List 查询脚本列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListScriptResponse, err error)
+	// ListScriptVersions 脚本内容版本历史
+	ListScriptVersions(ctx context.Context, req *v11.ListScriptVersionsRequest, opts ...http.CallOption) (rsp *v11.ListScriptVersionsResponse, err error)
+	// RestoreScriptVersion 恢复到指定版本(id 走 body)
+	RestoreScriptVersion(ctx context.Context, req *v11.RestoreScriptVersionRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Update 更新脚本
 	Update(ctx context.Context, req *v11.UpdateScriptRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
@@ -276,6 +329,34 @@ func (c *ScriptServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReq
 	opts = append(opts, http.Operation(OperationScriptServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListScriptVersions 脚本内容版本历史
+func (c *ScriptServiceHTTPClientImpl) ListScriptVersions(ctx context.Context, in *v11.ListScriptVersionsRequest, opts ...http.CallOption) (*v11.ListScriptVersionsResponse, error) {
+	var out v11.ListScriptVersionsResponse
+	pattern := "/admin/v1/scripts/versions"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationScriptServiceListScriptVersions))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RestoreScriptVersion 恢复到指定版本(id 走 body)
+func (c *ScriptServiceHTTPClientImpl) RestoreScriptVersion(ctx context.Context, in *v11.RestoreScriptVersionRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/scripts/versions:restore"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationScriptServiceRestoreScriptVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

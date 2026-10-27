@@ -22,6 +22,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/agentnode"
+	"go-wind-ops/pkg/eventhook"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/envs"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
@@ -169,6 +170,9 @@ func (s *AgentService) Start(ctx context.Context) {
 					s.log.Infof("distribution timeout sweep: finalized %d stale record(s)", len(distIDs))
 					for _, distID := range distIDs {
 						s.notifyDistAdvance(ctx, distID)
+						eventhook.Emit("distribution.failed", map[string]any{
+							"distributionId": distID, "reason": "command timeout without result",
+						})
 					}
 				}
 				// 批次内超时未回执的指令逐条定案并对账批次计数。

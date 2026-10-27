@@ -29,6 +29,12 @@ service ScriptService {
   // 更新脚本
   rpc UpdateScript (UpdateScriptRequest) returns (google.protobuf.Empty) {}
 
+  // 脚本内容版本历史(新→旧)
+  rpc ListScriptVersions (ListScriptVersionsRequest) returns (ListScriptVersionsResponse) {}
+
+  // 恢复到指定版本(恢复前先快照当前内容,历史永不丢)
+  rpc RestoreScriptVersion (RestoreScriptVersionRequest) returns (google.protobuf.Empty) {}
+
   // 删除脚本
   rpc DeleteScript (DeleteScriptRequest) returns (google.protobuf.Empty) {}
 
@@ -295,4 +301,40 @@ message ScriptBatchDetail {
   optional ScriptBatch batch = 1 [json_name = "batch"]; // 批次
 
   repeated ScriptBatchItem items = 2 [json_name = "items"]; // 逐节点结果
+}
+
+// ListScriptVersionsRequest 版本历史查询
+message ListScriptVersionsRequest {
+  optional uint32 script_id = 1 [
+    json_name = "scriptId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID
+}
+
+// ScriptVersion 版本快照
+message ScriptVersion {
+  optional uint32 id = 1 [json_name = "id"]; // 版本ID
+  optional uint32 script_id = 2 [json_name = "scriptId"]; // 脚本ID
+  optional string content = 3 [json_name = "content"]; // 内容快照
+  optional string remark = 4 [json_name = "remark"]; // 来源(auto=更新前自动快照/restore=恢复前快照)
+  optional uint32 created_by = 5 [json_name = "createdBy"]; // 操作者
+  optional google.protobuf.Timestamp created_at = 30 [json_name = "createdAt"]; // 快照时间
+}
+
+message ListScriptVersionsResponse {
+  uint64 total = 1 [json_name = "total"]; // 总数
+  repeated ScriptVersion items = 2 [json_name = "items"]; // 版本列表(新→旧)
+}
+
+// RestoreScriptVersionRequest 恢复到指定版本
+message RestoreScriptVersionRequest {
+  uint32 script_id = 1 [
+    json_name = "scriptId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 脚本ID(id 走 body:触发类 POST 不带 path 参数)
+
+  uint32 version_id = 2 [
+    json_name = "versionId",
+    (google.api.field_behavior) = REQUIRED
+  ]; // 目标版本ID
 }

@@ -1,4 +1,5 @@
 import {
+
   useMutation,
   type UseMutationOptions,
   useQuery,
@@ -11,6 +12,7 @@ import {
   type opsservicev1_GetScriptRequest,
   type opsservicev1_ListScriptResponse,
   type opsservicev1_Script,
+  type opsservicev1_ListScriptVersionsResponse,
 } from '@/api/generated/admin/service/v1';
 import { makeUpdateMask, type PaginationQuery, queryClient } from '@/core';
 import { apiClient } from '@/api/client';
@@ -102,6 +104,29 @@ export function useExecuteScript(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.scriptService.Execute(req as never),
+    ...options,
+  });
+}
+
+export function useListScriptVersions(
+  scriptId: number | undefined,
+  options?: Partial<UseQueryOptions<opsservicev1_ListScriptVersionsResponse, Error, opsservicev1_ListScriptVersionsResponse, readonly unknown[]>>,
+) {
+  return useQuery({
+    queryKey: ['scriptVersions', scriptId],
+    queryFn: () => apiClient.scriptService.ListScriptVersions({ scriptId } as never),
+    enabled: !!scriptId,
+    ...options,
+  });
+}
+
+export function useRestoreScriptVersion(
+  options?: UseMutationOptions<void, Error, { scriptId: number; versionId: number }>,
+) {
+  return useMutation({
+    mutationFn: async (req) => {
+      await apiClient.scriptService.RestoreScriptVersion(req as never);
+    },
     ...options,
   });
 }

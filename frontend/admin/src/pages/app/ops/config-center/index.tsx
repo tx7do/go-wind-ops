@@ -1,13 +1,28 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Button, Drawer, Form, Input, Modal, Popconfirm, Select, Tag, Tooltip, App } from 'antd';
+import {
+  Button,
+  Descriptions,
+  Drawer,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Select,
+  Space,
+  Tag,
+  Tooltip,
+  App,
+  Typography,
+} from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
   HistoryOutlined,
   PlusOutlined,
   SendOutlined,
+  CompassOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +30,7 @@ import type {
   opsservicev1_AgentNode as AgentNode,
   opsservicev1_ConfigDistribution as ConfigDistribution,
   opsservicev1_ConfigTemplate as ConfigTemplate,
+  opsservicev1_ConfigDriftReport as DriftReport,
 } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
@@ -22,6 +38,7 @@ import {
   fetchListConfigTemplates,
   useCreateConfigTemplate,
   useDeleteConfigTemplate,
+  useCheckConfigDrift,
   useDistributeConfig,
   useListConfigDistributions,
   useUpdateConfigTemplate,
@@ -49,6 +66,9 @@ const ConfigCenter = () => {
   const [selected, setSelected] = useState<ConfigTemplate | undefined>();
 
   const [distributeTpl, setDistributeTpl] = useState<ConfigTemplate | undefined>();
+  const [driftOf, setDriftOf] = useState<ConfigTemplate | undefined>();
+  const [driftNodeId, setDriftNodeId] = useState<number | undefined>();
+  const [driftReport, setDriftReport] = useState<DriftReport | undefined>();
   const [distributeNodeId, setDistributeNodeId] = useState<number | undefined>();
   const [nodeOptions, setNodeOptions] = useState<{ label: string; value: number }[]>([]);
 
@@ -68,6 +88,11 @@ const ConfigCenter = () => {
     onSuccess: () => { message.success(t('deleteSuccess')); invalidate(); actionRef.current?.reload(); },
     onError: (e: Error) => message.error(e.message || t('deleteFailed')),
   });
+  const driftMutation = useCheckConfigDrift({
+    onSuccess: (report) => setDriftReport(report),
+    onError: (e: Error) => message.error(e.message || t('driftFailed', { ns: 'config-center' })),
+  });
+
   const distributeMutation = useDistributeConfig({
     onSuccess: (resp) => {
       message.success(t('distributeSent', { status: resp.status }));
@@ -143,6 +168,11 @@ const ConfigCenter = () => {
         <Tooltip key="distribute" title={t('distribute')}>
           <a onClick={() => openDistribute(r)}>
             <SendOutlined />
+          </a>
+        </Tooltip>,
+        <Tooltip key="drift" title={t('driftCheck')}>
+          <a onClick={() => { setDriftOf(r); setDriftReport(undefined); }}>
+            <CompassOutlined />
           </a>
         </Tooltip>,
         <Tooltip key="history" title={t('history')}>
@@ -277,6 +307,65 @@ const ConfigCenter = () => {
         <div style={{ marginTop: 8, fontSize: 12, color: 'var(--ant-color-text-secondary)' }}>
           {t('targetPathLabel')}: {distributeTpl?.targetPath}
         </div>
+      </Modal>
+      <Modal
+        title={t('driftTitle', { ns: 'config-center', name: driftOf?.name ?? '' })}
+        open={!!driftOf}
+        onCancel={() => { setDriftOf(undefined); setDriftReport(undefined); }}
+        footer={driftReport ? (
+          <Button onClick={() => { setDriftOf(undefined); setDriftReport(undefined); }}>
+            {t('common:button.ok')}
+          </Button>
+        ) : null}
+        width={560}
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <div>
+            <div style={{ marginBottom: 4 }}>{t('driftNode', { ns: 'config-center' })}</div>
+            <Select
+              style={{ width: '100%' }}
+              showSearch
+              optionFilterProp="label"
+              value={driftNodeId}
+              onChange={setDriftNodeId}
+              placeholder={t('driftNodePlaceholder', { ns: 'config-center' })}
+              options={nodeOptions}
+            />
+          </div>
+          {driftReport ? (
+            <Descriptions column={1} size="small" bordered>
+              <Descriptions.Item label={t('driftTargetPath', { ns: 'config-center' })}>
+                <Typography.Text code>{driftReport.targetPath}</Typography.Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t('driftExpected', { ns: 'config-center' })}>
+                <Typography.Text code copyable style={{ fontSize: 12 }}>{driftReport.expectedSha256}</Typography.Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t('driftActual', { ns: 'config-center' })}>
+                {driftReport.exists ? (
+                  <Typography.Text code copyable style={{ fontSize: 12 }}>{driftReport.actualSha256}</Typography.Text>
+                ) : (
+                  <Tag color="warning">{t('driftFileMissing', { ns: 'config-center' })}</Tag>
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('driftResult', { ns: 'config-center' })}>
+                {driftReport.drifted ? (
+                  <Tag color="error">{t('driftedYes', { ns: 'config-center' })}</Tag>
+                ) : (
+                  <Tag color="success">{t('driftedNo', { ns: 'config-center' })}</Tag>
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+          ) : (
+            <Button
+              type="primary"
+              disabled={!driftNodeId}
+              loading={driftMutation.isPending}
+              onClick={() => driftOf?.id && driftNodeId && driftMutation.mutate({ templateId: driftOf.id, nodeId: driftNodeId })}
+            >
+              {t('driftRun', { ns: 'config-center' })}
+            </Button>
+          )}
+        </Space>
       </Modal>
 
       {/* 下发记录抽屉 */}

@@ -21,5 +21,8 @@
   "approveFailed": "操作失败",
   "rejectSuccess": "已驳回",
   "rejectFailed": "操作失败",
-  "statusExpired": "已过期"
+  "statusExpired": "已过期",
+  "filterAll": "全部",
+  "filterPending": "待审批",
+  "filterMine": "我发起的"
 }

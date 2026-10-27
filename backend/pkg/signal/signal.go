@@ -305,6 +305,7 @@ const (
 
 	CommandActionFilePull  CommandAction = "file_pull"  // agent 上传本地文件到对象存储
 	CommandActionFilePush  CommandAction = "file_push"  // agent 从对象存储下载到本地路径
+	CommandActionFileHash  CommandAction = "file_hash"  // agent 计算本地文件 SHA-256(配置漂移检测)
 	CommandActionFileList   CommandAction = "file_list"
 	CommandActionFileRead   CommandAction = "file_read"
 	CommandActionFileWrite  CommandAction = "file_write"
@@ -504,4 +505,16 @@ type FilePullPayload struct {
 type FilePushPayload struct {
 	Path string `json:"path"`
 	Url  string `json:"url"`
+}
+
+// FileHashPayload file_hash 载荷:计算本地文件 SHA-256。
+type FileHashPayload struct {
+	Path string `json:"path"`
+}
+
+// FileHashResult file_hash 结果:文件不存在时 Exists=false 且 Sha256 为空。
+type FileHashResult struct {
+	Path   string `json:"path"`
+	Sha256 string `json:"sha256"`
+	Exists bool   `json:"exists"`
 }

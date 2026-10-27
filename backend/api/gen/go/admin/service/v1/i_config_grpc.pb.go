@@ -28,6 +28,7 @@ const (
 	ConfigService_Update_FullMethodName            = "/admin.service.v1.ConfigService/Update"
 	ConfigService_Delete_FullMethodName            = "/admin.service.v1.ConfigService/Delete"
 	ConfigService_Distribute_FullMethodName        = "/admin.service.v1.ConfigService/Distribute"
+	ConfigService_CheckConfigDrift_FullMethodName  = "/admin.service.v1.ConfigService/CheckConfigDrift"
 	ConfigService_ListDistributions_FullMethodName = "/admin.service.v1.ConfigService/ListDistributions"
 )
 
@@ -49,6 +50,8 @@ type ConfigServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeleteConfigTemplateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 下发模板到目标节点
 	Distribute(ctx context.Context, in *v11.DistributeConfigRequest, opts ...grpc.CallOption) (*v11.ConfigDistribution, error)
+	// 配置漂移校验(id 走 body)
+	CheckConfigDrift(ctx context.Context, in *v11.CheckConfigDriftRequest, opts ...grpc.CallOption) (*v11.ConfigDriftReport, error)
 	// 查询下发记录列表(按模板过滤)
 	ListDistributions(ctx context.Context, in *v11.ListConfigDistributionsRequest, opts ...grpc.CallOption) (*v11.ListConfigDistributionResponse, error)
 }
@@ -121,6 +124,16 @@ func (c *configServiceClient) Distribute(ctx context.Context, in *v11.Distribute
 	return out, nil
 }
 
+func (c *configServiceClient) CheckConfigDrift(ctx context.Context, in *v11.CheckConfigDriftRequest, opts ...grpc.CallOption) (*v11.ConfigDriftReport, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ConfigDriftReport)
+	err := c.cc.Invoke(ctx, ConfigService_CheckConfigDrift_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *configServiceClient) ListDistributions(ctx context.Context, in *v11.ListConfigDistributionsRequest, opts ...grpc.CallOption) (*v11.ListConfigDistributionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.ListConfigDistributionResponse)
@@ -149,6 +162,8 @@ type ConfigServiceServer interface {
 	Delete(context.Context, *v11.DeleteConfigTemplateRequest) (*emptypb.Empty, error)
 	// 下发模板到目标节点
 	Distribute(context.Context, *v11.DistributeConfigRequest) (*v11.ConfigDistribution, error)
+	// 配置漂移校验(id 走 body)
+	CheckConfigDrift(context.Context, *v11.CheckConfigDriftRequest) (*v11.ConfigDriftReport, error)
 	// 查询下发记录列表(按模板过滤)
 	ListDistributions(context.Context, *v11.ListConfigDistributionsRequest) (*v11.ListConfigDistributionResponse, error)
 	mustEmbedUnimplementedConfigServiceServer()
@@ -178,6 +193,9 @@ func (UnimplementedConfigServiceServer) Delete(context.Context, *v11.DeleteConfi
 }
 func (UnimplementedConfigServiceServer) Distribute(context.Context, *v11.DistributeConfigRequest) (*v11.ConfigDistribution, error) {
 	return nil, status.Error(codes.Unimplemented, "method Distribute not implemented")
+}
+func (UnimplementedConfigServiceServer) CheckConfigDrift(context.Context, *v11.CheckConfigDriftRequest) (*v11.ConfigDriftReport, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckConfigDrift not implemented")
 }
 func (UnimplementedConfigServiceServer) ListDistributions(context.Context, *v11.ListConfigDistributionsRequest) (*v11.ListConfigDistributionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListDistributions not implemented")
@@ -311,6 +329,24 @@ func _ConfigService_Distribute_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConfigService_CheckConfigDrift_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CheckConfigDriftRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigServiceServer).CheckConfigDrift(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConfigService_CheckConfigDrift_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigServiceServer).CheckConfigDrift(ctx, req.(*v11.CheckConfigDriftRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ConfigService_ListDistributions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.ListConfigDistributionsRequest)
 	if err := dec(in); err != nil {
@@ -359,6 +395,10 @@ var ConfigService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Distribute",
 			Handler:    _ConfigService_Distribute_Handler,
+		},
+		{
+			MethodName: "CheckConfigDrift",
+			Handler:    _ConfigService_CheckConfigDrift_Handler,
 		},
 		{
 			MethodName: "ListDistributions",

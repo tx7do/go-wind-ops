@@ -65,6 +65,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/schema"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptversion"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
@@ -2277,6 +2278,38 @@ func init() {
 	scriptbatchDescID := scriptbatchMixinFields0[0].Descriptor()
 	// scriptbatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	scriptbatch.IDValidator = scriptbatchDescID.Validators[0].(func(uint32) error)
+	scriptversionMixin := schema.ScriptVersion{}.Mixin()
+	scriptversion.Policy = privacy.NewPolicies(scriptversionMixin[1], schema.ScriptVersion{})
+	scriptversion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := scriptversion.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	scriptversionMixinFields0 := scriptversionMixin[0].Fields()
+	_ = scriptversionMixinFields0
+	scriptversionMixinFields1 := scriptversionMixin[1].Fields()
+	_ = scriptversionMixinFields1
+	scriptversionFields := schema.ScriptVersion{}.Fields()
+	_ = scriptversionFields
+	// scriptversionDescTenantID is the schema descriptor for tenant_id field.
+	scriptversionDescTenantID := scriptversionMixinFields1[0].Descriptor()
+	// scriptversion.DefaultTenantID holds the default value on creation for the tenant_id field.
+	scriptversion.DefaultTenantID = scriptversionDescTenantID.Default.(uint32)
+	// scriptversionDescScriptID is the schema descriptor for script_id field.
+	scriptversionDescScriptID := scriptversionFields[0].Descriptor()
+	// scriptversion.ScriptIDValidator is a validator for the "script_id" field. It is called by the builders before save.
+	scriptversion.ScriptIDValidator = scriptversionDescScriptID.Validators[0].(func(uint32) error)
+	// scriptversionDescRemark is the schema descriptor for remark field.
+	scriptversionDescRemark := scriptversionFields[2].Descriptor()
+	// scriptversion.DefaultRemark holds the default value on creation for the remark field.
+	scriptversion.DefaultRemark = scriptversionDescRemark.Default.(string)
+	// scriptversionDescID is the schema descriptor for id field.
+	scriptversionDescID := scriptversionMixinFields0[0].Descriptor()
+	// scriptversion.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	scriptversion.IDValidator = scriptversionDescID.Validators[0].(func(uint32) error)
 	taskMixin := schema.Task{}.Mixin()
 	task.Policy = privacy.NewPolicies(taskMixin[4], schema.Task{})
 	task.Hooks[0] = func(next ent.Mutator) ent.Mutator {

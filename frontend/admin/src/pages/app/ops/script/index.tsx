@@ -8,6 +8,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
   TeamOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +28,7 @@ import {
 import { useBatchExecScript } from '@/api/hooks/script-batch';
 import { fetchListAgentNodes } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import ScriptVersionsDrawer from './components/ScriptVersionsDrawer';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import ScriptDrawer from './components/ScriptDrawer';
 
@@ -44,6 +46,7 @@ const ScriptManagement = () => {
   const tableScrollY = useProTableScrollY(containerRef);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [versionsOf, setVersionsOf] = useState<Script | undefined>();
   const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [selectedScript, setSelectedScript] = useState<Script | undefined>();
 
@@ -248,6 +251,11 @@ const ScriptManagement = () => {
             <EditOutlined />
           </a>
         </Tooltip>,
+        <Tooltip key="versions" title={t('versionsTitle', { name: record.name })}>
+          <a onClick={() => setVersionsOf(record)}>
+            <HistoryOutlined />
+          </a>
+        </Tooltip>,
         <Popconfirm
           key="delete"
           title={t('deleteConfirmTitle')}
@@ -339,7 +347,14 @@ const ScriptManagement = () => {
         </div>
       </ContentContainer>
 
-      <ScriptDrawer
+            {versionsOf && (
+        <ScriptVersionsDrawer
+          scriptId={versionsOf.id}
+          scriptName={versionsOf.name}
+          onClose={() => setVersionsOf(undefined)}
+        />
+      )}
+<ScriptDrawer
         open={drawerOpen}
         mode={drawerMode}
         data={selectedScript}

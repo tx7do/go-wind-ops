@@ -183,6 +183,9 @@ type Script func(*sql.Selector)
 // ScriptBatch is the predicate function for scriptbatch builders.
 type ScriptBatch func(*sql.Selector)
 
+// ScriptVersion is the predicate function for scriptversion builders.
+type ScriptVersion func(*sql.Selector)
+
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
 

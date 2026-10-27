@@ -22,6 +22,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/eventhook"
 )
 
 // ApprovalRequiredReason 审批闸门拦截错误专用 reason(前端可据此引导到审批页;
@@ -96,6 +97,10 @@ func approvalGate(
 	}
 	log.Warnf("approval gate: operation held for approval (id=%d action=%s agent=%s operator=%d expires_at=%s)",
 		rec.ID, action, agentID, operatorID, expiresAt)
+	eventhook.Emit("approval.created", map[string]any{
+		"approvalId": rec.ID, "action": action, "agent": agentID,
+		"operation": opName, "requester": operatorID, "expiresAt": expiresAt,
+	})
 
 	// 待办外呼:标题带单号与动作,便于审批人定位
 	title := "审批待办 #" + strconv.Itoa(int(rec.ID)) + ": " + opName

@@ -36,5 +36,18 @@
   "distPending": "进行中",
   "distError": "失败原因",
   "action": "操作",
-  "updatedAt": "更新时间"
+  "updatedAt": "更新时间",
+  "driftCheck": "漂移校验",
+  "driftTitle": "漂移校验: {{name}}",
+  "driftNode": "目标节点",
+  "driftNodePlaceholder": "选择节点",
+  "driftTargetPath": "目标路径",
+  "driftExpected": "期望 SHA-256(模板渲染)",
+  "driftActual": "实际 SHA-256(节点文件)",
+  "driftFileMissing": "文件不存在",
+  "driftResult": "结论",
+  "driftedYes": "已漂移",
+  "driftedNo": "一致",
+  "driftRun": "开始校验",
+  "driftFailed": "校验失败"
 }

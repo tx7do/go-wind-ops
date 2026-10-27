@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationConfigServiceCheckConfigDrift = "/admin.service.v1.ConfigService/CheckConfigDrift"
 const OperationConfigServiceCreate = "/admin.service.v1.ConfigService/Create"
 const OperationConfigServiceDelete = "/admin.service.v1.ConfigService/Delete"
 const OperationConfigServiceDistribute = "/admin.service.v1.ConfigService/Distribute"
@@ -31,6 +32,8 @@ const OperationConfigServiceListDistributions = "/admin.service.v1.ConfigService
 const OperationConfigServiceUpdate = "/admin.service.v1.ConfigService/Update"
 
 type ConfigServiceHTTPServer interface {
+	// CheckConfigDrift 配置漂移校验(id 走 body)
+	CheckConfigDrift(context.Context, *v11.CheckConfigDriftRequest) (*v11.ConfigDriftReport, error)
 	// Create 创建模板
 	Create(context.Context, *v11.CreateConfigTemplateRequest) (*v11.ConfigTemplate, error)
 	// Delete 删除模板
@@ -55,6 +58,7 @@ func RegisterConfigServiceHTTPServer(s *http.Server, srv ConfigServiceHTTPServer
 	r.PUT("/admin/v1/config-templates/{id}", _ConfigService_Update8_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/config-templates/{id}", _ConfigService_Delete9_HTTP_Handler(srv))
 	r.POST("/admin/v1/config-templates/distribute:send", _ConfigService_Distribute0_HTTP_Handler(srv))
+	r.POST("/admin/v1/config-templates:check-drift", _ConfigService_CheckConfigDrift0_HTTP_Handler(srv))
 	r.POST("/admin/v1/config-templates/distributions:search", _ConfigService_ListDistributions0_HTTP_Handler(srv))
 }
 
@@ -190,6 +194,28 @@ func _ConfigService_Distribute0_HTTP_Handler(srv ConfigServiceHTTPServer) func(c
 	}
 }
 
+func _ConfigService_CheckConfigDrift0_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CheckConfigDriftRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConfigServiceCheckConfigDrift)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CheckConfigDrift(ctx, req.(*v11.CheckConfigDriftRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ConfigDriftReport)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _ConfigService_ListDistributions0_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.ListConfigDistributionsRequest
@@ -213,6 +239,8 @@ func _ConfigService_ListDistributions0_HTTP_Handler(srv ConfigServiceHTTPServer)
 }
 
 type ConfigServiceHTTPClient interface {
+	// CheckConfigDrift 配置漂移校验(id 走 body)
+	CheckConfigDrift(ctx context.Context, req *v11.CheckConfigDriftRequest, opts ...http.CallOption) (rsp *v11.ConfigDriftReport, err error)
 	// Create 创建模板
 	Create(ctx context.Context, req *v11.CreateConfigTemplateRequest, opts ...http.CallOption) (rsp *v11.ConfigTemplate, err error)
 	// Delete 删除模板
@@ -235,6 +263,20 @@ type ConfigServiceHTTPClientImpl struct {
 
 func NewConfigServiceHTTPClient(client *http.Client) ConfigServiceHTTPClient {
 	return &ConfigServiceHTTPClientImpl{client}
+}
+
+// CheckConfigDrift 配置漂移校验(id 走 body)
+func (c *ConfigServiceHTTPClientImpl) CheckConfigDrift(ctx context.Context, in *v11.CheckConfigDriftRequest, opts ...http.CallOption) (*v11.ConfigDriftReport, error) {
+	var out v11.ConfigDriftReport
+	pattern := "/admin/v1/config-templates:check-drift"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConfigServiceCheckConfigDrift))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Create 创建模板

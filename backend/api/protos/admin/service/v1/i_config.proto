@@ -55,6 +55,14 @@ service ConfigService {
     };
   }
 
+  // 配置漂移校验(id 走 body)
+  rpc CheckConfigDrift (ops.service.v1.CheckConfigDriftRequest) returns (ops.service.v1.ConfigDriftReport) {
+    option (google.api.http) = {
+      post: "/admin/v1/config-templates:check-drift"
+      body: "*"
+    };
+  }
+
   // 查询下发记录列表(按模板过滤)
   rpc ListDistributions (ops.service.v1.ListConfigDistributionsRequest) returns (ops.service.v1.ListConfigDistributionResponse) {
     option (google.api.http) = {

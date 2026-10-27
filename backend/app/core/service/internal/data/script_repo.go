@@ -167,6 +167,13 @@ func (r *ScriptRepo) Create(ctx context.Context, req *opsV1.CreateScriptRequest,
 	return r.mapper.ToDTO(t), nil
 }
 
+// UpdateContent 仅更新内容(版本恢复用,不动 cron 等其余字段)。
+func (r *ScriptRepo) UpdateContent(ctx context.Context, id uint32, content string) error {
+	return r.entClient.Client().Script.UpdateOneID(id).
+		SetContent(content).
+		Exec(ctx)
+}
+
 func (r *ScriptRepo) Update(ctx context.Context, req *opsV1.UpdateScriptRequest) error {
 	if req == nil || req.Data == nil {
 		return opsV1.ErrorBadRequest("invalid parameter")

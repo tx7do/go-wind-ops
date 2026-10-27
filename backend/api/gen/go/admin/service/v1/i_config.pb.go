@@ -28,7 +28,7 @@ var File_admin_service_v1_i_config_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fadmin/service/v1/i_config.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1bops/service/v1/config.proto2\xb2\a\n" +
+	"\x1fadmin/service/v1/i_config.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1bops/service/v1/config.proto2\xc6\b\n" +
 	"\rConfigService\x12q\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a*.ops.service.v1.ListConfigTemplateResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/admin/v1/config-templates\x12x\n" +
 	"\x03Get\x12(.ops.service.v1.GetConfigTemplateRequest\x1a\x1e.ops.service.v1.ConfigTemplate\"'\x82\xd3\xe4\x93\x02!\x12\x1f/admin/v1/config-templates/{id}\x12|\n" +
@@ -36,7 +36,8 @@ const file_admin_service_v1_i_config_proto_rawDesc = "" +
 	"\x06Update\x12+.ops.service.v1.UpdateConfigTemplateRequest\x1a\x16.google.protobuf.Empty\"*\x82\xd3\xe4\x93\x02$:\x01*\x1a\x1f/admin/v1/config-templates/{id}\x12v\n" +
 	"\x06Delete\x12+.ops.service.v1.DeleteConfigTemplateRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!*\x1f/admin/v1/config-templates/{id}\x12\x90\x01\n" +
 	"\n" +
-	"Distribute\x12'.ops.service.v1.DistributeConfigRequest\x1a\".ops.service.v1.ConfigDistribution\"5\x82\xd3\xe4\x93\x02/:\x01*\"*/admin/v1/config-templates/distribute:send\x12\xaf\x01\n" +
+	"Distribute\x12'.ops.service.v1.DistributeConfigRequest\x1a\".ops.service.v1.ConfigDistribution\"5\x82\xd3\xe4\x93\x02/:\x01*\"*/admin/v1/config-templates/distribute:send\x12\x91\x01\n" +
+	"\x10CheckConfigDrift\x12'.ops.service.v1.CheckConfigDriftRequest\x1a!.ops.service.v1.ConfigDriftReport\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/admin/v1/config-templates:check-drift\x12\xaf\x01\n" +
 	"\x11ListDistributions\x12..ops.service.v1.ListConfigDistributionsRequest\x1a..ops.service.v1.ListConfigDistributionResponse\":\x82\xd3\xe4\x93\x024:\x01*\"//admin/v1/config-templates/distributions:searchB\xb7\x01\n" +
 	"\x14com.admin.service.v1B\fIConfigProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
@@ -47,12 +48,14 @@ var file_admin_service_v1_i_config_proto_goTypes = []any{
 	(*v11.UpdateConfigTemplateRequest)(nil),    // 3: ops.service.v1.UpdateConfigTemplateRequest
 	(*v11.DeleteConfigTemplateRequest)(nil),    // 4: ops.service.v1.DeleteConfigTemplateRequest
 	(*v11.DistributeConfigRequest)(nil),        // 5: ops.service.v1.DistributeConfigRequest
-	(*v11.ListConfigDistributionsRequest)(nil), // 6: ops.service.v1.ListConfigDistributionsRequest
-	(*v11.ListConfigTemplateResponse)(nil),     // 7: ops.service.v1.ListConfigTemplateResponse
-	(*v11.ConfigTemplate)(nil),                 // 8: ops.service.v1.ConfigTemplate
-	(*emptypb.Empty)(nil),                      // 9: google.protobuf.Empty
-	(*v11.ConfigDistribution)(nil),             // 10: ops.service.v1.ConfigDistribution
-	(*v11.ListConfigDistributionResponse)(nil), // 11: ops.service.v1.ListConfigDistributionResponse
+	(*v11.CheckConfigDriftRequest)(nil),        // 6: ops.service.v1.CheckConfigDriftRequest
+	(*v11.ListConfigDistributionsRequest)(nil), // 7: ops.service.v1.ListConfigDistributionsRequest
+	(*v11.ListConfigTemplateResponse)(nil),     // 8: ops.service.v1.ListConfigTemplateResponse
+	(*v11.ConfigTemplate)(nil),                 // 9: ops.service.v1.ConfigTemplate
+	(*emptypb.Empty)(nil),                      // 10: google.protobuf.Empty
+	(*v11.ConfigDistribution)(nil),             // 11: ops.service.v1.ConfigDistribution
+	(*v11.ConfigDriftReport)(nil),              // 12: ops.service.v1.ConfigDriftReport
+	(*v11.ListConfigDistributionResponse)(nil), // 13: ops.service.v1.ListConfigDistributionResponse
 }
 var file_admin_service_v1_i_config_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.ConfigService.List:input_type -> pagination.PagingRequest
@@ -61,16 +64,18 @@ var file_admin_service_v1_i_config_proto_depIdxs = []int32{
 	3,  // 3: admin.service.v1.ConfigService.Update:input_type -> ops.service.v1.UpdateConfigTemplateRequest
 	4,  // 4: admin.service.v1.ConfigService.Delete:input_type -> ops.service.v1.DeleteConfigTemplateRequest
 	5,  // 5: admin.service.v1.ConfigService.Distribute:input_type -> ops.service.v1.DistributeConfigRequest
-	6,  // 6: admin.service.v1.ConfigService.ListDistributions:input_type -> ops.service.v1.ListConfigDistributionsRequest
-	7,  // 7: admin.service.v1.ConfigService.List:output_type -> ops.service.v1.ListConfigTemplateResponse
-	8,  // 8: admin.service.v1.ConfigService.Get:output_type -> ops.service.v1.ConfigTemplate
-	8,  // 9: admin.service.v1.ConfigService.Create:output_type -> ops.service.v1.ConfigTemplate
-	9,  // 10: admin.service.v1.ConfigService.Update:output_type -> google.protobuf.Empty
-	9,  // 11: admin.service.v1.ConfigService.Delete:output_type -> google.protobuf.Empty
-	10, // 12: admin.service.v1.ConfigService.Distribute:output_type -> ops.service.v1.ConfigDistribution
-	11, // 13: admin.service.v1.ConfigService.ListDistributions:output_type -> ops.service.v1.ListConfigDistributionResponse
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
+	6,  // 6: admin.service.v1.ConfigService.CheckConfigDrift:input_type -> ops.service.v1.CheckConfigDriftRequest
+	7,  // 7: admin.service.v1.ConfigService.ListDistributions:input_type -> ops.service.v1.ListConfigDistributionsRequest
+	8,  // 8: admin.service.v1.ConfigService.List:output_type -> ops.service.v1.ListConfigTemplateResponse
+	9,  // 9: admin.service.v1.ConfigService.Get:output_type -> ops.service.v1.ConfigTemplate
+	9,  // 10: admin.service.v1.ConfigService.Create:output_type -> ops.service.v1.ConfigTemplate
+	10, // 11: admin.service.v1.ConfigService.Update:output_type -> google.protobuf.Empty
+	10, // 12: admin.service.v1.ConfigService.Delete:output_type -> google.protobuf.Empty
+	11, // 13: admin.service.v1.ConfigService.Distribute:output_type -> ops.service.v1.ConfigDistribution
+	12, // 14: admin.service.v1.ConfigService.CheckConfigDrift:output_type -> ops.service.v1.ConfigDriftReport
+	13, // 15: admin.service.v1.ConfigService.ListDistributions:output_type -> ops.service.v1.ListConfigDistributionResponse
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

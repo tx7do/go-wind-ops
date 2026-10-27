@@ -70,6 +70,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptversion"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
@@ -209,6 +210,8 @@ type Client struct {
 	Script *ScriptClient
 	// ScriptBatch is the client for interacting with the ScriptBatch builders.
 	ScriptBatch *ScriptBatchClient
+	// ScriptVersion is the client for interacting with the ScriptVersion builders.
+	ScriptVersion *ScriptVersionClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -297,6 +300,7 @@ func (c *Client) init() {
 	c.RolePermission = NewRolePermissionClient(c.config)
 	c.Script = NewScriptClient(c.config)
 	c.ScriptBatch = NewScriptBatchClient(c.config)
+	c.ScriptVersion = NewScriptVersionClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 	c.TerminalChunk = NewTerminalChunkClient(c.config)
@@ -457,6 +461,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RolePermission:       NewRolePermissionClient(cfg),
 		Script:               NewScriptClient(cfg),
 		ScriptBatch:          NewScriptBatchClient(cfg),
+		ScriptVersion:        NewScriptVersionClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
 		TerminalChunk:        NewTerminalChunkClient(cfg),
@@ -544,6 +549,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RolePermission:       NewRolePermissionClient(cfg),
 		Script:               NewScriptClient(cfg),
 		ScriptBatch:          NewScriptBatchClient(cfg),
+		ScriptVersion:        NewScriptVersionClient(cfg),
 		Task:                 NewTaskClient(cfg),
 		Tenant:               NewTenantClient(cfg),
 		TerminalChunk:        NewTerminalChunkClient(cfg),
@@ -594,9 +600,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
 		c.Project, c.PromotionPipeline, c.Repository, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Script, c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk,
-		c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.RolePermission, c.Script, c.ScriptBatch, c.ScriptVersion, c.Task, c.Tenant,
+		c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -618,9 +624,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.PipelineRun, c.PolicyEvaluationLog, c.Position,
 		c.Project, c.PromotionPipeline, c.Repository, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Script, c.ScriptBatch, c.Task, c.Tenant, c.TerminalChunk,
-		c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.RolePermission, c.Script, c.ScriptBatch, c.ScriptVersion, c.Task, c.Tenant,
+		c.TerminalChunk, c.TerminalSession, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -747,6 +753,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Script.mutate(ctx, m)
 	case *ScriptBatchMutation:
 		return c.ScriptBatch.mutate(ctx, m)
+	case *ScriptVersionMutation:
+		return c.ScriptVersion.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TenantMutation:
@@ -8832,6 +8840,140 @@ func (c *ScriptBatchClient) mutate(ctx context.Context, m *ScriptBatchMutation) 
 	}
 }
 
+// ScriptVersionClient is a client for the ScriptVersion schema.
+type ScriptVersionClient struct {
+	config
+}
+
+// NewScriptVersionClient returns a client for the ScriptVersion from the given config.
+func NewScriptVersionClient(c config) *ScriptVersionClient {
+	return &ScriptVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scriptversion.Hooks(f(g(h())))`.
+func (c *ScriptVersionClient) Use(hooks ...Hook) {
+	c.hooks.ScriptVersion = append(c.hooks.ScriptVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scriptversion.Intercept(f(g(h())))`.
+func (c *ScriptVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScriptVersion = append(c.inters.ScriptVersion, interceptors...)
+}
+
+// Create returns a builder for creating a ScriptVersion entity.
+func (c *ScriptVersionClient) Create() *ScriptVersionCreate {
+	mutation := newScriptVersionMutation(c.config, OpCreate)
+	return &ScriptVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScriptVersion entities.
+func (c *ScriptVersionClient) CreateBulk(builders ...*ScriptVersionCreate) *ScriptVersionCreateBulk {
+	return &ScriptVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScriptVersionClient) MapCreateBulk(slice any, setFunc func(*ScriptVersionCreate, int)) *ScriptVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScriptVersionCreateBulk{err: fmt.Errorf("calling to ScriptVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScriptVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScriptVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScriptVersion.
+func (c *ScriptVersionClient) Update() *ScriptVersionUpdate {
+	mutation := newScriptVersionMutation(c.config, OpUpdate)
+	return &ScriptVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScriptVersionClient) UpdateOne(_m *ScriptVersion) *ScriptVersionUpdateOne {
+	mutation := newScriptVersionMutation(c.config, OpUpdateOne, withScriptVersion(_m))
+	return &ScriptVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScriptVersionClient) UpdateOneID(id uint32) *ScriptVersionUpdateOne {
+	mutation := newScriptVersionMutation(c.config, OpUpdateOne, withScriptVersionID(id))
+	return &ScriptVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScriptVersion.
+func (c *ScriptVersionClient) Delete() *ScriptVersionDelete {
+	mutation := newScriptVersionMutation(c.config, OpDelete)
+	return &ScriptVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScriptVersionClient) DeleteOne(_m *ScriptVersion) *ScriptVersionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScriptVersionClient) DeleteOneID(id uint32) *ScriptVersionDeleteOne {
+	builder := c.Delete().Where(scriptversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScriptVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for ScriptVersion.
+func (c *ScriptVersionClient) Query() *ScriptVersionQuery {
+	return &ScriptVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScriptVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScriptVersion entity by its id.
+func (c *ScriptVersionClient) Get(ctx context.Context, id uint32) (*ScriptVersion, error) {
+	return c.Query().Where(scriptversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScriptVersionClient) GetX(ctx context.Context, id uint32) *ScriptVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScriptVersionClient) Hooks() []Hook {
+	hooks := c.hooks.ScriptVersion
+	return append(hooks[:len(hooks):len(hooks)], scriptversion.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScriptVersionClient) Interceptors() []Interceptor {
+	return c.inters.ScriptVersion
+}
+
+func (c *ScriptVersionClient) mutate(ctx context.Context, m *ScriptVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScriptVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScriptVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScriptVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScriptVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScriptVersion mutation op: %q", m.Op())
+	}
+}
+
 // TaskClient is a client for the Task schema.
 type TaskClient struct {
 	config
@@ -10051,7 +10193,7 @@ type (
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
 		PromotionPipeline, Repository, Role, RoleMetadata, RolePermission, Script,
-		ScriptBatch, Task, Tenant, TerminalChunk, TerminalSession, User,
+		ScriptBatch, ScriptVersion, Task, Tenant, TerminalChunk, TerminalSession, User,
 		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
@@ -10066,7 +10208,7 @@ type (
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PipelineRun, PolicyEvaluationLog, Position, Project,
 		PromotionPipeline, Repository, Role, RoleMetadata, RolePermission, Script,
-		ScriptBatch, Task, Tenant, TerminalChunk, TerminalSession, User,
+		ScriptBatch, ScriptVersion, Task, Tenant, TerminalChunk, TerminalSession, User,
 		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

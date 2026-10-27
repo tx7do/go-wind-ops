@@ -21,5 +21,8 @@
   "approveFailed": "Operation failed",
   "rejectSuccess": "Rejected",
   "rejectFailed": "Operation failed",
-  "statusExpired": "Expired"
+  "statusExpired": "Expired",
+  "filterAll": "All",
+  "filterPending": "Pending",
+  "filterMine": "Created by me"
 }

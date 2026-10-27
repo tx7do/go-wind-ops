@@ -1527,6 +1527,30 @@ func (f ScriptBatchMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptBatchMutation", m)
 }
 
+// The ScriptVersionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScriptVersionQueryRuleFunc func(context.Context, *ent.ScriptVersionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScriptVersionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScriptVersionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScriptVersionQuery", q)
+}
+
+// The ScriptVersionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScriptVersionMutationRuleFunc func(context.Context, *ent.ScriptVersionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScriptVersionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScriptVersionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptVersionMutation", m)
+}
+
 // The TaskQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TaskQueryRuleFunc func(context.Context, *ent.TaskQuery) error
@@ -1896,6 +1920,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ScriptBatchQuery:
 		return q.Filter(), nil
+	case *ent.ScriptVersionQuery:
+		return q.Filter(), nil
 	case *ent.TaskQuery:
 		return q.Filter(), nil
 	case *ent.TenantQuery:
@@ -2038,6 +2064,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ScriptMutation:
 		return m.Filter(), nil
 	case *ent.ScriptBatchMutation:
+		return m.Filter(), nil
+	case *ent.ScriptVersionMutation:
 		return m.Filter(), nil
 	case *ent.TaskMutation:
 		return m.Filter(), nil

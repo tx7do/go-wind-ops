@@ -12,6 +12,9 @@ import (
 	"sort"
 	"strings"
 
+	"crypto/sha256"
+	"encoding/hex"
+
 	"go-wind-ops/pkg/filetransfer"
 	"go-wind-ops/pkg/signal"
 )
@@ -24,6 +27,33 @@ func (s *Service) registerFileHandlers() {
 	s.RegisterHandler("file_delete", s.handleFileDelete)
 	s.RegisterHandler(signal.CommandActionFilePull, s.handleFilePull)
 	s.RegisterHandler(signal.CommandActionFilePush, s.handleFilePush)
+	s.RegisterHandler(signal.CommandActionFileHash, s.handleFileHash)
+}
+
+// handleFileHash 计算本地文件 SHA-256(配置漂移检测);目录校验同文件
+// 管理指令(AGENT_ALLOWED_DIRS 白名单),文件不存在返回 Exists=false
+// 而非错误——"未部署"本身就是漂移的一种。
+func (s *Service) handleFileHash(_ context.Context, env *signal.CommandEnvelope) (any, error) {
+	var p signal.FileHashPayload
+	if len(env.Payload) > 0 {
+		if err := json.Unmarshal(env.Payload, &p); err != nil { return nil, fmt.Errorf("decode: %w", err) }
+	}
+	if p.Path == "" { return nil, fmt.Errorf("path required") }
+	p.Path = normalizeFilePath(p.Path)
+	if err := s.checkDir(&signal.ProjectOperationPayload{Dir: filepath.Dir(p.Path)}); err != nil { return nil, err }
+
+	res := signal.FileHashResult{Path: p.Path}
+	data, err := os.ReadFile(p.Path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return res, nil
+		}
+		return nil, fmt.Errorf("read: %w", err)
+	}
+	sum := sha256.Sum256(data)
+	res.Exists = true
+	res.Sha256 = hex.EncodeToString(sum[:])
+	return res, nil
 }
 
 // normalizeFilePath 规范化文件管理路径:TrimSpace + 裸盘符补卷根 + Clean。

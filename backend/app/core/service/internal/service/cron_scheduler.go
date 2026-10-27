@@ -49,6 +49,8 @@ type CronScheduler struct {
 	maintenanceRepo   *data.MaintenanceWindowRepo
 	approvalRepo      *data.ApprovalRepo
 	runtimeCleanupRepo *data.RuntimeCleanupRepo
+	inspectionService  *InspectionService
+	inspectionRepo     *data.InspectionRepo
 	budgetRepo         *data.CloudBudgetRepo
 	budgetService      *CloudBudgetService
 	certRepo           *data.CertRepo
@@ -64,6 +66,7 @@ type CronScheduler struct {
 	lastApprovalExpirySweep time.Time
 	lastAuditChainSweep     time.Time
 	lastRuntimeRetentionSweep time.Time
+	lastInspectionTrigger    time.Time
 	lastOrphanSweep         time.Time
 	lastBudgetCheck         time.Time
 	lastCertCheck           time.Time
@@ -72,7 +75,7 @@ type CronScheduler struct {
 	log                     *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, runtimeCleanupRepo *data.RuntimeCleanupRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, runtimeCleanupRepo *data.RuntimeCleanupRepo, inspectionService *InspectionService, inspectionRepo *data.InspectionRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
 	return &CronScheduler{
 		ctx:                ctx,
 		buildRepo:          buildRepo,
@@ -87,6 +90,8 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		maintenanceRepo:   maintenanceRepo,
 		approvalRepo:      approvalRepo,
 		runtimeCleanupRepo: runtimeCleanupRepo,
+		inspectionService:  inspectionService,
+		inspectionRepo:     inspectionRepo,
 		budgetRepo:         budgetRepo,
 		budgetService:      budgetService,
 		certRepo:           certRepo,
@@ -128,6 +133,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.runTick(ctx, "approval-expiry", s.tickApprovalExpiry)
 				s.runTick(ctx, "audit-chain", s.tickAuditChain)
 				s.runTick(ctx, "runtime-retention", s.tickRuntimeRetention)
+				s.runTick(ctx, "inspections", s.tickInspections)
 			}
 		}
 	}()
@@ -409,6 +415,35 @@ const auditRetentionSweepInterval = 24 * time.Hour
 // tickRuntimeRetention 运行数据保留期清扫(告警/投递/节点指标,30s 节拍内
 // 1 小时节流);逐表天数由 ALERT/DELIVERY/NODE_METRIC_RETENTION_DAYS 控制
 // (缺省 90/90/30,0=关闭该表清理)。
+// tickInspections 定时巡检:INSPECTION_CRON(5 段表达式,空=关闭)驱动,
+// 内存锚点判定到期;建单前查最近 1 分钟是否已有巡检(多副本同拍去重——
+// 巡检是只读聚合,极端并发下重复报告无害)。报告归属平台租户。
+func (s *CronScheduler) tickInspections(ctx context.Context) {
+	spec := strings.TrimSpace(os.Getenv("INSPECTION_CRON"))
+	if spec == "" || s.inspectionService == nil || s.inspectionRepo == nil {
+		return
+	}
+	schedule, err := cron.ParseStandard(spec)
+	if err != nil {
+		return
+	}
+	next := schedule.Next(s.lastInspectionTrigger)
+	if next.After(time.Now()) {
+		return
+	}
+	s.lastInspectionTrigger = time.Now()
+
+	if n, _ := s.inspectionRepo.CountSince(ctx, time.Now().Add(-time.Minute)); n > 0 {
+		return
+	}
+	if _, err = s.inspectionService.RunInspection(appViewer.NewSystemViewerContext(ctx),
+		&opsV1.RunInspectionRequest{}); err != nil {
+		s.log.Errorf("scheduled inspection failed: %s", err.Error())
+		return
+	}
+	s.log.Infof("scheduled inspection triggered (spec=%s)", spec)
+}
+
 func (s *CronScheduler) tickRuntimeRetention(ctx context.Context) {
 	if s.runtimeCleanupRepo == nil {
 		return

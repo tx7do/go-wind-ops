@@ -6,6 +6,8 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+"encoding/hex"
+"crypto/sha256"
 	"fmt"
 	"strings"
 	"time"
@@ -18,6 +20,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/id"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-ops/app/core/service/internal/data"
 	"github.com/minio/minio-go/v7"
@@ -612,6 +616,61 @@ func (s *ConfigService) ListConfigDistributions(ctx context.Context, req *opsV1.
 	}
 	return resp, nil
 }
+
+// CheckConfigDrift 配置漂移校验:模板按节点渲染内容取 SHA-256(期望),
+// 经 file_hash 同步指令实测节点目标路径文件(实际),两者比对:
+// 不存在或哈希不一致即漂移。文件/渲染失败如实返回,不做静默兜底。
+func (s *ConfigService) CheckConfigDrift(ctx context.Context, req *opsV1.CheckConfigDriftRequest) (*opsV1.ConfigDriftReport, error) {
+	if req == nil || req.GetTemplateId() == 0 || req.GetNodeId() == 0 {
+		return nil, opsV1.ErrorBadRequest("invalid parameter: templateId/nodeId required")
+	}
+	tpl, err := s.templateRepo.GetEntity(ctx, req.GetTemplateId())
+	if err != nil {
+		return nil, opsV1.ErrorNotFound("config template not found")
+	}
+	node, err := s.nodeRepo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: trans.Ptr(req.GetNodeId())})
+	if err != nil || node == nil {
+		return nil, opsV1.ErrorNotFound("node not found")
+	}
+	if s.agentSvc == nil {
+		return nil, opsV1.ErrorServiceUnavailable("mqtt channel unavailable")
+	}
+
+	rendered := s.renderTemplate(ctx, tpl, req.GetProjectId(), node)
+	sum := sha256.Sum256([]byte(rendered))
+	expected := hex.EncodeToString(sum[:])
+
+	res, err := s.agentSvc.PublishCommandSync(ctx, node.GetId(), node.GetAgentId(),
+		signal.CommandActionFileHash, &signal.FileHashPayload{Path: tpl.TargetPath}, operatorIDOf(ctx), configDriftTimeout)
+	if err != nil {
+		return nil, opsV1.ErrorServiceUnavailable("%s", "file hash command failed: node offline or timeout")
+	}
+	if !res.Success {
+		return nil, opsV1.ErrorInternalServerError("file hash failed: %s", res.Error)
+	}
+	var actual signal.FileHashResult
+	if err = json.Unmarshal(res.Data, &actual); err != nil {
+		return nil, opsV1.ErrorInternalServerError("decode file hash result")
+	}
+
+	drifted := !actual.Exists || actual.Sha256 != expected
+	report := &opsV1.ConfigDriftReport{
+		TemplateId:     req.GetTemplateId(),
+		NodeId:         req.GetNodeId(),
+		TargetPath:     tpl.TargetPath,
+		ExpectedSha256: expected,
+		Exists:         actual.Exists,
+		Drifted:        drifted,
+	}
+	if actual.Exists {
+		report.ActualSha256 = &actual.Sha256
+	}
+	s.log.Infof("config drift check (template=%d node=%d drifted=%v)", req.GetTemplateId(), req.GetNodeId(), drifted)
+	return report, nil
+}
+
+// configDriftTimeout 漂移校验同步指令超时(文件哈希为轻量读,秒级足够)。
+const configDriftTimeout = 10 * time.Second
 
 // renderTemplate 下发前占位符替换:{{env}}/{{node.*}}/{{project.*}}/{{date}}/{{datetime}};
 // 项目类占位符在未关联项目时替换为空串。

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -16,6 +17,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/client"
 	"go-wind-ops/app/core/service/internal/server"
 	"go-wind-ops/app/core/service/internal/service"
+	"go-wind-ops/pkg/eventhook"
 )
 
 // initApp 手写装配整个应用,是本服务的依赖注入点(替代原 google/wire 生成)。
@@ -157,6 +159,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
 	maintenanceWindowRepo := data.NewMaintenanceWindowRepo(ctx, entClient)
 	promotionPipelineRepo := data.NewPromotionPipelineRepo(ctx, entClient)
+	scriptVersionRepo := data.NewScriptVersionRepo(ctx, entClient)
 	runtimeCleanupRepo := data.NewRuntimeCleanupRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
@@ -219,13 +222,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	agentNodeService := service.NewAgentNodeService(ctx, agentNodeRepo, metricRepo, agentService, approvalRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo)
 	projectService := service.NewProjectService(ctx, projectRepo, agentNodeRepo, agentService)
 	commandRecordService := service.NewCommandRecordService(ctx, commandRecordRepo)
-	scriptService := service.NewScriptService(ctx, scriptRepo, agentNodeRepo, agentService, approvalRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo)
+	scriptService := service.NewScriptService(ctx, scriptRepo, agentNodeRepo, agentService, approvalRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, scriptVersionRepo)
 	scriptBatchService := service.NewScriptBatchService(ctx, scriptBatchRepo, commandRecordRepo, scriptRepo, agentNodeRepo, agentService)
 	repositoryService := service.NewRepositoryService(ctx, repositoryRepo)
 	buildService := service.NewBuildService(ctx, buildRepo, repositoryRepo, buildHistoryRepo, minIOClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryRepo, buildRepo, repositoryRepo, minIOClient)
 	distributionService := service.NewDistributionService(ctx, distributionRepo, distributionRecordRepo, buildRepo, buildHistoryRepo, projectRepo, agentNodeRepo, minIOClient, agentService)
-	agentService.SetDistributionAdvanceHook(distributionService.AdvanceBatches)
+	agentService.SetDistributionAdvanceHook(func(ctx context.Context, distID uint32) {
+		distributionService.AdvanceBatches(ctx, distID)
+		eventhook.Emit("distribution.advanced", map[string]any{"distributionId": distID})
+	})
 	monitorService := service.NewMonitorService(ctx, monitorRepo)
 	alertService := service.NewAlertService(ctx, alertRepo)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo)
@@ -245,7 +251,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 定时调度(构建/脚本/监控/备份/预算/证书 cron + 孤儿构建清扫)
 	auditRetentionRepo := data.NewAuditRetentionRepo(ctx, entClient)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, approvalRepo, runtimeCleanupRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, approvalRepo, runtimeCleanupRepo, inspectionService, inspectionRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
 	cronScheduler.Start(ctx.Context())
 
 	// 终端录制留存清理(TERMINAL_RETENTION_DAYS,默认 30 天,0=永久)

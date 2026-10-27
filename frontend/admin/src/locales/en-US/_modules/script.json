@@ -43,5 +43,14 @@
   "dangerousTitle": "Dangerous script detected",
   "dangerousContent": "The script matches catastrophic operation patterns (root deletion, disk formatting, shutdown/reboot, etc.) and may cause irreversible damage. Double-check the script before confirming.",
   "dangerousConfirm": "I understand, run anyway",
-  "dangerousCancel": "Cancel"
+  "dangerousCancel": "Cancel",
+  "versionsTitle": "Version History: {{name}}",
+  "versionFromAuto": "Auto snapshot",
+  "versionFromRestore": "Pre-restore snapshot",
+  "versionView": "View",
+  "versionRestore": "Restore",
+  "versionRestored": "Restored (current content auto-snapshotted)",
+  "versionRestoreFailed": "Restore failed",
+  "versionsEmpty": "No versions yet (generated on first content update)",
+  "versionViewTitle": "Version #{{id}} content"
 }

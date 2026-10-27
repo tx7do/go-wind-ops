@@ -97,3 +97,8 @@ func (s *ConfigService) ListDistributions(ctx context.Context, req *opsV1.ListCo
 	}
 	return s.configServiceClient.ListConfigDistributions(ctx, req)
 }
+
+// CheckConfigDrift 配置漂移校验(透传 core)。
+func (s *ConfigService) CheckConfigDrift(ctx context.Context, req *opsV1.CheckConfigDriftRequest) (*opsV1.ConfigDriftReport, error) {
+	return s.configServiceClient.CheckConfigDrift(ctx, req)
+}

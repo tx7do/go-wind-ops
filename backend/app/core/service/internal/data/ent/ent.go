@@ -65,6 +65,7 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-ops/app/core/service/internal/data/ent/script"
 	"go-wind-ops/app/core/service/internal/data/ent/scriptbatch"
+	"go-wind-ops/app/core/service/internal/data/ent/scriptversion"
 	"go-wind-ops/app/core/service/internal/data/ent/task"
 	"go-wind-ops/app/core/service/internal/data/ent/tenant"
 	"go-wind-ops/app/core/service/internal/data/ent/terminalchunk"
@@ -199,6 +200,7 @@ func checkColumn(t, c string) error {
 			rolepermission.Table:       rolepermission.ValidColumn,
 			script.Table:               script.ValidColumn,
 			scriptbatch.Table:          scriptbatch.ValidColumn,
+			scriptversion.Table:        scriptversion.ValidColumn,
 			task.Table:                 task.ValidColumn,
 			tenant.Table:               tenant.ValidColumn,
 			terminalchunk.Table:        terminalchunk.ValidColumn,

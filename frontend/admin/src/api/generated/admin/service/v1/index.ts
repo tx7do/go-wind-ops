@@ -4246,6 +4246,10 @@ export interface ConfigService {
   Distribute(
     request: opsservicev1_DistributeConfigRequest,
   ): Promise<opsservicev1_ConfigDistribution>;
+  // 配置漂移校验(id 走 body)
+  CheckConfigDrift(
+    request: opsservicev1_CheckConfigDriftRequest,
+  ): Promise<opsservicev1_ConfigDriftReport>;
   // 查询下发记录列表(按模板过滤)
   ListDistributions(
     request: opsservicev1_ListConfigDistributionsRequest,
@@ -4375,6 +4379,14 @@ export function createConfigServiceClient(
         method: 'Distribute',
       }) as Promise<opsservicev1_ConfigDistribution>;
     },
+    CheckConfigDrift(request) {
+      const path = `/admin/v1/config-templates:check-drift`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ConfigService',
+        method: 'CheckConfigDrift',
+      }) as Promise<opsservicev1_ConfigDriftReport>;
+    },
     ListDistributions(request) {
       const path = `/admin/v1/config-templates/distributions:search`;
       const body = JSON.stringify(request);
@@ -4467,6 +4479,28 @@ export type opsservicev1_ConfigDistribution = {
   targetPath?: string;
   templateId?: number;
   templateName?: string;
+};
+
+// CheckConfigDriftRequest 漂移校验(同步指令,秒级返回)
+export type opsservicev1_CheckConfigDriftRequest = {
+  //
+  // Behaviors: REQUIRED
+  nodeId: number | undefined;
+  projectId?: number;
+  //
+  // Behaviors: REQUIRED
+  templateId: number | undefined;
+};
+
+// ConfigDriftReport 漂移报告
+export type opsservicev1_ConfigDriftReport = {
+  actualSha256?: string;
+  drifted: boolean | undefined;
+  exists: boolean | undefined;
+  expectedSha256: string | undefined;
+  nodeId: number | undefined;
+  targetPath: string | undefined;
+  templateId: number | undefined;
 };
 
 export type opsservicev1_ListConfigDistributionsRequest = {
@@ -10784,6 +10818,14 @@ export interface ScriptService {
   Update(
     request: opsservicev1_UpdateScriptRequest,
   ): Promise<wellKnownEmpty>;
+  // 脚本内容版本历史
+  ListScriptVersions(
+    request: opsservicev1_ListScriptVersionsRequest,
+  ): Promise<opsservicev1_ListScriptVersionsResponse>;
+  // 恢复到指定版本(id 走 body)
+  RestoreScriptVersion(
+    request: opsservicev1_RestoreScriptVersionRequest,
+  ): Promise<wellKnownEmpty>;
   // 删除脚本
   Delete(
     request: opsservicev1_DeleteScriptRequest,
@@ -10898,6 +10940,32 @@ export function createScriptServiceClient(
         method: 'Update',
       }) as Promise<wellKnownEmpty>;
     },
+    ListScriptVersions(request) {
+      const path = `/admin/v1/scripts/versions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.scriptId) {
+        queryParams.push(
+          `scriptId=${encodeURIComponent(request.scriptId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptService',
+        method: 'ListScriptVersions',
+      }) as Promise<opsservicev1_ListScriptVersionsResponse>;
+    },
+    RestoreScriptVersion(request) {
+      const path = `/admin/v1/scripts/versions:restore`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ScriptService',
+        method: 'RestoreScriptVersion',
+      }) as Promise<wellKnownEmpty>;
+    },
     Delete(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -10976,6 +11044,38 @@ export type opsservicev1_UpdateScriptRequest = {
   // Behaviors: REQUIRED
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
+};
+
+// ListScriptVersionsRequest 版本历史查询
+export type opsservicev1_ListScriptVersionsRequest = {
+  //
+  // Behaviors: REQUIRED
+  scriptId?: number;
+};
+
+export type opsservicev1_ListScriptVersionsResponse = {
+  items: opsservicev1_ScriptVersion[] | undefined;
+  total: number | undefined;
+};
+
+// ScriptVersion 版本快照
+export type opsservicev1_ScriptVersion = {
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  remark?: string;
+  scriptId?: number;
+};
+
+// RestoreScriptVersionRequest 恢复到指定版本
+export type opsservicev1_RestoreScriptVersionRequest = {
+  //
+  // Behaviors: REQUIRED
+  scriptId: number | undefined;
+  //
+  // Behaviors: REQUIRED
+  versionId: number | undefined;
 };
 
 export type opsservicev1_DeleteScriptRequest = {

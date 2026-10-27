@@ -1438,3 +1438,231 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListConfigDistributionResponseValidationError{}
+
+// Validate checks the field values on CheckConfigDriftRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckConfigDriftRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckConfigDriftRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckConfigDriftRequestMultiError, or nil if none found.
+func (m *CheckConfigDriftRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckConfigDriftRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TemplateId
+
+	// no validation rules for NodeId
+
+	if m.ProjectId != nil {
+		// no validation rules for ProjectId
+	}
+
+	if len(errors) > 0 {
+		return CheckConfigDriftRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckConfigDriftRequestMultiError is an error wrapping multiple validation
+// errors returned by CheckConfigDriftRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CheckConfigDriftRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckConfigDriftRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckConfigDriftRequestMultiError) AllErrors() []error { return m }
+
+// CheckConfigDriftRequestValidationError is the validation error returned by
+// CheckConfigDriftRequest.Validate if the designated constraints aren't met.
+type CheckConfigDriftRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckConfigDriftRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckConfigDriftRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckConfigDriftRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckConfigDriftRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckConfigDriftRequestValidationError) ErrorName() string {
+	return "CheckConfigDriftRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckConfigDriftRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckConfigDriftRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckConfigDriftRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckConfigDriftRequestValidationError{}
+
+// Validate checks the field values on ConfigDriftReport with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ConfigDriftReport) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConfigDriftReport with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ConfigDriftReportMultiError, or nil if none found.
+func (m *ConfigDriftReport) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConfigDriftReport) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TemplateId
+
+	// no validation rules for NodeId
+
+	// no validation rules for TargetPath
+
+	// no validation rules for ExpectedSha256
+
+	// no validation rules for Exists
+
+	// no validation rules for Drifted
+
+	if m.ActualSha256 != nil {
+		// no validation rules for ActualSha256
+	}
+
+	if len(errors) > 0 {
+		return ConfigDriftReportMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConfigDriftReportMultiError is an error wrapping multiple validation errors
+// returned by ConfigDriftReport.ValidateAll() if the designated constraints
+// aren't met.
+type ConfigDriftReportMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConfigDriftReportMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConfigDriftReportMultiError) AllErrors() []error { return m }
+
+// ConfigDriftReportValidationError is the validation error returned by
+// ConfigDriftReport.Validate if the designated constraints aren't met.
+type ConfigDriftReportValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConfigDriftReportValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConfigDriftReportValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConfigDriftReportValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConfigDriftReportValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConfigDriftReportValidationError) ErrorName() string {
+	return "ConfigDriftReportValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ConfigDriftReportValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConfigDriftReport.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConfigDriftReportValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConfigDriftReportValidationError{}

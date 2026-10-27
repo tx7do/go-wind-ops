@@ -2090,3 +2090,507 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ScriptBatchDetailValidationError{}
+
+// Validate checks the field values on ListScriptVersionsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListScriptVersionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListScriptVersionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListScriptVersionsRequestMultiError, or nil if none found.
+func (m *ListScriptVersionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListScriptVersionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.ScriptId != nil {
+		// no validation rules for ScriptId
+	}
+
+	if len(errors) > 0 {
+		return ListScriptVersionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListScriptVersionsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListScriptVersionsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type ListScriptVersionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListScriptVersionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListScriptVersionsRequestMultiError) AllErrors() []error { return m }
+
+// ListScriptVersionsRequestValidationError is the validation error returned by
+// ListScriptVersionsRequest.Validate if the designated constraints aren't met.
+type ListScriptVersionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListScriptVersionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListScriptVersionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListScriptVersionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListScriptVersionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListScriptVersionsRequestValidationError) ErrorName() string {
+	return "ListScriptVersionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListScriptVersionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListScriptVersionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListScriptVersionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListScriptVersionsRequestValidationError{}
+
+// Validate checks the field values on ScriptVersion with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ScriptVersion) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScriptVersion with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ScriptVersionMultiError, or
+// nil if none found.
+func (m *ScriptVersion) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScriptVersion) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.ScriptId != nil {
+		// no validation rules for ScriptId
+	}
+
+	if m.Content != nil {
+		// no validation rules for Content
+	}
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScriptVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScriptVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScriptVersionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ScriptVersionMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScriptVersionMultiError is an error wrapping multiple validation errors
+// returned by ScriptVersion.ValidateAll() if the designated constraints
+// aren't met.
+type ScriptVersionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScriptVersionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScriptVersionMultiError) AllErrors() []error { return m }
+
+// ScriptVersionValidationError is the validation error returned by
+// ScriptVersion.Validate if the designated constraints aren't met.
+type ScriptVersionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScriptVersionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScriptVersionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScriptVersionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScriptVersionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScriptVersionValidationError) ErrorName() string { return "ScriptVersionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ScriptVersionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScriptVersion.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScriptVersionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScriptVersionValidationError{}
+
+// Validate checks the field values on ListScriptVersionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListScriptVersionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListScriptVersionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListScriptVersionsResponseMultiError, or nil if none found.
+func (m *ListScriptVersionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListScriptVersionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListScriptVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListScriptVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListScriptVersionsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListScriptVersionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListScriptVersionsResponseMultiError is an error wrapping multiple
+// validation errors returned by ListScriptVersionsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListScriptVersionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListScriptVersionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListScriptVersionsResponseMultiError) AllErrors() []error { return m }
+
+// ListScriptVersionsResponseValidationError is the validation error returned
+// by ListScriptVersionsResponse.Validate if the designated constraints aren't met.
+type ListScriptVersionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListScriptVersionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListScriptVersionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListScriptVersionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListScriptVersionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListScriptVersionsResponseValidationError) ErrorName() string {
+	return "ListScriptVersionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListScriptVersionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListScriptVersionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListScriptVersionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListScriptVersionsResponseValidationError{}
+
+// Validate checks the field values on RestoreScriptVersionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RestoreScriptVersionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RestoreScriptVersionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RestoreScriptVersionRequestMultiError, or nil if none found.
+func (m *RestoreScriptVersionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RestoreScriptVersionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ScriptId
+
+	// no validation rules for VersionId
+
+	if len(errors) > 0 {
+		return RestoreScriptVersionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RestoreScriptVersionRequestMultiError is an error wrapping multiple
+// validation errors returned by RestoreScriptVersionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RestoreScriptVersionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RestoreScriptVersionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RestoreScriptVersionRequestMultiError) AllErrors() []error { return m }
+
+// RestoreScriptVersionRequestValidationError is the validation error returned
+// by RestoreScriptVersionRequest.Validate if the designated constraints
+// aren't met.
+type RestoreScriptVersionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RestoreScriptVersionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RestoreScriptVersionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RestoreScriptVersionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RestoreScriptVersionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RestoreScriptVersionRequestValidationError) ErrorName() string {
+	return "RestoreScriptVersionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RestoreScriptVersionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRestoreScriptVersionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RestoreScriptVersionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RestoreScriptVersionRequestValidationError{}

@@ -1030,6 +1030,241 @@ func (x *ScriptBatchDetail) GetItems() []*ScriptBatchItem {
 	return nil
 }
 
+// ListScriptVersionsRequest 版本历史查询
+type ListScriptVersionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ScriptId      *uint32                `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"` // 脚本ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListScriptVersionsRequest) Reset() {
+	*x = ListScriptVersionsRequest{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListScriptVersionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListScriptVersionsRequest) ProtoMessage() {}
+
+func (x *ListScriptVersionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListScriptVersionsRequest.ProtoReflect.Descriptor instead.
+func (*ListScriptVersionsRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListScriptVersionsRequest) GetScriptId() uint32 {
+	if x != nil && x.ScriptId != nil {
+		return *x.ScriptId
+	}
+	return 0
+}
+
+// ScriptVersion 版本快照
+type ScriptVersion struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 版本ID
+	ScriptId      *uint32                `protobuf:"varint,2,opt,name=script_id,json=scriptId,proto3,oneof" json:"script_id,omitempty"`    // 脚本ID
+	Content       *string                `protobuf:"bytes,3,opt,name=content,proto3,oneof" json:"content,omitempty"`                       // 内容快照
+	Remark        *string                `protobuf:"bytes,4,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                         // 来源(auto=更新前自动快照/restore=恢复前快照)
+	CreatedBy     *uint32                `protobuf:"varint,5,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 操作者
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"` // 快照时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScriptVersion) Reset() {
+	*x = ScriptVersion{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScriptVersion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScriptVersion) ProtoMessage() {}
+
+func (x *ScriptVersion) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScriptVersion.ProtoReflect.Descriptor instead.
+func (*ScriptVersion) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ScriptVersion) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *ScriptVersion) GetScriptId() uint32 {
+	if x != nil && x.ScriptId != nil {
+		return *x.ScriptId
+	}
+	return 0
+}
+
+func (x *ScriptVersion) GetContent() string {
+	if x != nil && x.Content != nil {
+		return *x.Content
+	}
+	return ""
+}
+
+func (x *ScriptVersion) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
+	}
+	return ""
+}
+
+func (x *ScriptVersion) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *ScriptVersion) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ListScriptVersionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Items         []*ScriptVersion       `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 版本列表(新→旧)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListScriptVersionsResponse) Reset() {
+	*x = ListScriptVersionsResponse{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListScriptVersionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListScriptVersionsResponse) ProtoMessage() {}
+
+func (x *ListScriptVersionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListScriptVersionsResponse.ProtoReflect.Descriptor instead.
+func (*ListScriptVersionsResponse) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ListScriptVersionsResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListScriptVersionsResponse) GetItems() []*ScriptVersion {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// RestoreScriptVersionRequest 恢复到指定版本
+type RestoreScriptVersionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ScriptId      uint32                 `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3" json:"script_id,omitempty"`    // 脚本ID(id 走 body:触发类 POST 不带 path 参数)
+	VersionId     uint32                 `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"` // 目标版本ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestoreScriptVersionRequest) Reset() {
+	*x = RestoreScriptVersionRequest{}
+	mi := &file_ops_service_v1_script_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreScriptVersionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreScriptVersionRequest) ProtoMessage() {}
+
+func (x *RestoreScriptVersionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_script_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestoreScriptVersionRequest.ProtoReflect.Descriptor instead.
+func (*RestoreScriptVersionRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_script_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *RestoreScriptVersionRequest) GetScriptId() uint32 {
+	if x != nil {
+		return x.ScriptId
+	}
+	return 0
+}
+
+func (x *RestoreScriptVersionRequest) GetVersionId() uint32 {
+	if x != nil {
+		return x.VersionId
+	}
+	return 0
+}
+
 var File_ops_service_v1_script_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_script_proto_rawDesc = "" +
@@ -1168,12 +1403,42 @@ const file_ops_service_v1_script_proto_rawDesc = "" +
 	"\x11ScriptBatchDetail\x126\n" +
 	"\x05batch\x18\x01 \x01(\v2\x1b.ops.service.v1.ScriptBatchH\x00R\x05batch\x88\x01\x01\x125\n" +
 	"\x05items\x18\x02 \x03(\v2\x1f.ops.service.v1.ScriptBatchItemR\x05itemsB\b\n" +
-	"\x06_batch2\xf5\x03\n" +
+	"\x06_batch\"P\n" +
+	"\x19ListScriptVersionsRequest\x12%\n" +
+	"\tscript_id\x18\x01 \x01(\rB\x03\xe0A\x02H\x00R\bscriptId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_script_id\"\xb0\x02\n" +
+	"\rScriptVersion\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rH\x00R\x02id\x88\x01\x01\x12 \n" +
+	"\tscript_id\x18\x02 \x01(\rH\x01R\bscriptId\x88\x01\x01\x12\x1d\n" +
+	"\acontent\x18\x03 \x01(\tH\x02R\acontent\x88\x01\x01\x12\x1b\n" +
+	"\x06remark\x18\x04 \x01(\tH\x03R\x06remark\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"created_by\x18\x05 \x01(\rH\x04R\tcreatedBy\x88\x01\x01\x12>\n" +
+	"\n" +
+	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampH\x05R\tcreatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\f\n" +
+	"\n" +
+	"_script_idB\n" +
+	"\n" +
+	"\b_contentB\t\n" +
+	"\a_remarkB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_created_at\"g\n" +
+	"\x1aListScriptVersionsResponse\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x04R\x05total\x123\n" +
+	"\x05items\x18\x02 \x03(\v2\x1d.ops.service.v1.ScriptVersionR\x05items\"c\n" +
+	"\x1bRestoreScriptVersionRequest\x12 \n" +
+	"\tscript_id\x18\x01 \x01(\rB\x03\xe0A\x02R\bscriptId\x12\"\n" +
+	"\n" +
+	"version_id\x18\x02 \x01(\rB\x03\xe0A\x02R\tversionId2\xc3\x05\n" +
 	"\rScriptService\x12N\n" +
 	"\vListScripts\x12\x19.pagination.PagingRequest\x1a\".ops.service.v1.ListScriptResponse\"\x00\x12G\n" +
 	"\tGetScript\x12 .ops.service.v1.GetScriptRequest\x1a\x16.ops.service.v1.Script\"\x00\x12M\n" +
 	"\fCreateScript\x12#.ops.service.v1.CreateScriptRequest\x1a\x16.ops.service.v1.Script\"\x00\x12M\n" +
-	"\fUpdateScript\x12#.ops.service.v1.UpdateScriptRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n" +
+	"\fUpdateScript\x12#.ops.service.v1.UpdateScriptRequest\x1a\x16.google.protobuf.Empty\"\x00\x12m\n" +
+	"\x12ListScriptVersions\x12).ops.service.v1.ListScriptVersionsRequest\x1a*.ops.service.v1.ListScriptVersionsResponse\"\x00\x12]\n" +
+	"\x14RestoreScriptVersion\x12+.ops.service.v1.RestoreScriptVersionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n" +
 	"\fDeleteScript\x12#.ops.service.v1.DeleteScriptRequest\x1a\x16.google.protobuf.Empty\"\x00\x12^\n" +
 	"\rExecuteScript\x12$.ops.service.v1.ExecuteScriptRequest\x1a%.ops.service.v1.ExecuteScriptResponse\"\x002\xbc\x02\n" +
 	"\x12ScriptBatchService\x12Y\n" +
@@ -1194,64 +1459,74 @@ func file_ops_service_v1_script_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_script_proto_rawDescData
 }
 
-var file_ops_service_v1_script_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_ops_service_v1_script_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_ops_service_v1_script_proto_goTypes = []any{
-	(*Script)(nil),                     // 0: ops.service.v1.Script
-	(*ListScriptResponse)(nil),         // 1: ops.service.v1.ListScriptResponse
-	(*GetScriptRequest)(nil),           // 2: ops.service.v1.GetScriptRequest
-	(*CreateScriptRequest)(nil),        // 3: ops.service.v1.CreateScriptRequest
-	(*UpdateScriptRequest)(nil),        // 4: ops.service.v1.UpdateScriptRequest
-	(*DeleteScriptRequest)(nil),        // 5: ops.service.v1.DeleteScriptRequest
-	(*ExecuteScriptRequest)(nil),       // 6: ops.service.v1.ExecuteScriptRequest
-	(*ExecuteScriptResponse)(nil),      // 7: ops.service.v1.ExecuteScriptResponse
-	(*ExecuteScriptBatchRequest)(nil),  // 8: ops.service.v1.ExecuteScriptBatchRequest
-	(*ExecuteScriptBatchResponse)(nil), // 9: ops.service.v1.ExecuteScriptBatchResponse
-	(*ScriptBatch)(nil),                // 10: ops.service.v1.ScriptBatch
-	(*ListScriptBatchResponse)(nil),    // 11: ops.service.v1.ListScriptBatchResponse
-	(*GetScriptBatchRequest)(nil),      // 12: ops.service.v1.GetScriptBatchRequest
-	(*ScriptBatchItem)(nil),            // 13: ops.service.v1.ScriptBatchItem
-	(*ScriptBatchDetail)(nil),          // 14: ops.service.v1.ScriptBatchDetail
-	(*timestamppb.Timestamp)(nil),      // 15: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),      // 16: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),           // 17: pagination.PagingRequest
-	(*emptypb.Empty)(nil),              // 18: google.protobuf.Empty
+	(*Script)(nil),                      // 0: ops.service.v1.Script
+	(*ListScriptResponse)(nil),          // 1: ops.service.v1.ListScriptResponse
+	(*GetScriptRequest)(nil),            // 2: ops.service.v1.GetScriptRequest
+	(*CreateScriptRequest)(nil),         // 3: ops.service.v1.CreateScriptRequest
+	(*UpdateScriptRequest)(nil),         // 4: ops.service.v1.UpdateScriptRequest
+	(*DeleteScriptRequest)(nil),         // 5: ops.service.v1.DeleteScriptRequest
+	(*ExecuteScriptRequest)(nil),        // 6: ops.service.v1.ExecuteScriptRequest
+	(*ExecuteScriptResponse)(nil),       // 7: ops.service.v1.ExecuteScriptResponse
+	(*ExecuteScriptBatchRequest)(nil),   // 8: ops.service.v1.ExecuteScriptBatchRequest
+	(*ExecuteScriptBatchResponse)(nil),  // 9: ops.service.v1.ExecuteScriptBatchResponse
+	(*ScriptBatch)(nil),                 // 10: ops.service.v1.ScriptBatch
+	(*ListScriptBatchResponse)(nil),     // 11: ops.service.v1.ListScriptBatchResponse
+	(*GetScriptBatchRequest)(nil),       // 12: ops.service.v1.GetScriptBatchRequest
+	(*ScriptBatchItem)(nil),             // 13: ops.service.v1.ScriptBatchItem
+	(*ScriptBatchDetail)(nil),           // 14: ops.service.v1.ScriptBatchDetail
+	(*ListScriptVersionsRequest)(nil),   // 15: ops.service.v1.ListScriptVersionsRequest
+	(*ScriptVersion)(nil),               // 16: ops.service.v1.ScriptVersion
+	(*ListScriptVersionsResponse)(nil),  // 17: ops.service.v1.ListScriptVersionsResponse
+	(*RestoreScriptVersionRequest)(nil), // 18: ops.service.v1.RestoreScriptVersionRequest
+	(*timestamppb.Timestamp)(nil),       // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),       // 20: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),            // 21: pagination.PagingRequest
+	(*emptypb.Empty)(nil),               // 22: google.protobuf.Empty
 }
 var file_ops_service_v1_script_proto_depIdxs = []int32{
-	15, // 0: ops.service.v1.Script.last_cron_at:type_name -> google.protobuf.Timestamp
-	15, // 1: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
-	15, // 2: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 0: ops.service.v1.Script.last_cron_at:type_name -> google.protobuf.Timestamp
+	19, // 1: ops.service.v1.Script.created_at:type_name -> google.protobuf.Timestamp
+	19, // 2: ops.service.v1.Script.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: ops.service.v1.ListScriptResponse.items:type_name -> ops.service.v1.Script
 	0,  // 4: ops.service.v1.CreateScriptRequest.data:type_name -> ops.service.v1.Script
 	0,  // 5: ops.service.v1.UpdateScriptRequest.data:type_name -> ops.service.v1.Script
-	16, // 6: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
-	15, // 7: ops.service.v1.ScriptBatch.created_at:type_name -> google.protobuf.Timestamp
+	20, // 6: ops.service.v1.UpdateScriptRequest.update_mask:type_name -> google.protobuf.FieldMask
+	19, // 7: ops.service.v1.ScriptBatch.created_at:type_name -> google.protobuf.Timestamp
 	10, // 8: ops.service.v1.ListScriptBatchResponse.items:type_name -> ops.service.v1.ScriptBatch
-	15, // 9: ops.service.v1.ScriptBatchItem.finished_at:type_name -> google.protobuf.Timestamp
+	19, // 9: ops.service.v1.ScriptBatchItem.finished_at:type_name -> google.protobuf.Timestamp
 	10, // 10: ops.service.v1.ScriptBatchDetail.batch:type_name -> ops.service.v1.ScriptBatch
 	13, // 11: ops.service.v1.ScriptBatchDetail.items:type_name -> ops.service.v1.ScriptBatchItem
-	17, // 12: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
-	2,  // 13: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
-	3,  // 14: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
-	4,  // 15: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
-	5,  // 16: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
-	6,  // 17: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
-	17, // 18: ops.service.v1.ScriptBatchService.ListScriptBatches:input_type -> pagination.PagingRequest
-	12, // 19: ops.service.v1.ScriptBatchService.GetScriptBatch:input_type -> ops.service.v1.GetScriptBatchRequest
-	8,  // 20: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:input_type -> ops.service.v1.ExecuteScriptBatchRequest
-	1,  // 21: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
-	0,  // 22: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
-	0,  // 23: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
-	18, // 24: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
-	18, // 25: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
-	7,  // 26: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
-	11, // 27: ops.service.v1.ScriptBatchService.ListScriptBatches:output_type -> ops.service.v1.ListScriptBatchResponse
-	14, // 28: ops.service.v1.ScriptBatchService.GetScriptBatch:output_type -> ops.service.v1.ScriptBatchDetail
-	9,  // 29: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:output_type -> ops.service.v1.ExecuteScriptBatchResponse
-	21, // [21:30] is the sub-list for method output_type
-	12, // [12:21] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	19, // 12: ops.service.v1.ScriptVersion.created_at:type_name -> google.protobuf.Timestamp
+	16, // 13: ops.service.v1.ListScriptVersionsResponse.items:type_name -> ops.service.v1.ScriptVersion
+	21, // 14: ops.service.v1.ScriptService.ListScripts:input_type -> pagination.PagingRequest
+	2,  // 15: ops.service.v1.ScriptService.GetScript:input_type -> ops.service.v1.GetScriptRequest
+	3,  // 16: ops.service.v1.ScriptService.CreateScript:input_type -> ops.service.v1.CreateScriptRequest
+	4,  // 17: ops.service.v1.ScriptService.UpdateScript:input_type -> ops.service.v1.UpdateScriptRequest
+	15, // 18: ops.service.v1.ScriptService.ListScriptVersions:input_type -> ops.service.v1.ListScriptVersionsRequest
+	18, // 19: ops.service.v1.ScriptService.RestoreScriptVersion:input_type -> ops.service.v1.RestoreScriptVersionRequest
+	5,  // 20: ops.service.v1.ScriptService.DeleteScript:input_type -> ops.service.v1.DeleteScriptRequest
+	6,  // 21: ops.service.v1.ScriptService.ExecuteScript:input_type -> ops.service.v1.ExecuteScriptRequest
+	21, // 22: ops.service.v1.ScriptBatchService.ListScriptBatches:input_type -> pagination.PagingRequest
+	12, // 23: ops.service.v1.ScriptBatchService.GetScriptBatch:input_type -> ops.service.v1.GetScriptBatchRequest
+	8,  // 24: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:input_type -> ops.service.v1.ExecuteScriptBatchRequest
+	1,  // 25: ops.service.v1.ScriptService.ListScripts:output_type -> ops.service.v1.ListScriptResponse
+	0,  // 26: ops.service.v1.ScriptService.GetScript:output_type -> ops.service.v1.Script
+	0,  // 27: ops.service.v1.ScriptService.CreateScript:output_type -> ops.service.v1.Script
+	22, // 28: ops.service.v1.ScriptService.UpdateScript:output_type -> google.protobuf.Empty
+	17, // 29: ops.service.v1.ScriptService.ListScriptVersions:output_type -> ops.service.v1.ListScriptVersionsResponse
+	22, // 30: ops.service.v1.ScriptService.RestoreScriptVersion:output_type -> google.protobuf.Empty
+	22, // 31: ops.service.v1.ScriptService.DeleteScript:output_type -> google.protobuf.Empty
+	7,  // 32: ops.service.v1.ScriptService.ExecuteScript:output_type -> ops.service.v1.ExecuteScriptResponse
+	11, // 33: ops.service.v1.ScriptBatchService.ListScriptBatches:output_type -> ops.service.v1.ListScriptBatchResponse
+	14, // 34: ops.service.v1.ScriptBatchService.GetScriptBatch:output_type -> ops.service.v1.ScriptBatchDetail
+	9,  // 35: ops.service.v1.ScriptBatchService.ExecuteScriptBatch:output_type -> ops.service.v1.ExecuteScriptBatchResponse
+	25, // [25:36] is the sub-list for method output_type
+	14, // [14:25] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_ops_service_v1_script_proto_init() }
@@ -1269,13 +1544,15 @@ func file_ops_service_v1_script_proto_init() {
 	file_ops_service_v1_script_proto_msgTypes[12].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[13].OneofWrappers = []any{}
 	file_ops_service_v1_script_proto_msgTypes[14].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[15].OneofWrappers = []any{}
+	file_ops_service_v1_script_proto_msgTypes[16].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_script_proto_rawDesc), len(file_ops_service_v1_script_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

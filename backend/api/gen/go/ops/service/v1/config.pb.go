@@ -660,6 +660,160 @@ func (x *ListConfigDistributionResponse) GetItems() []*ConfigDistribution {
 	return nil
 }
 
+// CheckConfigDriftRequest 漂移校验(同步指令,秒级返回)
+type CheckConfigDriftRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TemplateId    uint32                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`    // 模板ID(id 走 body:触发类 POST 不带 path 参数)
+	NodeId        uint32                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                // 目标节点
+	ProjectId     *uint32                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目(占位符渲染用,可空)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckConfigDriftRequest) Reset() {
+	*x = CheckConfigDriftRequest{}
+	mi := &file_ops_service_v1_config_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckConfigDriftRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckConfigDriftRequest) ProtoMessage() {}
+
+func (x *CheckConfigDriftRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_config_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckConfigDriftRequest.ProtoReflect.Descriptor instead.
+func (*CheckConfigDriftRequest) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CheckConfigDriftRequest) GetTemplateId() uint32 {
+	if x != nil {
+		return x.TemplateId
+	}
+	return 0
+}
+
+func (x *CheckConfigDriftRequest) GetNodeId() uint32 {
+	if x != nil {
+		return x.NodeId
+	}
+	return 0
+}
+
+func (x *CheckConfigDriftRequest) GetProjectId() uint32 {
+	if x != nil && x.ProjectId != nil {
+		return *x.ProjectId
+	}
+	return 0
+}
+
+// ConfigDriftReport 漂移报告
+type ConfigDriftReport struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TemplateId     uint32                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`            // 模板
+	NodeId         uint32                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                        // 节点
+	TargetPath     string                 `protobuf:"bytes,3,opt,name=target_path,json=targetPath,proto3" json:"target_path,omitempty"`             // 目标路径
+	ExpectedSha256 string                 `protobuf:"bytes,4,opt,name=expected_sha256,json=expectedSha256,proto3" json:"expected_sha256,omitempty"` // 期望哈希(渲染内容)
+	ActualSha256   *string                `protobuf:"bytes,5,opt,name=actual_sha256,json=actualSha256,proto3,oneof" json:"actual_sha256,omitempty"` // 实际哈希(文件不存在时空)
+	Exists         bool                   `protobuf:"varint,6,opt,name=exists,proto3" json:"exists,omitempty"`                                      // 节点文件是否存在
+	Drifted        bool                   `protobuf:"varint,7,opt,name=drifted,proto3" json:"drifted,omitempty"`                                    // 是否漂移(不存在或哈希不一致)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ConfigDriftReport) Reset() {
+	*x = ConfigDriftReport{}
+	mi := &file_ops_service_v1_config_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigDriftReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigDriftReport) ProtoMessage() {}
+
+func (x *ConfigDriftReport) ProtoReflect() protoreflect.Message {
+	mi := &file_ops_service_v1_config_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigDriftReport.ProtoReflect.Descriptor instead.
+func (*ConfigDriftReport) Descriptor() ([]byte, []int) {
+	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ConfigDriftReport) GetTemplateId() uint32 {
+	if x != nil {
+		return x.TemplateId
+	}
+	return 0
+}
+
+func (x *ConfigDriftReport) GetNodeId() uint32 {
+	if x != nil {
+		return x.NodeId
+	}
+	return 0
+}
+
+func (x *ConfigDriftReport) GetTargetPath() string {
+	if x != nil {
+		return x.TargetPath
+	}
+	return ""
+}
+
+func (x *ConfigDriftReport) GetExpectedSha256() string {
+	if x != nil {
+		return x.ExpectedSha256
+	}
+	return ""
+}
+
+func (x *ConfigDriftReport) GetActualSha256() string {
+	if x != nil && x.ActualSha256 != nil {
+		return *x.ActualSha256
+	}
+	return ""
+}
+
+func (x *ConfigDriftReport) GetExists() bool {
+	if x != nil {
+		return x.Exists
+	}
+	return false
+}
+
+func (x *ConfigDriftReport) GetDrifted() bool {
+	if x != nil {
+		return x.Drifted
+	}
+	return false
+}
+
 var File_ops_service_v1_config_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_config_proto_rawDesc = "" +
@@ -750,14 +904,33 @@ const file_ops_service_v1_config_proto_rawDesc = "" +
 	"_page_size\"p\n" +
 	"\x1eListConfigDistributionResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x128\n" +
-	"\x05items\x18\x02 \x03(\v2\".ops.service.v1.ConfigDistributionR\x05items2\xd5\x05\n" +
+	"\x05items\x18\x02 \x03(\v2\".ops.service.v1.ConfigDistributionR\x05items\"\x90\x01\n" +
+	"\x17CheckConfigDriftRequest\x12$\n" +
+	"\vtemplate_id\x18\x01 \x01(\rB\x03\xe0A\x02R\n" +
+	"templateId\x12\x1c\n" +
+	"\anode_id\x18\x02 \x01(\rB\x03\xe0A\x02R\x06nodeId\x12\"\n" +
+	"\n" +
+	"project_id\x18\x03 \x01(\rH\x00R\tprojectId\x88\x01\x01B\r\n" +
+	"\v_project_id\"\x85\x02\n" +
+	"\x11ConfigDriftReport\x12\x1f\n" +
+	"\vtemplate_id\x18\x01 \x01(\rR\n" +
+	"templateId\x12\x17\n" +
+	"\anode_id\x18\x02 \x01(\rR\x06nodeId\x12\x1f\n" +
+	"\vtarget_path\x18\x03 \x01(\tR\n" +
+	"targetPath\x12'\n" +
+	"\x0fexpected_sha256\x18\x04 \x01(\tR\x0eexpectedSha256\x12(\n" +
+	"\ractual_sha256\x18\x05 \x01(\tH\x00R\factualSha256\x88\x01\x01\x12\x16\n" +
+	"\x06exists\x18\x06 \x01(\bR\x06exists\x12\x18\n" +
+	"\adrifted\x18\a \x01(\bR\adriftedB\x10\n" +
+	"\x0e_actual_sha2562\xb7\x06\n" +
 	"\rConfigService\x12^\n" +
 	"\x13ListConfigTemplates\x12\x19.pagination.PagingRequest\x1a*.ops.service.v1.ListConfigTemplateResponse\"\x00\x12_\n" +
 	"\x11GetConfigTemplate\x12(.ops.service.v1.GetConfigTemplateRequest\x1a\x1e.ops.service.v1.ConfigTemplate\"\x00\x12e\n" +
 	"\x14CreateConfigTemplate\x12+.ops.service.v1.CreateConfigTemplateRequest\x1a\x1e.ops.service.v1.ConfigTemplate\"\x00\x12]\n" +
 	"\x14UpdateConfigTemplate\x12+.ops.service.v1.UpdateConfigTemplateRequest\x1a\x16.google.protobuf.Empty\"\x00\x12]\n" +
 	"\x14DeleteConfigTemplate\x12+.ops.service.v1.DeleteConfigTemplateRequest\x1a\x16.google.protobuf.Empty\"\x00\x12a\n" +
-	"\x10DistributeConfig\x12'.ops.service.v1.DistributeConfigRequest\x1a\".ops.service.v1.ConfigDistribution\"\x00\x12{\n" +
+	"\x10DistributeConfig\x12'.ops.service.v1.DistributeConfigRequest\x1a\".ops.service.v1.ConfigDistribution\"\x00\x12`\n" +
+	"\x10CheckConfigDrift\x12'.ops.service.v1.CheckConfigDriftRequest\x1a!.ops.service.v1.ConfigDriftReport\"\x00\x12{\n" +
 	"\x17ListConfigDistributions\x12..ops.service.v1.ListConfigDistributionsRequest\x1a..ops.service.v1.ListConfigDistributionResponse\"\x00B\xa8\x01\n" +
 	"\x12com.ops.service.v1B\vConfigProtoP\x01Z+go-wind-ops/api/gen/go/ops/service/v1;opspb\xa2\x02\x03OSX\xaa\x02\x0eOps.Service.V1\xca\x02\x0eOps\\Service\\V1\xe2\x02\x1aOps\\Service\\V1\\GPBMetadata\xea\x02\x10Ops::Service::V1b\x06proto3"
 
@@ -773,7 +946,7 @@ func file_ops_service_v1_config_proto_rawDescGZIP() []byte {
 	return file_ops_service_v1_config_proto_rawDescData
 }
 
-var file_ops_service_v1_config_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_ops_service_v1_config_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_ops_service_v1_config_proto_goTypes = []any{
 	(*ConfigTemplate)(nil),                 // 0: ops.service.v1.ConfigTemplate
 	(*ListConfigTemplateResponse)(nil),     // 1: ops.service.v1.ListConfigTemplateResponse
@@ -785,37 +958,41 @@ var file_ops_service_v1_config_proto_goTypes = []any{
 	(*ConfigDistribution)(nil),             // 7: ops.service.v1.ConfigDistribution
 	(*ListConfigDistributionsRequest)(nil), // 8: ops.service.v1.ListConfigDistributionsRequest
 	(*ListConfigDistributionResponse)(nil), // 9: ops.service.v1.ListConfigDistributionResponse
-	(*timestamppb.Timestamp)(nil),          // 10: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),          // 11: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),               // 12: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                  // 13: google.protobuf.Empty
+	(*CheckConfigDriftRequest)(nil),        // 10: ops.service.v1.CheckConfigDriftRequest
+	(*ConfigDriftReport)(nil),              // 11: ops.service.v1.ConfigDriftReport
+	(*timestamppb.Timestamp)(nil),          // 12: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),          // 13: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),               // 14: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                  // 15: google.protobuf.Empty
 }
 var file_ops_service_v1_config_proto_depIdxs = []int32{
-	10, // 0: ops.service.v1.ConfigTemplate.created_at:type_name -> google.protobuf.Timestamp
-	10, // 1: ops.service.v1.ConfigTemplate.updated_at:type_name -> google.protobuf.Timestamp
+	12, // 0: ops.service.v1.ConfigTemplate.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: ops.service.v1.ConfigTemplate.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: ops.service.v1.ListConfigTemplateResponse.items:type_name -> ops.service.v1.ConfigTemplate
 	0,  // 3: ops.service.v1.CreateConfigTemplateRequest.data:type_name -> ops.service.v1.ConfigTemplate
 	0,  // 4: ops.service.v1.UpdateConfigTemplateRequest.data:type_name -> ops.service.v1.ConfigTemplate
-	11, // 5: ops.service.v1.UpdateConfigTemplateRequest.update_mask:type_name -> google.protobuf.FieldMask
-	10, // 6: ops.service.v1.ConfigDistribution.finished_at:type_name -> google.protobuf.Timestamp
-	10, // 7: ops.service.v1.ConfigDistribution.created_at:type_name -> google.protobuf.Timestamp
+	13, // 5: ops.service.v1.UpdateConfigTemplateRequest.update_mask:type_name -> google.protobuf.FieldMask
+	12, // 6: ops.service.v1.ConfigDistribution.finished_at:type_name -> google.protobuf.Timestamp
+	12, // 7: ops.service.v1.ConfigDistribution.created_at:type_name -> google.protobuf.Timestamp
 	7,  // 8: ops.service.v1.ListConfigDistributionResponse.items:type_name -> ops.service.v1.ConfigDistribution
-	12, // 9: ops.service.v1.ConfigService.ListConfigTemplates:input_type -> pagination.PagingRequest
+	14, // 9: ops.service.v1.ConfigService.ListConfigTemplates:input_type -> pagination.PagingRequest
 	2,  // 10: ops.service.v1.ConfigService.GetConfigTemplate:input_type -> ops.service.v1.GetConfigTemplateRequest
 	3,  // 11: ops.service.v1.ConfigService.CreateConfigTemplate:input_type -> ops.service.v1.CreateConfigTemplateRequest
 	4,  // 12: ops.service.v1.ConfigService.UpdateConfigTemplate:input_type -> ops.service.v1.UpdateConfigTemplateRequest
 	5,  // 13: ops.service.v1.ConfigService.DeleteConfigTemplate:input_type -> ops.service.v1.DeleteConfigTemplateRequest
 	6,  // 14: ops.service.v1.ConfigService.DistributeConfig:input_type -> ops.service.v1.DistributeConfigRequest
-	8,  // 15: ops.service.v1.ConfigService.ListConfigDistributions:input_type -> ops.service.v1.ListConfigDistributionsRequest
-	1,  // 16: ops.service.v1.ConfigService.ListConfigTemplates:output_type -> ops.service.v1.ListConfigTemplateResponse
-	0,  // 17: ops.service.v1.ConfigService.GetConfigTemplate:output_type -> ops.service.v1.ConfigTemplate
-	0,  // 18: ops.service.v1.ConfigService.CreateConfigTemplate:output_type -> ops.service.v1.ConfigTemplate
-	13, // 19: ops.service.v1.ConfigService.UpdateConfigTemplate:output_type -> google.protobuf.Empty
-	13, // 20: ops.service.v1.ConfigService.DeleteConfigTemplate:output_type -> google.protobuf.Empty
-	7,  // 21: ops.service.v1.ConfigService.DistributeConfig:output_type -> ops.service.v1.ConfigDistribution
-	9,  // 22: ops.service.v1.ConfigService.ListConfigDistributions:output_type -> ops.service.v1.ListConfigDistributionResponse
-	16, // [16:23] is the sub-list for method output_type
-	9,  // [9:16] is the sub-list for method input_type
+	10, // 15: ops.service.v1.ConfigService.CheckConfigDrift:input_type -> ops.service.v1.CheckConfigDriftRequest
+	8,  // 16: ops.service.v1.ConfigService.ListConfigDistributions:input_type -> ops.service.v1.ListConfigDistributionsRequest
+	1,  // 17: ops.service.v1.ConfigService.ListConfigTemplates:output_type -> ops.service.v1.ListConfigTemplateResponse
+	0,  // 18: ops.service.v1.ConfigService.GetConfigTemplate:output_type -> ops.service.v1.ConfigTemplate
+	0,  // 19: ops.service.v1.ConfigService.CreateConfigTemplate:output_type -> ops.service.v1.ConfigTemplate
+	15, // 20: ops.service.v1.ConfigService.UpdateConfigTemplate:output_type -> google.protobuf.Empty
+	15, // 21: ops.service.v1.ConfigService.DeleteConfigTemplate:output_type -> google.protobuf.Empty
+	7,  // 22: ops.service.v1.ConfigService.DistributeConfig:output_type -> ops.service.v1.ConfigDistribution
+	11, // 23: ops.service.v1.ConfigService.CheckConfigDrift:output_type -> ops.service.v1.ConfigDriftReport
+	9,  // 24: ops.service.v1.ConfigService.ListConfigDistributions:output_type -> ops.service.v1.ListConfigDistributionResponse
+	17, // [17:25] is the sub-list for method output_type
+	9,  // [9:17] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -832,13 +1009,15 @@ func file_ops_service_v1_config_proto_init() {
 	file_ops_service_v1_config_proto_msgTypes[6].OneofWrappers = []any{}
 	file_ops_service_v1_config_proto_msgTypes[7].OneofWrappers = []any{}
 	file_ops_service_v1_config_proto_msgTypes[8].OneofWrappers = []any{}
+	file_ops_service_v1_config_proto_msgTypes[10].OneofWrappers = []any{}
+	file_ops_service_v1_config_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ops_service_v1_config_proto_rawDesc), len(file_ops_service_v1_config_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

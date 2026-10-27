@@ -40,6 +40,21 @@ service ScriptService {
     };
   }
 
+  // 脚本内容版本历史
+  rpc ListScriptVersions (ops.service.v1.ListScriptVersionsRequest) returns (ops.service.v1.ListScriptVersionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/scripts/versions"
+    };
+  }
+
+  // 恢复到指定版本(id 走 body)
+  rpc RestoreScriptVersion (ops.service.v1.RestoreScriptVersionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/scripts/versions:restore"
+      body: "*"
+    };
+  }
+
   // 删除脚本
   rpc Delete (ops.service.v1.DeleteScriptRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {

@@ -15,6 +15,7 @@ import (
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
 	"go-wind-ops/app/core/service/internal/data"
+	"go-wind-ops/pkg/eventhook"
 )
 
 type PromotionPipelineService struct {
@@ -159,5 +160,10 @@ func (s *PromotionPipelineService) PromotePromotion(ctx context.Context, req *op
 	}
 	s.log.Infof("promotion triggered (pipeline=%d stage=%d env=%s distribution=%d records=%d)",
 		req.GetId(), req.GetStageIndex(), stage.Env, stage.DistributionID, len(out.GetRecordIds()))
+	eventhook.Emit("promotion.triggered", map[string]any{
+		"pipelineId": req.GetId(), "stageIndex": req.GetStageIndex(),
+		"env": stage.Env, "distributionId": stage.DistributionID,
+		"recordIds": out.GetRecordIds(), "operator": operatorIDOf(ctx),
+	})
 	return out, nil
 }
