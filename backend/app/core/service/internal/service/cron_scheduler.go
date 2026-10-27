@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"context"
 	"os"
 	"runtime/debug"
@@ -60,6 +61,7 @@ type CronScheduler struct {
 	lastRetentionSweep      time.Time
 	lastAuditRetentionSweep time.Time
 	lastApprovalExpirySweep time.Time
+	lastAuditChainSweep     time.Time
 	lastOrphanSweep         time.Time
 	lastBudgetCheck         time.Time
 	lastCertCheck           time.Time
@@ -121,6 +123,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.runTick(ctx, "audit-retention", s.tickAuditRetention)
 				s.runTick(ctx, "transient-objects", s.tickTransientObjects)
 				s.runTick(ctx, "approval-expiry", s.tickApprovalExpiry)
+				s.runTick(ctx, "audit-chain", s.tickAuditChain)
 			}
 		}
 	}()
@@ -396,6 +399,75 @@ const auditRetentionSweepInterval = 24 * time.Hour
 // (默认 90;0/负值=不启用),删除五类审计表中早于留存期的行。
 // tickApprovalExpiry 审批到期扫描:节拍 30s,10 分钟节流(PENDING 超时
 // 分钟级精度足够)。repo 为空直接返回(wiring 未注入时不启用)。
+// tickAuditChain 审计链自检:30s 节拍内 30 分钟节流。断链=安全事件,
+// 告警 ERROR 且不可被维护窗口静默;链恢复自动解除并通知。
+// monitor_id 恒 0(全局单对象),source=AUDIT_CHAIN,复用既有去重/恢复惯例。
+func (s *CronScheduler) tickAuditChain(ctx context.Context) {
+	if s.auditRetentionRepo == nil {
+		return
+	}
+	if time.Since(s.lastAuditChainSweep) < 30*time.Minute {
+		return
+	}
+	s.lastAuditChainSweep = time.Now()
+
+	issues, err := s.auditRetentionRepo.VerifyChains(ctx)
+	if err != nil {
+		s.log.Errorf("audit chain verify failed: %s", err.Error())
+		return
+	}
+
+	// 告警表已挂租户隐私:后台路径注入系统 viewer(链完整属平台级)
+	actx := appViewer.NewSystemViewerContext(ctx)
+	broken := make([]data.ChainIssue, 0, len(issues))
+	for _, it := range issues {
+		if it.Broken() {
+			broken = append(broken, it)
+		}
+	}
+
+	const source = "AUDIT_CHAIN"
+	const monitorID = uint32(0)
+	unresolved, _ := s.alertRepo.HasUnresolvedAlert(actx, monitorID, source)
+
+	if len(broken) == 0 {
+		if !unresolved {
+			return
+		}
+		if _, err = s.alertRepo.ResolveAllByMonitor(actx, monitorID, source); err != nil {
+			s.log.Errorf("resolve audit chain alerts: %s", err.Error())
+			return
+		}
+		msg := "审计哈希链已恢复完整,断链告警解除"
+		if _, err = s.alertRepo.CreateRecovery(actx, monitorID, 0, 0, source, msg); err != nil {
+			s.log.Errorf("create audit chain recovery: %s", err.Error())
+			return
+		}
+		if a, err := s.alertRepo.Create(actx, monitorID, 0, 0, source, "RECOVERY", msg, false); err == nil {
+			SendAlertToChannels(actx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "恢复: 审计链完整", msg, false)
+		}
+		s.log.Warnf("audit chain integrity restored")
+		return
+	}
+
+	if unresolved {
+		return // 已在告警中,不重复
+	}
+	detail := make([]string, 0, len(broken))
+	for _, it := range broken {
+		detail = append(detail, fmt.Sprintf("%s 断链 %d 处(首断点 id=%d 期望 prev=%q)",
+			it.Table, len(it.BrokenIDs), it.BrokenIDs[0], it.BrokenHead))
+	}
+	msg := "审计日志哈希链完整性核验失败:" + strings.Join(detail, ";")
+	a, err := s.alertRepo.Create(actx, monitorID, 0, 0, source, "ERROR", msg, false)
+	if err != nil {
+		s.log.Errorf("create audit chain alert: %s", err.Error())
+		return
+	}
+	SendAlertToChannels(actx, s.notifChannelRepo, s.deliveryRepo, s.maintenanceRepo, a.ID, "告警: 审计链断裂", msg, false)
+	s.log.Errorf("ALERT: %s", msg)
+}
+
 func (s *CronScheduler) tickApprovalExpiry(ctx context.Context) {
 	if s.approvalRepo == nil {
 		return

@@ -27,5 +27,6 @@
   "deliveryStatus": "状态",
   "deliverySent": "已送达",
   "deliveryFailed": "失败",
-  "deliveryError": "失败原因"
+  "deliveryError": "失败原因",
+  "sourceAuditChain": "审计链"
 }

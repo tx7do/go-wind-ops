@@ -19,6 +19,12 @@ import (
 	"go-wind-ops/app/core/service/internal/data/ent/permissionauditlog"
 )
 
+// VerifyChains 审计域完整性核验(cron 自检用,与 tools/audit-verify 同语义:
+// 只判哈希链,ECDSA 验签仍在离线 CLI)。
+func (r *AuditRetentionRepo) VerifyChains(ctx context.Context) ([]ChainIssue, error) {
+	return VerifyAuditChains(ctx, r.entClient.DB())
+}
+
 // AuditRetentionRepo 审计日志留存清理。
 type AuditRetentionRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]

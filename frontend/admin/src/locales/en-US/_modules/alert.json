@@ -27,5 +27,6 @@
   "deliveryStatus": "Status",
   "deliverySent": "Sent",
   "deliveryFailed": "Failed",
-  "deliveryError": "Error"
+  "deliveryError": "Error",
+  "sourceAuditChain": "Audit Chain"
 }
