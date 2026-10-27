@@ -1622,6 +1622,7 @@ export type opsservicev1_ApiKey_Scope =
   | 'BUILDS'
   | 'DISTRIBUTIONS'
   | 'PIPELINES'
+  | 'PROMOTIONS'
   | 'WEBHOOKS';
 export type opsservicev1_GetApiKeyRequest = {
   //
@@ -1888,6 +1889,14 @@ export interface AuthenticationService {
   VerifyCaptcha(
     request: authenticationservicev1_VerifyCaptchaRequest,
   ): Promise<authenticationservicev1_VerifyCaptchaResponse>;
+  // 我的会话列表(操作者维度)
+  GetAccessTokens(
+    request: authenticationservicev1_GetAccessTokensRequest,
+  ): Promise<authenticationservicev1_GetAccessTokensResponse>;
+  // 吊销我的指定会话
+  RevokeTokenById(
+    request: authenticationservicev1_RevokeTokenByIdRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createAuthenticationServiceClient(
@@ -1941,6 +1950,37 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'VerifyCaptcha',
       }) as Promise<authenticationservicev1_VerifyCaptchaResponse>;
+    },
+    GetAccessTokens(request) {
+      const path = `/admin/v1/access-tokens`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      if (request.clientType) {
+        queryParams.push(
+          `clientType=${encodeURIComponent(request.clientType.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AuthenticationService',
+        method: 'GetAccessTokens',
+      }) as Promise<authenticationservicev1_GetAccessTokensResponse>;
+    },
+    RevokeTokenById(request) {
+      const path = `/admin/v1/access-tokens:revoke`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'RevokeTokenById',
+      }) as Promise<wellKnownEmpty>;
     },
   };
 }
@@ -2021,6 +2061,25 @@ export type authenticationservicev1_VerifyCaptchaRequest = {
 
 export type authenticationservicev1_VerifyCaptchaResponse = {
   valid: boolean | undefined;
+};
+
+export type authenticationservicev1_GetAccessTokensRequest = {
+  clientType: authenticationservicev1_ClientType | undefined;
+  userId: number | undefined;
+};
+
+export type authenticationservicev1_GetAccessTokensResponse = {
+  accessTokens: string[] | undefined;
+};
+
+// 管理端按 id 撤销（仅管理员/系统）
+export type authenticationservicev1_RevokeTokenByIdRequest = {
+  clientType?: authenticationservicev1_ClientType;
+  //
+  // Behaviors: REQUIRED
+  jti: string | undefined;
+  reason: string | undefined;
+  userId?: number;
 };
 
 // BackupService 备份任务管理
@@ -7111,6 +7170,10 @@ export interface MfaService {
   MfaDisable(
     request: authenticationservicev1_MfaDisableRequest,
   ): Promise<wellKnownEmpty>;
+  // 生成/重生成备份码(鉴权;明文仅一次)
+  MfaBackupCodesRegenerate(
+    request: authenticationservicev1_MfaBackupCodesRegenerateRequest,
+  ): Promise<authenticationservicev1_MfaBackupCodesResponse>;
 }
 
 export function createMfaServiceClient(
@@ -7149,6 +7212,14 @@ export function createMfaServiceClient(
         method: 'MfaDisable',
       }) as Promise<wellKnownEmpty>;
     },
+    MfaBackupCodesRegenerate(request) {
+      const path = `/admin/v1/mfa/backup-codes:regenerate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'MfaBackupCodesRegenerate',
+      }) as Promise<authenticationservicev1_MfaBackupCodesResponse>;
+    },
   };
 }
 // VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
@@ -7178,6 +7249,15 @@ export type authenticationservicev1_MfaSetupConfirmRequest = {
 // MfaDisableRequest 解绑:TOTP 验证码(防误触/劫持解绑)
 export type authenticationservicev1_MfaDisableRequest = {
   code: string | undefined;
+};
+
+// MfaBackupCodesRegenerateRequest 重生成备份码(鉴权,操作者=当前用户)
+export type authenticationservicev1_MfaBackupCodesRegenerateRequest = {
+};
+
+// MfaBackupCodesResponse 备份码明文(仅此一次;服务端只存哈希)
+export type authenticationservicev1_MfaBackupCodesResponse = {
+  codes: string[] | undefined;
 };
 
 // MonitorService 监控规则管理

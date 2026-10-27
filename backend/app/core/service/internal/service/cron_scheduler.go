@@ -48,6 +48,7 @@ type CronScheduler struct {
 	deliveryRepo       *data.NotificationDeliveryRepo
 	maintenanceRepo   *data.MaintenanceWindowRepo
 	approvalRepo      *data.ApprovalRepo
+	runtimeCleanupRepo *data.RuntimeCleanupRepo
 	budgetRepo         *data.CloudBudgetRepo
 	budgetService      *CloudBudgetService
 	certRepo           *data.CertRepo
@@ -62,6 +63,7 @@ type CronScheduler struct {
 	lastAuditRetentionSweep time.Time
 	lastApprovalExpirySweep time.Time
 	lastAuditChainSweep     time.Time
+	lastRuntimeRetentionSweep time.Time
 	lastOrphanSweep         time.Time
 	lastBudgetCheck         time.Time
 	lastCertCheck           time.Time
@@ -70,7 +72,7 @@ type CronScheduler struct {
 	log                     *log.Helper
 }
 
-func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
+func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, runtimeCleanupRepo *data.RuntimeCleanupRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
 	return &CronScheduler{
 		ctx:                ctx,
 		buildRepo:          buildRepo,
@@ -84,6 +86,7 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		deliveryRepo:       deliveryRepo,
 		maintenanceRepo:   maintenanceRepo,
 		approvalRepo:      approvalRepo,
+		runtimeCleanupRepo: runtimeCleanupRepo,
 		budgetRepo:         budgetRepo,
 		budgetService:      budgetService,
 		certRepo:           certRepo,
@@ -124,6 +127,7 @@ func (s *CronScheduler) Start(ctx context.Context) {
 				s.runTick(ctx, "transient-objects", s.tickTransientObjects)
 				s.runTick(ctx, "approval-expiry", s.tickApprovalExpiry)
 				s.runTick(ctx, "audit-chain", s.tickAuditChain)
+				s.runTick(ctx, "runtime-retention", s.tickRuntimeRetention)
 			}
 		}
 	}()
@@ -402,6 +406,26 @@ const auditRetentionSweepInterval = 24 * time.Hour
 // tickAuditChain 审计链自检:30s 节拍内 30 分钟节流。断链=安全事件,
 // 告警 ERROR 且不可被维护窗口静默;链恢复自动解除并通知。
 // monitor_id 恒 0(全局单对象),source=AUDIT_CHAIN,复用既有去重/恢复惯例。
+// tickRuntimeRetention 运行数据保留期清扫(告警/投递/节点指标,30s 节拍内
+// 1 小时节流);逐表天数由 ALERT/DELIVERY/NODE_METRIC_RETENTION_DAYS 控制
+// (缺省 90/90/30,0=关闭该表清理)。
+func (s *CronScheduler) tickRuntimeRetention(ctx context.Context) {
+	if s.runtimeCleanupRepo == nil {
+		return
+	}
+	if time.Since(s.lastRuntimeRetentionSweep) < time.Hour {
+		return
+	}
+	s.lastRuntimeRetentionSweep = time.Now()
+
+	res := s.runtimeCleanupRepo.SweepRuntimeRetention(ctx, time.Now())
+	for item, n := range res {
+		if n > 0 {
+			s.log.Infof("runtime retention: %s cleaned %d rows", item, n)
+		}
+	}
+}
+
 func (s *CronScheduler) tickAuditChain(ctx context.Context) {
 	if s.auditRetentionRepo == nil {
 		return

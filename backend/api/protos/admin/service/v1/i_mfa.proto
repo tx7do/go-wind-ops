@@ -46,4 +46,11 @@ service MfaService {
       body: "*"
     };
   }
+  // 生成/重生成备份码(鉴权;明文仅一次)
+  rpc MfaBackupCodesRegenerate (authentication.service.v1.MfaBackupCodesRegenerateRequest) returns (authentication.service.v1.MfaBackupCodesResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa/backup-codes:regenerate"
+      body: "*"
+    };
+  }
 }

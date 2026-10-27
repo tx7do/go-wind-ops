@@ -564,3 +564,208 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MfaDisableRequestValidationError{}
+
+// Validate checks the field values on MfaBackupCodesRegenerateRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MfaBackupCodesRegenerateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MfaBackupCodesRegenerateRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// MfaBackupCodesRegenerateRequestMultiError, or nil if none found.
+func (m *MfaBackupCodesRegenerateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MfaBackupCodesRegenerateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return MfaBackupCodesRegenerateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// MfaBackupCodesRegenerateRequestMultiError is an error wrapping multiple
+// validation errors returned by MfaBackupCodesRegenerateRequest.ValidateAll()
+// if the designated constraints aren't met.
+type MfaBackupCodesRegenerateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MfaBackupCodesRegenerateRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MfaBackupCodesRegenerateRequestMultiError) AllErrors() []error { return m }
+
+// MfaBackupCodesRegenerateRequestValidationError is the validation error
+// returned by MfaBackupCodesRegenerateRequest.Validate if the designated
+// constraints aren't met.
+type MfaBackupCodesRegenerateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MfaBackupCodesRegenerateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MfaBackupCodesRegenerateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MfaBackupCodesRegenerateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MfaBackupCodesRegenerateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MfaBackupCodesRegenerateRequestValidationError) ErrorName() string {
+	return "MfaBackupCodesRegenerateRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MfaBackupCodesRegenerateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMfaBackupCodesRegenerateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MfaBackupCodesRegenerateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MfaBackupCodesRegenerateRequestValidationError{}
+
+// Validate checks the field values on MfaBackupCodesResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MfaBackupCodesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MfaBackupCodesResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MfaBackupCodesResponseMultiError, or nil if none found.
+func (m *MfaBackupCodesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MfaBackupCodesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return MfaBackupCodesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// MfaBackupCodesResponseMultiError is an error wrapping multiple validation
+// errors returned by MfaBackupCodesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type MfaBackupCodesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MfaBackupCodesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MfaBackupCodesResponseMultiError) AllErrors() []error { return m }
+
+// MfaBackupCodesResponseValidationError is the validation error returned by
+// MfaBackupCodesResponse.Validate if the designated constraints aren't met.
+type MfaBackupCodesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MfaBackupCodesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MfaBackupCodesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MfaBackupCodesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MfaBackupCodesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MfaBackupCodesResponseValidationError) ErrorName() string {
+	return "MfaBackupCodesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MfaBackupCodesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMfaBackupCodesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MfaBackupCodesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MfaBackupCodesResponseValidationError{}

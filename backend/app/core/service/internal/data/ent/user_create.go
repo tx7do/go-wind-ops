@@ -176,6 +176,12 @@ func (_c *UserCreate) SetNillableMfaSecret(v *string) *UserCreate {
 	return _c
 }
 
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (_c *UserCreate) SetMfaBackupCodes(v []string) *UserCreate {
+	_c.mutation.SetMfaBackupCodes(v)
+	return _c
+}
+
 // SetNickname sets the "nickname" field.
 func (_c *UserCreate) SetNickname(v string) *UserCreate {
 	_c.mutation.SetNickname(v)
@@ -572,6 +578,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldMfaSecret, field.TypeString, value)
 		_node.MfaSecret = &value
 	}
+	if value, ok := _c.mutation.MfaBackupCodes(); ok {
+		_spec.SetField(user.FieldMfaBackupCodes, field.TypeJSON, value)
+		_node.MfaBackupCodes = value
+	}
 	if value, ok := _c.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 		_node.Nickname = &value
@@ -833,6 +843,24 @@ func (u *UserUpsert) UpdateMfaSecret() *UserUpsert {
 // ClearMfaSecret clears the value of the "mfa_secret" field.
 func (u *UserUpsert) ClearMfaSecret() *UserUpsert {
 	u.SetNull(user.FieldMfaSecret)
+	return u
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (u *UserUpsert) SetMfaBackupCodes(v []string) *UserUpsert {
+	u.Set(user.FieldMfaBackupCodes, v)
+	return u
+}
+
+// UpdateMfaBackupCodes sets the "mfa_backup_codes" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMfaBackupCodes() *UserUpsert {
+	u.SetExcluded(user.FieldMfaBackupCodes)
+	return u
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (u *UserUpsert) ClearMfaBackupCodes() *UserUpsert {
+	u.SetNull(user.FieldMfaBackupCodes)
 	return u
 }
 
@@ -1324,6 +1352,27 @@ func (u *UserUpsertOne) UpdateMfaSecret() *UserUpsertOne {
 func (u *UserUpsertOne) ClearMfaSecret() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearMfaSecret()
+	})
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (u *UserUpsertOne) SetMfaBackupCodes(v []string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaBackupCodes(v)
+	})
+}
+
+// UpdateMfaBackupCodes sets the "mfa_backup_codes" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMfaBackupCodes() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaBackupCodes()
+	})
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (u *UserUpsertOne) ClearMfaBackupCodes() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMfaBackupCodes()
 	})
 }
 
@@ -2023,6 +2072,27 @@ func (u *UserUpsertBulk) UpdateMfaSecret() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearMfaSecret() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearMfaSecret()
+	})
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (u *UserUpsertBulk) SetMfaBackupCodes(v []string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMfaBackupCodes(v)
+	})
+}
+
+// UpdateMfaBackupCodes sets the "mfa_backup_codes" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMfaBackupCodes() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMfaBackupCodes()
+	})
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (u *UserUpsertBulk) ClearMfaBackupCodes() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMfaBackupCodes()
 	})
 }
 

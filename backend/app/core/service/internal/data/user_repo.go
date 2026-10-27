@@ -62,6 +62,10 @@ type UserRepo interface {
 	SetMfaEnabled(ctx context.Context, userID uint32, enabled bool) error
 	// ClearMfa 清除密钥并停用(解绑)。
 	ClearMfa(ctx context.Context, userID uint32) error
+	// SetMfaBackupCodes 覆写备份码哈希列表(空=清空)。
+	SetMfaBackupCodes(ctx context.Context, userID uint32, hashes []string) error
+	// GetMfaBackupCodes 读备份码哈希列表。
+	GetMfaBackupCodes(ctx context.Context, userID uint32) ([]string, error)
 
 	AssignUserRole(ctx context.Context, data *permissionV1.UserRole) error
 	AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) error
@@ -1335,10 +1339,34 @@ func (r *userRepo) ClearMfa(ctx context.Context, userID uint32) error {
 	ctx = appViewer.NewSystemViewerContext(ctx)
 	_, err := r.entClient.Client().User.UpdateOneID(userID).
 		ClearMfaSecret().
+		ClearMfaBackupCodes().
 		SetMfaEnabled(false).
 		Save(ctx)
 	if err != nil {
 		r.log.Errorf("clear mfa for user [%d] failed: %s", userID, err.Error())
 	}
 	return err
+}
+
+func (r *userRepo) SetMfaBackupCodes(ctx context.Context, userID uint32, hashes []string) error {
+	ctx = appViewer.NewSystemViewerContext(ctx)
+	builder := r.entClient.Client().User.UpdateOneID(userID)
+	if len(hashes) == 0 {
+		builder.ClearMfaBackupCodes()
+	} else {
+		builder.SetMfaBackupCodes(hashes)
+	}
+	_, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("set mfa backup codes for user [%d] failed: %s", userID, err.Error())
+	}
+	return err
+}
+
+func (r *userRepo) GetMfaBackupCodes(ctx context.Context, userID uint32) ([]string, error) {
+	e, err := r.entClient.Client().User.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return e.MfaBackupCodes, nil
 }

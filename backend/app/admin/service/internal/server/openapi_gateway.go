@@ -44,6 +44,7 @@ type OpenApiGateway struct {
 	buildClient    opsV1.BuildServiceClient
 	distClient     opsV1.DistributionServiceClient
 	pipelineClient opsV1.PipelineServiceClient
+	promotionClient opsV1.PromotionPipelineServiceClient
 	rateLimiter    *apiKeyRateLimiter
 }
 
@@ -53,13 +54,15 @@ func NewOpenApiGateway(
 	buildClient opsV1.BuildServiceClient,
 	distClient opsV1.DistributionServiceClient,
 	pipelineClient opsV1.PipelineServiceClient,
+	promotionClient opsV1.PromotionPipelineServiceClient,
 ) *OpenApiGateway {
 	return &OpenApiGateway{
-		apiKeyClient:   apiKeyClient,
-		buildClient:    buildClient,
-		distClient:     distClient,
-		pipelineClient: pipelineClient,
-		rateLimiter:    newAPIKeyRateLimiter(),
+		apiKeyClient:    apiKeyClient,
+		buildClient:     buildClient,
+		distClient:      distClient,
+		pipelineClient:  pipelineClient,
+		promotionClient: promotionClient,
+		rateLimiter:     newAPIKeyRateLimiter(),
 	}
 }
 
@@ -108,6 +111,8 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			requiredScope = opsV1.ApiKey_DISTRIBUTIONS
 		case "pipelines":
 			requiredScope = opsV1.ApiKey_PIPELINES
+		case "promotions":
+			requiredScope = opsV1.ApiKey_PROMOTIONS
 		default:
 			writeJsonError(w, http.StatusNotFound, "NOT_FOUND", "unknown kind: "+parts[0])
 			return
@@ -141,7 +146,7 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid id")
 			return
 		}
-		g.trigger(w, gctx, parts[0], uint32(id))
+		g.trigger(w, gctx, r, parts[0], uint32(id))
 		return
 	}
 	// 走到此处必为 webhooks/git/{buildId}(requiredScope 解析已排除其余形态)
@@ -167,7 +172,7 @@ func scopeAllowed(scopes []opsV1.ApiKey_Scope, required opsV1.ApiKey_Scope) bool
 }
 
 // trigger 触发构建/分发/流水线。
-func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, kind string, id uint32) {
+func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, r *http.Request, kind string, id uint32) {
 	var (
 		resp any
 		err  error

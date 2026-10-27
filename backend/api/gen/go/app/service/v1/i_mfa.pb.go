@@ -28,36 +28,41 @@ var File_app_service_v1_i_mfa_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_mfa_proto_rawDesc = "" +
 	"\n" +
-	"\x1aapp/service/v1/i_mfa.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto\x1a#authentication/service/v1/mfa.proto2\xb9\x04\n" +
+	"\x1aapp/service/v1/i_mfa.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto\x1a#authentication/service/v1/mfa.proto2\xf5\x05\n" +
 	"\n" +
 	"MfaService\x12\x98\x01\n" +
 	"\x12VerifyMFAChallenge\x124.authentication.service.v1.VerifyMFAChallengeRequest\x1a(.authentication.service.v1.LoginResponse\"\"\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/app/v1/mfa/verify\x12\x96\x01\n" +
 	"\rMfaSetupStart\x12/.authentication.service.v1.MfaSetupStartRequest\x1a0.authentication.service.v1.MfaSetupStartResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/app/v1/mfa/setup:start\x12\x82\x01\n" +
 	"\x0fMfaSetupConfirm\x121.authentication.service.v1.MfaSetupConfirmRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/app/v1/mfa/setup:confirm\x12r\n" +
 	"\n" +
-	"MfaDisable\x12,.authentication.service.v1.MfaDisableRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/app/v1/mfa:disableB\xaa\x01\n" +
+	"MfaDisable\x12,.authentication.service.v1.MfaDisableRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/app/v1/mfa:disable\x12\xb9\x01\n" +
+	"\x18MfaBackupCodesRegenerate\x12:.authentication.service.v1.MfaBackupCodesRegenerateRequest\x1a1.authentication.service.v1.MfaBackupCodesResponse\".\x82\xd3\xe4\x93\x02(:\x01*\"#/app/v1/mfa/backup-codes:regenerateB\xaa\x01\n" +
 	"\x12com.app.service.v1B\tIMfaProtoP\x01Z/go-wind-ops/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_mfa_proto_goTypes = []any{
-	(*v1.VerifyMFAChallengeRequest)(nil), // 0: authentication.service.v1.VerifyMFAChallengeRequest
-	(*v1.MfaSetupStartRequest)(nil),      // 1: authentication.service.v1.MfaSetupStartRequest
-	(*v1.MfaSetupConfirmRequest)(nil),    // 2: authentication.service.v1.MfaSetupConfirmRequest
-	(*v1.MfaDisableRequest)(nil),         // 3: authentication.service.v1.MfaDisableRequest
-	(*v1.LoginResponse)(nil),             // 4: authentication.service.v1.LoginResponse
-	(*v1.MfaSetupStartResponse)(nil),     // 5: authentication.service.v1.MfaSetupStartResponse
-	(*emptypb.Empty)(nil),                // 6: google.protobuf.Empty
+	(*v1.VerifyMFAChallengeRequest)(nil),       // 0: authentication.service.v1.VerifyMFAChallengeRequest
+	(*v1.MfaSetupStartRequest)(nil),            // 1: authentication.service.v1.MfaSetupStartRequest
+	(*v1.MfaSetupConfirmRequest)(nil),          // 2: authentication.service.v1.MfaSetupConfirmRequest
+	(*v1.MfaDisableRequest)(nil),               // 3: authentication.service.v1.MfaDisableRequest
+	(*v1.MfaBackupCodesRegenerateRequest)(nil), // 4: authentication.service.v1.MfaBackupCodesRegenerateRequest
+	(*v1.LoginResponse)(nil),                   // 5: authentication.service.v1.LoginResponse
+	(*v1.MfaSetupStartResponse)(nil),           // 6: authentication.service.v1.MfaSetupStartResponse
+	(*emptypb.Empty)(nil),                      // 7: google.protobuf.Empty
+	(*v1.MfaBackupCodesResponse)(nil),          // 8: authentication.service.v1.MfaBackupCodesResponse
 }
 var file_app_service_v1_i_mfa_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.MfaService.VerifyMFAChallenge:input_type -> authentication.service.v1.VerifyMFAChallengeRequest
 	1, // 1: app.service.v1.MfaService.MfaSetupStart:input_type -> authentication.service.v1.MfaSetupStartRequest
 	2, // 2: app.service.v1.MfaService.MfaSetupConfirm:input_type -> authentication.service.v1.MfaSetupConfirmRequest
 	3, // 3: app.service.v1.MfaService.MfaDisable:input_type -> authentication.service.v1.MfaDisableRequest
-	4, // 4: app.service.v1.MfaService.VerifyMFAChallenge:output_type -> authentication.service.v1.LoginResponse
-	5, // 5: app.service.v1.MfaService.MfaSetupStart:output_type -> authentication.service.v1.MfaSetupStartResponse
-	6, // 6: app.service.v1.MfaService.MfaSetupConfirm:output_type -> google.protobuf.Empty
-	6, // 7: app.service.v1.MfaService.MfaDisable:output_type -> google.protobuf.Empty
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	4, // 4: app.service.v1.MfaService.MfaBackupCodesRegenerate:input_type -> authentication.service.v1.MfaBackupCodesRegenerateRequest
+	5, // 5: app.service.v1.MfaService.VerifyMFAChallenge:output_type -> authentication.service.v1.LoginResponse
+	6, // 6: app.service.v1.MfaService.MfaSetupStart:output_type -> authentication.service.v1.MfaSetupStartResponse
+	7, // 7: app.service.v1.MfaService.MfaSetupConfirm:output_type -> google.protobuf.Empty
+	7, // 8: app.service.v1.MfaService.MfaDisable:output_type -> google.protobuf.Empty
+	8, // 9: app.service.v1.MfaService.MfaBackupCodesRegenerate:output_type -> authentication.service.v1.MfaBackupCodesResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

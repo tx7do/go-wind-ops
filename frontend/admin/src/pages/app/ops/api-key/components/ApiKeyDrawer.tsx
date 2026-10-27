@@ -14,7 +14,7 @@ import { useCreateApiKey, useUpdateApiKey } from '@/api/hooks/api-key';
 
 /** 作用域选项值(与生成客户端 ApiKey_Scope 字面量一致) */
 const SCOPE_ALL = 'ALL';
-const SCOPE_OPTIONS = ['ALL', 'BUILDS', 'DISTRIBUTIONS', 'PIPELINES', 'WEBHOOKS'] as const satisfies readonly ApiKeyScope[];
+const SCOPE_OPTIONS = ['ALL', 'BUILDS', 'DISTRIBUTIONS', 'PIPELINES', 'WEBHOOKS', 'PROMOTIONS'] as const satisfies readonly ApiKeyScope[];
 
 interface ApiKeyDrawerProps {
   open: boolean;

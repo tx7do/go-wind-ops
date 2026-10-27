@@ -239,7 +239,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	terminalWsHandler := server.NewTerminalWsHandler(ctx, redisClient, terminalServiceClient)
 	terminalTicketHandler := server.NewTerminalTicketHandler(ctx, accessTokenChecker, roleServiceClient, permissionServiceClient, redisClient)
 	projectLogWsHandler := server.NewProjectLogWsHandler(ctx, redisClient, projectServiceClient)
-	openApiGateway := server.NewOpenApiGateway(apiKeyServiceClient, buildServiceClient, distributionServiceClient, pipelineServiceClient)
+	openApiGateway := server.NewOpenApiGateway(apiKeyServiceClient, buildServiceClient, distributionServiceClient, pipelineServiceClient, promotionPipelineServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
 		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,

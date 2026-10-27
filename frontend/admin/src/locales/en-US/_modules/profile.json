@@ -81,5 +81,14 @@
   "mfaEnabledSuccess": "Two-factor authentication enabled",
   "mfaDisabledSuccess": "Two-factor authentication disabled",
   "mfaSetupStartFailed": "Failed to start enrollment",
-  "mfaCodeInvalid": "Invalid or expired code"
+  "mfaCodeInvalid": "Invalid or expired code",
+  "sessionsTitle": "My Sessions",
+  "sessionsIntro": "All active sessions of this account. Revoke remotely if a device is lost; the revoked endpoint must sign in again.",
+  "sessionsEmpty": "No active sessions",
+  "sessionRevoke": "Revoke",
+  "sessionRevoked": "Session revoked",
+  "sessionRevokeFailed": "Revoke failed",
+  "mfaBackupGenerate": "Generate backup codes",
+  "mfaBackupRegenerate": "Regenerate backup codes",
+  "mfaBackupOnceHint": "Backup codes are shown only once — store them safely. If TOTP fails at sign-in, a backup code works instead; each is single-use and regenerating invalidates old ones."
 }

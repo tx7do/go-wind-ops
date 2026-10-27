@@ -9,6 +9,7 @@ package service
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"strconv"
@@ -130,7 +131,10 @@ func (s *MfaService) VerifyMFAChallenge(ctx context.Context, req *authentication
 		return nil, authenticationV1.ErrorForbidden("mfa not enabled")
 	}
 	if !totp.Verify(*secret, req.GetTotpCode(), time.Now()) {
-		return nil, authenticationV1.ErrorUnauthorized("invalid mfa code")
+		// 备份码兜底:哈希命中即消费(一次性),与 TOTP 等效放行
+		if !s.consumeBackupCode(ctx, userID, req.GetTotpCode()) {
+			return nil, authenticationV1.ErrorUnauthorized("invalid mfa code")
+		}
 	}
 	s.redisClient.Del(ctx, failKey)
 
@@ -231,4 +235,59 @@ func (s *MfaService) MfaDisable(ctx context.Context, req *authenticationV1.MfaDi
 	}
 	s.log.Infof("mfa disabled for user [%d]", userID)
 	return &emptypb.Empty{}, nil
+}
+
+// ── 备份码 ───────────────────────────────────────────────────────────
+
+// MfaBackupCodesRegenerate 生成 10 个新备份码:明文仅本次响应出现,服务端
+// 只存 SHA-256;重生成即作废旧码。须已启用 MFA。
+func (s *MfaService) MfaBackupCodesRegenerate(ctx context.Context, _ *authenticationV1.MfaBackupCodesRegenerateRequest) (*authenticationV1.MfaBackupCodesResponse, error) {
+	userID := operatorIDOf(ctx)
+	if userID == 0 {
+		return nil, authenticationV1.ErrorUnauthorized("unauthenticated")
+	}
+	_, enabled, err := s.userRepo.GetMfaState(ctx, userID)
+	if err != nil || !enabled {
+		return nil, authenticationV1.ErrorBadRequest("mfa not enabled")
+	}
+
+	codes := make([]string, 0, 10)
+	hashes := make([]string, 0, 10)
+	for i := 0; i < 10; i++ {
+		raw := make([]byte, 4)
+		if _, err = rand.Read(raw); err != nil {
+			return nil, authenticationV1.ErrorInternalServerError("generate failed")
+		}
+		code := fmt.Sprintf("%s-%s", hex.EncodeToString(raw[:2]), hex.EncodeToString(raw[2:]))
+		sum := sha256.Sum256([]byte(code))
+		codes = append(codes, code)
+		hashes = append(hashes, hex.EncodeToString(sum[:]))
+	}
+	if err = s.userRepo.SetMfaBackupCodes(ctx, userID, hashes); err != nil {
+		return nil, authenticationV1.ErrorInternalServerError("save failed")
+	}
+	s.log.Infof("mfa backup codes regenerated for user [%d]", userID)
+	return &authenticationV1.MfaBackupCodesResponse{Codes: codes}, nil
+}
+
+// consumeBackupCode 备份码消费:哈希命中即从列表移除(一次性),返回是否命中。
+func (s *MfaService) consumeBackupCode(ctx context.Context, userID uint32, code string) bool {
+	hashes, err := s.userRepo.GetMfaBackupCodes(ctx, userID)
+	if err != nil || len(hashes) == 0 {
+		return false
+	}
+	sum := sha256.Sum256([]byte(strings.TrimSpace(code)))
+	want := hex.EncodeToString(sum[:])
+	for i, h := range hashes {
+		if h == want {
+			remaining := append(append([]string{}, hashes[:i]...), hashes[i+1:]...)
+			if err = s.userRepo.SetMfaBackupCodes(ctx, userID, remaining); err != nil {
+				s.log.Errorf("consume backup code for user [%d]: %s", userID, err.Error())
+				return false
+			}
+			s.log.Infof("mfa backup code consumed for user [%d] (remaining=%d)", userID, len(remaining))
+			return true
+		}
+	}
+	return false
 }

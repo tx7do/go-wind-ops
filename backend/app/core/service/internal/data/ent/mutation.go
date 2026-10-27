@@ -100666,42 +100666,44 @@ func (m *TerminalSessionMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_by    *uint32
-	addcreated_by *int32
-	updated_by    *uint32
-	addupdated_by *int32
-	deleted_by    *uint32
-	adddeleted_by *int32
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	remark        *string
-	tenant_id     *uint32
-	addtenant_id  *int32
-	username      *string
-	mfa_enabled   *bool
-	mfa_secret    *string
-	nickname      *string
-	realname      *string
-	email         *string
-	mobile        *string
-	telephone     *string
-	avatar        *string
-	address       *string
-	region        *string
-	description   *string
-	gender        *user.Gender
-	last_login_at *time.Time
-	last_login_ip *string
-	locked_until  *time.Time
-	status        *user.Status
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op                     Op
+	typ                    string
+	id                     *uint32
+	created_by             *uint32
+	addcreated_by          *int32
+	updated_by             *uint32
+	addupdated_by          *int32
+	deleted_by             *uint32
+	adddeleted_by          *int32
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	remark                 *string
+	tenant_id              *uint32
+	addtenant_id           *int32
+	username               *string
+	mfa_enabled            *bool
+	mfa_secret             *string
+	mfa_backup_codes       *[]string
+	appendmfa_backup_codes []string
+	nickname               *string
+	realname               *string
+	email                  *string
+	mobile                 *string
+	telephone              *string
+	avatar                 *string
+	address                *string
+	region                 *string
+	description            *string
+	gender                 *user.Gender
+	last_login_at          *time.Time
+	last_login_ip          *string
+	locked_until           *time.Time
+	status                 *user.Status
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*User, error)
+	predicates             []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -101416,6 +101418,71 @@ func (m *UserMutation) MfaSecretCleared() bool {
 func (m *UserMutation) ResetMfaSecret() {
 	m.mfa_secret = nil
 	delete(m.clearedFields, user.FieldMfaSecret)
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (m *UserMutation) SetMfaBackupCodes(s []string) {
+	m.mfa_backup_codes = &s
+	m.appendmfa_backup_codes = nil
+}
+
+// MfaBackupCodes returns the value of the "mfa_backup_codes" field in the mutation.
+func (m *UserMutation) MfaBackupCodes() (r []string, exists bool) {
+	v := m.mfa_backup_codes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMfaBackupCodes returns the old "mfa_backup_codes" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMfaBackupCodes(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMfaBackupCodes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMfaBackupCodes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMfaBackupCodes: %w", err)
+	}
+	return oldValue.MfaBackupCodes, nil
+}
+
+// AppendMfaBackupCodes adds s to the "mfa_backup_codes" field.
+func (m *UserMutation) AppendMfaBackupCodes(s []string) {
+	m.appendmfa_backup_codes = append(m.appendmfa_backup_codes, s...)
+}
+
+// AppendedMfaBackupCodes returns the list of values that were appended to the "mfa_backup_codes" field in this mutation.
+func (m *UserMutation) AppendedMfaBackupCodes() ([]string, bool) {
+	if len(m.appendmfa_backup_codes) == 0 {
+		return nil, false
+	}
+	return m.appendmfa_backup_codes, true
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (m *UserMutation) ClearMfaBackupCodes() {
+	m.mfa_backup_codes = nil
+	m.appendmfa_backup_codes = nil
+	m.clearedFields[user.FieldMfaBackupCodes] = struct{}{}
+}
+
+// MfaBackupCodesCleared returns if the "mfa_backup_codes" field was cleared in this mutation.
+func (m *UserMutation) MfaBackupCodesCleared() bool {
+	_, ok := m.clearedFields[user.FieldMfaBackupCodes]
+	return ok
+}
+
+// ResetMfaBackupCodes resets all changes to the "mfa_backup_codes" field.
+func (m *UserMutation) ResetMfaBackupCodes() {
+	m.mfa_backup_codes = nil
+	m.appendmfa_backup_codes = nil
+	delete(m.clearedFields, user.FieldMfaBackupCodes)
 }
 
 // SetNickname sets the "nickname" field.
@@ -102138,7 +102205,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -102171,6 +102238,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.mfa_secret != nil {
 		fields = append(fields, user.FieldMfaSecret)
+	}
+	if m.mfa_backup_codes != nil {
+		fields = append(fields, user.FieldMfaBackupCodes)
 	}
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
@@ -102244,6 +102314,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.MfaEnabled()
 	case user.FieldMfaSecret:
 		return m.MfaSecret()
+	case user.FieldMfaBackupCodes:
+		return m.MfaBackupCodes()
 	case user.FieldNickname:
 		return m.Nickname()
 	case user.FieldRealname:
@@ -102303,6 +102375,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldMfaEnabled(ctx)
 	case user.FieldMfaSecret:
 		return m.OldMfaSecret(ctx)
+	case user.FieldMfaBackupCodes:
+		return m.OldMfaBackupCodes(ctx)
 	case user.FieldNickname:
 		return m.OldNickname(ctx)
 	case user.FieldRealname:
@@ -102416,6 +102490,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMfaSecret(v)
+		return nil
+	case user.FieldMfaBackupCodes:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMfaBackupCodes(v)
 		return nil
 	case user.FieldNickname:
 		v, ok := value.(string)
@@ -102626,6 +102707,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldMfaSecret) {
 		fields = append(fields, user.FieldMfaSecret)
 	}
+	if m.FieldCleared(user.FieldMfaBackupCodes) {
+		fields = append(fields, user.FieldMfaBackupCodes)
+	}
 	if m.FieldCleared(user.FieldNickname) {
 		fields = append(fields, user.FieldNickname)
 	}
@@ -102712,6 +102796,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldMfaSecret:
 		m.ClearMfaSecret()
 		return nil
+	case user.FieldMfaBackupCodes:
+		m.ClearMfaBackupCodes()
+		return nil
 	case user.FieldNickname:
 		m.ClearNickname()
 		return nil
@@ -102794,6 +102881,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldMfaSecret:
 		m.ResetMfaSecret()
+		return nil
+	case user.FieldMfaBackupCodes:
+		m.ResetMfaBackupCodes()
 		return nil
 	case user.FieldNickname:
 		m.ResetNickname()

@@ -14,6 +14,49 @@ info:
         url: https://github.com/tx7do/go-wind-ops/blob/master/LICENSE
     version: "1.0"
 paths:
+    /admin/v1/access-tokens:
+        get:
+            tags:
+                - AuthenticationService
+            description: 我的会话列表(操作者维度)
+            operationId: AuthenticationService_GetAccessTokens
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: clientType
+                  in: query
+                  schema:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    format: enum
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetAccessTokensResponse'
+    /admin/v1/access-tokens:revoke:
+        post:
+            tags:
+                - AuthenticationService
+            description: 吊销我的指定会话
+            operationId: AuthenticationService_RevokeTokenById
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.RevokeTokenByIdRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/agent-nodes:
         get:
             tags:
@@ -4677,6 +4720,25 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mfa/backup-codes:regenerate:
+        post:
+            tags:
+                - MfaService
+            description: 生成/重生成备份码(鉴权;明文仅一次)
+            operationId: MfaService_MfaBackupCodesRegenerate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.MfaBackupCodesRegenerateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.MfaBackupCodesResponse'
     /admin/v1/mfa/setup:confirm:
         post:
             tags:
@@ -9085,6 +9147,14 @@ components:
                 imageBase64:
                     type: string
                     description: 验证码图片的Base64编码字符串，客户端可以解码并显示给用户
+        authentication.service.v1.GetAccessTokensResponse:
+            type: object
+            properties:
+                accessTokens:
+                    type: array
+                    items:
+                        type: string
+                    description: 访问令牌列表
         authentication.service.v1.GetOidcAuthorizeUrlRequest:
             type: object
             properties:
@@ -9288,6 +9358,18 @@ components:
                 mfa_operation_id:
                     type: string
             description: 用户登录 - 回应
+        authentication.service.v1.MfaBackupCodesRegenerateRequest:
+            type: object
+            properties: {}
+            description: MfaBackupCodesRegenerateRequest 重生成备份码(鉴权,操作者=当前用户)
+        authentication.service.v1.MfaBackupCodesResponse:
+            type: object
+            properties:
+                codes:
+                    type: array
+                    items:
+                        type: string
+            description: MfaBackupCodesResponse 备份码明文(仅此一次;服务端只存哈希)
         authentication.service.v1.MfaDisableRequest:
             type: object
             properties:
@@ -9312,6 +9394,28 @@ components:
                 otpauthUri:
                     type: string
             description: MfaSetupStartResponse 绑定起点:Base32 密钥与 otpauth URI(扫码/手输)
+        authentication.service.v1.RevokeTokenByIdRequest:
+            required:
+                - jti
+            type: object
+            properties:
+                jti:
+                    type: string
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 可选：目标令牌所属的客户端类型（当 jti 非全局唯一时必须提供）
+                    format: enum
+                reason:
+                    type: string
+                    description: 撤销原因
+                userId:
+                    type: integer
+                    description: 可选：关联的用户ID，便于高效定位要撤销的令牌（向后兼容）
+                    format: uint32
+            description: 管理端按 id 撤销（仅管理员/系统）
         authentication.service.v1.UpdateLoginPolicyRequest:
             type: object
             properties:
@@ -9355,9 +9459,7 @@ components:
                     type: string
                 deviceId:
                     type: string
-            description: |-
-                VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
-                 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。
+            description: "VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)\r\n 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。"
         dict.service.v1.BatchCreateLanguagesRequest:
             type: object
             properties:
@@ -10682,6 +10784,7 @@ components:
                             - DISTRIBUTIONS
                             - PIPELINES
                             - WEBHOOKS
+                            - PROMOTIONS
                             - ALL
                         type: string
                         format: enum

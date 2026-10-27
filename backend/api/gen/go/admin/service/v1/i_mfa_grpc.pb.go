@@ -21,10 +21,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MfaService_VerifyMFAChallenge_FullMethodName = "/admin.service.v1.MfaService/VerifyMFAChallenge"
-	MfaService_MfaSetupStart_FullMethodName      = "/admin.service.v1.MfaService/MfaSetupStart"
-	MfaService_MfaSetupConfirm_FullMethodName    = "/admin.service.v1.MfaService/MfaSetupConfirm"
-	MfaService_MfaDisable_FullMethodName         = "/admin.service.v1.MfaService/MfaDisable"
+	MfaService_VerifyMFAChallenge_FullMethodName       = "/admin.service.v1.MfaService/VerifyMFAChallenge"
+	MfaService_MfaSetupStart_FullMethodName            = "/admin.service.v1.MfaService/MfaSetupStart"
+	MfaService_MfaSetupConfirm_FullMethodName          = "/admin.service.v1.MfaService/MfaSetupConfirm"
+	MfaService_MfaDisable_FullMethodName               = "/admin.service.v1.MfaService/MfaDisable"
+	MfaService_MfaBackupCodesRegenerate_FullMethodName = "/admin.service.v1.MfaService/MfaBackupCodesRegenerate"
 )
 
 // MfaServiceClient is the client API for MfaService service.
@@ -41,6 +42,8 @@ type MfaServiceClient interface {
 	MfaSetupConfirm(ctx context.Context, in *v1.MfaSetupConfirmRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 解绑(鉴权;验证码通过后清除)
 	MfaDisable(ctx context.Context, in *v1.MfaDisableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 生成/重生成备份码(鉴权;明文仅一次)
+	MfaBackupCodesRegenerate(ctx context.Context, in *v1.MfaBackupCodesRegenerateRequest, opts ...grpc.CallOption) (*v1.MfaBackupCodesResponse, error)
 }
 
 type mfaServiceClient struct {
@@ -91,6 +94,16 @@ func (c *mfaServiceClient) MfaDisable(ctx context.Context, in *v1.MfaDisableRequ
 	return out, nil
 }
 
+func (c *mfaServiceClient) MfaBackupCodesRegenerate(ctx context.Context, in *v1.MfaBackupCodesRegenerateRequest, opts ...grpc.CallOption) (*v1.MfaBackupCodesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.MfaBackupCodesResponse)
+	err := c.cc.Invoke(ctx, MfaService_MfaBackupCodesRegenerate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MfaServiceServer is the server API for MfaService service.
 // All implementations must embed UnimplementedMfaServiceServer
 // for forward compatibility.
@@ -105,6 +118,8 @@ type MfaServiceServer interface {
 	MfaSetupConfirm(context.Context, *v1.MfaSetupConfirmRequest) (*emptypb.Empty, error)
 	// 解绑(鉴权;验证码通过后清除)
 	MfaDisable(context.Context, *v1.MfaDisableRequest) (*emptypb.Empty, error)
+	// 生成/重生成备份码(鉴权;明文仅一次)
+	MfaBackupCodesRegenerate(context.Context, *v1.MfaBackupCodesRegenerateRequest) (*v1.MfaBackupCodesResponse, error)
 	mustEmbedUnimplementedMfaServiceServer()
 }
 
@@ -126,6 +141,9 @@ func (UnimplementedMfaServiceServer) MfaSetupConfirm(context.Context, *v1.MfaSet
 }
 func (UnimplementedMfaServiceServer) MfaDisable(context.Context, *v1.MfaDisableRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method MfaDisable not implemented")
+}
+func (UnimplementedMfaServiceServer) MfaBackupCodesRegenerate(context.Context, *v1.MfaBackupCodesRegenerateRequest) (*v1.MfaBackupCodesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MfaBackupCodesRegenerate not implemented")
 }
 func (UnimplementedMfaServiceServer) mustEmbedUnimplementedMfaServiceServer() {}
 func (UnimplementedMfaServiceServer) testEmbeddedByValue()                    {}
@@ -220,6 +238,24 @@ func _MfaService_MfaDisable_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MfaService_MfaBackupCodesRegenerate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.MfaBackupCodesRegenerateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MfaServiceServer).MfaBackupCodesRegenerate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MfaService_MfaBackupCodesRegenerate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MfaServiceServer).MfaBackupCodesRegenerate(ctx, req.(*v1.MfaBackupCodesRegenerateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MfaService_ServiceDesc is the grpc.ServiceDesc for MfaService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +278,10 @@ var MfaService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MfaDisable",
 			Handler:    _MfaService_MfaDisable_Handler,
+		},
+		{
+			MethodName: "MfaBackupCodesRegenerate",
+			Handler:    _MfaService_MfaBackupCodesRegenerate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

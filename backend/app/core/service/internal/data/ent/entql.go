@@ -1920,31 +1920,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "User",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			user.FieldCreatedBy:   {Type: field.TypeUint32, Column: user.FieldCreatedBy},
-			user.FieldUpdatedBy:   {Type: field.TypeUint32, Column: user.FieldUpdatedBy},
-			user.FieldDeletedBy:   {Type: field.TypeUint32, Column: user.FieldDeletedBy},
-			user.FieldCreatedAt:   {Type: field.TypeTime, Column: user.FieldCreatedAt},
-			user.FieldUpdatedAt:   {Type: field.TypeTime, Column: user.FieldUpdatedAt},
-			user.FieldDeletedAt:   {Type: field.TypeTime, Column: user.FieldDeletedAt},
-			user.FieldRemark:      {Type: field.TypeString, Column: user.FieldRemark},
-			user.FieldTenantID:    {Type: field.TypeUint32, Column: user.FieldTenantID},
-			user.FieldUsername:    {Type: field.TypeString, Column: user.FieldUsername},
-			user.FieldMfaEnabled:  {Type: field.TypeBool, Column: user.FieldMfaEnabled},
-			user.FieldMfaSecret:   {Type: field.TypeString, Column: user.FieldMfaSecret},
-			user.FieldNickname:    {Type: field.TypeString, Column: user.FieldNickname},
-			user.FieldRealname:    {Type: field.TypeString, Column: user.FieldRealname},
-			user.FieldEmail:       {Type: field.TypeString, Column: user.FieldEmail},
-			user.FieldMobile:      {Type: field.TypeString, Column: user.FieldMobile},
-			user.FieldTelephone:   {Type: field.TypeString, Column: user.FieldTelephone},
-			user.FieldAvatar:      {Type: field.TypeString, Column: user.FieldAvatar},
-			user.FieldAddress:     {Type: field.TypeString, Column: user.FieldAddress},
-			user.FieldRegion:      {Type: field.TypeString, Column: user.FieldRegion},
-			user.FieldDescription: {Type: field.TypeString, Column: user.FieldDescription},
-			user.FieldGender:      {Type: field.TypeEnum, Column: user.FieldGender},
-			user.FieldLastLoginAt: {Type: field.TypeTime, Column: user.FieldLastLoginAt},
-			user.FieldLastLoginIP: {Type: field.TypeString, Column: user.FieldLastLoginIP},
-			user.FieldLockedUntil: {Type: field.TypeTime, Column: user.FieldLockedUntil},
-			user.FieldStatus:      {Type: field.TypeEnum, Column: user.FieldStatus},
+			user.FieldCreatedBy:      {Type: field.TypeUint32, Column: user.FieldCreatedBy},
+			user.FieldUpdatedBy:      {Type: field.TypeUint32, Column: user.FieldUpdatedBy},
+			user.FieldDeletedBy:      {Type: field.TypeUint32, Column: user.FieldDeletedBy},
+			user.FieldCreatedAt:      {Type: field.TypeTime, Column: user.FieldCreatedAt},
+			user.FieldUpdatedAt:      {Type: field.TypeTime, Column: user.FieldUpdatedAt},
+			user.FieldDeletedAt:      {Type: field.TypeTime, Column: user.FieldDeletedAt},
+			user.FieldRemark:         {Type: field.TypeString, Column: user.FieldRemark},
+			user.FieldTenantID:       {Type: field.TypeUint32, Column: user.FieldTenantID},
+			user.FieldUsername:       {Type: field.TypeString, Column: user.FieldUsername},
+			user.FieldMfaEnabled:     {Type: field.TypeBool, Column: user.FieldMfaEnabled},
+			user.FieldMfaSecret:      {Type: field.TypeString, Column: user.FieldMfaSecret},
+			user.FieldMfaBackupCodes: {Type: field.TypeJSON, Column: user.FieldMfaBackupCodes},
+			user.FieldNickname:       {Type: field.TypeString, Column: user.FieldNickname},
+			user.FieldRealname:       {Type: field.TypeString, Column: user.FieldRealname},
+			user.FieldEmail:          {Type: field.TypeString, Column: user.FieldEmail},
+			user.FieldMobile:         {Type: field.TypeString, Column: user.FieldMobile},
+			user.FieldTelephone:      {Type: field.TypeString, Column: user.FieldTelephone},
+			user.FieldAvatar:         {Type: field.TypeString, Column: user.FieldAvatar},
+			user.FieldAddress:        {Type: field.TypeString, Column: user.FieldAddress},
+			user.FieldRegion:         {Type: field.TypeString, Column: user.FieldRegion},
+			user.FieldDescription:    {Type: field.TypeString, Column: user.FieldDescription},
+			user.FieldGender:         {Type: field.TypeEnum, Column: user.FieldGender},
+			user.FieldLastLoginAt:    {Type: field.TypeTime, Column: user.FieldLastLoginAt},
+			user.FieldLastLoginIP:    {Type: field.TypeString, Column: user.FieldLastLoginIP},
+			user.FieldLockedUntil:    {Type: field.TypeTime, Column: user.FieldLockedUntil},
+			user.FieldStatus:         {Type: field.TypeEnum, Column: user.FieldStatus},
 		},
 	}
 	graph.Nodes[64] = &sqlgraph.Node{
@@ -9989,6 +9990,11 @@ func (f *UserFilter) WhereMfaEnabled(p entql.BoolP) {
 // WhereMfaSecret applies the entql string predicate on the mfa_secret field.
 func (f *UserFilter) WhereMfaSecret(p entql.StringP) {
 	f.Where(p.Field(user.FieldMfaSecret))
+}
+
+// WhereMfaBackupCodes applies the entql json.RawMessage predicate on the mfa_backup_codes field.
+func (f *UserFilter) WhereMfaBackupCodes(p entql.BytesP) {
+	f.Where(p.Field(user.FieldMfaBackupCodes))
 }
 
 // WhereNickname applies the entql string predicate on the nickname field.

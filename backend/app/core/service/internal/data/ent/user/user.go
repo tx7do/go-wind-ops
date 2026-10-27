@@ -36,6 +36,8 @@ const (
 	FieldMfaEnabled = "mfa_enabled"
 	// FieldMfaSecret holds the string denoting the mfa_secret field in the database.
 	FieldMfaSecret = "mfa_secret"
+	// FieldMfaBackupCodes holds the string denoting the mfa_backup_codes field in the database.
+	FieldMfaBackupCodes = "mfa_backup_codes"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
 	// FieldRealname holds the string denoting the realname field in the database.
@@ -82,6 +84,7 @@ var Columns = []string{
 	FieldUsername,
 	FieldMfaEnabled,
 	FieldMfaSecret,
+	FieldMfaBackupCodes,
 	FieldNickname,
 	FieldRealname,
 	FieldEmail,

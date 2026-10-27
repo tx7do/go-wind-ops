@@ -9,6 +9,7 @@ import {
   useMfaSetupStart,
   useMfaSetupConfirm,
   useMfaDisable,
+  useMfaBackupCodesRegenerate,
 } from '@/api/hooks/auth';
 import { useAuthStore } from '@/stores';
 
@@ -28,6 +29,7 @@ const MfaSecurityPanel: React.FC = () => {
 
   const [setup, setSetup] = useState<{ secret: string; otpauthUri: string } | undefined>();
   const [code, setCode] = useState('');
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
 
   const refreshUser = () => {
     queryClient.invalidateQueries({ queryKey: ['getMe'] });
@@ -51,6 +53,11 @@ const MfaSecurityPanel: React.FC = () => {
       refreshUser();
     },
     onError: (e: Error) => message.error(e.message || t('mfaCodeInvalid')),
+  });
+
+  const backupMutation = useMfaBackupCodesRegenerate({
+    onSuccess: (resp) => setBackupCodes(resp.codes ?? []),
+    onError: (e: Error) => message.error(e.message || t('mfaSetupStartFailed')),
   });
 
   const disableMutation = useMfaDisable({
@@ -127,6 +134,32 @@ const MfaSecurityPanel: React.FC = () => {
 
         {mfaEnabled && (
           <>
+            <div>
+              <Button
+                size="small"
+                loading={backupMutation.isPending}
+                onClick={() => backupMutation.mutate()}
+                style={{ marginBottom: 8 }}
+              >
+                {backupCodes.length ? t('mfaBackupRegenerate') : t('mfaBackupGenerate')}
+              </Button>
+              {backupCodes.length > 0 && (
+                <Alert
+                  type="warning"
+                  showIcon
+                  message={t('mfaBackupOnceHint')}
+                  description={
+                    <Typography.Paragraph
+                      code
+                      copyable={{ text: backupCodes.join('\n') }}
+                      style={{ marginBottom: 0, whiteSpace: 'pre-wrap' }}
+                    >
+                      {backupCodes.join('  ')}
+                    </Typography.Paragraph>
+                  }
+                />
+              )}
+            </div>
             <Input
               value={code}
               onChange={(e) => setCode(e.target.value)}

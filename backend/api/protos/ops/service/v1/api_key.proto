@@ -55,6 +55,7 @@ message ApiKey {
     DISTRIBUTIONS = 2; // 触发分发(/openapi/v1/distributions/{id}/trigger)
     PIPELINES = 3;     // 触发流水线(/openapi/v1/pipelines/{id}/trigger)
     WEBHOOKS = 4;      // Git webhook(/openapi/v1/webhooks/git/{buildId})
+    PROMOTIONS = 6;    // 晋升触发(/openapi/v1/promotions/{id}/trigger)
     ALL = 5;           // 全部端点(通配;与空等价)
   }
 

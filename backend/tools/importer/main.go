@@ -45,8 +45,40 @@ import (
 
 // Manifest 导入清单。
 type Manifest struct {
-	Scripts  []ScriptSeed  `json:"scripts"`
-	Projects []ProjectSeed `json:"projects"`
+	Scripts       []ScriptSeed       `json:"scripts"`
+	Projects      []ProjectSeed      `json:"projects"`
+	Distributions []DistributionSeed `json:"distributions,omitempty"`
+	Monitors      []MonitorSeed      `json:"monitors,omitempty"`
+}
+
+// DistributionSeed 分发配置种子(deployType: FILE/DOCKER;afterOpt: NONE/RESTART/START)。
+type DistributionSeed struct {
+	Name        string   `json:"name"`
+	BuildID     uint32   `json:"buildId"`
+	ProjectIDs  []uint32 `json:"projectIds"`
+	ClearOld    bool     `json:"clearOld,omitempty"`
+	AfterOpt    string   `json:"afterOpt,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Labels      []string `json:"labels,omitempty"`
+}
+
+// MonitorSeed 监控规则种子(targetType: PROJECT/NODE_METRIC/PROCESS)。
+type MonitorSeed struct {
+	Name              string  `json:"name"`
+	ProjectID         uint32  `json:"projectId,omitempty"`
+	Cron              string  `json:"cron,omitempty"`
+	AutoRestart       bool    `json:"autoRestart,omitempty"`
+	WebhookURL        string  `json:"webhookUrl,omitempty"`
+	Enabled           bool    `json:"enabled"`
+	Description       string  `json:"description,omitempty"`
+	TargetType        string  `json:"targetType"`
+	NodeID            uint32  `json:"nodeId,omitempty"`
+	ProcessName       string  `json:"processName,omitempty"`
+	MetricType        string  `json:"metricType,omitempty"`
+	ThresholdPercent  float64 `json:"thresholdPercent,omitempty"`
+	ConsecutiveCount  uint32  `json:"consecutiveCount,omitempty"`
+	NotifyOnRecovery  bool    `json:"notifyOnRecovery,omitempty"`
+	RepeatIntervalMin int32   `json:"repeatIntervalMinutes,omitempty"`
 }
 
 // ScriptSeed 脚本种子。
@@ -126,6 +158,14 @@ func main() {
 	}
 	if err = c.importProjects(mf.Projects); err != nil {
 		fmt.Fprintf(os.Stderr, "import projects: %v\n", err)
+		exit = 1
+	}
+	if err = c.importDistributions(mf.Distributions); err != nil {
+		fmt.Fprintf(os.Stderr, "import distributions: %v\n", err)
+		exit = 1
+	}
+	if err = c.importMonitors(mf.Monitors); err != nil {
+		fmt.Fprintf(os.Stderr, "import monitors: %v\n", err)
 		exit = 1
 	}
 	os.Exit(exit)
@@ -257,7 +297,7 @@ func (c *client) importScripts(seeds []ScriptSeed) error {
 		})
 		if err != nil || status != http.StatusOK {
 			res.failed++
-				fmt.Printf("script [%s] 创建失败: status=%d err=%v body=%s\n", s.Name, status, err, truncate(body))
+			fmt.Printf("script [%s] 创建失败: status=%d err=%v body=%s\n", s.Name, status, err, truncate(body))
 			continue
 		}
 		res.created++
@@ -284,7 +324,7 @@ func (c *client) importProjects(seeds []ProjectSeed) error {
 		}
 		if p.NodeID == 0 || p.ProjectDir == "" {
 			res.failed++
-				fmt.Printf("project [%s] 缺 nodeId/projectDir,跳过创建\n", p.Name)
+			fmt.Printf("project [%s] 缺 nodeId/projectDir,跳过创建\n", p.Name)
 			continue
 		}
 		body, status, err := c.do(http.MethodPost, "/admin/v1/projects", map[string]any{
@@ -302,7 +342,7 @@ func (c *client) importProjects(seeds []ProjectSeed) error {
 		})
 		if err != nil || status != http.StatusOK {
 			res.failed++
-				fmt.Printf("project [%s] 创建失败: status=%d err=%v body=%s\n", p.Name, status, err, truncate(body))
+			fmt.Printf("project [%s] 创建失败: status=%d err=%v body=%s\n", p.Name, status, err, truncate(body))
 			continue
 		}
 		res.created++
@@ -311,6 +351,100 @@ func (c *client) importProjects(seeds []ProjectSeed) error {
 	fmt.Println("projects:", res)
 	if res.failed > 0 {
 		return fmt.Errorf("%d project(s) failed", res.failed)
+	}
+	return nil
+}
+
+func (c *client) importDistributions(seeds []DistributionSeed) error {
+	existing, err := c.listNames("/admin/v1/distributions")
+	if err != nil {
+		return err
+	}
+	var res importResult
+	for _, d := range seeds {
+		if _, dup := existing[d.Name]; dup {
+			res.skipped++
+			fmt.Printf("distribution [%s] 已存在,跳过\n", d.Name)
+			continue
+		}
+		if d.BuildID == 0 || len(d.ProjectIDs) == 0 {
+			res.failed++
+			fmt.Printf("distribution [%s] 缺 buildId/projectIds,跳过创建\n", d.Name)
+			continue
+		}
+		body, status, err := c.do(http.MethodPost, "/admin/v1/distributions", map[string]any{
+			"data": map[string]any{
+				"name":        d.Name,
+				"buildId":     d.BuildID,
+				"projectIds":  d.ProjectIDs,
+				"clearOld":    d.ClearOld,
+				"afterOpt":    d.AfterOpt,
+				"description": d.Description,
+				"labels":      d.Labels,
+			},
+		})
+		if err != nil || status != http.StatusOK {
+			res.failed++
+			fmt.Printf("distribution [%s] 创建失败: status=%d err=%v body=%s\n", d.Name, status, err, truncate(body))
+			continue
+		}
+		res.created++
+		fmt.Printf("distribution [%s] 已创建\n", d.Name)
+	}
+	fmt.Println("distributions:", res)
+	if res.failed > 0 {
+		return fmt.Errorf("%d distribution(s) failed", res.failed)
+	}
+	return nil
+}
+
+func (c *client) importMonitors(seeds []MonitorSeed) error {
+	existing, err := c.listNames("/admin/v1/monitors")
+	if err != nil {
+		return err
+	}
+	var res importResult
+	for _, m := range seeds {
+		if _, dup := existing[m.Name]; dup {
+			res.skipped++
+			fmt.Printf("monitor [%s] 已存在,跳过\n", m.Name)
+			continue
+		}
+		if m.TargetType == "" {
+			res.failed++
+			fmt.Printf("monitor [%s] 缺 targetType,跳过创建\n", m.Name)
+			continue
+		}
+		body, status, err := c.do(http.MethodPost, "/admin/v1/monitors", map[string]any{
+			"data": map[string]any{
+				"name":                  m.Name,
+				"projectId":             m.ProjectID,
+				"cron":                  m.Cron,
+				"autoRestart":           m.AutoRestart,
+				"webhookUrl":            m.WebhookURL,
+				"enabled":               m.Enabled,
+				"description":           m.Description,
+				"targetType":            m.TargetType,
+				"nodeId":                m.NodeID,
+				"processName":           m.ProcessName,
+				"metricType":            m.MetricType,
+				"thresholdPercent":      m.ThresholdPercent,
+				"consecutiveCount":      m.ConsecutiveCount,
+				"notifyOnRecovery":      m.NotifyOnRecovery,
+				"repeatIntervalMinutes": m.RepeatIntervalMin,
+			},
+		})
+		if err != nil || status != http.StatusOK {
+			res.failed++
+			fmt.Printf("monitor [%s] 创建失败: status=%d err=%v body=%s\n", m.Name, status, err, truncate(body))
+			continue
+		}
+		res.created++
+		fmt.Printf("monitor [%s] 已创建\n", m.Name)
+	}
+	fmt.Println("monitors:", res)
+	if res.failed > 0 {
+		return fmt.Errorf("%d monitor(s) failed", res.failed)
 	}
 	return nil
 }

@@ -88,6 +88,7 @@ const (
 	ApiKey_DISTRIBUTIONS             ApiKey_Scope = 2 // 触发分发(/openapi/v1/distributions/{id}/trigger)
 	ApiKey_PIPELINES                 ApiKey_Scope = 3 // 触发流水线(/openapi/v1/pipelines/{id}/trigger)
 	ApiKey_WEBHOOKS                  ApiKey_Scope = 4 // Git webhook(/openapi/v1/webhooks/git/{buildId})
+	ApiKey_PROMOTIONS                ApiKey_Scope = 6 // 晋升触发(/openapi/v1/promotions/{id}/trigger)
 	ApiKey_ALL                       ApiKey_Scope = 5 // 全部端点(通配;与空等价)
 )
 
@@ -99,6 +100,7 @@ var (
 		2: "DISTRIBUTIONS",
 		3: "PIPELINES",
 		4: "WEBHOOKS",
+		6: "PROMOTIONS",
 		5: "ALL",
 	}
 	ApiKey_Scope_value = map[string]int32{
@@ -107,6 +109,7 @@ var (
 		"DISTRIBUTIONS":             2,
 		"PIPELINES":                 3,
 		"WEBHOOKS":                  4,
+		"PROMOTIONS":                6,
 		"ALL":                       5,
 	}
 )
@@ -599,7 +602,7 @@ var File_ops_service_v1_api_key_proto protoreflect.FileDescriptor
 
 const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\n" +
-	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xd4\x06\n" +
+	"\x1cops/service/v1/api_key.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xe4\x06\n" +
 	"\x06ApiKey\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\rB\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
 	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04name\x88\x01\x01\x12 \n" +
@@ -619,14 +622,16 @@ const file_ops_service_v1_api_key_proto_rawDesc = "" +
 	"\x06Status\x12\x1e\n" +
 	"\x1aAPI_KEY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aENABLED\x10\x01\x12\f\n" +
-	"\bDISABLED\x10\x02\"k\n" +
+	"\bDISABLED\x10\x02\"{\n" +
 	"\x05Scope\x12\x1d\n" +
 	"\x19API_KEY_SCOPE_UNSPECIFIED\x10\x00\x12\n" +
 	"\n" +
 	"\x06BUILDS\x10\x01\x12\x11\n" +
 	"\rDISTRIBUTIONS\x10\x02\x12\r\n" +
 	"\tPIPELINES\x10\x03\x12\f\n" +
-	"\bWEBHOOKS\x10\x04\x12\a\n" +
+	"\bWEBHOOKS\x10\x04\x12\x0e\n" +
+	"\n" +
+	"PROMOTIONS\x10\x06\x12\a\n" +
 	"\x03ALL\x10\x05B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\t\n" +

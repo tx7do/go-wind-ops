@@ -39,5 +39,6 @@
   "usageTriggerDist": "触发分发",
   "usageTriggerPipeline": "触发流水线",
   "usageWebhook": "Git push webhook(按分支过滤,命中才触发)",
-  "usageNote": "认证:请求头 X-Api-Key 或 Authorization: Bearer;密钥校验、状态/过期判定在服务端完成。"
+  "usageNote": "认证:请求头 X-Api-Key 或 Authorization: Bearer;密钥校验、状态/过期判定在服务端完成。",
+  "scopePromotions": "触发晋升"
 }

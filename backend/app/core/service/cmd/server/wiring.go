@@ -157,6 +157,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cloudCostRepo := data.NewCloudCostRepo(ctx, entClient)
 	maintenanceWindowRepo := data.NewMaintenanceWindowRepo(ctx, entClient)
 	promotionPipelineRepo := data.NewPromotionPipelineRepo(ctx, entClient)
+	runtimeCleanupRepo := data.NewRuntimeCleanupRepo(ctx, entClient)
 	cloudInstanceRepo := data.NewCloudInstanceRepo(ctx, entClient)
 	cloudAccountRepo := data.NewCloudAccountRepo(ctx, entClient)
 	scriptBatchRepo := data.NewScriptBatchRepo(ctx, entClient)
@@ -244,7 +245,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 定时调度(构建/脚本/监控/备份/预算/证书 cron + 孤儿构建清扫)
 	auditRetentionRepo := data.NewAuditRetentionRepo(ctx, entClient)
-	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, approvalRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
+	cronScheduler := service.NewCronScheduler(ctx, buildRepo, scriptRepo, monitorRepo, alertRepo, projectRepo, agentNodeRepo, backupTaskRepo, notificationChannelRepo, notificationDeliveryRepo, maintenanceWindowRepo, approvalRepo, runtimeCleanupRepo, cloudBudgetRepo, cloudBudgetService, certRepo, certService, logSnapshotService, buildHistoryRepo, pipelineRunRepo, minIOClient, buildService, scriptService, backupService, agentService, auditRetentionRepo)
 	cronScheduler.Start(ctx.Context())
 
 	// 终端录制留存清理(TERMINAL_RETENTION_DAYS,默认 30 天,0=永久)

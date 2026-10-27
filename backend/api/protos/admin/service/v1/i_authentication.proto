@@ -72,5 +72,18 @@ service AuthenticationService {
       security: {}
     };
   }
+  // 我的会话列表(操作者维度)
+  rpc GetAccessTokens (authentication.service.v1.GetAccessTokensRequest) returns (authentication.service.v1.GetAccessTokensResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/access-tokens"
+    };
+  }
 
+  // 吊销我的指定会话
+  rpc RevokeTokenById (authentication.service.v1.RevokeTokenByIdRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/access-tokens:revoke"
+      body: "*"
+    };
+  }
 }

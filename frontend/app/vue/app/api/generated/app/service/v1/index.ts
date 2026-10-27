@@ -269,6 +269,10 @@ export interface MfaService {
   MfaDisable(
     request: authenticationservicev1_MfaDisableRequest,
   ): Promise<wellKnownEmpty>;
+  // 生成/重生成备份码(鉴权;明文仅一次)
+  MfaBackupCodesRegenerate(
+    request: authenticationservicev1_MfaBackupCodesRegenerateRequest,
+  ): Promise<authenticationservicev1_MfaBackupCodesResponse>;
 }
 
 export function createMfaServiceClient(
@@ -307,6 +311,14 @@ export function createMfaServiceClient(
         method: 'MfaDisable',
       }) as Promise<wellKnownEmpty>;
     },
+    MfaBackupCodesRegenerate(request) {
+      const path = `/app/v1/mfa/backup-codes:regenerate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'MfaBackupCodesRegenerate',
+      }) as Promise<authenticationservicev1_MfaBackupCodesResponse>;
+    },
   };
 }
 // VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
@@ -336,6 +348,15 @@ export type authenticationservicev1_MfaSetupConfirmRequest = {
 // MfaDisableRequest 解绑:TOTP 验证码(防误触/劫持解绑)
 export type authenticationservicev1_MfaDisableRequest = {
   code: string | undefined;
+};
+
+// MfaBackupCodesRegenerateRequest 重生成备份码(鉴权,操作者=当前用户)
+export type authenticationservicev1_MfaBackupCodesRegenerateRequest = {
+};
+
+// MfaBackupCodesResponse 备份码明文(仅此一次;服务端只存哈希)
+export type authenticationservicev1_MfaBackupCodesResponse = {
+  codes: string[] | undefined;
 };
 
 // 用户个人资料服务

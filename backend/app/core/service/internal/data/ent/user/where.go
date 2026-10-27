@@ -754,6 +754,16 @@ func MfaSecretContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldMfaSecret, v))
 }
 
+// MfaBackupCodesIsNil applies the IsNil predicate on the "mfa_backup_codes" field.
+func MfaBackupCodesIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldMfaBackupCodes))
+}
+
+// MfaBackupCodesNotNil applies the NotNil predicate on the "mfa_backup_codes" field.
+func MfaBackupCodesNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldMfaBackupCodes))
+}
+
 // NicknameEQ applies the EQ predicate on the "nickname" field.
 func NicknameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldNickname, v))

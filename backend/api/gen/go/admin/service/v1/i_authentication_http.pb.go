@@ -22,15 +22,19 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationAuthenticationServiceGenerateCaptcha = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
+const OperationAuthenticationServiceGetAccessTokens = "/admin.service.v1.AuthenticationService/GetAccessTokens"
 const OperationAuthenticationServiceGetOidcAuthorizeUrl = "/admin.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
 const OperationAuthenticationServiceLogin = "/admin.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/admin.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/admin.service.v1.AuthenticationService/RefreshToken"
+const OperationAuthenticationServiceRevokeTokenById = "/admin.service.v1.AuthenticationService/RevokeTokenById"
 const OperationAuthenticationServiceVerifyCaptcha = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
 
 type AuthenticationServiceHTTPServer interface {
 	// GenerateCaptcha 生成验证码
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
+	// GetAccessTokens 我的会话列表(操作者维度)
+	GetAccessTokens(context.Context, *v1.GetAccessTokensRequest) (*v1.GetAccessTokensResponse, error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error)
 	// Login 登录
@@ -39,6 +43,8 @@ type AuthenticationServiceHTTPServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// RevokeTokenById 吊销我的指定会话
+	RevokeTokenById(context.Context, *v1.RevokeTokenByIdRequest) (*emptypb.Empty, error)
 	// VerifyCaptcha 验证验证码
 	VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error)
 }
@@ -51,6 +57,8 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.POST("/admin/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
 	r.GET("/admin/v1/captcha", _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv))
 	r.POST("/admin/v1/captcha/verify", _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv))
+	r.GET("/admin/v1/access-tokens", _AuthenticationService_GetAccessTokens0_HTTP_Handler(srv))
+	r.POST("/admin/v1/access-tokens:revoke", _AuthenticationService_RevokeTokenById0_HTTP_Handler(srv))
 }
 
 func _AuthenticationService_Login0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
@@ -182,9 +190,52 @@ func _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv AuthenticationServic
 	}
 }
 
+func _AuthenticationService_GetAccessTokens0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetAccessTokensRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceGetAccessTokens)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetAccessTokens(ctx, req.(*v1.GetAccessTokensRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetAccessTokensResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AuthenticationService_RevokeTokenById0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.RevokeTokenByIdRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceRevokeTokenById)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RevokeTokenById(ctx, req.(*v1.RevokeTokenByIdRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthenticationServiceHTTPClient interface {
 	// GenerateCaptcha 生成验证码
 	GenerateCaptcha(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v1.GenerateCaptchaResponse, err error)
+	// GetAccessTokens 我的会话列表(操作者维度)
+	GetAccessTokens(ctx context.Context, req *v1.GetAccessTokensRequest, opts ...http.CallOption) (rsp *v1.GetAccessTokensResponse, err error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(ctx context.Context, req *v1.GetOidcAuthorizeUrlRequest, opts ...http.CallOption) (rsp *v1.GetOidcAuthorizeUrlResponse, err error)
 	// Login 登录
@@ -193,6 +244,8 @@ type AuthenticationServiceHTTPClient interface {
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
+	// RevokeTokenById 吊销我的指定会话
+	RevokeTokenById(ctx context.Context, req *v1.RevokeTokenByIdRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// VerifyCaptcha 验证验证码
 	VerifyCaptcha(ctx context.Context, req *v1.VerifyCaptchaRequest, opts ...http.CallOption) (rsp *v1.VerifyCaptchaResponse, err error)
 }
@@ -211,6 +264,20 @@ func (c *AuthenticationServiceHTTPClientImpl) GenerateCaptcha(ctx context.Contex
 	pattern := "/admin/v1/captcha"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAuthenticationServiceGenerateCaptcha))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetAccessTokens 我的会话列表(操作者维度)
+func (c *AuthenticationServiceHTTPClientImpl) GetAccessTokens(ctx context.Context, in *v1.GetAccessTokensRequest, opts ...http.CallOption) (*v1.GetAccessTokensResponse, error) {
+	var out v1.GetAccessTokensResponse
+	pattern := "/admin/v1/access-tokens"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceGetAccessTokens))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -267,6 +334,20 @@ func (c *AuthenticationServiceHTTPClientImpl) RefreshToken(ctx context.Context, 
 	pattern := "/admin/v1/refresh-token"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthenticationServiceRefreshToken))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RevokeTokenById 吊销我的指定会话
+func (c *AuthenticationServiceHTTPClientImpl) RevokeTokenById(ctx context.Context, in *v1.RevokeTokenByIdRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/access-tokens:revoke"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceRevokeTokenById))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

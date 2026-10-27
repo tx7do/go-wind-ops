@@ -48,6 +48,10 @@ func (User) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.JSON("mfa_backup_codes", []string{}).
+			Comment("MFA 备份码 SHA-256 哈希列表(明文只在生成响应出现一次;登录验证消费即删)").
+			Optional(),
+
 		field.String("nickname").
 			Comment("昵称").
 			Optional().

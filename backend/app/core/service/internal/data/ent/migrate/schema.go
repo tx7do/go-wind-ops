@@ -3463,6 +3463,7 @@ var (
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "用户名"},
 		{Name: "mfa_enabled", Type: field.TypeBool, Comment: "已启用 MFA(TOTP)二步验证:登录密码授权后须凭验证码换正式令牌", Default: false},
 		{Name: "mfa_secret", Type: field.TypeString, Nullable: true, Comment: "TOTP Base32 密钥(Sensitive 不落日志;绑定 Confirm 前为待激活态)"},
+		{Name: "mfa_backup_codes", Type: field.TypeJSON, Nullable: true, Comment: "MFA 备份码 SHA-256 哈希列表(明文只在生成响应出现一次;登录验证消费即删)"},
 		{Name: "nickname", Type: field.TypeString, Nullable: true, Comment: "昵称"},
 		{Name: "realname", Type: field.TypeString, Nullable: true, Comment: "真实名字"},
 		{Name: "email", Type: field.TypeString, Nullable: true, Size: 320, Comment: "电子邮箱"},
@@ -3493,22 +3494,22 @@ var (
 			{
 				Name:    "idx_sys_user_tenant_email",
 				Unique:  true,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[14]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[15]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_mobile",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[15]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[16]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_last_login_at",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[22]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[23]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_last_login_ip",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[23]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[24]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_created_by",

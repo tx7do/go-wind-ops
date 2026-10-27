@@ -39,5 +39,6 @@
   "usageTriggerDist": "Trigger distribution",
   "usageTriggerPipeline": "Trigger pipeline",
   "usageWebhook": "Git push webhook (branch-filtered, fires only on match)",
-  "usageNote": "Auth: X-Api-Key header or Authorization: Bearer. Validation, status and expiry are checked server-side."
+  "usageNote": "Auth: X-Api-Key header or Authorization: Bearer. Validation, status and expiry are checked server-side.",
+  "scopePromotions": "Trigger promotions"
 }

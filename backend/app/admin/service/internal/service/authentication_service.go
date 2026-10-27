@@ -293,6 +293,31 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 	return resp, nil
 }
 
+// GetAccessTokens 我的会话列表(操作者维度,透传 core)。
+func (s *AuthenticationService) GetAccessTokens(ctx context.Context, req *authenticationV1.GetAccessTokensRequest) (*authenticationV1.GetAccessTokensResponse, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.UserId = operator.UserId
+	req.ClientType = authenticationV1.ClientType_admin
+	return s.authenticationServiceClient.GetAccessTokens(ctx, req)
+}
+
+// RevokeTokenById 吊销我的指定会话(仅允许吊销自己的:uid 由操作者覆盖)。
+func (s *AuthenticationService) RevokeTokenById(ctx context.Context, req *authenticationV1.RevokeTokenByIdRequest) (*emptypb.Empty, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.authenticationServiceClient.RevokeTokenById(ctx, &authenticationV1.RevokeTokenByIdRequest{
+		Jti:        req.GetJti(),
+		ClientType: trans.Ptr(authenticationV1.ClientType_admin),
+		UserId:     trans.Ptr(operator.GetUserId()),
+		Reason:     req.Reason,
+	})
+}
+
 // Logout 登出
 func (s *AuthenticationService) Logout(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
 	operator, err := auth.FromContext(ctx)

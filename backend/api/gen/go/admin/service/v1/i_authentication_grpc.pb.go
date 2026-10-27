@@ -27,6 +27,8 @@ const (
 	AuthenticationService_RefreshToken_FullMethodName        = "/admin.service.v1.AuthenticationService/RefreshToken"
 	AuthenticationService_GenerateCaptcha_FullMethodName     = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
 	AuthenticationService_VerifyCaptcha_FullMethodName       = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_GetAccessTokens_FullMethodName     = "/admin.service.v1.AuthenticationService/GetAccessTokens"
+	AuthenticationService_RevokeTokenById_FullMethodName     = "/admin.service.v1.AuthenticationService/RevokeTokenById"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -47,6 +49,10 @@ type AuthenticationServiceClient interface {
 	GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1.GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(ctx context.Context, in *v1.VerifyCaptchaRequest, opts ...grpc.CallOption) (*v1.VerifyCaptchaResponse, error)
+	// 我的会话列表(操作者维度)
+	GetAccessTokens(ctx context.Context, in *v1.GetAccessTokensRequest, opts ...grpc.CallOption) (*v1.GetAccessTokensResponse, error)
+	// 吊销我的指定会话
+	RevokeTokenById(ctx context.Context, in *v1.RevokeTokenByIdRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authenticationServiceClient struct {
@@ -117,6 +123,26 @@ func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *v1.
 	return out, nil
 }
 
+func (c *authenticationServiceClient) GetAccessTokens(ctx context.Context, in *v1.GetAccessTokensRequest, opts ...grpc.CallOption) (*v1.GetAccessTokensResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GetAccessTokensResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GetAccessTokens_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) RevokeTokenById(ctx context.Context, in *v1.RevokeTokenByIdRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthenticationService_RevokeTokenById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -135,6 +161,10 @@ type AuthenticationServiceServer interface {
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error)
+	// 我的会话列表(操作者维度)
+	GetAccessTokens(context.Context, *v1.GetAccessTokensRequest) (*v1.GetAccessTokensResponse, error)
+	// 吊销我的指定会话
+	RevokeTokenById(context.Context, *v1.RevokeTokenByIdRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -162,6 +192,12 @@ func (UnimplementedAuthenticationServiceServer) GenerateCaptcha(context.Context,
 }
 func (UnimplementedAuthenticationServiceServer) VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyCaptcha not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GetAccessTokens(context.Context, *v1.GetAccessTokensRequest) (*v1.GetAccessTokensResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAccessTokens not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) RevokeTokenById(context.Context, *v1.RevokeTokenByIdRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokeTokenById not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -292,6 +328,42 @@ func _AuthenticationService_VerifyCaptcha_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_GetAccessTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetAccessTokensRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GetAccessTokens(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GetAccessTokens_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GetAccessTokens(ctx, req.(*v1.GetAccessTokensRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_RevokeTokenById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.RevokeTokenByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).RevokeTokenById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_RevokeTokenById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).RevokeTokenById(ctx, req.(*v1.RevokeTokenByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +394,14 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyCaptcha",
 			Handler:    _AuthenticationService_VerifyCaptcha_Handler,
+		},
+		{
+			MethodName: "GetAccessTokens",
+			Handler:    _AuthenticationService_GetAccessTokens_Handler,
+		},
+		{
+			MethodName: "RevokeTokenById",
+			Handler:    _AuthenticationService_RevokeTokenById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

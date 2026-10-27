@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-wind-ops/app/core/service/internal/data/ent/user"
 	"strings"
@@ -40,6 +41,8 @@ type User struct {
 	MfaEnabled bool `json:"mfa_enabled,omitempty"`
 	// TOTP Base32 密钥(Sensitive 不落日志;绑定 Confirm 前为待激活态)
 	MfaSecret *string `json:"-"`
+	// MFA 备份码 SHA-256 哈希列表(明文只在生成响应出现一次;登录验证消费即删)
+	MfaBackupCodes []string `json:"mfa_backup_codes,omitempty"`
 	// 昵称
 	Nickname *string `json:"nickname,omitempty"`
 	// 真实名字
@@ -76,6 +79,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldMfaBackupCodes:
+			values[i] = new([]byte)
 		case user.FieldMfaEnabled:
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldTenantID:
@@ -180,6 +185,14 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.MfaSecret = new(string)
 				*_m.MfaSecret = value.String
+			}
+		case user.FieldMfaBackupCodes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field mfa_backup_codes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.MfaBackupCodes); err != nil {
+					return fmt.Errorf("unmarshal field mfa_backup_codes: %w", err)
+				}
 			}
 		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -364,6 +377,9 @@ func (_m *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.MfaEnabled))
 	builder.WriteString(", ")
 	builder.WriteString("mfa_secret=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("mfa_backup_codes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MfaBackupCodes))
 	builder.WriteString(", ")
 	if v := _m.Nickname; v != nil {
 		builder.WriteString("nickname=")

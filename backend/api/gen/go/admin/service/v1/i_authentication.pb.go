@@ -28,14 +28,16 @@ var File_admin_service_v1_i_authentication_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_authentication_proto_rawDesc = "" +
 	"\n" +
-	"'admin/service/v1/i_authentication.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto2\xc6\x06\n" +
+	"'admin/service/v1/i_authentication.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto2\xec\b\n" +
 	"\x15AuthenticationService\x12{\n" +
 	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1f\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/login\x12\xb2\x01\n" +
 	"\x13GetOidcAuthorizeUrl\x125.authentication.service.v1.GetOidcAuthorizeUrlRequest\x1a6.authentication.service.v1.GetOidcAuthorizeUrlResponse\",\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/admin/v1/oidc/authorize-url\x12U\n" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/admin/v1/logout\x12\x85\x01\n" +
 	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/admin/v1/refresh-token\x12}\n" +
 	"\x0fGenerateCaptcha\x12\x16.google.protobuf.Empty\x1a2.authentication.service.v1.GenerateCaptchaResponse\"\x1e\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x13\x12\x11/admin/v1/captcha\x12\x9c\x01\n" +
-	"\rVerifyCaptcha\x12/.authentication.service.v1.VerifyCaptchaRequest\x1a0.authentication.service.v1.VerifyCaptchaResponse\"(\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/admin/v1/captcha/verifyB\xbf\x01\n" +
+	"\rVerifyCaptcha\x12/.authentication.service.v1.VerifyCaptchaRequest\x1a0.authentication.service.v1.VerifyCaptchaResponse\"(\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/admin/v1/captcha/verify\x12\x99\x01\n" +
+	"\x0fGetAccessTokens\x121.authentication.service.v1.GetAccessTokensRequest\x1a2.authentication.service.v1.GetAccessTokensResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/access-tokens\x12\x87\x01\n" +
+	"\x0fRevokeTokenById\x121.authentication.service.v1.RevokeTokenByIdRequest\x1a\x16.google.protobuf.Empty\")\x82\xd3\xe4\x93\x02#:\x01*\"\x1e/admin/v1/access-tokens:revokeB\xbf\x01\n" +
 	"\x14com.admin.service.v1B\x14IAuthenticationProtoP\x01Z/go-wind-ops/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_authentication_proto_goTypes = []any{
@@ -43,29 +45,36 @@ var file_admin_service_v1_i_authentication_proto_goTypes = []any{
 	(*v1.GetOidcAuthorizeUrlRequest)(nil),  // 1: authentication.service.v1.GetOidcAuthorizeUrlRequest
 	(*emptypb.Empty)(nil),                  // 2: google.protobuf.Empty
 	(*v1.VerifyCaptchaRequest)(nil),        // 3: authentication.service.v1.VerifyCaptchaRequest
-	(*v1.LoginResponse)(nil),               // 4: authentication.service.v1.LoginResponse
-	(*v1.GetOidcAuthorizeUrlResponse)(nil), // 5: authentication.service.v1.GetOidcAuthorizeUrlResponse
-	(*v1.GenerateCaptchaResponse)(nil),     // 6: authentication.service.v1.GenerateCaptchaResponse
-	(*v1.VerifyCaptchaResponse)(nil),       // 7: authentication.service.v1.VerifyCaptchaResponse
+	(*v1.GetAccessTokensRequest)(nil),      // 4: authentication.service.v1.GetAccessTokensRequest
+	(*v1.RevokeTokenByIdRequest)(nil),      // 5: authentication.service.v1.RevokeTokenByIdRequest
+	(*v1.LoginResponse)(nil),               // 6: authentication.service.v1.LoginResponse
+	(*v1.GetOidcAuthorizeUrlResponse)(nil), // 7: authentication.service.v1.GetOidcAuthorizeUrlResponse
+	(*v1.GenerateCaptchaResponse)(nil),     // 8: authentication.service.v1.GenerateCaptchaResponse
+	(*v1.VerifyCaptchaResponse)(nil),       // 9: authentication.service.v1.VerifyCaptchaResponse
+	(*v1.GetAccessTokensResponse)(nil),     // 10: authentication.service.v1.GetAccessTokensResponse
 }
 var file_admin_service_v1_i_authentication_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
-	1, // 1: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:input_type -> authentication.service.v1.GetOidcAuthorizeUrlRequest
-	2, // 2: admin.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
-	0, // 3: admin.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
-	2, // 4: admin.service.v1.AuthenticationService.GenerateCaptcha:input_type -> google.protobuf.Empty
-	3, // 5: admin.service.v1.AuthenticationService.VerifyCaptcha:input_type -> authentication.service.v1.VerifyCaptchaRequest
-	4, // 6: admin.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
-	5, // 7: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:output_type -> authentication.service.v1.GetOidcAuthorizeUrlResponse
-	2, // 8: admin.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
-	4, // 9: admin.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
-	6, // 10: admin.service.v1.AuthenticationService.GenerateCaptcha:output_type -> authentication.service.v1.GenerateCaptchaResponse
-	7, // 11: admin.service.v1.AuthenticationService.VerifyCaptcha:output_type -> authentication.service.v1.VerifyCaptchaResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
+	1,  // 1: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:input_type -> authentication.service.v1.GetOidcAuthorizeUrlRequest
+	2,  // 2: admin.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
+	0,  // 3: admin.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
+	2,  // 4: admin.service.v1.AuthenticationService.GenerateCaptcha:input_type -> google.protobuf.Empty
+	3,  // 5: admin.service.v1.AuthenticationService.VerifyCaptcha:input_type -> authentication.service.v1.VerifyCaptchaRequest
+	4,  // 6: admin.service.v1.AuthenticationService.GetAccessTokens:input_type -> authentication.service.v1.GetAccessTokensRequest
+	5,  // 7: admin.service.v1.AuthenticationService.RevokeTokenById:input_type -> authentication.service.v1.RevokeTokenByIdRequest
+	6,  // 8: admin.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
+	7,  // 9: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:output_type -> authentication.service.v1.GetOidcAuthorizeUrlResponse
+	2,  // 10: admin.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
+	6,  // 11: admin.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
+	8,  // 12: admin.service.v1.AuthenticationService.GenerateCaptcha:output_type -> authentication.service.v1.GenerateCaptchaResponse
+	9,  // 13: admin.service.v1.AuthenticationService.VerifyCaptcha:output_type -> authentication.service.v1.VerifyCaptchaResponse
+	10, // 14: admin.service.v1.AuthenticationService.GetAccessTokens:output_type -> authentication.service.v1.GetAccessTokensResponse
+	2,  // 15: admin.service.v1.AuthenticationService.RevokeTokenById:output_type -> google.protobuf.Empty
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_authentication_proto_init() }

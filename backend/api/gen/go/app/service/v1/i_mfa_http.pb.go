@@ -21,12 +21,15 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationMfaServiceMfaBackupCodesRegenerate = "/app.service.v1.MfaService/MfaBackupCodesRegenerate"
 const OperationMfaServiceMfaDisable = "/app.service.v1.MfaService/MfaDisable"
 const OperationMfaServiceMfaSetupConfirm = "/app.service.v1.MfaService/MfaSetupConfirm"
 const OperationMfaServiceMfaSetupStart = "/app.service.v1.MfaService/MfaSetupStart"
 const OperationMfaServiceVerifyMFAChallenge = "/app.service.v1.MfaService/VerifyMFAChallenge"
 
 type MfaServiceHTTPServer interface {
+	// MfaBackupCodesRegenerate 生成/重生成备份码(鉴权;明文仅一次)
+	MfaBackupCodesRegenerate(context.Context, *v1.MfaBackupCodesRegenerateRequest) (*v1.MfaBackupCodesResponse, error)
 	// MfaDisable 解绑(鉴权;验证码通过后清除)
 	MfaDisable(context.Context, *v1.MfaDisableRequest) (*emptypb.Empty, error)
 	// MfaSetupConfirm 确认绑定(鉴权;验证码通过后启用)
@@ -43,6 +46,7 @@ func RegisterMfaServiceHTTPServer(s *http.Server, srv MfaServiceHTTPServer) {
 	r.POST("/app/v1/mfa/setup:start", _MfaService_MfaSetupStart0_HTTP_Handler(srv))
 	r.POST("/app/v1/mfa/setup:confirm", _MfaService_MfaSetupConfirm0_HTTP_Handler(srv))
 	r.POST("/app/v1/mfa:disable", _MfaService_MfaDisable0_HTTP_Handler(srv))
+	r.POST("/app/v1/mfa/backup-codes:regenerate", _MfaService_MfaBackupCodesRegenerate0_HTTP_Handler(srv))
 }
 
 func _MfaService_VerifyMFAChallenge0_HTTP_Handler(srv MfaServiceHTTPServer) func(ctx http.Context) error {
@@ -133,7 +137,31 @@ func _MfaService_MfaDisable0_HTTP_Handler(srv MfaServiceHTTPServer) func(ctx htt
 	}
 }
 
+func _MfaService_MfaBackupCodesRegenerate0_HTTP_Handler(srv MfaServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.MfaBackupCodesRegenerateRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationMfaServiceMfaBackupCodesRegenerate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.MfaBackupCodesRegenerate(ctx, req.(*v1.MfaBackupCodesRegenerateRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.MfaBackupCodesResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type MfaServiceHTTPClient interface {
+	// MfaBackupCodesRegenerate 生成/重生成备份码(鉴权;明文仅一次)
+	MfaBackupCodesRegenerate(ctx context.Context, req *v1.MfaBackupCodesRegenerateRequest, opts ...http.CallOption) (rsp *v1.MfaBackupCodesResponse, err error)
 	// MfaDisable 解绑(鉴权;验证码通过后清除)
 	MfaDisable(ctx context.Context, req *v1.MfaDisableRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// MfaSetupConfirm 确认绑定(鉴权;验证码通过后启用)
@@ -150,6 +178,20 @@ type MfaServiceHTTPClientImpl struct {
 
 func NewMfaServiceHTTPClient(client *http.Client) MfaServiceHTTPClient {
 	return &MfaServiceHTTPClientImpl{client}
+}
+
+// MfaBackupCodesRegenerate 生成/重生成备份码(鉴权;明文仅一次)
+func (c *MfaServiceHTTPClientImpl) MfaBackupCodesRegenerate(ctx context.Context, in *v1.MfaBackupCodesRegenerateRequest, opts ...http.CallOption) (*v1.MfaBackupCodesResponse, error) {
+	var out v1.MfaBackupCodesResponse
+	pattern := "/app/v1/mfa/backup-codes:regenerate"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationMfaServiceMfaBackupCodesRegenerate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // MfaDisable 解绑(鉴权;验证码通过后清除)

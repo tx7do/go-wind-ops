@@ -8,6 +8,8 @@ import {
   type authenticationservicev1_GenerateCaptchaResponse,
   type authenticationservicev1_LoginRequest,
   type authenticationservicev1_LoginResponse,
+  type authenticationservicev1_GetAccessTokensResponse,
+  type authenticationservicev1_MfaBackupCodesResponse,
   type authenticationservicev1_MfaSetupStartResponse,
 } from '@/api/generated/admin/service/v1';
 import { apiClient } from '@/api/client';
@@ -99,6 +101,41 @@ export function useMfaDisable(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.mfaService.MfaDisable(req),
+    ...options,
+  });
+}
+
+export function useMfaBackupCodesRegenerate(
+  options?: UseMutationOptions<
+    authenticationservicev1_MfaBackupCodesResponse,
+    Error,
+    void
+  >,
+) {
+  return useMutation({
+    mutationFn: () => apiClient.mfaService.MfaBackupCodesRegenerate({}),
+    ...options,
+  });
+}
+
+// ------------------------------
+// 我的会话管理（Query/Mutation）
+// ------------------------------
+export function useGetAccessTokens(
+  options?: Partial<UseQueryOptions<authenticationservicev1_GetAccessTokensResponse, Error, authenticationservicev1_GetAccessTokensResponse, readonly unknown[]>>,
+) {
+  return useQuery({
+    queryKey: ['myAccessTokens'],
+    queryFn: () => apiClient.authenticationService.GetAccessTokens({ clientType: 'admin', userId: undefined }),
+    ...options,
+  });
+}
+
+export function useRevokeTokenById(
+  options?: UseMutationOptions<Record<never, never>, Error, { jti: string; reason?: string }>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.authenticationService.RevokeTokenById(req as never),
     ...options,
   });
 }

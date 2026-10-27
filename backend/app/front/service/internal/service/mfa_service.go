@@ -69,6 +69,11 @@ func (s *MfaService) MfaSetupConfirm(ctx context.Context, req *authenticationV1.
 	return s.mfaServiceClient.MfaSetupConfirm(ctx, req)
 }
 
+// MfaBackupCodesRegenerate 生成/重生成备份码(鉴权透传 core)。
+func (s *MfaService) MfaBackupCodesRegenerate(ctx context.Context, req *authenticationV1.MfaBackupCodesRegenerateRequest) (*authenticationV1.MfaBackupCodesResponse, error) {
+	return s.mfaServiceClient.MfaBackupCodesRegenerate(ctx, req)
+}
+
 // MfaDisable 解绑 MFA(鉴权透传 core)。
 func (s *MfaService) MfaDisable(ctx context.Context, req *authenticationV1.MfaDisableRequest) (*emptypb.Empty, error) {
 	return s.mfaServiceClient.MfaDisable(ctx, req)

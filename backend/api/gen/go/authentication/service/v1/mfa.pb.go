@@ -273,6 +273,88 @@ func (x *MfaDisableRequest) GetCode() string {
 	return ""
 }
 
+// MfaBackupCodesRegenerateRequest 重生成备份码(鉴权,操作者=当前用户)
+type MfaBackupCodesRegenerateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MfaBackupCodesRegenerateRequest) Reset() {
+	*x = MfaBackupCodesRegenerateRequest{}
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MfaBackupCodesRegenerateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MfaBackupCodesRegenerateRequest) ProtoMessage() {}
+
+func (x *MfaBackupCodesRegenerateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MfaBackupCodesRegenerateRequest.ProtoReflect.Descriptor instead.
+func (*MfaBackupCodesRegenerateRequest) Descriptor() ([]byte, []int) {
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{5}
+}
+
+// MfaBackupCodesResponse 备份码明文(仅此一次;服务端只存哈希)
+type MfaBackupCodesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Codes         []string               `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"` // 备份码(xxxx-xxxx)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MfaBackupCodesResponse) Reset() {
+	*x = MfaBackupCodesResponse{}
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MfaBackupCodesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MfaBackupCodesResponse) ProtoMessage() {}
+
+func (x *MfaBackupCodesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MfaBackupCodesResponse.ProtoReflect.Descriptor instead.
+func (*MfaBackupCodesResponse) Descriptor() ([]byte, []int) {
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *MfaBackupCodesResponse) GetCodes() []string {
+	if x != nil {
+		return x.Codes
+	}
+	return nil
+}
+
 var File_authentication_service_v1_mfa_proto protoreflect.FileDescriptor
 
 const file_authentication_service_v1_mfa_proto_rawDesc = "" +
@@ -295,14 +377,18 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\x16MfaSetupConfirmRequest\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\"'\n" +
 	"\x11MfaDisableRequest\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\tR\x04code2\xb0\x03\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\"!\n" +
+	"\x1fMfaBackupCodesRegenerateRequest\".\n" +
+	"\x16MfaBackupCodesResponse\x12\x14\n" +
+	"\x05codes\x18\x01 \x03(\tR\x05codes2\xbe\x04\n" +
 	"\n" +
 	"MfaService\x12v\n" +
 	"\x12VerifyMFAChallenge\x124.authentication.service.v1.VerifyMFAChallengeRequest\x1a(.authentication.service.v1.LoginResponse\"\x00\x12t\n" +
 	"\rMfaSetupStart\x12/.authentication.service.v1.MfaSetupStartRequest\x1a0.authentication.service.v1.MfaSetupStartResponse\"\x00\x12^\n" +
 	"\x0fMfaSetupConfirm\x121.authentication.service.v1.MfaSetupConfirmRequest\x1a\x16.google.protobuf.Empty\"\x00\x12T\n" +
 	"\n" +
-	"MfaDisable\x12,.authentication.service.v1.MfaDisableRequest\x1a\x16.google.protobuf.Empty\"\x00B\xf2\x01\n" +
+	"MfaDisable\x12,.authentication.service.v1.MfaDisableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12\x8b\x01\n" +
+	"\x18MfaBackupCodesRegenerate\x12:.authentication.service.v1.MfaBackupCodesRegenerateRequest\x1a1.authentication.service.v1.MfaBackupCodesResponse\"\x00B\xf2\x01\n" +
 	"\x1dcom.authentication.service.v1B\bMfaProtoP\x01ZAgo-wind-ops/api/gen/go/authentication/service/v1;authenticationpb\xa2\x02\x03ASX\xaa\x02\x19Authentication.Service.V1\xca\x02\x19Authentication\\Service\\V1\xe2\x02%Authentication\\Service\\V1\\GPBMetadata\xea\x02\x1bAuthentication::Service::V1b\x06proto3"
 
 var (
@@ -317,27 +403,31 @@ func file_authentication_service_v1_mfa_proto_rawDescGZIP() []byte {
 	return file_authentication_service_v1_mfa_proto_rawDescData
 }
 
-var file_authentication_service_v1_mfa_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_authentication_service_v1_mfa_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_authentication_service_v1_mfa_proto_goTypes = []any{
-	(*VerifyMFAChallengeRequest)(nil), // 0: authentication.service.v1.VerifyMFAChallengeRequest
-	(*MfaSetupStartRequest)(nil),      // 1: authentication.service.v1.MfaSetupStartRequest
-	(*MfaSetupStartResponse)(nil),     // 2: authentication.service.v1.MfaSetupStartResponse
-	(*MfaSetupConfirmRequest)(nil),    // 3: authentication.service.v1.MfaSetupConfirmRequest
-	(*MfaDisableRequest)(nil),         // 4: authentication.service.v1.MfaDisableRequest
-	(*LoginResponse)(nil),             // 5: authentication.service.v1.LoginResponse
-	(*emptypb.Empty)(nil),             // 6: google.protobuf.Empty
+	(*VerifyMFAChallengeRequest)(nil),       // 0: authentication.service.v1.VerifyMFAChallengeRequest
+	(*MfaSetupStartRequest)(nil),            // 1: authentication.service.v1.MfaSetupStartRequest
+	(*MfaSetupStartResponse)(nil),           // 2: authentication.service.v1.MfaSetupStartResponse
+	(*MfaSetupConfirmRequest)(nil),          // 3: authentication.service.v1.MfaSetupConfirmRequest
+	(*MfaDisableRequest)(nil),               // 4: authentication.service.v1.MfaDisableRequest
+	(*MfaBackupCodesRegenerateRequest)(nil), // 5: authentication.service.v1.MfaBackupCodesRegenerateRequest
+	(*MfaBackupCodesResponse)(nil),          // 6: authentication.service.v1.MfaBackupCodesResponse
+	(*LoginResponse)(nil),                   // 7: authentication.service.v1.LoginResponse
+	(*emptypb.Empty)(nil),                   // 8: google.protobuf.Empty
 }
 var file_authentication_service_v1_mfa_proto_depIdxs = []int32{
 	0, // 0: authentication.service.v1.MfaService.VerifyMFAChallenge:input_type -> authentication.service.v1.VerifyMFAChallengeRequest
 	1, // 1: authentication.service.v1.MfaService.MfaSetupStart:input_type -> authentication.service.v1.MfaSetupStartRequest
 	3, // 2: authentication.service.v1.MfaService.MfaSetupConfirm:input_type -> authentication.service.v1.MfaSetupConfirmRequest
 	4, // 3: authentication.service.v1.MfaService.MfaDisable:input_type -> authentication.service.v1.MfaDisableRequest
-	5, // 4: authentication.service.v1.MfaService.VerifyMFAChallenge:output_type -> authentication.service.v1.LoginResponse
-	2, // 5: authentication.service.v1.MfaService.MfaSetupStart:output_type -> authentication.service.v1.MfaSetupStartResponse
-	6, // 6: authentication.service.v1.MfaService.MfaSetupConfirm:output_type -> google.protobuf.Empty
-	6, // 7: authentication.service.v1.MfaService.MfaDisable:output_type -> google.protobuf.Empty
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	5, // 4: authentication.service.v1.MfaService.MfaBackupCodesRegenerate:input_type -> authentication.service.v1.MfaBackupCodesRegenerateRequest
+	7, // 5: authentication.service.v1.MfaService.VerifyMFAChallenge:output_type -> authentication.service.v1.LoginResponse
+	2, // 6: authentication.service.v1.MfaService.MfaSetupStart:output_type -> authentication.service.v1.MfaSetupStartResponse
+	8, // 7: authentication.service.v1.MfaService.MfaSetupConfirm:output_type -> google.protobuf.Empty
+	8, // 8: authentication.service.v1.MfaService.MfaDisable:output_type -> google.protobuf.Empty
+	6, // 9: authentication.service.v1.MfaService.MfaBackupCodesRegenerate:output_type -> authentication.service.v1.MfaBackupCodesResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -356,7 +446,7 @@ func file_authentication_service_v1_mfa_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_authentication_service_v1_mfa_proto_rawDesc), len(file_authentication_service_v1_mfa_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

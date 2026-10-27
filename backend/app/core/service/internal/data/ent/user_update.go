@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -201,6 +202,24 @@ func (_u *UserUpdate) SetNillableMfaSecret(v *string) *UserUpdate {
 // ClearMfaSecret clears the value of the "mfa_secret" field.
 func (_u *UserUpdate) ClearMfaSecret() *UserUpdate {
 	_u.mutation.ClearMfaSecret()
+	return _u
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (_u *UserUpdate) SetMfaBackupCodes(v []string) *UserUpdate {
+	_u.mutation.SetMfaBackupCodes(v)
+	return _u
+}
+
+// AppendMfaBackupCodes appends value to the "mfa_backup_codes" field.
+func (_u *UserUpdate) AppendMfaBackupCodes(v []string) *UserUpdate {
+	_u.mutation.AppendMfaBackupCodes(v)
+	return _u
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (_u *UserUpdate) ClearMfaBackupCodes() *UserUpdate {
+	_u.mutation.ClearMfaBackupCodes()
 	return _u
 }
 
@@ -632,6 +651,17 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.MfaSecretCleared() {
 		_spec.ClearField(user.FieldMfaSecret, field.TypeString)
 	}
+	if value, ok := _u.mutation.MfaBackupCodes(); ok {
+		_spec.SetField(user.FieldMfaBackupCodes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedMfaBackupCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, user.FieldMfaBackupCodes, value)
+		})
+	}
+	if _u.mutation.MfaBackupCodesCleared() {
+		_spec.ClearField(user.FieldMfaBackupCodes, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
@@ -910,6 +940,24 @@ func (_u *UserUpdateOne) SetNillableMfaSecret(v *string) *UserUpdateOne {
 // ClearMfaSecret clears the value of the "mfa_secret" field.
 func (_u *UserUpdateOne) ClearMfaSecret() *UserUpdateOne {
 	_u.mutation.ClearMfaSecret()
+	return _u
+}
+
+// SetMfaBackupCodes sets the "mfa_backup_codes" field.
+func (_u *UserUpdateOne) SetMfaBackupCodes(v []string) *UserUpdateOne {
+	_u.mutation.SetMfaBackupCodes(v)
+	return _u
+}
+
+// AppendMfaBackupCodes appends value to the "mfa_backup_codes" field.
+func (_u *UserUpdateOne) AppendMfaBackupCodes(v []string) *UserUpdateOne {
+	_u.mutation.AppendMfaBackupCodes(v)
+	return _u
+}
+
+// ClearMfaBackupCodes clears the value of the "mfa_backup_codes" field.
+func (_u *UserUpdateOne) ClearMfaBackupCodes() *UserUpdateOne {
+	_u.mutation.ClearMfaBackupCodes()
 	return _u
 }
 
@@ -1370,6 +1418,17 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.MfaSecretCleared() {
 		_spec.ClearField(user.FieldMfaSecret, field.TypeString)
+	}
+	if value, ok := _u.mutation.MfaBackupCodes(); ok {
+		_spec.SetField(user.FieldMfaBackupCodes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedMfaBackupCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, user.FieldMfaBackupCodes, value)
+		})
+	}
+	if _u.mutation.MfaBackupCodesCleared() {
+		_spec.ClearField(user.FieldMfaBackupCodes, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)

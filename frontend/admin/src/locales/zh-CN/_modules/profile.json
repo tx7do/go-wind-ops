@@ -81,5 +81,14 @@
   "mfaEnabledSuccess": "两步验证已启用",
   "mfaDisabledSuccess": "两步验证已解绑",
   "mfaSetupStartFailed": "发起绑定失败",
-  "mfaCodeInvalid": "验证码错误或已过期"
+  "mfaCodeInvalid": "验证码错误或已过期",
+  "sessionsTitle": "我的会话",
+  "sessionsIntro": "当前账号的全部登录会话;在其他设备遗失时可远程吊销。吊销后对应端需重新登录。",
+  "sessionsEmpty": "暂无活跃会话",
+  "sessionRevoke": "吊销",
+  "sessionRevoked": "会话已吊销",
+  "sessionRevokeFailed": "吊销失败",
+  "mfaBackupGenerate": "生成备份码",
+  "mfaBackupRegenerate": "重新生成备份码",
+  "mfaBackupOnceHint": "备份码仅在本次显示,请保存到安全处;登录时输错 TOTP 后可改用备份码,每个仅可用一次,重生成即作废旧码。"
 }
