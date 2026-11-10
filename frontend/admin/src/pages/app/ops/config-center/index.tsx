@@ -67,10 +67,10 @@ const ConfigCenter = () => {
 
   const [distributeTpl, setDistributeTpl] = useState<ConfigTemplate | undefined>();
   const [driftOf, setDriftOf] = useState<ConfigTemplate | undefined>();
-  const [driftNodeId, setDriftNodeId] = useState<number | undefined>();
+  const [driftNodeId, setDriftNodeId] = useState<string | undefined>();
   const [driftReport, setDriftReport] = useState<DriftReport | undefined>();
-  const [distributeNodeId, setDistributeNodeId] = useState<number | undefined>();
-  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: number }[]>([]);
+  const [distributeNodeId, setDistributeNodeId] = useState<string | undefined>();
+  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: string }[]>([]);
 
   const [historyTpl, setHistoryTpl] = useState<ConfigTemplate | undefined>();
 
@@ -136,7 +136,7 @@ const ConfigCenter = () => {
       const r = await fetchListAgentNodes(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }));
       setNodeOptions((r.items ?? []).map((n: AgentNode) => ({
         label: (n.name || n.hostname || n.agentId || String(n.id)) + (n.status === 'ONLINE' ? '' : ` (${t('nodeOffline')})`),
-        value: n.id ?? 0,
+        value: n.id ?? '',
       })));
     } catch {
       setNodeOptions([]);
@@ -217,7 +217,7 @@ const ConfigCenter = () => {
                 orderBy: ['-createdAt'],
               });
               const resp = await fetchListConfigTemplates(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={{ labelWidth: 'auto' }}
             pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

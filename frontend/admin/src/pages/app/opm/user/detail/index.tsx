@@ -20,10 +20,7 @@ const UserDetail = () => {
   const { message } = App.useApp();
 
   const { id } = useParams<{ id: string }>();
-  const userId = useMemo(() => {
-    const num = Number(id);
-    return isNaN(num) ? undefined : num;
-  }, [id]);
+  const userId = useMemo(() => (id && /^\d+$/.test(id) ? id : undefined), [id]);
 
   const [activeTab, setActiveTab] = useState<string>(TabEnum.BASIC_INFO);
   const [passwordDrawerOpen, setPasswordDrawerOpen] = useState(false);

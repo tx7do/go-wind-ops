@@ -40,20 +40,20 @@ const PipelineDrawer: React.FC<PipelineDrawerProps> = ({ open, mode, data, onClo
   const formRef = useRef<ProFormInstance>(null);
   const { message } = App.useApp();
 
-  const [buildOptions, setBuildOptions] = useState<{ label: string; value: number }[]>([]);
-  const [scriptOptions, setScriptOptions] = useState<{ label: string; value: number }[]>([]);
-  const [distOptions, setDistOptions] = useState<{ label: string; value: number }[]>([]);
+  const [buildOptions, setBuildOptions] = useState<{ label: string; value: string }[]>([]);
+  const [scriptOptions, setScriptOptions] = useState<{ label: string; value: string }[]>([]);
+  const [distOptions, setDistOptions] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     if (!open) return;
     fetchListBuilds(new PaginationQuery({ paging: { page: 1, pageSize: 200 } }))
-      .then((r) => setBuildOptions((r.items ?? []).map((b) => ({ label: b.name || String(b.id), value: b.id ?? 0 }))))
+      .then((r) => setBuildOptions((r.items ?? []).map((b) => ({ label: b.name || String(b.id), value: b.id ?? '' }))))
       .catch(() => setBuildOptions([]));
     fetchListScripts(new PaginationQuery({ paging: { page: 1, pageSize: 200 } }))
-      .then((r) => setScriptOptions((r.items ?? []).map((x) => ({ label: x.name || String(x.id), value: x.id ?? 0 }))))
+      .then((r) => setScriptOptions((r.items ?? []).map((x) => ({ label: x.name || String(x.id), value: x.id ?? '' }))))
       .catch(() => setScriptOptions([]));
     fetchListDistributions(new PaginationQuery({ paging: { page: 1, pageSize: 200 } }))
-      .then((r) => setDistOptions((r.items ?? []).map((d) => ({ label: d.name || String(d.id), value: d.id ?? 0 }))))
+      .then((r) => setDistOptions((r.items ?? []).map((d) => ({ label: d.name || String(d.id), value: d.id ?? '' }))))
       .catch(() => setDistOptions([]));
   }, [open]);
 

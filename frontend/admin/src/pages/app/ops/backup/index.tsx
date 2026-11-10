@@ -167,7 +167,7 @@ const BackupTaskManagement = () => {
                     : undefined,
               });
               const resp = await fetchListBackupTasks(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={{ labelWidth: 'auto' }}
             pagination={{

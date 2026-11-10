@@ -11,7 +11,7 @@ import { exportAuditLogs, type AuditExportFormat } from '@/utils/csv';
  * fetcher 契约与审计导出一致：(query: PaginationQuery) => Promise<{ items, total }>。
  */
 export interface TableExportButtonProps {
-  fetcher: (query: PaginationQuery) => Promise<{ items?: any[]; total?: number }>;
+  fetcher: (query: PaginationQuery) => Promise<{ items?: any[]; total?: string | number }>;
   /** ProColumns[]（或 {title, dataIndex}[]），自动过滤出可导出列 */
   columns: any[];
   filename?: string;

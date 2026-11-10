@@ -78,7 +78,7 @@ const AlertManagement = () => {
               orderBy: sorter && Object.keys(sorter).length > 0 ? Object.entries(sorter).map(([k, v]) => v === 'ascend' ? k : `-${k}`) : ['-createdAt'],
             });
             const resp = await fetchListAlerts(q);
-            return { data: resp.items || [], total: resp.total || 0, success: true };
+            return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
           }}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
           toolBarRender={() => []}

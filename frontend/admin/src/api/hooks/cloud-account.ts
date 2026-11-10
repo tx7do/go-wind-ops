@@ -41,7 +41,7 @@ export function useCreateCloudAccount(
 }
 
 export function useUpdateCloudAccount(
-  options?: Partial<UseMutationOptions<unknown, Error, { id: number; data: Partial<opsservicev1_CloudAccount>; secretKey?: string }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: string; data: Partial<opsservicev1_CloudAccount>; secretKey?: string }>>,
 ) {
   return useMutation({
     mutationFn: ({ id, data, secretKey }) =>
@@ -51,7 +51,7 @@ export function useUpdateCloudAccount(
 }
 
 export function useDeleteCloudAccount(
-  options?: Partial<UseMutationOptions<unknown, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id }) => { await apiClient.cloudAccountService.Delete({ id }); },
@@ -60,7 +60,7 @@ export function useDeleteCloudAccount(
 }
 
 export function useVerifyCloudAccount(
-  options?: Partial<UseMutationOptions<opsservicev1_VerifyCloudAccountResponse, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<opsservicev1_VerifyCloudAccountResponse, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: ({ id }) => apiClient.cloudAccountService.Verify({ id } as never),

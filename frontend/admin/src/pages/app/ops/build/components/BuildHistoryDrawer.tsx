@@ -32,7 +32,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
   const [logRecord, setLogRecord] = useState<BuildHistory | undefined>();
 
   // 日志增量 tail:打开弹窗全量拉一次,运行中每 2s 追加新片段直至终态
-  const [logView, setLogView] = useState<{ text: string; offset: number; status?: string; error?: string }>();
+  const [logView, setLogView] = useState<{ text: string; offset: string; status?: string; error?: string }>();
   const logPreRef = useRef<HTMLPreElement>(null);
   const openLog = (record: BuildHistory) => {
     setLogRecord(record);
@@ -41,12 +41,12 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
   useEffect(() => {
     if (!logRecord?.id) return;
     let alive = true;
-    fetchBuildHistoryLog(logRecord.id, 0)
+    fetchBuildHistoryLog(logRecord.id, '')
       .then((resp) => {
         if (!alive) return;
         setLogView({
           text: resp.delta || '',
-          offset: resp.newOffset ?? 0,
+          offset: resp.newOffset ?? '',
           status: resp.status,
           error: resp.error,
         });
@@ -60,10 +60,10 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
     if (logView?.status === 'SUCCESS' || logView?.status === 'FAILED') return;
     const timer = setInterval(async () => {
       try {
-        const resp = await fetchBuildHistoryLog(logRecord.id!, logView?.offset ?? 0);
+        const resp = await fetchBuildHistoryLog(logRecord.id!, logView?.offset ?? '');
         setLogView((p) => ({
           text: (p?.text || '') + (resp.delta || ''),
-          offset: resp.newOffset ?? p?.offset ?? 0,
+          offset: resp.newOffset ?? p?.offset ?? '',
           status: resp.status,
           error: resp.error,
         }));
@@ -79,8 +79,8 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
 
   // 回滚:选分发配置
   const [rollbackFor, setRollbackFor] = useState<BuildHistory | undefined>();
-  const [distOptions, setDistOptions] = useState<{ label: string; value: number }[]>([]);
-  const [selectedDistId, setSelectedDistId] = useState<number | undefined>();
+  const [distOptions, setDistOptions] = useState<{ label: string; value: string }[]>([]);
+  const [selectedDistId, setSelectedDistId] = useState<string | undefined>();
   const [rollbackLoading, setRollbackLoading] = useState(false);
   const triggerMutation = useTriggerDistribution({
     onSuccess: (resp) => {
@@ -112,7 +112,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
         new PaginationQuery({ paging: { page: 1, pageSize: 100 } }),
       );
       const matching = (resp.items ?? []).filter((d) => d.buildId === build?.id);
-      setDistOptions(matching.map((d) => ({ label: d.name || String(d.id), value: d.id ?? 0 })));
+      setDistOptions(matching.map((d) => ({ label: d.name || String(d.id), value: d.id ?? '' })));
       if (matching.length > 0) setSelectedDistId(matching[0].id);
       else setSelectedDistId(undefined);
     } catch {
@@ -134,7 +134,7 @@ const BuildHistoryDrawer: React.FC<BuildHistoryDrawerProps> = ({ build, onClose 
 
   const download = async (record: BuildHistory) => {
     try {
-      const resp = await fetchArtifactDownloadUrl(record.id ?? 0);
+      const resp = await fetchArtifactDownloadUrl(record.id ?? '');
       window.open(resp.url, '_blank');
     } catch (e) {
       console.error('artifact url failed:', e);

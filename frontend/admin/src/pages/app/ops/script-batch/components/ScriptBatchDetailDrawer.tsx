@@ -4,7 +4,7 @@ import type { opsservicev1_ScriptBatchItem as ScriptBatchItem } from '@/api/gene
 import { useGetScriptBatch } from '@/api/hooks/script-batch';
 
 interface Props {
-  batchId?: number;
+  batchId?: string;
   onClose: () => void;
 }
 
@@ -16,7 +16,7 @@ const ScriptBatchDetailDrawer: React.FC<Props> = ({ batchId, onClose }) => {
 
   // enabled 由 batchId 驱动;RUNNING 批次轮询,终态停止
   const { data, isFetching } = useGetScriptBatch(
-    { id: batchId ?? 0 },
+    { id: batchId ?? '' },
     {
       enabled: !!batchId,
       refetchInterval: (query) =>

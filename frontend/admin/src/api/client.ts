@@ -21,6 +21,10 @@ const transport: ClientTransport = {
   duplexStream(path, _meta) {
     throw new Error(`duplexStream not supported via ApiClient: ${path}`);
   },
+  byteStream(path, _meta) {
+    // google.api.HttpBody 字节流（同 serverStream：二进制流不走 axios 适配层）
+    throw new Error(`byteStream not supported via ApiClient: ${path}`);
+  },
 };
 
 export const apiClient = createApiClient(transport);

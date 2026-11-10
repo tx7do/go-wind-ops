@@ -33,10 +33,10 @@ export function useCreateNotificationChannel(
 }
 
 export function useUpdateNotificationChannel(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, any> }) =>
       apiClient.notificationChannelService.Update({
         id,
         data: { ...values } as opsservicev1_NotificationChannel,

@@ -28,8 +28,8 @@ const CloudAccountManagement = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<CloudAccount | undefined>();
-  const [verifyingId, setVerifyingId] = useState<number>();
-  const [syncingId, setSyncingId] = useState<number>();
+  const [verifyingId, setVerifyingId] = useState<string>();
+  const [syncingId, setSyncingId] = useState<string>();
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listCloudAccounts'] });
 
@@ -163,7 +163,7 @@ const CloudAccountManagement = () => {
                 paging: { page: params.current || 1, pageSize: params.pageSize || 10 },
               });
               const resp = await fetchListCloudAccounts(query);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             rowKey="id"
             search={false}

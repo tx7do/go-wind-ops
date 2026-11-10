@@ -291,7 +291,7 @@ const TerminalPage = () => {
             },
           });
           term.write(
-            `\r\x1b[2K\x1b[32m${t('uploadTermDone', { name: relativePath || f.name, size: formatBytes(done.size ?? f.size) })}\x1b[0m\r\n`,
+            `\r\x1b[2K\x1b[32m${t('uploadTermDone', { name: relativePath || f.name, size: formatBytes(Number(done.size ?? f.size)) })}\x1b[0m\r\n`,
           );
           ok += 1;
         } catch (err) {

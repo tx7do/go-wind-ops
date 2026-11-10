@@ -38,7 +38,7 @@ export function useGetTerminalSession(
 }
 
 export function useListTerminalChunks(
-  sessionId?: number,
+  sessionId?: string,
   options?: Partial<UseQueryOptions<opsservicev1_ListTerminalChunkResponse, Error, opsservicev1_ListTerminalChunkResponse, readonly unknown[]>>,
 ) {
   return useQuery({

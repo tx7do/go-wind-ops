@@ -52,14 +52,14 @@ const ScriptManagement = () => {
 
   // 执行弹窗:选目标在线节点
   const [execScript, setExecScript] = useState<Script | undefined>();
-  const [execNodeId, setExecNodeId] = useState<number | undefined>();
+  const [execNodeId, setExecNodeId] = useState<string | undefined>();
   const [execLoading, setExecLoading] = useState(false);
-  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: number }[]>([]);
+  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: string }[]>([]);
 
   // 批量执行弹窗:多选节点
   const [batchScript, setBatchScript] = useState<Script | undefined>();
-  const [batchNodeIds, setBatchNodeIds] = useState<number[]>([]);
-  const [batchNodeOptions, setBatchNodeOptions] = useState<{ label: string; value: number }[]>([]);
+  const [batchNodeIds, setBatchNodeIds] = useState<string[]>([]);
+  const [batchNodeOptions, setBatchNodeOptions] = useState<{ label: string; value: string }[]>([]);
   const [batchLoading, setBatchLoading] = useState(false);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['listScripts'] });
@@ -152,7 +152,7 @@ const ScriptManagement = () => {
       setNodeOptions(
         online.map((n) => ({
           label: n.name || n.hostname || n.agentId || String(n.id),
-          value: n.id ?? 0,
+          value: n.id ?? '',
         })),
       );
       if (online.length > 0) setExecNodeId(online[0].id);
@@ -174,7 +174,7 @@ const ScriptManagement = () => {
           label:
             (n.name || n.hostname || n.agentId || String(n.id)) +
             (n.status === 'ONLINE' ? '' : ` (${t('nodeOffline')})`),
-          value: n.id ?? 0,
+          value: n.id ?? '',
         })),
       );
     } catch {
@@ -302,7 +302,7 @@ const ScriptManagement = () => {
 
               return {
                 data: response.items || [],
-                total: response.total || 0,
+                total: Number(response.total ?? 0),
                 success: true,
               };
             }}

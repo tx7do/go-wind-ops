@@ -108,7 +108,7 @@ const TerminalSessionsDrawer = ({ open, onClose, onReplay }: Props) => {
               orderBy: ['-createdAt'],
             });
             const resp = await (await import('@/api/hooks/terminal-audit')).fetchListTerminalSessions(q);
-            return { data: resp.items || [], total: resp.total || 0, success: true };
+            return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
           }}
           search={false}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

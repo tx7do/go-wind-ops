@@ -66,18 +66,18 @@ const MenuManagement = () => {
 
   // 构建菜单树
   const buildMenuTree = (items: Menu[]): Menu[] => {
-    const map = new Map<number, Menu & { children?: Menu[] }>();
+    const map = new Map<string, Menu & { children?: Menu[] }>();
     const roots: (Menu & { children?: Menu[] })[] = [];
 
     // 先创建所有节点的映射
     items.forEach((item) => {
-      map.set(item.id as number, { ...item, children: [] });
+      map.set(item.id as string, { ...item, children: [] });
     });
 
     // 构建树
     map.forEach((node) => {
-      if (node.parentId && map.has(node.parentId as number)) {
-        const parent = map.get(node.parentId as number)!;
+      if (node.parentId && map.has(node.parentId)) {
+        const parent = map.get(node.parentId)!;
         if (!parent.children) parent.children = [];
         parent.children.push(node);
       } else {
@@ -107,7 +107,7 @@ const MenuManagement = () => {
     const keys: React.Key[] = [];
     const collectKeys = (items: Menu[]) => {
       items.forEach((item) => {
-        keys.push(item.id as number);
+        keys.push(item.id as string);
         if ((item as any).children?.length) {
           collectKeys((item as any).children);
         }
@@ -272,7 +272,7 @@ const MenuManagement = () => {
 
               return {
                 data: treeData,
-                total: items.length,
+                total: Number(items.length ?? 0),
                 success: true,
               };
             

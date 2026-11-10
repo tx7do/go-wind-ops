@@ -8,7 +8,7 @@ import { fetchListAlerts } from '@/api/hooks/alert';
 import { fetchListDistributionRecords } from '@/api/hooks/distribution';
 
 interface Props {
-  projectId?: number;
+  projectId?: string;
   projectName?: string;
   onClose: () => void;
 }

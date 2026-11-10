@@ -37,7 +37,7 @@ const BuildDrawer: React.FC<BuildDrawerProps> = ({
   const { message } = App.useApp();
 
   const [repoOptions, setRepoOptions] = useState<
-    { label: string; value: number }[]
+    { label: string; value: string }[]
   >([]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const BuildDrawer: React.FC<BuildDrawerProps> = ({
     fetchListRepositories(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }))
       .then((resp) => {
         setRepoOptions(
-          (resp.items ?? []).map((r) => ({ label: r.name || String(r.id), value: r.id ?? 0 })),
+          (resp.items ?? []).map((r) => ({ label: r.name || String(r.id), value: r.id ?? '' })),
         );
       })
       .catch(() => setRepoOptions([]));

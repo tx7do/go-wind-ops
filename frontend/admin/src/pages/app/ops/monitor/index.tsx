@@ -82,7 +82,7 @@ const MonitorManagement = () => {
                 orderBy: sorter && Object.keys(sorter).length > 0 ? Object.entries(sorter).map(([k, v]) => v === 'ascend' ? k : `-${k}`) : undefined,
               });
               const resp = await fetchListMonitors(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={{ labelWidth: 'auto' }}
             pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

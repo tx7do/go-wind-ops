@@ -54,7 +54,7 @@ export function useSearchLogSnapshots(
 }
 
 export function useDeleteLogSnapshot(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.logSnapshotService.Delete(req as never),

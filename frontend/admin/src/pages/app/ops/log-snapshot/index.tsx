@@ -72,7 +72,7 @@ const LogSnapshotManagement = () => {
   const [captureProjectId, setCaptureProjectId] = useState<number | undefined>();
   const [projectOptions, setProjectOptions] = useState<{ label: string; value: number }[]>([]);
   const [keyword, setKeyword] = useState('');
-  const [hits, setHits] = useState<{ snapshotId?: number; projectName?: string; excerpt?: string; matchCount?: number; capturedAt?: string }[]>([]);
+  const [hits, setHits] = useState<{ snapshotId?: string; projectName?: string; excerpt?: string; matchCount?: number; capturedAt?: string }[]>([]);
   const [searching, setSearching] = useState(false);
 
   const captureMutation = useCaptureLogSnapshot({
@@ -160,7 +160,7 @@ const LogSnapshotManagement = () => {
       dataIndex: 'sizeBytes',
       width: 110,
       hideInSearch: true,
-      render: (_, r) => `${Math.ceil((r.sizeBytes ?? 0) / 1024)} KB`,
+      render: (_, r) => `${Math.ceil(Number(r.sizeBytes ?? 0) / 1024)} KB`,
     },
     {
       title: t('trigger'),
@@ -252,7 +252,7 @@ const LogSnapshotManagement = () => {
                 orderBy: ['-createdAt'],
               });
               const resp = await fetchListLogSnapshots(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={false}
             pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

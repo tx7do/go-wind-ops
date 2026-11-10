@@ -47,7 +47,7 @@ const BackupTaskDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSucces
       onFinish={async (values: any) => {
         const payload = {
           ...values,
-          nodeId: values.nodeId ? Number(values.nodeId) : 0,
+          nodeId: values.nodeId ? values.nodeId : '',
           retention: values.retention ?? 0,
         };
         if (mode === 'create') await createMutation.mutateAsync(payload);
@@ -91,7 +91,7 @@ const BackupTaskDrawer: React.FC<Props> = ({ open, mode, data, onClose, onSucces
 };
 
 // NodeSelect 节点下拉(展示全部节点供选择目标机器)
-const NodeSelect: React.FC<{ initialValue?: number }> = ({ initialValue }) => {
+const NodeSelect: React.FC<{ initialValue?: string | number }> = ({ initialValue }) => {
   const { t } = useTranslation('backup');
   const [options, setOptions] = useState<{ label: string; value: number }[]>([]);
 

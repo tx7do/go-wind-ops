@@ -77,10 +77,10 @@ export function useCreateScript(
 }
 
 export function useUpdateScript(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, any> }) =>
       apiClient.scriptService.Update({
         id,
         data: { ...values } as opsservicev1_Script,
@@ -109,7 +109,7 @@ export function useExecuteScript(
 }
 
 export function useListScriptVersions(
-  scriptId: number | undefined,
+  scriptId: string | undefined,
   options?: Partial<UseQueryOptions<opsservicev1_ListScriptVersionsResponse, Error, opsservicev1_ListScriptVersionsResponse, readonly unknown[]>>,
 ) {
   return useQuery({
@@ -121,7 +121,7 @@ export function useListScriptVersions(
 }
 
 export function useRestoreScriptVersion(
-  options?: UseMutationOptions<void, Error, { scriptId: number; versionId: number }>,
+  options?: UseMutationOptions<void, Error, { scriptId: string; versionId: string }>,
 ) {
   return useMutation({
     mutationFn: async (req) => {

@@ -25,11 +25,11 @@ const CloudResourceManagement = () => {
   const tableScrollY = useProTableScrollY(containerRef);
 
   const [syncingAll, setSyncingAll] = useState(false);
-  const [accountOptions, setAccountOptions] = useState<{ label: string; value: number }[]>([]);
+  const [accountOptions, setAccountOptions] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     fetchListCloudAccounts(new PaginationQuery({ paging: { page: 1, pageSize: 500 } }))
-      .then((r) => setAccountOptions((r.items ?? []).map((a) => ({ label: a.name || String(a.id), value: a.id ?? 0 }))))
+      .then((r) => setAccountOptions((r.items ?? []).map((a) => ({ label: a.name || String(a.id), value: a.id ?? '' }))))
       .catch(() => setAccountOptions([]));
   }, []);
 
@@ -164,7 +164,7 @@ const CloudResourceManagement = () => {
               matched: params.matched === 'true' ? true : params.matched === 'false' ? false : undefined,
               keyword: params.keyword || undefined,
             });
-            return { data: resp.items || [], total: resp.total || 0, success: true };
+            return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
           }}
           rowKey="id"
           search={{ labelWidth: 'auto', defaultColsNumber: 3 }}

@@ -10,7 +10,7 @@ import { apiClient } from '@/api/client';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 
 interface Props {
-  alertId?: number;
+  alertId?: string;
   onClose: () => void;
 }
 
@@ -85,7 +85,7 @@ const AlertDeliveriesDrawer = ({ alertId, onClose }: Props) => {
               orderBy: ['-createdAt'],
             });
             const resp = await apiClient.notificationDeliveryService.List(q.toRawParams());
-            return { data: resp.items || [], total: resp.total || 0, success: true };
+            return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
           }}
           search={false}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE }}

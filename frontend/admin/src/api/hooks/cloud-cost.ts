@@ -50,7 +50,7 @@ export function useUpsertCloudCost(
 }
 
 export function useDeleteCloudCost(
-  options?: Partial<UseMutationOptions<unknown, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id }) => { await apiClient.cloudCostService.Delete({ id }); },
@@ -79,7 +79,7 @@ export function useCloudCostSummary(
 }
 
 export function useFetchCloudCostFromProvider(
-  options?: Partial<UseMutationOptions<opsservicev1_FetchCloudCostFromProviderResponse, Error, { cloudAccountId: number; month: string }>>,
+  options?: Partial<UseMutationOptions<opsservicev1_FetchCloudCostFromProviderResponse, Error, { cloudAccountId: string; month: string }>>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.cloudCostService.Fetch(req as never),

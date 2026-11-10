@@ -20,7 +20,7 @@ const ScriptBatchManagement = () => {
   const actionRef = useRef<ActionType>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
-  const [detailId, setDetailId] = useState<number | undefined>();
+  const [detailId, setDetailId] = useState<string | undefined>();
 
   const columns: ProColumns<ScriptBatch>[] = [
     {
@@ -113,7 +113,7 @@ const ScriptBatchManagement = () => {
                     : undefined,
               });
               const resp = await fetchListScriptBatches(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={{ labelWidth: 'auto' }}
             pagination={{

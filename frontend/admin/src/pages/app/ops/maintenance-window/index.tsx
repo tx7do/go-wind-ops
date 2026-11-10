@@ -122,7 +122,7 @@ const MaintenanceWindowManagement = () => {
               const resp = await fetchListMaintenanceWindows(query);
               return {
                 data: resp.items || [],
-                total: resp.total || 0,
+                total: Number(resp.total ?? 0),
                 success: true,
               };
             }}

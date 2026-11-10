@@ -46,10 +46,10 @@ export function useCreateConfigTemplate(
 }
 
 export function useUpdateConfigTemplate(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, any> }) =>
       apiClient.configService.Update({
         id,
         data: { ...values } as opsservicev1_ConfigTemplate,
@@ -60,7 +60,7 @@ export function useUpdateConfigTemplate(
 }
 
 export function useDeleteConfigTemplate(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.configService.Delete(req as never),
@@ -69,7 +69,7 @@ export function useDeleteConfigTemplate(
 }
 
 export function useDistributeConfig(
-  options?: UseMutationOptions<opsservicev1_ConfigDistribution, Error, { templateId: number; nodeId: number; projectId?: number }>,
+  options?: UseMutationOptions<opsservicev1_ConfigDistribution, Error, { templateId: string; nodeId: string; projectId?: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.configService.Distribute(req as never),
@@ -78,7 +78,7 @@ export function useDistributeConfig(
 }
 
 export function useListConfigDistributions(
-  templateId?: number,
+  templateId?: string,
   options?: Partial<UseQueryOptions<opsservicev1_ConfigDistribution[], Error, opsservicev1_ConfigDistribution[], readonly unknown[]>>,
 ) {
   return useQuery({
@@ -101,7 +101,7 @@ export function useCheckConfigDrift(
   options?: UseMutationOptions<
     opsservicev1_ConfigDriftReport,
     Error,
-    { templateId: number; nodeId: number; projectId?: number }
+    { templateId: string; nodeId: string; projectId?: string }
   >,
 ) {
   return useMutation({

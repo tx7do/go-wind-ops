@@ -39,13 +39,13 @@ function bytesToText(bytes: Uint8Array): string {
   }
 }
 
-function buildWsUrl(ticket: string, projectId: number, intervalMs: number): string {
+function buildWsUrl(ticket: string, projectId: string, intervalMs: number): string {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
   return `${proto}://${location.host}/admin/v1/ws/projects/log?ticket=${encodeURIComponent(ticket)}&projectId=${projectId}&interval=${intervalMs}`;
 }
 
 /** 获取一次性握手票据(30s 有效,单次消费):长效 token 不进 WS URL。 */
-async function fetchLogTicket(projectId: number): Promise<string> {
+async function fetchLogTicket(projectId: string): Promise<string> {
   const resp = (await requestApi({
     path: `/admin/v1/ws/terminal/tickets?kind=project-log&projectId=${projectId}`,
     method: 'POST',

@@ -38,7 +38,7 @@ const ProjectDrawer: React.FC<ProjectDrawerProps> = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   // 节点下拉(在线优先展示由后端排序;这里取全量)
-  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: number }[]>([]);
+  const [nodeOptions, setNodeOptions] = useState<{ label: string; value: string }[]>([]);
   useEffect(() => {
     if (!open) return;
     fetchListAgentNodes(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }))
@@ -46,7 +46,7 @@ const ProjectDrawer: React.FC<ProjectDrawerProps> = ({
         setNodeOptions(
           (resp.items ?? []).map((n) => ({
             label: `${n.name || n.hostname || n.agentId}${n.status === 'ONLINE' ? '（在线）' : '（离线）'}`,
-            value: n.id ?? 0,
+            value: n.id ?? '',
           })),
         );
       })

@@ -40,7 +40,7 @@ export async function fetchListCloudInstances(params: CloudInstanceListParams) {
 }
 
 export function useSyncCloudAccountInstances(
-  options?: Partial<UseMutationOptions<opsservicev1_SyncCloudAccountInstancesResponse, Error, { cloudAccountId: number }>>,
+  options?: Partial<UseMutationOptions<opsservicev1_SyncCloudAccountInstancesResponse, Error, { cloudAccountId: string }>>,
 ) {
   return useMutation({
     mutationFn: ({ cloudAccountId }) =>

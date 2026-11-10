@@ -44,7 +44,7 @@ export function useCreateMaintenanceWindow(
 }
 
 export function useUpdateMaintenanceWindow(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Partial<opsservicev1_MaintenanceWindow> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Partial<opsservicev1_MaintenanceWindow> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) =>
@@ -57,7 +57,7 @@ export function useUpdateMaintenanceWindow(
 }
 
 export function useDeleteMaintenanceWindow(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.maintenanceWindowService.DeleteMaintenanceWindow(req as never),

@@ -12,7 +12,7 @@ import {
  * (恢复前服务端自动快照当前内容,历史链条永不丢)。
  */
 const ScriptVersionsDrawer: React.FC<{
-  scriptId?: number;
+  scriptId?: string;
   scriptName?: string;
   onClose: () => void;
 }> = ({ scriptId, scriptName, onClose }) => {
@@ -20,7 +20,7 @@ const ScriptVersionsDrawer: React.FC<{
   const { message } = App.useApp();
   const queryClient = useQueryClient();
   const { data, isLoading } = useListScriptVersions(scriptId);
-  const [viewing, setViewing] = useState<{ id: number; content: string } | undefined>();
+  const [viewing, setViewing] = useState<{ id: string; content: string } | undefined>();
 
   const restoreMutation = useRestoreScriptVersion({
     onSuccess: () => {
@@ -56,7 +56,7 @@ const ScriptVersionsDrawer: React.FC<{
                 </Typography.Text>
               </Space>
               <Space size={4}>
-                <Button size="small" onClick={() => setViewing({ id: v.id || 0, content: v.content || '' })}>
+                <Button size="small" onClick={() => setViewing({ id: v.id || '', content: v.content || '' })}>
                   {t('versionView')}
                 </Button>
                 <Button

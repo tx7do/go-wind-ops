@@ -44,7 +44,7 @@ export function useCreatePipeline(
 }
 
 export function useUpdatePipeline(
-  options?: Partial<UseMutationOptions<unknown, Error, { id: number; data: Partial<opsservicev1_Pipeline> }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: string; data: Partial<opsservicev1_Pipeline> }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id, data }) => { await apiClient.pipelineService.Update({ id, data } as never); },
@@ -53,7 +53,7 @@ export function useUpdatePipeline(
 }
 
 export function useDeletePipeline(
-  options?: Partial<UseMutationOptions<unknown, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<unknown, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id }) => { await apiClient.pipelineService.Delete({ id }); },
@@ -62,7 +62,7 @@ export function useDeletePipeline(
 }
 
 export function useTriggerPipeline(
-  options?: Partial<UseMutationOptions<opsservicev1_TriggerPipelineResponse, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<opsservicev1_TriggerPipelineResponse, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: ({ id }) => apiClient.pipelineService.Trigger({ id } as never),
@@ -86,7 +86,7 @@ export async function fetchListPipelineRuns(params: PaginationQuery) {
 }
 
 export function useGetPipelineRun(
-  req: { id?: number },
+  req: { id?: string },
   options?: Partial<UseQueryOptions<opsservicev1_PipelineRun, Error, opsservicev1_PipelineRun, readonly unknown[]>>,
 ) {
   return useQuery({
@@ -98,6 +98,6 @@ export function useGetPipelineRun(
 }
 
 /** 增量拉取运行日志:offset 传上次返回的 newOffset(0=全量)。 */
-export async function fetchPipelineRunLog(id: number, offset: number): Promise<opsservicev1_GetPipelineRunLogResponse> {
+export async function fetchPipelineRunLog(id: string, offset: string): Promise<opsservicev1_GetPipelineRunLogResponse> {
   return apiClient.pipelineService.GetRunLog({ id, offset });
 }

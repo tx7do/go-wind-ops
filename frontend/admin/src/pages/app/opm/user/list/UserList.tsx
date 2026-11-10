@@ -18,8 +18,8 @@ import { getUserStatusMap, getUserStatusOptions } from '../constants';
 import UserDrawer from './UserDrawer';
 
 interface UserListProps {
-  tenantId: number | undefined;
-  orgUnitId: number | undefined;
+  tenantId: string | undefined;
+  orgUnitId: string | undefined;
 }
 
 /**
@@ -259,7 +259,7 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
 
             return {
               data: response.items || [],
-              total: response.total || 0,
+              total: Number(response.total ?? 0),
               success: true,
             };
           

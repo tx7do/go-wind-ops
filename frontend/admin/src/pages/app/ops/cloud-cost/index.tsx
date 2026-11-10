@@ -47,14 +47,14 @@ const CloudCostManagement = () => {
   const [editing, setEditing] = useState<CloudCost | undefined>();
   const [importOpen, setImportOpen] = useState(false);
   const [csvText, setCsvText] = useState('');
-  const [accountOptions, setAccountOptions] = useState<{ label: string; value: number }[]>([]);
+  const [accountOptions, setAccountOptions] = useState<{ label: string; value: string }[]>([]);
   const [fetchOpen, setFetchOpen] = useState(false);
-  const [fetchAccountId, setFetchAccountId] = useState<number>();
+  const [fetchAccountId, setFetchAccountId] = useState<string>();
   const [fetchMonth, setFetchMonth] = useState<string>(dayjs().subtract(1, 'month').format('YYYY-MM'));
 
   useEffect(() => {
     fetchListCloudAccounts(new PaginationQuery({ paging: { page: 1, pageSize: 500 } }))
-      .then((r) => setAccountOptions((r.items ?? []).map((a) => ({ label: a.name || String(a.id), value: a.id ?? 0 }))))
+      .then((r) => setAccountOptions((r.items ?? []).map((a) => ({ label: a.name || String(a.id), value: a.id ?? '' }))))
       .catch(() => setAccountOptions([]));
   }, []);
 
@@ -290,7 +290,7 @@ const CloudCostManagement = () => {
               year: params.year || undefined,
               provider: params.provider || undefined,
             });
-            return { data: resp.items || [], total: resp.total || 0, success: true };
+            return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
           }}
           rowKey="id"
           search={{ labelWidth: 'auto', defaultColsNumber: 3 }}

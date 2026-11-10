@@ -160,7 +160,7 @@ const ApiKeyManagement = () => {
                 paging: { page: params.current || 1, pageSize: params.pageSize || 10 },
               });
               const resp = await fetchListApiKeys(query);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             rowKey="id"
             search={false}

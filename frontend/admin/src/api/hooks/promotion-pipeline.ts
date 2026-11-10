@@ -46,7 +46,7 @@ export function useCreatePromotionPipeline(
 }
 
 export function useUpdatePromotionPipeline(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Partial<opsservicev1_PromotionPipeline> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Partial<opsservicev1_PromotionPipeline> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) =>
@@ -59,7 +59,7 @@ export function useUpdatePromotionPipeline(
 }
 
 export function useDeletePromotionPipeline(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.promotionPipelineService.DeletePromotionPipeline(req as never),
@@ -68,7 +68,7 @@ export function useDeletePromotionPipeline(
 }
 
 export function useGetPromotionStatus(
-  id: number | undefined,
+  id: string | undefined,
   options?: Partial<UseQueryOptions<opsservicev1_GetPromotionStatusResponse, Error, opsservicev1_GetPromotionStatusResponse, readonly unknown[]>>,
 ) {
   return useQuery({
@@ -80,7 +80,7 @@ export function useGetPromotionStatus(
 }
 
 export function usePromotePromotion(
-  options?: UseMutationOptions<opsservicev1_PromotePromotionResponse, Error, { id: number; stageIndex: number; historyId?: number }>,
+  options?: UseMutationOptions<opsservicev1_PromotePromotionResponse, Error, { id: string; stageIndex: number; historyId?: number }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.promotionPipelineService.PromotePromotion(req as never),

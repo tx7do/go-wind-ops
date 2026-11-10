@@ -460,7 +460,7 @@ class StorageManager implements IStorageCache {
         if (!raw) {
           result[key] = null;
           this.trackMetric("misses");
-          onProgress?.({ current: i + 1, total: keys.length, key, status: "failed" });
+          onProgress?.({ current: i + 1, total: Number(keys.length ?? 0), key, status: "failed" });
           continue;
         }
 
@@ -473,7 +473,7 @@ class StorageManager implements IStorageCache {
             this.storage.removeItem(fullKey);
             this.removeMeta(key);
             result[key] = null;
-            onProgress?.({ current: i + 1, total: keys.length, key, status: "expired" });
+            onProgress?.({ current: i + 1, total: Number(keys.length ?? 0), key, status: "expired" });
           } else {
             // 不过滤过期项，返回原始数据（调用方自行处理）
             result[key] = includeRaw ? (parsed as unknown as T) : null;
@@ -484,7 +484,7 @@ class StorageManager implements IStorageCache {
         result[key] = parsed.data;
         this.trackMetric("hits");
         this.updateMetaOnAccess(key);
-        onProgress?.({ current: i + 1, total: keys.length, key, status: "success" });
+        onProgress?.({ current: i + 1, total: Number(keys.length ?? 0), key, status: "success" });
       } catch (error) {
         console.error(`[StorageManager] getItems error for key "${key}":`, error);
         this.trackMetric("errors");
@@ -492,7 +492,7 @@ class StorageManager implements IStorageCache {
         this.storage.removeItem(fullKey);
         this.removeMeta(key);
         result[key] = null;
-        onProgress?.({ current: i + 1, total: keys.length, key, status: "failed" });
+        onProgress?.({ current: i + 1, total: Number(keys.length ?? 0), key, status: "failed" });
       }
 
       // 微任务让出主线程，避免阻塞 UI
@@ -543,7 +543,7 @@ class StorageManager implements IStorageCache {
         this.updateMetaOnSet(key, serialized, ttl);
         result.success[key] = value;
         this.trackMetric("sets");
-        onProgress?.({ current: i + 1, total: entries.length, key, status: "success" });
+        onProgress?.({ current: i + 1, total: Number(entries.length ?? 0), key, status: "success" });
       } catch (error) {
         this.trackMetric("errors");
         const err = error instanceof Error ? error : new Error(String(error));
@@ -562,19 +562,19 @@ class StorageManager implements IStorageCache {
             this.updateMetaOnSet(key, serialized, ttl);
             result.success[key] = value;
             this.trackMetric("sets");
-            onProgress?.({ current: i + 1, total: entries.length, key, status: "success" });
+            onProgress?.({ current: i + 1, total: Number(entries.length ?? 0), key, status: "success" });
             continue;
           } catch (retryError) {
             result.failed[key] =
               retryError instanceof Error ? retryError : new Error("Retry failed");
             this.trackMetric("errors");
-            onProgress?.({ current: i + 1, total: entries.length, key, status: "failed" });
+            onProgress?.({ current: i + 1, total: Number(entries.length ?? 0), key, status: "failed" });
             continue;
           }
         }
 
         result.failed[key] = err;
-        onProgress?.({ current: i + 1, total: entries.length, key, status: "failed" });
+        onProgress?.({ current: i + 1, total: Number(entries.length ?? 0), key, status: "failed" });
       }
 
       // 每 50 项让出主线程

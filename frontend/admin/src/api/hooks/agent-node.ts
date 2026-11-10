@@ -54,10 +54,10 @@ export function useGetAgentNode(
 }
 
 export function useUpdateAgentNode(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) => {
+    mutationFn: ({ id, values }: { id: string; values: Record<string, any> }) => {
       const req: opsservicev1_UpdateAgentNodeRequest = {
         id,
         data: { ...values } as opsservicev1_AgentNode,
@@ -113,7 +113,7 @@ export function useUpgradeAgent(
   options?: UseMutationOptions<
     opsservicev1_UpgradeAgentResponse,
     Error,
-    { nodeId: number; version: string; objectKey: string }
+    { nodeId: string; version: string; objectKey: string }
   >,
 ) {
   return useMutation({

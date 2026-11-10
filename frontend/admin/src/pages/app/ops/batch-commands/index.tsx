@@ -21,7 +21,7 @@ const BatchCommandsPage = () => {
   const [agentIds, setAgentIds] = useState<string[]>([]);
   const [command, setCommand] = useState('');
   const [timeoutSec, setTimeoutSec] = useState<number>(60);
-  const [batchId, setBatchId] = useState<number>();
+  const [batchId, setBatchId] = useState<string>();
 
   const { data: nodesResp } = useQuery({
     queryKey: ['listAgentNodesForBatch', 'all'],

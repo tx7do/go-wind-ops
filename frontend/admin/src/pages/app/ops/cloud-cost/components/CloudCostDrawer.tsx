@@ -16,7 +16,7 @@ import { useUpsertCloudCost } from '@/api/hooks/cloud-cost';
 interface CloudCostDrawerProps {
   open: boolean;
   data?: CloudCost; // 编辑时预填(按账号+月份定位,无 id 概念)
-  accountOptions: { label: string; value: number }[];
+  accountOptions: { label: string; value: string }[];
   onClose: () => void;
   onSuccess: () => void;
 }

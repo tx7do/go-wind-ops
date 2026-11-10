@@ -41,7 +41,7 @@ export function useCreateApiKey(
 }
 
 export function useUpdateApiKey(
-  options?: Partial<UseMutationOptions<void, Error, { id: number; data: Partial<opsservicev1_ApiKey> }>>,
+  options?: Partial<UseMutationOptions<void, Error, { id: string; data: Partial<opsservicev1_ApiKey> }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id, data }) => { await apiClient.apiKeyService.Update({ id, data } as never); },
@@ -50,7 +50,7 @@ export function useUpdateApiKey(
 }
 
 export function useDeleteApiKey(
-  options?: Partial<UseMutationOptions<void, Error, { id: number }>>,
+  options?: Partial<UseMutationOptions<void, Error, { id: string }>>,
 ) {
   return useMutation({
     mutationFn: async ({ id }) => { await apiClient.apiKeyService.Delete({ id }); },

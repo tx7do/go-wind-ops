@@ -51,10 +51,10 @@ export function useCreateBackupTask(
 }
 
 export function useUpdateBackupTask(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, any> }) =>
       apiClient.backupService.Update({
         id,
         data: { ...values } as opsservicev1_BackupTask,
@@ -65,7 +65,7 @@ export function useUpdateBackupTask(
 }
 
 export function useDeleteBackupTask(
-  options?: UseMutationOptions<Record<never, never>, Error, { id: number }>,
+  options?: UseMutationOptions<Record<never, never>, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.backupService.Delete(req as never),
@@ -74,7 +74,7 @@ export function useDeleteBackupTask(
 }
 
 export function useTriggerBackup(
-  options?: UseMutationOptions<opsservicev1_TriggerBackupResponse, Error, { id: number }>,
+  options?: UseMutationOptions<opsservicev1_TriggerBackupResponse, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.backupService.Trigger(req as never),
@@ -103,7 +103,7 @@ export async function fetchListBackupRecords(params: PaginationQuery) {
 }
 
 export function useGetBackupRecordDownloadUrl(
-  options?: UseMutationOptions<opsservicev1_GetBackupRecordDownloadUrlResponse, Error, { id: number }>,
+  options?: UseMutationOptions<opsservicev1_GetBackupRecordDownloadUrlResponse, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.backupService.GetRecordDownloadUrl(req as never),
@@ -117,7 +117,7 @@ export function useRestoreBackupRecord(
   options?: UseMutationOptions<
     opsservicev1_RestoreBackupRecordResponse,
     Error,
-    { recordId: number; nodeId: number; targetDir: string }
+    { recordId: string; nodeId: string; targetDir: string }
   >,
 ) {
   return useMutation({

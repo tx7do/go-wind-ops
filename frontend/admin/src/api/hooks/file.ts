@@ -94,7 +94,8 @@ export async function putFileToPresignedUrl(
 }
 
 /** 字节数人性化显示(终端上传回显/提示用)。 */
-export function formatBytes(n?: number): string {
+export function formatBytes(n?: string | number): string {
+  n = n !== null && n !== undefined ? Number(n) : undefined;
   if (!n || n <= 0) return '0B';
   if (n < 1024) return `${n}B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)}KB`;

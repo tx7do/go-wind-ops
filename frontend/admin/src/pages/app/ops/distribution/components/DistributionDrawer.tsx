@@ -48,21 +48,21 @@ const DistributionDrawer: React.FC<DistributionDrawerProps> = ({
   const formRef = useRef<ProFormInstance>(null);
   const { message } = App.useApp();
 
-  const [buildOptions, setBuildOptions] = useState<{ label: string; value: number }[]>([]);
-  const [projectOptions, setProjectOptions] = useState<{ label: string; value: number }[]>([]);
+  const [buildOptions, setBuildOptions] = useState<{ label: string; value: string }[]>([]);
+  const [projectOptions, setProjectOptions] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     if (!open) return;
     fetchListBuilds(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }))
       .then((resp: Build[] | any) => {
         const items = (resp.items ?? []) as Build[];
-        setBuildOptions(items.map((b) => ({ label: b.name || String(b.id), value: b.id ?? 0 })));
+        setBuildOptions(items.map((b) => ({ label: b.name || String(b.id), value: b.id ?? '' })));
       })
       .catch(() => setBuildOptions([]));
     fetchListProjects(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }))
       .then((resp: any) => {
         const items = (resp.items ?? []) as Project[];
-        setProjectOptions(items.map((p) => ({ label: p.name || String(p.id), value: p.id ?? 0 })));
+        setProjectOptions(items.map((p) => ({ label: p.name || String(p.id), value: p.id ?? '' })));
       })
       .catch(() => setProjectOptions([]));
   }, [open]);

@@ -20,7 +20,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
   const [items, setItems] = useState<PipelineRun[]>([]);
   const [loading, setLoading] = useState(false);
   const [logRun, setLogRun] = useState<PipelineRun>();
-  const [logView, setLogView] = useState<{ text: string; offset: number; status?: string; error?: string }>();
+  const [logView, setLogView] = useState<{ text: string; offset: string; status?: string; error?: string }>();
   const logPreRef = useRef<HTMLPreElement>(null);
 
   const refresh = useCallback(async () => {
@@ -31,7 +31,7 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
       setItems(
         (resp.items ?? [])
           .filter((r) => r.pipelineId === pipeline.id)
-          .sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
+          .sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0)),
       );
     } finally {
       setLoading(false);
@@ -60,10 +60,10 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
   useEffect(() => {
     if (!logRun?.id) return;
     let alive = true;
-    fetchPipelineRunLog(logRun.id, 0)
+    fetchPipelineRunLog(logRun.id, "")
       .then((resp) => {
         if (!alive) return;
-        setLogView({ text: resp.delta || '', offset: resp.newOffset ?? 0, status: resp.status, error: (resp as unknown as { error?: string }).error });
+        setLogView({ text: resp.delta || '', offset: resp.newOffset ?? '', status: resp.status, error: (resp as unknown as { error?: string }).error });
       })
       .catch(() => {});
     return () => {
@@ -76,10 +76,10 @@ const PipelineRunsModal: React.FC<PipelineRunsModalProps> = ({ pipeline, onClose
     if (logView?.status === 'SUCCESS' || logView?.status === 'FAILED') return;
     const timer = setInterval(async () => {
       try {
-        const resp = await fetchPipelineRunLog(logRun.id!, logView?.offset ?? 0);
+        const resp = await fetchPipelineRunLog(logRun.id!, logView?.offset ?? '');
         setLogView((p) => ({
           text: (p?.text || '') + (resp.delta || ''),
-          offset: resp.newOffset ?? p?.offset ?? 0,
+          offset: resp.newOffset ?? p?.offset ?? '',
           status: resp.status,
           error: (resp as unknown as { error?: string }).error,
         }));

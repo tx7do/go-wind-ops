@@ -35,7 +35,7 @@ export async function fetchListInspections(params: PaginationQuery) {
 }
 
 export function useGetInspection(
-  id?: number,
+  id?: string,
   options?: Partial<UseQueryOptions<opsservicev1_Inspection, Error, opsservicev1_Inspection, readonly unknown[]>>,
 ) {
   return useQuery({

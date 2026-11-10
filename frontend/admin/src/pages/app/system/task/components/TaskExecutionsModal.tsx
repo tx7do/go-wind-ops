@@ -111,7 +111,7 @@ const TaskExecutionsModal = ({ open, typeName, onClose }: TaskExecutionsModalPro
         pagination={{
           current: page,
           pageSize,
-          total: query.data?.total || 0,
+          total: Number(query.data?.total ?? 0),
           showSizeChanger: true,
           onChange: (p, ps) => {
             setPage(p);

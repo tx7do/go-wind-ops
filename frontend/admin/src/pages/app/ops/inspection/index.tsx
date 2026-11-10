@@ -20,7 +20,7 @@ const InspectionManagement = () => {
   const actionRef = useRef<ActionType>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
-  const [reportId, setReportId] = useState<number | undefined>();
+  const [reportId, setReportId] = useState<string | undefined>();
 
   const runMutation = useRunInspection({
     onSuccess: () => {
@@ -106,7 +106,7 @@ const InspectionManagement = () => {
                 orderBy: ['-createdAt'],
               });
               const resp = await fetchListInspections(q);
-              return { data: resp.items || [], total: resp.total || 0, success: true };
+              return { data: resp.items || [], total: Number(resp.total ?? 0), success: true };
             }}
             search={false}
             pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

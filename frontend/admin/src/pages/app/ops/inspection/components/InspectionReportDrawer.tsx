@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetInspection } from '@/api/hooks/inspection';
 
 interface Props {
-  inspectionId?: number;
+  inspectionId?: string;
   onClose: () => void;
 }
 
@@ -21,7 +21,7 @@ interface ReportNode {
 
 interface ReportProject {
   name: string;
-  nodeId: number;
+  nodeId: string;
   status: string;
 }
 

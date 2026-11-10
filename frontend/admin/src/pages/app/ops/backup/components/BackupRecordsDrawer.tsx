@@ -13,7 +13,7 @@ import { useListAgentNodes } from '@/api/hooks/agent-node';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 
 interface Props {
-  taskId?: number;
+  taskId?: string;
   taskName?: string;
   onClose: () => void;
 }
@@ -43,7 +43,7 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
   const nodes = nodeData?.items ?? [];
 
   const [restoreFor, setRestoreFor] = useState<BackupRecord | undefined>();
-  const [restoreNodeId, setRestoreNodeId] = useState<number | undefined>();
+  const [restoreNodeId, setRestoreNodeId] = useState<string | undefined>();
   const [restoreDir, setRestoreDir] = useState('');
 
   const restoreMutation = useRestoreBackupRecord({
@@ -147,7 +147,7 @@ const BackupRecordsDrawer = ({ taskId, taskName, onClose }: Props) => {
             const resp = await fetchListBackupRecords(q);
             const items = resp.items || [];
             schedulePoll(items);
-            return { data: items, total: resp.total || 0, success: true };
+            return { data: items, total: Number(resp.total ?? 0), success: true };
           }}
           search={false}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}

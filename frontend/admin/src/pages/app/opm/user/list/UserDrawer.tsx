@@ -19,7 +19,7 @@ interface UserDrawerProps {
   open: boolean;
   mode: 'create' | 'edit';
   data?: any;
-  tenantId: number | undefined;
+  tenantId: string | undefined;
   onClose: () => void;
   onSuccess: () => void;
 }

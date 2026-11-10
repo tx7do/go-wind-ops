@@ -360,7 +360,7 @@ export default function DashboardPage() {
                     <span>{b.branch}</span>
                     {b.status === 'SUCCESS' && b.artifactObjectKey && (
                       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                        {Math.ceil((b.artifactSize ?? 0) / 1024)} KB
+                        {Math.ceil(Number(b.artifactSize ?? 0) / 1024)} KB
                       </Typography.Text>
                     )}
                     <Typography.Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
