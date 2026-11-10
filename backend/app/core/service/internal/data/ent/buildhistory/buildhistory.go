@@ -93,19 +93,19 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
-	BuildIDValidator func(uint64) error
+	BuildIDValidator func(int64) error
 	// BuildNoValidator is a validator for the "build_no" field. It is called by the builders before save.
 	BuildNoValidator func(uint32) error
 	// DefaultArtifactSize holds the default value on creation for the "artifact_size" field.
-	DefaultArtifactSize uint64
+	DefaultArtifactSize int64
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
-	DefaultOperatorID uint64
+	DefaultOperatorID int64
 	// DefaultRunnerID holds the default value on creation for the "runner_id" field.
 	DefaultRunnerID string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

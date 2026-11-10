@@ -115,7 +115,7 @@ func (r *CloudAccountRepo) List(ctx context.Context, req *paginationV1.PagingReq
 		return nil, err
 	}
 
-	resp := &opsV1.ListCloudAccountsResponse{Total: uint64(total)}
+	resp := &opsV1.ListCloudAccountsResponse{Total: int64(total)}
 	for _, e := range rows {
 		resp.Items = append(resp.Items, r.toDTO(e))
 	}
@@ -123,7 +123,7 @@ func (r *CloudAccountRepo) List(ctx context.Context, req *paginationV1.PagingReq
 }
 
 // Get 详情。
-func (r *CloudAccountRepo) Get(ctx context.Context, id uint64) (*opsV1.CloudAccount, error) {
+func (r *CloudAccountRepo) Get(ctx context.Context, id int64) (*opsV1.CloudAccount, error) {
 	e, err := r.GetEntity(ctx, id)
 	if err != nil {
 		return nil, err
@@ -132,12 +132,12 @@ func (r *CloudAccountRepo) Get(ctx context.Context, id uint64) (*opsV1.CloudAcco
 }
 
 // GetEntity 原始实体(Verify 需读密文 SK)。
-func (r *CloudAccountRepo) GetEntity(ctx context.Context, id uint64) (*ent.CloudAccount, error) {
+func (r *CloudAccountRepo) GetEntity(ctx context.Context, id int64) (*ent.CloudAccount, error) {
 	return r.entClient.Client().CloudAccount.Get(ctx, id)
 }
 
 // IsNameTaken 名字唯一性校验。
-func (r *CloudAccountRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *CloudAccountRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().CloudAccount.Query().Where(cloudaccount.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(cloudaccount.IDNEQ(excludeID))
@@ -146,7 +146,7 @@ func (r *CloudAccountRepo) IsNameTaken(ctx context.Context, name string, exclude
 }
 
 // Create 落库(SK 密文由服务层加密后传入)。
-func (r *CloudAccountRepo) Create(ctx context.Context, name string, provider opsV1.CloudAccount_Provider, accessKey, secretEncrypted, region string, status opsV1.CloudAccount_Status, description *string, operatorID uint64) (*opsV1.CloudAccount, error) {
+func (r *CloudAccountRepo) Create(ctx context.Context, name string, provider opsV1.CloudAccount_Provider, accessKey, secretEncrypted, region string, status opsV1.CloudAccount_Status, description *string, operatorID int64) (*opsV1.CloudAccount, error) {
 	st := cloudaccount.StatusEnabled
 	if status == opsV1.CloudAccount_DISABLED {
 		st = cloudaccount.StatusDisabled
@@ -178,7 +178,7 @@ func (r *CloudAccountRepo) Create(ctx context.Context, name string, provider ops
 }
 
 // Update 基础字段;secretEncrypted 非空才换密钥。
-func (r *CloudAccountRepo) Update(ctx context.Context, id uint64, name string, provider *opsV1.CloudAccount_Provider, accessKey *string, secretEncrypted *string, region *string, status *opsV1.CloudAccount_Status, description *string) (*opsV1.CloudAccount, error) {
+func (r *CloudAccountRepo) Update(ctx context.Context, id int64, name string, provider *opsV1.CloudAccount_Provider, accessKey *string, secretEncrypted *string, region *string, status *opsV1.CloudAccount_Status, description *string) (*opsV1.CloudAccount, error) {
 	builder := r.entClient.Client().CloudAccount.UpdateOneID(id)
 	if name != "" {
 		builder.SetName(name)
@@ -213,7 +213,7 @@ func (r *CloudAccountRepo) Update(ctx context.Context, id uint64, name string, p
 }
 
 // UpdateVerifyResult 校验结果回填(账号 ID/名 + 校验时间)。
-func (r *CloudAccountRepo) UpdateVerifyResult(ctx context.Context, id uint64, accountID, accountName string, verifiedAt time.Time) error {
+func (r *CloudAccountRepo) UpdateVerifyResult(ctx context.Context, id int64, accountID, accountName string, verifiedAt time.Time) error {
 	builder := r.entClient.Client().CloudAccount.UpdateOneID(id).
 		SetLastVerifiedAt(verifiedAt)
 	if accountID != "" {
@@ -226,6 +226,6 @@ func (r *CloudAccountRepo) UpdateVerifyResult(ctx context.Context, id uint64, ac
 }
 
 // Delete 删除。
-func (r *CloudAccountRepo) Delete(ctx context.Context, id uint64) error {
+func (r *CloudAccountRepo) Delete(ctx context.Context, id int64) error {
 	return r.entClient.Client().CloudAccount.DeleteOneID(id).Exec(ctx)
 }

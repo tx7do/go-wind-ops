@@ -53,9 +53,9 @@ func Verify(secret, code string, now time.Time) bool {
 	if err != nil || len(key) == 0 {
 		return false
 	}
-	counter := uint64(now.Unix()) / uint64(Step.Seconds())
+	counter := int64(now.Unix()) / int64(Step.Seconds())
 	for i := -int64(skew); i <= skew; i++ {
-		if hotp(key, counter+uint64(i)) == code {
+		if hotp(key, counter+int64(i)) == code {
 			return true
 		}
 	}
@@ -63,17 +63,17 @@ func Verify(secret, code string, now time.Time) bool {
 }
 
 // hotp RFC 4226 HMAC-SHA-1 动态截断,返回 6 位十进制字符串。
-func hotp(key []byte, counter uint64) string {
+func hotp(key []byte, counter int64) string {
 	var buf [8]byte
-	binary.BigEndian.PutUint64(buf[:], counter)
+	binary.BigEndian.PutUint64(buf[:], uint64(counter))
 	mac := hmac.New(sha1.New, key)
 	mac.Write(buf[:])
 	sum := mac.Sum(nil)
 
 	offset := sum[len(sum)-1] & 0x0f
-	value := (uint64(sum[offset])&0x7f)<<24 |
-		uint64(sum[offset+1])<<16 |
-		uint64(sum[offset+2])<<8 |
-		uint64(sum[offset+3])
+	value := (int64(sum[offset])&0x7f)<<24 |
+		int64(sum[offset+1])<<16 |
+		int64(sum[offset+2])<<8 |
+		int64(sum[offset+3])
 	return fmt.Sprintf("%06d", value%1_000_000)
 }

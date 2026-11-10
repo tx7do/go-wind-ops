@@ -85,8 +85,8 @@ func (_q *LogSnapshotQuery) FirstX(ctx context.Context) *LogSnapshot {
 
 // FirstID returns the first LogSnapshot ID from the query.
 // Returns a *NotFoundError when no LogSnapshot ID was found.
-func (_q *LogSnapshotQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *LogSnapshotQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *LogSnapshotQuery) FirstID(ctx context.Context) (id uint64, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *LogSnapshotQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *LogSnapshotQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *LogSnapshotQuery) OnlyX(ctx context.Context) *LogSnapshot {
 // OnlyID is like Only, but returns the only LogSnapshot ID in the query.
 // Returns a *NotSingularError when more than one LogSnapshot ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *LogSnapshotQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *LogSnapshotQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *LogSnapshotQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *LogSnapshotQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *LogSnapshotQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *LogSnapshotQuery) AllX(ctx context.Context) []*LogSnapshot {
 }
 
 // IDs executes the query and returns a list of LogSnapshot IDs.
-func (_q *LogSnapshotQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (_q *LogSnapshotQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *LogSnapshotQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *LogSnapshotQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *LogSnapshotQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *LogSnapshotQuery) Clone() *LogSnapshotQuery {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint64 `json:"tenant_id,omitempty"`
+//		TenantID int64 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -289,7 +289,7 @@ func (_q *LogSnapshotQuery) GroupBy(field string, fields ...string) *LogSnapshot
 // Example:
 //
 //	var v []struct {
-//		TenantID uint64 `json:"tenant_id,omitempty"`
+//		TenantID int64 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.LogSnapshot.Query().
@@ -381,7 +381,7 @@ func (_q *LogSnapshotQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *LogSnapshotQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

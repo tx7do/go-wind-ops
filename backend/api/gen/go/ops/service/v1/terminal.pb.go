@@ -121,11 +121,11 @@ func (x *TerminalChunk) GetRows() uint32 {
 // 终端会话审计记录
 type TerminalSession struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                      // 记录ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                      // 记录ID
 	SessionId     *string                `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"`        // 会话 ID
-	NodeId        *uint64                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                // 节点
+	NodeId        *int64                 `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                // 节点
 	AgentId       *string                `protobuf:"bytes,4,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`              // 机器标识
-	OperatorId    *uint64                `protobuf:"varint,5,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`    // 打开人
+	OperatorId    *int64                 `protobuf:"varint,5,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`    // 打开人
 	Status        *string                `protobuf:"bytes,6,opt,name=status,proto3,oneof" json:"status,omitempty"`                               // 状态(OPEN/CLOSED)
 	InputBytes    *int64                 `protobuf:"varint,7,opt,name=input_bytes,json=inputBytes,proto3,oneof" json:"input_bytes,omitempty"`    // 录制输入字节
 	OutputBytes   *int64                 `protobuf:"varint,8,opt,name=output_bytes,json=outputBytes,proto3,oneof" json:"output_bytes,omitempty"` // 录制输出字节
@@ -167,7 +167,7 @@ func (*TerminalSession) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *TerminalSession) GetId() uint64 {
+func (x *TerminalSession) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -181,7 +181,7 @@ func (x *TerminalSession) GetSessionId() string {
 	return ""
 }
 
-func (x *TerminalSession) GetNodeId() uint64 {
+func (x *TerminalSession) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -195,7 +195,7 @@ func (x *TerminalSession) GetAgentId() string {
 	return ""
 }
 
-func (x *TerminalSession) GetOperatorId() uint64 {
+func (x *TerminalSession) GetOperatorId() int64 {
 	if x != nil && x.OperatorId != nil {
 		return *x.OperatorId
 	}
@@ -253,7 +253,7 @@ func (x *TerminalSession) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListTerminalSessionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*TerminalSession     `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 会话列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -289,7 +289,7 @@ func (*ListTerminalSessionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListTerminalSessionResponse) GetTotal() uint64 {
+func (x *ListTerminalSessionResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -305,7 +305,7 @@ func (x *ListTerminalSessionResponse) GetItems() []*TerminalSession {
 
 type GetTerminalSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -340,7 +340,7 @@ func (*GetTerminalSessionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetTerminalSessionRequest) GetId() uint64 {
+func (x *GetTerminalSessionRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -349,7 +349,7 @@ func (x *GetTerminalSessionRequest) GetId() uint64 {
 
 type ListTerminalChunksRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     *uint64                `protobuf:"varint,1,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"` // 会话记录ID(ops_terminal_sessions.id)
+	SessionId     *int64                 `protobuf:"varint,1,opt,name=session_id,json=sessionId,proto3,oneof" json:"session_id,omitempty"` // 会话记录ID(ops_terminal_sessions.id)
 	FromSeq       *int32                 `protobuf:"varint,2,opt,name=from_seq,json=fromSeq,proto3,oneof" json:"from_seq,omitempty"`       // 起始序号
 	Limit         *int32                 `protobuf:"varint,3,opt,name=limit,proto3,oneof" json:"limit,omitempty"`                          // 单次上限
 	unknownFields protoimpl.UnknownFields
@@ -386,7 +386,7 @@ func (*ListTerminalChunksRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_terminal_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ListTerminalChunksRequest) GetSessionId() uint64 {
+func (x *ListTerminalChunksRequest) GetSessionId() int64 {
 	if x != nil && x.SessionId != nil {
 		return *x.SessionId
 	}
@@ -549,12 +549,12 @@ const file_ops_service_v1_terminal_proto_rawDesc = "" +
 	"\x05_colsB\a\n" +
 	"\x05_rows\"\x95\x05\n" +
 	"\x0fTerminalSession\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tH\x01R\tsessionId\x88\x01\x01\x12\x1c\n" +
-	"\anode_id\x18\x03 \x01(\x04H\x02R\x06nodeId\x88\x01\x01\x12\x1e\n" +
+	"\anode_id\x18\x03 \x01(\x03H\x02R\x06nodeId\x88\x01\x01\x12\x1e\n" +
 	"\bagent_id\x18\x04 \x01(\tH\x03R\aagentId\x88\x01\x01\x12$\n" +
-	"\voperator_id\x18\x05 \x01(\x04H\x04R\n" +
+	"\voperator_id\x18\x05 \x01(\x03H\x04R\n" +
 	"operatorId\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x06 \x01(\tH\x05R\x06status\x88\x01\x01\x12$\n" +
 	"\vinput_bytes\x18\a \x01(\x03H\x06R\n" +
@@ -584,14 +584,14 @@ const file_ops_service_v1_terminal_proto_rawDesc = "" +
 	"_closed_atB\r\n" +
 	"\v_created_at\"j\n" +
 	"\x1bListTerminalSessionResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x125\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x125\n" +
 	"\x05items\x18\x02 \x03(\v2\x1f.ops.service.v1.TerminalSessionR\x05items\"<\n" +
 	"\x19GetTerminalSessionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\xf3\x01\n" +
 	"\x19ListTerminalChunksRequest\x12'\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\tsessionId\x88\x01\x01\x12@\n" +
+	"session_id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\tsessionId\x88\x01\x01\x12@\n" +
 	"\bfrom_seq\x18\x02 \x01(\x05B \xbaG\x1d\x92\x02\x1a起始序号(含),默认 0H\x01R\afromSeq\x88\x01\x01\x12E\n" +
 	"\x05limit\x18\x03 \x01(\x05B*\xbaG'\x92\x02$单次上限(默认 500,上限 2000)H\x02R\x05limit\x88\x01\x01B\r\n" +
 	"\v_session_idB\v\n" +

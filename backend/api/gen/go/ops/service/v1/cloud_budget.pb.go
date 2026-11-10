@@ -30,8 +30,8 @@ const (
 // 云成本月度预算
 type CloudBudget struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 预算ID
-	CloudAccountId   *uint64                `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`      // 云账号
+	Id               *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 预算ID
+	CloudAccountId   *int64                 `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`      // 云账号
 	Month            *string                `protobuf:"bytes,3,opt,name=month,proto3,oneof" json:"month,omitempty"`                                                 // 预算月份
 	Amount           *float64               `protobuf:"fixed64,4,opt,name=amount,proto3,oneof" json:"amount,omitempty"`                                             // 预算金额
 	Currency         *string                `protobuf:"bytes,5,opt,name=currency,proto3,oneof" json:"currency,omitempty"`                                           // 币种
@@ -77,14 +77,14 @@ func (*CloudBudget) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_budget_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CloudBudget) GetId() uint64 {
+func (x *CloudBudget) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *CloudBudget) GetCloudAccountId() uint64 {
+func (x *CloudBudget) GetCloudAccountId() int64 {
 	if x != nil && x.CloudAccountId != nil {
 		return *x.CloudAccountId
 	}
@@ -170,7 +170,7 @@ func (x *CloudBudget) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListCloudBudgetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*CloudBudget         `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 预算列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -206,7 +206,7 @@ func (*ListCloudBudgetResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_budget_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListCloudBudgetResponse) GetTotal() uint64 {
+func (x *ListCloudBudgetResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -222,7 +222,7 @@ func (x *ListCloudBudgetResponse) GetItems() []*CloudBudget {
 
 type GetCloudBudgetRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 预算ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 预算ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -257,7 +257,7 @@ func (*GetCloudBudgetRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_budget_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetCloudBudgetRequest) GetId() uint64 {
+func (x *GetCloudBudgetRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -310,7 +310,7 @@ func (x *CreateCloudBudgetRequest) GetData() *CloudBudget {
 
 type UpdateCloudBudgetRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 预算ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 预算ID
 	Data          *CloudBudget           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -347,7 +347,7 @@ func (*UpdateCloudBudgetRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_budget_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateCloudBudgetRequest) GetId() uint64 {
+func (x *UpdateCloudBudgetRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -370,7 +370,7 @@ func (x *UpdateCloudBudgetRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteCloudBudgetRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 预算ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 预算ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -405,7 +405,7 @@ func (*DeleteCloudBudgetRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_budget_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteCloudBudgetRequest) GetId() uint64 {
+func (x *DeleteCloudBudgetRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -454,8 +454,8 @@ const file_ops_service_v1_cloud_budget_proto_rawDesc = "" +
 	"\n" +
 	"!ops/service/v1/cloud_budget.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x83\b\n" +
 	"\vCloudBudget\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12T\n" +
-	"\x10cloud_account_id\x18\x02 \x01(\x04B%\xbaG\"\x92\x02\x1f云账号(0=全部账号合计)H\x01R\x0ecloudAccountId\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12T\n" +
+	"\x10cloud_account_id\x18\x02 \x01(\x03B%\xbaG\"\x92\x02\x1f云账号(0=全部账号合计)H\x01R\x0ecloudAccountId\x88\x01\x01\x129\n" +
 	"\x05month\x18\x03 \x01(\tB\x1e\xe0A\x02\xbaG\x18\x92\x02\x15预算月份(YYYY-MM)H\x02R\x05month\x88\x01\x01\x122\n" +
 	"\x06amount\x18\x04 \x01(\x01B\x15\xe0A\x02\xbaG\x0f\x92\x02\f预算金额H\x03R\x06amount\x88\x01\x01\x12:\n" +
 	"\bcurrency\x18\x05 \x01(\tB\x19\xbaG\x16\x92\x02\x13币种(CNY/USD/...)H\x04R\bcurrency\x88\x01\x01\x12e\n" +
@@ -486,20 +486,20 @@ const file_ops_service_v1_cloud_budget_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"b\n" +
 	"\x17ListCloudBudgetResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x121\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x121\n" +
 	"\x05items\x18\x02 \x03(\v2\x1b.ops.service.v1.CloudBudgetR\x05items\"8\n" +
 	"\x15GetCloudBudgetRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"P\n" +
 	"\x18CreateCloudBudgetRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.ops.service.v1.CloudBudgetB\x03\xe0A\x02R\x04data\"\xc2\x01\n" +
 	"\x18UpdateCloudBudgetRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x124\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x124\n" +
 	"\x04data\x18\x02 \x01(\v2\x1b.ops.service.v1.CloudBudgetB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\";\n" +
 	"\x18DeleteCloudBudgetRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\x19\n" +
 	"\x17CheckCloudBudgetRequest2\xad\x04\n" +
 	"\x12CloudBudgetService\x12X\n" +

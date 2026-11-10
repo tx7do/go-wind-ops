@@ -51,7 +51,6 @@ func (s *CloudBudgetService) Update(ctx context.Context, req *opsV1.UpdateCloudB
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.cloudBudgetServiceClient.UpdateCloudBudget(ctx, req)
 }
 

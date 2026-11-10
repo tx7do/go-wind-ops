@@ -59,13 +59,13 @@ func ValidColumn(column string) bool {
 
 var (
 	// NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
-	NodeIDValidator func(uint64) error
+	NodeIDValidator func(int64) error
 	// DefaultMemTotalBytes holds the default value on creation for the "mem_total_bytes" field.
-	DefaultMemTotalBytes uint64
+	DefaultMemTotalBytes int64
 	// DefaultUptimeSeconds holds the default value on creation for the "uptime_seconds" field.
-	DefaultUptimeSeconds uint64
+	DefaultUptimeSeconds int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the NodeMetric queries.

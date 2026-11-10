@@ -70,14 +70,14 @@ func (_u *BuildHistoryUpdate) ClearDeletedAt() *BuildHistoryUpdate {
 }
 
 // SetBuildID sets the "build_id" field.
-func (_u *BuildHistoryUpdate) SetBuildID(v uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetBuildID(v int64) *BuildHistoryUpdate {
 	_u.mutation.ResetBuildID()
 	_u.mutation.SetBuildID(v)
 	return _u
 }
 
 // SetNillableBuildID sets the "build_id" field if the given value is not nil.
-func (_u *BuildHistoryUpdate) SetNillableBuildID(v *uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetNillableBuildID(v *int64) *BuildHistoryUpdate {
 	if v != nil {
 		_u.SetBuildID(*v)
 	}
@@ -212,14 +212,14 @@ func (_u *BuildHistoryUpdate) ClearArtifactObjectKey() *BuildHistoryUpdate {
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (_u *BuildHistoryUpdate) SetArtifactSize(v uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetArtifactSize(v int64) *BuildHistoryUpdate {
 	_u.mutation.ResetArtifactSize()
 	_u.mutation.SetArtifactSize(v)
 	return _u
 }
 
 // SetNillableArtifactSize sets the "artifact_size" field if the given value is not nil.
-func (_u *BuildHistoryUpdate) SetNillableArtifactSize(v *uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetNillableArtifactSize(v *int64) *BuildHistoryUpdate {
 	if v != nil {
 		_u.SetArtifactSize(*v)
 	}
@@ -299,14 +299,14 @@ func (_u *BuildHistoryUpdate) ClearFinishedAt() *BuildHistoryUpdate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *BuildHistoryUpdate) SetOperatorID(v uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetOperatorID(v int64) *BuildHistoryUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *BuildHistoryUpdate) SetNillableOperatorID(v *uint64) *BuildHistoryUpdate {
+func (_u *BuildHistoryUpdate) SetNillableOperatorID(v *int64) *BuildHistoryUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -407,7 +407,7 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -416,7 +416,7 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(buildhistory.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildhistory.FieldCreatedAt, field.TypeTime)
@@ -434,10 +434,10 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(buildhistory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.BuildID(); ok {
-		_spec.SetField(buildhistory.FieldBuildID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldBuildID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBuildID(); ok {
-		_spec.AddField(buildhistory.FieldBuildID, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldBuildID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.BuildNo(); ok {
 		_spec.SetField(buildhistory.FieldBuildNo, field.TypeUint32, value)
@@ -476,13 +476,13 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(buildhistory.FieldArtifactObjectKey, field.TypeString)
 	}
 	if value, ok := _u.mutation.ArtifactSize(); ok {
-		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedArtifactSize(); ok {
-		_spec.AddField(buildhistory.FieldArtifactSize, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldArtifactSize, field.TypeInt64, value)
 	}
 	if _u.mutation.ArtifactSizeCleared() {
-		_spec.ClearField(buildhistory.FieldArtifactSize, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldArtifactSize, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Error(); ok {
 		_spec.SetField(buildhistory.FieldError, field.TypeString, value)
@@ -503,13 +503,13 @@ func (_u *BuildHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(buildhistory.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(buildhistory.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(buildhistory.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.RunnerID(); ok {
 		_spec.SetField(buildhistory.FieldRunnerID, field.TypeString, value)
@@ -580,14 +580,14 @@ func (_u *BuildHistoryUpdateOne) ClearDeletedAt() *BuildHistoryUpdateOne {
 }
 
 // SetBuildID sets the "build_id" field.
-func (_u *BuildHistoryUpdateOne) SetBuildID(v uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetBuildID(v int64) *BuildHistoryUpdateOne {
 	_u.mutation.ResetBuildID()
 	_u.mutation.SetBuildID(v)
 	return _u
 }
 
 // SetNillableBuildID sets the "build_id" field if the given value is not nil.
-func (_u *BuildHistoryUpdateOne) SetNillableBuildID(v *uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetNillableBuildID(v *int64) *BuildHistoryUpdateOne {
 	if v != nil {
 		_u.SetBuildID(*v)
 	}
@@ -722,14 +722,14 @@ func (_u *BuildHistoryUpdateOne) ClearArtifactObjectKey() *BuildHistoryUpdateOne
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (_u *BuildHistoryUpdateOne) SetArtifactSize(v uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetArtifactSize(v int64) *BuildHistoryUpdateOne {
 	_u.mutation.ResetArtifactSize()
 	_u.mutation.SetArtifactSize(v)
 	return _u
 }
 
 // SetNillableArtifactSize sets the "artifact_size" field if the given value is not nil.
-func (_u *BuildHistoryUpdateOne) SetNillableArtifactSize(v *uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetNillableArtifactSize(v *int64) *BuildHistoryUpdateOne {
 	if v != nil {
 		_u.SetArtifactSize(*v)
 	}
@@ -809,14 +809,14 @@ func (_u *BuildHistoryUpdateOne) ClearFinishedAt() *BuildHistoryUpdateOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *BuildHistoryUpdateOne) SetOperatorID(v uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetOperatorID(v int64) *BuildHistoryUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *BuildHistoryUpdateOne) SetNillableOperatorID(v *uint64) *BuildHistoryUpdateOne {
+func (_u *BuildHistoryUpdateOne) SetNillableOperatorID(v *int64) *BuildHistoryUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -930,7 +930,7 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BuildHistory.id" for update`)}
@@ -956,7 +956,7 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(buildhistory.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildhistory.FieldCreatedAt, field.TypeTime)
@@ -974,10 +974,10 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 		_spec.ClearField(buildhistory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.BuildID(); ok {
-		_spec.SetField(buildhistory.FieldBuildID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldBuildID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBuildID(); ok {
-		_spec.AddField(buildhistory.FieldBuildID, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldBuildID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.BuildNo(); ok {
 		_spec.SetField(buildhistory.FieldBuildNo, field.TypeUint32, value)
@@ -1016,13 +1016,13 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 		_spec.ClearField(buildhistory.FieldArtifactObjectKey, field.TypeString)
 	}
 	if value, ok := _u.mutation.ArtifactSize(); ok {
-		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedArtifactSize(); ok {
-		_spec.AddField(buildhistory.FieldArtifactSize, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldArtifactSize, field.TypeInt64, value)
 	}
 	if _u.mutation.ArtifactSizeCleared() {
-		_spec.ClearField(buildhistory.FieldArtifactSize, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldArtifactSize, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Error(); ok {
 		_spec.SetField(buildhistory.FieldError, field.TypeString, value)
@@ -1043,13 +1043,13 @@ func (_u *BuildHistoryUpdateOne) sqlSave(ctx context.Context) (_node *BuildHisto
 		_spec.ClearField(buildhistory.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(buildhistory.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(buildhistory.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(buildhistory.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(buildhistory.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.RunnerID(); ok {
 		_spec.SetField(buildhistory.FieldRunnerID, field.TypeString, value)

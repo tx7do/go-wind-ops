@@ -43,12 +43,12 @@ message CloudCost {
     AWS = 4;            // 亚马逊云
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
-  optional uint64 cloud_account_id = 2 [
+  optional int64 cloud_account_id = 2 [
     json_name = "cloudAccountId",
     (google.api.field_behavior) = REQUIRED
   ]; // 云账号ID
@@ -92,13 +92,13 @@ message ListCloudCostsRequest {
   uint32 page = 1 [json_name = "page"]; // 页码(1 起)
   uint32 page_size = 2 [json_name = "pageSize"]; // 页大小
 
-  optional uint64 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
+  optional int64 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
   optional string year = 11 [json_name = "year"]; // 按年份(YYYY,空=全部)
   optional string provider = 12 [json_name = "provider"]; // 按厂商
 }
 
 message ListCloudCostsResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated CloudCost items = 2 [json_name = "items"]; // 记录列表
 }
 
@@ -111,7 +111,7 @@ message UpsertCloudCostRequest {
 
 message DeleteCloudCostRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 记录ID
@@ -148,7 +148,7 @@ message GetCloudCostSummaryResponse {
 }
 
 message FetchCloudCostFromProviderRequest {
-  uint64 cloud_account_id = 1 [
+  int64 cloud_account_id = 1 [
     json_name = "cloudAccountId",
     (google.api.field_behavior) = REQUIRED
   ]; // 云账号ID

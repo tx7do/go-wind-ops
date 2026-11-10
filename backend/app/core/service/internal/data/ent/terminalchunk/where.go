@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.TerminalChunk {
+func ID(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.TerminalChunk {
+func IDEQ(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.TerminalChunk {
+func IDNEQ(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.TerminalChunk {
+func IDIn(ids ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.TerminalChunk {
+func IDNotIn(ids ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.TerminalChunk {
+func IDGT(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.TerminalChunk {
+func IDGTE(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.TerminalChunk {
+func IDLT(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.TerminalChunk {
+func IDLTE(id int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.TerminalChunk {
+func TenantID(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.TerminalChunk {
 }
 
 // TerminalSessionID applies equality check predicate on the "terminal_session_id" field. It's identical to TerminalSessionIDEQ.
-func TerminalSessionID(v uint64) predicate.TerminalChunk {
+func TerminalSessionID(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldTerminalSessionID, v))
 }
 
@@ -95,42 +95,42 @@ func ByteLen(v int) predicate.TerminalChunk {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.TerminalChunk {
+func TenantIDEQ(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.TerminalChunk {
+func TenantIDNEQ(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.TerminalChunk {
+func TenantIDIn(vs ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.TerminalChunk {
+func TenantIDNotIn(vs ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.TerminalChunk {
+func TenantIDGT(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.TerminalChunk {
+func TenantIDGTE(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.TerminalChunk {
+func TenantIDLT(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.TerminalChunk {
+func TenantIDLTE(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -295,42 +295,42 @@ func DeletedAtNotNil() predicate.TerminalChunk {
 }
 
 // TerminalSessionIDEQ applies the EQ predicate on the "terminal_session_id" field.
-func TerminalSessionIDEQ(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDEQ(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldEQ(FieldTerminalSessionID, v))
 }
 
 // TerminalSessionIDNEQ applies the NEQ predicate on the "terminal_session_id" field.
-func TerminalSessionIDNEQ(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDNEQ(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNEQ(FieldTerminalSessionID, v))
 }
 
 // TerminalSessionIDIn applies the In predicate on the "terminal_session_id" field.
-func TerminalSessionIDIn(vs ...uint64) predicate.TerminalChunk {
+func TerminalSessionIDIn(vs ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldIn(FieldTerminalSessionID, vs...))
 }
 
 // TerminalSessionIDNotIn applies the NotIn predicate on the "terminal_session_id" field.
-func TerminalSessionIDNotIn(vs ...uint64) predicate.TerminalChunk {
+func TerminalSessionIDNotIn(vs ...int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldNotIn(FieldTerminalSessionID, vs...))
 }
 
 // TerminalSessionIDGT applies the GT predicate on the "terminal_session_id" field.
-func TerminalSessionIDGT(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDGT(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGT(FieldTerminalSessionID, v))
 }
 
 // TerminalSessionIDGTE applies the GTE predicate on the "terminal_session_id" field.
-func TerminalSessionIDGTE(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDGTE(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldGTE(FieldTerminalSessionID, v))
 }
 
 // TerminalSessionIDLT applies the LT predicate on the "terminal_session_id" field.
-func TerminalSessionIDLT(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDLT(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLT(FieldTerminalSessionID, v))
 }
 
 // TerminalSessionIDLTE applies the LTE predicate on the "terminal_session_id" field.
-func TerminalSessionIDLTE(v uint64) predicate.TerminalChunk {
+func TerminalSessionIDLTE(v int64) predicate.TerminalChunk {
 	return predicate.TerminalChunk(sql.FieldLTE(FieldTerminalSessionID, v))
 }
 

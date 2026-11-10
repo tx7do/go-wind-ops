@@ -69,13 +69,13 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// TerminalSessionIDValidator is a validator for the "terminal_session_id" field. It is called by the builders before save.
-	TerminalSessionIDValidator func(uint64) error
+	TerminalSessionIDValidator func(int64) error
 	// DefaultByteLen holds the default value on creation for the "byte_len" field.
 	DefaultByteLen int
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Direction defines the type for the "direction" enum field.

@@ -24,13 +24,13 @@ type PromotionPipelineCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PromotionPipelineCreate) SetTenantID(v uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetTenantID(v int64) *PromotionPipelineCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PromotionPipelineCreate) SetNillableTenantID(v *uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetNillableTenantID(v *int64) *PromotionPipelineCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -80,13 +80,13 @@ func (_c *PromotionPipelineCreate) SetNillableDeletedAt(v *time.Time) *Promotion
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PromotionPipelineCreate) SetCreatedBy(v uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetCreatedBy(v int64) *PromotionPipelineCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PromotionPipelineCreate) SetNillableCreatedBy(v *uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetNillableCreatedBy(v *int64) *PromotionPipelineCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -94,13 +94,13 @@ func (_c *PromotionPipelineCreate) SetNillableCreatedBy(v *uint64) *PromotionPip
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PromotionPipelineCreate) SetUpdatedBy(v uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetUpdatedBy(v int64) *PromotionPipelineCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PromotionPipelineCreate) SetNillableUpdatedBy(v *uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetNillableUpdatedBy(v *int64) *PromotionPipelineCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -108,13 +108,13 @@ func (_c *PromotionPipelineCreate) SetNillableUpdatedBy(v *uint64) *PromotionPip
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PromotionPipelineCreate) SetDeletedBy(v uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetDeletedBy(v int64) *PromotionPipelineCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PromotionPipelineCreate) SetNillableDeletedBy(v *uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetNillableDeletedBy(v *int64) *PromotionPipelineCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -148,7 +148,7 @@ func (_c *PromotionPipelineCreate) SetNillableDescription(v *string) *PromotionP
 }
 
 // SetID sets the "id" field.
-func (_c *PromotionPipelineCreate) SetID(v uint64) *PromotionPipelineCreate {
+func (_c *PromotionPipelineCreate) SetID(v int64) *PromotionPipelineCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -231,7 +231,7 @@ func (_c *PromotionPipelineCreate) sqlSave(ctx context.Context) (*PromotionPipel
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -241,7 +241,7 @@ func (_c *PromotionPipelineCreate) sqlSave(ctx context.Context) (*PromotionPipel
 func (_c *PromotionPipelineCreate) createSpec() (*PromotionPipeline, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PromotionPipeline{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(promotionpipeline.Table, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(promotionpipeline.Table, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -249,7 +249,7 @@ func (_c *PromotionPipelineCreate) createSpec() (*PromotionPipeline, *sqlgraph.C
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(promotionpipeline.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -265,15 +265,15 @@ func (_c *PromotionPipelineCreate) createSpec() (*PromotionPipeline, *sqlgraph.C
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -377,7 +377,7 @@ func (u *PromotionPipelineUpsert) ClearDeletedAt() *PromotionPipelineUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionPipelineUpsert) SetCreatedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) SetCreatedBy(v int64) *PromotionPipelineUpsert {
 	u.Set(promotionpipeline.FieldCreatedBy, v)
 	return u
 }
@@ -389,7 +389,7 @@ func (u *PromotionPipelineUpsert) UpdateCreatedBy() *PromotionPipelineUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionPipelineUpsert) AddCreatedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) AddCreatedBy(v int64) *PromotionPipelineUpsert {
 	u.Add(promotionpipeline.FieldCreatedBy, v)
 	return u
 }
@@ -401,7 +401,7 @@ func (u *PromotionPipelineUpsert) ClearCreatedBy() *PromotionPipelineUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionPipelineUpsert) SetUpdatedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) SetUpdatedBy(v int64) *PromotionPipelineUpsert {
 	u.Set(promotionpipeline.FieldUpdatedBy, v)
 	return u
 }
@@ -413,7 +413,7 @@ func (u *PromotionPipelineUpsert) UpdateUpdatedBy() *PromotionPipelineUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionPipelineUpsert) AddUpdatedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) AddUpdatedBy(v int64) *PromotionPipelineUpsert {
 	u.Add(promotionpipeline.FieldUpdatedBy, v)
 	return u
 }
@@ -425,7 +425,7 @@ func (u *PromotionPipelineUpsert) ClearUpdatedBy() *PromotionPipelineUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionPipelineUpsert) SetDeletedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) SetDeletedBy(v int64) *PromotionPipelineUpsert {
 	u.Set(promotionpipeline.FieldDeletedBy, v)
 	return u
 }
@@ -437,7 +437,7 @@ func (u *PromotionPipelineUpsert) UpdateDeletedBy() *PromotionPipelineUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionPipelineUpsert) AddDeletedBy(v uint64) *PromotionPipelineUpsert {
+func (u *PromotionPipelineUpsert) AddDeletedBy(v int64) *PromotionPipelineUpsert {
 	u.Add(promotionpipeline.FieldDeletedBy, v)
 	return u
 }
@@ -587,14 +587,14 @@ func (u *PromotionPipelineUpsertOne) ClearDeletedAt() *PromotionPipelineUpsertOn
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionPipelineUpsertOne) SetCreatedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) SetCreatedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionPipelineUpsertOne) AddCreatedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) AddCreatedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -615,14 +615,14 @@ func (u *PromotionPipelineUpsertOne) ClearCreatedBy() *PromotionPipelineUpsertOn
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionPipelineUpsertOne) SetUpdatedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) SetUpdatedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionPipelineUpsertOne) AddUpdatedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) AddUpdatedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -643,14 +643,14 @@ func (u *PromotionPipelineUpsertOne) ClearUpdatedBy() *PromotionPipelineUpsertOn
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionPipelineUpsertOne) SetDeletedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) SetDeletedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionPipelineUpsertOne) AddDeletedBy(v uint64) *PromotionPipelineUpsertOne {
+func (u *PromotionPipelineUpsertOne) AddDeletedBy(v int64) *PromotionPipelineUpsertOne {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -735,7 +735,7 @@ func (u *PromotionPipelineUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PromotionPipelineUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PromotionPipelineUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -744,7 +744,7 @@ func (u *PromotionPipelineUpsertOne) ID(ctx context.Context) (id uint64, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PromotionPipelineUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PromotionPipelineUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -801,7 +801,7 @@ func (_c *PromotionPipelineCreateBulk) Save(ctx context.Context) ([]*PromotionPi
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -982,14 +982,14 @@ func (u *PromotionPipelineUpsertBulk) ClearDeletedAt() *PromotionPipelineUpsertB
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionPipelineUpsertBulk) SetCreatedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) SetCreatedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionPipelineUpsertBulk) AddCreatedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) AddCreatedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1010,14 +1010,14 @@ func (u *PromotionPipelineUpsertBulk) ClearCreatedBy() *PromotionPipelineUpsertB
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionPipelineUpsertBulk) SetUpdatedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) SetUpdatedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionPipelineUpsertBulk) AddUpdatedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) AddUpdatedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1038,14 +1038,14 @@ func (u *PromotionPipelineUpsertBulk) ClearUpdatedBy() *PromotionPipelineUpsertB
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionPipelineUpsertBulk) SetDeletedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) SetDeletedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionPipelineUpsertBulk) AddDeletedBy(v uint64) *PromotionPipelineUpsertBulk {
+func (u *PromotionPipelineUpsertBulk) AddDeletedBy(v int64) *PromotionPipelineUpsertBulk {
 	return u.Update(func(s *PromotionPipelineUpsert) {
 		s.AddDeletedBy(v)
 	})

@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
-	kratosTransport "github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/log"
+	kratosTransport "github.com/go-kratos/kratos/v2/transport"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	pkgcrypto "go-wind-ops/pkg/crypto"
@@ -49,7 +49,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ═══════════════════════ 一、基础设施 ═══════════════════════
 
-
 	// 全局存储加密器(AES-256-GCM, pkg/crypto):与 core 服务必须配置同一个
 	// ENCRYPTION_KEY,否则一边加密一边解不开。生产态未配置直接拒绝启动,
 	// 开发环境降级明文并告警。
@@ -66,7 +65,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 服务发现与鉴权基建
 	discovery := data.NewDiscovery(ctx)
 	clientType := data.NewClientType()
-
 
 	redisClient, cleanupRedis, err := data.NewRedisClient(ctx)
 	if err != nil {

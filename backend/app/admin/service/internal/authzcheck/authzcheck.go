@@ -15,7 +15,7 @@ func HasPermissionCode(
 	ctx context.Context,
 	roleClient permissionV1.RoleServiceClient,
 	permClient permissionV1.PermissionServiceClient,
-	userID uint64,
+	userID int64,
 	code string,
 ) (bool, error) {
 	permIds, err := roleClient.ListPermissionIds(ctx, &permissionV1.ListPermissionIdsRequest{

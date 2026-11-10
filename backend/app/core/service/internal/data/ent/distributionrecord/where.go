@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.DistributionRecord {
+func ID(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.DistributionRecord {
+func IDEQ(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.DistributionRecord {
+func IDNEQ(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.DistributionRecord {
+func IDIn(ids ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.DistributionRecord {
+func IDNotIn(ids ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.DistributionRecord {
+func IDGT(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.DistributionRecord {
+func IDGTE(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.DistributionRecord {
+func IDLT(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.DistributionRecord {
+func IDLTE(id int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.DistributionRecord {
+func TenantID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,22 +75,22 @@ func DeletedAt(v time.Time) predicate.DistributionRecord {
 }
 
 // DistributionID applies equality check predicate on the "distribution_id" field. It's identical to DistributionIDEQ.
-func DistributionID(v uint64) predicate.DistributionRecord {
+func DistributionID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldDistributionID, v))
 }
 
 // BuildHistoryID applies equality check predicate on the "build_history_id" field. It's identical to BuildHistoryIDEQ.
-func BuildHistoryID(v uint64) predicate.DistributionRecord {
+func BuildHistoryID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldBuildHistoryID, v))
 }
 
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v uint64) predicate.DistributionRecord {
+func ProjectID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldProjectID, v))
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.DistributionRecord {
+func NodeID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -115,7 +115,7 @@ func Result(v string) predicate.DistributionRecord {
 }
 
 // OperatorID applies equality check predicate on the "operator_id" field. It's identical to OperatorIDEQ.
-func OperatorID(v uint64) predicate.DistributionRecord {
+func OperatorID(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
@@ -125,42 +125,42 @@ func FinishedAt(v time.Time) predicate.DistributionRecord {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.DistributionRecord {
+func TenantIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.DistributionRecord {
+func TenantIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.DistributionRecord {
+func TenantIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func TenantIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.DistributionRecord {
+func TenantIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.DistributionRecord {
+func TenantIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.DistributionRecord {
+func TenantIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.DistributionRecord {
+func TenantIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -325,162 +325,162 @@ func DeletedAtNotNil() predicate.DistributionRecord {
 }
 
 // DistributionIDEQ applies the EQ predicate on the "distribution_id" field.
-func DistributionIDEQ(v uint64) predicate.DistributionRecord {
+func DistributionIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldDistributionID, v))
 }
 
 // DistributionIDNEQ applies the NEQ predicate on the "distribution_id" field.
-func DistributionIDNEQ(v uint64) predicate.DistributionRecord {
+func DistributionIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldDistributionID, v))
 }
 
 // DistributionIDIn applies the In predicate on the "distribution_id" field.
-func DistributionIDIn(vs ...uint64) predicate.DistributionRecord {
+func DistributionIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldDistributionID, vs...))
 }
 
 // DistributionIDNotIn applies the NotIn predicate on the "distribution_id" field.
-func DistributionIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func DistributionIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldDistributionID, vs...))
 }
 
 // DistributionIDGT applies the GT predicate on the "distribution_id" field.
-func DistributionIDGT(v uint64) predicate.DistributionRecord {
+func DistributionIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldDistributionID, v))
 }
 
 // DistributionIDGTE applies the GTE predicate on the "distribution_id" field.
-func DistributionIDGTE(v uint64) predicate.DistributionRecord {
+func DistributionIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldDistributionID, v))
 }
 
 // DistributionIDLT applies the LT predicate on the "distribution_id" field.
-func DistributionIDLT(v uint64) predicate.DistributionRecord {
+func DistributionIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldDistributionID, v))
 }
 
 // DistributionIDLTE applies the LTE predicate on the "distribution_id" field.
-func DistributionIDLTE(v uint64) predicate.DistributionRecord {
+func DistributionIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldDistributionID, v))
 }
 
 // BuildHistoryIDEQ applies the EQ predicate on the "build_history_id" field.
-func BuildHistoryIDEQ(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldBuildHistoryID, v))
 }
 
 // BuildHistoryIDNEQ applies the NEQ predicate on the "build_history_id" field.
-func BuildHistoryIDNEQ(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldBuildHistoryID, v))
 }
 
 // BuildHistoryIDIn applies the In predicate on the "build_history_id" field.
-func BuildHistoryIDIn(vs ...uint64) predicate.DistributionRecord {
+func BuildHistoryIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldBuildHistoryID, vs...))
 }
 
 // BuildHistoryIDNotIn applies the NotIn predicate on the "build_history_id" field.
-func BuildHistoryIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func BuildHistoryIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldBuildHistoryID, vs...))
 }
 
 // BuildHistoryIDGT applies the GT predicate on the "build_history_id" field.
-func BuildHistoryIDGT(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldBuildHistoryID, v))
 }
 
 // BuildHistoryIDGTE applies the GTE predicate on the "build_history_id" field.
-func BuildHistoryIDGTE(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldBuildHistoryID, v))
 }
 
 // BuildHistoryIDLT applies the LT predicate on the "build_history_id" field.
-func BuildHistoryIDLT(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldBuildHistoryID, v))
 }
 
 // BuildHistoryIDLTE applies the LTE predicate on the "build_history_id" field.
-func BuildHistoryIDLTE(v uint64) predicate.DistributionRecord {
+func BuildHistoryIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldBuildHistoryID, v))
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v uint64) predicate.DistributionRecord {
+func ProjectIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldProjectID, v))
 }
 
 // ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v uint64) predicate.DistributionRecord {
+func ProjectIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldProjectID, v))
 }
 
 // ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...uint64) predicate.DistributionRecord {
+func ProjectIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldProjectID, vs...))
 }
 
 // ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func ProjectIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldProjectID, vs...))
 }
 
 // ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v uint64) predicate.DistributionRecord {
+func ProjectIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldProjectID, v))
 }
 
 // ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v uint64) predicate.DistributionRecord {
+func ProjectIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldProjectID, v))
 }
 
 // ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v uint64) predicate.DistributionRecord {
+func ProjectIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldProjectID, v))
 }
 
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v uint64) predicate.DistributionRecord {
+func ProjectIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldProjectID, v))
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.DistributionRecord {
+func NodeIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.DistributionRecord {
+func NodeIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.DistributionRecord {
+func NodeIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func NodeIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.DistributionRecord {
+func NodeIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.DistributionRecord {
+func NodeIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.DistributionRecord {
+func NodeIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.DistributionRecord {
+func NodeIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldNodeID, v))
 }
 
@@ -770,42 +770,42 @@ func ResultContainsFold(v string) predicate.DistributionRecord {
 }
 
 // OperatorIDEQ applies the EQ predicate on the "operator_id" field.
-func OperatorIDEQ(v uint64) predicate.DistributionRecord {
+func OperatorIDEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // OperatorIDNEQ applies the NEQ predicate on the "operator_id" field.
-func OperatorIDNEQ(v uint64) predicate.DistributionRecord {
+func OperatorIDNEQ(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNEQ(FieldOperatorID, v))
 }
 
 // OperatorIDIn applies the In predicate on the "operator_id" field.
-func OperatorIDIn(vs ...uint64) predicate.DistributionRecord {
+func OperatorIDIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDNotIn applies the NotIn predicate on the "operator_id" field.
-func OperatorIDNotIn(vs ...uint64) predicate.DistributionRecord {
+func OperatorIDNotIn(vs ...int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldNotIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDGT applies the GT predicate on the "operator_id" field.
-func OperatorIDGT(v uint64) predicate.DistributionRecord {
+func OperatorIDGT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGT(FieldOperatorID, v))
 }
 
 // OperatorIDGTE applies the GTE predicate on the "operator_id" field.
-func OperatorIDGTE(v uint64) predicate.DistributionRecord {
+func OperatorIDGTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldGTE(FieldOperatorID, v))
 }
 
 // OperatorIDLT applies the LT predicate on the "operator_id" field.
-func OperatorIDLT(v uint64) predicate.DistributionRecord {
+func OperatorIDLT(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLT(FieldOperatorID, v))
 }
 
 // OperatorIDLTE applies the LTE predicate on the "operator_id" field.
-func OperatorIDLTE(v uint64) predicate.DistributionRecord {
+func OperatorIDLTE(v int64) predicate.DistributionRecord {
 	return predicate.DistributionRecord(sql.FieldLTE(FieldOperatorID, v))
 }
 

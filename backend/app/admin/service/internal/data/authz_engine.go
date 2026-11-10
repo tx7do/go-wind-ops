@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	casbinEngine "github.com/tx7do/kratos-authz/engine/casbin"
 	authzEngine "github.com/tx7do/kratos-authz/engine"
+	casbinEngine "github.com/tx7do/kratos-authz/engine/casbin"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -72,7 +72,7 @@ func (p *policyProvider) ProvidePolicies(ctx context.Context) (authorizer.Permis
 	}
 
 	// API id → (path, method 大写)
-	apiByID := make(map[uint64]authorizer.PermissionData, len(apis.GetItems()))
+	apiByID := make(map[int64]authorizer.PermissionData, len(apis.GetItems()))
 	for _, api := range apis.GetItems() {
 		if api.GetId() == 0 || api.GetPath() == "" {
 			continue
@@ -89,7 +89,7 @@ func (p *policyProvider) ProvidePolicies(ctx context.Context) (authorizer.Permis
 			continue
 		}
 		resources, err := p.permClient.ListPermissionResources(ctx, &permissionV1.ListPermissionResourcesRequest{
-			RoleIds:       []uint64{role.GetId()},
+			RoleIds:       []int64{role.GetId()},
 			ResourceTypes: []permissionV1.ListPermissionResourcesRequest_ResourceType{permissionV1.ListPermissionResourcesRequest_API},
 		})
 		if err != nil {

@@ -125,6 +125,25 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/mfa/backup-codes:regenerate:
+        post:
+            tags:
+                - MfaService
+            description: 生成/重生成备份码(鉴权;明文仅一次)
+            operationId: MfaService_MfaBackupCodesRegenerate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.MfaBackupCodesRegenerateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.MfaBackupCodesResponse'
     /app/v1/mfa/setup:confirm:
         post:
             tags:
@@ -299,9 +318,8 @@ components:
                     type: string
                     description: 跳转链接
                 user_id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 username:
                     type: string
                     description: 用户名
@@ -381,6 +399,18 @@ components:
                 mfa_operation_id:
                     type: string
             description: 用户登录 - 回应
+        authentication.service.v1.MfaBackupCodesRegenerateRequest:
+            type: object
+            properties: {}
+            description: MfaBackupCodesRegenerateRequest 重生成备份码(鉴权,操作者=当前用户)
+        authentication.service.v1.MfaBackupCodesResponse:
+            type: object
+            properties:
+                codes:
+                    type: array
+                    items:
+                        type: string
+            description: MfaBackupCodesResponse 备份码明文(仅此一次;服务端只存哈希)
         authentication.service.v1.MfaDisableRequest:
             type: object
             properties:
@@ -416,9 +446,7 @@ components:
                     type: string
                 deviceId:
                     type: string
-            description: |-
-                VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)
-                 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。
+            description: "VerifyMFAChallengeRequest MFA 二步验证请求(免鉴权端点)\r\n 字段 json_name 对齐前端既有 hook 的调用字面量(operationId/totpCode)。"
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -484,8 +512,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/identity.service.v1.User'
                 password:
@@ -505,25 +532,21 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID
-                    format: uint32
                 tenantName:
                     type: string
                     description: 租户名称
                 orgUnitId:
-                    type: integer
+                    type: string
                     description: 组织ID
-                    format: uint32
                 orgUnitIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 归属组织ID列表
                 orgUnitName:
                     type: string
@@ -534,14 +557,12 @@ components:
                         type: string
                     description: 组织名称列表
                 positionId:
-                    type: integer
+                    type: string
                     description: 职位ID
-                    format: uint32
                 positionIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 职位列表
                 positionName:
                     type: string
@@ -552,14 +573,12 @@ components:
                         type: string
                     description: 职位名称列表
                 roleId:
-                    type: integer
+                    type: string
                     description: 角色ID
-                    format: uint32
                 roleIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 角色ID列表
                 roles:
                     type: array
@@ -650,17 +669,14 @@ components:
                     type: string
                     description: 获赞数
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间

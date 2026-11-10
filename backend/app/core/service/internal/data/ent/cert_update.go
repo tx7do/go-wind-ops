@@ -70,14 +70,14 @@ func (_u *CertUpdate) ClearDeletedAt() *CertUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CertUpdate) SetCreatedBy(v uint64) *CertUpdate {
+func (_u *CertUpdate) SetCreatedBy(v int64) *CertUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CertUpdate) SetNillableCreatedBy(v *uint64) *CertUpdate {
+func (_u *CertUpdate) SetNillableCreatedBy(v *int64) *CertUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *CertUpdate) ClearCreatedBy() *CertUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CertUpdate) SetUpdatedBy(v uint64) *CertUpdate {
+func (_u *CertUpdate) SetUpdatedBy(v int64) *CertUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CertUpdate) SetNillableUpdatedBy(v *uint64) *CertUpdate {
+func (_u *CertUpdate) SetNillableUpdatedBy(v *int64) *CertUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *CertUpdate) ClearUpdatedBy() *CertUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CertUpdate) SetDeletedBy(v uint64) *CertUpdate {
+func (_u *CertUpdate) SetDeletedBy(v int64) *CertUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CertUpdate) SetNillableDeletedBy(v *uint64) *CertUpdate {
+func (_u *CertUpdate) SetNillableDeletedBy(v *int64) *CertUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -431,7 +431,7 @@ func (_u *CertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cert.Table, cert.Columns, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(cert.Table, cert.Columns, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -440,7 +440,7 @@ func (_u *CertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cert.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(cert.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cert.FieldCreatedAt, field.TypeTime)
@@ -458,31 +458,31 @@ func (_u *CertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(cert.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cert.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cert.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cert.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cert.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cert.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cert.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cert.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cert.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cert.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(cert.FieldName, field.TypeString, value)
@@ -610,14 +610,14 @@ func (_u *CertUpdateOne) ClearDeletedAt() *CertUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CertUpdateOne) SetCreatedBy(v uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetCreatedBy(v int64) *CertUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CertUpdateOne) SetNillableCreatedBy(v *uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetNillableCreatedBy(v *int64) *CertUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -637,14 +637,14 @@ func (_u *CertUpdateOne) ClearCreatedBy() *CertUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CertUpdateOne) SetUpdatedBy(v uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetUpdatedBy(v int64) *CertUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CertUpdateOne) SetNillableUpdatedBy(v *uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetNillableUpdatedBy(v *int64) *CertUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -664,14 +664,14 @@ func (_u *CertUpdateOne) ClearUpdatedBy() *CertUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CertUpdateOne) SetDeletedBy(v uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetDeletedBy(v int64) *CertUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CertUpdateOne) SetNillableDeletedBy(v *uint64) *CertUpdateOne {
+func (_u *CertUpdateOne) SetNillableDeletedBy(v *int64) *CertUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -984,7 +984,7 @@ func (_u *CertUpdateOne) sqlSave(ctx context.Context) (_node *Cert, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cert.Table, cert.Columns, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(cert.Table, cert.Columns, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Cert.id" for update`)}
@@ -1010,7 +1010,7 @@ func (_u *CertUpdateOne) sqlSave(ctx context.Context) (_node *Cert, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cert.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(cert.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cert.FieldCreatedAt, field.TypeTime)
@@ -1028,31 +1028,31 @@ func (_u *CertUpdateOne) sqlSave(ctx context.Context) (_node *Cert, err error) {
 		_spec.ClearField(cert.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cert.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cert.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cert.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cert.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cert.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cert.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cert.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cert.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(cert.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cert.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(cert.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(cert.FieldName, field.TypeString, value)

@@ -80,7 +80,7 @@ func (NotificationChannelType) EnumDescriptor() ([]byte, []int) {
 // 告警通知渠道配置
 type NotificationChannel struct {
 	state            protoimpl.MessageState   `protogen:"open.v1"`
-	Id               *uint64                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 渠道ID
+	Id               *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 渠道ID
 	Name             *string                  `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                   // 渠道名
 	Type             *NotificationChannelType `protobuf:"varint,3,opt,name=type,proto3,enum=ops.service.v1.NotificationChannelType,oneof" json:"type,omitempty"`      // 渠道类型
 	WebhookUrl       *string                  `protobuf:"bytes,4,opt,name=webhook_url,json=webhookUrl,proto3,oneof" json:"webhook_url,omitempty"`                     // Webhook URL
@@ -130,7 +130,7 @@ func (*NotificationChannel) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_channel_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *NotificationChannel) GetId() uint64 {
+func (x *NotificationChannel) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -244,7 +244,7 @@ func (x *NotificationChannel) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListNotificationChannelResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Items         []*NotificationChannel `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -280,7 +280,7 @@ func (*ListNotificationChannelResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_channel_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListNotificationChannelResponse) GetTotal() uint64 {
+func (x *ListNotificationChannelResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -296,7 +296,7 @@ func (x *ListNotificationChannelResponse) GetItems() []*NotificationChannel {
 
 type GetNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -331,7 +331,7 @@ func (*GetNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_channel_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetNotificationChannelRequest) GetId() uint64 {
+func (x *GetNotificationChannelRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -384,7 +384,7 @@ func (x *CreateNotificationChannelRequest) GetData() *NotificationChannel {
 
 type UpdateNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *NotificationChannel   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -421,7 +421,7 @@ func (*UpdateNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_channel_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateNotificationChannelRequest) GetId() uint64 {
+func (x *UpdateNotificationChannelRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -444,7 +444,7 @@ func (x *UpdateNotificationChannelRequest) GetUpdateMask() *fieldmaskpb.FieldMas
 
 type DeleteNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -479,7 +479,7 @@ func (*DeleteNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_channel_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteNotificationChannelRequest) GetId() uint64 {
+func (x *DeleteNotificationChannelRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -492,7 +492,7 @@ const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\n" +
 	")ops/service/v1/notification_channel.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x89\t\n" +
 	"\x13NotificationChannel\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17渠道名(全局唯一)H\x01R\x04name\x88\x01\x01\x12E\n" +
 	"\x04type\x18\x03 \x01(\x0e2'.ops.service.v1.NotificationChannelTypeB\x03\xe0A\x02H\x02R\x04type\x88\x01\x01\x12O\n" +
 	"\vwebhook_url\x18\x04 \x01(\tB)\xbaG&\x92\x02#Webhook URL(type=WEBHOOK 时必填)H\x03R\n" +
@@ -534,20 +534,20 @@ const file_ops_service_v1_notification_channel_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"r\n" +
 	"\x1fListNotificationChannelResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x129\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x129\n" +
 	"\x05items\x18\x02 \x03(\v2#.ops.service.v1.NotificationChannelR\x05items\"@\n" +
 	"\x1dGetNotificationChannelRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"`\n" +
 	" CreateNotificationChannelRequest\x12<\n" +
 	"\x04data\x18\x01 \x01(\v2#.ops.service.v1.NotificationChannelB\x03\xe0A\x02R\x04data\"\xb2\x01\n" +
 	" UpdateNotificationChannelRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12<\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12<\n" +
 	"\x04data\x18\x02 \x01(\v2#.ops.service.v1.NotificationChannelB\x03\xe0A\x02R\x04data\x12;\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\"C\n" +
 	" DeleteNotificationChannelRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id*\\\n" +
 	"\x17NotificationChannelType\x12)\n" +
 	"%NOTIFICATION_CHANNEL_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +

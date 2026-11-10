@@ -30,7 +30,7 @@ const (
 // 配置模板
 type ConfigTemplate struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 模板ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 模板ID
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                               // 模板名
 	Env           *string                `protobuf:"bytes,3,opt,name=env,proto3,oneof" json:"env,omitempty"`                                 // 环境
 	TargetPath    *string                `protobuf:"bytes,4,opt,name=target_path,json=targetPath,proto3,oneof" json:"target_path,omitempty"` // 目标路径
@@ -72,7 +72,7 @@ func (*ConfigTemplate) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ConfigTemplate) GetId() uint64 {
+func (x *ConfigTemplate) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -130,7 +130,7 @@ func (x *ConfigTemplate) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListConfigTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*ConfigTemplate      `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 模板列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -166,7 +166,7 @@ func (*ListConfigTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListConfigTemplateResponse) GetTotal() uint64 {
+func (x *ListConfigTemplateResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -182,7 +182,7 @@ func (x *ListConfigTemplateResponse) GetItems() []*ConfigTemplate {
 
 type GetConfigTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 模板ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 模板ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -217,7 +217,7 @@ func (*GetConfigTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetConfigTemplateRequest) GetId() uint64 {
+func (x *GetConfigTemplateRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -270,7 +270,7 @@ func (x *CreateConfigTemplateRequest) GetData() *ConfigTemplate {
 
 type UpdateConfigTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 模板ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 模板ID
 	Data          *ConfigTemplate        `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -307,7 +307,7 @@ func (*UpdateConfigTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateConfigTemplateRequest) GetId() uint64 {
+func (x *UpdateConfigTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -330,7 +330,7 @@ func (x *UpdateConfigTemplateRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteConfigTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 模板ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 模板ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -365,7 +365,7 @@ func (*DeleteConfigTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteConfigTemplateRequest) GetId() uint64 {
+func (x *DeleteConfigTemplateRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -374,9 +374,9 @@ func (x *DeleteConfigTemplateRequest) GetId() uint64 {
 
 type DistributeConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    *uint64                `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"` // 模板ID
-	NodeId        *uint64                `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`             // 目标节点ID
-	ProjectId     *uint64                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`    // 关联项目
+	TemplateId    *int64                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"` // 模板ID
+	NodeId        *int64                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`             // 目标节点ID
+	ProjectId     *int64                 `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`    // 关联项目
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -411,21 +411,21 @@ func (*DistributeConfigRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DistributeConfigRequest) GetTemplateId() uint64 {
+func (x *DistributeConfigRequest) GetTemplateId() int64 {
 	if x != nil && x.TemplateId != nil {
 		return *x.TemplateId
 	}
 	return 0
 }
 
-func (x *DistributeConfigRequest) GetNodeId() uint64 {
+func (x *DistributeConfigRequest) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
 	return 0
 }
 
-func (x *DistributeConfigRequest) GetProjectId() uint64 {
+func (x *DistributeConfigRequest) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -434,11 +434,11 @@ func (x *DistributeConfigRequest) GetProjectId() uint64 {
 
 type ConfigDistribution struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 记录ID
-	TemplateId    *uint64                `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`      // 模板
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 记录ID
+	TemplateId    *int64                 `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`      // 模板
 	TemplateName  *string                `protobuf:"bytes,3,opt,name=template_name,json=templateName,proto3,oneof" json:"template_name,omitempty"` // 模板名
-	NodeId        *uint64                `protobuf:"varint,4,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                  // 目标节点
-	ProjectId     *uint64                `protobuf:"varint,5,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`         // 关联项目
+	NodeId        *int64                 `protobuf:"varint,4,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                  // 目标节点
+	ProjectId     *int64                 `protobuf:"varint,5,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`         // 关联项目
 	TargetPath    *string                `protobuf:"bytes,6,opt,name=target_path,json=targetPath,proto3,oneof" json:"target_path,omitempty"`       // 目标路径
 	Status        *string                `protobuf:"bytes,7,opt,name=status,proto3,oneof" json:"status,omitempty"`                                 // 状态(PENDING/SUCCESS/FAILED)
 	Error         *string                `protobuf:"bytes,8,opt,name=error,proto3,oneof" json:"error,omitempty"`                                   // 失败原因
@@ -478,14 +478,14 @@ func (*ConfigDistribution) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ConfigDistribution) GetId() uint64 {
+func (x *ConfigDistribution) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *ConfigDistribution) GetTemplateId() uint64 {
+func (x *ConfigDistribution) GetTemplateId() int64 {
 	if x != nil && x.TemplateId != nil {
 		return *x.TemplateId
 	}
@@ -499,14 +499,14 @@ func (x *ConfigDistribution) GetTemplateName() string {
 	return ""
 }
 
-func (x *ConfigDistribution) GetNodeId() uint64 {
+func (x *ConfigDistribution) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
 	return 0
 }
 
-func (x *ConfigDistribution) GetProjectId() uint64 {
+func (x *ConfigDistribution) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -550,7 +550,7 @@ func (x *ConfigDistribution) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListConfigDistributionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    *uint64                `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"` // 按模板过滤
+	TemplateId    *int64                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"` // 按模板过滤
 	Page          *int32                 `protobuf:"varint,2,opt,name=page,proto3,oneof" json:"page,omitempty"`                               // 页码
 	PageSize      *int32                 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3,oneof" json:"page_size,omitempty"`       // 页大小
 	unknownFields protoimpl.UnknownFields
@@ -587,7 +587,7 @@ func (*ListConfigDistributionsRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ListConfigDistributionsRequest) GetTemplateId() uint64 {
+func (x *ListConfigDistributionsRequest) GetTemplateId() int64 {
 	if x != nil && x.TemplateId != nil {
 		return *x.TemplateId
 	}
@@ -610,7 +610,7 @@ func (x *ListConfigDistributionsRequest) GetPageSize() int32 {
 
 type ListConfigDistributionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*ConfigDistribution  `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 记录列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -646,7 +646,7 @@ func (*ListConfigDistributionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListConfigDistributionResponse) GetTotal() uint64 {
+func (x *ListConfigDistributionResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -663,9 +663,9 @@ func (x *ListConfigDistributionResponse) GetItems() []*ConfigDistribution {
 // CheckConfigDriftRequest 漂移校验(同步指令,秒级返回)
 type CheckConfigDriftRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    uint64                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`    // 模板ID(id 走 body:触发类 POST 不带 path 参数)
-	NodeId        uint64                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                // 目标节点
-	ProjectId     *uint64                `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目(占位符渲染用,可空)
+	TemplateId    int64                  `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`    // 模板ID(id 走 body:触发类 POST 不带 path 参数)
+	NodeId        int64                  `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                // 目标节点
+	ProjectId     *int64                 `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目(占位符渲染用,可空)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -700,21 +700,21 @@ func (*CheckConfigDriftRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *CheckConfigDriftRequest) GetTemplateId() uint64 {
+func (x *CheckConfigDriftRequest) GetTemplateId() int64 {
 	if x != nil {
 		return x.TemplateId
 	}
 	return 0
 }
 
-func (x *CheckConfigDriftRequest) GetNodeId() uint64 {
+func (x *CheckConfigDriftRequest) GetNodeId() int64 {
 	if x != nil {
 		return x.NodeId
 	}
 	return 0
 }
 
-func (x *CheckConfigDriftRequest) GetProjectId() uint64 {
+func (x *CheckConfigDriftRequest) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -724,8 +724,8 @@ func (x *CheckConfigDriftRequest) GetProjectId() uint64 {
 // ConfigDriftReport 漂移报告
 type ConfigDriftReport struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId     uint64                 `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`            // 模板
-	NodeId         uint64                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                        // 节点
+	TemplateId     int64                  `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`            // 模板
+	NodeId         int64                  `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`                        // 节点
 	TargetPath     string                 `protobuf:"bytes,3,opt,name=target_path,json=targetPath,proto3" json:"target_path,omitempty"`             // 目标路径
 	ExpectedSha256 string                 `protobuf:"bytes,4,opt,name=expected_sha256,json=expectedSha256,proto3" json:"expected_sha256,omitempty"` // 期望哈希(渲染内容)
 	ActualSha256   *string                `protobuf:"bytes,5,opt,name=actual_sha256,json=actualSha256,proto3,oneof" json:"actual_sha256,omitempty"` // 实际哈希(文件不存在时空)
@@ -765,14 +765,14 @@ func (*ConfigDriftReport) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_config_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ConfigDriftReport) GetTemplateId() uint64 {
+func (x *ConfigDriftReport) GetTemplateId() int64 {
 	if x != nil {
 		return x.TemplateId
 	}
 	return 0
 }
 
-func (x *ConfigDriftReport) GetNodeId() uint64 {
+func (x *ConfigDriftReport) GetNodeId() int64 {
 	if x != nil {
 		return x.NodeId
 	}
@@ -820,7 +820,7 @@ const file_ops_service_v1_config_proto_rawDesc = "" +
 	"\n" +
 	"\x1bops/service/v1/config.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xfc\x04\n" +
 	"\x0eConfigTemplate\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17模板名(全局唯一)H\x01R\x04name\x88\x01\x01\x12C\n" +
 	"\x03env\x18\x03 \x01(\tB,\xbaG)\x92\x02&所属环境(default/dev/staging/prod)H\x02R\x03env\x88\x01\x01\x12e\n" +
 	"\vtarget_path\x18\x04 \x01(\tB?\xe0A\x02\xbaG9\x92\x026下发目标绝对路径(须在 agent 授权目录内)H\x03R\n" +
@@ -841,39 +841,39 @@ const file_ops_service_v1_config_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"h\n" +
 	"\x1aListConfigTemplateResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x124\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x124\n" +
 	"\x05items\x18\x02 \x03(\v2\x1e.ops.service.v1.ConfigTemplateR\x05items\";\n" +
 	"\x18GetConfigTemplateRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"V\n" +
 	"\x1bCreateConfigTemplateRequest\x127\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.ops.service.v1.ConfigTemplateB\x03\xe0A\x02R\x04data\"\xc8\x01\n" +
 	"\x1bUpdateConfigTemplateRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x127\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x127\n" +
 	"\x04data\x18\x02 \x01(\v2\x1e.ops.service.v1.ConfigTemplateB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\">\n" +
 	"\x1bDeleteConfigTemplateRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\xe4\x01\n" +
 	"\x17DistributeConfigRequest\x12)\n" +
-	"\vtemplate_id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\n" +
 	"templateId\x88\x01\x01\x12!\n" +
-	"\anode_id\x18\x02 \x01(\x04B\x03\xe0A\x02H\x01R\x06nodeId\x88\x01\x01\x12P\n" +
+	"\anode_id\x18\x02 \x01(\x03B\x03\xe0A\x02H\x01R\x06nodeId\x88\x01\x01\x12P\n" +
 	"\n" +
-	"project_id\x18\x03 \x01(\x04B,\xbaG)\x92\x02&关联项目(0=不关联,仅记录用)H\x02R\tprojectId\x88\x01\x01B\x0e\n" +
+	"project_id\x18\x03 \x01(\x03B,\xbaG)\x92\x02&关联项目(0=不关联,仅记录用)H\x02R\tprojectId\x88\x01\x01B\x0e\n" +
 	"\f_template_idB\n" +
 	"\n" +
 	"\b_node_idB\r\n" +
 	"\v_project_id\"\xb2\x04\n" +
 	"\x12ConfigDistribution\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12$\n" +
-	"\vtemplate_id\x18\x02 \x01(\x04H\x01R\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12$\n" +
+	"\vtemplate_id\x18\x02 \x01(\x03H\x01R\n" +
 	"templateId\x88\x01\x01\x12(\n" +
 	"\rtemplate_name\x18\x03 \x01(\tH\x02R\ftemplateName\x88\x01\x01\x12\x1c\n" +
-	"\anode_id\x18\x04 \x01(\x04H\x03R\x06nodeId\x88\x01\x01\x12\"\n" +
+	"\anode_id\x18\x04 \x01(\x03H\x03R\x06nodeId\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"project_id\x18\x05 \x01(\x04H\x04R\tprojectId\x88\x01\x01\x12$\n" +
+	"project_id\x18\x05 \x01(\x03H\x04R\tprojectId\x88\x01\x01\x12$\n" +
 	"\vtarget_path\x18\x06 \x01(\tH\x05R\n" +
 	"targetPath\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\a \x01(\tH\x06R\x06status\x88\x01\x01\x12\x19\n" +
@@ -894,7 +894,7 @@ const file_ops_service_v1_config_proto_rawDesc = "" +
 	"\f_finished_atB\r\n" +
 	"\v_created_at\"\xad\x01\n" +
 	"\x1eListConfigDistributionsRequest\x12)\n" +
-	"\vtemplate_id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\n" +
 	"templateId\x88\x01\x01\x12\x17\n" +
 	"\x04page\x18\x02 \x01(\x05H\x01R\x04page\x88\x01\x01\x12 \n" +
 	"\tpage_size\x18\x03 \x01(\x05H\x02R\bpageSize\x88\x01\x01B\x0e\n" +
@@ -903,19 +903,19 @@ const file_ops_service_v1_config_proto_rawDesc = "" +
 	"\n" +
 	"_page_size\"p\n" +
 	"\x1eListConfigDistributionResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x128\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x128\n" +
 	"\x05items\x18\x02 \x03(\v2\".ops.service.v1.ConfigDistributionR\x05items\"\x90\x01\n" +
 	"\x17CheckConfigDriftRequest\x12$\n" +
-	"\vtemplate_id\x18\x01 \x01(\x04B\x03\xe0A\x02R\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03B\x03\xe0A\x02R\n" +
 	"templateId\x12\x1c\n" +
-	"\anode_id\x18\x02 \x01(\x04B\x03\xe0A\x02R\x06nodeId\x12\"\n" +
+	"\anode_id\x18\x02 \x01(\x03B\x03\xe0A\x02R\x06nodeId\x12\"\n" +
 	"\n" +
-	"project_id\x18\x03 \x01(\x04H\x00R\tprojectId\x88\x01\x01B\r\n" +
+	"project_id\x18\x03 \x01(\x03H\x00R\tprojectId\x88\x01\x01B\r\n" +
 	"\v_project_id\"\x85\x02\n" +
 	"\x11ConfigDriftReport\x12\x1f\n" +
-	"\vtemplate_id\x18\x01 \x01(\x04R\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
 	"templateId\x12\x17\n" +
-	"\anode_id\x18\x02 \x01(\x04R\x06nodeId\x12\x1f\n" +
+	"\anode_id\x18\x02 \x01(\x03R\x06nodeId\x12\x1f\n" +
 	"\vtarget_path\x18\x03 \x01(\tR\n" +
 	"targetPath\x12'\n" +
 	"\x0fexpected_sha256\x18\x04 \x01(\tR\x0eexpectedSha256\x12(\n" +

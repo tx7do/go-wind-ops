@@ -82,7 +82,7 @@ func (r *ScriptBatchRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 	}, nil
 }
 
-func (r *ScriptBatchRepo) Get(ctx context.Context, id uint64) (*opsV1.ScriptBatch, error) {
+func (r *ScriptBatchRepo) Get(ctx context.Context, id int64) (*opsV1.ScriptBatch, error) {
 	builder := r.entClient.Client().ScriptBatch.Query()
 
 	dto, err := r.repository.Get(ctx, builder, nil, scriptbatch.IDEQ(id))
@@ -98,7 +98,7 @@ func (r *ScriptBatchRepo) Get(ctx context.Context, id uint64) (*opsV1.ScriptBatc
 }
 
 // GetEntity 取原始实体(批次计数对账用)。
-func (r *ScriptBatchRepo) GetEntity(ctx context.Context, id uint64) (*ent.ScriptBatch, error) {
+func (r *ScriptBatchRepo) GetEntity(ctx context.Context, id int64) (*ent.ScriptBatch, error) {
 	return r.entClient.Client().ScriptBatch.
 		Query().
 		Where(scriptbatch.IDEQ(id)).
@@ -106,7 +106,7 @@ func (r *ScriptBatchRepo) GetEntity(ctx context.Context, id uint64) (*ent.Script
 }
 
 // Create 创建批次(RUNNING 起步,total 为目标节点数)。
-func (r *ScriptBatchRepo) Create(ctx context.Context, scriptID uint64, scriptName string, nodeIDs []uint64, total uint32, operatorID uint64) (*ent.ScriptBatch, error) {
+func (r *ScriptBatchRepo) Create(ctx context.Context, scriptID int64, scriptName string, nodeIDs []int64, total uint32, operatorID int64) (*ent.ScriptBatch, error) {
 	builder := r.entClient.Client().ScriptBatch.
 		Create().
 		SetScriptID(scriptID).
@@ -128,7 +128,7 @@ func (r *ScriptBatchRepo) Create(ctx context.Context, scriptID uint64, scriptNam
 
 // ApplyItemResult 批次内单节点到达终态:原子累加成败计数,全部终态时
 // 把批次推进到 FINISHED。幂等依赖调用方只在台账首次定案时调用。
-func (r *ScriptBatchRepo) ApplyItemResult(ctx context.Context, batchID uint64, success bool) error {
+func (r *ScriptBatchRepo) ApplyItemResult(ctx context.Context, batchID int64, success bool) error {
 	builder := r.entClient.Client().ScriptBatch.
 		Update().
 		Where(scriptbatch.IDEQ(batchID))

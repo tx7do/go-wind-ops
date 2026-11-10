@@ -84,8 +84,8 @@ func (CloudCost_Provider) EnumDescriptor() ([]byte, []int) {
 // 云成本月账单
 type CloudCost struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 记录ID
-	CloudAccountId   *uint64                `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`      // 云账号ID
+	Id               *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 记录ID
+	CloudAccountId   *int64                 `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`      // 云账号ID
 	CloudAccountName *string                `protobuf:"bytes,3,opt,name=cloud_account_name,json=cloudAccountName,proto3,oneof" json:"cloud_account_name,omitempty"` // 云账号名(快照)
 	Provider         *CloudCost_Provider    `protobuf:"varint,4,opt,name=provider,proto3,enum=ops.service.v1.CloudCost_Provider,oneof" json:"provider,omitempty"`   // 云厂商(录入时快照)
 	Month            *string                `protobuf:"bytes,5,opt,name=month,proto3,oneof" json:"month,omitempty"`                                                 // 账单月份 YYYY-MM
@@ -128,14 +128,14 @@ func (*CloudCost) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CloudCost) GetId() uint64 {
+func (x *CloudCost) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *CloudCost) GetCloudAccountId() uint64 {
+func (x *CloudCost) GetCloudAccountId() int64 {
 	if x != nil && x.CloudAccountId != nil {
 		return *x.CloudAccountId
 	}
@@ -202,7 +202,7 @@ type ListCloudCostsRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Page           uint32                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`                                                    // 页码(1 起)
 	PageSize       uint32                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`                            // 页大小
-	CloudAccountId *uint64                `protobuf:"varint,10,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"` // 按云账号
+	CloudAccountId *int64                 `protobuf:"varint,10,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"` // 按云账号
 	Year           *string                `protobuf:"bytes,11,opt,name=year,proto3,oneof" json:"year,omitempty"`                                              // 按年份(YYYY,空=全部)
 	Provider       *string                `protobuf:"bytes,12,opt,name=provider,proto3,oneof" json:"provider,omitempty"`                                      // 按厂商
 	unknownFields  protoimpl.UnknownFields
@@ -253,7 +253,7 @@ func (x *ListCloudCostsRequest) GetPageSize() uint32 {
 	return 0
 }
 
-func (x *ListCloudCostsRequest) GetCloudAccountId() uint64 {
+func (x *ListCloudCostsRequest) GetCloudAccountId() int64 {
 	if x != nil && x.CloudAccountId != nil {
 		return *x.CloudAccountId
 	}
@@ -276,7 +276,7 @@ func (x *ListCloudCostsRequest) GetProvider() string {
 
 type ListCloudCostsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*CloudCost           `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 记录列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -312,7 +312,7 @@ func (*ListCloudCostsResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListCloudCostsResponse) GetTotal() uint64 {
+func (x *ListCloudCostsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -373,7 +373,7 @@ func (x *UpsertCloudCostRequest) GetData() *CloudCost {
 type DeleteCloudCostRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
-	Id            uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 记录ID
+	Id            int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 记录ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,7 +408,7 @@ func (*DeleteCloudCostRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteCloudCostRequest) GetId() uint64 {
+func (x *DeleteCloudCostRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -678,7 +678,7 @@ func (x *GetCloudCostSummaryResponse) GetItems() []*CloudCostSummaryItem {
 
 type FetchCloudCostFromProviderRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	CloudAccountId uint64                 `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
+	CloudAccountId int64                  `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
 	Month          string                 `protobuf:"bytes,2,opt,name=month,proto3" json:"month,omitempty"`                                            // 账单月份 YYYY-MM
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -714,7 +714,7 @@ func (*FetchCloudCostFromProviderRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_cost_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *FetchCloudCostFromProviderRequest) GetCloudAccountId() uint64 {
+func (x *FetchCloudCostFromProviderRequest) GetCloudAccountId() int64 {
 	if x != nil {
 		return x.CloudAccountId
 	}
@@ -786,8 +786,8 @@ const file_ops_service_v1_cloud_cost_proto_rawDesc = "" +
 	"\n" +
 	"\x1fops/service/v1/cloud_cost.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd0\x05\n" +
 	"\tCloudCost\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x122\n" +
-	"\x10cloud_account_id\x18\x02 \x01(\x04B\x03\xe0A\x02H\x01R\x0ecloudAccountId\x88\x01\x01\x126\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x122\n" +
+	"\x10cloud_account_id\x18\x02 \x01(\x03B\x03\xe0A\x02H\x01R\x0ecloudAccountId\x88\x01\x01\x126\n" +
 	"\x12cloud_account_name\x18\x03 \x01(\tB\x03\xe0A\x03H\x02R\x10cloudAccountName\x88\x01\x01\x12H\n" +
 	"\bprovider\x18\x04 \x01(\x0e2\".ops.service.v1.CloudCost.ProviderB\x03\xe0A\x03H\x03R\bprovider\x88\x01\x01\x12\x1e\n" +
 	"\x05month\x18\x05 \x01(\tB\x03\xe0A\x02H\x04R\x05month\x88\x01\x01\x12 \n" +
@@ -819,20 +819,20 @@ const file_ops_service_v1_cloud_cost_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\rR\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\rR\bpageSize\x12-\n" +
 	"\x10cloud_account_id\x18\n" +
-	" \x01(\x04H\x00R\x0ecloudAccountId\x88\x01\x01\x12\x17\n" +
+	" \x01(\x03H\x00R\x0ecloudAccountId\x88\x01\x01\x12\x17\n" +
 	"\x04year\x18\v \x01(\tH\x01R\x04year\x88\x01\x01\x12\x1f\n" +
 	"\bprovider\x18\f \x01(\tH\x02R\bprovider\x88\x01\x01B\x13\n" +
 	"\x11_cloud_account_idB\a\n" +
 	"\x05_yearB\v\n" +
 	"\t_provider\"_\n" +
 	"\x16ListCloudCostsResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12/\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12/\n" +
 	"\x05items\x18\x02 \x03(\v2\x19.ops.service.v1.CloudCostR\x05items\"Z\n" +
 	"\x16UpsertCloudCostRequest\x127\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.ops.service.v1.CloudCostB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
 	"\x05_data\"-\n" +
 	"\x16DeleteCloudCostRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\"M\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\"M\n" +
 	"\x17ImportCloudCostsRequest\x122\n" +
 	"\x04rows\x18\x01 \x03(\v2\x19.ops.service.v1.CloudCostB\x03\xe0A\x02R\x04rows\"N\n" +
 	"\x18ImportCloudCostsResponse\x12\x1a\n" +
@@ -852,7 +852,7 @@ const file_ops_service_v1_cloud_cost_proto_rawDesc = "" +
 	"\x1bGetCloudCostSummaryResponse\x12:\n" +
 	"\x05items\x18\x01 \x03(\v2$.ops.service.v1.CloudCostSummaryItemR\x05items\"m\n" +
 	"!FetchCloudCostFromProviderRequest\x12-\n" +
-	"\x10cloud_account_id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x0ecloudAccountId\x12\x19\n" +
+	"\x10cloud_account_id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x0ecloudAccountId\x12\x19\n" +
 	"\x05month\x18\x02 \x01(\tB\x03\xe0A\x02R\x05month\"\xab\x01\n" +
 	"\"FetchCloudCostFromProviderResponse\x127\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.ops.service.v1.CloudCostB\x03\xe0A\x03H\x00R\x04data\x88\x01\x01\x12.\n" +

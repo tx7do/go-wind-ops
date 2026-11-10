@@ -23,13 +23,13 @@ type NotificationChannelCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *NotificationChannelCreate) SetTenantID(v uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetTenantID(v int64) *NotificationChannelCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *NotificationChannelCreate) SetNillableTenantID(v *uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetNillableTenantID(v *int64) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *NotificationChannelCreate) SetNillableDeletedAt(v *time.Time) *Notific
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *NotificationChannelCreate) SetCreatedBy(v uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetCreatedBy(v int64) *NotificationChannelCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *NotificationChannelCreate) SetNillableCreatedBy(v *uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetNillableCreatedBy(v *int64) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *NotificationChannelCreate) SetNillableCreatedBy(v *uint64) *Notificati
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *NotificationChannelCreate) SetUpdatedBy(v uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetUpdatedBy(v int64) *NotificationChannelCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *NotificationChannelCreate) SetNillableUpdatedBy(v *uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetNillableUpdatedBy(v *int64) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *NotificationChannelCreate) SetNillableUpdatedBy(v *uint64) *Notificati
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *NotificationChannelCreate) SetDeletedBy(v uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetDeletedBy(v int64) *NotificationChannelCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *NotificationChannelCreate) SetNillableDeletedBy(v *uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetNillableDeletedBy(v *int64) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -295,7 +295,7 @@ func (_c *NotificationChannelCreate) SetNillableDescription(v *string) *Notifica
 }
 
 // SetID sets the "id" field.
-func (_c *NotificationChannelCreate) SetID(v uint64) *NotificationChannelCreate {
+func (_c *NotificationChannelCreate) SetID(v int64) *NotificationChannelCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -407,7 +407,7 @@ func (_c *NotificationChannelCreate) sqlSave(ctx context.Context) (*Notification
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -417,7 +417,7 @@ func (_c *NotificationChannelCreate) sqlSave(ctx context.Context) (*Notification
 func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgraph.CreateSpec) {
 	var (
 		_node = &NotificationChannel{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(notificationchannel.Table, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(notificationchannel.Table, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -425,7 +425,7 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(notificationchannel.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(notificationchannel.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -441,15 +441,15 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(notificationchannel.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(notificationchannel.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(notificationchannel.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(notificationchannel.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(notificationchannel.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(notificationchannel.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -593,7 +593,7 @@ func (u *NotificationChannelUpsert) ClearDeletedAt() *NotificationChannelUpsert 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NotificationChannelUpsert) SetCreatedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) SetCreatedBy(v int64) *NotificationChannelUpsert {
 	u.Set(notificationchannel.FieldCreatedBy, v)
 	return u
 }
@@ -605,7 +605,7 @@ func (u *NotificationChannelUpsert) UpdateCreatedBy() *NotificationChannelUpsert
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NotificationChannelUpsert) AddCreatedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) AddCreatedBy(v int64) *NotificationChannelUpsert {
 	u.Add(notificationchannel.FieldCreatedBy, v)
 	return u
 }
@@ -617,7 +617,7 @@ func (u *NotificationChannelUpsert) ClearCreatedBy() *NotificationChannelUpsert 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NotificationChannelUpsert) SetUpdatedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) SetUpdatedBy(v int64) *NotificationChannelUpsert {
 	u.Set(notificationchannel.FieldUpdatedBy, v)
 	return u
 }
@@ -629,7 +629,7 @@ func (u *NotificationChannelUpsert) UpdateUpdatedBy() *NotificationChannelUpsert
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NotificationChannelUpsert) AddUpdatedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) AddUpdatedBy(v int64) *NotificationChannelUpsert {
 	u.Add(notificationchannel.FieldUpdatedBy, v)
 	return u
 }
@@ -641,7 +641,7 @@ func (u *NotificationChannelUpsert) ClearUpdatedBy() *NotificationChannelUpsert 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NotificationChannelUpsert) SetDeletedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) SetDeletedBy(v int64) *NotificationChannelUpsert {
 	u.Set(notificationchannel.FieldDeletedBy, v)
 	return u
 }
@@ -653,7 +653,7 @@ func (u *NotificationChannelUpsert) UpdateDeletedBy() *NotificationChannelUpsert
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NotificationChannelUpsert) AddDeletedBy(v uint64) *NotificationChannelUpsert {
+func (u *NotificationChannelUpsert) AddDeletedBy(v int64) *NotificationChannelUpsert {
 	u.Add(notificationchannel.FieldDeletedBy, v)
 	return u
 }
@@ -983,14 +983,14 @@ func (u *NotificationChannelUpsertOne) ClearDeletedAt() *NotificationChannelUpse
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NotificationChannelUpsertOne) SetCreatedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) SetCreatedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NotificationChannelUpsertOne) AddCreatedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) AddCreatedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1011,14 +1011,14 @@ func (u *NotificationChannelUpsertOne) ClearCreatedBy() *NotificationChannelUpse
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NotificationChannelUpsertOne) SetUpdatedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) SetUpdatedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NotificationChannelUpsertOne) AddUpdatedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) AddUpdatedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1039,14 +1039,14 @@ func (u *NotificationChannelUpsertOne) ClearUpdatedBy() *NotificationChannelUpse
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NotificationChannelUpsertOne) SetDeletedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) SetDeletedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NotificationChannelUpsertOne) AddDeletedBy(v uint64) *NotificationChannelUpsertOne {
+func (u *NotificationChannelUpsertOne) AddDeletedBy(v int64) *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1341,7 +1341,7 @@ func (u *NotificationChannelUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NotificationChannelUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *NotificationChannelUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1350,7 +1350,7 @@ func (u *NotificationChannelUpsertOne) ID(ctx context.Context) (id uint64, err e
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NotificationChannelUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *NotificationChannelUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1407,7 +1407,7 @@ func (_c *NotificationChannelCreateBulk) Save(ctx context.Context) ([]*Notificat
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1588,14 +1588,14 @@ func (u *NotificationChannelUpsertBulk) ClearDeletedAt() *NotificationChannelUps
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NotificationChannelUpsertBulk) SetCreatedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) SetCreatedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NotificationChannelUpsertBulk) AddCreatedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) AddCreatedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1616,14 +1616,14 @@ func (u *NotificationChannelUpsertBulk) ClearCreatedBy() *NotificationChannelUps
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NotificationChannelUpsertBulk) SetUpdatedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) SetUpdatedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NotificationChannelUpsertBulk) AddUpdatedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) AddUpdatedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1644,14 +1644,14 @@ func (u *NotificationChannelUpsertBulk) ClearUpdatedBy() *NotificationChannelUps
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NotificationChannelUpsertBulk) SetDeletedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) SetDeletedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NotificationChannelUpsertBulk) AddDeletedBy(v uint64) *NotificationChannelUpsertBulk {
+func (u *NotificationChannelUpsertBulk) AddDeletedBy(v int64) *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.AddDeletedBy(v)
 	})

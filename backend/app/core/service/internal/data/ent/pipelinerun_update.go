@@ -70,14 +70,14 @@ func (_u *PipelineRunUpdate) ClearDeletedAt() *PipelineRunUpdate {
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (_u *PipelineRunUpdate) SetPipelineID(v uint64) *PipelineRunUpdate {
+func (_u *PipelineRunUpdate) SetPipelineID(v int64) *PipelineRunUpdate {
 	_u.mutation.ResetPipelineID()
 	_u.mutation.SetPipelineID(v)
 	return _u
 }
 
 // SetNillablePipelineID sets the "pipeline_id" field if the given value is not nil.
-func (_u *PipelineRunUpdate) SetNillablePipelineID(v *uint64) *PipelineRunUpdate {
+func (_u *PipelineRunUpdate) SetNillablePipelineID(v *int64) *PipelineRunUpdate {
 	if v != nil {
 		_u.SetPipelineID(*v)
 	}
@@ -252,14 +252,14 @@ func (_u *PipelineRunUpdate) ClearFinishedAt() *PipelineRunUpdate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *PipelineRunUpdate) SetOperatorID(v uint64) *PipelineRunUpdate {
+func (_u *PipelineRunUpdate) SetOperatorID(v int64) *PipelineRunUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *PipelineRunUpdate) SetNillableOperatorID(v *uint64) *PipelineRunUpdate {
+func (_u *PipelineRunUpdate) SetNillableOperatorID(v *int64) *PipelineRunUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -355,7 +355,7 @@ func (_u *PipelineRunUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(pipelinerun.Table, pipelinerun.Columns, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(pipelinerun.Table, pipelinerun.Columns, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -364,7 +364,7 @@ func (_u *PipelineRunUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pipelinerun.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(pipelinerun.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(pipelinerun.FieldCreatedAt, field.TypeTime)
@@ -382,10 +382,10 @@ func (_u *PipelineRunUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(pipelinerun.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.PipelineID(); ok {
-		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPipelineID(); ok {
-		_spec.AddField(pipelinerun.FieldPipelineID, field.TypeUint64, value)
+		_spec.AddField(pipelinerun.FieldPipelineID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(pipelinerun.FieldStatus, field.TypeEnum, value)
@@ -436,13 +436,13 @@ func (_u *PipelineRunUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(pipelinerun.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(pipelinerun.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(pipelinerun.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.RunnerID(); ok {
 		_spec.SetField(pipelinerun.FieldRunnerID, field.TypeString, value)
@@ -513,14 +513,14 @@ func (_u *PipelineRunUpdateOne) ClearDeletedAt() *PipelineRunUpdateOne {
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (_u *PipelineRunUpdateOne) SetPipelineID(v uint64) *PipelineRunUpdateOne {
+func (_u *PipelineRunUpdateOne) SetPipelineID(v int64) *PipelineRunUpdateOne {
 	_u.mutation.ResetPipelineID()
 	_u.mutation.SetPipelineID(v)
 	return _u
 }
 
 // SetNillablePipelineID sets the "pipeline_id" field if the given value is not nil.
-func (_u *PipelineRunUpdateOne) SetNillablePipelineID(v *uint64) *PipelineRunUpdateOne {
+func (_u *PipelineRunUpdateOne) SetNillablePipelineID(v *int64) *PipelineRunUpdateOne {
 	if v != nil {
 		_u.SetPipelineID(*v)
 	}
@@ -695,14 +695,14 @@ func (_u *PipelineRunUpdateOne) ClearFinishedAt() *PipelineRunUpdateOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *PipelineRunUpdateOne) SetOperatorID(v uint64) *PipelineRunUpdateOne {
+func (_u *PipelineRunUpdateOne) SetOperatorID(v int64) *PipelineRunUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *PipelineRunUpdateOne) SetNillableOperatorID(v *uint64) *PipelineRunUpdateOne {
+func (_u *PipelineRunUpdateOne) SetNillableOperatorID(v *int64) *PipelineRunUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -811,7 +811,7 @@ func (_u *PipelineRunUpdateOne) sqlSave(ctx context.Context) (_node *PipelineRun
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(pipelinerun.Table, pipelinerun.Columns, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(pipelinerun.Table, pipelinerun.Columns, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PipelineRun.id" for update`)}
@@ -837,7 +837,7 @@ func (_u *PipelineRunUpdateOne) sqlSave(ctx context.Context) (_node *PipelineRun
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pipelinerun.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(pipelinerun.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(pipelinerun.FieldCreatedAt, field.TypeTime)
@@ -855,10 +855,10 @@ func (_u *PipelineRunUpdateOne) sqlSave(ctx context.Context) (_node *PipelineRun
 		_spec.ClearField(pipelinerun.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.PipelineID(); ok {
-		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPipelineID(); ok {
-		_spec.AddField(pipelinerun.FieldPipelineID, field.TypeUint64, value)
+		_spec.AddField(pipelinerun.FieldPipelineID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(pipelinerun.FieldStatus, field.TypeEnum, value)
@@ -909,13 +909,13 @@ func (_u *PipelineRunUpdateOne) sqlSave(ctx context.Context) (_node *PipelineRun
 		_spec.ClearField(pipelinerun.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(pipelinerun.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(pipelinerun.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(pipelinerun.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.RunnerID(); ok {
 		_spec.SetField(pipelinerun.FieldRunnerID, field.TypeString, value)

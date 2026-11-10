@@ -115,7 +115,7 @@ func (r *BackupTaskRepo) Get(ctx context.Context, req *opsV1.GetBackupTaskReques
 }
 
 // GetEntity 取原始实体(触发备份用)。
-func (r *BackupTaskRepo) GetEntity(ctx context.Context, id uint64) (*ent.BackupTask, error) {
+func (r *BackupTaskRepo) GetEntity(ctx context.Context, id int64) (*ent.BackupTask, error) {
 	return r.entClient.Client().BackupTask.
 		Query().
 		Where(backuptask.IDEQ(id)).
@@ -123,7 +123,7 @@ func (r *BackupTaskRepo) GetEntity(ctx context.Context, id uint64) (*ent.BackupT
 }
 
 // IsNameTaken 校验任务名唯一性。
-func (r *BackupTaskRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *BackupTaskRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().BackupTask.Query().Where(backuptask.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(backuptask.IDNEQ(excludeID))
@@ -136,7 +136,7 @@ func (r *BackupTaskRepo) IsNameTaken(ctx context.Context, name string, excludeID
 	return exist, nil
 }
 
-func (r *BackupTaskRepo) Create(ctx context.Context, req *opsV1.CreateBackupTaskRequest, operatorID uint64) (*opsV1.BackupTask, error) {
+func (r *BackupTaskRepo) Create(ctx context.Context, req *opsV1.CreateBackupTaskRequest, operatorID int64) (*opsV1.BackupTask, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -214,7 +214,7 @@ func (r *BackupTaskRepo) Delete(ctx context.Context, req *opsV1.DeleteBackupTask
 }
 
 // AdvanceCronAnchor 定时调度锚点 CAS 推进(多副本去重)。
-func (r *BackupTaskRepo) AdvanceCronAnchor(ctx context.Context, id uint64, expected, next time.Time) (bool, error) {
+func (r *BackupTaskRepo) AdvanceCronAnchor(ctx context.Context, id int64, expected, next time.Time) (bool, error) {
 	n, err := r.entClient.Client().BackupTask.
 		Update().
 		Where(
@@ -227,7 +227,7 @@ func (r *BackupTaskRepo) AdvanceCronAnchor(ctx context.Context, id uint64, expec
 }
 
 // AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效)。
-func (r *BackupTaskRepo) AdvanceCronAnchorFromNull(ctx context.Context, id uint64, now time.Time) (bool, error) {
+func (r *BackupTaskRepo) AdvanceCronAnchorFromNull(ctx context.Context, id int64, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().BackupTask.
 		Update().
 		Where(

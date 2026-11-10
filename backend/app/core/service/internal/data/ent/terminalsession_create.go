@@ -23,13 +23,13 @@ type TerminalSessionCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *TerminalSessionCreate) SetTenantID(v uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetTenantID(v int64) *TerminalSessionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *TerminalSessionCreate) SetNillableTenantID(v *uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetNillableTenantID(v *int64) *TerminalSessionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -85,13 +85,13 @@ func (_c *TerminalSessionCreate) SetSessionID(v string) *TerminalSessionCreate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *TerminalSessionCreate) SetNodeID(v uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetNodeID(v int64) *TerminalSessionCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_c *TerminalSessionCreate) SetNillableNodeID(v *uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetNillableNodeID(v *int64) *TerminalSessionCreate {
 	if v != nil {
 		_c.SetNodeID(*v)
 	}
@@ -105,13 +105,13 @@ func (_c *TerminalSessionCreate) SetAgentID(v string) *TerminalSessionCreate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *TerminalSessionCreate) SetOperatorID(v uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetOperatorID(v int64) *TerminalSessionCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *TerminalSessionCreate) SetNillableOperatorID(v *uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetNillableOperatorID(v *int64) *TerminalSessionCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -203,7 +203,7 @@ func (_c *TerminalSessionCreate) SetNillableClosedAt(v *time.Time) *TerminalSess
 }
 
 // SetID sets the "id" field.
-func (_c *TerminalSessionCreate) SetID(v uint64) *TerminalSessionCreate {
+func (_c *TerminalSessionCreate) SetID(v int64) *TerminalSessionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -339,7 +339,7 @@ func (_c *TerminalSessionCreate) sqlSave(ctx context.Context) (*TerminalSession,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -349,7 +349,7 @@ func (_c *TerminalSessionCreate) sqlSave(ctx context.Context) (*TerminalSession,
 func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TerminalSession{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(terminalsession.Table, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(terminalsession.Table, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -357,7 +357,7 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(terminalsession.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(terminalsession.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -377,7 +377,7 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 		_node.SessionID = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(terminalsession.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(terminalsession.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.AgentID(); ok {
@@ -385,7 +385,7 @@ func (_c *TerminalSessionCreate) createSpec() (*TerminalSession, *sqlgraph.Creat
 		_node.AgentID = value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(terminalsession.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(terminalsession.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -513,7 +513,7 @@ func (u *TerminalSessionUpsert) UpdateSessionID() *TerminalSessionUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *TerminalSessionUpsert) SetNodeID(v uint64) *TerminalSessionUpsert {
+func (u *TerminalSessionUpsert) SetNodeID(v int64) *TerminalSessionUpsert {
 	u.Set(terminalsession.FieldNodeID, v)
 	return u
 }
@@ -525,7 +525,7 @@ func (u *TerminalSessionUpsert) UpdateNodeID() *TerminalSessionUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *TerminalSessionUpsert) AddNodeID(v uint64) *TerminalSessionUpsert {
+func (u *TerminalSessionUpsert) AddNodeID(v int64) *TerminalSessionUpsert {
 	u.Add(terminalsession.FieldNodeID, v)
 	return u
 }
@@ -549,7 +549,7 @@ func (u *TerminalSessionUpsert) UpdateAgentID() *TerminalSessionUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *TerminalSessionUpsert) SetOperatorID(v uint64) *TerminalSessionUpsert {
+func (u *TerminalSessionUpsert) SetOperatorID(v int64) *TerminalSessionUpsert {
 	u.Set(terminalsession.FieldOperatorID, v)
 	return u
 }
@@ -561,7 +561,7 @@ func (u *TerminalSessionUpsert) UpdateOperatorID() *TerminalSessionUpsert {
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *TerminalSessionUpsert) AddOperatorID(v uint64) *TerminalSessionUpsert {
+func (u *TerminalSessionUpsert) AddOperatorID(v int64) *TerminalSessionUpsert {
 	u.Add(terminalsession.FieldOperatorID, v)
 	return u
 }
@@ -779,14 +779,14 @@ func (u *TerminalSessionUpsertOne) UpdateSessionID() *TerminalSessionUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *TerminalSessionUpsertOne) SetNodeID(v uint64) *TerminalSessionUpsertOne {
+func (u *TerminalSessionUpsertOne) SetNodeID(v int64) *TerminalSessionUpsertOne {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *TerminalSessionUpsertOne) AddNodeID(v uint64) *TerminalSessionUpsertOne {
+func (u *TerminalSessionUpsertOne) AddNodeID(v int64) *TerminalSessionUpsertOne {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.AddNodeID(v)
 	})
@@ -821,14 +821,14 @@ func (u *TerminalSessionUpsertOne) UpdateAgentID() *TerminalSessionUpsertOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *TerminalSessionUpsertOne) SetOperatorID(v uint64) *TerminalSessionUpsertOne {
+func (u *TerminalSessionUpsertOne) SetOperatorID(v int64) *TerminalSessionUpsertOne {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *TerminalSessionUpsertOne) AddOperatorID(v uint64) *TerminalSessionUpsertOne {
+func (u *TerminalSessionUpsertOne) AddOperatorID(v int64) *TerminalSessionUpsertOne {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -976,7 +976,7 @@ func (u *TerminalSessionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TerminalSessionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *TerminalSessionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -985,7 +985,7 @@ func (u *TerminalSessionUpsertOne) ID(ctx context.Context) (id uint64, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TerminalSessionUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *TerminalSessionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1042,7 +1042,7 @@ func (_c *TerminalSessionCreateBulk) Save(ctx context.Context) ([]*TerminalSessi
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1237,14 +1237,14 @@ func (u *TerminalSessionUpsertBulk) UpdateSessionID() *TerminalSessionUpsertBulk
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *TerminalSessionUpsertBulk) SetNodeID(v uint64) *TerminalSessionUpsertBulk {
+func (u *TerminalSessionUpsertBulk) SetNodeID(v int64) *TerminalSessionUpsertBulk {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *TerminalSessionUpsertBulk) AddNodeID(v uint64) *TerminalSessionUpsertBulk {
+func (u *TerminalSessionUpsertBulk) AddNodeID(v int64) *TerminalSessionUpsertBulk {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1279,14 +1279,14 @@ func (u *TerminalSessionUpsertBulk) UpdateAgentID() *TerminalSessionUpsertBulk {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *TerminalSessionUpsertBulk) SetOperatorID(v uint64) *TerminalSessionUpsertBulk {
+func (u *TerminalSessionUpsertBulk) SetOperatorID(v int64) *TerminalSessionUpsertBulk {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *TerminalSessionUpsertBulk) AddOperatorID(v uint64) *TerminalSessionUpsertBulk {
+func (u *TerminalSessionUpsertBulk) AddOperatorID(v int64) *TerminalSessionUpsertBulk {
 	return u.Update(func(s *TerminalSessionUpsert) {
 		s.AddOperatorID(v)
 	})

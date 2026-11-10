@@ -1,8 +1,8 @@
 package service
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"os"
 	"runtime/debug"
 	"strconv"
@@ -46,8 +46,8 @@ type CronScheduler struct {
 	agentService       *AgentService
 	notifChannelRepo   *data.NotificationChannelRepo
 	deliveryRepo       *data.NotificationDeliveryRepo
-	maintenanceRepo   *data.MaintenanceWindowRepo
-	approvalRepo      *data.ApprovalRepo
+	maintenanceRepo    *data.MaintenanceWindowRepo
+	approvalRepo       *data.ApprovalRepo
 	runtimeCleanupRepo *data.RuntimeCleanupRepo
 	inspectionService  *InspectionService
 	inspectionRepo     *data.InspectionRepo
@@ -61,18 +61,18 @@ type CronScheduler struct {
 	ossClient          *oss.MinIOClient
 	auditRetentionRepo *data.AuditRetentionRepo
 
-	lastRetentionSweep      time.Time
-	lastAuditRetentionSweep time.Time
-	lastApprovalExpirySweep time.Time
-	lastAuditChainSweep     time.Time
+	lastRetentionSweep        time.Time
+	lastAuditRetentionSweep   time.Time
+	lastApprovalExpirySweep   time.Time
+	lastAuditChainSweep       time.Time
 	lastRuntimeRetentionSweep time.Time
-	lastInspectionTrigger    time.Time
-	lastOrphanSweep         time.Time
-	lastBudgetCheck         time.Time
-	lastCertCheck           time.Time
-	lastLogSnapshot         time.Time
-	lastTransientSweep      time.Time
-	log                     *log.Helper
+	lastInspectionTrigger     time.Time
+	lastOrphanSweep           time.Time
+	lastBudgetCheck           time.Time
+	lastCertCheck             time.Time
+	lastLogSnapshot           time.Time
+	lastTransientSweep        time.Time
+	log                       *log.Helper
 }
 
 func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptRepo *data.ScriptRepo, monitorRepo *data.MonitorRepo, alertRepo *data.AlertRepo, projectRepo *data.ProjectRepo, nodeRepo *data.AgentNodeRepo, backupTaskRepo *data.BackupTaskRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, approvalRepo *data.ApprovalRepo, runtimeCleanupRepo *data.RuntimeCleanupRepo, inspectionService *InspectionService, inspectionRepo *data.InspectionRepo, budgetRepo *data.CloudBudgetRepo, budgetService *CloudBudgetService, certRepo *data.CertRepo, certService *CertService, logSnapshotService *LogSnapshotService, historyRepo *data.BuildHistoryRepo, pipelineRunRepo *data.PipelineRunRepo, ossClient *oss.MinIOClient, buildService *BuildService, scriptService *ScriptService, backupService *BackupService, agentService *AgentService, auditRetentionRepo *data.AuditRetentionRepo) *CronScheduler {
@@ -87,8 +87,8 @@ func NewCronScheduler(ctx *bootstrap.Context, buildRepo *data.BuildRepo, scriptR
 		backupTaskRepo:     backupTaskRepo,
 		notifChannelRepo:   notifChannelRepo,
 		deliveryRepo:       deliveryRepo,
-		maintenanceRepo:   maintenanceRepo,
-		approvalRepo:      approvalRepo,
+		maintenanceRepo:    maintenanceRepo,
+		approvalRepo:       approvalRepo,
 		runtimeCleanupRepo: runtimeCleanupRepo,
 		inspectionService:  inspectionService,
 		inspectionRepo:     inspectionRepo,
@@ -486,7 +486,7 @@ func (s *CronScheduler) tickAuditChain(ctx context.Context) {
 	}
 
 	const source = "AUDIT_CHAIN"
-	const monitorID = uint64(0)
+	const monitorID = int64(0)
 	unresolved, _ := s.alertRepo.HasUnresolvedAlert(actx, monitorID, source)
 
 	if len(broken) == 0 {

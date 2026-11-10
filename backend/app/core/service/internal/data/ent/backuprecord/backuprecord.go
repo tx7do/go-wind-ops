@@ -87,11 +87,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// TaskIDValidator is a validator for the "task_id" field. It is called by the builders before save.
-	TaskIDValidator func(uint64) error
+	TaskIDValidator func(int64) error
 	// NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
-	NodeIDValidator func(uint64) error
+	NodeIDValidator func(int64) error
 	// BucketValidator is a validator for the "bucket" field. It is called by the builders before save.
 	BucketValidator func(string) error
 	// ObjectKeyValidator is a validator for the "object_key" field. It is called by the builders before save.
@@ -101,9 +101,9 @@ var (
 	// CommandRequestIDValidator is a validator for the "command_request_id" field. It is called by the builders before save.
 	CommandRequestIDValidator func(string) error
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
-	DefaultOperatorID uint64
+	DefaultOperatorID int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

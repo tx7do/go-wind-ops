@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.ScriptVersion {
+func ID(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.ScriptVersion {
+func IDEQ(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.ScriptVersion {
+func IDNEQ(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.ScriptVersion {
+func IDIn(ids ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.ScriptVersion {
+func IDNotIn(ids ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.ScriptVersion {
+func IDGT(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.ScriptVersion {
+func IDGTE(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.ScriptVersion {
+func IDLT(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.ScriptVersion {
+func IDLTE(id int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.ScriptVersion {
+func TenantID(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.ScriptVersion {
 }
 
 // ScriptID applies equality check predicate on the "script_id" field. It's identical to ScriptIDEQ.
-func ScriptID(v uint64) predicate.ScriptVersion {
+func ScriptID(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldScriptID, v))
 }
 
@@ -90,47 +90,47 @@ func Remark(v string) predicate.ScriptVersion {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.ScriptVersion {
+func CreatedBy(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.ScriptVersion {
+func TenantIDEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.ScriptVersion {
+func TenantIDNEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.ScriptVersion {
+func TenantIDIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.ScriptVersion {
+func TenantIDNotIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.ScriptVersion {
+func TenantIDGT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.ScriptVersion {
+func TenantIDGTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.ScriptVersion {
+func TenantIDLT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.ScriptVersion {
+func TenantIDLTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -295,42 +295,42 @@ func DeletedAtNotNil() predicate.ScriptVersion {
 }
 
 // ScriptIDEQ applies the EQ predicate on the "script_id" field.
-func ScriptIDEQ(v uint64) predicate.ScriptVersion {
+func ScriptIDEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldScriptID, v))
 }
 
 // ScriptIDNEQ applies the NEQ predicate on the "script_id" field.
-func ScriptIDNEQ(v uint64) predicate.ScriptVersion {
+func ScriptIDNEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNEQ(FieldScriptID, v))
 }
 
 // ScriptIDIn applies the In predicate on the "script_id" field.
-func ScriptIDIn(vs ...uint64) predicate.ScriptVersion {
+func ScriptIDIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldIn(FieldScriptID, vs...))
 }
 
 // ScriptIDNotIn applies the NotIn predicate on the "script_id" field.
-func ScriptIDNotIn(vs ...uint64) predicate.ScriptVersion {
+func ScriptIDNotIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNotIn(FieldScriptID, vs...))
 }
 
 // ScriptIDGT applies the GT predicate on the "script_id" field.
-func ScriptIDGT(v uint64) predicate.ScriptVersion {
+func ScriptIDGT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGT(FieldScriptID, v))
 }
 
 // ScriptIDGTE applies the GTE predicate on the "script_id" field.
-func ScriptIDGTE(v uint64) predicate.ScriptVersion {
+func ScriptIDGTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGTE(FieldScriptID, v))
 }
 
 // ScriptIDLT applies the LT predicate on the "script_id" field.
-func ScriptIDLT(v uint64) predicate.ScriptVersion {
+func ScriptIDLT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLT(FieldScriptID, v))
 }
 
 // ScriptIDLTE applies the LTE predicate on the "script_id" field.
-func ScriptIDLTE(v uint64) predicate.ScriptVersion {
+func ScriptIDLTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLTE(FieldScriptID, v))
 }
 
@@ -465,42 +465,42 @@ func RemarkContainsFold(v string) predicate.ScriptVersion {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.ScriptVersion {
+func CreatedByEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.ScriptVersion {
+func CreatedByNEQ(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.ScriptVersion {
+func CreatedByIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.ScriptVersion {
+func CreatedByNotIn(vs ...int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.ScriptVersion {
+func CreatedByGT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.ScriptVersion {
+func CreatedByGTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.ScriptVersion {
+func CreatedByLT(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.ScriptVersion {
+func CreatedByLTE(v int64) predicate.ScriptVersion {
 	return predicate.ScriptVersion(sql.FieldLTE(FieldCreatedBy, v))
 }
 

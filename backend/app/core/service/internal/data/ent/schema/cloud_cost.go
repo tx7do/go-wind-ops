@@ -31,7 +31,7 @@ func (CloudCost) Annotations() []schema.Annotation {
 // Fields of the CloudCost.
 func (CloudCost) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("cloud_account_id").
+		field.Int64("cloud_account_id").
 			Comment("云账号ID").
 			Positive(),
 
@@ -74,7 +74,7 @@ func (CloudCost) Fields() []ent.Field {
 func (CloudCost) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

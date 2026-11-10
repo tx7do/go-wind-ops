@@ -31,7 +31,7 @@ func (ConfigDistribution) Annotations() []schema.Annotation {
 // Fields of the ConfigDistribution.
 func (ConfigDistribution) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("template_id").
+		field.Int64("template_id").
 			Comment("来源模板(ops_config_templates.id)").
 			Positive(),
 
@@ -39,11 +39,11 @@ func (ConfigDistribution) Fields() []ent.Field {
 			Comment("模板名快照").
 			NotEmpty(),
 
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("目标节点(ops_agent_nodes.id)").
 			Positive(),
 
-		field.Uint64("project_id").
+		field.Int64("project_id").
 			Comment("关联项目(ops_projects.id;不关联为 0)").
 			Default(0).
 			Optional(),
@@ -70,7 +70,7 @@ func (ConfigDistribution) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("operator_id").
+		field.Int64("operator_id").
 			Comment("触发下发的用户").
 			Default(0).
 			Optional().
@@ -87,7 +87,7 @@ func (ConfigDistribution) Fields() []ent.Field {
 func (ConfigDistribution) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

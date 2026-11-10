@@ -133,8 +133,8 @@ func (CloudInstance_MatchState) EnumDescriptor() ([]byte, []int) {
 // 云资源实例
 type CloudInstance struct {
 	state            protoimpl.MessageState  `protogen:"open.v1"`
-	Id               *uint64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                        // 记录ID
-	CloudAccountId   *uint64                 `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`        // 云账号ID
+	Id               *int64                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                        // 记录ID
+	CloudAccountId   *int64                  `protobuf:"varint,2,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"`        // 云账号ID
 	CloudAccountName *string                 `protobuf:"bytes,3,opt,name=cloud_account_name,json=cloudAccountName,proto3,oneof" json:"cloud_account_name,omitempty"`   // 云账号名(快照)
 	Provider         *CloudInstance_Provider `protobuf:"varint,4,opt,name=provider,proto3,enum=ops.service.v1.CloudInstance_Provider,oneof" json:"provider,omitempty"` // 云厂商
 	Region           *string                 `protobuf:"bytes,5,opt,name=region,proto3,oneof" json:"region,omitempty"`                                                 // 地域
@@ -147,7 +147,7 @@ type CloudInstance struct {
 	PublicIp         *string                 `protobuf:"bytes,12,opt,name=public_ip,json=publicIp,proto3,oneof" json:"public_ip,omitempty"`                            // 公网IP
 	ExpiredAt        *timestamppb.Timestamp  `protobuf:"bytes,13,opt,name=expired_at,json=expiredAt,proto3,oneof" json:"expired_at,omitempty"`                         // 到期时间(按量/AWS 为空)
 	Matched          *bool                   `protobuf:"varint,14,opt,name=matched,proto3,oneof" json:"matched,omitempty"`                                             // 是否匹配到节点
-	AgentNodeId      *uint64                 `protobuf:"varint,15,opt,name=agent_node_id,json=agentNodeId,proto3,oneof" json:"agent_node_id,omitempty"`                // 匹配节点ID
+	AgentNodeId      *int64                  `protobuf:"varint,15,opt,name=agent_node_id,json=agentNodeId,proto3,oneof" json:"agent_node_id,omitempty"`                // 匹配节点ID
 	AgentNodeName    *string                 `protobuf:"bytes,16,opt,name=agent_node_name,json=agentNodeName,proto3,oneof" json:"agent_node_name,omitempty"`           // 匹配节点名(快照)
 	SyncedAt         *timestamppb.Timestamp  `protobuf:"bytes,17,opt,name=synced_at,json=syncedAt,proto3,oneof" json:"synced_at,omitempty"`                            // 同步批次时间
 	CreatedAt        *timestamppb.Timestamp  `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                         // 创建时间
@@ -185,14 +185,14 @@ func (*CloudInstance) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_instance_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CloudInstance) GetId() uint64 {
+func (x *CloudInstance) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *CloudInstance) GetCloudAccountId() uint64 {
+func (x *CloudInstance) GetCloudAccountId() int64 {
 	if x != nil && x.CloudAccountId != nil {
 		return *x.CloudAccountId
 	}
@@ -283,7 +283,7 @@ func (x *CloudInstance) GetMatched() bool {
 	return false
 }
 
-func (x *CloudInstance) GetAgentNodeId() uint64 {
+func (x *CloudInstance) GetAgentNodeId() int64 {
 	if x != nil && x.AgentNodeId != nil {
 		return *x.AgentNodeId
 	}
@@ -316,7 +316,7 @@ type ListCloudInstancesRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Page           uint32                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`                                                    // 页码(1 起)
 	PageSize       uint32                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`                            // 页大小
-	CloudAccountId *uint64                `protobuf:"varint,10,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"` // 按云账号
+	CloudAccountId *int64                 `protobuf:"varint,10,opt,name=cloud_account_id,json=cloudAccountId,proto3,oneof" json:"cloud_account_id,omitempty"` // 按云账号
 	Provider       *string                `protobuf:"bytes,11,opt,name=provider,proto3,oneof" json:"provider,omitempty"`                                      // 按厂商(ALIYUN/...)
 	Region         *string                `protobuf:"bytes,12,opt,name=region,proto3,oneof" json:"region,omitempty"`                                          // 按地域
 	Matched        *bool                  `protobuf:"varint,13,opt,name=matched,proto3,oneof" json:"matched,omitempty"`                                       // 按匹配状态(空=全部)
@@ -369,7 +369,7 @@ func (x *ListCloudInstancesRequest) GetPageSize() uint32 {
 	return 0
 }
 
-func (x *ListCloudInstancesRequest) GetCloudAccountId() uint64 {
+func (x *ListCloudInstancesRequest) GetCloudAccountId() int64 {
 	if x != nil && x.CloudAccountId != nil {
 		return *x.CloudAccountId
 	}
@@ -406,7 +406,7 @@ func (x *ListCloudInstancesRequest) GetKeyword() string {
 
 type ListCloudInstancesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*CloudInstance       `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 实例列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -442,7 +442,7 @@ func (*ListCloudInstancesResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_instance_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListCloudInstancesResponse) GetTotal() uint64 {
+func (x *ListCloudInstancesResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -459,7 +459,7 @@ func (x *ListCloudInstancesResponse) GetItems() []*CloudInstance {
 type SyncCloudAccountInstancesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
-	CloudAccountId uint64 `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
+	CloudAccountId int64 `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -494,7 +494,7 @@ func (*SyncCloudAccountInstancesRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_instance_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *SyncCloudAccountInstancesRequest) GetCloudAccountId() uint64 {
+func (x *SyncCloudAccountInstancesRequest) GetCloudAccountId() int64 {
 	if x != nil {
 		return x.CloudAccountId
 	}
@@ -503,7 +503,7 @@ func (x *SyncCloudAccountInstancesRequest) GetCloudAccountId() uint64 {
 
 type SyncCloudAccountInstancesResponse struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	CloudAccountId uint64                 `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
+	CloudAccountId int64                  `protobuf:"varint,1,opt,name=cloud_account_id,json=cloudAccountId,proto3" json:"cloud_account_id,omitempty"` // 云账号ID
 	Total          uint32                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`                                           // 同步实例数
 	Matched        uint32                 `protobuf:"varint,3,opt,name=matched,proto3" json:"matched,omitempty"`                                       // 匹配节点数
 	Regions        uint32                 `protobuf:"varint,4,opt,name=regions,proto3" json:"regions,omitempty"`                                       // 同步地域数
@@ -542,7 +542,7 @@ func (*SyncCloudAccountInstancesResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cloud_instance_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *SyncCloudAccountInstancesResponse) GetCloudAccountId() uint64 {
+func (x *SyncCloudAccountInstancesResponse) GetCloudAccountId() int64 {
 	if x != nil {
 		return x.CloudAccountId
 	}
@@ -583,8 +583,8 @@ const file_ops_service_v1_cloud_instance_proto_rawDesc = "" +
 	"\n" +
 	"#ops/service/v1/cloud_instance.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd9\t\n" +
 	"\rCloudInstance\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12-\n" +
-	"\x10cloud_account_id\x18\x02 \x01(\x04H\x01R\x0ecloudAccountId\x88\x01\x01\x121\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12-\n" +
+	"\x10cloud_account_id\x18\x02 \x01(\x03H\x01R\x0ecloudAccountId\x88\x01\x01\x121\n" +
 	"\x12cloud_account_name\x18\x03 \x01(\tH\x02R\x10cloudAccountName\x88\x01\x01\x12G\n" +
 	"\bprovider\x18\x04 \x01(\x0e2&.ops.service.v1.CloudInstance.ProviderH\x03R\bprovider\x88\x01\x01\x12\x1b\n" +
 	"\x06region\x18\x05 \x01(\tH\x04R\x06region\x88\x01\x01\x12\x17\n" +
@@ -602,7 +602,7 @@ const file_ops_service_v1_cloud_instance_proto_rawDesc = "" +
 	"\n" +
 	"expired_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampH\fR\texpiredAt\x88\x01\x01\x12\x1d\n" +
 	"\amatched\x18\x0e \x01(\bH\rR\amatched\x88\x01\x01\x12'\n" +
-	"\ragent_node_id\x18\x0f \x01(\x04H\x0eR\vagentNodeId\x88\x01\x01\x12+\n" +
+	"\ragent_node_id\x18\x0f \x01(\x03H\x0eR\vagentNodeId\x88\x01\x01\x12+\n" +
 	"\x0fagent_node_name\x18\x10 \x01(\tH\x0fR\ragentNodeName\x88\x01\x01\x12A\n" +
 	"\tsynced_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x10R\bsyncedAt\x88\x01\x01\x12C\n" +
 	"\n" +
@@ -644,7 +644,7 @@ const file_ops_service_v1_cloud_instance_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\rR\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\rR\bpageSize\x12-\n" +
 	"\x10cloud_account_id\x18\n" +
-	" \x01(\x04H\x00R\x0ecloudAccountId\x88\x01\x01\x12\x1f\n" +
+	" \x01(\x03H\x00R\x0ecloudAccountId\x88\x01\x01\x12\x1f\n" +
 	"\bprovider\x18\v \x01(\tH\x01R\bprovider\x88\x01\x01\x12\x1b\n" +
 	"\x06region\x18\f \x01(\tH\x02R\x06region\x88\x01\x01\x12\x1d\n" +
 	"\amatched\x18\r \x01(\bH\x03R\amatched\x88\x01\x01\x12\x1d\n" +
@@ -657,12 +657,12 @@ const file_ops_service_v1_cloud_instance_proto_rawDesc = "" +
 	"\n" +
 	"\b_keyword\"g\n" +
 	"\x1aListCloudInstancesResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x123\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x123\n" +
 	"\x05items\x18\x02 \x03(\v2\x1d.ops.service.v1.CloudInstanceR\x05items\"Q\n" +
 	" SyncCloudAccountInstancesRequest\x12-\n" +
-	"\x10cloud_account_id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x0ecloudAccountId\"\xaf\x01\n" +
+	"\x10cloud_account_id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x0ecloudAccountId\"\xaf\x01\n" +
 	"!SyncCloudAccountInstancesResponse\x12(\n" +
-	"\x10cloud_account_id\x18\x01 \x01(\x04R\x0ecloudAccountId\x12\x14\n" +
+	"\x10cloud_account_id\x18\x01 \x01(\x03R\x0ecloudAccountId\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\rR\x05total\x12\x18\n" +
 	"\amatched\x18\x03 \x01(\rR\amatched\x12\x18\n" +
 	"\aregions\x18\x04 \x01(\rR\aregions\x12\x16\n" +

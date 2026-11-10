@@ -70,14 +70,14 @@ func (_u *MaintenanceWindowUpdate) ClearDeletedAt() *MaintenanceWindowUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MaintenanceWindowUpdate) SetCreatedBy(v uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetCreatedBy(v int64) *MaintenanceWindowUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdate) SetNillableCreatedBy(v *uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetNillableCreatedBy(v *int64) *MaintenanceWindowUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *MaintenanceWindowUpdate) ClearCreatedBy() *MaintenanceWindowUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MaintenanceWindowUpdate) SetUpdatedBy(v uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetUpdatedBy(v int64) *MaintenanceWindowUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdate) SetNillableUpdatedBy(v *uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetNillableUpdatedBy(v *int64) *MaintenanceWindowUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *MaintenanceWindowUpdate) ClearUpdatedBy() *MaintenanceWindowUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MaintenanceWindowUpdate) SetDeletedBy(v uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetDeletedBy(v int64) *MaintenanceWindowUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdate) SetNillableDeletedBy(v *uint64) *MaintenanceWindowUpdate {
+func (_u *MaintenanceWindowUpdate) SetNillableDeletedBy(v *int64) *MaintenanceWindowUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -278,7 +278,7 @@ func (_u *MaintenanceWindowUpdate) sqlSave(ctx context.Context) (_node int, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(maintenancewindow.Table, maintenancewindow.Columns, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(maintenancewindow.Table, maintenancewindow.Columns, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -302,31 +302,31 @@ func (_u *MaintenanceWindowUpdate) sqlSave(ctx context.Context) (_node int, err 
 		_spec.ClearField(maintenancewindow.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(maintenancewindow.FieldName, field.TypeString, value)
@@ -409,14 +409,14 @@ func (_u *MaintenanceWindowUpdateOne) ClearDeletedAt() *MaintenanceWindowUpdateO
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MaintenanceWindowUpdateOne) SetCreatedBy(v uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetCreatedBy(v int64) *MaintenanceWindowUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdateOne) SetNillableCreatedBy(v *uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetNillableCreatedBy(v *int64) *MaintenanceWindowUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -436,14 +436,14 @@ func (_u *MaintenanceWindowUpdateOne) ClearCreatedBy() *MaintenanceWindowUpdateO
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MaintenanceWindowUpdateOne) SetUpdatedBy(v uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetUpdatedBy(v int64) *MaintenanceWindowUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdateOne) SetNillableUpdatedBy(v *uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetNillableUpdatedBy(v *int64) *MaintenanceWindowUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -463,14 +463,14 @@ func (_u *MaintenanceWindowUpdateOne) ClearUpdatedBy() *MaintenanceWindowUpdateO
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MaintenanceWindowUpdateOne) SetDeletedBy(v uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetDeletedBy(v int64) *MaintenanceWindowUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdateOne) SetNillableDeletedBy(v *uint64) *MaintenanceWindowUpdateOne {
+func (_u *MaintenanceWindowUpdateOne) SetNillableDeletedBy(v *int64) *MaintenanceWindowUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -630,7 +630,7 @@ func (_u *MaintenanceWindowUpdateOne) sqlSave(ctx context.Context) (_node *Maint
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(maintenancewindow.Table, maintenancewindow.Columns, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(maintenancewindow.Table, maintenancewindow.Columns, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MaintenanceWindow.id" for update`)}
@@ -671,31 +671,31 @@ func (_u *MaintenanceWindowUpdateOne) sqlSave(ctx context.Context) (_node *Maint
 		_spec.ClearField(maintenancewindow.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(maintenancewindow.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(maintenancewindow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(maintenancewindow.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(maintenancewindow.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(maintenancewindow.FieldName, field.TypeString, value)

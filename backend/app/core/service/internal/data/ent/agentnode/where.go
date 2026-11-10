@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.AgentNode {
+func ID(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.AgentNode {
+func IDEQ(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.AgentNode {
+func IDNEQ(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.AgentNode {
+func IDIn(ids ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.AgentNode {
+func IDNotIn(ids ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.AgentNode {
+func IDGT(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.AgentNode {
+func IDGTE(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.AgentNode {
+func IDLT(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.AgentNode {
+func IDLTE(id int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.AgentNode {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.AgentNode {
+func CreatedBy(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.AgentNode {
+func UpdatedBy(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.AgentNode {
+func DeletedBy(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -150,7 +150,7 @@ func CPUCores(v int) predicate.AgentNode {
 }
 
 // MemTotalBytes applies equality check predicate on the "mem_total_bytes" field. It's identical to MemTotalBytesEQ.
-func MemTotalBytes(v uint64) predicate.AgentNode {
+func MemTotalBytes(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldMemTotalBytes, v))
 }
 
@@ -170,7 +170,7 @@ func DiskUsedPercent(v float64) predicate.AgentNode {
 }
 
 // UptimeSeconds applies equality check predicate on the "uptime_seconds" field. It's identical to UptimeSecondsEQ.
-func UptimeSeconds(v uint64) predicate.AgentNode {
+func UptimeSeconds(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldUptimeSeconds, v))
 }
 
@@ -330,42 +330,42 @@ func DeletedAtNotNil() predicate.AgentNode {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.AgentNode {
+func CreatedByEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.AgentNode {
+func CreatedByNEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.AgentNode {
+func CreatedByIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.AgentNode {
+func CreatedByNotIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.AgentNode {
+func CreatedByGT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.AgentNode {
+func CreatedByGTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.AgentNode {
+func CreatedByLT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.AgentNode {
+func CreatedByLTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -380,42 +380,42 @@ func CreatedByNotNil() predicate.AgentNode {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.AgentNode {
+func UpdatedByEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.AgentNode {
+func UpdatedByNEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.AgentNode {
+func UpdatedByIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.AgentNode {
+func UpdatedByNotIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.AgentNode {
+func UpdatedByGT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.AgentNode {
+func UpdatedByGTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.AgentNode {
+func UpdatedByLT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.AgentNode {
+func UpdatedByLTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -430,42 +430,42 @@ func UpdatedByNotNil() predicate.AgentNode {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.AgentNode {
+func DeletedByEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.AgentNode {
+func DeletedByNEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.AgentNode {
+func DeletedByIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.AgentNode {
+func DeletedByNotIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.AgentNode {
+func DeletedByGT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.AgentNode {
+func DeletedByGTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.AgentNode {
+func DeletedByLT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.AgentNode {
+func DeletedByLTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -1385,42 +1385,42 @@ func CPUCoresNotNil() predicate.AgentNode {
 }
 
 // MemTotalBytesEQ applies the EQ predicate on the "mem_total_bytes" field.
-func MemTotalBytesEQ(v uint64) predicate.AgentNode {
+func MemTotalBytesEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesNEQ applies the NEQ predicate on the "mem_total_bytes" field.
-func MemTotalBytesNEQ(v uint64) predicate.AgentNode {
+func MemTotalBytesNEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesIn applies the In predicate on the "mem_total_bytes" field.
-func MemTotalBytesIn(vs ...uint64) predicate.AgentNode {
+func MemTotalBytesIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldMemTotalBytes, vs...))
 }
 
 // MemTotalBytesNotIn applies the NotIn predicate on the "mem_total_bytes" field.
-func MemTotalBytesNotIn(vs ...uint64) predicate.AgentNode {
+func MemTotalBytesNotIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldMemTotalBytes, vs...))
 }
 
 // MemTotalBytesGT applies the GT predicate on the "mem_total_bytes" field.
-func MemTotalBytesGT(v uint64) predicate.AgentNode {
+func MemTotalBytesGT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesGTE applies the GTE predicate on the "mem_total_bytes" field.
-func MemTotalBytesGTE(v uint64) predicate.AgentNode {
+func MemTotalBytesGTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesLT applies the LT predicate on the "mem_total_bytes" field.
-func MemTotalBytesLT(v uint64) predicate.AgentNode {
+func MemTotalBytesLT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesLTE applies the LTE predicate on the "mem_total_bytes" field.
-func MemTotalBytesLTE(v uint64) predicate.AgentNode {
+func MemTotalBytesLTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldMemTotalBytes, v))
 }
 
@@ -1595,42 +1595,42 @@ func DiskUsedPercentNotNil() predicate.AgentNode {
 }
 
 // UptimeSecondsEQ applies the EQ predicate on the "uptime_seconds" field.
-func UptimeSecondsEQ(v uint64) predicate.AgentNode {
+func UptimeSecondsEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldEQ(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsNEQ applies the NEQ predicate on the "uptime_seconds" field.
-func UptimeSecondsNEQ(v uint64) predicate.AgentNode {
+func UptimeSecondsNEQ(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNEQ(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsIn applies the In predicate on the "uptime_seconds" field.
-func UptimeSecondsIn(vs ...uint64) predicate.AgentNode {
+func UptimeSecondsIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldIn(FieldUptimeSeconds, vs...))
 }
 
 // UptimeSecondsNotIn applies the NotIn predicate on the "uptime_seconds" field.
-func UptimeSecondsNotIn(vs ...uint64) predicate.AgentNode {
+func UptimeSecondsNotIn(vs ...int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldNotIn(FieldUptimeSeconds, vs...))
 }
 
 // UptimeSecondsGT applies the GT predicate on the "uptime_seconds" field.
-func UptimeSecondsGT(v uint64) predicate.AgentNode {
+func UptimeSecondsGT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGT(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsGTE applies the GTE predicate on the "uptime_seconds" field.
-func UptimeSecondsGTE(v uint64) predicate.AgentNode {
+func UptimeSecondsGTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldGTE(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsLT applies the LT predicate on the "uptime_seconds" field.
-func UptimeSecondsLT(v uint64) predicate.AgentNode {
+func UptimeSecondsLT(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLT(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsLTE applies the LTE predicate on the "uptime_seconds" field.
-func UptimeSecondsLTE(v uint64) predicate.AgentNode {
+func UptimeSecondsLTE(v int64) predicate.AgentNode {
 	return predicate.AgentNode(sql.FieldLTE(FieldUptimeSeconds, v))
 }
 

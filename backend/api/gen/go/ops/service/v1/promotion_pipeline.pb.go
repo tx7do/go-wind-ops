@@ -30,7 +30,7 @@ const (
 // 晋升阶段
 type PromotionStage struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	DistributionId uint64                 `protobuf:"varint,1,opt,name=distribution_id,json=distributionId,proto3" json:"distribution_id,omitempty"` // 该阶段的分发配置
+	DistributionId int64                  `protobuf:"varint,1,opt,name=distribution_id,json=distributionId,proto3" json:"distribution_id,omitempty"` // 该阶段的分发配置
 	Env            string                 `protobuf:"bytes,2,opt,name=env,proto3" json:"env,omitempty"`                                              // 环境标签(展示)
 	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`                                            // 阶段名(展示)
 	unknownFields  protoimpl.UnknownFields
@@ -67,7 +67,7 @@ func (*PromotionStage) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PromotionStage) GetDistributionId() uint64 {
+func (x *PromotionStage) GetDistributionId() int64 {
 	if x != nil {
 		return x.DistributionId
 	}
@@ -91,7 +91,7 @@ func (x *PromotionStage) GetName() string {
 // 晋升流水线
 type PromotionPipeline struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 流水线ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 流水线ID
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                             // 流水线名
 	Stages        []*PromotionStage      `protobuf:"bytes,3,rep,name=stages,proto3" json:"stages,omitempty"`                               // 有序阶段
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`               // 描述
@@ -130,7 +130,7 @@ func (*PromotionPipeline) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PromotionPipeline) GetId() uint64 {
+func (x *PromotionPipeline) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -167,7 +167,7 @@ func (x *PromotionPipeline) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListPromotionPipelineResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*PromotionPipeline   `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 流水线列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -203,7 +203,7 @@ func (*ListPromotionPipelineResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListPromotionPipelineResponse) GetTotal() uint64 {
+func (x *ListPromotionPipelineResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -219,7 +219,7 @@ func (x *ListPromotionPipelineResponse) GetItems() []*PromotionPipeline {
 
 type GetPromotionPipelineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -254,7 +254,7 @@ func (*GetPromotionPipelineRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetPromotionPipelineRequest) GetId() uint64 {
+func (x *GetPromotionPipelineRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -307,7 +307,7 @@ func (x *CreatePromotionPipelineRequest) GetData() *PromotionPipeline {
 
 type UpdatePromotionPipelineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 流水线ID(id 走 body:触发类 POST 不带 path 参数)
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 流水线ID(id 走 body:触发类 POST 不带 path 参数)
 	Data          *PromotionPipeline     `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`                               // 更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3,oneof" json:"update_mask,omitempty"` // 更新掩码
 	unknownFields protoimpl.UnknownFields
@@ -344,7 +344,7 @@ func (*UpdatePromotionPipelineRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdatePromotionPipelineRequest) GetId() uint64 {
+func (x *UpdatePromotionPipelineRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -367,7 +367,7 @@ func (x *UpdatePromotionPipelineRequest) GetUpdateMask() *fieldmaskpb.FieldMask 
 
 type DeletePromotionPipelineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -402,7 +402,7 @@ func (*DeletePromotionPipelineRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeletePromotionPipelineRequest) GetId() uint64 {
+func (x *DeletePromotionPipelineRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -411,9 +411,9 @@ func (x *DeletePromotionPipelineRequest) GetId() uint64 {
 
 type PromotePromotionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                      // 流水线ID(id 走 body)
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                      // 流水线ID(id 走 body)
 	StageIndex    uint32                 `protobuf:"varint,2,opt,name=stage_index,json=stageIndex,proto3" json:"stage_index,omitempty"`    // 目标阶段下标(0 起)
-	HistoryId     *uint64                `protobuf:"varint,3,opt,name=history_id,json=historyId,proto3,oneof" json:"history_id,omitempty"` // 指定构建历史(缺省该分发配置最新成功构建)
+	HistoryId     *int64                 `protobuf:"varint,3,opt,name=history_id,json=historyId,proto3,oneof" json:"history_id,omitempty"` // 指定构建历史(缺省该分发配置最新成功构建)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -448,7 +448,7 @@ func (*PromotePromotionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PromotePromotionRequest) GetId() uint64 {
+func (x *PromotePromotionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -462,7 +462,7 @@ func (x *PromotePromotionRequest) GetStageIndex() uint32 {
 	return 0
 }
 
-func (x *PromotePromotionRequest) GetHistoryId() uint64 {
+func (x *PromotePromotionRequest) GetHistoryId() int64 {
 	if x != nil && x.HistoryId != nil {
 		return *x.HistoryId
 	}
@@ -471,7 +471,7 @@ func (x *PromotePromotionRequest) GetHistoryId() uint64 {
 
 type PromotePromotionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RecordIds     []uint64               `protobuf:"varint,1,rep,packed,name=record_ids,json=recordIds,proto3" json:"record_ids,omitempty"` // 分发记录ID(透传分发触发结果)
+	RecordIds     []int64                `protobuf:"varint,1,rep,packed,name=record_ids,json=recordIds,proto3" json:"record_ids,omitempty"` // 分发记录ID(透传分发触发结果)
 	Env           string                 `protobuf:"bytes,2,opt,name=env,proto3" json:"env,omitempty"`                                      // 晋升目标环境
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -507,7 +507,7 @@ func (*PromotePromotionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *PromotePromotionResponse) GetRecordIds() []uint64 {
+func (x *PromotePromotionResponse) GetRecordIds() []int64 {
 	if x != nil {
 		return x.RecordIds
 	}
@@ -524,7 +524,7 @@ func (x *PromotePromotionResponse) GetEnv() string {
 // GetPromotionStatusRequest 阶段状态查询
 type GetPromotionStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 流水线ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -559,7 +559,7 @@ func (*GetPromotionStatusRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_promotion_pipeline_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetPromotionStatusRequest) GetId() uint64 {
+func (x *GetPromotionStatusRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -572,9 +572,9 @@ type PromotionStageStatus struct {
 	StageIndex     uint32                 `protobuf:"varint,1,opt,name=stage_index,json=stageIndex,proto3" json:"stage_index,omitempty"`                     // 阶段下标
 	Env            string                 `protobuf:"bytes,2,opt,name=env,proto3" json:"env,omitempty"`                                                      // 环境标签
 	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`                                                    // 阶段名
-	DistributionId uint64                 `protobuf:"varint,4,opt,name=distribution_id,json=distributionId,proto3" json:"distribution_id,omitempty"`         // 分发配置
+	DistributionId int64                  `protobuf:"varint,4,opt,name=distribution_id,json=distributionId,proto3" json:"distribution_id,omitempty"`         // 分发配置
 	LatestStatus   *string                `protobuf:"bytes,5,opt,name=latest_status,json=latestStatus,proto3,oneof" json:"latest_status,omitempty"`          // 最新记录状态(空=未部署过)
-	LatestRecordId *uint64                `protobuf:"varint,6,opt,name=latest_record_id,json=latestRecordId,proto3,oneof" json:"latest_record_id,omitempty"` // 最新记录ID
+	LatestRecordId *int64                 `protobuf:"varint,6,opt,name=latest_record_id,json=latestRecordId,proto3,oneof" json:"latest_record_id,omitempty"` // 最新记录ID
 	LatestAt       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=latest_at,json=latestAt,proto3,oneof" json:"latest_at,omitempty"`                      // 最新记录时间
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -631,7 +631,7 @@ func (x *PromotionStageStatus) GetName() string {
 	return ""
 }
 
-func (x *PromotionStageStatus) GetDistributionId() uint64 {
+func (x *PromotionStageStatus) GetDistributionId() int64 {
 	if x != nil {
 		return x.DistributionId
 	}
@@ -645,7 +645,7 @@ func (x *PromotionStageStatus) GetLatestStatus() string {
 	return ""
 }
 
-func (x *PromotionStageStatus) GetLatestRecordId() uint64 {
+func (x *PromotionStageStatus) GetLatestRecordId() int64 {
 	if x != nil && x.LatestRecordId != nil {
 		return *x.LatestRecordId
 	}
@@ -709,11 +709,11 @@ const file_ops_service_v1_promotion_pipeline_proto_rawDesc = "" +
 	"\n" +
 	"'ops/service/v1/promotion_pipeline.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"_\n" +
 	"\x0ePromotionStage\x12'\n" +
-	"\x0fdistribution_id\x18\x01 \x01(\x04R\x0edistributionId\x12\x10\n" +
+	"\x0fdistribution_id\x18\x01 \x01(\x03R\x0edistributionId\x12\x10\n" +
 	"\x03env\x18\x02 \x01(\tR\x03env\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\"\x9e\x02\n" +
 	"\x11PromotionPipeline\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
 	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04name\x88\x01\x01\x126\n" +
 	"\x06stages\x18\x03 \x03(\v2\x1e.ops.service.v1.PromotionStageR\x06stages\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12C\n" +
@@ -724,46 +724,46 @@ const file_ops_service_v1_promotion_pipeline_proto_rawDesc = "" +
 	"\f_descriptionB\r\n" +
 	"\v_created_at\"n\n" +
 	"\x1dListPromotionPipelineResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x127\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x127\n" +
 	"\x05items\x18\x02 \x03(\v2!.ops.service.v1.PromotionPipelineR\x05items\">\n" +
 	"\x1bGetPromotionPipelineRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"j\n" +
 	"\x1eCreatePromotionPipelineRequest\x12?\n" +
 	"\x04data\x18\x01 \x01(\v2!.ops.service.v1.PromotionPipelineB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
 	"\x05_data\"\xd1\x01\n" +
 	"\x1eUpdatePromotionPipelineRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12?\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12?\n" +
 	"\x04data\x18\x02 \x01(\v2!.ops.service.v1.PromotionPipelineB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01\x12@\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskH\x01R\n" +
 	"updateMask\x88\x01\x01B\a\n" +
 	"\x05_dataB\x0e\n" +
 	"\f_update_mask\"A\n" +
 	"\x1eDeletePromotionPipelineRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\x87\x01\n" +
 	"\x17PromotePromotionRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12$\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12$\n" +
 	"\vstage_index\x18\x02 \x01(\rB\x03\xe0A\x02R\n" +
 	"stageIndex\x12\"\n" +
 	"\n" +
-	"history_id\x18\x03 \x01(\x04H\x00R\thistoryId\x88\x01\x01B\r\n" +
+	"history_id\x18\x03 \x01(\x03H\x00R\thistoryId\x88\x01\x01B\r\n" +
 	"\v_history_id\"K\n" +
 	"\x18PromotePromotionResponse\x12\x1d\n" +
 	"\n" +
-	"record_ids\x18\x01 \x03(\x04R\trecordIds\x12\x10\n" +
+	"record_ids\x18\x01 \x03(\x03R\trecordIds\x12\x10\n" +
 	"\x03env\x18\x02 \x01(\tR\x03env\"<\n" +
 	"\x19GetPromotionStatusRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\xd2\x02\n" +
 	"\x14PromotionStageStatus\x12\x1f\n" +
 	"\vstage_index\x18\x01 \x01(\rR\n" +
 	"stageIndex\x12\x10\n" +
 	"\x03env\x18\x02 \x01(\tR\x03env\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12'\n" +
-	"\x0fdistribution_id\x18\x04 \x01(\x04R\x0edistributionId\x12(\n" +
+	"\x0fdistribution_id\x18\x04 \x01(\x03R\x0edistributionId\x12(\n" +
 	"\rlatest_status\x18\x05 \x01(\tH\x00R\flatestStatus\x88\x01\x01\x12-\n" +
-	"\x10latest_record_id\x18\x06 \x01(\x04H\x01R\x0elatestRecordId\x88\x01\x01\x12<\n" +
+	"\x10latest_record_id\x18\x06 \x01(\x03H\x01R\x0elatestRecordId\x88\x01\x01\x12<\n" +
 	"\tlatest_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\blatestAt\x88\x01\x01B\x10\n" +
 	"\x0e_latest_statusB\x13\n" +
 	"\x11_latest_record_idB\f\n" +

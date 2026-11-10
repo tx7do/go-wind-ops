@@ -59,7 +59,6 @@ func (s *BuildService) Update(ctx context.Context, req *opsV1.UpdateBuildRequest
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.buildServiceClient.UpdateBuild(ctx, req)
 }
 

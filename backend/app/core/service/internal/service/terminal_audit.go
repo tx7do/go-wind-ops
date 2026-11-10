@@ -105,4 +105,4 @@ func timestamppbOfPtr(t *time.Time) *timestamppb.Timestamp {
 	return timestamppb.New(*t)
 }
 
-func uint64Ptr(v uint64) *uint64 { return &v }
+func uint64Ptr(v int64) *int64 { return &v }

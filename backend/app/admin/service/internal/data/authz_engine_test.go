@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
-	casbinEngine "github.com/tx7do/kratos-authz/engine/casbin"
 	authzEngine "github.com/tx7do/kratos-authz/engine"
+	casbinEngine "github.com/tx7do/kratos-authz/engine/casbin"
 
 	"go-wind-ops/pkg/authorizer"
 )

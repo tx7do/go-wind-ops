@@ -35,8 +35,8 @@ const batchItemOutputLimit = 4 << 10
 type ScriptBatchService struct {
 	opsV1.UnimplementedScriptBatchServiceServer
 
-	log       *log.Helper
-	batchRepo *data.ScriptBatchRepo
+	log        *log.Helper
+	batchRepo  *data.ScriptBatchRepo
 	recordRepo *data.CommandRecordRepo
 	scriptRepo *data.ScriptRepo
 	nodeRepo   *data.AgentNodeRepo
@@ -128,8 +128,8 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 	var (
 		payload  *signal.ScriptExecPayload
 		targets  []batchTarget
-		nodeIDs  []uint64
-		batchSid uint64
+		nodeIDs  []int64
+		batchSid int64
 		batchNm  string
 	)
 	switch {
@@ -262,14 +262,14 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 
 // batchTarget 批量下发的单台目标(agent_ids 模式 nodeID 为 0,免 node 换算)。
 type batchTarget struct {
-	nodeID  uint64
+	nodeID  int64
 	agentID string
 }
 
-func (s *ScriptBatchService) operatorID(ctx context.Context) uint64 {
+func (s *ScriptBatchService) operatorID(ctx context.Context) int64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint64(operator.GetUserId())
+	return int64(operator.GetUserId())
 }

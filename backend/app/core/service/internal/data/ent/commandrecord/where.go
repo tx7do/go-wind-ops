@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.CommandRecord {
+func ID(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.CommandRecord {
+func IDEQ(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.CommandRecord {
+func IDNEQ(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.CommandRecord {
+func IDIn(ids ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.CommandRecord {
+func IDNotIn(ids ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.CommandRecord {
+func IDGT(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.CommandRecord {
+func IDGTE(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.CommandRecord {
+func IDLT(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.CommandRecord {
+func IDLTE(id int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.CommandRecord {
+func TenantID(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -80,7 +80,7 @@ func RequestID(v string) predicate.CommandRecord {
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.CommandRecord {
+func NodeID(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -110,12 +110,12 @@ func Error(v string) predicate.CommandRecord {
 }
 
 // OperatorID applies equality check predicate on the "operator_id" field. It's identical to OperatorIDEQ.
-func OperatorID(v uint64) predicate.CommandRecord {
+func OperatorID(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // BatchID applies equality check predicate on the "batch_id" field. It's identical to BatchIDEQ.
-func BatchID(v uint64) predicate.CommandRecord {
+func BatchID(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldBatchID, v))
 }
 
@@ -125,42 +125,42 @@ func FinishedAt(v time.Time) predicate.CommandRecord {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.CommandRecord {
+func TenantIDEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.CommandRecord {
+func TenantIDNEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.CommandRecord {
+func TenantIDIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.CommandRecord {
+func TenantIDNotIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.CommandRecord {
+func TenantIDGT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.CommandRecord {
+func TenantIDGTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.CommandRecord {
+func TenantIDLT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.CommandRecord {
+func TenantIDLTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -390,42 +390,42 @@ func RequestIDContainsFold(v string) predicate.CommandRecord {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.CommandRecord {
+func NodeIDEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.CommandRecord {
+func NodeIDNEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.CommandRecord {
+func NodeIDIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.CommandRecord {
+func NodeIDNotIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.CommandRecord {
+func NodeIDGT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.CommandRecord {
+func NodeIDGTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.CommandRecord {
+func NodeIDLT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.CommandRecord {
+func NodeIDLTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLTE(FieldNodeID, v))
 }
 
@@ -825,42 +825,42 @@ func ErrorContainsFold(v string) predicate.CommandRecord {
 }
 
 // OperatorIDEQ applies the EQ predicate on the "operator_id" field.
-func OperatorIDEQ(v uint64) predicate.CommandRecord {
+func OperatorIDEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // OperatorIDNEQ applies the NEQ predicate on the "operator_id" field.
-func OperatorIDNEQ(v uint64) predicate.CommandRecord {
+func OperatorIDNEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNEQ(FieldOperatorID, v))
 }
 
 // OperatorIDIn applies the In predicate on the "operator_id" field.
-func OperatorIDIn(vs ...uint64) predicate.CommandRecord {
+func OperatorIDIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDNotIn applies the NotIn predicate on the "operator_id" field.
-func OperatorIDNotIn(vs ...uint64) predicate.CommandRecord {
+func OperatorIDNotIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDGT applies the GT predicate on the "operator_id" field.
-func OperatorIDGT(v uint64) predicate.CommandRecord {
+func OperatorIDGT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGT(FieldOperatorID, v))
 }
 
 // OperatorIDGTE applies the GTE predicate on the "operator_id" field.
-func OperatorIDGTE(v uint64) predicate.CommandRecord {
+func OperatorIDGTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGTE(FieldOperatorID, v))
 }
 
 // OperatorIDLT applies the LT predicate on the "operator_id" field.
-func OperatorIDLT(v uint64) predicate.CommandRecord {
+func OperatorIDLT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLT(FieldOperatorID, v))
 }
 
 // OperatorIDLTE applies the LTE predicate on the "operator_id" field.
-func OperatorIDLTE(v uint64) predicate.CommandRecord {
+func OperatorIDLTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLTE(FieldOperatorID, v))
 }
 
@@ -875,42 +875,42 @@ func OperatorIDNotNil() predicate.CommandRecord {
 }
 
 // BatchIDEQ applies the EQ predicate on the "batch_id" field.
-func BatchIDEQ(v uint64) predicate.CommandRecord {
+func BatchIDEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldEQ(FieldBatchID, v))
 }
 
 // BatchIDNEQ applies the NEQ predicate on the "batch_id" field.
-func BatchIDNEQ(v uint64) predicate.CommandRecord {
+func BatchIDNEQ(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNEQ(FieldBatchID, v))
 }
 
 // BatchIDIn applies the In predicate on the "batch_id" field.
-func BatchIDIn(vs ...uint64) predicate.CommandRecord {
+func BatchIDIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldIn(FieldBatchID, vs...))
 }
 
 // BatchIDNotIn applies the NotIn predicate on the "batch_id" field.
-func BatchIDNotIn(vs ...uint64) predicate.CommandRecord {
+func BatchIDNotIn(vs ...int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldNotIn(FieldBatchID, vs...))
 }
 
 // BatchIDGT applies the GT predicate on the "batch_id" field.
-func BatchIDGT(v uint64) predicate.CommandRecord {
+func BatchIDGT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGT(FieldBatchID, v))
 }
 
 // BatchIDGTE applies the GTE predicate on the "batch_id" field.
-func BatchIDGTE(v uint64) predicate.CommandRecord {
+func BatchIDGTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldGTE(FieldBatchID, v))
 }
 
 // BatchIDLT applies the LT predicate on the "batch_id" field.
-func BatchIDLT(v uint64) predicate.CommandRecord {
+func BatchIDLT(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLT(FieldBatchID, v))
 }
 
 // BatchIDLTE applies the LTE predicate on the "batch_id" field.
-func BatchIDLTE(v uint64) predicate.CommandRecord {
+func BatchIDLTE(v int64) predicate.CommandRecord {
 	return predicate.CommandRecord(sql.FieldLTE(FieldBatchID, v))
 }
 

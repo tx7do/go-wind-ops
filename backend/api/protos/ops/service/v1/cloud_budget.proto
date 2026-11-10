@@ -37,12 +37,12 @@ service CloudBudgetService {
 
 // 云成本月度预算
 message CloudBudget {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 预算ID
 
-  optional uint64 cloud_account_id = 2 [
+  optional int64 cloud_account_id = 2 [
     json_name = "cloudAccountId",
     (gnostic.openapi.v3.property) = {
       description: "云账号(0=全部账号合计)"
@@ -117,12 +117,12 @@ message CloudBudget {
 }
 
 message ListCloudBudgetResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated CloudBudget items = 2 [json_name = "items"]; // 预算列表
 }
 
 message GetCloudBudgetRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 预算ID
@@ -136,7 +136,7 @@ message CreateCloudBudgetRequest {
 }
 
 message UpdateCloudBudgetRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 预算ID
@@ -155,7 +155,7 @@ message UpdateCloudBudgetRequest {
 }
 
 message DeleteCloudBudgetRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 预算ID

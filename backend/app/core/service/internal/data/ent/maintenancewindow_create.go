@@ -65,13 +65,13 @@ func (_c *MaintenanceWindowCreate) SetNillableDeletedAt(v *time.Time) *Maintenan
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *MaintenanceWindowCreate) SetCreatedBy(v uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetCreatedBy(v int64) *MaintenanceWindowCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableCreatedBy(v *uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetNillableCreatedBy(v *int64) *MaintenanceWindowCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *MaintenanceWindowCreate) SetNillableCreatedBy(v *uint64) *MaintenanceW
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *MaintenanceWindowCreate) SetUpdatedBy(v uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetUpdatedBy(v int64) *MaintenanceWindowCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableUpdatedBy(v *uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetNillableUpdatedBy(v *int64) *MaintenanceWindowCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *MaintenanceWindowCreate) SetNillableUpdatedBy(v *uint64) *MaintenanceW
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *MaintenanceWindowCreate) SetDeletedBy(v uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetDeletedBy(v int64) *MaintenanceWindowCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableDeletedBy(v *uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetNillableDeletedBy(v *int64) *MaintenanceWindowCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -153,7 +153,7 @@ func (_c *MaintenanceWindowCreate) SetNillableDescription(v *string) *Maintenanc
 }
 
 // SetID sets the "id" field.
-func (_c *MaintenanceWindowCreate) SetID(v uint64) *MaintenanceWindowCreate {
+func (_c *MaintenanceWindowCreate) SetID(v int64) *MaintenanceWindowCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -239,7 +239,7 @@ func (_c *MaintenanceWindowCreate) sqlSave(ctx context.Context) (*MaintenanceWin
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -249,7 +249,7 @@ func (_c *MaintenanceWindowCreate) sqlSave(ctx context.Context) (*MaintenanceWin
 func (_c *MaintenanceWindowCreate) createSpec() (*MaintenanceWindow, *sqlgraph.CreateSpec) {
 	var (
 		_node = &MaintenanceWindow{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(maintenancewindow.Table, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(maintenancewindow.Table, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -269,15 +269,15 @@ func (_c *MaintenanceWindowCreate) createSpec() (*MaintenanceWindow, *sqlgraph.C
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(maintenancewindow.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -389,7 +389,7 @@ func (u *MaintenanceWindowUpsert) ClearDeletedAt() *MaintenanceWindowUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MaintenanceWindowUpsert) SetCreatedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) SetCreatedBy(v int64) *MaintenanceWindowUpsert {
 	u.Set(maintenancewindow.FieldCreatedBy, v)
 	return u
 }
@@ -401,7 +401,7 @@ func (u *MaintenanceWindowUpsert) UpdateCreatedBy() *MaintenanceWindowUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MaintenanceWindowUpsert) AddCreatedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) AddCreatedBy(v int64) *MaintenanceWindowUpsert {
 	u.Add(maintenancewindow.FieldCreatedBy, v)
 	return u
 }
@@ -413,7 +413,7 @@ func (u *MaintenanceWindowUpsert) ClearCreatedBy() *MaintenanceWindowUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MaintenanceWindowUpsert) SetUpdatedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) SetUpdatedBy(v int64) *MaintenanceWindowUpsert {
 	u.Set(maintenancewindow.FieldUpdatedBy, v)
 	return u
 }
@@ -425,7 +425,7 @@ func (u *MaintenanceWindowUpsert) UpdateUpdatedBy() *MaintenanceWindowUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MaintenanceWindowUpsert) AddUpdatedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) AddUpdatedBy(v int64) *MaintenanceWindowUpsert {
 	u.Add(maintenancewindow.FieldUpdatedBy, v)
 	return u
 }
@@ -437,7 +437,7 @@ func (u *MaintenanceWindowUpsert) ClearUpdatedBy() *MaintenanceWindowUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MaintenanceWindowUpsert) SetDeletedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) SetDeletedBy(v int64) *MaintenanceWindowUpsert {
 	u.Set(maintenancewindow.FieldDeletedBy, v)
 	return u
 }
@@ -449,7 +449,7 @@ func (u *MaintenanceWindowUpsert) UpdateDeletedBy() *MaintenanceWindowUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MaintenanceWindowUpsert) AddDeletedBy(v uint64) *MaintenanceWindowUpsert {
+func (u *MaintenanceWindowUpsert) AddDeletedBy(v int64) *MaintenanceWindowUpsert {
 	u.Add(maintenancewindow.FieldDeletedBy, v)
 	return u
 }
@@ -620,14 +620,14 @@ func (u *MaintenanceWindowUpsertOne) ClearDeletedAt() *MaintenanceWindowUpsertOn
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MaintenanceWindowUpsertOne) SetCreatedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) SetCreatedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MaintenanceWindowUpsertOne) AddCreatedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) AddCreatedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -648,14 +648,14 @@ func (u *MaintenanceWindowUpsertOne) ClearCreatedBy() *MaintenanceWindowUpsertOn
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MaintenanceWindowUpsertOne) SetUpdatedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) SetUpdatedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MaintenanceWindowUpsertOne) AddUpdatedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) AddUpdatedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -676,14 +676,14 @@ func (u *MaintenanceWindowUpsertOne) ClearUpdatedBy() *MaintenanceWindowUpsertOn
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MaintenanceWindowUpsertOne) SetDeletedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) SetDeletedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MaintenanceWindowUpsertOne) AddDeletedBy(v uint64) *MaintenanceWindowUpsertOne {
+func (u *MaintenanceWindowUpsertOne) AddDeletedBy(v int64) *MaintenanceWindowUpsertOne {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -796,7 +796,7 @@ func (u *MaintenanceWindowUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MaintenanceWindowUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *MaintenanceWindowUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -805,7 +805,7 @@ func (u *MaintenanceWindowUpsertOne) ID(ctx context.Context) (id uint64, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MaintenanceWindowUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *MaintenanceWindowUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -862,7 +862,7 @@ func (_c *MaintenanceWindowCreateBulk) Save(ctx context.Context) ([]*Maintenance
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1040,14 +1040,14 @@ func (u *MaintenanceWindowUpsertBulk) ClearDeletedAt() *MaintenanceWindowUpsertB
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MaintenanceWindowUpsertBulk) SetCreatedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) SetCreatedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MaintenanceWindowUpsertBulk) AddCreatedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) AddCreatedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1068,14 +1068,14 @@ func (u *MaintenanceWindowUpsertBulk) ClearCreatedBy() *MaintenanceWindowUpsertB
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MaintenanceWindowUpsertBulk) SetUpdatedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) SetUpdatedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MaintenanceWindowUpsertBulk) AddUpdatedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) AddUpdatedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1096,14 +1096,14 @@ func (u *MaintenanceWindowUpsertBulk) ClearUpdatedBy() *MaintenanceWindowUpsertB
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MaintenanceWindowUpsertBulk) SetDeletedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) SetDeletedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MaintenanceWindowUpsertBulk) AddDeletedBy(v uint64) *MaintenanceWindowUpsertBulk {
+func (u *MaintenanceWindowUpsertBulk) AddDeletedBy(v int64) *MaintenanceWindowUpsertBulk {
 	return u.Update(func(s *MaintenanceWindowUpsert) {
 		s.AddDeletedBy(v)
 	})

@@ -85,8 +85,8 @@ func (_q *AlertQuery) FirstX(ctx context.Context) *Alert {
 
 // FirstID returns the first Alert ID from the query.
 // Returns a *NotFoundError when no Alert ID was found.
-func (_q *AlertQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *AlertQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *AlertQuery) FirstID(ctx context.Context) (id uint64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *AlertQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *AlertQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *AlertQuery) OnlyX(ctx context.Context) *Alert {
 // OnlyID is like Only, but returns the only Alert ID in the query.
 // Returns a *NotSingularError when more than one Alert ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *AlertQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *AlertQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *AlertQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *AlertQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *AlertQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *AlertQuery) AllX(ctx context.Context) []*Alert {
 }
 
 // IDs executes the query and returns a list of Alert IDs.
-func (_q *AlertQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (_q *AlertQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *AlertQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *AlertQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *AlertQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *AlertQuery) Clone() *AlertQuery {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint64 `json:"tenant_id,omitempty"`
+//		TenantID int64 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -289,7 +289,7 @@ func (_q *AlertQuery) GroupBy(field string, fields ...string) *AlertGroupBy {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint64 `json:"tenant_id,omitempty"`
+//		TenantID int64 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Alert.Query().
@@ -381,7 +381,7 @@ func (_q *AlertQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *AlertQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

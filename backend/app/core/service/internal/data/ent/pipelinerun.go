@@ -17,9 +17,9 @@ type PipelineRun struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,7 +27,7 @@ type PipelineRun struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 流水线配置(ops_build_pipelines.id)
-	PipelineID uint64 `json:"pipeline_id,omitempty"`
+	PipelineID int64 `json:"pipeline_id,omitempty"`
 	// 运行状态
 	Status *pipelinerun.Status `json:"status,omitempty"`
 	// 步骤快照(JSON,触发时定版,配置后改不影响本 run)
@@ -45,7 +45,7 @@ type PipelineRun struct {
 	// 结束时间(终态)
 	FinishedAt *time.Time `json:"finished_at,omitempty"`
 	// 触发人
-	OperatorID *uint64 `json:"operator_id,omitempty"`
+	OperatorID *int64 `json:"operator_id,omitempty"`
 	// 执行实例标识(机器指纹):执行 goroutine 归属实例,启动清扫只定案本实例的遗留记录
 	RunnerID     *string `json:"runner_id,omitempty"`
 	selectValues sql.SelectValues
@@ -82,13 +82,13 @@ func (_m *PipelineRun) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case pipelinerun.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case pipelinerun.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -115,7 +115,7 @@ func (_m *PipelineRun) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field pipeline_id", values[i])
 			} else if value.Valid {
-				_m.PipelineID = uint64(value.Int64)
+				_m.PipelineID = value.Int64
 			}
 		case pipelinerun.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -176,8 +176,8 @@ func (_m *PipelineRun) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operator_id", values[i])
 			} else if value.Valid {
-				_m.OperatorID = new(uint64)
-				*_m.OperatorID = uint64(value.Int64)
+				_m.OperatorID = new(int64)
+				*_m.OperatorID = value.Int64
 			}
 		case pipelinerun.FieldRunnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {

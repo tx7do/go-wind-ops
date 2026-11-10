@@ -48,7 +48,7 @@ func NewRouterService(
 	}
 }
 
-func (s *AdminPortalService) menuListToQueryString(menus []uint64, onlyButton bool) string {
+func (s *AdminPortalService) menuListToQueryString(menus []int64, onlyButton bool) string {
 	var ids []string
 	for _, menu := range menus {
 		ids = append(ids, fmt.Sprintf("\"%d\"", menu))
@@ -73,7 +73,7 @@ func (s *AdminPortalService) menuListToQueryString(menus []uint64, onlyButton bo
 }
 
 // queryMultipleRolesMenusByRoleIds 使用RoleIDs查询菜单，即多个角色的菜单
-func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []uint64) ([]uint64, error) {
+func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []int64) ([]int64, error) {
 	if len(roleIDs) == 0 {
 		s.log.Warnf("user has no roles assigned")
 		return nil, nil
@@ -113,7 +113,7 @@ func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Contex
 }
 
 // getMyMenuTree 当前操作人可见的菜单路由树(GetNavigation/GetInitialContext 共用)。
-func (s *AdminPortalService) getMyMenuTree(ctx context.Context, userID uint64) ([]*permissionV1.MenuRouteItem, error) {
+func (s *AdminPortalService) getMyMenuTree(ctx context.Context, userID int64) ([]*permissionV1.MenuRouteItem, error) {
 	user, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{
 			Id: userID,
@@ -145,7 +145,7 @@ func (s *AdminPortalService) getMyMenuTree(ctx context.Context, userID uint64) (
 }
 
 // getMyPermissionCodes 当前操作人的权限码列表(GetMyPermissionCode/GetInitialContext 共用)。
-func (s *AdminPortalService) getMyPermissionCodes(ctx context.Context, userID uint64) ([]string, error) {
+func (s *AdminPortalService) getMyPermissionCodes(ctx context.Context, userID int64) ([]string, error) {
 	permissionIdsResp, err := s.roleServiceClient.ListPermissionIds(ctx, &permissionV1.ListPermissionIdsRequest{
 		QueryBy: &permissionV1.ListPermissionIdsRequest_UserId{
 			UserId: userID,

@@ -12,7 +12,7 @@ import (
 // PromotionStage 晋升流水线的单个阶段。
 type PromotionStage struct {
 	// DistributionID 该阶段执行的分发配置(环境隔离靠分发目标落在对应 env 的节点)。
-	DistributionID uint64 `json:"distributionId"`
+	DistributionID int64 `json:"distributionId"`
 	// Env 阶段环境标签(展示用,如 dev/staging/prod)。
 	Env string `json:"env"`
 	// Name 阶段名(如 开发/预发/生产)。
@@ -57,7 +57,7 @@ func (PromotionPipeline) Fields() []ent.Field {
 func (PromotionPipeline) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

@@ -1,13 +1,14 @@
 // mqtt_auth_server.go EMQX Broker 级认证与授权的最小 HTTP 服务。
 // EMQX 配置 HTTP 认证/授权后回调本端点:
-//   POST /api/v1/mqtt/auth {username, password, clientid}
-//     → username == core 自身账号:与 core 配置的 MQTT 凭证比对
-//     → 否则按 agent 处理:校验 SHA-256(password) 与 ops_agent_nodes.token_hash
-//       是否匹配;首次出现按 TOFU 注册(与 MQTT 信令层准入共享同一张表和同一个
-//       token——agent 以本机 token 作为 MQTT 口令连接)
-//   POST /api/v1/mqtt/acl {username, topic, action}
-//     → core:放行 ops/ 前缀全部主题;agent:仅放行 ops/agent/{自身用户名}/#
-//     → 其余(含 $SYS)一律拒绝
+//
+//	POST /api/v1/mqtt/auth {username, password, clientid}
+//	  → username == core 自身账号:与 core 配置的 MQTT 凭证比对
+//	  → 否则按 agent 处理:校验 SHA-256(password) 与 ops_agent_nodes.token_hash
+//	    是否匹配;首次出现按 TOFU 注册(与 MQTT 信令层准入共享同一张表和同一个
+//	    token——agent 以本机 token 作为 MQTT 口令连接)
+//	POST /api/v1/mqtt/acl {username, topic, action}
+//	  → core:放行 ops/ 前缀全部主题;agent:仅放行 ops/agent/{自身用户名}/#
+//	  → 其余(含 $SYS)一律拒绝
 //
 // 回调密钥:MQTT_AUTH_WEBHOOK_SECRET 非空时,两个端点要求携带共享密钥
 // (URL 查询参数 ?secret= 或请求头 X-Mqtt-Webhook-Secret,常时比较),
@@ -31,8 +32,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data"
-	"go-wind-ops/pkg/envs"
 	"go-wind-ops/pkg/configenv"
+	"go-wind-ops/pkg/envs"
 )
 
 // MqttAuthWebhookSecretEnv 回调共享密钥的环境变量名。

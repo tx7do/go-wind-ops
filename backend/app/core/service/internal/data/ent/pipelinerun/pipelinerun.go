@@ -87,17 +87,17 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// PipelineIDValidator is a validator for the "pipeline_id" field. It is called by the builders before save.
-	PipelineIDValidator func(uint64) error
+	PipelineIDValidator func(int64) error
 	// DefaultCurrentStep holds the default value on creation for the "current_step" field.
 	DefaultCurrentStep int32
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
-	DefaultOperatorID uint64
+	DefaultOperatorID int64
 	// DefaultRunnerID holds the default value on creation for the "runner_id" field.
 	DefaultRunnerID string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

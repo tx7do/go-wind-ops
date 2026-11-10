@@ -21,11 +21,11 @@ const artifactUrlExpiry = time.Hour
 type BuildHistoryService struct {
 	opsV1.UnimplementedBuildHistoryServiceServer
 
-	log         *log.Helper
-	repo        *data.BuildHistoryRepo
-	buildRepo   *data.BuildRepo
-	repoRepo    *data.RepositoryRepo
-	ossClient   *oss.MinIOClient
+	log       *log.Helper
+	repo      *data.BuildHistoryRepo
+	buildRepo *data.BuildRepo
+	repoRepo  *data.RepositoryRepo
+	ossClient *oss.MinIOClient
 }
 
 func NewBuildHistoryService(ctx *bootstrap.Context, repo *data.BuildHistoryRepo, buildRepo *data.BuildRepo, repoRepo *data.RepositoryRepo, ossClient *oss.MinIOClient) *BuildHistoryService {
@@ -121,6 +121,6 @@ func (s *BuildHistoryService) GetArtifactDownloadUrl(ctx context.Context, req *o
 	return &opsV1.GetArtifactDownloadUrlResponse{
 		Url:       urlObj.String(),
 		ObjectKey: history.GetArtifactObjectKey(),
-		Size:      history.GetArtifactSize(),
+		Size:      uint64(history.GetArtifactSize()),
 	}, nil
 }

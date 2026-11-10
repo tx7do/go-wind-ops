@@ -34,7 +34,7 @@ func (Project) Annotations() []schema.Annotation {
 // Fields of the Project.
 func (Project) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("所属节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -76,7 +76,7 @@ func (Project) Fields() []ent.Field {
 			Comment("标签").
 			Optional(),
 
-		field.Uint64("last_pid").
+		field.Int64("last_pid").
 			Comment("最近一次启动记录的进程 pid(agent 回填)").
 			Default(0).
 			Optional().
@@ -104,7 +104,7 @@ func (Project) Fields() []ent.Field {
 func (Project) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

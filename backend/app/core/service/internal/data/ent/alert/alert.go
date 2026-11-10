@@ -81,15 +81,15 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// DefaultMonitorID holds the default value on creation for the "monitor_id" field.
-	DefaultMonitorID uint64
+	DefaultMonitorID int64
 	// DefaultSource holds the default value on creation for the "source" field.
 	DefaultSource string
 	// DefaultProjectID holds the default value on creation for the "project_id" field.
-	DefaultProjectID uint64
+	DefaultProjectID int64
 	// DefaultNodeID holds the default value on creation for the "node_id" field.
-	DefaultNodeID uint64
+	DefaultNodeID int64
 	// MessageValidator is a validator for the "message" field. It is called by the builders before save.
 	MessageValidator func(string) error
 	// DefaultResolved holds the default value on creation for the "resolved" field.
@@ -97,7 +97,7 @@ var (
 	// DefaultNotified holds the default value on creation for the "notified" field.
 	DefaultNotified bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Level defines the type for the "level" enum field.

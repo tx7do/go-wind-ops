@@ -32,7 +32,7 @@ func (BuildHistory) Annotations() []schema.Annotation {
 // Fields of the BuildHistory.
 func (BuildHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("build_id").
+		field.Int64("build_id").
 			Comment("构建配置(ops_builds.id)").
 			Positive(),
 
@@ -72,7 +72,7 @@ func (BuildHistory) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("artifact_size").
+		field.Int64("artifact_size").
 			Comment("产物大小(字节)").
 			Default(0).
 			Optional().
@@ -93,7 +93,7 @@ func (BuildHistory) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("operator_id").
+		field.Int64("operator_id").
 			Comment("触发人").
 			Default(0).
 			Optional().
@@ -111,7 +111,7 @@ func (BuildHistory) Fields() []ent.Field {
 func (BuildHistory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

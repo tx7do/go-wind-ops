@@ -15,8 +15,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 )

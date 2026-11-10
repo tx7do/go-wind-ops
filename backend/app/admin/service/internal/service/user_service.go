@@ -18,9 +18,9 @@ import (
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
+	"go-wind-ops/pkg/constants"
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils"
-	"go-wind-ops/pkg/constants"
 )
 
 type UserService struct {
@@ -109,7 +109,7 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 		return nil, err
 	}
 
-	var roleIds []uint64
+	var roleIds []int64
 	if len(req.Data.GetRoleIds()) > 0 {
 		roleIds = req.Data.GetRoleIds()
 	}
@@ -226,7 +226,7 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 		}
 	}
 
-	var roleIds []uint64
+	var roleIds []int64
 	if len(req.Data.GetRoleIds()) > 0 {
 		roleIds = req.Data.GetRoleIds()
 	}
@@ -345,7 +345,7 @@ func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequ
 	if err != nil {
 		return nil, err
 	}
-	var roleIds []uint64
+	var roleIds []int64
 	for _, role := range userRoles.GetBindings() {
 		roleIds = append(roleIds, role.GetRoleId())
 	}

@@ -23,13 +23,13 @@ type DistributionRecordCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *DistributionRecordCreate) SetTenantID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetTenantID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *DistributionRecordCreate) SetNillableTenantID(v *uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetNillableTenantID(v *int64) *DistributionRecordCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,25 +79,25 @@ func (_c *DistributionRecordCreate) SetNillableDeletedAt(v *time.Time) *Distribu
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_c *DistributionRecordCreate) SetDistributionID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetDistributionID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetDistributionID(v)
 	return _c
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (_c *DistributionRecordCreate) SetBuildHistoryID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetBuildHistoryID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetBuildHistoryID(v)
 	return _c
 }
 
 // SetProjectID sets the "project_id" field.
-func (_c *DistributionRecordCreate) SetProjectID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetProjectID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetProjectID(v)
 	return _c
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *DistributionRecordCreate) SetNodeID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetNodeID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -165,13 +165,13 @@ func (_c *DistributionRecordCreate) SetNillableResult(v *string) *DistributionRe
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *DistributionRecordCreate) SetOperatorID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetOperatorID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *DistributionRecordCreate) SetNillableOperatorID(v *uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetNillableOperatorID(v *int64) *DistributionRecordCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -193,7 +193,7 @@ func (_c *DistributionRecordCreate) SetNillableFinishedAt(v *time.Time) *Distrib
 }
 
 // SetID sets the "id" field.
-func (_c *DistributionRecordCreate) SetID(v uint64) *DistributionRecordCreate {
+func (_c *DistributionRecordCreate) SetID(v int64) *DistributionRecordCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -325,7 +325,7 @@ func (_c *DistributionRecordCreate) sqlSave(ctx context.Context) (*DistributionR
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -335,7 +335,7 @@ func (_c *DistributionRecordCreate) sqlSave(ctx context.Context) (*DistributionR
 func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph.CreateSpec) {
 	var (
 		_node = &DistributionRecord{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(distributionrecord.Table, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(distributionrecord.Table, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -343,7 +343,7 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(distributionrecord.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -359,19 +359,19 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.DistributionID(); ok {
-		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeInt64, value)
 		_node.DistributionID = value
 	}
 	if value, ok := _c.mutation.BuildHistoryID(); ok {
-		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeInt64, value)
 		_node.BuildHistoryID = value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(distributionrecord.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldProjectID, field.TypeInt64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(distributionrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.CommandRequestID(); ok {
@@ -395,7 +395,7 @@ func (_c *DistributionRecordCreate) createSpec() (*DistributionRecord, *sqlgraph
 		_node.Result = &value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = &value
 	}
 	if value, ok := _c.mutation.FinishedAt(); ok {
@@ -491,7 +491,7 @@ func (u *DistributionRecordUpsert) ClearDeletedAt() *DistributionRecordUpsert {
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *DistributionRecordUpsert) SetDistributionID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) SetDistributionID(v int64) *DistributionRecordUpsert {
 	u.Set(distributionrecord.FieldDistributionID, v)
 	return u
 }
@@ -503,13 +503,13 @@ func (u *DistributionRecordUpsert) UpdateDistributionID() *DistributionRecordUps
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *DistributionRecordUpsert) AddDistributionID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) AddDistributionID(v int64) *DistributionRecordUpsert {
 	u.Add(distributionrecord.FieldDistributionID, v)
 	return u
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (u *DistributionRecordUpsert) SetBuildHistoryID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) SetBuildHistoryID(v int64) *DistributionRecordUpsert {
 	u.Set(distributionrecord.FieldBuildHistoryID, v)
 	return u
 }
@@ -521,13 +521,13 @@ func (u *DistributionRecordUpsert) UpdateBuildHistoryID() *DistributionRecordUps
 }
 
 // AddBuildHistoryID adds v to the "build_history_id" field.
-func (u *DistributionRecordUpsert) AddBuildHistoryID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) AddBuildHistoryID(v int64) *DistributionRecordUpsert {
 	u.Add(distributionrecord.FieldBuildHistoryID, v)
 	return u
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *DistributionRecordUpsert) SetProjectID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) SetProjectID(v int64) *DistributionRecordUpsert {
 	u.Set(distributionrecord.FieldProjectID, v)
 	return u
 }
@@ -539,13 +539,13 @@ func (u *DistributionRecordUpsert) UpdateProjectID() *DistributionRecordUpsert {
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *DistributionRecordUpsert) AddProjectID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) AddProjectID(v int64) *DistributionRecordUpsert {
 	u.Add(distributionrecord.FieldProjectID, v)
 	return u
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *DistributionRecordUpsert) SetNodeID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) SetNodeID(v int64) *DistributionRecordUpsert {
 	u.Set(distributionrecord.FieldNodeID, v)
 	return u
 }
@@ -557,7 +557,7 @@ func (u *DistributionRecordUpsert) UpdateNodeID() *DistributionRecordUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *DistributionRecordUpsert) AddNodeID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) AddNodeID(v int64) *DistributionRecordUpsert {
 	u.Add(distributionrecord.FieldNodeID, v)
 	return u
 }
@@ -647,7 +647,7 @@ func (u *DistributionRecordUpsert) ClearResult() *DistributionRecordUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *DistributionRecordUpsert) SetOperatorID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) SetOperatorID(v int64) *DistributionRecordUpsert {
 	u.Set(distributionrecord.FieldOperatorID, v)
 	return u
 }
@@ -659,7 +659,7 @@ func (u *DistributionRecordUpsert) UpdateOperatorID() *DistributionRecordUpsert 
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *DistributionRecordUpsert) AddOperatorID(v uint64) *DistributionRecordUpsert {
+func (u *DistributionRecordUpsert) AddOperatorID(v int64) *DistributionRecordUpsert {
 	u.Add(distributionrecord.FieldOperatorID, v)
 	return u
 }
@@ -785,14 +785,14 @@ func (u *DistributionRecordUpsertOne) ClearDeletedAt() *DistributionRecordUpsert
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *DistributionRecordUpsertOne) SetDistributionID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) SetDistributionID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetDistributionID(v)
 	})
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *DistributionRecordUpsertOne) AddDistributionID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) AddDistributionID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddDistributionID(v)
 	})
@@ -806,14 +806,14 @@ func (u *DistributionRecordUpsertOne) UpdateDistributionID() *DistributionRecord
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (u *DistributionRecordUpsertOne) SetBuildHistoryID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) SetBuildHistoryID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetBuildHistoryID(v)
 	})
 }
 
 // AddBuildHistoryID adds v to the "build_history_id" field.
-func (u *DistributionRecordUpsertOne) AddBuildHistoryID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) AddBuildHistoryID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddBuildHistoryID(v)
 	})
@@ -827,14 +827,14 @@ func (u *DistributionRecordUpsertOne) UpdateBuildHistoryID() *DistributionRecord
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *DistributionRecordUpsertOne) SetProjectID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) SetProjectID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *DistributionRecordUpsertOne) AddProjectID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) AddProjectID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddProjectID(v)
 	})
@@ -848,14 +848,14 @@ func (u *DistributionRecordUpsertOne) UpdateProjectID() *DistributionRecordUpser
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *DistributionRecordUpsertOne) SetNodeID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) SetNodeID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *DistributionRecordUpsertOne) AddNodeID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) AddNodeID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddNodeID(v)
 	})
@@ -967,14 +967,14 @@ func (u *DistributionRecordUpsertOne) ClearResult() *DistributionRecordUpsertOne
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *DistributionRecordUpsertOne) SetOperatorID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) SetOperatorID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *DistributionRecordUpsertOne) AddOperatorID(v uint64) *DistributionRecordUpsertOne {
+func (u *DistributionRecordUpsertOne) AddOperatorID(v int64) *DistributionRecordUpsertOne {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -1031,7 +1031,7 @@ func (u *DistributionRecordUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *DistributionRecordUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *DistributionRecordUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1040,7 +1040,7 @@ func (u *DistributionRecordUpsertOne) ID(ctx context.Context) (id uint64, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *DistributionRecordUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *DistributionRecordUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1097,7 +1097,7 @@ func (_c *DistributionRecordCreateBulk) Save(ctx context.Context) ([]*Distributi
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1278,14 +1278,14 @@ func (u *DistributionRecordUpsertBulk) ClearDeletedAt() *DistributionRecordUpser
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *DistributionRecordUpsertBulk) SetDistributionID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) SetDistributionID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetDistributionID(v)
 	})
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *DistributionRecordUpsertBulk) AddDistributionID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) AddDistributionID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddDistributionID(v)
 	})
@@ -1299,14 +1299,14 @@ func (u *DistributionRecordUpsertBulk) UpdateDistributionID() *DistributionRecor
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (u *DistributionRecordUpsertBulk) SetBuildHistoryID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) SetBuildHistoryID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetBuildHistoryID(v)
 	})
 }
 
 // AddBuildHistoryID adds v to the "build_history_id" field.
-func (u *DistributionRecordUpsertBulk) AddBuildHistoryID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) AddBuildHistoryID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddBuildHistoryID(v)
 	})
@@ -1320,14 +1320,14 @@ func (u *DistributionRecordUpsertBulk) UpdateBuildHistoryID() *DistributionRecor
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *DistributionRecordUpsertBulk) SetProjectID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) SetProjectID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *DistributionRecordUpsertBulk) AddProjectID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) AddProjectID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1341,14 +1341,14 @@ func (u *DistributionRecordUpsertBulk) UpdateProjectID() *DistributionRecordUpse
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *DistributionRecordUpsertBulk) SetNodeID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) SetNodeID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *DistributionRecordUpsertBulk) AddNodeID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) AddNodeID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1460,14 +1460,14 @@ func (u *DistributionRecordUpsertBulk) ClearResult() *DistributionRecordUpsertBu
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *DistributionRecordUpsertBulk) SetOperatorID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) SetOperatorID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *DistributionRecordUpsertBulk) AddOperatorID(v uint64) *DistributionRecordUpsertBulk {
+func (u *DistributionRecordUpsertBulk) AddOperatorID(v int64) *DistributionRecordUpsertBulk {
 	return u.Update(func(s *DistributionRecordUpsert) {
 		s.AddOperatorID(v)
 	})

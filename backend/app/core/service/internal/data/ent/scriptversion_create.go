@@ -23,13 +23,13 @@ type ScriptVersionCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ScriptVersionCreate) SetTenantID(v uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetTenantID(v int64) *ScriptVersionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ScriptVersionCreate) SetNillableTenantID(v *uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetNillableTenantID(v *int64) *ScriptVersionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *ScriptVersionCreate) SetNillableDeletedAt(v *time.Time) *ScriptVersion
 }
 
 // SetScriptID sets the "script_id" field.
-func (_c *ScriptVersionCreate) SetScriptID(v uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetScriptID(v int64) *ScriptVersionCreate {
 	_c.mutation.SetScriptID(v)
 	return _c
 }
@@ -105,13 +105,13 @@ func (_c *ScriptVersionCreate) SetNillableRemark(v *string) *ScriptVersionCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ScriptVersionCreate) SetCreatedBy(v uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetCreatedBy(v int64) *ScriptVersionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ScriptVersionCreate) SetNillableCreatedBy(v *uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetNillableCreatedBy(v *int64) *ScriptVersionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -119,7 +119,7 @@ func (_c *ScriptVersionCreate) SetNillableCreatedBy(v *uint64) *ScriptVersionCre
 }
 
 // SetID sets the "id" field.
-func (_c *ScriptVersionCreate) SetID(v uint64) *ScriptVersionCreate {
+func (_c *ScriptVersionCreate) SetID(v int64) *ScriptVersionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -209,7 +209,7 @@ func (_c *ScriptVersionCreate) sqlSave(ctx context.Context) (*ScriptVersion, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -219,7 +219,7 @@ func (_c *ScriptVersionCreate) sqlSave(ctx context.Context) (*ScriptVersion, err
 func (_c *ScriptVersionCreate) createSpec() (*ScriptVersion, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ScriptVersion{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(scriptversion.Table, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(scriptversion.Table, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -227,7 +227,7 @@ func (_c *ScriptVersionCreate) createSpec() (*ScriptVersion, *sqlgraph.CreateSpe
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(scriptversion.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(scriptversion.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -243,7 +243,7 @@ func (_c *ScriptVersionCreate) createSpec() (*ScriptVersion, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.ScriptID(); ok {
-		_spec.SetField(scriptversion.FieldScriptID, field.TypeUint64, value)
+		_spec.SetField(scriptversion.FieldScriptID, field.TypeInt64, value)
 		_node.ScriptID = value
 	}
 	if value, ok := _c.mutation.Content(); ok {
@@ -255,7 +255,7 @@ func (_c *ScriptVersionCreate) createSpec() (*ScriptVersion, *sqlgraph.CreateSpe
 		_node.Remark = value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	return _node, _spec
@@ -347,7 +347,7 @@ func (u *ScriptVersionUpsert) ClearDeletedAt() *ScriptVersionUpsert {
 }
 
 // SetScriptID sets the "script_id" field.
-func (u *ScriptVersionUpsert) SetScriptID(v uint64) *ScriptVersionUpsert {
+func (u *ScriptVersionUpsert) SetScriptID(v int64) *ScriptVersionUpsert {
 	u.Set(scriptversion.FieldScriptID, v)
 	return u
 }
@@ -359,7 +359,7 @@ func (u *ScriptVersionUpsert) UpdateScriptID() *ScriptVersionUpsert {
 }
 
 // AddScriptID adds v to the "script_id" field.
-func (u *ScriptVersionUpsert) AddScriptID(v uint64) *ScriptVersionUpsert {
+func (u *ScriptVersionUpsert) AddScriptID(v int64) *ScriptVersionUpsert {
 	u.Add(scriptversion.FieldScriptID, v)
 	return u
 }
@@ -389,7 +389,7 @@ func (u *ScriptVersionUpsert) UpdateRemark() *ScriptVersionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ScriptVersionUpsert) SetCreatedBy(v uint64) *ScriptVersionUpsert {
+func (u *ScriptVersionUpsert) SetCreatedBy(v int64) *ScriptVersionUpsert {
 	u.Set(scriptversion.FieldCreatedBy, v)
 	return u
 }
@@ -401,7 +401,7 @@ func (u *ScriptVersionUpsert) UpdateCreatedBy() *ScriptVersionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ScriptVersionUpsert) AddCreatedBy(v uint64) *ScriptVersionUpsert {
+func (u *ScriptVersionUpsert) AddCreatedBy(v int64) *ScriptVersionUpsert {
 	u.Add(scriptversion.FieldCreatedBy, v)
 	return u
 }
@@ -509,14 +509,14 @@ func (u *ScriptVersionUpsertOne) ClearDeletedAt() *ScriptVersionUpsertOne {
 }
 
 // SetScriptID sets the "script_id" field.
-func (u *ScriptVersionUpsertOne) SetScriptID(v uint64) *ScriptVersionUpsertOne {
+func (u *ScriptVersionUpsertOne) SetScriptID(v int64) *ScriptVersionUpsertOne {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.SetScriptID(v)
 	})
 }
 
 // AddScriptID adds v to the "script_id" field.
-func (u *ScriptVersionUpsertOne) AddScriptID(v uint64) *ScriptVersionUpsertOne {
+func (u *ScriptVersionUpsertOne) AddScriptID(v int64) *ScriptVersionUpsertOne {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.AddScriptID(v)
 	})
@@ -558,14 +558,14 @@ func (u *ScriptVersionUpsertOne) UpdateRemark() *ScriptVersionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ScriptVersionUpsertOne) SetCreatedBy(v uint64) *ScriptVersionUpsertOne {
+func (u *ScriptVersionUpsertOne) SetCreatedBy(v int64) *ScriptVersionUpsertOne {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ScriptVersionUpsertOne) AddCreatedBy(v uint64) *ScriptVersionUpsertOne {
+func (u *ScriptVersionUpsertOne) AddCreatedBy(v int64) *ScriptVersionUpsertOne {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -601,7 +601,7 @@ func (u *ScriptVersionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ScriptVersionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ScriptVersionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -610,7 +610,7 @@ func (u *ScriptVersionUpsertOne) ID(ctx context.Context) (id uint64, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ScriptVersionUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ScriptVersionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -667,7 +667,7 @@ func (_c *ScriptVersionCreateBulk) Save(ctx context.Context) ([]*ScriptVersion, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -848,14 +848,14 @@ func (u *ScriptVersionUpsertBulk) ClearDeletedAt() *ScriptVersionUpsertBulk {
 }
 
 // SetScriptID sets the "script_id" field.
-func (u *ScriptVersionUpsertBulk) SetScriptID(v uint64) *ScriptVersionUpsertBulk {
+func (u *ScriptVersionUpsertBulk) SetScriptID(v int64) *ScriptVersionUpsertBulk {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.SetScriptID(v)
 	})
 }
 
 // AddScriptID adds v to the "script_id" field.
-func (u *ScriptVersionUpsertBulk) AddScriptID(v uint64) *ScriptVersionUpsertBulk {
+func (u *ScriptVersionUpsertBulk) AddScriptID(v int64) *ScriptVersionUpsertBulk {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.AddScriptID(v)
 	})
@@ -897,14 +897,14 @@ func (u *ScriptVersionUpsertBulk) UpdateRemark() *ScriptVersionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ScriptVersionUpsertBulk) SetCreatedBy(v uint64) *ScriptVersionUpsertBulk {
+func (u *ScriptVersionUpsertBulk) SetCreatedBy(v int64) *ScriptVersionUpsertBulk {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ScriptVersionUpsertBulk) AddCreatedBy(v uint64) *ScriptVersionUpsertBulk {
+func (u *ScriptVersionUpsertBulk) AddCreatedBy(v int64) *ScriptVersionUpsertBulk {
 	return u.Update(func(s *ScriptVersionUpsert) {
 		s.AddCreatedBy(v)
 	})

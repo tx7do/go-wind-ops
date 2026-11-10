@@ -111,7 +111,7 @@ func (AgentNode) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("mem_total_bytes").
+		field.Int64("mem_total_bytes").
 			Comment("物理内存总量").
 			Optional().
 			Nillable(),
@@ -135,7 +135,7 @@ func (AgentNode) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("uptime_seconds").
+		field.Int64("uptime_seconds").
 			Comment("系统运行时长(秒,心跳快照)").
 			Optional().
 			Nillable(),

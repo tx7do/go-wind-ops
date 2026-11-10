@@ -65,7 +65,7 @@ func (_c *NodeMetricCreate) SetNillableDeletedAt(v *time.Time) *NodeMetricCreate
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *NodeMetricCreate) SetNodeID(v uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetNodeID(v int64) *NodeMetricCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -113,13 +113,13 @@ func (_c *NodeMetricCreate) SetNillableDiskUsedPercent(v *float64) *NodeMetricCr
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_c *NodeMetricCreate) SetMemTotalBytes(v uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetMemTotalBytes(v int64) *NodeMetricCreate {
 	_c.mutation.SetMemTotalBytes(v)
 	return _c
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_c *NodeMetricCreate) SetNillableMemTotalBytes(v *uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetNillableMemTotalBytes(v *int64) *NodeMetricCreate {
 	if v != nil {
 		_c.SetMemTotalBytes(*v)
 	}
@@ -127,13 +127,13 @@ func (_c *NodeMetricCreate) SetNillableMemTotalBytes(v *uint64) *NodeMetricCreat
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_c *NodeMetricCreate) SetUptimeSeconds(v uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetUptimeSeconds(v int64) *NodeMetricCreate {
 	_c.mutation.SetUptimeSeconds(v)
 	return _c
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_c *NodeMetricCreate) SetNillableUptimeSeconds(v *uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetNillableUptimeSeconds(v *int64) *NodeMetricCreate {
 	if v != nil {
 		_c.SetUptimeSeconds(*v)
 	}
@@ -141,7 +141,7 @@ func (_c *NodeMetricCreate) SetNillableUptimeSeconds(v *uint64) *NodeMetricCreat
 }
 
 // SetID sets the "id" field.
-func (_c *NodeMetricCreate) SetID(v uint64) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetID(v int64) *NodeMetricCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -222,7 +222,7 @@ func (_c *NodeMetricCreate) sqlSave(ctx context.Context) (*NodeMetric, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -232,7 +232,7 @@ func (_c *NodeMetricCreate) sqlSave(ctx context.Context) (*NodeMetric, error) {
 func (_c *NodeMetricCreate) createSpec() (*NodeMetric, *sqlgraph.CreateSpec) {
 	var (
 		_node = &NodeMetric{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(nodemetric.Table, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(nodemetric.Table, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -252,7 +252,7 @@ func (_c *NodeMetricCreate) createSpec() (*NodeMetric, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.CPUPercent(); ok {
@@ -268,11 +268,11 @@ func (_c *NodeMetricCreate) createSpec() (*NodeMetric, *sqlgraph.CreateSpec) {
 		_node.DiskUsedPercent = &value
 	}
 	if value, ok := _c.mutation.MemTotalBytes(); ok {
-		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeInt64, value)
 		_node.MemTotalBytes = &value
 	}
 	if value, ok := _c.mutation.UptimeSeconds(); ok {
-		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeInt64, value)
 		_node.UptimeSeconds = &value
 	}
 	return _node, _spec
@@ -364,7 +364,7 @@ func (u *NodeMetricUpsert) ClearDeletedAt() *NodeMetricUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsert) SetNodeID(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) SetNodeID(v int64) *NodeMetricUpsert {
 	u.Set(nodemetric.FieldNodeID, v)
 	return u
 }
@@ -376,7 +376,7 @@ func (u *NodeMetricUpsert) UpdateNodeID() *NodeMetricUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsert) AddNodeID(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) AddNodeID(v int64) *NodeMetricUpsert {
 	u.Add(nodemetric.FieldNodeID, v)
 	return u
 }
@@ -454,7 +454,7 @@ func (u *NodeMetricUpsert) ClearDiskUsedPercent() *NodeMetricUpsert {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *NodeMetricUpsert) SetMemTotalBytes(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) SetMemTotalBytes(v int64) *NodeMetricUpsert {
 	u.Set(nodemetric.FieldMemTotalBytes, v)
 	return u
 }
@@ -466,7 +466,7 @@ func (u *NodeMetricUpsert) UpdateMemTotalBytes() *NodeMetricUpsert {
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *NodeMetricUpsert) AddMemTotalBytes(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) AddMemTotalBytes(v int64) *NodeMetricUpsert {
 	u.Add(nodemetric.FieldMemTotalBytes, v)
 	return u
 }
@@ -478,7 +478,7 @@ func (u *NodeMetricUpsert) ClearMemTotalBytes() *NodeMetricUpsert {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *NodeMetricUpsert) SetUptimeSeconds(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) SetUptimeSeconds(v int64) *NodeMetricUpsert {
 	u.Set(nodemetric.FieldUptimeSeconds, v)
 	return u
 }
@@ -490,7 +490,7 @@ func (u *NodeMetricUpsert) UpdateUptimeSeconds() *NodeMetricUpsert {
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *NodeMetricUpsert) AddUptimeSeconds(v uint64) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) AddUptimeSeconds(v int64) *NodeMetricUpsert {
 	u.Add(nodemetric.FieldUptimeSeconds, v)
 	return u
 }
@@ -595,14 +595,14 @@ func (u *NodeMetricUpsertOne) ClearDeletedAt() *NodeMetricUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsertOne) SetNodeID(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) SetNodeID(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsertOne) AddNodeID(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) AddNodeID(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddNodeID(v)
 	})
@@ -700,14 +700,14 @@ func (u *NodeMetricUpsertOne) ClearDiskUsedPercent() *NodeMetricUpsertOne {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *NodeMetricUpsertOne) SetMemTotalBytes(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) SetMemTotalBytes(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetMemTotalBytes(v)
 	})
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *NodeMetricUpsertOne) AddMemTotalBytes(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) AddMemTotalBytes(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddMemTotalBytes(v)
 	})
@@ -728,14 +728,14 @@ func (u *NodeMetricUpsertOne) ClearMemTotalBytes() *NodeMetricUpsertOne {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *NodeMetricUpsertOne) SetUptimeSeconds(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) SetUptimeSeconds(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetUptimeSeconds(v)
 	})
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *NodeMetricUpsertOne) AddUptimeSeconds(v uint64) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) AddUptimeSeconds(v int64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddUptimeSeconds(v)
 	})
@@ -771,7 +771,7 @@ func (u *NodeMetricUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -780,7 +780,7 @@ func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NodeMetricUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *NodeMetricUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -837,7 +837,7 @@ func (_c *NodeMetricCreateBulk) Save(ctx context.Context) ([]*NodeMetric, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1015,14 +1015,14 @@ func (u *NodeMetricUpsertBulk) ClearDeletedAt() *NodeMetricUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsertBulk) SetNodeID(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) SetNodeID(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsertBulk) AddNodeID(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) AddNodeID(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1120,14 +1120,14 @@ func (u *NodeMetricUpsertBulk) ClearDiskUsedPercent() *NodeMetricUpsertBulk {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *NodeMetricUpsertBulk) SetMemTotalBytes(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) SetMemTotalBytes(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetMemTotalBytes(v)
 	})
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *NodeMetricUpsertBulk) AddMemTotalBytes(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) AddMemTotalBytes(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddMemTotalBytes(v)
 	})
@@ -1148,14 +1148,14 @@ func (u *NodeMetricUpsertBulk) ClearMemTotalBytes() *NodeMetricUpsertBulk {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *NodeMetricUpsertBulk) SetUptimeSeconds(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) SetUptimeSeconds(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetUptimeSeconds(v)
 	})
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *NodeMetricUpsertBulk) AddUptimeSeconds(v uint64) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) AddUptimeSeconds(v int64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddUptimeSeconds(v)
 	})

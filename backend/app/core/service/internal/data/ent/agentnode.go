@@ -18,7 +18,7 @@ type AgentNode struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -26,11 +26,11 @@ type AgentNode struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint64 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint64 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint64 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 机器唯一标识(machine-id),MQTT 主题与准入的锚点
 	AgentID string `json:"agent_id,omitempty"`
 	// 节点显示名(默认取 hostname,可人工修改)
@@ -62,7 +62,7 @@ type AgentNode struct {
 	// 逻辑核数
 	CPUCores *int `json:"cpu_cores,omitempty"`
 	// 物理内存总量
-	MemTotalBytes *uint64 `json:"mem_total_bytes,omitempty"`
+	MemTotalBytes *int64 `json:"mem_total_bytes,omitempty"`
 	// 人工标签(业务轮用于分组/筛选)
 	Labels []string `json:"labels,omitempty"`
 	// 最新 CPU 占用百分比(心跳快照)
@@ -72,7 +72,7 @@ type AgentNode struct {
 	// 最新磁盘占用百分比(心跳快照)
 	DiskUsedPercent *float64 `json:"disk_used_percent,omitempty"`
 	// 系统运行时长(秒,心跳快照)
-	UptimeSeconds *uint64 `json:"uptime_seconds,omitempty"`
+	UptimeSeconds *int64 `json:"uptime_seconds,omitempty"`
 	// 最后心跳时间
 	LastHeartbeatAt *time.Time `json:"last_heartbeat_at,omitempty"`
 	selectValues    sql.SelectValues
@@ -115,7 +115,7 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case agentnode.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -141,22 +141,22 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint64)
-				*_m.CreatedBy = uint64(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case agentnode.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint64)
-				*_m.UpdatedBy = uint64(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case agentnode.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint64)
-				*_m.DeletedBy = uint64(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case agentnode.FieldAgentID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -265,8 +265,8 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field mem_total_bytes", values[i])
 			} else if value.Valid {
-				_m.MemTotalBytes = new(uint64)
-				*_m.MemTotalBytes = uint64(value.Int64)
+				_m.MemTotalBytes = new(int64)
+				*_m.MemTotalBytes = value.Int64
 			}
 		case agentnode.FieldLabels:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -301,8 +301,8 @@ func (_m *AgentNode) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field uptime_seconds", values[i])
 			} else if value.Valid {
-				_m.UptimeSeconds = new(uint64)
-				*_m.UptimeSeconds = uint64(value.Int64)
+				_m.UptimeSeconds = new(int64)
+				*_m.UptimeSeconds = value.Int64
 			}
 		case agentnode.FieldLastHeartbeatAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

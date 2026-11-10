@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Alert {
+func ID(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Alert {
+func IDEQ(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Alert {
+func IDNEQ(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Alert {
+func IDIn(ids ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Alert {
+func IDNotIn(ids ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Alert {
+func IDGT(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Alert {
+func IDGTE(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Alert {
+func IDLT(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Alert {
+func IDLTE(id int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.Alert {
+func TenantID(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.Alert {
 }
 
 // MonitorID applies equality check predicate on the "monitor_id" field. It's identical to MonitorIDEQ.
-func MonitorID(v uint64) predicate.Alert {
+func MonitorID(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldMonitorID, v))
 }
 
@@ -85,12 +85,12 @@ func Source(v string) predicate.Alert {
 }
 
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v uint64) predicate.Alert {
+func ProjectID(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldProjectID, v))
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.Alert {
+func NodeID(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -115,42 +115,42 @@ func Notified(v bool) predicate.Alert {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.Alert {
+func TenantIDEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.Alert {
+func TenantIDNEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.Alert {
+func TenantIDIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.Alert {
+func TenantIDNotIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.Alert {
+func TenantIDGT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.Alert {
+func TenantIDGTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.Alert {
+func TenantIDLT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.Alert {
+func TenantIDLTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -315,42 +315,42 @@ func DeletedAtNotNil() predicate.Alert {
 }
 
 // MonitorIDEQ applies the EQ predicate on the "monitor_id" field.
-func MonitorIDEQ(v uint64) predicate.Alert {
+func MonitorIDEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldMonitorID, v))
 }
 
 // MonitorIDNEQ applies the NEQ predicate on the "monitor_id" field.
-func MonitorIDNEQ(v uint64) predicate.Alert {
+func MonitorIDNEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNEQ(FieldMonitorID, v))
 }
 
 // MonitorIDIn applies the In predicate on the "monitor_id" field.
-func MonitorIDIn(vs ...uint64) predicate.Alert {
+func MonitorIDIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldIn(FieldMonitorID, vs...))
 }
 
 // MonitorIDNotIn applies the NotIn predicate on the "monitor_id" field.
-func MonitorIDNotIn(vs ...uint64) predicate.Alert {
+func MonitorIDNotIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNotIn(FieldMonitorID, vs...))
 }
 
 // MonitorIDGT applies the GT predicate on the "monitor_id" field.
-func MonitorIDGT(v uint64) predicate.Alert {
+func MonitorIDGT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGT(FieldMonitorID, v))
 }
 
 // MonitorIDGTE applies the GTE predicate on the "monitor_id" field.
-func MonitorIDGTE(v uint64) predicate.Alert {
+func MonitorIDGTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGTE(FieldMonitorID, v))
 }
 
 // MonitorIDLT applies the LT predicate on the "monitor_id" field.
-func MonitorIDLT(v uint64) predicate.Alert {
+func MonitorIDLT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLT(FieldMonitorID, v))
 }
 
 // MonitorIDLTE applies the LTE predicate on the "monitor_id" field.
-func MonitorIDLTE(v uint64) predicate.Alert {
+func MonitorIDLTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldMonitorID, v))
 }
 
@@ -430,42 +430,42 @@ func SourceContainsFold(v string) predicate.Alert {
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v uint64) predicate.Alert {
+func ProjectIDEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldProjectID, v))
 }
 
 // ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v uint64) predicate.Alert {
+func ProjectIDNEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNEQ(FieldProjectID, v))
 }
 
 // ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...uint64) predicate.Alert {
+func ProjectIDIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldIn(FieldProjectID, vs...))
 }
 
 // ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...uint64) predicate.Alert {
+func ProjectIDNotIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNotIn(FieldProjectID, vs...))
 }
 
 // ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v uint64) predicate.Alert {
+func ProjectIDGT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGT(FieldProjectID, v))
 }
 
 // ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v uint64) predicate.Alert {
+func ProjectIDGTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGTE(FieldProjectID, v))
 }
 
 // ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v uint64) predicate.Alert {
+func ProjectIDLT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLT(FieldProjectID, v))
 }
 
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v uint64) predicate.Alert {
+func ProjectIDLTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldProjectID, v))
 }
 
@@ -480,42 +480,42 @@ func ProjectIDNotNil() predicate.Alert {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.Alert {
+func NodeIDEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.Alert {
+func NodeIDNEQ(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.Alert {
+func NodeIDIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.Alert {
+func NodeIDNotIn(vs ...int64) predicate.Alert {
 	return predicate.Alert(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.Alert {
+func NodeIDGT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.Alert {
+func NodeIDGTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.Alert {
+func NodeIDLT(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.Alert {
+func NodeIDLTE(v int64) predicate.Alert {
 	return predicate.Alert(sql.FieldLTE(FieldNodeID, v))
 }
 

@@ -31,7 +31,7 @@ func (TerminalChunk) Annotations() []schema.Annotation {
 // Fields of the TerminalChunk.
 func (TerminalChunk) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("terminal_session_id").
+		field.Int64("terminal_session_id").
 			Comment("会话行(ops_terminal_sessions.id)").
 			Positive(),
 
@@ -59,7 +59,7 @@ func (TerminalChunk) Fields() []ent.Field {
 func (TerminalChunk) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

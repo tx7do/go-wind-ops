@@ -85,12 +85,12 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	projectID, perr := strconv.ParseUint(r.URL.Query().Get("projectId"), 10, 32)
+	projectID, perr := strconv.ParseInt(r.URL.Query().Get("projectId"), 10, 64)
 	if perr != nil || projectID == 0 {
 		http.Error(w, "projectId required", http.StatusBadRequest)
 		return
 	}
-	if tk.ProjectId != uint64(projectID) {
+	if tk.ProjectId != int64(projectID) {
 		http.Error(w, "ticket/project mismatch", http.StatusForbidden)
 		return
 	}
@@ -101,7 +101,7 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	intervalMs := 2000
-	if v,VERR := strconv.Atoi(r.URL.Query().Get("interval")); VERR == nil && v >= 1000 && v <= 10000 {
+	if v, VERR := strconv.Atoi(r.URL.Query().Get("interval")); VERR == nil && v >= 1000 && v <= 10000 {
 		intervalMs = v
 	}
 
@@ -147,7 +147,7 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 
 		resp, err := h.client.GetProjectLog(callCtx, &opsV1.GetProjectLogRequest{
-			Id:     uint64Ptr(uint64(projectID)),
+			Id:     uint64Ptr(int64(projectID)),
 			Offset: int64Ptr(offset),
 		})
 		if err != nil {
@@ -170,5 +170,5 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func uint64Ptr(v uint64) *uint64 { return &v }
-func int64Ptr(v int64) *int64 { return &v }
+func uint64Ptr(v int64) *int64 { return &v }
+func int64Ptr(v int64) *int64  { return &v }

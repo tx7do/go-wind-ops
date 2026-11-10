@@ -86,7 +86,7 @@ func (r *TerminalSessionRepo) List(ctx context.Context, req *paginationV1.Paging
 }
 
 // GetEntity 取原始实体(录制器用)。
-func (r *TerminalSessionRepo) GetEntity(ctx context.Context, id uint64) (*ent.TerminalSession, error) {
+func (r *TerminalSessionRepo) GetEntity(ctx context.Context, id int64) (*ent.TerminalSession, error) {
 	return r.entClient.Client().TerminalSession.
 		Query().
 		Where(terminalsession.IDEQ(id)).
@@ -94,7 +94,7 @@ func (r *TerminalSessionRepo) GetEntity(ctx context.Context, id uint64) (*ent.Te
 }
 
 // Create 开会话落一行(OPEN)。
-func (r *TerminalSessionRepo) Create(ctx context.Context, sessionId, agentId string, nodeID, operatorID uint64) (*ent.TerminalSession, error) {
+func (r *TerminalSessionRepo) Create(ctx context.Context, sessionId, agentId string, nodeID, operatorID int64) (*ent.TerminalSession, error) {
 	builder := r.entClient.Client().TerminalSession.
 		Create().
 		SetSessionID(sessionId).
@@ -115,7 +115,7 @@ func (r *TerminalSessionRepo) Create(ctx context.Context, sessionId, agentId str
 }
 
 // Finalize 会话关闭:累加流量/分块计数并置 CLOSED(幂等,仅 OPEN 行生效)。
-func (r *TerminalSessionRepo) Finalize(ctx context.Context, id uint64, inputBytes, outputBytes int64, chunkCount int, truncated bool) error {
+func (r *TerminalSessionRepo) Finalize(ctx context.Context, id int64, inputBytes, outputBytes int64, chunkCount int, truncated bool) error {
 	now := time.Now()
 	_, err := r.entClient.Client().TerminalSession.
 		Update().
@@ -135,7 +135,7 @@ func (r *TerminalSessionRepo) Finalize(ctx context.Context, id uint64, inputByte
 
 // ListExpiredSessionIDs 取已关闭且早于 cutoff 的会话行 ID(留存清理用,
 // 分批上限 limit)。
-func (r *TerminalSessionRepo) ListExpiredSessionIDs(ctx context.Context, cutoff time.Time, limit int) ([]uint64, error) {
+func (r *TerminalSessionRepo) ListExpiredSessionIDs(ctx context.Context, cutoff time.Time, limit int) ([]int64, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 200
 	}
@@ -151,7 +151,7 @@ func (r *TerminalSessionRepo) ListExpiredSessionIDs(ctx context.Context, cutoff 
 	if err != nil {
 		return nil, err
 	}
-	ids := make([]uint64, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, row := range rows {
 		ids = append(ids, row.ID)
 	}
@@ -159,7 +159,7 @@ func (r *TerminalSessionRepo) ListExpiredSessionIDs(ctx context.Context, cutoff 
 }
 
 // DeleteByIDs 删除会话行(留存清理;调用方须先删干净关联分块)。
-func (r *TerminalSessionRepo) DeleteByIDs(ctx context.Context, ids []uint64) error {
+func (r *TerminalSessionRepo) DeleteByIDs(ctx context.Context, ids []int64) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -209,7 +209,7 @@ func (r *TerminalChunkRepo) CreateBulk(ctx context.Context, rows []*ent.Terminal
 }
 
 // DeleteBySessionIDs 批量删除会话分块(留存清理,先于会话行删除)。
-func (r *TerminalChunkRepo) DeleteBySessionIDs(ctx context.Context, sessionRowIDs []uint64) error {
+func (r *TerminalChunkRepo) DeleteBySessionIDs(ctx context.Context, sessionRowIDs []int64) error {
 	if len(sessionRowIDs) == 0 {
 		return nil
 	}
@@ -224,7 +224,7 @@ func (r *TerminalChunkRepo) DeleteBySessionIDs(ctx context.Context, sessionRowID
 }
 
 // ListBySession 按会话取分块(基表查询,手写转换——payload 用 bytes 类型)。
-func (r *TerminalChunkRepo) ListBySession(ctx context.Context, sessionRowID uint64, fromSeq, limit int) ([]*ent.TerminalChunk, error) {
+func (r *TerminalChunkRepo) ListBySession(ctx context.Context, sessionRowID int64, fromSeq, limit int) ([]*ent.TerminalChunk, error) {
 	if limit <= 0 || limit > 2000 {
 		limit = 500
 	}

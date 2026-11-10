@@ -30,13 +30,13 @@ import (
 )
 
 const (
-	pidFileName       = ".ops-project.pid"
-	logFileName       = ".ops-project.log"
-	outputLimit       = 64 << 10 // 回传输出上限 64KB
-	startGracePeriod  = 800 * time.Millisecond
-	shellWaitTimeout  = 30 * time.Second
-	logReadDefault    = 64 << 10  // 日志读取默认尾部字节数
-	logReadMax        = 256 << 10 // 日志读取上限
+	pidFileName      = ".ops-project.pid"
+	logFileName      = ".ops-project.log"
+	outputLimit      = 64 << 10 // 回传输出上限 64KB
+	startGracePeriod = 800 * time.Millisecond
+	shellWaitTimeout = 30 * time.Second
+	logReadDefault   = 64 << 10  // 日志读取默认尾部字节数
+	logReadMax       = 256 << 10 // 日志读取上限
 )
 
 // LoadAllowedDirs 读取授权目录列表(AGENT_ALLOWED_DIRS,平台列表分隔符分隔)。
@@ -135,7 +135,7 @@ func (s *Service) handleProjectStart(ctx context.Context, env *signal.CommandEnv
 	return signal.ProjectOperationResult{
 		ProjectId: payload.ProjectId,
 		Operation: "start",
-		Pid:       uint64(pid),
+		Pid:       int64(pid),
 		Alive:     true,
 		Status:    "RUNNING",
 		Output:    truncateOutput(output),
@@ -205,7 +205,7 @@ func (s *Service) handleProjectStatus(ctx context.Context, env *signal.CommandEn
 	}
 
 	pid := readPidFile(payload.Dir)
-	result.Pid = uint64(pid)
+	result.Pid = int64(pid)
 
 	if strings.TrimSpace(payload.StatusCommand) != "" {
 		exitCode, output, err := runShellAwait(ctx, payload.Dir, payload.StatusCommand)

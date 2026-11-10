@@ -13,9 +13,9 @@ import (
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
+	"go-wind-ops/pkg/constants"
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils"
-	"go-wind-ops/pkg/constants"
 )
 
 type RoleService struct {

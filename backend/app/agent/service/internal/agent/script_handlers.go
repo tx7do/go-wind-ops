@@ -59,7 +59,7 @@ func (s *Service) handleScriptExec(ctx context.Context, env *signal.CommandEnvel
 	}
 	if timedOut {
 		result.ExitCode = -1
-		result.Output = truncateOutput(result.Output + "\n[timeout after "+strconv.FormatUint(uint64(timeout), 10)+"s]")
+		result.Output = truncateOutput(result.Output + "\n[timeout after " + strconv.FormatInt(int64(timeout), 10) + "s]")
 	}
 	if err != nil && !timedOut && exitCode == 0 {
 		// 非退出码失败(启动失败等),且无法从 ProcessState 取码:标记 -1

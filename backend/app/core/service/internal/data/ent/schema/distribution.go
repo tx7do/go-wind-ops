@@ -36,11 +36,11 @@ func (Distribution) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint64("build_id").
+		field.Int64("build_id").
 			Comment("构建来源(ops_builds.id);触发时取其最新成功产物").
 			Positive(),
 
-		field.JSON("project_ids", []uint64{}).
+		field.JSON("project_ids", []int64{}).
 			Comment("目标项目 ID 列表(支持多目标,逐项目触发分发记录)").
 			Optional(),
 
@@ -121,7 +121,7 @@ func (Distribution) Fields() []ent.Field {
 func (Distribution) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

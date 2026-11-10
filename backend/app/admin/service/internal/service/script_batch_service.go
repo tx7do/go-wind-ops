@@ -46,9 +46,8 @@ func (s *ScriptBatchService) BatchExec(ctx context.Context, req *opsV1.ExecuteSc
 		return nil, err
 	}
 	// 即席命令模式(command+agent_ids)与脚本模式(script_id+node_ids)二选一
-	valid := req != nil && (
-		(req.GetCommand() != "" && (len(req.GetAgentIds()) > 0 || len(req.GetNodeIds()) > 0)) ||
-			(req.GetScriptId() != 0 && len(req.GetNodeIds()) > 0))
+	valid := req != nil && ((req.GetCommand() != "" && (len(req.GetAgentIds()) > 0 || len(req.GetNodeIds()) > 0)) ||
+		(req.GetScriptId() != 0 && len(req.GetNodeIds()) > 0))
 	if !valid {
 		return nil, adminV1.ErrorBadRequest("invalid request: command+agentIds or scriptId+nodeIds required")
 	}

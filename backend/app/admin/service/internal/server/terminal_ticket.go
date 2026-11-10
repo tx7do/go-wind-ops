@@ -46,7 +46,7 @@ type terminalTicket struct {
 	Kind      string `json:"kind"`
 	Operator  string `json:"op"`
 	AgentId   string `json:"agentId,omitempty"`
-	ProjectId uint64 `json:"projectId,omitempty"`
+	ProjectId int64  `json:"projectId,omitempty"`
 }
 
 // TerminalTicketHandler 终端握手票据签发。
@@ -99,9 +99,9 @@ func (h *TerminalTicketHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 
 	operator := appMetadata.NewUserOperator(
-		uint64(payload.GetUserId()),
-		uint64(payload.GetTenantId()),
-		uint64(payload.GetOrgUnitId()),
+		int64(payload.GetUserId()),
+		int64(payload.GetTenantId()),
+		int64(payload.GetOrgUnitId()),
 		payload.GetDataScope(),
 	)
 	encoded, err := appMetadata.EncodeOperatorMetadata(operator)
@@ -127,12 +127,12 @@ func (h *TerminalTicketHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		}
 		requiredCode = constants.OpsNodeManagePermissionCode
 	case TicketKindProjectLog:
-		pid, perr := strconv.ParseUint(r.URL.Query().Get("projectId"), 10, 32)
+		pid, perr := strconv.ParseInt(r.URL.Query().Get("projectId"), 10, 64)
 		if perr != nil || pid == 0 {
 			http.Error(w, "projectId required", http.StatusBadRequest)
 			return
 		}
-		tk.ProjectId = uint64(pid)
+		tk.ProjectId = int64(pid)
 		requiredCode = constants.OpsProjectManagePermissionCode
 	default:
 		http.Error(w, "unknown ticket kind", http.StatusBadRequest)

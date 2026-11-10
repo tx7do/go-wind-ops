@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Project {
+func ID(id int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Project {
+func IDEQ(id int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Project {
+func IDNEQ(id int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Project {
+func IDIn(ids ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Project {
+func IDNotIn(ids ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Project {
+func IDGT(id int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Project {
+func IDGTE(id int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Project {
+func IDLT(id int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Project {
+func IDLTE(id int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.Project {
+func TenantID(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,22 +75,22 @@ func DeletedAt(v time.Time) predicate.Project {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.Project {
+func CreatedBy(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.Project {
+func UpdatedBy(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.Project {
+func DeletedBy(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.Project {
+func NodeID(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -130,7 +130,7 @@ func StatusCommand(v string) predicate.Project {
 }
 
 // LastPid applies equality check predicate on the "last_pid" field. It's identical to LastPidEQ.
-func LastPid(v uint64) predicate.Project {
+func LastPid(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldLastPid, v))
 }
 
@@ -140,42 +140,42 @@ func LastStatusAt(v time.Time) predicate.Project {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.Project {
+func TenantIDEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.Project {
+func TenantIDNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.Project {
+func TenantIDIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.Project {
+func TenantIDNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.Project {
+func TenantIDGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.Project {
+func TenantIDGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.Project {
+func TenantIDLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.Project {
+func TenantIDLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -340,42 +340,42 @@ func DeletedAtNotNil() predicate.Project {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.Project {
+func CreatedByEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.Project {
+func CreatedByNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.Project {
+func CreatedByIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.Project {
+func CreatedByNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.Project {
+func CreatedByGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.Project {
+func CreatedByGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.Project {
+func CreatedByLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.Project {
+func CreatedByLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -390,42 +390,42 @@ func CreatedByNotNil() predicate.Project {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.Project {
+func UpdatedByEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.Project {
+func UpdatedByNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.Project {
+func UpdatedByIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.Project {
+func UpdatedByNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.Project {
+func UpdatedByGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.Project {
+func UpdatedByGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.Project {
+func UpdatedByLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.Project {
+func UpdatedByLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -440,42 +440,42 @@ func UpdatedByNotNil() predicate.Project {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.Project {
+func DeletedByEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.Project {
+func DeletedByNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.Project {
+func DeletedByIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.Project {
+func DeletedByNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.Project {
+func DeletedByGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.Project {
+func DeletedByGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.Project {
+func DeletedByLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.Project {
+func DeletedByLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -490,42 +490,42 @@ func DeletedByNotNil() predicate.Project {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.Project {
+func NodeIDEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.Project {
+func NodeIDNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.Project {
+func NodeIDIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.Project {
+func NodeIDNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.Project {
+func NodeIDGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.Project {
+func NodeIDGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.Project {
+func NodeIDLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.Project {
+func NodeIDLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldNodeID, v))
 }
 
@@ -1045,42 +1045,42 @@ func LabelsNotNil() predicate.Project {
 }
 
 // LastPidEQ applies the EQ predicate on the "last_pid" field.
-func LastPidEQ(v uint64) predicate.Project {
+func LastPidEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldLastPid, v))
 }
 
 // LastPidNEQ applies the NEQ predicate on the "last_pid" field.
-func LastPidNEQ(v uint64) predicate.Project {
+func LastPidNEQ(v int64) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldLastPid, v))
 }
 
 // LastPidIn applies the In predicate on the "last_pid" field.
-func LastPidIn(vs ...uint64) predicate.Project {
+func LastPidIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldLastPid, vs...))
 }
 
 // LastPidNotIn applies the NotIn predicate on the "last_pid" field.
-func LastPidNotIn(vs ...uint64) predicate.Project {
+func LastPidNotIn(vs ...int64) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldLastPid, vs...))
 }
 
 // LastPidGT applies the GT predicate on the "last_pid" field.
-func LastPidGT(v uint64) predicate.Project {
+func LastPidGT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldLastPid, v))
 }
 
 // LastPidGTE applies the GTE predicate on the "last_pid" field.
-func LastPidGTE(v uint64) predicate.Project {
+func LastPidGTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldLastPid, v))
 }
 
 // LastPidLT applies the LT predicate on the "last_pid" field.
-func LastPidLT(v uint64) predicate.Project {
+func LastPidLT(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldLastPid, v))
 }
 
 // LastPidLTE applies the LTE predicate on the "last_pid" field.
-func LastPidLTE(v uint64) predicate.Project {
+func LastPidLTE(v int64) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldLastPid, v))
 }
 

@@ -4,10 +4,10 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
-"encoding/hex"
-"crypto/sha256"
 	"fmt"
 	"strings"
 	"time"
@@ -17,18 +17,18 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/id"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/tx7do/go-utils/trans"
 
-	"go-wind-ops/app/core/service/internal/data"
 	"github.com/minio/minio-go/v7"
+	"go-wind-ops/app/core/service/internal/data"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
-	"go-wind-ops/pkg/oss"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
+	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/signal"
 
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
@@ -40,7 +40,7 @@ import (
 type InspectionService struct {
 	opsV1.UnimplementedInspectionServiceServer
 
-	log           *log.Helper
+	log            *log.Helper
 	inspectionRepo *data.InspectionRepo
 	nodeRepo       *data.AgentNodeRepo
 	projectRepo    *data.ProjectRepo
@@ -88,7 +88,7 @@ func (s *InspectionService) RunInspection(ctx context.Context, req *opsV1.RunIns
 	return inspectionToDTO(mustInspection(s, ctx, row.ID)), nil
 }
 
-func mustInspection(s *InspectionService, ctx context.Context, id uint64) *ent.Inspection {
+func mustInspection(s *InspectionService, ctx context.Context, id int64) *ent.Inspection {
 	row, _ := s.inspectionRepo.GetEntity(ctx, id)
 	return row
 }
@@ -117,12 +117,12 @@ type inspectionNode struct {
 
 type inspectionProject struct {
 	Name   string `json:"name"`
-	NodeID uint64 `json:"nodeId"`
+	NodeID int64  `json:"nodeId"`
 	Status string `json:"status"`
 }
 
 // execute 聚合各域数据并终态化(失败置 FAILED)。
-func (s *InspectionService) execute(ctx context.Context, rowID uint64) {
+func (s *InspectionService) execute(ctx context.Context, rowID int64) {
 	defer func() {
 		if r := recover(); r != nil {
 			_ = s.inspectionRepo.Finish(ctx, rowID, "FAILED", "", 0, 0, 0, 0, 0, 0, fmt.Sprintf("panic: %v", r))
@@ -222,7 +222,7 @@ func inspectionToDTO(row *ent.Inspection) *opsV1.Inspection {
 type LogSnapshotService struct {
 	opsV1.UnimplementedLogSnapshotServiceServer
 
-	log        *log.Helper
+	log          *log.Helper
 	snapshotRepo *data.LogSnapshotRepo
 	projectRepo  *data.ProjectRepo
 	nodeRepo     *data.AgentNodeRepo
@@ -461,13 +461,13 @@ const (
 type ConfigService struct {
 	opsV1.UnimplementedConfigServiceServer
 
-	log           *log.Helper
-	templateRepo  *data.ConfigTemplateRepo
-	distRepo      *data.ConfigDistributionRepo
-	nodeRepo      *data.AgentNodeRepo
-	projectRepo   *data.ProjectRepo
-	ossClient     *oss.MinIOClient
-	agentSvc      *AgentService
+	log          *log.Helper
+	templateRepo *data.ConfigTemplateRepo
+	distRepo     *data.ConfigDistributionRepo
+	nodeRepo     *data.AgentNodeRepo
+	projectRepo  *data.ProjectRepo
+	ossClient    *oss.MinIOClient
+	agentSvc     *AgentService
 }
 
 func NewConfigService(ctx *bootstrap.Context, templateRepo *data.ConfigTemplateRepo, distRepo *data.ConfigDistributionRepo, nodeRepo *data.AgentNodeRepo, projectRepo *data.ProjectRepo, ossClient *oss.MinIOClient, agentSvc *AgentService) *ConfigService {
@@ -610,7 +610,7 @@ func (s *ConfigService) ListConfigDistributions(ctx context.Context, req *opsV1.
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("query distributions failed")
 	}
-	resp := &opsV1.ListConfigDistributionResponse{Total: uint64(total)}
+	resp := &opsV1.ListConfigDistributionResponse{Total: int64(total)}
 	for _, row := range rows {
 		resp.Items = append(resp.Items, configDistributionToDTO(row))
 	}
@@ -674,7 +674,7 @@ const configDriftTimeout = 10 * time.Second
 
 // renderTemplate 下发前占位符替换:{{env}}/{{node.*}}/{{project.*}}/{{date}}/{{datetime}};
 // 项目类占位符在未关联项目时替换为空串。
-func (s *ConfigService) renderTemplate(ctx context.Context, tpl *ent.ConfigTemplate, projectID uint64, node *opsV1.AgentNode) string {
+func (s *ConfigService) renderTemplate(ctx context.Context, tpl *ent.ConfigTemplate, projectID int64, node *opsV1.AgentNode) string {
 	content := tpl.Content
 	nodeID := node.GetId()
 	repl := map[string]string{
@@ -723,15 +723,15 @@ func configDistributionToDTO(row *ent.ConfigDistribution) *opsV1.ConfigDistribut
 		return nil
 	}
 	return &opsV1.ConfigDistribution{
-		Id:          &row.ID,
-		TemplateId:  &row.TemplateID,
+		Id:           &row.ID,
+		TemplateId:   &row.TemplateID,
 		TemplateName: &row.TemplateName,
-		NodeId:      &row.NodeID,
-		ProjectId:   uint64Ptr(row.ProjectID),
-		TargetPath:  &row.TargetPath,
-		Status:      strPtr(string(row.Status)),
-		Error:       row.Error,
-		FinishedAt:  timestamppbOfPtr(row.FinishedAt),
-		CreatedAt:   timestamppbOfPtr(row.CreatedAt),
+		NodeId:       &row.NodeID,
+		ProjectId:    uint64Ptr(row.ProjectID),
+		TargetPath:   &row.TargetPath,
+		Status:       strPtr(string(row.Status)),
+		Error:        row.Error,
+		FinishedAt:   timestamppbOfPtr(row.FinishedAt),
+		CreatedAt:    timestamppbOfPtr(row.CreatedAt),
 	}
 }

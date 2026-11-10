@@ -18,9 +18,9 @@ import (
 
 	"go-wind-ops/app/admin/service/cmd/server/assets"
 
+	"go-wind-ops/pkg/constants"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/middleware/auth"
-	"go-wind-ops/pkg/constants"
 )
 
 type RouteWalker interface {
@@ -156,7 +156,7 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 		return adminV1.ErrorInternalServerError("OpenAPI document paths is nil")
 	}
 
-	var count uint64 = 0
+	var count int64 = 0
 	var apiList []*permissionV1.Api
 
 	// 遍历所有路径和操作
@@ -204,7 +204,7 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 		return adminV1.ErrorInternalServerError("router walker is nil")
 	}
 
-	var count uint64 = 0
+	var count int64 = 0
 
 	var apiList []*permissionV1.Api
 
@@ -255,7 +255,7 @@ func (s *ApiService) GetWalkRouteData(ctx context.Context, _ *emptypb.Empty) (*p
 	resp := &permissionV1.ListApiResponse{
 		Items: []*permissionV1.Api{},
 	}
-	var count uint64 = 0
+	var count int64 = 0
 	if err := s.routeWalker.WalkRoute(func(info http.RouteInfo) error {
 		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
 		count++
@@ -270,7 +270,7 @@ func (s *ApiService) GetWalkRouteData(ctx context.Context, _ *emptypb.Empty) (*p
 		s.log.Errorf("failed to walk route: %v", err)
 		return nil, adminV1.ErrorInternalServerError("failed to walk route")
 	}
-	resp.Total = uint64(count)
+	resp.Total = int64(count)
 
 	return resp, nil
 }

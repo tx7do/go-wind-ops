@@ -57,7 +57,7 @@ func (Script) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("cron_node_id").
+		field.Int64("cron_node_id").
 			Comment("定时执行的目标节点(0 为未配置,不调度)").
 			Default(0).
 			Optional().
@@ -78,7 +78,7 @@ func (Script) Fields() []ent.Field {
 func (Script) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

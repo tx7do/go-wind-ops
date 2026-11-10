@@ -112,7 +112,7 @@ func (r *CertRepo) Get(ctx context.Context, req *opsV1.GetCertRequest) (*opsV1.C
 }
 
 // GetEntity 取原始实体(探测/检查用)。
-func (r *CertRepo) GetEntity(ctx context.Context, id uint64) (*ent.Cert, error) {
+func (r *CertRepo) GetEntity(ctx context.Context, id int64) (*ent.Cert, error) {
 	return r.entClient.Client().Cert.
 		Query().
 		Where(cert.IDEQ(id)).
@@ -120,7 +120,7 @@ func (r *CertRepo) GetEntity(ctx context.Context, id uint64) (*ent.Cert, error) 
 }
 
 // IsNameTaken 校验证书名唯一性。
-func (r *CertRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *CertRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Cert.Query().Where(cert.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(cert.IDNEQ(excludeID))
@@ -133,7 +133,7 @@ func (r *CertRepo) IsNameTaken(ctx context.Context, name string, excludeID uint6
 	return exist, nil
 }
 
-func (r *CertRepo) Create(ctx context.Context, req *opsV1.CreateCertRequest, operatorID uint64) (*opsV1.Cert, error) {
+func (r *CertRepo) Create(ctx context.Context, req *opsV1.CreateCertRequest, operatorID int64) (*opsV1.Cert, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -193,7 +193,7 @@ func (r *CertRepo) Update(ctx context.Context, req *opsV1.UpdateCertRequest) err
 }
 
 // ApplyProbeResult 回填探测结果(成功清 last_error,失败清有效期字段)。
-func (r *CertRepo) ApplyProbeResult(ctx context.Context, id uint64, issuer string, notBefore, notAfter *time.Time, probeErr string) error {
+func (r *CertRepo) ApplyProbeResult(ctx context.Context, id int64, issuer string, notBefore, notAfter *time.Time, probeErr string) error {
 	now := time.Now()
 	update := r.entClient.Client().Cert.
 		UpdateOneID(id).

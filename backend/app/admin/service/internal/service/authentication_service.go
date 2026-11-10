@@ -1,17 +1,17 @@
 package service
 
 import (
-	"github.com/redis/go-redis/v9"
 	"context"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	ktransport "github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -20,8 +20,8 @@ import (
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 
-	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/logalock"
+	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/netutil"
 )
 
@@ -158,7 +158,6 @@ type AuthenticationService struct {
 	loginLock     *logalock.Locker
 }
 
-
 func NewAuthenticationService(
 	ctx *bootstrap.Context,
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
@@ -185,7 +184,8 @@ func (s *AuthenticationService) GetOidcAuthorizeUrl(ctx context.Context, req *au
 // 验证码 id/value 通过 HTTP Header（X-Captcha-Id / X-Captcha-Value）传递。
 // captchaClient.Verify 已是 verify-and-delete 单次有效语义。
 // 注意：refresh_token / client_credentials 等非密码授权不走此校验（仅 password 授权调用）。
-func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {	if !CaptchaEnabled {
+func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {
+	if !CaptchaEnabled {
 		// 验证码开关关闭，跳过校验
 		return true
 	}

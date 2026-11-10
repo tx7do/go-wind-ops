@@ -28,7 +28,7 @@ func TestVerifyRFC6238Vectors(t *testing.T) {
 		t.Fatalf("decode seed: %v", err)
 	}
 	for _, c := range cases {
-		if got := hotp(key, uint64(c.t)/30); got != c.code {
+		if got := hotp(key, int64(c.t)/30); got != c.code {
 			t.Errorf("T=%d: got %s want %s", c.t, got, c.code)
 		}
 	}
@@ -40,11 +40,11 @@ func TestVerifyWindow(t *testing.T) {
 	if !Verify(rfcSeed, "081804", now) {
 		t.Error("current step should match")
 	}
-	prev := hotp(mustDecode(t, rfcSeed), uint64(now.Unix())/30-1)
+	prev := hotp(mustDecode(t, rfcSeed), int64(now.Unix())/30-1)
 	if !Verify(rfcSeed, prev, now) {
 		t.Error("previous step should match within ±1 window")
 	}
-	far := hotp(mustDecode(t, rfcSeed), uint64(now.Unix())/30-2)
+	far := hotp(mustDecode(t, rfcSeed), int64(now.Unix())/30-2)
 	if Verify(rfcSeed, far, now) {
 		t.Error("step beyond ±1 window must not match")
 	}

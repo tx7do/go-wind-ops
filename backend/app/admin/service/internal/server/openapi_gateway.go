@@ -21,10 +21,10 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
-	"os"
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -40,12 +40,12 @@ import (
 
 // OpenApiGateway OpenAPI 网关处理器。
 type OpenApiGateway struct {
-	apiKeyClient   opsV1.ApiKeyServiceClient
-	buildClient    opsV1.BuildServiceClient
-	distClient     opsV1.DistributionServiceClient
-	pipelineClient opsV1.PipelineServiceClient
+	apiKeyClient    opsV1.ApiKeyServiceClient
+	buildClient     opsV1.BuildServiceClient
+	distClient      opsV1.DistributionServiceClient
+	pipelineClient  opsV1.PipelineServiceClient
 	promotionClient opsV1.PromotionPipelineServiceClient
-	rateLimiter    *apiKeyRateLimiter
+	rateLimiter     *apiKeyRateLimiter
 }
 
 // NewOpenApiGateway 构造网关。
@@ -137,25 +137,25 @@ func (g *OpenApiGateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	gctx := r.Context()
 	if info.GetTenantId() > 0 {
 		gctx, _ = appMetadata.NewContext(gctx, appMetadata.NewUserOperator(
-			uint64(info.GetOwnerUserId()), uint64(info.GetTenantId()), 0, identityV1.DataScope_ALL))
+			int64(info.GetOwnerUserId()), int64(info.GetTenantId()), 0, identityV1.DataScope_ALL))
 	}
 
 	if len(parts) == 3 && parts[2] == "trigger" {
-		id, perr := strconv.ParseUint(parts[1], 10, 32)
+		id, perr := strconv.ParseInt(parts[1], 10, 64)
 		if perr != nil {
 			writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid id")
 			return
 		}
-		g.trigger(w, gctx, r, parts[0], uint64(id))
+		g.trigger(w, gctx, r, parts[0], int64(id))
 		return
 	}
 	// 走到此处必为 webhooks/git/{buildId}(requiredScope 解析已排除其余形态)
-	id, perr := strconv.ParseUint(parts[2], 10, 32)
+	id, perr := strconv.ParseInt(parts[2], 10, 64)
 	if perr != nil {
 		writeJsonError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid build id")
 		return
 	}
-	g.gitWebhook(w, r, gctx, uint64(id))
+	g.gitWebhook(w, r, gctx, int64(id))
 }
 
 // scopeAllowed 作用域判定:未限定(空)或含通配 ALL 放行,否则须命中目标类别。
@@ -172,7 +172,7 @@ func scopeAllowed(scopes []opsV1.ApiKey_Scope, required opsV1.ApiKey_Scope) bool
 }
 
 // trigger 触发构建/分发/流水线。
-func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, r *http.Request, kind string, id uint64) {
+func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, r *http.Request, kind string, id int64) {
 	var (
 		resp any
 		err  error
@@ -207,7 +207,7 @@ func (g *OpenApiGateway) trigger(w http.ResponseWriter, ctx context.Context, r *
 // 必须配置 OPENAPI_GIT_WEBHOOK_SECRET(fail-closed):校验 X-Signature:
 // sha256=<HMAC-SHA256(body)>(GitHub/Gitea 兼容的签名格式),防止 webhook
 // 端点被无密钥方刷触发;未配置时一律 403 拒绝。
-func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, ctx context.Context, buildId uint64) {
+func (g *OpenApiGateway) gitWebhook(w http.ResponseWriter, r *http.Request, ctx context.Context, buildId int64) {
 	secret := os.Getenv("OPENAPI_GIT_WEBHOOK_SECRET")
 	if secret == "" {
 		writeJsonError(w, http.StatusForbidden, "WEBHOOK_SECRET_REQUIRED",

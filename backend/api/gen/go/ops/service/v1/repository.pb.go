@@ -30,7 +30,7 @@ const (
 // 构建源仓库
 type Repository struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 仓库ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                // 仓库ID
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                             // 仓库名
 	GitUrl        *string                `protobuf:"bytes,3,opt,name=git_url,json=gitUrl,proto3,oneof" json:"git_url,omitempty"`           // Git 仓库地址
 	Branch        *string                `protobuf:"bytes,4,opt,name=branch,proto3,oneof" json:"branch,omitempty"`                         // 默认分支
@@ -74,7 +74,7 @@ func (*Repository) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_repository_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Repository) GetId() uint64 {
+func (x *Repository) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -146,7 +146,7 @@ func (x *Repository) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListRepositoryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*Repository          `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 仓库列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -182,7 +182,7 @@ func (*ListRepositoryResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_repository_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListRepositoryResponse) GetTotal() uint64 {
+func (x *ListRepositoryResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -198,7 +198,7 @@ func (x *ListRepositoryResponse) GetItems() []*Repository {
 
 type GetRepositoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 仓库ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 仓库ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -233,7 +233,7 @@ func (*GetRepositoryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_repository_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetRepositoryRequest) GetId() uint64 {
+func (x *GetRepositoryRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -286,7 +286,7 @@ func (x *CreateRepositoryRequest) GetData() *Repository {
 
 type UpdateRepositoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 仓库ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 仓库ID
 	Data          *Repository            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -323,7 +323,7 @@ func (*UpdateRepositoryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_repository_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateRepositoryRequest) GetId() uint64 {
+func (x *UpdateRepositoryRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -346,7 +346,7 @@ func (x *UpdateRepositoryRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteRepositoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 仓库ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 仓库ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -381,7 +381,7 @@ func (*DeleteRepositoryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_repository_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteRepositoryRequest) GetId() uint64 {
+func (x *DeleteRepositoryRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -395,7 +395,7 @@ const file_ops_service_v1_repository_proto_rawDesc = "" +
 	"\x1fops/service/v1/repository.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xdb\x05\n" +
 	"\n" +
 	"Repository\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17仓库名(全局唯一)H\x01R\x04name\x88\x01\x01\x12^\n" +
 	"\agit_url\x18\x03 \x01(\tB@\xe0A\x02\xbaG:\x92\x027Git 仓库地址(HTTPS;本地路径用于开发/测试)H\x02R\x06gitUrl\x88\x01\x01\x12/\n" +
 	"\x06branch\x18\x04 \x01(\tB\x12\xbaG\x0f\x92\x02\f默认分支H\x03R\x06branch\x88\x01\x01\x12>\n" +
@@ -418,20 +418,20 @@ const file_ops_service_v1_repository_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"`\n" +
 	"\x16ListRepositoryResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x120\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x120\n" +
 	"\x05items\x18\x02 \x03(\v2\x1a.ops.service.v1.RepositoryR\x05items\"7\n" +
 	"\x14GetRepositoryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"N\n" +
 	"\x17CreateRepositoryRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.ops.service.v1.RepositoryB\x03\xe0A\x02R\x04data\"\xc0\x01\n" +
 	"\x17UpdateRepositoryRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x123\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x123\n" +
 	"\x04data\x18\x02 \x01(\v2\x1a.ops.service.v1.RepositoryB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\":\n" +
 	"\x17DeleteRepositoryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xca\x03\n" +
 	"\x11RepositoryService\x12W\n" +
 	"\x10ListRepositories\x12\x19.pagination.PagingRequest\x1a&.ops.service.v1.ListRepositoryResponse\"\x00\x12S\n" +

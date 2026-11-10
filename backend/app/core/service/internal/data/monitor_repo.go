@@ -127,7 +127,7 @@ func (r *MonitorRepo) Get(ctx context.Context, req *opsV1.GetMonitorRequest) (*o
 }
 
 // GetEntity 取原始实体(调度器用)。
-func (r *MonitorRepo) GetEntity(ctx context.Context, id uint64) (*ent.Monitor, error) {
+func (r *MonitorRepo) GetEntity(ctx context.Context, id int64) (*ent.Monitor, error) {
 	return r.entClient.Client().Monitor.
 		Query().
 		Where(monitor.IDEQ(id)).
@@ -135,7 +135,7 @@ func (r *MonitorRepo) GetEntity(ctx context.Context, id uint64) (*ent.Monitor, e
 }
 
 // IsNameTaken 校验规则名唯一性。
-func (r *MonitorRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *MonitorRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Monitor.Query().Where(monitor.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(monitor.IDNEQ(excludeID))
@@ -148,7 +148,7 @@ func (r *MonitorRepo) IsNameTaken(ctx context.Context, name string, excludeID ui
 	return exist, nil
 }
 
-func (r *MonitorRepo) Create(ctx context.Context, req *opsV1.CreateMonitorRequest, operatorID uint64) (*opsV1.Monitor, error) {
+func (r *MonitorRepo) Create(ctx context.Context, req *opsV1.CreateMonitorRequest, operatorID int64) (*opsV1.Monitor, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -279,7 +279,7 @@ func (r *MonitorRepo) Delete(ctx context.Context, req *opsV1.DeleteMonitorReques
 // IncConsecutiveHits 连续命中计数原子自增(SQL 侧 consecutive_hits =
 // consecutive_hits + 1),返回自增后的新值供防抖阈值判断与告警文案使用。
 // 相比"读出 +1 再写回"的读改写,多副本并发下不会丢失更新。
-func (r *MonitorRepo) IncConsecutiveHits(ctx context.Context, id uint64) (int, error) {
+func (r *MonitorRepo) IncConsecutiveHits(ctx context.Context, id int64) (int, error) {
 	entity, err := r.entClient.Client().Monitor.
 		UpdateOneID(id).
 		AddConsecutiveHits(1).
@@ -291,7 +291,7 @@ func (r *MonitorRepo) IncConsecutiveHits(ctx context.Context, id uint64) (int, e
 }
 
 // ResetConsecutiveHits 未命中时计数归零(仅非零行生效,幂等)。
-func (r *MonitorRepo) ResetConsecutiveHits(ctx context.Context, id uint64) error {
+func (r *MonitorRepo) ResetConsecutiveHits(ctx context.Context, id int64) error {
 	_, err := r.entClient.Client().Monitor.
 		Update().
 		Where(
@@ -306,7 +306,7 @@ func (r *MonitorRepo) ResetConsecutiveHits(ctx context.Context, id uint64) error
 // AdvanceCheckAnchorFromNull 给空锚点监控规则落初始锚点(仅 NULL 行生效):
 // 新建规则 last_check_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致检查从未
 // 触发;首见先落锚不补跑,从下一个周期起正常调度。
-func (r *MonitorRepo) AdvanceCheckAnchorFromNull(ctx context.Context, monitorID uint64, now time.Time) (bool, error) {
+func (r *MonitorRepo) AdvanceCheckAnchorFromNull(ctx context.Context, monitorID int64, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Monitor.
 		Update().
 		Where(
@@ -321,7 +321,7 @@ func (r *MonitorRepo) AdvanceCheckAnchorFromNull(ctx context.Context, monitorID 
 // AdvanceCheckAnchor CAS 推进检查锚点:仅当 last_check_at 仍等于 expected
 // 时更新为 now,返回是否抢到(多副本去重)——同一规则同一周期只有一方
 // 执行检查,探测指令、防抖计数与告警创建随之天然单份。
-func (r *MonitorRepo) AdvanceCheckAnchor(ctx context.Context, monitorID uint64, expected, now time.Time) (bool, error) {
+func (r *MonitorRepo) AdvanceCheckAnchor(ctx context.Context, monitorID int64, expected, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Monitor.
 		Update().
 		Where(

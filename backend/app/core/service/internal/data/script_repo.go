@@ -119,7 +119,7 @@ func (r *ScriptRepo) Get(ctx context.Context, req *opsV1.GetScriptRequest) (*ops
 }
 
 // GetEntity 读取 ent 实体(后台归因用:cron 触发时取脚本租户)。
-func (r *ScriptRepo) GetEntity(ctx context.Context, id uint64) (*ent.Script, error) {
+func (r *ScriptRepo) GetEntity(ctx context.Context, id int64) (*ent.Script, error) {
 	return r.entClient.Client().Script.
 		Query().
 		Where(script.IDEQ(id)).
@@ -127,7 +127,7 @@ func (r *ScriptRepo) GetEntity(ctx context.Context, id uint64) (*ent.Script, err
 }
 
 // IsNameTaken 校验脚本名唯一性(excludeID>0 时排除自身,供更新用)。
-func (r *ScriptRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *ScriptRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Script.Query().Where(script.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(script.IDNEQ(excludeID))
@@ -140,7 +140,7 @@ func (r *ScriptRepo) IsNameTaken(ctx context.Context, name string, excludeID uin
 	return exist, nil
 }
 
-func (r *ScriptRepo) Create(ctx context.Context, req *opsV1.CreateScriptRequest, operatorID uint64) (*opsV1.Script, error) {
+func (r *ScriptRepo) Create(ctx context.Context, req *opsV1.CreateScriptRequest, operatorID int64) (*opsV1.Script, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -168,7 +168,7 @@ func (r *ScriptRepo) Create(ctx context.Context, req *opsV1.CreateScriptRequest,
 }
 
 // UpdateContent 仅更新内容(版本恢复用,不动 cron 等其余字段)。
-func (r *ScriptRepo) UpdateContent(ctx context.Context, id uint64, content string) error {
+func (r *ScriptRepo) UpdateContent(ctx context.Context, id int64, content string) error {
 	return r.entClient.Client().Script.UpdateOneID(id).
 		SetContent(content).
 		Exec(ctx)
@@ -229,7 +229,7 @@ func (r *ScriptRepo) Delete(ctx context.Context, req *opsV1.DeleteScriptRequest)
 // AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效):
 // 新建任务 last_cron_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致定时
 // 调度从未触发;首见先落锚不补跑,从下一个周期起正常调度。
-func (r *ScriptRepo) AdvanceCronAnchorFromNull(ctx context.Context, scriptID uint64, now time.Time) (bool, error) {
+func (r *ScriptRepo) AdvanceCronAnchorFromNull(ctx context.Context, scriptID int64, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Script.
 		Update().
 		Where(
@@ -243,7 +243,7 @@ func (r *ScriptRepo) AdvanceCronAnchorFromNull(ctx context.Context, scriptID uin
 
 // AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected
 // 时更新为 now,返回是否抢到(多副本去重)。
-func (r *ScriptRepo) AdvanceCronAnchor(ctx context.Context, scriptID uint64, expected, now time.Time) (bool, error) {
+func (r *ScriptRepo) AdvanceCronAnchor(ctx context.Context, scriptID int64, expected, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Script.
 		Update().
 		Where(

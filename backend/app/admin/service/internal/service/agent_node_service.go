@@ -43,7 +43,6 @@ func (s *AgentNodeService) Update(ctx context.Context, req *opsV1.UpdateAgentNod
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.agentNodeServiceClient.UpdateAgentNode(ctx, req)
 }
 

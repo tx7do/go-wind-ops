@@ -52,7 +52,6 @@ func (s *BackupService) Update(ctx context.Context, req *opsV1.UpdateBackupTaskR
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.backupServiceClient.UpdateBackupTask(ctx, req)
 }
 

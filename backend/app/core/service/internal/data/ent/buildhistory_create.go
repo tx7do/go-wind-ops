@@ -23,13 +23,13 @@ type BuildHistoryCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *BuildHistoryCreate) SetTenantID(v uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetTenantID(v int64) *BuildHistoryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *BuildHistoryCreate) SetNillableTenantID(v *uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetNillableTenantID(v *int64) *BuildHistoryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *BuildHistoryCreate) SetNillableDeletedAt(v *time.Time) *BuildHistoryCr
 }
 
 // SetBuildID sets the "build_id" field.
-func (_c *BuildHistoryCreate) SetBuildID(v uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetBuildID(v int64) *BuildHistoryCreate {
 	_c.mutation.SetBuildID(v)
 	return _c
 }
@@ -161,13 +161,13 @@ func (_c *BuildHistoryCreate) SetNillableArtifactObjectKey(v *string) *BuildHist
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (_c *BuildHistoryCreate) SetArtifactSize(v uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetArtifactSize(v int64) *BuildHistoryCreate {
 	_c.mutation.SetArtifactSize(v)
 	return _c
 }
 
 // SetNillableArtifactSize sets the "artifact_size" field if the given value is not nil.
-func (_c *BuildHistoryCreate) SetNillableArtifactSize(v *uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetNillableArtifactSize(v *int64) *BuildHistoryCreate {
 	if v != nil {
 		_c.SetArtifactSize(*v)
 	}
@@ -217,13 +217,13 @@ func (_c *BuildHistoryCreate) SetNillableFinishedAt(v *time.Time) *BuildHistoryC
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *BuildHistoryCreate) SetOperatorID(v uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetOperatorID(v int64) *BuildHistoryCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *BuildHistoryCreate) SetNillableOperatorID(v *uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetNillableOperatorID(v *int64) *BuildHistoryCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -245,7 +245,7 @@ func (_c *BuildHistoryCreate) SetNillableRunnerID(v *string) *BuildHistoryCreate
 }
 
 // SetID sets the "id" field.
-func (_c *BuildHistoryCreate) SetID(v uint64) *BuildHistoryCreate {
+func (_c *BuildHistoryCreate) SetID(v int64) *BuildHistoryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -354,7 +354,7 @@ func (_c *BuildHistoryCreate) sqlSave(ctx context.Context) (*BuildHistory, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -364,7 +364,7 @@ func (_c *BuildHistoryCreate) sqlSave(ctx context.Context) (*BuildHistory, error
 func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &BuildHistory{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(buildhistory.Table, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(buildhistory.Table, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -372,7 +372,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(buildhistory.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -388,7 +388,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.BuildID(); ok {
-		_spec.SetField(buildhistory.FieldBuildID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldBuildID, field.TypeInt64, value)
 		_node.BuildID = value
 	}
 	if value, ok := _c.mutation.BuildNo(); ok {
@@ -416,7 +416,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 		_node.ArtifactObjectKey = &value
 	}
 	if value, ok := _c.mutation.ArtifactSize(); ok {
-		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldArtifactSize, field.TypeInt64, value)
 		_node.ArtifactSize = &value
 	}
 	if value, ok := _c.mutation.Error(); ok {
@@ -432,7 +432,7 @@ func (_c *BuildHistoryCreate) createSpec() (*BuildHistory, *sqlgraph.CreateSpec)
 		_node.FinishedAt = &value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(buildhistory.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(buildhistory.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = &value
 	}
 	if value, ok := _c.mutation.RunnerID(); ok {
@@ -528,7 +528,7 @@ func (u *BuildHistoryUpsert) ClearDeletedAt() *BuildHistoryUpsert {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *BuildHistoryUpsert) SetBuildID(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) SetBuildID(v int64) *BuildHistoryUpsert {
 	u.Set(buildhistory.FieldBuildID, v)
 	return u
 }
@@ -540,7 +540,7 @@ func (u *BuildHistoryUpsert) UpdateBuildID() *BuildHistoryUpsert {
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *BuildHistoryUpsert) AddBuildID(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) AddBuildID(v int64) *BuildHistoryUpsert {
 	u.Add(buildhistory.FieldBuildID, v)
 	return u
 }
@@ -654,7 +654,7 @@ func (u *BuildHistoryUpsert) ClearArtifactObjectKey() *BuildHistoryUpsert {
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (u *BuildHistoryUpsert) SetArtifactSize(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) SetArtifactSize(v int64) *BuildHistoryUpsert {
 	u.Set(buildhistory.FieldArtifactSize, v)
 	return u
 }
@@ -666,7 +666,7 @@ func (u *BuildHistoryUpsert) UpdateArtifactSize() *BuildHistoryUpsert {
 }
 
 // AddArtifactSize adds v to the "artifact_size" field.
-func (u *BuildHistoryUpsert) AddArtifactSize(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) AddArtifactSize(v int64) *BuildHistoryUpsert {
 	u.Add(buildhistory.FieldArtifactSize, v)
 	return u
 }
@@ -732,7 +732,7 @@ func (u *BuildHistoryUpsert) ClearFinishedAt() *BuildHistoryUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *BuildHistoryUpsert) SetOperatorID(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) SetOperatorID(v int64) *BuildHistoryUpsert {
 	u.Set(buildhistory.FieldOperatorID, v)
 	return u
 }
@@ -744,7 +744,7 @@ func (u *BuildHistoryUpsert) UpdateOperatorID() *BuildHistoryUpsert {
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *BuildHistoryUpsert) AddOperatorID(v uint64) *BuildHistoryUpsert {
+func (u *BuildHistoryUpsert) AddOperatorID(v int64) *BuildHistoryUpsert {
 	u.Add(buildhistory.FieldOperatorID, v)
 	return u
 }
@@ -870,14 +870,14 @@ func (u *BuildHistoryUpsertOne) ClearDeletedAt() *BuildHistoryUpsertOne {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *BuildHistoryUpsertOne) SetBuildID(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) SetBuildID(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetBuildID(v)
 	})
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *BuildHistoryUpsertOne) AddBuildID(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) AddBuildID(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddBuildID(v)
 	})
@@ -1017,14 +1017,14 @@ func (u *BuildHistoryUpsertOne) ClearArtifactObjectKey() *BuildHistoryUpsertOne 
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (u *BuildHistoryUpsertOne) SetArtifactSize(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) SetArtifactSize(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetArtifactSize(v)
 	})
 }
 
 // AddArtifactSize adds v to the "artifact_size" field.
-func (u *BuildHistoryUpsertOne) AddArtifactSize(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) AddArtifactSize(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddArtifactSize(v)
 	})
@@ -1108,14 +1108,14 @@ func (u *BuildHistoryUpsertOne) ClearFinishedAt() *BuildHistoryUpsertOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *BuildHistoryUpsertOne) SetOperatorID(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) SetOperatorID(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *BuildHistoryUpsertOne) AddOperatorID(v uint64) *BuildHistoryUpsertOne {
+func (u *BuildHistoryUpsertOne) AddOperatorID(v int64) *BuildHistoryUpsertOne {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -1172,7 +1172,7 @@ func (u *BuildHistoryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BuildHistoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *BuildHistoryUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1181,7 +1181,7 @@ func (u *BuildHistoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BuildHistoryUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *BuildHistoryUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1238,7 +1238,7 @@ func (_c *BuildHistoryCreateBulk) Save(ctx context.Context) ([]*BuildHistory, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1419,14 +1419,14 @@ func (u *BuildHistoryUpsertBulk) ClearDeletedAt() *BuildHistoryUpsertBulk {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *BuildHistoryUpsertBulk) SetBuildID(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) SetBuildID(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetBuildID(v)
 	})
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *BuildHistoryUpsertBulk) AddBuildID(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) AddBuildID(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddBuildID(v)
 	})
@@ -1566,14 +1566,14 @@ func (u *BuildHistoryUpsertBulk) ClearArtifactObjectKey() *BuildHistoryUpsertBul
 }
 
 // SetArtifactSize sets the "artifact_size" field.
-func (u *BuildHistoryUpsertBulk) SetArtifactSize(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) SetArtifactSize(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetArtifactSize(v)
 	})
 }
 
 // AddArtifactSize adds v to the "artifact_size" field.
-func (u *BuildHistoryUpsertBulk) AddArtifactSize(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) AddArtifactSize(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddArtifactSize(v)
 	})
@@ -1657,14 +1657,14 @@ func (u *BuildHistoryUpsertBulk) ClearFinishedAt() *BuildHistoryUpsertBulk {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *BuildHistoryUpsertBulk) SetOperatorID(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) SetOperatorID(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *BuildHistoryUpsertBulk) AddOperatorID(v uint64) *BuildHistoryUpsertBulk {
+func (u *BuildHistoryUpsertBulk) AddOperatorID(v int64) *BuildHistoryUpsertBulk {
 	return u.Update(func(s *BuildHistoryUpsert) {
 		s.AddOperatorID(v)
 	})

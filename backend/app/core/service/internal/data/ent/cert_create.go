@@ -23,13 +23,13 @@ type CertCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CertCreate) SetTenantID(v uint64) *CertCreate {
+func (_c *CertCreate) SetTenantID(v int64) *CertCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CertCreate) SetNillableTenantID(v *uint64) *CertCreate {
+func (_c *CertCreate) SetNillableTenantID(v *int64) *CertCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CertCreate) SetNillableDeletedAt(v *time.Time) *CertCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CertCreate) SetCreatedBy(v uint64) *CertCreate {
+func (_c *CertCreate) SetCreatedBy(v int64) *CertCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CertCreate) SetNillableCreatedBy(v *uint64) *CertCreate {
+func (_c *CertCreate) SetNillableCreatedBy(v *int64) *CertCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CertCreate) SetNillableCreatedBy(v *uint64) *CertCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CertCreate) SetUpdatedBy(v uint64) *CertCreate {
+func (_c *CertCreate) SetUpdatedBy(v int64) *CertCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CertCreate) SetNillableUpdatedBy(v *uint64) *CertCreate {
+func (_c *CertCreate) SetNillableUpdatedBy(v *int64) *CertCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CertCreate) SetNillableUpdatedBy(v *uint64) *CertCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CertCreate) SetDeletedBy(v uint64) *CertCreate {
+func (_c *CertCreate) SetDeletedBy(v int64) *CertCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CertCreate) SetNillableDeletedBy(v *uint64) *CertCreate {
+func (_c *CertCreate) SetNillableDeletedBy(v *int64) *CertCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -273,7 +273,7 @@ func (_c *CertCreate) SetNillableDescription(v *string) *CertCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CertCreate) SetID(v uint64) *CertCreate {
+func (_c *CertCreate) SetID(v int64) *CertCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -386,7 +386,7 @@ func (_c *CertCreate) sqlSave(ctx context.Context) (*Cert, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -396,7 +396,7 @@ func (_c *CertCreate) sqlSave(ctx context.Context) (*Cert, error) {
 func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Cert{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(cert.Table, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(cert.Table, sqlgraph.NewFieldSpec(cert.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -404,7 +404,7 @@ func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(cert.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(cert.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -420,15 +420,15 @@ func (_c *CertCreate) createSpec() (*Cert, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(cert.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(cert.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(cert.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(cert.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -568,7 +568,7 @@ func (u *CertUpsert) ClearDeletedAt() *CertUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CertUpsert) SetCreatedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) SetCreatedBy(v int64) *CertUpsert {
 	u.Set(cert.FieldCreatedBy, v)
 	return u
 }
@@ -580,7 +580,7 @@ func (u *CertUpsert) UpdateCreatedBy() *CertUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CertUpsert) AddCreatedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) AddCreatedBy(v int64) *CertUpsert {
 	u.Add(cert.FieldCreatedBy, v)
 	return u
 }
@@ -592,7 +592,7 @@ func (u *CertUpsert) ClearCreatedBy() *CertUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CertUpsert) SetUpdatedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) SetUpdatedBy(v int64) *CertUpsert {
 	u.Set(cert.FieldUpdatedBy, v)
 	return u
 }
@@ -604,7 +604,7 @@ func (u *CertUpsert) UpdateUpdatedBy() *CertUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CertUpsert) AddUpdatedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) AddUpdatedBy(v int64) *CertUpsert {
 	u.Add(cert.FieldUpdatedBy, v)
 	return u
 }
@@ -616,7 +616,7 @@ func (u *CertUpsert) ClearUpdatedBy() *CertUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CertUpsert) SetDeletedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) SetDeletedBy(v int64) *CertUpsert {
 	u.Set(cert.FieldDeletedBy, v)
 	return u
 }
@@ -628,7 +628,7 @@ func (u *CertUpsert) UpdateDeletedBy() *CertUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CertUpsert) AddDeletedBy(v uint64) *CertUpsert {
+func (u *CertUpsert) AddDeletedBy(v int64) *CertUpsert {
 	u.Add(cert.FieldDeletedBy, v)
 	return u
 }
@@ -934,14 +934,14 @@ func (u *CertUpsertOne) ClearDeletedAt() *CertUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CertUpsertOne) SetCreatedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) SetCreatedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CertUpsertOne) AddCreatedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) AddCreatedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -962,14 +962,14 @@ func (u *CertUpsertOne) ClearCreatedBy() *CertUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CertUpsertOne) SetUpdatedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) SetUpdatedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CertUpsertOne) AddUpdatedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) AddUpdatedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -990,14 +990,14 @@ func (u *CertUpsertOne) ClearUpdatedBy() *CertUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CertUpsertOne) SetDeletedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) SetDeletedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CertUpsertOne) AddDeletedBy(v uint64) *CertUpsertOne {
+func (u *CertUpsertOne) AddDeletedBy(v int64) *CertUpsertOne {
 	return u.Update(func(s *CertUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1264,7 +1264,7 @@ func (u *CertUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CertUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CertUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1273,7 +1273,7 @@ func (u *CertUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CertUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CertUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1330,7 +1330,7 @@ func (_c *CertCreateBulk) Save(ctx context.Context) ([]*Cert, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1511,14 +1511,14 @@ func (u *CertUpsertBulk) ClearDeletedAt() *CertUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CertUpsertBulk) SetCreatedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) SetCreatedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CertUpsertBulk) AddCreatedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) AddCreatedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1539,14 +1539,14 @@ func (u *CertUpsertBulk) ClearCreatedBy() *CertUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CertUpsertBulk) SetUpdatedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) SetUpdatedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CertUpsertBulk) AddUpdatedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) AddUpdatedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1567,14 +1567,14 @@ func (u *CertUpsertBulk) ClearUpdatedBy() *CertUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CertUpsertBulk) SetDeletedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) SetDeletedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CertUpsertBulk) AddDeletedBy(v uint64) *CertUpsertBulk {
+func (u *CertUpsertBulk) AddDeletedBy(v int64) *CertUpsertBulk {
 	return u.Update(func(s *CertUpsert) {
 		s.AddDeletedBy(v)
 	})

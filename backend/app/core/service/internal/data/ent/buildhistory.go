@@ -17,9 +17,9 @@ type BuildHistory struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,7 +27,7 @@ type BuildHistory struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 构建配置(ops_builds.id)
-	BuildID uint64 `json:"build_id,omitempty"`
+	BuildID int64 `json:"build_id,omitempty"`
 	// 构建号(配置内自增)
 	BuildNo uint32 `json:"build_no,omitempty"`
 	// 构建状态
@@ -41,7 +41,7 @@ type BuildHistory struct {
 	// 产物对象键(MinIO)
 	ArtifactObjectKey *string `json:"artifact_object_key,omitempty"`
 	// 产物大小(字节)
-	ArtifactSize *uint64 `json:"artifact_size,omitempty"`
+	ArtifactSize *int64 `json:"artifact_size,omitempty"`
 	// 失败原因
 	Error *string `json:"error,omitempty"`
 	// 开始执行时间
@@ -49,7 +49,7 @@ type BuildHistory struct {
 	// 结束时间
 	FinishedAt *time.Time `json:"finished_at,omitempty"`
 	// 触发人
-	OperatorID *uint64 `json:"operator_id,omitempty"`
+	OperatorID *int64 `json:"operator_id,omitempty"`
 	// 执行实例标识(机器指纹):构建 goroutine 归属实例,启动清扫只定案本实例的遗留记录
 	RunnerID     *string `json:"runner_id,omitempty"`
 	selectValues sql.SelectValues
@@ -86,13 +86,13 @@ func (_m *BuildHistory) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case buildhistory.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case buildhistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -119,7 +119,7 @@ func (_m *BuildHistory) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field build_id", values[i])
 			} else if value.Valid {
-				_m.BuildID = uint64(value.Int64)
+				_m.BuildID = value.Int64
 			}
 		case buildhistory.FieldBuildNo:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -166,8 +166,8 @@ func (_m *BuildHistory) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field artifact_size", values[i])
 			} else if value.Valid {
-				_m.ArtifactSize = new(uint64)
-				*_m.ArtifactSize = uint64(value.Int64)
+				_m.ArtifactSize = new(int64)
+				*_m.ArtifactSize = value.Int64
 			}
 		case buildhistory.FieldError:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -194,8 +194,8 @@ func (_m *BuildHistory) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operator_id", values[i])
 			} else if value.Valid {
-				_m.OperatorID = new(uint64)
-				*_m.OperatorID = uint64(value.Int64)
+				_m.OperatorID = new(int64)
+				*_m.OperatorID = value.Int64
 			}
 		case buildhistory.FieldRunnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {

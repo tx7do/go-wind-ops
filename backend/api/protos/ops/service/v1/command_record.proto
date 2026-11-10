@@ -32,7 +32,7 @@ enum CommandStatus {
 
 // 指令台账记录
 message CommandRecord {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
@@ -42,7 +42,7 @@ message CommandRecord {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 幂等键(UUID)
 
-  optional uint64 node_id = 3 [
+  optional int64 node_id = 3 [
     json_name = "nodeId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 目标节点ID
@@ -77,7 +77,7 @@ message CommandRecord {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 失败原因
 
-  optional uint64 operator_id = 10 [
+  optional int64 operator_id = 10 [
     json_name = "operatorId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 触发指令的用户
@@ -94,12 +94,12 @@ message CommandRecord {
 }
 
 message ListCommandRecordResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated CommandRecord items = 2 [json_name = "items"]; // 记录列表
 }
 
 message GetCommandRecordRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 记录ID

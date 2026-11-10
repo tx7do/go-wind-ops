@@ -111,7 +111,7 @@ func (r *CloudBudgetRepo) Get(ctx context.Context, req *opsV1.GetCloudBudgetRequ
 }
 
 // GetEntity 取原始实体(检查用)。
-func (r *CloudBudgetRepo) GetEntity(ctx context.Context, id uint64) (*ent.CloudBudget, error) {
+func (r *CloudBudgetRepo) GetEntity(ctx context.Context, id int64) (*ent.CloudBudget, error) {
 	return r.entClient.Client().CloudBudget.
 		Query().
 		Where(cloudbudget.IDEQ(id)).
@@ -119,7 +119,7 @@ func (r *CloudBudgetRepo) GetEntity(ctx context.Context, id uint64) (*ent.CloudB
 }
 
 // IsKeyTaken 同账号同月份预算唯一性校验。
-func (r *CloudBudgetRepo) IsKeyTaken(ctx context.Context, accountID uint64, month string, excludeID uint64) (bool, error) {
+func (r *CloudBudgetRepo) IsKeyTaken(ctx context.Context, accountID int64, month string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().CloudBudget.Query().
 		Where(
 			cloudbudget.CloudAccountIDEQ(accountID),
@@ -136,7 +136,7 @@ func (r *CloudBudgetRepo) IsKeyTaken(ctx context.Context, accountID uint64, mont
 	return exist, nil
 }
 
-func (r *CloudBudgetRepo) Create(ctx context.Context, req *opsV1.CreateCloudBudgetRequest, operatorID uint64) (*opsV1.CloudBudget, error) {
+func (r *CloudBudgetRepo) Create(ctx context.Context, req *opsV1.CreateCloudBudgetRequest, operatorID int64) (*opsV1.CloudBudget, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -198,7 +198,7 @@ func (r *CloudBudgetRepo) Update(ctx context.Context, req *opsV1.UpdateCloudBudg
 }
 
 // SetNotified 阈值告警防重位。
-func (r *CloudBudgetRepo) SetNotified(ctx context.Context, id uint64, notified bool) error {
+func (r *CloudBudgetRepo) SetNotified(ctx context.Context, id int64, notified bool) error {
 	_, err := r.entClient.Client().CloudBudget.
 		UpdateOneID(id).
 		SetNotified(notified).
@@ -207,7 +207,7 @@ func (r *CloudBudgetRepo) SetNotified(ctx context.Context, id uint64, notified b
 }
 
 // SetAnomalyNotified 突增告警防重位。
-func (r *CloudBudgetRepo) SetAnomalyNotified(ctx context.Context, id uint64, notified bool) error {
+func (r *CloudBudgetRepo) SetAnomalyNotified(ctx context.Context, id int64, notified bool) error {
 	_, err := r.entClient.Client().CloudBudget.
 		UpdateOneID(id).
 		SetAnomalyNotified(notified).

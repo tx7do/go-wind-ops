@@ -23,13 +23,13 @@ type LogSnapshotCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *LogSnapshotCreate) SetTenantID(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetTenantID(v int64) *LogSnapshotCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *LogSnapshotCreate) SetNillableTenantID(v *uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetNillableTenantID(v *int64) *LogSnapshotCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *LogSnapshotCreate) SetNillableDeletedAt(v *time.Time) *LogSnapshotCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *LogSnapshotCreate) SetCreatedBy(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetCreatedBy(v int64) *LogSnapshotCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *LogSnapshotCreate) SetNillableCreatedBy(v *uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetNillableCreatedBy(v *int64) *LogSnapshotCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *LogSnapshotCreate) SetNillableCreatedBy(v *uint64) *LogSnapshotCreate 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *LogSnapshotCreate) SetUpdatedBy(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetUpdatedBy(v int64) *LogSnapshotCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *LogSnapshotCreate) SetNillableUpdatedBy(v *uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetNillableUpdatedBy(v *int64) *LogSnapshotCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *LogSnapshotCreate) SetNillableUpdatedBy(v *uint64) *LogSnapshotCreate 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *LogSnapshotCreate) SetDeletedBy(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetDeletedBy(v int64) *LogSnapshotCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *LogSnapshotCreate) SetNillableDeletedBy(v *uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetNillableDeletedBy(v *int64) *LogSnapshotCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *LogSnapshotCreate) SetNillableDeletedBy(v *uint64) *LogSnapshotCreate 
 }
 
 // SetProjectID sets the "project_id" field.
-func (_c *LogSnapshotCreate) SetProjectID(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetProjectID(v int64) *LogSnapshotCreate {
 	_c.mutation.SetProjectID(v)
 	return _c
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *LogSnapshotCreate) SetNodeID(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetNodeID(v int64) *LogSnapshotCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -195,7 +195,7 @@ func (_c *LogSnapshotCreate) SetNillableTrigger(v *string) *LogSnapshotCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *LogSnapshotCreate) SetID(v uint64) *LogSnapshotCreate {
+func (_c *LogSnapshotCreate) SetID(v int64) *LogSnapshotCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -305,7 +305,7 @@ func (_c *LogSnapshotCreate) sqlSave(ctx context.Context) (*LogSnapshot, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -315,7 +315,7 @@ func (_c *LogSnapshotCreate) sqlSave(ctx context.Context) (*LogSnapshot, error) 
 func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 	var (
 		_node = &LogSnapshot{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(logsnapshot.Table, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(logsnapshot.Table, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -323,7 +323,7 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(logsnapshot.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -339,23 +339,23 @@ func (_c *LogSnapshotCreate) createSpec() (*LogSnapshot, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(logsnapshot.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldProjectID, field.TypeInt64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(logsnapshot.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.ProjectName(); ok {
@@ -467,7 +467,7 @@ func (u *LogSnapshotUpsert) ClearDeletedAt() *LogSnapshotUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LogSnapshotUpsert) SetCreatedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) SetCreatedBy(v int64) *LogSnapshotUpsert {
 	u.Set(logsnapshot.FieldCreatedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *LogSnapshotUpsert) UpdateCreatedBy() *LogSnapshotUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LogSnapshotUpsert) AddCreatedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) AddCreatedBy(v int64) *LogSnapshotUpsert {
 	u.Add(logsnapshot.FieldCreatedBy, v)
 	return u
 }
@@ -491,7 +491,7 @@ func (u *LogSnapshotUpsert) ClearCreatedBy() *LogSnapshotUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LogSnapshotUpsert) SetUpdatedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) SetUpdatedBy(v int64) *LogSnapshotUpsert {
 	u.Set(logsnapshot.FieldUpdatedBy, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *LogSnapshotUpsert) UpdateUpdatedBy() *LogSnapshotUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LogSnapshotUpsert) AddUpdatedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) AddUpdatedBy(v int64) *LogSnapshotUpsert {
 	u.Add(logsnapshot.FieldUpdatedBy, v)
 	return u
 }
@@ -515,7 +515,7 @@ func (u *LogSnapshotUpsert) ClearUpdatedBy() *LogSnapshotUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LogSnapshotUpsert) SetDeletedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) SetDeletedBy(v int64) *LogSnapshotUpsert {
 	u.Set(logsnapshot.FieldDeletedBy, v)
 	return u
 }
@@ -527,7 +527,7 @@ func (u *LogSnapshotUpsert) UpdateDeletedBy() *LogSnapshotUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LogSnapshotUpsert) AddDeletedBy(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) AddDeletedBy(v int64) *LogSnapshotUpsert {
 	u.Add(logsnapshot.FieldDeletedBy, v)
 	return u
 }
@@ -539,7 +539,7 @@ func (u *LogSnapshotUpsert) ClearDeletedBy() *LogSnapshotUpsert {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *LogSnapshotUpsert) SetProjectID(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) SetProjectID(v int64) *LogSnapshotUpsert {
 	u.Set(logsnapshot.FieldProjectID, v)
 	return u
 }
@@ -551,13 +551,13 @@ func (u *LogSnapshotUpsert) UpdateProjectID() *LogSnapshotUpsert {
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *LogSnapshotUpsert) AddProjectID(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) AddProjectID(v int64) *LogSnapshotUpsert {
 	u.Add(logsnapshot.FieldProjectID, v)
 	return u
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *LogSnapshotUpsert) SetNodeID(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) SetNodeID(v int64) *LogSnapshotUpsert {
 	u.Set(logsnapshot.FieldNodeID, v)
 	return u
 }
@@ -569,7 +569,7 @@ func (u *LogSnapshotUpsert) UpdateNodeID() *LogSnapshotUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *LogSnapshotUpsert) AddNodeID(v uint64) *LogSnapshotUpsert {
+func (u *LogSnapshotUpsert) AddNodeID(v int64) *LogSnapshotUpsert {
 	u.Add(logsnapshot.FieldNodeID, v)
 	return u
 }
@@ -749,14 +749,14 @@ func (u *LogSnapshotUpsertOne) ClearDeletedAt() *LogSnapshotUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LogSnapshotUpsertOne) SetCreatedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) SetCreatedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LogSnapshotUpsertOne) AddCreatedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) AddCreatedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -777,14 +777,14 @@ func (u *LogSnapshotUpsertOne) ClearCreatedBy() *LogSnapshotUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LogSnapshotUpsertOne) SetUpdatedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) SetUpdatedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LogSnapshotUpsertOne) AddUpdatedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) AddUpdatedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -805,14 +805,14 @@ func (u *LogSnapshotUpsertOne) ClearUpdatedBy() *LogSnapshotUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LogSnapshotUpsertOne) SetDeletedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) SetDeletedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LogSnapshotUpsertOne) AddDeletedBy(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) AddDeletedBy(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -833,14 +833,14 @@ func (u *LogSnapshotUpsertOne) ClearDeletedBy() *LogSnapshotUpsertOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *LogSnapshotUpsertOne) SetProjectID(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) SetProjectID(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *LogSnapshotUpsertOne) AddProjectID(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) AddProjectID(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddProjectID(v)
 	})
@@ -854,14 +854,14 @@ func (u *LogSnapshotUpsertOne) UpdateProjectID() *LogSnapshotUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *LogSnapshotUpsertOne) SetNodeID(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) SetNodeID(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *LogSnapshotUpsertOne) AddNodeID(v uint64) *LogSnapshotUpsertOne {
+func (u *LogSnapshotUpsertOne) AddNodeID(v int64) *LogSnapshotUpsertOne {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddNodeID(v)
 	})
@@ -981,7 +981,7 @@ func (u *LogSnapshotUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *LogSnapshotUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *LogSnapshotUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -990,7 +990,7 @@ func (u *LogSnapshotUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *LogSnapshotUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *LogSnapshotUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1047,7 +1047,7 @@ func (_c *LogSnapshotCreateBulk) Save(ctx context.Context) ([]*LogSnapshot, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1228,14 +1228,14 @@ func (u *LogSnapshotUpsertBulk) ClearDeletedAt() *LogSnapshotUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LogSnapshotUpsertBulk) SetCreatedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) SetCreatedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LogSnapshotUpsertBulk) AddCreatedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) AddCreatedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1256,14 +1256,14 @@ func (u *LogSnapshotUpsertBulk) ClearCreatedBy() *LogSnapshotUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LogSnapshotUpsertBulk) SetUpdatedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) SetUpdatedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LogSnapshotUpsertBulk) AddUpdatedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) AddUpdatedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1284,14 +1284,14 @@ func (u *LogSnapshotUpsertBulk) ClearUpdatedBy() *LogSnapshotUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LogSnapshotUpsertBulk) SetDeletedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) SetDeletedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LogSnapshotUpsertBulk) AddDeletedBy(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) AddDeletedBy(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1312,14 +1312,14 @@ func (u *LogSnapshotUpsertBulk) ClearDeletedBy() *LogSnapshotUpsertBulk {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *LogSnapshotUpsertBulk) SetProjectID(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) SetProjectID(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *LogSnapshotUpsertBulk) AddProjectID(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) AddProjectID(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1333,14 +1333,14 @@ func (u *LogSnapshotUpsertBulk) UpdateProjectID() *LogSnapshotUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *LogSnapshotUpsertBulk) SetNodeID(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) SetNodeID(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *LogSnapshotUpsertBulk) AddNodeID(v uint64) *LogSnapshotUpsertBulk {
+func (u *LogSnapshotUpsertBulk) AddNodeID(v int64) *LogSnapshotUpsertBulk {
 	return u.Update(func(s *LogSnapshotUpsert) {
 		s.AddNodeID(v)
 	})

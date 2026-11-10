@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	pluginSyncTimeout   = 15 * time.Second
+	pluginSyncTimeout    = 15 * time.Second
 	pluginExecTimeoutMax = 600 * time.Second
 )
 
@@ -34,15 +34,15 @@ type PluginService struct {
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
 	maintenanceRepo  *data.MaintenanceWindowRepo
-	approvalRepo *data.ApprovalRepo
+	approvalRepo     *data.ApprovalRepo
 }
 
 func NewPluginService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *PluginService {
 	return &PluginService{
-		log:          ctx.NewLoggerHelper("plugin/service/core-service"),
-		agentSvc:     agentSvc,
-		nodeRepo:     nodeRepo,
-		approvalRepo: approvalRepo,
+		log:              ctx.NewLoggerHelper("plugin/service/core-service"),
+		agentSvc:         agentSvc,
+		nodeRepo:         nodeRepo,
+		approvalRepo:     approvalRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
 		maintenanceRepo:  maintenanceRepo,

@@ -27,7 +27,7 @@ service InspectionService {
 
 // 巡检报告
 message Inspection {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 报告ID
@@ -62,12 +62,12 @@ message Inspection {
 }
 
 message ListInspectionResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated Inspection items = 2 [json_name = "items"]; // 报告列表
 }
 
 message GetInspectionRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 报告ID

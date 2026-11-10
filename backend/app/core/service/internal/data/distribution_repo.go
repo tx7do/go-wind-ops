@@ -127,7 +127,7 @@ func (r *DistributionRepo) Get(ctx context.Context, req *opsV1.GetDistributionRe
 }
 
 // IsNameTaken 校验分发名唯一性。
-func (r *DistributionRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *DistributionRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Distribution.Query().Where(distribution.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(distribution.IDNEQ(excludeID))
@@ -140,7 +140,7 @@ func (r *DistributionRepo) IsNameTaken(ctx context.Context, name string, exclude
 	return exist, nil
 }
 
-func (r *DistributionRepo) Create(ctx context.Context, req *opsV1.CreateDistributionRequest, operatorID uint64) (*opsV1.Distribution, error) {
+func (r *DistributionRepo) Create(ctx context.Context, req *opsV1.CreateDistributionRequest, operatorID int64) (*opsV1.Distribution, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}

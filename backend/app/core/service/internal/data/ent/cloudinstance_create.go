@@ -23,13 +23,13 @@ type CloudInstanceCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CloudInstanceCreate) SetTenantID(v uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetTenantID(v int64) *CloudInstanceCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CloudInstanceCreate) SetNillableTenantID(v *uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetNillableTenantID(v *int64) *CloudInstanceCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *CloudInstanceCreate) SetNillableDeletedAt(v *time.Time) *CloudInstance
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_c *CloudInstanceCreate) SetCloudAccountID(v uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetCloudAccountID(v int64) *CloudInstanceCreate {
 	_c.mutation.SetCloudAccountID(v)
 	return _c
 }
@@ -237,13 +237,13 @@ func (_c *CloudInstanceCreate) SetNillableMatched(v *bool) *CloudInstanceCreate 
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (_c *CloudInstanceCreate) SetAgentNodeID(v uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetAgentNodeID(v int64) *CloudInstanceCreate {
 	_c.mutation.SetAgentNodeID(v)
 	return _c
 }
 
 // SetNillableAgentNodeID sets the "agent_node_id" field if the given value is not nil.
-func (_c *CloudInstanceCreate) SetNillableAgentNodeID(v *uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetNillableAgentNodeID(v *int64) *CloudInstanceCreate {
 	if v != nil {
 		_c.SetAgentNodeID(*v)
 	}
@@ -271,7 +271,7 @@ func (_c *CloudInstanceCreate) SetSyncedAt(v time.Time) *CloudInstanceCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CloudInstanceCreate) SetID(v uint64) *CloudInstanceCreate {
+func (_c *CloudInstanceCreate) SetID(v int64) *CloudInstanceCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -382,7 +382,7 @@ func (_c *CloudInstanceCreate) sqlSave(ctx context.Context) (*CloudInstance, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -392,7 +392,7 @@ func (_c *CloudInstanceCreate) sqlSave(ctx context.Context) (*CloudInstance, err
 func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CloudInstance{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(cloudinstance.Table, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(cloudinstance.Table, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -400,7 +400,7 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(cloudinstance.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(cloudinstance.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -416,7 +416,7 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeUint64, value)
+		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeInt64, value)
 		_node.CloudAccountID = value
 	}
 	if value, ok := _c.mutation.CloudAccountName(); ok {
@@ -468,7 +468,7 @@ func (_c *CloudInstanceCreate) createSpec() (*CloudInstance, *sqlgraph.CreateSpe
 		_node.Matched = value
 	}
 	if value, ok := _c.mutation.AgentNodeID(); ok {
-		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeUint64, value)
+		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeInt64, value)
 		_node.AgentNodeID = &value
 	}
 	if value, ok := _c.mutation.AgentNodeName(); ok {
@@ -568,7 +568,7 @@ func (u *CloudInstanceUpsert) ClearDeletedAt() *CloudInstanceUpsert {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudInstanceUpsert) SetCloudAccountID(v uint64) *CloudInstanceUpsert {
+func (u *CloudInstanceUpsert) SetCloudAccountID(v int64) *CloudInstanceUpsert {
 	u.Set(cloudinstance.FieldCloudAccountID, v)
 	return u
 }
@@ -580,7 +580,7 @@ func (u *CloudInstanceUpsert) UpdateCloudAccountID() *CloudInstanceUpsert {
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudInstanceUpsert) AddCloudAccountID(v uint64) *CloudInstanceUpsert {
+func (u *CloudInstanceUpsert) AddCloudAccountID(v int64) *CloudInstanceUpsert {
 	u.Add(cloudinstance.FieldCloudAccountID, v)
 	return u
 }
@@ -784,7 +784,7 @@ func (u *CloudInstanceUpsert) UpdateMatched() *CloudInstanceUpsert {
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (u *CloudInstanceUpsert) SetAgentNodeID(v uint64) *CloudInstanceUpsert {
+func (u *CloudInstanceUpsert) SetAgentNodeID(v int64) *CloudInstanceUpsert {
 	u.Set(cloudinstance.FieldAgentNodeID, v)
 	return u
 }
@@ -796,7 +796,7 @@ func (u *CloudInstanceUpsert) UpdateAgentNodeID() *CloudInstanceUpsert {
 }
 
 // AddAgentNodeID adds v to the "agent_node_id" field.
-func (u *CloudInstanceUpsert) AddAgentNodeID(v uint64) *CloudInstanceUpsert {
+func (u *CloudInstanceUpsert) AddAgentNodeID(v int64) *CloudInstanceUpsert {
 	u.Add(cloudinstance.FieldAgentNodeID, v)
 	return u
 }
@@ -934,14 +934,14 @@ func (u *CloudInstanceUpsertOne) ClearDeletedAt() *CloudInstanceUpsertOne {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudInstanceUpsertOne) SetCloudAccountID(v uint64) *CloudInstanceUpsertOne {
+func (u *CloudInstanceUpsertOne) SetCloudAccountID(v int64) *CloudInstanceUpsertOne {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.SetCloudAccountID(v)
 	})
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudInstanceUpsertOne) AddCloudAccountID(v uint64) *CloudInstanceUpsertOne {
+func (u *CloudInstanceUpsertOne) AddCloudAccountID(v int64) *CloudInstanceUpsertOne {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.AddCloudAccountID(v)
 	})
@@ -1186,14 +1186,14 @@ func (u *CloudInstanceUpsertOne) UpdateMatched() *CloudInstanceUpsertOne {
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (u *CloudInstanceUpsertOne) SetAgentNodeID(v uint64) *CloudInstanceUpsertOne {
+func (u *CloudInstanceUpsertOne) SetAgentNodeID(v int64) *CloudInstanceUpsertOne {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.SetAgentNodeID(v)
 	})
 }
 
 // AddAgentNodeID adds v to the "agent_node_id" field.
-func (u *CloudInstanceUpsertOne) AddAgentNodeID(v uint64) *CloudInstanceUpsertOne {
+func (u *CloudInstanceUpsertOne) AddAgentNodeID(v int64) *CloudInstanceUpsertOne {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.AddAgentNodeID(v)
 	})
@@ -1264,7 +1264,7 @@ func (u *CloudInstanceUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CloudInstanceUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CloudInstanceUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1273,7 +1273,7 @@ func (u *CloudInstanceUpsertOne) ID(ctx context.Context) (id uint64, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CloudInstanceUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CloudInstanceUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1330,7 +1330,7 @@ func (_c *CloudInstanceCreateBulk) Save(ctx context.Context) ([]*CloudInstance, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1511,14 +1511,14 @@ func (u *CloudInstanceUpsertBulk) ClearDeletedAt() *CloudInstanceUpsertBulk {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudInstanceUpsertBulk) SetCloudAccountID(v uint64) *CloudInstanceUpsertBulk {
+func (u *CloudInstanceUpsertBulk) SetCloudAccountID(v int64) *CloudInstanceUpsertBulk {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.SetCloudAccountID(v)
 	})
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudInstanceUpsertBulk) AddCloudAccountID(v uint64) *CloudInstanceUpsertBulk {
+func (u *CloudInstanceUpsertBulk) AddCloudAccountID(v int64) *CloudInstanceUpsertBulk {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.AddCloudAccountID(v)
 	})
@@ -1763,14 +1763,14 @@ func (u *CloudInstanceUpsertBulk) UpdateMatched() *CloudInstanceUpsertBulk {
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (u *CloudInstanceUpsertBulk) SetAgentNodeID(v uint64) *CloudInstanceUpsertBulk {
+func (u *CloudInstanceUpsertBulk) SetAgentNodeID(v int64) *CloudInstanceUpsertBulk {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.SetAgentNodeID(v)
 	})
 }
 
 // AddAgentNodeID adds v to the "agent_node_id" field.
-func (u *CloudInstanceUpsertBulk) AddAgentNodeID(v uint64) *CloudInstanceUpsertBulk {
+func (u *CloudInstanceUpsertBulk) AddAgentNodeID(v int64) *CloudInstanceUpsertBulk {
 	return u.Update(func(s *CloudInstanceUpsert) {
 		s.AddAgentNodeID(v)
 	})

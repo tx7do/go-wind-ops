@@ -23,13 +23,13 @@ type ProjectCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ProjectCreate) SetTenantID(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetTenantID(v int64) *ProjectCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableTenantID(v *uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNillableTenantID(v *int64) *ProjectCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ProjectCreate) SetNillableDeletedAt(v *time.Time) *ProjectCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ProjectCreate) SetCreatedBy(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetCreatedBy(v int64) *ProjectCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableCreatedBy(v *uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNillableCreatedBy(v *int64) *ProjectCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ProjectCreate) SetNillableCreatedBy(v *uint64) *ProjectCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ProjectCreate) SetUpdatedBy(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetUpdatedBy(v int64) *ProjectCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableUpdatedBy(v *uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNillableUpdatedBy(v *int64) *ProjectCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ProjectCreate) SetNillableUpdatedBy(v *uint64) *ProjectCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ProjectCreate) SetDeletedBy(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetDeletedBy(v int64) *ProjectCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableDeletedBy(v *uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNillableDeletedBy(v *int64) *ProjectCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,7 +121,7 @@ func (_c *ProjectCreate) SetNillableDeletedBy(v *uint64) *ProjectCreate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *ProjectCreate) SetNodeID(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNodeID(v int64) *ProjectCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -215,13 +215,13 @@ func (_c *ProjectCreate) SetLabels(v []string) *ProjectCreate {
 }
 
 // SetLastPid sets the "last_pid" field.
-func (_c *ProjectCreate) SetLastPid(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetLastPid(v int64) *ProjectCreate {
 	_c.mutation.SetLastPid(v)
 	return _c
 }
 
 // SetNillableLastPid sets the "last_pid" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableLastPid(v *uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetNillableLastPid(v *int64) *ProjectCreate {
 	if v != nil {
 		_c.SetLastPid(*v)
 	}
@@ -257,7 +257,7 @@ func (_c *ProjectCreate) SetNillableLastStatusAt(v *time.Time) *ProjectCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *ProjectCreate) SetID(v uint64) *ProjectCreate {
+func (_c *ProjectCreate) SetID(v int64) *ProjectCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -370,7 +370,7 @@ func (_c *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -380,7 +380,7 @@ func (_c *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
 func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Project{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(project.Table, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(project.Table, sqlgraph.NewFieldSpec(project.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -388,7 +388,7 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(project.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(project.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -404,19 +404,19 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(project.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(project.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(project.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(project.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(project.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(project.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(project.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(project.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -452,7 +452,7 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_node.Labels = value
 	}
 	if value, ok := _c.mutation.LastPid(); ok {
-		_spec.SetField(project.FieldLastPid, field.TypeUint64, value)
+		_spec.SetField(project.FieldLastPid, field.TypeInt64, value)
 		_node.LastPid = &value
 	}
 	if value, ok := _c.mutation.LastStatus(); ok {
@@ -552,7 +552,7 @@ func (u *ProjectUpsert) ClearDeletedAt() *ProjectUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProjectUpsert) SetCreatedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) SetCreatedBy(v int64) *ProjectUpsert {
 	u.Set(project.FieldCreatedBy, v)
 	return u
 }
@@ -564,7 +564,7 @@ func (u *ProjectUpsert) UpdateCreatedBy() *ProjectUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProjectUpsert) AddCreatedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) AddCreatedBy(v int64) *ProjectUpsert {
 	u.Add(project.FieldCreatedBy, v)
 	return u
 }
@@ -576,7 +576,7 @@ func (u *ProjectUpsert) ClearCreatedBy() *ProjectUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProjectUpsert) SetUpdatedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) SetUpdatedBy(v int64) *ProjectUpsert {
 	u.Set(project.FieldUpdatedBy, v)
 	return u
 }
@@ -588,7 +588,7 @@ func (u *ProjectUpsert) UpdateUpdatedBy() *ProjectUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProjectUpsert) AddUpdatedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) AddUpdatedBy(v int64) *ProjectUpsert {
 	u.Add(project.FieldUpdatedBy, v)
 	return u
 }
@@ -600,7 +600,7 @@ func (u *ProjectUpsert) ClearUpdatedBy() *ProjectUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProjectUpsert) SetDeletedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) SetDeletedBy(v int64) *ProjectUpsert {
 	u.Set(project.FieldDeletedBy, v)
 	return u
 }
@@ -612,7 +612,7 @@ func (u *ProjectUpsert) UpdateDeletedBy() *ProjectUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProjectUpsert) AddDeletedBy(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) AddDeletedBy(v int64) *ProjectUpsert {
 	u.Add(project.FieldDeletedBy, v)
 	return u
 }
@@ -624,7 +624,7 @@ func (u *ProjectUpsert) ClearDeletedBy() *ProjectUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ProjectUpsert) SetNodeID(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) SetNodeID(v int64) *ProjectUpsert {
 	u.Set(project.FieldNodeID, v)
 	return u
 }
@@ -636,7 +636,7 @@ func (u *ProjectUpsert) UpdateNodeID() *ProjectUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ProjectUpsert) AddNodeID(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) AddNodeID(v int64) *ProjectUpsert {
 	u.Add(project.FieldNodeID, v)
 	return u
 }
@@ -774,7 +774,7 @@ func (u *ProjectUpsert) ClearLabels() *ProjectUpsert {
 }
 
 // SetLastPid sets the "last_pid" field.
-func (u *ProjectUpsert) SetLastPid(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) SetLastPid(v int64) *ProjectUpsert {
 	u.Set(project.FieldLastPid, v)
 	return u
 }
@@ -786,7 +786,7 @@ func (u *ProjectUpsert) UpdateLastPid() *ProjectUpsert {
 }
 
 // AddLastPid adds v to the "last_pid" field.
-func (u *ProjectUpsert) AddLastPid(v uint64) *ProjectUpsert {
+func (u *ProjectUpsert) AddLastPid(v int64) *ProjectUpsert {
 	u.Add(project.FieldLastPid, v)
 	return u
 }
@@ -930,14 +930,14 @@ func (u *ProjectUpsertOne) ClearDeletedAt() *ProjectUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProjectUpsertOne) SetCreatedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) SetCreatedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProjectUpsertOne) AddCreatedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) AddCreatedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -958,14 +958,14 @@ func (u *ProjectUpsertOne) ClearCreatedBy() *ProjectUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProjectUpsertOne) SetUpdatedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) SetUpdatedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProjectUpsertOne) AddUpdatedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) AddUpdatedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -986,14 +986,14 @@ func (u *ProjectUpsertOne) ClearUpdatedBy() *ProjectUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProjectUpsertOne) SetDeletedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) SetDeletedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProjectUpsertOne) AddDeletedBy(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) AddDeletedBy(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1014,14 +1014,14 @@ func (u *ProjectUpsertOne) ClearDeletedBy() *ProjectUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ProjectUpsertOne) SetNodeID(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) SetNodeID(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ProjectUpsertOne) AddNodeID(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) AddNodeID(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1189,14 +1189,14 @@ func (u *ProjectUpsertOne) ClearLabels() *ProjectUpsertOne {
 }
 
 // SetLastPid sets the "last_pid" field.
-func (u *ProjectUpsertOne) SetLastPid(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) SetLastPid(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetLastPid(v)
 	})
 }
 
 // AddLastPid adds v to the "last_pid" field.
-func (u *ProjectUpsertOne) AddLastPid(v uint64) *ProjectUpsertOne {
+func (u *ProjectUpsertOne) AddLastPid(v int64) *ProjectUpsertOne {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddLastPid(v)
 	})
@@ -1274,7 +1274,7 @@ func (u *ProjectUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ProjectUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ProjectUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1283,7 +1283,7 @@ func (u *ProjectUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ProjectUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ProjectUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1340,7 +1340,7 @@ func (_c *ProjectCreateBulk) Save(ctx context.Context) ([]*Project, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1521,14 +1521,14 @@ func (u *ProjectUpsertBulk) ClearDeletedAt() *ProjectUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProjectUpsertBulk) SetCreatedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) SetCreatedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProjectUpsertBulk) AddCreatedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) AddCreatedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1549,14 +1549,14 @@ func (u *ProjectUpsertBulk) ClearCreatedBy() *ProjectUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProjectUpsertBulk) SetUpdatedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) SetUpdatedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProjectUpsertBulk) AddUpdatedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) AddUpdatedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1577,14 +1577,14 @@ func (u *ProjectUpsertBulk) ClearUpdatedBy() *ProjectUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProjectUpsertBulk) SetDeletedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) SetDeletedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProjectUpsertBulk) AddDeletedBy(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) AddDeletedBy(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1605,14 +1605,14 @@ func (u *ProjectUpsertBulk) ClearDeletedBy() *ProjectUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ProjectUpsertBulk) SetNodeID(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) SetNodeID(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ProjectUpsertBulk) AddNodeID(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) AddNodeID(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1780,14 +1780,14 @@ func (u *ProjectUpsertBulk) ClearLabels() *ProjectUpsertBulk {
 }
 
 // SetLastPid sets the "last_pid" field.
-func (u *ProjectUpsertBulk) SetLastPid(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) SetLastPid(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.SetLastPid(v)
 	})
 }
 
 // AddLastPid adds v to the "last_pid" field.
-func (u *ProjectUpsertBulk) AddLastPid(v uint64) *ProjectUpsertBulk {
+func (u *ProjectUpsertBulk) AddLastPid(v int64) *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.AddLastPid(v)
 	})

@@ -79,9 +79,9 @@ func approvalGate(
 	deliveryRepo *data.NotificationDeliveryRepo,
 	maintenanceRepo *data.MaintenanceWindowRepo,
 	action string,
-	refID uint64,
+	refID int64,
 	agentID, opName, payloadJSON string,
-	operatorID uint64,
+	operatorID int64,
 ) error {
 	if _, ok := approvalRequiredActions()[action]; !ok {
 		return nil
@@ -116,6 +116,5 @@ func expiryHint(t *time.Time) string {
 	if t == nil {
 		return ",永不过期"
 	}
-	return ",截止 "+t.Format("2006-01-02 15:04")
+	return ",截止 " + t.Format("2006-01-02 15:04")
 }
-

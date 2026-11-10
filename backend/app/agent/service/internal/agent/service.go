@@ -16,8 +16,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	kratosLog "github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-transport/broker"
 
 	"go-wind-ops/pkg/machine"

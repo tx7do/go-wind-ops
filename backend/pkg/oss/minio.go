@@ -12,8 +12,8 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/timeutil"
 
-	"go-wind-ops/pkg/configenv"
 	"github.com/tx7do/go-utils/trans"
+	"go-wind-ops/pkg/configenv"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	ossMinio "github.com/tx7do/kratos-bootstrap/oss/minio"

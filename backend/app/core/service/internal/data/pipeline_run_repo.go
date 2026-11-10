@@ -81,7 +81,7 @@ func statusToProto(v pipelinerun.Status) opsV1.PipelineRun_Status {
 }
 
 // Create 触发时建 run(快照步骤 JSON)。
-func (r *PipelineRunRepo) Create(ctx context.Context, pipelineID uint64, stepsJSON string, operatorID uint64, runnerID string) (*ent.PipelineRun, error) {
+func (r *PipelineRunRepo) Create(ctx context.Context, pipelineID int64, stepsJSON string, operatorID int64, runnerID string) (*ent.PipelineRun, error) {
 	builder := r.entClient.Client().PipelineRun.Create().
 		SetPipelineID(pipelineID).
 		SetCurrentStep(-1).
@@ -99,7 +99,7 @@ func (r *PipelineRunRepo) Create(ctx context.Context, pipelineID uint64, stepsJS
 }
 
 // MarkRunning 标记执行开始。
-func (r *PipelineRunRepo) MarkRunning(ctx context.Context, id uint64) error {
+func (r *PipelineRunRepo) MarkRunning(ctx context.Context, id int64) error {
 	now := time.Now()
 	_, err := r.entClient.Client().PipelineRun.UpdateOneID(id).
 		SetStatus(pipelinerun.StatusRunning).
@@ -111,13 +111,13 @@ func (r *PipelineRunRepo) MarkRunning(ctx context.Context, id uint64) error {
 }
 
 // SetCurrentStep 推进当前步骤下标。
-func (r *PipelineRunRepo) SetCurrentStep(ctx context.Context, id uint64, idx int32) error {
+func (r *PipelineRunRepo) SetCurrentStep(ctx context.Context, id int64, idx int32) error {
 	_, err := r.entClient.Client().PipelineRun.UpdateOneID(id).SetCurrentStep(idx).SetUpdatedAt(time.Now()).Save(ctx)
 	return err
 }
 
 // AppendLog 追加日志(执行 goroutine 单写者,读改写安全)。
-func (r *PipelineRunRepo) AppendLog(ctx context.Context, id uint64, delta string) error {
+func (r *PipelineRunRepo) AppendLog(ctx context.Context, id int64, delta string) error {
 	if delta == "" {
 		return nil
 	}
@@ -134,7 +134,7 @@ func (r *PipelineRunRepo) AppendLog(ctx context.Context, id uint64, delta string
 }
 
 // SetStepResults 回写步骤结果 JSON。
-func (r *PipelineRunRepo) SetStepResults(ctx context.Context, id uint64, resultsJSON string) error {
+func (r *PipelineRunRepo) SetStepResults(ctx context.Context, id int64, resultsJSON string) error {
 	builder := r.entClient.Client().PipelineRun.UpdateOneID(id).
 		SetUpdatedAt(time.Now())
 	if resultsJSON != "" {
@@ -145,7 +145,7 @@ func (r *PipelineRunRepo) SetStepResults(ctx context.Context, id uint64, results
 }
 
 // UpdateFinished 终态落库。
-func (r *PipelineRunRepo) UpdateFinished(ctx context.Context, id uint64, status pipelinerun.Status, errMsg string) error {
+func (r *PipelineRunRepo) UpdateFinished(ctx context.Context, id int64, status pipelinerun.Status, errMsg string) error {
 	now := time.Now()
 	builder := r.entClient.Client().PipelineRun.UpdateOneID(id).
 		SetStatus(status).
@@ -205,12 +205,12 @@ func (r *PipelineRunRepo) FinalizeStaleInterrupted(ctx context.Context) (int, er
 }
 
 // GetEntity 取原始实体(日志 delta 切片用)。
-func (r *PipelineRunRepo) GetEntity(ctx context.Context, id uint64) (*ent.PipelineRun, error) {
+func (r *PipelineRunRepo) GetEntity(ctx context.Context, id int64) (*ent.PipelineRun, error) {
 	return r.entClient.Client().PipelineRun.Get(ctx, id)
 }
 
 // Get 详情。
-func (r *PipelineRunRepo) Get(ctx context.Context, id uint64) (*opsV1.PipelineRun, error) {
+func (r *PipelineRunRepo) Get(ctx context.Context, id int64) (*opsV1.PipelineRun, error) {
 	e, err := r.GetEntity(ctx, id)
 	if err != nil {
 		return nil, err
@@ -245,7 +245,7 @@ func (r *PipelineRunRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 		return nil, err
 	}
 
-	resp := &opsV1.ListPipelineRunResponse{Total: uint64(total)}
+	resp := &opsV1.ListPipelineRunResponse{Total: int64(total)}
 	for _, e := range rows {
 		dto, err := r.toDTO(e)
 		if err != nil {

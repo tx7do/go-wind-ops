@@ -13,16 +13,16 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/minio/minio-go/v7"
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-ops/app/core/service/internal/data"
 	"go-wind-ops/app/core/service/internal/data/ent"
 	pkgcrypto "go-wind-ops/pkg/crypto"
-	"go-wind-ops/pkg/machine"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
+	"go-wind-ops/pkg/machine"
 	"go-wind-ops/pkg/oss"
 	"go-wind-ops/pkg/shellexec"
 
@@ -49,11 +49,11 @@ const (
 type BuildService struct {
 	opsV1.UnimplementedBuildServiceServer
 
-	log       *log.Helper
-	repo      *data.BuildRepo
-	repoRepo  *data.RepositoryRepo
+	log         *log.Helper
+	repo        *data.BuildRepo
+	repoRepo    *data.RepositoryRepo
 	historyRepo *data.BuildHistoryRepo
-	ossClient *oss.MinIOClient
+	ossClient   *oss.MinIOClient
 
 	workspaceRoot string
 	// runnerID 本实例的执行标识(机器指纹):写入构建历史,启动清扫与孤儿
@@ -192,7 +192,7 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 // 构建执行器(进程内 goroutine)
 // ============================================================================
 
-func (s *BuildService) runBuild(historyID uint64) {
+func (s *BuildService) runBuild(historyID int64) {
 	// 构建历史/构建表已挂租户隐私:后台 goroutine 注入系统 viewer
 	// (历史行在触发请求上下文按用户租户落库,此处仅做终态推进)。
 	ctx := appViewer.NewSystemViewerContext(context.Background())
@@ -235,12 +235,12 @@ func (s *BuildService) runBuild(historyID uint64) {
 
 	buildDto, err := s.repo.Get(ctx, &opsV1.GetBuildRequest{Id: &history.BuildID})
 	if err != nil {
-		fail("load build config: "+err.Error())
+		fail("load build config: " + err.Error())
 		return
 	}
 	repoEntity, err := s.repoRepo.GetEntity(ctx, buildDto.GetRepositoryId())
 	if err != nil {
-		fail("load repository: "+err.Error())
+		fail("load repository: " + err.Error())
 		return
 	}
 
@@ -429,7 +429,7 @@ func copyFile(src, dst string) error {
 }
 
 // uploadArtifact 上传产物到 MinIO(artifacts 桶),返回大小。
-func (s *BuildService) uploadArtifact(ctx context.Context, filePath, objectKey string) (uint64, error) {
+func (s *BuildService) uploadArtifact(ctx context.Context, filePath, objectKey string) (int64, error) {
 	if s.ossClient == nil {
 		return 0, fmt.Errorf("oss client not configured")
 	}
@@ -460,7 +460,7 @@ func (s *BuildService) uploadArtifact(ctx context.Context, filePath, objectKey s
 	if err != nil {
 		return 0, err
 	}
-	return uint64(info.Size()), nil
+	return int64(info.Size()), nil
 }
 
 // buildGitURL 组装克隆地址:

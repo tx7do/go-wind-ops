@@ -23,13 +23,13 @@ type PipelineRunCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PipelineRunCreate) SetTenantID(v uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetTenantID(v int64) *PipelineRunCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PipelineRunCreate) SetNillableTenantID(v *uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetNillableTenantID(v *int64) *PipelineRunCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *PipelineRunCreate) SetNillableDeletedAt(v *time.Time) *PipelineRunCrea
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (_c *PipelineRunCreate) SetPipelineID(v uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetPipelineID(v int64) *PipelineRunCreate {
 	_c.mutation.SetPipelineID(v)
 	return _c
 }
@@ -197,13 +197,13 @@ func (_c *PipelineRunCreate) SetNillableFinishedAt(v *time.Time) *PipelineRunCre
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *PipelineRunCreate) SetOperatorID(v uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetOperatorID(v int64) *PipelineRunCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *PipelineRunCreate) SetNillableOperatorID(v *uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetNillableOperatorID(v *int64) *PipelineRunCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -225,7 +225,7 @@ func (_c *PipelineRunCreate) SetNillableRunnerID(v *string) *PipelineRunCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PipelineRunCreate) SetID(v uint64) *PipelineRunCreate {
+func (_c *PipelineRunCreate) SetID(v int64) *PipelineRunCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -329,7 +329,7 @@ func (_c *PipelineRunCreate) sqlSave(ctx context.Context) (*PipelineRun, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -339,7 +339,7 @@ func (_c *PipelineRunCreate) sqlSave(ctx context.Context) (*PipelineRun, error) 
 func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PipelineRun{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(pipelinerun.Table, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(pipelinerun.Table, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -347,7 +347,7 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(pipelinerun.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -363,7 +363,7 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.PipelineID(); ok {
-		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldPipelineID, field.TypeInt64, value)
 		_node.PipelineID = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -399,7 +399,7 @@ func (_c *PipelineRunCreate) createSpec() (*PipelineRun, *sqlgraph.CreateSpec) {
 		_node.FinishedAt = &value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(pipelinerun.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = &value
 	}
 	if value, ok := _c.mutation.RunnerID(); ok {
@@ -495,7 +495,7 @@ func (u *PipelineRunUpsert) ClearDeletedAt() *PipelineRunUpsert {
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (u *PipelineRunUpsert) SetPipelineID(v uint64) *PipelineRunUpsert {
+func (u *PipelineRunUpsert) SetPipelineID(v int64) *PipelineRunUpsert {
 	u.Set(pipelinerun.FieldPipelineID, v)
 	return u
 }
@@ -507,7 +507,7 @@ func (u *PipelineRunUpsert) UpdatePipelineID() *PipelineRunUpsert {
 }
 
 // AddPipelineID adds v to the "pipeline_id" field.
-func (u *PipelineRunUpsert) AddPipelineID(v uint64) *PipelineRunUpsert {
+func (u *PipelineRunUpsert) AddPipelineID(v int64) *PipelineRunUpsert {
 	u.Add(pipelinerun.FieldPipelineID, v)
 	return u
 }
@@ -657,7 +657,7 @@ func (u *PipelineRunUpsert) ClearFinishedAt() *PipelineRunUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *PipelineRunUpsert) SetOperatorID(v uint64) *PipelineRunUpsert {
+func (u *PipelineRunUpsert) SetOperatorID(v int64) *PipelineRunUpsert {
 	u.Set(pipelinerun.FieldOperatorID, v)
 	return u
 }
@@ -669,7 +669,7 @@ func (u *PipelineRunUpsert) UpdateOperatorID() *PipelineRunUpsert {
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *PipelineRunUpsert) AddOperatorID(v uint64) *PipelineRunUpsert {
+func (u *PipelineRunUpsert) AddOperatorID(v int64) *PipelineRunUpsert {
 	u.Add(pipelinerun.FieldOperatorID, v)
 	return u
 }
@@ -795,14 +795,14 @@ func (u *PipelineRunUpsertOne) ClearDeletedAt() *PipelineRunUpsertOne {
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (u *PipelineRunUpsertOne) SetPipelineID(v uint64) *PipelineRunUpsertOne {
+func (u *PipelineRunUpsertOne) SetPipelineID(v int64) *PipelineRunUpsertOne {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.SetPipelineID(v)
 	})
 }
 
 // AddPipelineID adds v to the "pipeline_id" field.
-func (u *PipelineRunUpsertOne) AddPipelineID(v uint64) *PipelineRunUpsertOne {
+func (u *PipelineRunUpsertOne) AddPipelineID(v int64) *PipelineRunUpsertOne {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.AddPipelineID(v)
 	})
@@ -984,14 +984,14 @@ func (u *PipelineRunUpsertOne) ClearFinishedAt() *PipelineRunUpsertOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *PipelineRunUpsertOne) SetOperatorID(v uint64) *PipelineRunUpsertOne {
+func (u *PipelineRunUpsertOne) SetOperatorID(v int64) *PipelineRunUpsertOne {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *PipelineRunUpsertOne) AddOperatorID(v uint64) *PipelineRunUpsertOne {
+func (u *PipelineRunUpsertOne) AddOperatorID(v int64) *PipelineRunUpsertOne {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -1048,7 +1048,7 @@ func (u *PipelineRunUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PipelineRunUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PipelineRunUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1057,7 +1057,7 @@ func (u *PipelineRunUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PipelineRunUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PipelineRunUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1114,7 +1114,7 @@ func (_c *PipelineRunCreateBulk) Save(ctx context.Context) ([]*PipelineRun, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1295,14 +1295,14 @@ func (u *PipelineRunUpsertBulk) ClearDeletedAt() *PipelineRunUpsertBulk {
 }
 
 // SetPipelineID sets the "pipeline_id" field.
-func (u *PipelineRunUpsertBulk) SetPipelineID(v uint64) *PipelineRunUpsertBulk {
+func (u *PipelineRunUpsertBulk) SetPipelineID(v int64) *PipelineRunUpsertBulk {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.SetPipelineID(v)
 	})
 }
 
 // AddPipelineID adds v to the "pipeline_id" field.
-func (u *PipelineRunUpsertBulk) AddPipelineID(v uint64) *PipelineRunUpsertBulk {
+func (u *PipelineRunUpsertBulk) AddPipelineID(v int64) *PipelineRunUpsertBulk {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.AddPipelineID(v)
 	})
@@ -1484,14 +1484,14 @@ func (u *PipelineRunUpsertBulk) ClearFinishedAt() *PipelineRunUpsertBulk {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *PipelineRunUpsertBulk) SetOperatorID(v uint64) *PipelineRunUpsertBulk {
+func (u *PipelineRunUpsertBulk) SetOperatorID(v int64) *PipelineRunUpsertBulk {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *PipelineRunUpsertBulk) AddOperatorID(v uint64) *PipelineRunUpsertBulk {
+func (u *PipelineRunUpsertBulk) AddOperatorID(v int64) *PipelineRunUpsertBulk {
 	return u.Update(func(s *PipelineRunUpsert) {
 		s.AddOperatorID(v)
 	})

@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -18,7 +18,6 @@ import (
 	"go-wind-ops/app/core/service/internal/data"
 
 	taskV1 "go-wind-ops/api/gen/go/task/service/v1"
-
 )
 
 // TaskScheduler 任务调度接口
@@ -46,7 +45,7 @@ type TaskService struct {
 	taskRepo *data.TaskRepo
 
 	// asynq Redis URI（与 asynq server 同源），用于懒建只读 Inspector 查执行记录
-	asynqRedisURI string
+	asynqRedisURI  string
 	asynqInspector *asynq.Inspector
 }
 
@@ -146,7 +145,7 @@ func (s *TaskService) ListTaskExecutions(ctx context.Context, req *taskV1.ListTa
 		infos = filtered
 	}
 
-	total := uint64(len(infos))
+	total := int64(len(infos))
 
 	// 内存分页
 	page := int(req.GetPage())
@@ -563,4 +562,3 @@ func (s *TaskService) startTask(t *taskV1.Task) error {
 
 	return nil
 }
-

@@ -54,7 +54,7 @@ message CloudAccount {
     DISABLED = 2; // 禁用
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 账号ID
@@ -101,13 +101,13 @@ message CloudAccount {
 }
 
 message ListCloudAccountsResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated CloudAccount items = 2 [json_name = "items"]; // 云账号列表
 }
 
 message GetCloudAccountRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
@@ -127,7 +127,7 @@ message CreateCloudAccountRequest {
 
 message UpdateCloudAccountRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
@@ -142,7 +142,7 @@ message UpdateCloudAccountRequest {
 
 message DeleteCloudAccountRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID
@@ -150,7 +150,7 @@ message DeleteCloudAccountRequest {
 
 message VerifyCloudAccountRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖,否则 oneof 重复赋值 400
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 账号ID

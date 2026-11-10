@@ -252,11 +252,11 @@ func (m *terminalSessionManager) open(sessionId string, cols, rows uint32) (*ter
 	}
 
 	sess := &terminalSession{
-		id:        sessionId,
-		pty:       pt,
-		ptyCmd:    ptyCmd,
-		shellName: shellName,
-		cancel:    cancel,
+		id:         sessionId,
+		pty:        pt,
+		ptyCmd:     ptyCmd,
+		shellName:  shellName,
+		cancel:     cancel,
 		lastActive: time.Now(),
 	}
 	if err = m.put(sess); err != nil {

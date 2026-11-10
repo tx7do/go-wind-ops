@@ -99,7 +99,7 @@ func readProcRowsWindows() ([]procRow, error) {
 		if len(rec) < 5 {
 			continue
 		}
-		pid, _ := strconv.ParseUint(strings.TrimSpace(rec[1]), 10, 32)
+		pid, _ := strconv.ParseInt(strings.TrimSpace(rec[1]), 10, 64)
 		memKB, _ := strconv.ParseFloat(strings.ReplaceAll(strings.TrimSuffix(strings.TrimSpace(rec[4]), " K"), ",", ""), 64)
 		rows = append(rows, procRow{name: strings.TrimSpace(rec[0]), pid: uint32(pid), memMB: memKB / 1024})
 	}
@@ -118,7 +118,7 @@ func readProcRowsUnix() ([]procRow, error) {
 		if len(fields) < 3 {
 			continue
 		}
-		pid, _ := strconv.ParseUint(fields[0], 10, 32)
+		pid, _ := strconv.ParseInt(fields[0], 10, 64)
 		pmem, _ := strconv.ParseFloat(fields[1], 64)
 		comm := fields[2]
 		if i := strings.LastIndexByte(comm, '/'); i >= 0 {

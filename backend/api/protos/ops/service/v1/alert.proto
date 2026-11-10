@@ -26,17 +26,17 @@ service AlertService {
 
 // 告警记录
 message Alert {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 告警ID
 
-  optional uint64 monitor_id = 2 [
+  optional int64 monitor_id = 2 [
     json_name = "monitorId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 来源规则/域对象(非 MONITOR 来源存域对象 ID:预算 ID/证书 ID/失联节点 ID)
 
-  optional uint64 project_id = 3 [
+  optional int64 project_id = 3 [
     json_name = "projectId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 关联项目
@@ -61,7 +61,7 @@ message Alert {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 是否已外呼 webhook
 
-  optional uint64 node_id = 8 [
+  optional int64 node_id = 8 [
     json_name = "nodeId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 关联节点(节点指标/节点失联告警;项目状态/预算/证书告警为 0)
@@ -83,19 +83,19 @@ message Alert {
 }
 
 message ListAlertResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated Alert items = 2 [json_name = "items"]; // 告警列表
 }
 
 message GetAlertRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 告警ID
 }
 
 message ResolveAlertRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 告警ID

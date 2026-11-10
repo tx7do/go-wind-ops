@@ -37,7 +37,7 @@ func (BackupTask) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("目标节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -74,7 +74,7 @@ func (BackupTask) Fields() []ent.Field {
 func (BackupTask) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

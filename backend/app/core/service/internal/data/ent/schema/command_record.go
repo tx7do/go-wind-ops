@@ -38,7 +38,7 @@ func (CommandRecord) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("目标节点(ops_agent_nodes.id);离线注入等无记录场景为 0").
 			Default(0).
 			Optional().
@@ -76,13 +76,13 @@ func (CommandRecord) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("operator_id").
+		field.Int64("operator_id").
 			Comment("触发指令的用户").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint64("batch_id").
+		field.Int64("batch_id").
 			Comment("所属脚本批量执行批次(ops_script_batches.id;非批量指令为 0)").
 			Default(0).
 			Optional(),
@@ -98,7 +98,7 @@ func (CommandRecord) Fields() []ent.Field {
 func (CommandRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

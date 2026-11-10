@@ -48,7 +48,7 @@ func (r *AuditRetentionRepo) DeleteOlderThan(ctx context.Context, cutoff time.Ti
 	client := r.entClient.Client()
 	var total int64
 
-	sweep := func(table string, queryIDs func(context.Context) ([]uint64, error), deleteIDs func(context.Context, []uint64) (int, error)) {
+	sweep := func(table string, queryIDs func(context.Context) ([]int64, error), deleteIDs func(context.Context, []int64) (int, error)) {
 		ids, err := queryIDs(ctx)
 		if err != nil {
 			r.log.Warnf("audit retention sweep %s select: %s", table, err.Error())
@@ -66,48 +66,48 @@ func (r *AuditRetentionRepo) DeleteOlderThan(ctx context.Context, cutoff time.Ti
 	}
 
 	sweep("operation",
-		func(ctx context.Context) ([]uint64, error) {
+		func(ctx context.Context) ([]int64, error) {
 			return client.OperationAuditLog.Query().
 				Where(operationauditlog.CreatedAtLT(cutoff)).
 				Limit(limit).IDs(ctx)
 		},
-		func(ctx context.Context, ids []uint64) (int, error) {
+		func(ctx context.Context, ids []int64) (int, error) {
 			return client.OperationAuditLog.Delete().Where(operationauditlog.IDIn(ids...)).Exec(ctx)
 		})
 	sweep("login",
-		func(ctx context.Context) ([]uint64, error) {
+		func(ctx context.Context) ([]int64, error) {
 			return client.LoginAuditLog.Query().
 				Where(loginauditlog.CreatedAtLT(cutoff)).
 				Limit(limit).IDs(ctx)
 		},
-		func(ctx context.Context, ids []uint64) (int, error) {
+		func(ctx context.Context, ids []int64) (int, error) {
 			return client.LoginAuditLog.Delete().Where(loginauditlog.IDIn(ids...)).Exec(ctx)
 		})
 	sweep("api",
-		func(ctx context.Context) ([]uint64, error) {
+		func(ctx context.Context) ([]int64, error) {
 			return client.ApiAuditLog.Query().
 				Where(apiauditlog.CreatedAtLT(cutoff)).
 				Limit(limit).IDs(ctx)
 		},
-		func(ctx context.Context, ids []uint64) (int, error) {
+		func(ctx context.Context, ids []int64) (int, error) {
 			return client.ApiAuditLog.Delete().Where(apiauditlog.IDIn(ids...)).Exec(ctx)
 		})
 	sweep("data-access",
-		func(ctx context.Context) ([]uint64, error) {
+		func(ctx context.Context) ([]int64, error) {
 			return client.DataAccessAuditLog.Query().
 				Where(dataaccessauditlog.CreatedAtLT(cutoff)).
 				Limit(limit).IDs(ctx)
 		},
-		func(ctx context.Context, ids []uint64) (int, error) {
+		func(ctx context.Context, ids []int64) (int, error) {
 			return client.DataAccessAuditLog.Delete().Where(dataaccessauditlog.IDIn(ids...)).Exec(ctx)
 		})
 	sweep("permission",
-		func(ctx context.Context) ([]uint64, error) {
+		func(ctx context.Context) ([]int64, error) {
 			return client.PermissionAuditLog.Query().
 				Where(permissionauditlog.CreatedAtLT(cutoff)).
 				Limit(limit).IDs(ctx)
 		},
-		func(ctx context.Context, ids []uint64) (int, error) {
+		func(ctx context.Context, ids []int64) (int, error) {
 			return client.PermissionAuditLog.Delete().Where(permissionauditlog.IDIn(ids...)).Exec(ctx)
 		})
 

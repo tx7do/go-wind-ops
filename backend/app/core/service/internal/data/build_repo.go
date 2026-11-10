@@ -119,7 +119,7 @@ func (r *BuildRepo) Get(ctx context.Context, req *opsV1.GetBuildRequest) (*opsV1
 }
 
 // GetEntity 读取 ent 实体(后台归因用:cron 触发时取构建配置租户)。
-func (r *BuildRepo) GetEntity(ctx context.Context, id uint64) (*ent.Build, error) {
+func (r *BuildRepo) GetEntity(ctx context.Context, id int64) (*ent.Build, error) {
 	return r.entClient.Client().Build.
 		Query().
 		Where(build.IDEQ(id)).
@@ -127,7 +127,7 @@ func (r *BuildRepo) GetEntity(ctx context.Context, id uint64) (*ent.Build, error
 }
 
 // IsNameTaken 校验构建名唯一性。
-func (r *BuildRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *BuildRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Build.Query().Where(build.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(build.IDNEQ(excludeID))
@@ -140,7 +140,7 @@ func (r *BuildRepo) IsNameTaken(ctx context.Context, name string, excludeID uint
 	return exist, nil
 }
 
-func (r *BuildRepo) Create(ctx context.Context, req *opsV1.CreateBuildRequest, operatorID uint64) (*opsV1.Build, error) {
+func (r *BuildRepo) Create(ctx context.Context, req *opsV1.CreateBuildRequest, operatorID int64) (*opsV1.Build, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -230,7 +230,7 @@ func (r *BuildRepo) Delete(ctx context.Context, req *opsV1.DeleteBuildRequest) e
 // AdvanceCronAnchorFromNull 给空锚点任务落初始锚点(仅 NULL 行生效):
 // 新建任务 last_cron_at 为 NULL,直接 CAS(EQ)永远匹配不上,导致定时
 // 调度从未触发;首见先落锚不补跑,从下一个周期起正常调度。
-func (r *BuildRepo) AdvanceCronAnchorFromNull(ctx context.Context, buildID uint64, now time.Time) (bool, error) {
+func (r *BuildRepo) AdvanceCronAnchorFromNull(ctx context.Context, buildID int64, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Build.
 		Update().
 		Where(
@@ -244,7 +244,7 @@ func (r *BuildRepo) AdvanceCronAnchorFromNull(ctx context.Context, buildID uint6
 
 // AdvanceCronAnchor CAS 推进定时调度锚点:仅当 last_cron_at 仍等于 expected
 // 时更新为 now,返回是否抢到(多副本去重)。
-func (r *BuildRepo) AdvanceCronAnchor(ctx context.Context, buildID uint64, expected, now time.Time) (bool, error) {
+func (r *BuildRepo) AdvanceCronAnchor(ctx context.Context, buildID int64, expected, now time.Time) (bool, error) {
 	n, err := r.entClient.Client().Build.
 		Update().
 		Where(

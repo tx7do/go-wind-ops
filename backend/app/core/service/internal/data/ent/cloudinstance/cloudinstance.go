@@ -102,9 +102,9 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// CloudAccountIDValidator is a validator for the "cloud_account_id" field. It is called by the builders before save.
-	CloudAccountIDValidator func(uint64) error
+	CloudAccountIDValidator func(int64) error
 	// RegionValidator is a validator for the "region" field. It is called by the builders before save.
 	RegionValidator func(string) error
 	// InstanceIDValidator is a validator for the "instance_id" field. It is called by the builders before save.
@@ -112,7 +112,7 @@ var (
 	// DefaultMatched holds the default value on creation for the "matched" field.
 	DefaultMatched bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Provider defines the type for the "provider" enum field.

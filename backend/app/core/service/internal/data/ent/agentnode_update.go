@@ -71,14 +71,14 @@ func (_u *AgentNodeUpdate) ClearDeletedAt() *AgentNodeUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *AgentNodeUpdate) SetCreatedBy(v uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetCreatedBy(v int64) *AgentNodeUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *AgentNodeUpdate) SetNillableCreatedBy(v *uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetNillableCreatedBy(v *int64) *AgentNodeUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *AgentNodeUpdate) ClearCreatedBy() *AgentNodeUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *AgentNodeUpdate) SetUpdatedBy(v uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetUpdatedBy(v int64) *AgentNodeUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *AgentNodeUpdate) SetNillableUpdatedBy(v *uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetNillableUpdatedBy(v *int64) *AgentNodeUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *AgentNodeUpdate) ClearUpdatedBy() *AgentNodeUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *AgentNodeUpdate) SetDeletedBy(v uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetDeletedBy(v int64) *AgentNodeUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *AgentNodeUpdate) SetNillableDeletedBy(v *uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetNillableDeletedBy(v *int64) *AgentNodeUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -439,14 +439,14 @@ func (_u *AgentNodeUpdate) ClearCPUCores() *AgentNodeUpdate {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_u *AgentNodeUpdate) SetMemTotalBytes(v uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetMemTotalBytes(v int64) *AgentNodeUpdate {
 	_u.mutation.ResetMemTotalBytes()
 	_u.mutation.SetMemTotalBytes(v)
 	return _u
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_u *AgentNodeUpdate) SetNillableMemTotalBytes(v *uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetNillableMemTotalBytes(v *int64) *AgentNodeUpdate {
 	if v != nil {
 		_u.SetMemTotalBytes(*v)
 	}
@@ -565,14 +565,14 @@ func (_u *AgentNodeUpdate) ClearDiskUsedPercent() *AgentNodeUpdate {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_u *AgentNodeUpdate) SetUptimeSeconds(v uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetUptimeSeconds(v int64) *AgentNodeUpdate {
 	_u.mutation.ResetUptimeSeconds()
 	_u.mutation.SetUptimeSeconds(v)
 	return _u
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_u *AgentNodeUpdate) SetNillableUptimeSeconds(v *uint64) *AgentNodeUpdate {
+func (_u *AgentNodeUpdate) SetNillableUptimeSeconds(v *int64) *AgentNodeUpdate {
 	if v != nil {
 		_u.SetUptimeSeconds(*v)
 	}
@@ -673,7 +673,7 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(agentnode.Table, agentnode.Columns, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(agentnode.Table, agentnode.Columns, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -697,31 +697,31 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(agentnode.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(agentnode.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(agentnode.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(agentnode.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(agentnode.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(agentnode.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(agentnode.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(agentnode.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(agentnode.FieldAgentID, field.TypeString, value)
@@ -813,13 +813,13 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(agentnode.FieldCPUCores, field.TypeInt)
 	}
 	if value, ok := _u.mutation.MemTotalBytes(); ok {
-		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMemTotalBytes(); ok {
-		_spec.AddField(agentnode.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if _u.mutation.MemTotalBytesCleared() {
-		_spec.ClearField(agentnode.FieldMemTotalBytes, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldMemTotalBytes, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Labels(); ok {
 		_spec.SetField(agentnode.FieldLabels, field.TypeJSON, value)
@@ -860,13 +860,13 @@ func (_u *AgentNodeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(agentnode.FieldDiskUsedPercent, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.UptimeSeconds(); ok {
-		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUptimeSeconds(); ok {
-		_spec.AddField(agentnode.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if _u.mutation.UptimeSecondsCleared() {
-		_spec.ClearField(agentnode.FieldUptimeSeconds, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldUptimeSeconds, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LastHeartbeatAt(); ok {
 		_spec.SetField(agentnode.FieldLastHeartbeatAt, field.TypeTime, value)
@@ -937,14 +937,14 @@ func (_u *AgentNodeUpdateOne) ClearDeletedAt() *AgentNodeUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *AgentNodeUpdateOne) SetCreatedBy(v uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetCreatedBy(v int64) *AgentNodeUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *AgentNodeUpdateOne) SetNillableCreatedBy(v *uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetNillableCreatedBy(v *int64) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -964,14 +964,14 @@ func (_u *AgentNodeUpdateOne) ClearCreatedBy() *AgentNodeUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *AgentNodeUpdateOne) SetUpdatedBy(v uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetUpdatedBy(v int64) *AgentNodeUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *AgentNodeUpdateOne) SetNillableUpdatedBy(v *uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetNillableUpdatedBy(v *int64) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -991,14 +991,14 @@ func (_u *AgentNodeUpdateOne) ClearUpdatedBy() *AgentNodeUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *AgentNodeUpdateOne) SetDeletedBy(v uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetDeletedBy(v int64) *AgentNodeUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *AgentNodeUpdateOne) SetNillableDeletedBy(v *uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetNillableDeletedBy(v *int64) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -1305,14 +1305,14 @@ func (_u *AgentNodeUpdateOne) ClearCPUCores() *AgentNodeUpdateOne {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_u *AgentNodeUpdateOne) SetMemTotalBytes(v uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetMemTotalBytes(v int64) *AgentNodeUpdateOne {
 	_u.mutation.ResetMemTotalBytes()
 	_u.mutation.SetMemTotalBytes(v)
 	return _u
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_u *AgentNodeUpdateOne) SetNillableMemTotalBytes(v *uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetNillableMemTotalBytes(v *int64) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetMemTotalBytes(*v)
 	}
@@ -1431,14 +1431,14 @@ func (_u *AgentNodeUpdateOne) ClearDiskUsedPercent() *AgentNodeUpdateOne {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_u *AgentNodeUpdateOne) SetUptimeSeconds(v uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetUptimeSeconds(v int64) *AgentNodeUpdateOne {
 	_u.mutation.ResetUptimeSeconds()
 	_u.mutation.SetUptimeSeconds(v)
 	return _u
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_u *AgentNodeUpdateOne) SetNillableUptimeSeconds(v *uint64) *AgentNodeUpdateOne {
+func (_u *AgentNodeUpdateOne) SetNillableUptimeSeconds(v *int64) *AgentNodeUpdateOne {
 	if v != nil {
 		_u.SetUptimeSeconds(*v)
 	}
@@ -1552,7 +1552,7 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(agentnode.Table, agentnode.Columns, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(agentnode.Table, agentnode.Columns, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AgentNode.id" for update`)}
@@ -1593,31 +1593,31 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 		_spec.ClearField(agentnode.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(agentnode.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(agentnode.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(agentnode.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(agentnode.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(agentnode.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(agentnode.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(agentnode.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(agentnode.FieldAgentID, field.TypeString, value)
@@ -1709,13 +1709,13 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 		_spec.ClearField(agentnode.FieldCPUCores, field.TypeInt)
 	}
 	if value, ok := _u.mutation.MemTotalBytes(); ok {
-		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMemTotalBytes(); ok {
-		_spec.AddField(agentnode.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if _u.mutation.MemTotalBytesCleared() {
-		_spec.ClearField(agentnode.FieldMemTotalBytes, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldMemTotalBytes, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Labels(); ok {
 		_spec.SetField(agentnode.FieldLabels, field.TypeJSON, value)
@@ -1756,13 +1756,13 @@ func (_u *AgentNodeUpdateOne) sqlSave(ctx context.Context) (_node *AgentNode, er
 		_spec.ClearField(agentnode.FieldDiskUsedPercent, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.UptimeSeconds(); ok {
-		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUptimeSeconds(); ok {
-		_spec.AddField(agentnode.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.AddField(agentnode.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if _u.mutation.UptimeSecondsCleared() {
-		_spec.ClearField(agentnode.FieldUptimeSeconds, field.TypeUint64)
+		_spec.ClearField(agentnode.FieldUptimeSeconds, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LastHeartbeatAt(); ok {
 		_spec.SetField(agentnode.FieldLastHeartbeatAt, field.TypeTime, value)

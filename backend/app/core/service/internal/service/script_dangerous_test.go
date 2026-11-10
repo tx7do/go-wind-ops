@@ -32,7 +32,7 @@ func TestFindDangerousPatterns(t *testing.T) {
 		{"powershell 递归删盘根", "Remove-Item -Recurse -Force C:\\", map[string]bool{"PowerShell 递归删盘根": true}, 1},
 		{"fork 炸弹", ":(){ :|:& };:", map[string]bool{"fork 炸弹": true}, 1},
 		{"多命中去重保序", "reboot\nshutdown -h", map[string]bool{
-			"重启 (reboot)":                true,
+			"重启 (reboot)":                 true,
 			"关机 (shutdown/halt/poweroff)": true,
 		}, 2},
 	}

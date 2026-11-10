@@ -70,14 +70,14 @@ func (_u *AlertUpdate) ClearDeletedAt() *AlertUpdate {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (_u *AlertUpdate) SetMonitorID(v uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetMonitorID(v int64) *AlertUpdate {
 	_u.mutation.ResetMonitorID()
 	_u.mutation.SetMonitorID(v)
 	return _u
 }
 
 // SetNillableMonitorID sets the "monitor_id" field if the given value is not nil.
-func (_u *AlertUpdate) SetNillableMonitorID(v *uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetNillableMonitorID(v *int64) *AlertUpdate {
 	if v != nil {
 		_u.SetMonitorID(*v)
 	}
@@ -111,14 +111,14 @@ func (_u *AlertUpdate) SetNillableSource(v *string) *AlertUpdate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *AlertUpdate) SetProjectID(v uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetProjectID(v int64) *AlertUpdate {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *AlertUpdate) SetNillableProjectID(v *uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetNillableProjectID(v *int64) *AlertUpdate {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -138,14 +138,14 @@ func (_u *AlertUpdate) ClearProjectID() *AlertUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *AlertUpdate) SetNodeID(v uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetNodeID(v int64) *AlertUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *AlertUpdate) SetNillableNodeID(v *uint64) *AlertUpdate {
+func (_u *AlertUpdate) SetNillableNodeID(v *int64) *AlertUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -297,7 +297,7 @@ func (_u *AlertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -306,7 +306,7 @@ func (_u *AlertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(alert.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(alert.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(alert.FieldCreatedAt, field.TypeTime)
@@ -324,34 +324,34 @@ func (_u *AlertUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(alert.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.MonitorID(); ok {
-		_spec.SetField(alert.FieldMonitorID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldMonitorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMonitorID(); ok {
-		_spec.AddField(alert.FieldMonitorID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldMonitorID, field.TypeInt64, value)
 	}
 	if _u.mutation.MonitorIDCleared() {
-		_spec.ClearField(alert.FieldMonitorID, field.TypeUint64)
+		_spec.ClearField(alert.FieldMonitorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Source(); ok {
 		_spec.SetField(alert.FieldSource, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(alert.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(alert.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(alert.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(alert.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(alert.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(alert.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(alert.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(alert.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Level(); ok {
 		_spec.SetField(alert.FieldLevel, field.TypeEnum, value)
@@ -434,14 +434,14 @@ func (_u *AlertUpdateOne) ClearDeletedAt() *AlertUpdateOne {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (_u *AlertUpdateOne) SetMonitorID(v uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetMonitorID(v int64) *AlertUpdateOne {
 	_u.mutation.ResetMonitorID()
 	_u.mutation.SetMonitorID(v)
 	return _u
 }
 
 // SetNillableMonitorID sets the "monitor_id" field if the given value is not nil.
-func (_u *AlertUpdateOne) SetNillableMonitorID(v *uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetNillableMonitorID(v *int64) *AlertUpdateOne {
 	if v != nil {
 		_u.SetMonitorID(*v)
 	}
@@ -475,14 +475,14 @@ func (_u *AlertUpdateOne) SetNillableSource(v *string) *AlertUpdateOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *AlertUpdateOne) SetProjectID(v uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetProjectID(v int64) *AlertUpdateOne {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *AlertUpdateOne) SetNillableProjectID(v *uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetNillableProjectID(v *int64) *AlertUpdateOne {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -502,14 +502,14 @@ func (_u *AlertUpdateOne) ClearProjectID() *AlertUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *AlertUpdateOne) SetNodeID(v uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetNodeID(v int64) *AlertUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *AlertUpdateOne) SetNillableNodeID(v *uint64) *AlertUpdateOne {
+func (_u *AlertUpdateOne) SetNillableNodeID(v *int64) *AlertUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -674,7 +674,7 @@ func (_u *AlertUpdateOne) sqlSave(ctx context.Context) (_node *Alert, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(alert.Table, alert.Columns, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Alert.id" for update`)}
@@ -700,7 +700,7 @@ func (_u *AlertUpdateOne) sqlSave(ctx context.Context) (_node *Alert, err error)
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(alert.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(alert.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(alert.FieldCreatedAt, field.TypeTime)
@@ -718,34 +718,34 @@ func (_u *AlertUpdateOne) sqlSave(ctx context.Context) (_node *Alert, err error)
 		_spec.ClearField(alert.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.MonitorID(); ok {
-		_spec.SetField(alert.FieldMonitorID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldMonitorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMonitorID(); ok {
-		_spec.AddField(alert.FieldMonitorID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldMonitorID, field.TypeInt64, value)
 	}
 	if _u.mutation.MonitorIDCleared() {
-		_spec.ClearField(alert.FieldMonitorID, field.TypeUint64)
+		_spec.ClearField(alert.FieldMonitorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Source(); ok {
 		_spec.SetField(alert.FieldSource, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(alert.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(alert.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(alert.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(alert.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(alert.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(alert.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(alert.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(alert.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(alert.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Level(); ok {
 		_spec.SetField(alert.FieldLevel, field.TypeEnum, value)

@@ -23,13 +23,13 @@ type BackupTaskCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *BackupTaskCreate) SetTenantID(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetTenantID(v int64) *BackupTaskCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *BackupTaskCreate) SetNillableTenantID(v *uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetNillableTenantID(v *int64) *BackupTaskCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *BackupTaskCreate) SetNillableDeletedAt(v *time.Time) *BackupTaskCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *BackupTaskCreate) SetCreatedBy(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetCreatedBy(v int64) *BackupTaskCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *BackupTaskCreate) SetNillableCreatedBy(v *uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetNillableCreatedBy(v *int64) *BackupTaskCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *BackupTaskCreate) SetNillableCreatedBy(v *uint64) *BackupTaskCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *BackupTaskCreate) SetUpdatedBy(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetUpdatedBy(v int64) *BackupTaskCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *BackupTaskCreate) SetNillableUpdatedBy(v *uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetNillableUpdatedBy(v *int64) *BackupTaskCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *BackupTaskCreate) SetNillableUpdatedBy(v *uint64) *BackupTaskCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *BackupTaskCreate) SetDeletedBy(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetDeletedBy(v int64) *BackupTaskCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *BackupTaskCreate) SetNillableDeletedBy(v *uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetNillableDeletedBy(v *int64) *BackupTaskCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -127,7 +127,7 @@ func (_c *BackupTaskCreate) SetName(v string) *BackupTaskCreate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *BackupTaskCreate) SetNodeID(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetNodeID(v int64) *BackupTaskCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -209,7 +209,7 @@ func (_c *BackupTaskCreate) SetNillableDescription(v *string) *BackupTaskCreate 
 }
 
 // SetID sets the "id" field.
-func (_c *BackupTaskCreate) SetID(v uint64) *BackupTaskCreate {
+func (_c *BackupTaskCreate) SetID(v int64) *BackupTaskCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -323,7 +323,7 @@ func (_c *BackupTaskCreate) sqlSave(ctx context.Context) (*BackupTask, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -333,7 +333,7 @@ func (_c *BackupTaskCreate) sqlSave(ctx context.Context) (*BackupTask, error) {
 func (_c *BackupTaskCreate) createSpec() (*BackupTask, *sqlgraph.CreateSpec) {
 	var (
 		_node = &BackupTask{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(backuptask.Table, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(backuptask.Table, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -341,7 +341,7 @@ func (_c *BackupTaskCreate) createSpec() (*BackupTask, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(backuptask.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(backuptask.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -357,15 +357,15 @@ func (_c *BackupTaskCreate) createSpec() (*BackupTask, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(backuptask.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(backuptask.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(backuptask.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(backuptask.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -373,7 +373,7 @@ func (_c *BackupTaskCreate) createSpec() (*BackupTask, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(backuptask.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(backuptask.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.SourceDir(); ok {
@@ -489,7 +489,7 @@ func (u *BackupTaskUpsert) ClearDeletedAt() *BackupTaskUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BackupTaskUpsert) SetCreatedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) SetCreatedBy(v int64) *BackupTaskUpsert {
 	u.Set(backuptask.FieldCreatedBy, v)
 	return u
 }
@@ -501,7 +501,7 @@ func (u *BackupTaskUpsert) UpdateCreatedBy() *BackupTaskUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BackupTaskUpsert) AddCreatedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) AddCreatedBy(v int64) *BackupTaskUpsert {
 	u.Add(backuptask.FieldCreatedBy, v)
 	return u
 }
@@ -513,7 +513,7 @@ func (u *BackupTaskUpsert) ClearCreatedBy() *BackupTaskUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BackupTaskUpsert) SetUpdatedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) SetUpdatedBy(v int64) *BackupTaskUpsert {
 	u.Set(backuptask.FieldUpdatedBy, v)
 	return u
 }
@@ -525,7 +525,7 @@ func (u *BackupTaskUpsert) UpdateUpdatedBy() *BackupTaskUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BackupTaskUpsert) AddUpdatedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) AddUpdatedBy(v int64) *BackupTaskUpsert {
 	u.Add(backuptask.FieldUpdatedBy, v)
 	return u
 }
@@ -537,7 +537,7 @@ func (u *BackupTaskUpsert) ClearUpdatedBy() *BackupTaskUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BackupTaskUpsert) SetDeletedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) SetDeletedBy(v int64) *BackupTaskUpsert {
 	u.Set(backuptask.FieldDeletedBy, v)
 	return u
 }
@@ -549,7 +549,7 @@ func (u *BackupTaskUpsert) UpdateDeletedBy() *BackupTaskUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BackupTaskUpsert) AddDeletedBy(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) AddDeletedBy(v int64) *BackupTaskUpsert {
 	u.Add(backuptask.FieldDeletedBy, v)
 	return u
 }
@@ -573,7 +573,7 @@ func (u *BackupTaskUpsert) UpdateName() *BackupTaskUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *BackupTaskUpsert) SetNodeID(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) SetNodeID(v int64) *BackupTaskUpsert {
 	u.Set(backuptask.FieldNodeID, v)
 	return u
 }
@@ -585,7 +585,7 @@ func (u *BackupTaskUpsert) UpdateNodeID() *BackupTaskUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *BackupTaskUpsert) AddNodeID(v uint64) *BackupTaskUpsert {
+func (u *BackupTaskUpsert) AddNodeID(v int64) *BackupTaskUpsert {
 	u.Add(backuptask.FieldNodeID, v)
 	return u
 }
@@ -783,14 +783,14 @@ func (u *BackupTaskUpsertOne) ClearDeletedAt() *BackupTaskUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BackupTaskUpsertOne) SetCreatedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) SetCreatedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BackupTaskUpsertOne) AddCreatedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) AddCreatedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -811,14 +811,14 @@ func (u *BackupTaskUpsertOne) ClearCreatedBy() *BackupTaskUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BackupTaskUpsertOne) SetUpdatedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) SetUpdatedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BackupTaskUpsertOne) AddUpdatedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) AddUpdatedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -839,14 +839,14 @@ func (u *BackupTaskUpsertOne) ClearUpdatedBy() *BackupTaskUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BackupTaskUpsertOne) SetDeletedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) SetDeletedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BackupTaskUpsertOne) AddDeletedBy(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) AddDeletedBy(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -881,14 +881,14 @@ func (u *BackupTaskUpsertOne) UpdateName() *BackupTaskUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *BackupTaskUpsertOne) SetNodeID(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) SetNodeID(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *BackupTaskUpsertOne) AddNodeID(v uint64) *BackupTaskUpsertOne {
+func (u *BackupTaskUpsertOne) AddNodeID(v int64) *BackupTaskUpsertOne {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1029,7 +1029,7 @@ func (u *BackupTaskUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BackupTaskUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *BackupTaskUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1038,7 +1038,7 @@ func (u *BackupTaskUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BackupTaskUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *BackupTaskUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1095,7 +1095,7 @@ func (_c *BackupTaskCreateBulk) Save(ctx context.Context) ([]*BackupTask, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1276,14 +1276,14 @@ func (u *BackupTaskUpsertBulk) ClearDeletedAt() *BackupTaskUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BackupTaskUpsertBulk) SetCreatedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) SetCreatedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BackupTaskUpsertBulk) AddCreatedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) AddCreatedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1304,14 +1304,14 @@ func (u *BackupTaskUpsertBulk) ClearCreatedBy() *BackupTaskUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BackupTaskUpsertBulk) SetUpdatedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) SetUpdatedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BackupTaskUpsertBulk) AddUpdatedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) AddUpdatedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1332,14 +1332,14 @@ func (u *BackupTaskUpsertBulk) ClearUpdatedBy() *BackupTaskUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BackupTaskUpsertBulk) SetDeletedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) SetDeletedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BackupTaskUpsertBulk) AddDeletedBy(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) AddDeletedBy(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1374,14 +1374,14 @@ func (u *BackupTaskUpsertBulk) UpdateName() *BackupTaskUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *BackupTaskUpsertBulk) SetNodeID(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) SetNodeID(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *BackupTaskUpsertBulk) AddNodeID(v uint64) *BackupTaskUpsertBulk {
+func (u *BackupTaskUpsertBulk) AddNodeID(v int64) *BackupTaskUpsertBulk {
 	return u.Update(func(s *BackupTaskUpsert) {
 		s.AddNodeID(v)
 	})

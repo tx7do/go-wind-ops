@@ -6,7 +6,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 
-
 	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -20,8 +19,8 @@ import (
 	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 	dictV1 "go-wind-ops/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 	opsV1 "go-wind-ops/api/gen/go/ops/service/v1"
+	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 	taskV1 "go-wind-ops/api/gen/go/task/service/v1"
 
 	"go-wind-ops/pkg/middleware/rpcsecret"
@@ -79,7 +78,6 @@ func NewDiscovery(ctx *bootstrap.Context) registry.Discovery {
 	if err != nil {
 		return nil
 	}
-
 
 	return discovery
 }

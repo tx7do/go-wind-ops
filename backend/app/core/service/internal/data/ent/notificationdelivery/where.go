@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.NotificationDelivery {
+func ID(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.NotificationDelivery {
+func IDEQ(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.NotificationDelivery {
+func IDNEQ(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.NotificationDelivery {
+func IDIn(ids ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.NotificationDelivery {
+func IDNotIn(ids ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.NotificationDelivery {
+func IDGT(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.NotificationDelivery {
+func IDGTE(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.NotificationDelivery {
+func IDLT(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.NotificationDelivery {
+func IDLTE(id int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.NotificationDelivery {
+func TenantID(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,12 +75,12 @@ func DeletedAt(v time.Time) predicate.NotificationDelivery {
 }
 
 // AlertID applies equality check predicate on the "alert_id" field. It's identical to AlertIDEQ.
-func AlertID(v uint64) predicate.NotificationDelivery {
+func AlertID(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldAlertID, v))
 }
 
 // ChannelID applies equality check predicate on the "channel_id" field. It's identical to ChannelIDEQ.
-func ChannelID(v uint64) predicate.NotificationDelivery {
+func ChannelID(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldChannelID, v))
 }
 
@@ -110,42 +110,42 @@ func Content(v string) predicate.NotificationDelivery {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.NotificationDelivery {
+func TenantIDEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.NotificationDelivery {
+func TenantIDNEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.NotificationDelivery {
+func TenantIDIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.NotificationDelivery {
+func TenantIDNotIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.NotificationDelivery {
+func TenantIDGT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.NotificationDelivery {
+func TenantIDGTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.NotificationDelivery {
+func TenantIDLT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.NotificationDelivery {
+func TenantIDLTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -310,82 +310,82 @@ func DeletedAtNotNil() predicate.NotificationDelivery {
 }
 
 // AlertIDEQ applies the EQ predicate on the "alert_id" field.
-func AlertIDEQ(v uint64) predicate.NotificationDelivery {
+func AlertIDEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldAlertID, v))
 }
 
 // AlertIDNEQ applies the NEQ predicate on the "alert_id" field.
-func AlertIDNEQ(v uint64) predicate.NotificationDelivery {
+func AlertIDNEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNEQ(FieldAlertID, v))
 }
 
 // AlertIDIn applies the In predicate on the "alert_id" field.
-func AlertIDIn(vs ...uint64) predicate.NotificationDelivery {
+func AlertIDIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldIn(FieldAlertID, vs...))
 }
 
 // AlertIDNotIn applies the NotIn predicate on the "alert_id" field.
-func AlertIDNotIn(vs ...uint64) predicate.NotificationDelivery {
+func AlertIDNotIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNotIn(FieldAlertID, vs...))
 }
 
 // AlertIDGT applies the GT predicate on the "alert_id" field.
-func AlertIDGT(v uint64) predicate.NotificationDelivery {
+func AlertIDGT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGT(FieldAlertID, v))
 }
 
 // AlertIDGTE applies the GTE predicate on the "alert_id" field.
-func AlertIDGTE(v uint64) predicate.NotificationDelivery {
+func AlertIDGTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGTE(FieldAlertID, v))
 }
 
 // AlertIDLT applies the LT predicate on the "alert_id" field.
-func AlertIDLT(v uint64) predicate.NotificationDelivery {
+func AlertIDLT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLT(FieldAlertID, v))
 }
 
 // AlertIDLTE applies the LTE predicate on the "alert_id" field.
-func AlertIDLTE(v uint64) predicate.NotificationDelivery {
+func AlertIDLTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLTE(FieldAlertID, v))
 }
 
 // ChannelIDEQ applies the EQ predicate on the "channel_id" field.
-func ChannelIDEQ(v uint64) predicate.NotificationDelivery {
+func ChannelIDEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldChannelID, v))
 }
 
 // ChannelIDNEQ applies the NEQ predicate on the "channel_id" field.
-func ChannelIDNEQ(v uint64) predicate.NotificationDelivery {
+func ChannelIDNEQ(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNEQ(FieldChannelID, v))
 }
 
 // ChannelIDIn applies the In predicate on the "channel_id" field.
-func ChannelIDIn(vs ...uint64) predicate.NotificationDelivery {
+func ChannelIDIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldIn(FieldChannelID, vs...))
 }
 
 // ChannelIDNotIn applies the NotIn predicate on the "channel_id" field.
-func ChannelIDNotIn(vs ...uint64) predicate.NotificationDelivery {
+func ChannelIDNotIn(vs ...int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNotIn(FieldChannelID, vs...))
 }
 
 // ChannelIDGT applies the GT predicate on the "channel_id" field.
-func ChannelIDGT(v uint64) predicate.NotificationDelivery {
+func ChannelIDGT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGT(FieldChannelID, v))
 }
 
 // ChannelIDGTE applies the GTE predicate on the "channel_id" field.
-func ChannelIDGTE(v uint64) predicate.NotificationDelivery {
+func ChannelIDGTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldGTE(FieldChannelID, v))
 }
 
 // ChannelIDLT applies the LT predicate on the "channel_id" field.
-func ChannelIDLT(v uint64) predicate.NotificationDelivery {
+func ChannelIDLT(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLT(FieldChannelID, v))
 }
 
 // ChannelIDLTE applies the LTE predicate on the "channel_id" field.
-func ChannelIDLTE(v uint64) predicate.NotificationDelivery {
+func ChannelIDLTE(v int64) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldLTE(FieldChannelID, v))
 }
 

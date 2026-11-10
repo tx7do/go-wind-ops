@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/maintenancewindow"
@@ -68,7 +68,7 @@ func (r *MaintenanceWindowRepo) List(ctx context.Context, req *paginationV1.Pagi
 		return nil, err
 	}
 
-	resp := &opsV1.ListMaintenanceWindowResponse{Total: uint64(total)}
+	resp := &opsV1.ListMaintenanceWindowResponse{Total: int64(total)}
 	for _, e := range rows {
 		resp.Items = append(resp.Items, r.toDTO(e))
 	}
@@ -76,7 +76,7 @@ func (r *MaintenanceWindowRepo) List(ctx context.Context, req *paginationV1.Pagi
 }
 
 // Get 详情。
-func (r *MaintenanceWindowRepo) Get(ctx context.Context, id uint64) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Get(ctx context.Context, id int64) (*opsV1.MaintenanceWindow, error) {
 	e, err := r.entClient.Client().MaintenanceWindow.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (r *MaintenanceWindowRepo) Get(ctx context.Context, id uint64) (*opsV1.Main
 }
 
 // Create 落库。
-func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsAt, endsAt time.Time, enabled bool, description *string, operatorID uint64) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsAt, endsAt time.Time, enabled bool, description *string, operatorID int64) (*opsV1.MaintenanceWindow, error) {
 	builder := r.entClient.Client().MaintenanceWindow.Create().
 		SetName(name).
 		SetStartsAt(startsAt).
@@ -105,7 +105,7 @@ func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsA
 }
 
 // Update 名称/时间/启用/描述。
-func (r *MaintenanceWindowRepo) Update(ctx context.Context, id uint64, name string, startsAt, endsAt time.Time, enabled bool, description *string) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Update(ctx context.Context, id int64, name string, startsAt, endsAt time.Time, enabled bool, description *string) (*opsV1.MaintenanceWindow, error) {
 	builder := r.entClient.Client().MaintenanceWindow.UpdateOneID(id).
 		SetName(name).
 		SetStartsAt(startsAt).
@@ -122,7 +122,7 @@ func (r *MaintenanceWindowRepo) Update(ctx context.Context, id uint64, name stri
 }
 
 // Delete 删除。
-func (r *MaintenanceWindowRepo) Delete(ctx context.Context, id uint64) error {
+func (r *MaintenanceWindowRepo) Delete(ctx context.Context, id int64) error {
 	return r.entClient.Client().MaintenanceWindow.DeleteOneID(id).Exec(ctx)
 }
 

@@ -136,8 +136,8 @@ func (ProjectOperation) EnumDescriptor() ([]byte, []int) {
 // 受管机器上的应用项目
 type Project struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                      // 项目ID
-	NodeId        *uint64                `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                                // 所属节点
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                      // 项目ID
+	NodeId        *int64                 `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                                // 所属节点
 	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                   // 项目名
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                     // 项目描述
 	ProjectDir    *string                `protobuf:"bytes,5,opt,name=project_dir,json=projectDir,proto3,oneof" json:"project_dir,omitempty"`                                     // 项目目录
@@ -146,7 +146,7 @@ type Project struct {
 	StatusCommand *string                `protobuf:"bytes,8,opt,name=status_command,json=statusCommand,proto3,oneof" json:"status_command,omitempty"`                            // 状态命令
 	Labels        []string               `protobuf:"bytes,9,rep,name=labels,proto3" json:"labels,omitempty"`                                                                     // 标签
 	Env           *string                `protobuf:"bytes,13,opt,name=env,proto3,oneof" json:"env,omitempty"`                                                                    // 环境标签
-	LastPid       *uint64                `protobuf:"varint,10,opt,name=last_pid,json=lastPid,proto3,oneof" json:"last_pid,omitempty"`                                            // 最近一次启动的进程 pid
+	LastPid       *int64                 `protobuf:"varint,10,opt,name=last_pid,json=lastPid,proto3,oneof" json:"last_pid,omitempty"`                                            // 最近一次启动的进程 pid
 	LastStatus    *ProjectStatus         `protobuf:"varint,11,opt,name=last_status,json=lastStatus,proto3,enum=ops.service.v1.ProjectStatus,oneof" json:"last_status,omitempty"` // 最近上报的运行状态
 	LastStatusAt  *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=last_status_at,json=lastStatusAt,proto3,oneof" json:"last_status_at,omitempty"`                            // 状态最近更新时间
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                       // 创建时间
@@ -185,14 +185,14 @@ func (*Project) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Project) GetId() uint64 {
+func (x *Project) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *Project) GetNodeId() uint64 {
+func (x *Project) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -255,7 +255,7 @@ func (x *Project) GetEnv() string {
 	return ""
 }
 
-func (x *Project) GetLastPid() uint64 {
+func (x *Project) GetLastPid() int64 {
 	if x != nil && x.LastPid != nil {
 		return *x.LastPid
 	}
@@ -292,7 +292,7 @@ func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListProjectResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*Project             `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 项目列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -328,7 +328,7 @@ func (*ListProjectResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListProjectResponse) GetTotal() uint64 {
+func (x *ListProjectResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -344,7 +344,7 @@ func (x *ListProjectResponse) GetItems() []*Project {
 
 type GetProjectRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -379,7 +379,7 @@ func (*GetProjectRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetProjectRequest) GetId() uint64 {
+func (x *GetProjectRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -432,7 +432,7 @@ func (x *CreateProjectRequest) GetData() *Project {
 
 type UpdateProjectRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 项目ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 项目ID
 	Data          *Project               `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -469,7 +469,7 @@ func (*UpdateProjectRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateProjectRequest) GetId() uint64 {
+func (x *UpdateProjectRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -492,7 +492,7 @@ func (x *UpdateProjectRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteProjectRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -527,7 +527,7 @@ func (*DeleteProjectRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteProjectRequest) GetId() uint64 {
+func (x *DeleteProjectRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -536,7 +536,7 @@ func (x *DeleteProjectRequest) GetId() uint64 {
 
 type OperateProjectRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 项目ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 项目ID
 	Operation     ProjectOperation       `protobuf:"varint,2,opt,name=operation,proto3,enum=ops.service.v1.ProjectOperation" json:"operation,omitempty"` // 生命周期操作
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -572,7 +572,7 @@ func (*OperateProjectRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *OperateProjectRequest) GetId() uint64 {
+func (x *OperateProjectRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -632,7 +632,7 @@ func (x *OperateProjectResponse) GetRequestId() string {
 
 type GetProjectLogRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                             // 项目ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                             // 项目ID
 	MaxBytes      *int32                 `protobuf:"varint,2,opt,name=max_bytes,json=maxBytes,proto3,oneof" json:"max_bytes,omitempty"` // 读取尾部字节数
 	Offset        *int64                 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`                     // 增量偏移
 	unknownFields protoimpl.UnknownFields
@@ -669,7 +669,7 @@ func (*GetProjectLogRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetProjectLogRequest) GetId() uint64 {
+func (x *GetProjectLogRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -768,7 +768,7 @@ func (x *GetProjectLogResponse) GetOffset() int64 {
 
 type ClearProjectLogRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 项目ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -803,7 +803,7 @@ func (*ClearProjectLogRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_project_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ClearProjectLogRequest) GetId() uint64 {
+func (x *ClearProjectLogRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -816,8 +816,8 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\n" +
 	"\x1cops/service/v1/project.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xda\t\n" +
 	"\aProject\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x125\n" +
-	"\anode_id\x18\x02 \x01(\x04B\x17\xe0A\x02\xbaG\x11\x92\x02\x0e所属节点IDH\x01R\x06nodeId\x88\x01\x01\x12<\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x125\n" +
+	"\anode_id\x18\x02 \x01(\x03B\x17\xe0A\x02\xbaG\x11\x92\x02\x0e所属节点IDH\x01R\x06nodeId\x88\x01\x01\x12<\n" +
 	"\x04name\x18\x03 \x01(\tB#\xe0A\x02\xbaG\x1d\x92\x02\x1a项目名(节点内唯一)H\x02R\x04name\x88\x01\x01\x129\n" +
 	"\vdescription\x18\x04 \x01(\tB\x12\xbaG\x0f\x92\x02\f项目描述H\x03R\vdescription\x88\x01\x01\x12r\n" +
 	"\vproject_dir\x18\x05 \x01(\tBL\xe0A\x02\xbaGF\x92\x02C项目目录(受管机器绝对路径,须在 agent 授权目录内)H\x04R\n" +
@@ -828,7 +828,7 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\x06labels\x18\t \x03(\tR\x06labels\x12V\n" +
 	"\x03env\x18\r \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\bR\x03env\x88\x01\x01\x12#\n" +
 	"\blast_pid\x18\n" +
-	" \x01(\x04B\x03\xe0A\x03H\tR\alastPid\x88\x01\x01\x12H\n" +
+	" \x01(\x03B\x03\xe0A\x03H\tR\alastPid\x88\x01\x01\x12H\n" +
 	"\vlast_status\x18\v \x01(\x0e2\x1d.ops.service.v1.ProjectStatusB\x03\xe0A\x03H\n" +
 	"R\n" +
 	"lastStatus\x88\x01\x01\x12J\n" +
@@ -853,29 +853,29 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"Z\n" +
 	"\x13ListProjectResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12-\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12-\n" +
 	"\x05items\x18\x02 \x03(\v2\x17.ops.service.v1.ProjectR\x05items\"4\n" +
 	"\x11GetProjectRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"H\n" +
 	"\x14CreateProjectRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x17.ops.service.v1.ProjectB\x03\xe0A\x02R\x04data\"\xba\x01\n" +
 	"\x14UpdateProjectRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x120\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x120\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.ops.service.v1.ProjectB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\"7\n" +
 	"\x14DeleteProjectRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"q\n" +
 	"\x15OperateProjectRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12C\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12C\n" +
 	"\toperation\x18\x02 \x01(\x0e2 .ops.service.v1.ProjectOperationB\x03\xe0A\x02R\toperation\"7\n" +
 	"\x16OperateProjectResponse\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"\xb2\x02\n" +
 	"\x14GetProjectLogRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12]\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12]\n" +
 	"\tmax_bytes\x18\x02 \x01(\x05B;\xbaG8\x92\x025读取日志尾部字节数(默认 64KB,上限 256KB)H\x01R\bmaxBytes\x88\x01\x01\x12\x80\x01\n" +
 	"\x06offset\x18\x03 \x01(\x03Bc\xbaG`\x92\x02]增量拉取起始偏移(>0 时从该偏移读到文件尾;偏移落后过多重置为尾部)H\x02R\x06offset\x88\x01\x01B\x05\n" +
 	"\x03_idB\f\n" +
@@ -890,7 +890,7 @@ const file_ops_service_v1_project_proto_rawDesc = "" +
 	"contentB64\x12\x16\n" +
 	"\x06offset\x18\x05 \x01(\x03R\x06offset\"9\n" +
 	"\x16ClearProjectLogRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id*I\n" +
 	"\rProjectStatus\x12\x1e\n" +
 	"\x1aPROJECT_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +

@@ -23,13 +23,13 @@ type ConfigDistributionCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ConfigDistributionCreate) SetTenantID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetTenantID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ConfigDistributionCreate) SetNillableTenantID(v *uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetNillableTenantID(v *int64) *ConfigDistributionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *ConfigDistributionCreate) SetNillableDeletedAt(v *time.Time) *ConfigDi
 }
 
 // SetTemplateID sets the "template_id" field.
-func (_c *ConfigDistributionCreate) SetTemplateID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetTemplateID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetTemplateID(v)
 	return _c
 }
@@ -91,19 +91,19 @@ func (_c *ConfigDistributionCreate) SetTemplateName(v string) *ConfigDistributio
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *ConfigDistributionCreate) SetNodeID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetNodeID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
 
 // SetProjectID sets the "project_id" field.
-func (_c *ConfigDistributionCreate) SetProjectID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetProjectID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetProjectID(v)
 	return _c
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_c *ConfigDistributionCreate) SetNillableProjectID(v *uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetNillableProjectID(v *int64) *ConfigDistributionCreate {
 	if v != nil {
 		_c.SetProjectID(*v)
 	}
@@ -151,13 +151,13 @@ func (_c *ConfigDistributionCreate) SetNillableError(v *string) *ConfigDistribut
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *ConfigDistributionCreate) SetOperatorID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetOperatorID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *ConfigDistributionCreate) SetNillableOperatorID(v *uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetNillableOperatorID(v *int64) *ConfigDistributionCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -179,7 +179,7 @@ func (_c *ConfigDistributionCreate) SetNillableFinishedAt(v *time.Time) *ConfigD
 }
 
 // SetID sets the "id" field.
-func (_c *ConfigDistributionCreate) SetID(v uint64) *ConfigDistributionCreate {
+func (_c *ConfigDistributionCreate) SetID(v int64) *ConfigDistributionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -311,7 +311,7 @@ func (_c *ConfigDistributionCreate) sqlSave(ctx context.Context) (*ConfigDistrib
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -321,7 +321,7 @@ func (_c *ConfigDistributionCreate) sqlSave(ctx context.Context) (*ConfigDistrib
 func (_c *ConfigDistributionCreate) createSpec() (*ConfigDistribution, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ConfigDistribution{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(configdistribution.Table, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(configdistribution.Table, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -329,7 +329,7 @@ func (_c *ConfigDistributionCreate) createSpec() (*ConfigDistribution, *sqlgraph
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(configdistribution.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -345,7 +345,7 @@ func (_c *ConfigDistributionCreate) createSpec() (*ConfigDistribution, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TemplateID(); ok {
-		_spec.SetField(configdistribution.FieldTemplateID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldTemplateID, field.TypeInt64, value)
 		_node.TemplateID = value
 	}
 	if value, ok := _c.mutation.TemplateName(); ok {
@@ -353,11 +353,11 @@ func (_c *ConfigDistributionCreate) createSpec() (*ConfigDistribution, *sqlgraph
 		_node.TemplateName = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(configdistribution.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(configdistribution.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldProjectID, field.TypeInt64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := _c.mutation.TargetPath(); ok {
@@ -377,7 +377,7 @@ func (_c *ConfigDistributionCreate) createSpec() (*ConfigDistribution, *sqlgraph
 		_node.Error = &value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(configdistribution.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = &value
 	}
 	if value, ok := _c.mutation.FinishedAt(); ok {
@@ -473,7 +473,7 @@ func (u *ConfigDistributionUpsert) ClearDeletedAt() *ConfigDistributionUpsert {
 }
 
 // SetTemplateID sets the "template_id" field.
-func (u *ConfigDistributionUpsert) SetTemplateID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) SetTemplateID(v int64) *ConfigDistributionUpsert {
 	u.Set(configdistribution.FieldTemplateID, v)
 	return u
 }
@@ -485,7 +485,7 @@ func (u *ConfigDistributionUpsert) UpdateTemplateID() *ConfigDistributionUpsert 
 }
 
 // AddTemplateID adds v to the "template_id" field.
-func (u *ConfigDistributionUpsert) AddTemplateID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) AddTemplateID(v int64) *ConfigDistributionUpsert {
 	u.Add(configdistribution.FieldTemplateID, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *ConfigDistributionUpsert) UpdateTemplateName() *ConfigDistributionUpser
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ConfigDistributionUpsert) SetNodeID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) SetNodeID(v int64) *ConfigDistributionUpsert {
 	u.Set(configdistribution.FieldNodeID, v)
 	return u
 }
@@ -515,13 +515,13 @@ func (u *ConfigDistributionUpsert) UpdateNodeID() *ConfigDistributionUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ConfigDistributionUpsert) AddNodeID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) AddNodeID(v int64) *ConfigDistributionUpsert {
 	u.Add(configdistribution.FieldNodeID, v)
 	return u
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *ConfigDistributionUpsert) SetProjectID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) SetProjectID(v int64) *ConfigDistributionUpsert {
 	u.Set(configdistribution.FieldProjectID, v)
 	return u
 }
@@ -533,7 +533,7 @@ func (u *ConfigDistributionUpsert) UpdateProjectID() *ConfigDistributionUpsert {
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *ConfigDistributionUpsert) AddProjectID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) AddProjectID(v int64) *ConfigDistributionUpsert {
 	u.Add(configdistribution.FieldProjectID, v)
 	return u
 }
@@ -599,7 +599,7 @@ func (u *ConfigDistributionUpsert) ClearError() *ConfigDistributionUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *ConfigDistributionUpsert) SetOperatorID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) SetOperatorID(v int64) *ConfigDistributionUpsert {
 	u.Set(configdistribution.FieldOperatorID, v)
 	return u
 }
@@ -611,7 +611,7 @@ func (u *ConfigDistributionUpsert) UpdateOperatorID() *ConfigDistributionUpsert 
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *ConfigDistributionUpsert) AddOperatorID(v uint64) *ConfigDistributionUpsert {
+func (u *ConfigDistributionUpsert) AddOperatorID(v int64) *ConfigDistributionUpsert {
 	u.Add(configdistribution.FieldOperatorID, v)
 	return u
 }
@@ -737,14 +737,14 @@ func (u *ConfigDistributionUpsertOne) ClearDeletedAt() *ConfigDistributionUpsert
 }
 
 // SetTemplateID sets the "template_id" field.
-func (u *ConfigDistributionUpsertOne) SetTemplateID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) SetTemplateID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetTemplateID(v)
 	})
 }
 
 // AddTemplateID adds v to the "template_id" field.
-func (u *ConfigDistributionUpsertOne) AddTemplateID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) AddTemplateID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddTemplateID(v)
 	})
@@ -772,14 +772,14 @@ func (u *ConfigDistributionUpsertOne) UpdateTemplateName() *ConfigDistributionUp
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ConfigDistributionUpsertOne) SetNodeID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) SetNodeID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ConfigDistributionUpsertOne) AddNodeID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) AddNodeID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddNodeID(v)
 	})
@@ -793,14 +793,14 @@ func (u *ConfigDistributionUpsertOne) UpdateNodeID() *ConfigDistributionUpsertOn
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *ConfigDistributionUpsertOne) SetProjectID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) SetProjectID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *ConfigDistributionUpsertOne) AddProjectID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) AddProjectID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddProjectID(v)
 	})
@@ -884,14 +884,14 @@ func (u *ConfigDistributionUpsertOne) ClearError() *ConfigDistributionUpsertOne 
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *ConfigDistributionUpsertOne) SetOperatorID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) SetOperatorID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *ConfigDistributionUpsertOne) AddOperatorID(v uint64) *ConfigDistributionUpsertOne {
+func (u *ConfigDistributionUpsertOne) AddOperatorID(v int64) *ConfigDistributionUpsertOne {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -948,7 +948,7 @@ func (u *ConfigDistributionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ConfigDistributionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ConfigDistributionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -957,7 +957,7 @@ func (u *ConfigDistributionUpsertOne) ID(ctx context.Context) (id uint64, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ConfigDistributionUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ConfigDistributionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1014,7 +1014,7 @@ func (_c *ConfigDistributionCreateBulk) Save(ctx context.Context) ([]*ConfigDist
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1195,14 +1195,14 @@ func (u *ConfigDistributionUpsertBulk) ClearDeletedAt() *ConfigDistributionUpser
 }
 
 // SetTemplateID sets the "template_id" field.
-func (u *ConfigDistributionUpsertBulk) SetTemplateID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) SetTemplateID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetTemplateID(v)
 	})
 }
 
 // AddTemplateID adds v to the "template_id" field.
-func (u *ConfigDistributionUpsertBulk) AddTemplateID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) AddTemplateID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddTemplateID(v)
 	})
@@ -1230,14 +1230,14 @@ func (u *ConfigDistributionUpsertBulk) UpdateTemplateName() *ConfigDistributionU
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *ConfigDistributionUpsertBulk) SetNodeID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) SetNodeID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *ConfigDistributionUpsertBulk) AddNodeID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) AddNodeID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1251,14 +1251,14 @@ func (u *ConfigDistributionUpsertBulk) UpdateNodeID() *ConfigDistributionUpsertB
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *ConfigDistributionUpsertBulk) SetProjectID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) SetProjectID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *ConfigDistributionUpsertBulk) AddProjectID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) AddProjectID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1342,14 +1342,14 @@ func (u *ConfigDistributionUpsertBulk) ClearError() *ConfigDistributionUpsertBul
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *ConfigDistributionUpsertBulk) SetOperatorID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) SetOperatorID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *ConfigDistributionUpsertBulk) AddOperatorID(v uint64) *ConfigDistributionUpsertBulk {
+func (u *ConfigDistributionUpsertBulk) AddOperatorID(v int64) *ConfigDistributionUpsertBulk {
 	return u.Update(func(s *ConfigDistributionUpsert) {
 		s.AddOperatorID(v)
 	})

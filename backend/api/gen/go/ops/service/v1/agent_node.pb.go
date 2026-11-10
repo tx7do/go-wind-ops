@@ -80,7 +80,7 @@ func (AgentNodeStatus) EnumDescriptor() ([]byte, []int) {
 // 受管机器上的 agent 节点
 type AgentNode struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                            // 节点ID
+	Id                *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                            // 节点ID
 	AgentId           *string                `protobuf:"bytes,2,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`                                    // 机器唯一标识
 	Name              *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                         // 节点显示名
 	Status            *AgentNodeStatus       `protobuf:"varint,4,opt,name=status,proto3,enum=ops.service.v1.AgentNodeStatus,oneof" json:"status,omitempty"`                // 在线状态
@@ -93,14 +93,14 @@ type AgentNode struct {
 	AgentVersion      *string                `protobuf:"bytes,11,opt,name=agent_version,json=agentVersion,proto3,oneof" json:"agent_version,omitempty"`                    // agent 进程版本
 	Ips               []string               `protobuf:"bytes,12,rep,name=ips,proto3" json:"ips,omitempty"`                                                                // 非环回 IP 列表
 	CpuCores          *int32                 `protobuf:"varint,13,opt,name=cpu_cores,json=cpuCores,proto3,oneof" json:"cpu_cores,omitempty"`                               // 逻辑核数
-	MemTotalBytes     *uint64                `protobuf:"varint,14,opt,name=mem_total_bytes,json=memTotalBytes,proto3,oneof" json:"mem_total_bytes,omitempty"`              // 物理内存总量(字节)
+	MemTotalBytes     *int64                 `protobuf:"varint,14,opt,name=mem_total_bytes,json=memTotalBytes,proto3,oneof" json:"mem_total_bytes,omitempty"`              // 物理内存总量(字节)
 	Env               *string                `protobuf:"bytes,16,opt,name=env,proto3,oneof" json:"env,omitempty"`                                                          // 环境标签
 	Revoked           *bool                  `protobuf:"varint,17,opt,name=revoked,proto3,oneof" json:"revoked,omitempty"`                                                 // 已吊销(准入拒绝)
 	Labels            []string               `protobuf:"bytes,15,rep,name=labels,proto3" json:"labels,omitempty"`                                                          // 人工标签
 	CpuPercent        *float64               `protobuf:"fixed64,20,opt,name=cpu_percent,json=cpuPercent,proto3,oneof" json:"cpu_percent,omitempty"`                        // CPU 占用百分比
 	MemoryUsedPercent *float64               `protobuf:"fixed64,21,opt,name=memory_used_percent,json=memoryUsedPercent,proto3,oneof" json:"memory_used_percent,omitempty"` // 内存占用百分比
 	DiskUsedPercent   *float64               `protobuf:"fixed64,22,opt,name=disk_used_percent,json=diskUsedPercent,proto3,oneof" json:"disk_used_percent,omitempty"`       // 磁盘占用百分比
-	UptimeSeconds     *uint64                `protobuf:"varint,23,opt,name=uptime_seconds,json=uptimeSeconds,proto3,oneof" json:"uptime_seconds,omitempty"`                // 系统运行时长(秒)
+	UptimeSeconds     *int64                 `protobuf:"varint,23,opt,name=uptime_seconds,json=uptimeSeconds,proto3,oneof" json:"uptime_seconds,omitempty"`                // 系统运行时长(秒)
 	LastHeartbeatAt   *timestamppb.Timestamp `protobuf:"bytes,24,opt,name=last_heartbeat_at,json=lastHeartbeatAt,proto3,oneof" json:"last_heartbeat_at,omitempty"`         // 最后心跳时间
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                             // 创建时间(首次准入)
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                             // 更新时间
@@ -138,7 +138,7 @@ func (*AgentNode) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AgentNode) GetId() uint64 {
+func (x *AgentNode) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -229,7 +229,7 @@ func (x *AgentNode) GetCpuCores() int32 {
 	return 0
 }
 
-func (x *AgentNode) GetMemTotalBytes() uint64 {
+func (x *AgentNode) GetMemTotalBytes() int64 {
 	if x != nil && x.MemTotalBytes != nil {
 		return *x.MemTotalBytes
 	}
@@ -278,7 +278,7 @@ func (x *AgentNode) GetDiskUsedPercent() float64 {
 	return 0
 }
 
-func (x *AgentNode) GetUptimeSeconds() uint64 {
+func (x *AgentNode) GetUptimeSeconds() int64 {
 	if x != nil && x.UptimeSeconds != nil {
 		return *x.UptimeSeconds
 	}
@@ -308,7 +308,7 @@ func (x *AgentNode) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListAgentNodeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*AgentNode           `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 节点列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -344,7 +344,7 @@ func (*ListAgentNodeResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListAgentNodeResponse) GetTotal() uint64 {
+func (x *ListAgentNodeResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -360,7 +360,7 @@ func (x *ListAgentNodeResponse) GetItems() []*AgentNode {
 
 type GetAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 节点ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 节点ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -395,7 +395,7 @@ func (*GetAgentNodeRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetAgentNodeRequest) GetId() uint64 {
+func (x *GetAgentNodeRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -406,7 +406,7 @@ func (x *GetAgentNodeRequest) GetId() uint64 {
 // 不带 path 参数,见 AGENTS 铁律)。
 type RevokeAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                 // 节点ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                 // 节点ID
 	Revoked       *bool                  `protobuf:"varint,2,opt,name=revoked,proto3,oneof" json:"revoked,omitempty"` // true=吊销,false=恢复(缺省 true)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -442,7 +442,7 @@ func (*RevokeAgentNodeRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RevokeAgentNodeRequest) GetId() uint64 {
+func (x *RevokeAgentNodeRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -458,7 +458,7 @@ func (x *RevokeAgentNodeRequest) GetRevoked() bool {
 
 type UpdateAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 节点ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 节点ID
 	Data          *AgentNode             `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据(仅 name/labels 可更新)
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -495,7 +495,7 @@ func (*UpdateAgentNodeRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateAgentNodeRequest) GetId() uint64 {
+func (x *UpdateAgentNodeRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -518,7 +518,7 @@ func (x *UpdateAgentNodeRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteAgentNodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 节点ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 节点ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -553,7 +553,7 @@ func (*DeleteAgentNodeRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteAgentNodeRequest) GetId() uint64 {
+func (x *DeleteAgentNodeRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -563,7 +563,7 @@ func (x *DeleteAgentNodeRequest) GetId() uint64 {
 type SendCommandRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-	Id            uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                               // 节点ID
+	Id            int64   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                               // 节点ID
 	AgentId       *string `protobuf:"bytes,2,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"` // 机器唯一标识
 	Action        string  `protobuf:"bytes,3,opt,name=action,proto3" json:"action,omitempty"`                        // 指令动作
 	Payload       *string `protobuf:"bytes,4,opt,name=payload,proto3,oneof" json:"payload,omitempty"`                // 指令载荷(JSON 字符串)
@@ -601,7 +601,7 @@ func (*SendCommandRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *SendCommandRequest) GetId() uint64 {
+func (x *SendCommandRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -675,7 +675,7 @@ func (x *SendCommandResponse) GetRequestId() string {
 
 type GetNodeMetricsHistoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`       // 节点ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`       // 节点ID
 	Hours         *int32                 `protobuf:"varint,2,opt,name=hours,proto3,oneof" json:"hours,omitempty"` // 查询时间范围(小时)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -711,7 +711,7 @@ func (*GetNodeMetricsHistoryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetNodeMetricsHistoryRequest) GetId() uint64 {
+func (x *GetNodeMetricsHistoryRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -867,7 +867,7 @@ func (x *GetAgentUpgradeUploadUrlResponse) GetObjectKey() string {
 
 type UpgradeAgentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	NodeId        *uint64                `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`         // 目标节点ID
+	NodeId        *int64                 `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`         // 目标节点ID
 	Version       *string                `protobuf:"bytes,2,opt,name=version,proto3,oneof" json:"version,omitempty"`                      // 目标版本号
 	ObjectKey     *string                `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key,omitempty"` // 升级包对象键
 	unknownFields protoimpl.UnknownFields
@@ -904,7 +904,7 @@ func (*UpgradeAgentRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_agent_node_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *UpgradeAgentRequest) GetNodeId() uint64 {
+func (x *UpgradeAgentRequest) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -1043,7 +1043,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\n" +
 	"\x1fops/service/v1/agent_node.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8a\r\n" +
 	"\tAgentNode\x12&\n" +
-	"\x02id\x18\x01 \x01(\x04B\x11\xe0A\x03\xbaG\v\x92\x02\b节点IDH\x00R\x02id\x88\x01\x01\x12e\n" +
+	"\x02id\x18\x01 \x01(\x03B\x11\xe0A\x03\xbaG\v\x92\x02\b节点IDH\x00R\x02id\x88\x01\x01\x12e\n" +
 	"\bagent_id\x18\x02 \x01(\tBE\xe0A\x03\xbaG?\x92\x02<机器唯一标识(machine-id),MQTT 主题与准入的锚点H\x01R\aagentId\x88\x01\x01\x12R\n" +
 	"\x04name\x18\x03 \x01(\tB9\xbaG6\x92\x023节点显示名(默认取 hostname,可人工修改)H\x02R\x04name\x88\x01\x01\x12S\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x1f.ops.service.v1.AgentNodeStatusB\x15\xe0A\x03\xbaG\x0f\x92\x02\f在线状态H\x03R\x06status\x88\x01\x01\x12$\n" +
@@ -1058,7 +1058,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"R\fagentVersion\x88\x01\x01\x12\x15\n" +
 	"\x03ips\x18\f \x03(\tB\x03\xe0A\x03R\x03ips\x12%\n" +
 	"\tcpu_cores\x18\r \x01(\x05B\x03\xe0A\x03H\vR\bcpuCores\x88\x01\x01\x120\n" +
-	"\x0fmem_total_bytes\x18\x0e \x01(\x04B\x03\xe0A\x03H\fR\rmemTotalBytes\x88\x01\x01\x12V\n" +
+	"\x0fmem_total_bytes\x18\x0e \x01(\x03B\x03\xe0A\x03H\fR\rmemTotalBytes\x88\x01\x01\x12V\n" +
 	"\x03env\x18\x10 \x01(\tB?\xbaG<\x92\x029环境标签(default/dev/staging/prod,用于环境隔离)H\rR\x03env\x88\x01\x01\x12\"\n" +
 	"\arevoked\x18\x11 \x01(\bB\x03\xe0A\x03H\x0eR\arevoked\x88\x01\x01\x129\n" +
 	"\x06labels\x18\x0f \x03(\tB!\xbaG\x1e\x92\x02\x1b人工标签(分组/筛选)R\x06labels\x12)\n" +
@@ -1066,7 +1066,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"cpuPercent\x88\x01\x01\x128\n" +
 	"\x13memory_used_percent\x18\x15 \x01(\x01B\x03\xe0A\x03H\x10R\x11memoryUsedPercent\x88\x01\x01\x124\n" +
 	"\x11disk_used_percent\x18\x16 \x01(\x01B\x03\xe0A\x03H\x11R\x0fdiskUsedPercent\x88\x01\x01\x12/\n" +
-	"\x0euptime_seconds\x18\x17 \x01(\x04B\x03\xe0A\x03H\x12R\ruptimeSeconds\x88\x01\x01\x12h\n" +
+	"\x0euptime_seconds\x18\x17 \x01(\x03B\x03\xe0A\x03H\x12R\ruptimeSeconds\x88\x01\x01\x12h\n" +
 	"\x11last_heartbeat_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xe0A\x03\xbaG\x15\x92\x02\x12最后心跳时间H\x13R\x0flastHeartbeatAt\x88\x01\x01\x12C\n" +
 	"\n" +
 	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x14R\tcreatedAt\x88\x01\x01\x12C\n" +
@@ -1097,26 +1097,26 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"^\n" +
 	"\x15ListAgentNodeResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12/\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12/\n" +
 	"\x05items\x18\x02 \x03(\v2\x19.ops.service.v1.AgentNodeR\x05items\"6\n" +
 	"\x13GetAgentNodeRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"X\n" +
 	"\x16RevokeAgentNodeRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12\x1d\n" +
 	"\arevoked\x18\x02 \x01(\bH\x00R\arevoked\x88\x01\x01B\n" +
 	"\n" +
 	"\b_revoked\"\xcb\x01\n" +
 	"\x16UpdateAgentNodeRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x122\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x122\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.ops.service.v1.AgentNodeB\x03\xe0A\x02R\x04data\x12h\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB+\xbaG(\x92\x02%要更新的字段列表(name/labels)R\n" +
 	"updateMask\"9\n" +
 	"\x16DeleteAgentNodeRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\xfc\x01\n" +
 	"\x12SendCommandRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x01R\x02id\x12#\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x01R\x02id\x12#\n" +
 	"\bagent_id\x18\x02 \x01(\tB\x03\xe0A\x01H\x00R\aagentId\x88\x01\x01\x12P\n" +
 	"\x06action\x18\x03 \x01(\tB8\xe0A\x02\xbaG2\x92\x02/指令动作(小写下划线,当前支持 ping)R\x06action\x12A\n" +
 	"\apayload\x18\x04 \x01(\tB\"\xbaG\x1f\x92\x02\x1c指令载荷(JSON 字符串)H\x01R\apayload\x88\x01\x01B\v\n" +
@@ -1127,7 +1127,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"\x96\x01\n" +
 	"\x1cGetNodeMetricsHistoryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12K\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12K\n" +
 	"\x05hours\x18\x02 \x01(\x05B0\xbaG-\x92\x02*查询最近 N 小时(默认 1,上限 168)H\x01R\x05hours\x88\x01\x01B\x05\n" +
 	"\x03_idB\b\n" +
 	"\x06_hours\"\x93\x02\n" +
@@ -1150,7 +1150,7 @@ const file_ops_service_v1_agent_node_proto_rawDesc = "" +
 	"\v_upload_urlB\r\n" +
 	"\v_object_key\"\xb9\x02\n" +
 	"\x13UpgradeAgentRequest\x12!\n" +
-	"\anode_id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x06nodeId\x88\x01\x01\x12a\n" +
+	"\anode_id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x06nodeId\x88\x01\x01\x12a\n" +
 	"\aversion\x18\x02 \x01(\tBB\xe0A\x02\xbaG<\x92\x029目标版本号(仅记录用途,实际以二进制为准)H\x01R\aversion\x88\x01\x01\x12u\n" +
 	"\n" +
 	"object_key\x18\x03 \x01(\tBQ\xe0A\x02\xbaGK\x92\x02H升级包对象键(agent-uploads/ 前缀,须先经上传预签名直传)H\x02R\tobjectKey\x88\x01\x01B\n" +

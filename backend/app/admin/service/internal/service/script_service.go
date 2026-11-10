@@ -59,7 +59,6 @@ func (s *ScriptService) Update(ctx context.Context, req *opsV1.UpdateScriptReque
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.scriptServiceClient.UpdateScript(ctx, req)
 }
 

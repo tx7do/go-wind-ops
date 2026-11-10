@@ -29,9 +29,9 @@ const (
 // 日志快照
 type LogSnapshot struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                     // 快照ID
-	ProjectId   *uint64                `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
-	NodeId      *uint64                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`               // 节点
+	Id          *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                     // 快照ID
+	ProjectId   *int64                 `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
+	NodeId      *int64                 `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`               // 节点
 	ProjectName *string                `protobuf:"bytes,4,opt,name=project_name,json=projectName,proto3,oneof" json:"project_name,omitempty"` // 项目名
 	SizeBytes   *int64                 `protobuf:"varint,5,opt,name=size_bytes,json=sizeBytes,proto3,oneof" json:"size_bytes,omitempty"`      // 大小
 	Content     *string                `protobuf:"bytes,6,opt,name=content,proto3,oneof" json:"content,omitempty"`                            // 日志内容
@@ -74,21 +74,21 @@ func (*LogSnapshot) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LogSnapshot) GetId() uint64 {
+func (x *LogSnapshot) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *LogSnapshot) GetProjectId() uint64 {
+func (x *LogSnapshot) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
 	return 0
 }
 
-func (x *LogSnapshot) GetNodeId() uint64 {
+func (x *LogSnapshot) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -139,7 +139,7 @@ func (x *LogSnapshot) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListLogSnapshotResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*LogSnapshot         `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 快照列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -175,7 +175,7 @@ func (*ListLogSnapshotResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListLogSnapshotResponse) GetTotal() uint64 {
+func (x *ListLogSnapshotResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -191,7 +191,7 @@ func (x *ListLogSnapshotResponse) GetItems() []*LogSnapshot {
 
 type GetLogSnapshotRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 快照ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 快照ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -226,7 +226,7 @@ func (*GetLogSnapshotRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetLogSnapshotRequest) GetId() uint64 {
+func (x *GetLogSnapshotRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -235,7 +235,7 @@ func (x *GetLogSnapshotRequest) GetId() uint64 {
 
 type CaptureLogSnapshotRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     *uint64                `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目ID
+	ProjectId     *int64                 `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -270,7 +270,7 @@ func (*CaptureLogSnapshotRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CaptureLogSnapshotRequest) GetProjectId() uint64 {
+func (x *CaptureLogSnapshotRequest) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -280,7 +280,7 @@ func (x *CaptureLogSnapshotRequest) GetProjectId() uint64 {
 type SearchLogSnapshotsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Keyword       *string                `protobuf:"bytes,1,opt,name=keyword,proto3,oneof" json:"keyword,omitempty"`                       // 关键字
-	ProjectId     *uint64                `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目过滤
+	ProjectId     *int64                 `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"` // 项目过滤
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,7 +322,7 @@ func (x *SearchLogSnapshotsRequest) GetKeyword() string {
 	return ""
 }
 
-func (x *SearchLogSnapshotsRequest) GetProjectId() uint64 {
+func (x *SearchLogSnapshotsRequest) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -383,7 +383,7 @@ func (x *SearchLogSnapshotResponse) GetKeyword() string {
 
 type DeleteLogSnapshotRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 快照ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 快照ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -418,7 +418,7 @@ func (*DeleteLogSnapshotRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteLogSnapshotRequest) GetId() uint64 {
+func (x *DeleteLogSnapshotRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -427,8 +427,8 @@ func (x *DeleteLogSnapshotRequest) GetId() uint64 {
 
 type SearchLogSnapshotResponse_SearchHit struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SnapshotId    *uint64                `protobuf:"varint,1,opt,name=snapshot_id,json=snapshotId,proto3,oneof" json:"snapshot_id,omitempty"`   // 快照ID
-	ProjectId     *uint64                `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
+	SnapshotId    *int64                 `protobuf:"varint,1,opt,name=snapshot_id,json=snapshotId,proto3,oneof" json:"snapshot_id,omitempty"`   // 快照ID
+	ProjectId     *int64                 `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`      // 项目
 	ProjectName   *string                `protobuf:"bytes,3,opt,name=project_name,json=projectName,proto3,oneof" json:"project_name,omitempty"` // 项目名
 	CapturedAt    *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=captured_at,json=capturedAt,proto3,oneof" json:"captured_at,omitempty"`    // 采集时间
 	Excerpt       *string                `protobuf:"bytes,5,opt,name=excerpt,proto3,oneof" json:"excerpt,omitempty"`                            // 命中上下文摘要
@@ -467,14 +467,14 @@ func (*SearchLogSnapshotResponse_SearchHit) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_log_snapshot_proto_rawDescGZIP(), []int{5, 0}
 }
 
-func (x *SearchLogSnapshotResponse_SearchHit) GetSnapshotId() uint64 {
+func (x *SearchLogSnapshotResponse_SearchHit) GetSnapshotId() int64 {
 	if x != nil && x.SnapshotId != nil {
 		return *x.SnapshotId
 	}
 	return 0
 }
 
-func (x *SearchLogSnapshotResponse_SearchHit) GetProjectId() uint64 {
+func (x *SearchLogSnapshotResponse_SearchHit) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
@@ -515,10 +515,10 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\n" +
 	"!ops/service/v1/log_snapshot.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xd7\x03\n" +
 	"\vLogSnapshot\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\x04H\x01R\tprojectId\x88\x01\x01\x12\x1c\n" +
-	"\anode_id\x18\x03 \x01(\x04H\x02R\x06nodeId\x88\x01\x01\x12&\n" +
+	"project_id\x18\x02 \x01(\x03H\x01R\tprojectId\x88\x01\x01\x12\x1c\n" +
+	"\anode_id\x18\x03 \x01(\x03H\x02R\x06nodeId\x88\x01\x01\x12&\n" +
 	"\fproject_name\x18\x04 \x01(\tH\x03R\vprojectName\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"size_bytes\x18\x05 \x01(\x03H\x04R\tsizeBytes\x88\x01\x01\x12\x1d\n" +
@@ -541,19 +541,19 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\f_content_b64B\r\n" +
 	"\v_created_at\"b\n" +
 	"\x17ListLogSnapshotResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x121\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x121\n" +
 	"\x05items\x18\x02 \x03(\v2\x1b.ops.service.v1.LogSnapshotR\x05items\"8\n" +
 	"\x15GetLogSnapshotRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"S\n" +
 	"\x19CaptureLogSnapshotRequest\x12'\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\tprojectId\x88\x01\x01B\r\n" +
+	"project_id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\tprojectId\x88\x01\x01B\r\n" +
 	"\v_project_id\"\xbf\x01\n" +
 	"\x19SearchLogSnapshotsRequest\x12E\n" +
 	"\akeyword\x18\x01 \x01(\tB&\xe0A\x02\xbaG \x92\x02\x1d关键字(内容模糊匹配)H\x00R\akeyword\x88\x01\x01\x12@\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\x04B\x1c\xbaG\x19\x92\x02\x16限定项目(0=全部)H\x01R\tprojectId\x88\x01\x01B\n" +
+	"project_id\x18\x02 \x01(\x03B\x1c\xbaG\x19\x92\x02\x16限定项目(0=全部)H\x01R\tprojectId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_keywordB\r\n" +
 	"\v_project_id\"\xf2\x03\n" +
@@ -561,10 +561,10 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\x04hits\x18\x01 \x03(\v23.ops.service.v1.SearchLogSnapshotResponse.SearchHitR\x04hits\x12\x1d\n" +
 	"\akeyword\x18\x02 \x01(\tH\x00R\akeyword\x88\x01\x01\x1a\xe0\x02\n" +
 	"\tSearchHit\x12$\n" +
-	"\vsnapshot_id\x18\x01 \x01(\x04H\x00R\n" +
+	"\vsnapshot_id\x18\x01 \x01(\x03H\x00R\n" +
 	"snapshotId\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"project_id\x18\x02 \x01(\x04H\x01R\tprojectId\x88\x01\x01\x12&\n" +
+	"project_id\x18\x02 \x01(\x03H\x01R\tprojectId\x88\x01\x01\x12&\n" +
 	"\fproject_name\x18\x03 \x01(\tH\x02R\vprojectName\x88\x01\x01\x12@\n" +
 	"\vcaptured_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\n" +
 	"capturedAt\x88\x01\x01\x12\x1d\n" +
@@ -581,7 +581,7 @@ const file_ops_service_v1_log_snapshot_proto_rawDesc = "" +
 	"\n" +
 	"\b_keyword\";\n" +
 	"\x18DeleteLogSnapshotRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xed\x03\n" +
 	"\x12LogSnapshotService\x12X\n" +
 	"\x10ListLogSnapshots\x12\x19.pagination.PagingRequest\x1a'.ops.service.v1.ListLogSnapshotResponse\"\x00\x12V\n" +

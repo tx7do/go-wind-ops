@@ -70,14 +70,14 @@ func (_u *TerminalChunkUpdate) ClearDeletedAt() *TerminalChunkUpdate {
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (_u *TerminalChunkUpdate) SetTerminalSessionID(v uint64) *TerminalChunkUpdate {
+func (_u *TerminalChunkUpdate) SetTerminalSessionID(v int64) *TerminalChunkUpdate {
 	_u.mutation.ResetTerminalSessionID()
 	_u.mutation.SetTerminalSessionID(v)
 	return _u
 }
 
 // SetNillableTerminalSessionID sets the "terminal_session_id" field if the given value is not nil.
-func (_u *TerminalChunkUpdate) SetNillableTerminalSessionID(v *uint64) *TerminalChunkUpdate {
+func (_u *TerminalChunkUpdate) SetNillableTerminalSessionID(v *int64) *TerminalChunkUpdate {
 	if v != nil {
 		_u.SetTerminalSessionID(*v)
 	}
@@ -217,7 +217,7 @@ func (_u *TerminalChunkUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -226,7 +226,7 @@ func (_u *TerminalChunkUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalchunk.FieldCreatedAt, field.TypeTime)
@@ -244,10 +244,10 @@ func (_u *TerminalChunkUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(terminalchunk.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TerminalSessionID(); ok {
-		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeUint64, value)
+		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTerminalSessionID(); ok {
-		_spec.AddField(terminalchunk.FieldTerminalSessionID, field.TypeUint64, value)
+		_spec.AddField(terminalchunk.FieldTerminalSessionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Seq(); ok {
 		_spec.SetField(terminalchunk.FieldSeq, field.TypeInt, value)
@@ -330,14 +330,14 @@ func (_u *TerminalChunkUpdateOne) ClearDeletedAt() *TerminalChunkUpdateOne {
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (_u *TerminalChunkUpdateOne) SetTerminalSessionID(v uint64) *TerminalChunkUpdateOne {
+func (_u *TerminalChunkUpdateOne) SetTerminalSessionID(v int64) *TerminalChunkUpdateOne {
 	_u.mutation.ResetTerminalSessionID()
 	_u.mutation.SetTerminalSessionID(v)
 	return _u
 }
 
 // SetNillableTerminalSessionID sets the "terminal_session_id" field if the given value is not nil.
-func (_u *TerminalChunkUpdateOne) SetNillableTerminalSessionID(v *uint64) *TerminalChunkUpdateOne {
+func (_u *TerminalChunkUpdateOne) SetNillableTerminalSessionID(v *int64) *TerminalChunkUpdateOne {
 	if v != nil {
 		_u.SetTerminalSessionID(*v)
 	}
@@ -490,7 +490,7 @@ func (_u *TerminalChunkUpdateOne) sqlSave(ctx context.Context) (_node *TerminalC
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TerminalChunk.id" for update`)}
@@ -516,7 +516,7 @@ func (_u *TerminalChunkUpdateOne) sqlSave(ctx context.Context) (_node *TerminalC
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(terminalchunk.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalchunk.FieldCreatedAt, field.TypeTime)
@@ -534,10 +534,10 @@ func (_u *TerminalChunkUpdateOne) sqlSave(ctx context.Context) (_node *TerminalC
 		_spec.ClearField(terminalchunk.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TerminalSessionID(); ok {
-		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeUint64, value)
+		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTerminalSessionID(); ok {
-		_spec.AddField(terminalchunk.FieldTerminalSessionID, field.TypeUint64, value)
+		_spec.AddField(terminalchunk.FieldTerminalSessionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Seq(); ok {
 		_spec.SetField(terminalchunk.FieldSeq, field.TypeInt, value)

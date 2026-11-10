@@ -84,15 +84,15 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// SessionIDValidator is a validator for the "session_id" field. It is called by the builders before save.
 	SessionIDValidator func(string) error
 	// DefaultNodeID holds the default value on creation for the "node_id" field.
-	DefaultNodeID uint64
+	DefaultNodeID int64
 	// AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
 	AgentIDValidator func(string) error
 	// DefaultOperatorID holds the default value on creation for the "operator_id" field.
-	DefaultOperatorID uint64
+	DefaultOperatorID int64
 	// DefaultInputBytes holds the default value on creation for the "input_bytes" field.
 	DefaultInputBytes int64
 	// DefaultOutputBytes holds the default value on creation for the "output_bytes" field.
@@ -102,7 +102,7 @@ var (
 	// DefaultTruncated holds the default value on creation for the "truncated" field.
 	DefaultTruncated bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

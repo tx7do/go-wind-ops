@@ -23,13 +23,13 @@ type CloudBudgetCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CloudBudgetCreate) SetTenantID(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetTenantID(v int64) *CloudBudgetCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CloudBudgetCreate) SetNillableTenantID(v *uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetNillableTenantID(v *int64) *CloudBudgetCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CloudBudgetCreate) SetNillableDeletedAt(v *time.Time) *CloudBudgetCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CloudBudgetCreate) SetCreatedBy(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetCreatedBy(v int64) *CloudBudgetCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CloudBudgetCreate) SetNillableCreatedBy(v *uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetNillableCreatedBy(v *int64) *CloudBudgetCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CloudBudgetCreate) SetNillableCreatedBy(v *uint64) *CloudBudgetCreate 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CloudBudgetCreate) SetUpdatedBy(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetUpdatedBy(v int64) *CloudBudgetCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CloudBudgetCreate) SetNillableUpdatedBy(v *uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetNillableUpdatedBy(v *int64) *CloudBudgetCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CloudBudgetCreate) SetNillableUpdatedBy(v *uint64) *CloudBudgetCreate 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CloudBudgetCreate) SetDeletedBy(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetDeletedBy(v int64) *CloudBudgetCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CloudBudgetCreate) SetNillableDeletedBy(v *uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetNillableDeletedBy(v *int64) *CloudBudgetCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *CloudBudgetCreate) SetNillableDeletedBy(v *uint64) *CloudBudgetCreate 
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_c *CloudBudgetCreate) SetCloudAccountID(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetCloudAccountID(v int64) *CloudBudgetCreate {
 	_c.mutation.SetCloudAccountID(v)
 	return _c
 }
 
 // SetNillableCloudAccountID sets the "cloud_account_id" field if the given value is not nil.
-func (_c *CloudBudgetCreate) SetNillableCloudAccountID(v *uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetNillableCloudAccountID(v *int64) *CloudBudgetCreate {
 	if v != nil {
 		_c.SetCloudAccountID(*v)
 	}
@@ -253,7 +253,7 @@ func (_c *CloudBudgetCreate) SetNillableDescription(v *string) *CloudBudgetCreat
 }
 
 // SetID sets the "id" field.
-func (_c *CloudBudgetCreate) SetID(v uint64) *CloudBudgetCreate {
+func (_c *CloudBudgetCreate) SetID(v int64) *CloudBudgetCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -386,7 +386,7 @@ func (_c *CloudBudgetCreate) sqlSave(ctx context.Context) (*CloudBudget, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -396,7 +396,7 @@ func (_c *CloudBudgetCreate) sqlSave(ctx context.Context) (*CloudBudget, error) 
 func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CloudBudget{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(cloudbudget.Table, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(cloudbudget.Table, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -404,7 +404,7 @@ func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(cloudbudget.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(cloudbudget.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -420,19 +420,19 @@ func (_c *CloudBudgetCreate) createSpec() (*CloudBudget, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeUint64, value)
+		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeInt64, value)
 		_node.CloudAccountID = value
 	}
 	if value, ok := _c.mutation.Month(); ok {
@@ -560,7 +560,7 @@ func (u *CloudBudgetUpsert) ClearDeletedAt() *CloudBudgetUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CloudBudgetUpsert) SetCreatedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) SetCreatedBy(v int64) *CloudBudgetUpsert {
 	u.Set(cloudbudget.FieldCreatedBy, v)
 	return u
 }
@@ -572,7 +572,7 @@ func (u *CloudBudgetUpsert) UpdateCreatedBy() *CloudBudgetUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CloudBudgetUpsert) AddCreatedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) AddCreatedBy(v int64) *CloudBudgetUpsert {
 	u.Add(cloudbudget.FieldCreatedBy, v)
 	return u
 }
@@ -584,7 +584,7 @@ func (u *CloudBudgetUpsert) ClearCreatedBy() *CloudBudgetUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CloudBudgetUpsert) SetUpdatedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) SetUpdatedBy(v int64) *CloudBudgetUpsert {
 	u.Set(cloudbudget.FieldUpdatedBy, v)
 	return u
 }
@@ -596,7 +596,7 @@ func (u *CloudBudgetUpsert) UpdateUpdatedBy() *CloudBudgetUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CloudBudgetUpsert) AddUpdatedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) AddUpdatedBy(v int64) *CloudBudgetUpsert {
 	u.Add(cloudbudget.FieldUpdatedBy, v)
 	return u
 }
@@ -608,7 +608,7 @@ func (u *CloudBudgetUpsert) ClearUpdatedBy() *CloudBudgetUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CloudBudgetUpsert) SetDeletedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) SetDeletedBy(v int64) *CloudBudgetUpsert {
 	u.Set(cloudbudget.FieldDeletedBy, v)
 	return u
 }
@@ -620,7 +620,7 @@ func (u *CloudBudgetUpsert) UpdateDeletedBy() *CloudBudgetUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CloudBudgetUpsert) AddDeletedBy(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) AddDeletedBy(v int64) *CloudBudgetUpsert {
 	u.Add(cloudbudget.FieldDeletedBy, v)
 	return u
 }
@@ -632,7 +632,7 @@ func (u *CloudBudgetUpsert) ClearDeletedBy() *CloudBudgetUpsert {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudBudgetUpsert) SetCloudAccountID(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) SetCloudAccountID(v int64) *CloudBudgetUpsert {
 	u.Set(cloudbudget.FieldCloudAccountID, v)
 	return u
 }
@@ -644,7 +644,7 @@ func (u *CloudBudgetUpsert) UpdateCloudAccountID() *CloudBudgetUpsert {
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudBudgetUpsert) AddCloudAccountID(v uint64) *CloudBudgetUpsert {
+func (u *CloudBudgetUpsert) AddCloudAccountID(v int64) *CloudBudgetUpsert {
 	u.Add(cloudbudget.FieldCloudAccountID, v)
 	return u
 }
@@ -884,14 +884,14 @@ func (u *CloudBudgetUpsertOne) ClearDeletedAt() *CloudBudgetUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CloudBudgetUpsertOne) SetCreatedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) SetCreatedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CloudBudgetUpsertOne) AddCreatedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) AddCreatedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -912,14 +912,14 @@ func (u *CloudBudgetUpsertOne) ClearCreatedBy() *CloudBudgetUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CloudBudgetUpsertOne) SetUpdatedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) SetUpdatedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CloudBudgetUpsertOne) AddUpdatedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) AddUpdatedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -940,14 +940,14 @@ func (u *CloudBudgetUpsertOne) ClearUpdatedBy() *CloudBudgetUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CloudBudgetUpsertOne) SetDeletedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) SetDeletedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CloudBudgetUpsertOne) AddDeletedBy(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) AddDeletedBy(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -968,14 +968,14 @@ func (u *CloudBudgetUpsertOne) ClearDeletedBy() *CloudBudgetUpsertOne {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudBudgetUpsertOne) SetCloudAccountID(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) SetCloudAccountID(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetCloudAccountID(v)
 	})
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudBudgetUpsertOne) AddCloudAccountID(v uint64) *CloudBudgetUpsertOne {
+func (u *CloudBudgetUpsertOne) AddCloudAccountID(v int64) *CloudBudgetUpsertOne {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddCloudAccountID(v)
 	})
@@ -1165,7 +1165,7 @@ func (u *CloudBudgetUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CloudBudgetUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CloudBudgetUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1174,7 +1174,7 @@ func (u *CloudBudgetUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CloudBudgetUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CloudBudgetUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1231,7 +1231,7 @@ func (_c *CloudBudgetCreateBulk) Save(ctx context.Context) ([]*CloudBudget, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1412,14 +1412,14 @@ func (u *CloudBudgetUpsertBulk) ClearDeletedAt() *CloudBudgetUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CloudBudgetUpsertBulk) SetCreatedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) SetCreatedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CloudBudgetUpsertBulk) AddCreatedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) AddCreatedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1440,14 +1440,14 @@ func (u *CloudBudgetUpsertBulk) ClearCreatedBy() *CloudBudgetUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CloudBudgetUpsertBulk) SetUpdatedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) SetUpdatedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CloudBudgetUpsertBulk) AddUpdatedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) AddUpdatedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1468,14 +1468,14 @@ func (u *CloudBudgetUpsertBulk) ClearUpdatedBy() *CloudBudgetUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CloudBudgetUpsertBulk) SetDeletedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) SetDeletedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CloudBudgetUpsertBulk) AddDeletedBy(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) AddDeletedBy(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1496,14 +1496,14 @@ func (u *CloudBudgetUpsertBulk) ClearDeletedBy() *CloudBudgetUpsertBulk {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (u *CloudBudgetUpsertBulk) SetCloudAccountID(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) SetCloudAccountID(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.SetCloudAccountID(v)
 	})
 }
 
 // AddCloudAccountID adds v to the "cloud_account_id" field.
-func (u *CloudBudgetUpsertBulk) AddCloudAccountID(v uint64) *CloudBudgetUpsertBulk {
+func (u *CloudBudgetUpsertBulk) AddCloudAccountID(v int64) *CloudBudgetUpsertBulk {
 	return u.Update(func(s *CloudBudgetUpsert) {
 		s.AddCloudAccountID(v)
 	})

@@ -83,7 +83,7 @@ func (r *NotificationDeliveryRepo) List(ctx context.Context, req *paginationV1.P
 }
 
 // Create 落一条投递记录(status: SENT/FAILED)。
-func (r *NotificationDeliveryRepo) Create(ctx context.Context, alertID, channelID uint64, channelType, target, status, lastError, title, content string) error {
+func (r *NotificationDeliveryRepo) Create(ctx context.Context, alertID, channelID int64, channelType, target, status, lastError, title, content string) error {
 	builder := r.entClient.Client().NotificationDelivery.
 		Create().
 		SetAlertID(alertID).
@@ -106,7 +106,7 @@ func (r *NotificationDeliveryRepo) Create(ctx context.Context, alertID, channelI
 }
 
 // Get 按 ID 取投递记录。
-func (r *NotificationDeliveryRepo) Get(ctx context.Context, id uint64) (*opsV1.NotificationDelivery, error) {
+func (r *NotificationDeliveryRepo) Get(ctx context.Context, id int64) (*opsV1.NotificationDelivery, error) {
 	builder := r.entClient.Client().NotificationDelivery.Query()
 
 	dto, err := r.repository.Get(ctx, builder, nil, notificationdelivery.IDEQ(id))

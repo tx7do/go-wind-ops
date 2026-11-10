@@ -153,7 +153,7 @@ func (r *CloudInstanceRepo) List(ctx context.Context, req *opsV1.ListCloudInstan
 		return nil, err
 	}
 
-	resp := &opsV1.ListCloudInstancesResponse{Total: uint64(total)}
+	resp := &opsV1.ListCloudInstancesResponse{Total: int64(total)}
 	for _, e := range rows {
 		resp.Items = append(resp.Items, r.toDTO(e))
 	}
@@ -162,7 +162,7 @@ func (r *CloudInstanceRepo) List(ctx context.Context, req *opsV1.ListCloudInstan
 
 // NodeRef 节点匹配引用。
 type NodeRef struct {
-	ID   uint64
+	ID   int64
 	Name string
 }
 
@@ -189,7 +189,7 @@ func (r *CloudInstanceRepo) BuildIPIndex(ctx context.Context) (map[string]NodeRe
 }
 
 // ReplaceForAccount 整账号全量替换:删旧插新(单批次事务语义由顺序执行保证,失败留下批数据可重试)。
-func (r *CloudInstanceRepo) ReplaceForAccount(ctx context.Context, accountID uint64, accountName string, provider opsV1.CloudInstance_Provider, rows []*opsV1.CloudInstance, syncedAt time.Time) error {
+func (r *CloudInstanceRepo) ReplaceForAccount(ctx context.Context, accountID int64, accountName string, provider opsV1.CloudInstance_Provider, rows []*opsV1.CloudInstance, syncedAt time.Time) error {
 	client := r.entClient.Client().CloudInstance
 
 	if _, err := client.Delete().
@@ -246,7 +246,7 @@ func (r *CloudInstanceRepo) ReplaceForAccount(ctx context.Context, accountID uin
 }
 
 // CountByAccount 按账号统计实例数(清单页概览用)。
-func (r *CloudInstanceRepo) CountByAccount(ctx context.Context, accountID uint64) (int, error) {
+func (r *CloudInstanceRepo) CountByAccount(ctx context.Context, accountID int64) (int, error) {
 	return r.entClient.Client().CloudInstance.Query().
 		Where(cloudinstance.CloudAccountIDEQ(accountID)).
 		Count(ctx)

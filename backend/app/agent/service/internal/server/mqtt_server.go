@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	kratosLog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport"
+	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	mqttBootstrap "github.com/tx7do/kratos-bootstrap/transport/mqtt"
 	"github.com/tx7do/kratos-transport/transport/mqtt"
 

@@ -126,7 +126,7 @@ var (
 	// DefaultEnv holds the default value on creation for the "env" field.
 	DefaultEnv string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

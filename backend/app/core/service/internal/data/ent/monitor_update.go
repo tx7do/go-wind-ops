@@ -70,14 +70,14 @@ func (_u *MonitorUpdate) ClearDeletedAt() *MonitorUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MonitorUpdate) SetCreatedBy(v uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetCreatedBy(v int64) *MonitorUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MonitorUpdate) SetNillableCreatedBy(v *uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNillableCreatedBy(v *int64) *MonitorUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *MonitorUpdate) ClearCreatedBy() *MonitorUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MonitorUpdate) SetUpdatedBy(v uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetUpdatedBy(v int64) *MonitorUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MonitorUpdate) SetNillableUpdatedBy(v *uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNillableUpdatedBy(v *int64) *MonitorUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *MonitorUpdate) ClearUpdatedBy() *MonitorUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MonitorUpdate) SetDeletedBy(v uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetDeletedBy(v int64) *MonitorUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MonitorUpdate) SetNillableDeletedBy(v *uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNillableDeletedBy(v *int64) *MonitorUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -165,14 +165,14 @@ func (_u *MonitorUpdate) SetNillableName(v *string) *MonitorUpdate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *MonitorUpdate) SetProjectID(v uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetProjectID(v int64) *MonitorUpdate {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *MonitorUpdate) SetNillableProjectID(v *uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNillableProjectID(v *int64) *MonitorUpdate {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -206,14 +206,14 @@ func (_u *MonitorUpdate) SetNillableTargetType(v *monitor.TargetType) *MonitorUp
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *MonitorUpdate) SetNodeID(v uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNodeID(v int64) *MonitorUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *MonitorUpdate) SetNillableNodeID(v *uint64) *MonitorUpdate {
+func (_u *MonitorUpdate) SetNillableNodeID(v *int64) *MonitorUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -533,7 +533,7 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(monitor.Table, monitor.Columns, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(monitor.Table, monitor.Columns, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -542,7 +542,7 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(monitor.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(monitor.FieldCreatedAt, field.TypeTime)
@@ -560,55 +560,55 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(monitor.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(monitor.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(monitor.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(monitor.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(monitor.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(monitor.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(monitor.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(monitor.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(monitor.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(monitor.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(monitor.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(monitor.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(monitor.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(monitor.FieldTargetType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(monitor.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(monitor.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(monitor.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProcessName(); ok {
 		_spec.SetField(monitor.FieldProcessName, field.TypeString, value)
@@ -736,14 +736,14 @@ func (_u *MonitorUpdateOne) ClearDeletedAt() *MonitorUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MonitorUpdateOne) SetCreatedBy(v uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetCreatedBy(v int64) *MonitorUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MonitorUpdateOne) SetNillableCreatedBy(v *uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNillableCreatedBy(v *int64) *MonitorUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -763,14 +763,14 @@ func (_u *MonitorUpdateOne) ClearCreatedBy() *MonitorUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MonitorUpdateOne) SetUpdatedBy(v uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetUpdatedBy(v int64) *MonitorUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MonitorUpdateOne) SetNillableUpdatedBy(v *uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNillableUpdatedBy(v *int64) *MonitorUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -790,14 +790,14 @@ func (_u *MonitorUpdateOne) ClearUpdatedBy() *MonitorUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MonitorUpdateOne) SetDeletedBy(v uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetDeletedBy(v int64) *MonitorUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MonitorUpdateOne) SetNillableDeletedBy(v *uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNillableDeletedBy(v *int64) *MonitorUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -831,14 +831,14 @@ func (_u *MonitorUpdateOne) SetNillableName(v *string) *MonitorUpdateOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *MonitorUpdateOne) SetProjectID(v uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetProjectID(v int64) *MonitorUpdateOne {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *MonitorUpdateOne) SetNillableProjectID(v *uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNillableProjectID(v *int64) *MonitorUpdateOne {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -872,14 +872,14 @@ func (_u *MonitorUpdateOne) SetNillableTargetType(v *monitor.TargetType) *Monito
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *MonitorUpdateOne) SetNodeID(v uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNodeID(v int64) *MonitorUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *MonitorUpdateOne) SetNillableNodeID(v *uint64) *MonitorUpdateOne {
+func (_u *MonitorUpdateOne) SetNillableNodeID(v *int64) *MonitorUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -1212,7 +1212,7 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(monitor.Table, monitor.Columns, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(monitor.Table, monitor.Columns, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Monitor.id" for update`)}
@@ -1238,7 +1238,7 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(monitor.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(monitor.FieldCreatedAt, field.TypeTime)
@@ -1256,55 +1256,55 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		_spec.ClearField(monitor.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(monitor.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(monitor.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(monitor.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(monitor.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(monitor.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(monitor.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(monitor.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(monitor.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(monitor.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(monitor.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(monitor.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(monitor.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(monitor.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(monitor.FieldTargetType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(monitor.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(monitor.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(monitor.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(monitor.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(monitor.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(monitor.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProcessName(); ok {
 		_spec.SetField(monitor.FieldProcessName, field.TypeString, value)

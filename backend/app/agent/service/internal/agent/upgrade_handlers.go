@@ -139,4 +139,3 @@ func spawnUpgradeScript(exePath, wd, newPath string) error {
 	cmd.Dir = wd
 	return cmd.Start()
 }
-

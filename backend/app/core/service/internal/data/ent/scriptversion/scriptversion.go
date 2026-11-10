@@ -64,13 +64,13 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// ScriptIDValidator is a validator for the "script_id" field. It is called by the builders before save.
-	ScriptIDValidator func(uint64) error
+	ScriptIDValidator func(int64) error
 	// DefaultRemark holds the default value on creation for the "remark" field.
 	DefaultRemark string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the ScriptVersion queries.

@@ -23,13 +23,13 @@ type ApprovalCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ApprovalCreate) SetTenantID(v uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetTenantID(v int64) *ApprovalCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ApprovalCreate) SetNillableTenantID(v *uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetNillableTenantID(v *int64) *ApprovalCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -85,7 +85,7 @@ func (_c *ApprovalCreate) SetOperationType(v string) *ApprovalCreate {
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (_c *ApprovalCreate) SetOperationRefID(v uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetOperationRefID(v int64) *ApprovalCreate {
 	_c.mutation.SetOperationRefID(v)
 	return _c
 }
@@ -117,13 +117,13 @@ func (_c *ApprovalCreate) SetNillablePayload(v *string) *ApprovalCreate {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (_c *ApprovalCreate) SetRequesterID(v uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetRequesterID(v int64) *ApprovalCreate {
 	_c.mutation.SetRequesterID(v)
 	return _c
 }
 
 // SetNillableRequesterID sets the "requester_id" field if the given value is not nil.
-func (_c *ApprovalCreate) SetNillableRequesterID(v *uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetNillableRequesterID(v *int64) *ApprovalCreate {
 	if v != nil {
 		_c.SetRequesterID(*v)
 	}
@@ -131,13 +131,13 @@ func (_c *ApprovalCreate) SetNillableRequesterID(v *uint64) *ApprovalCreate {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (_c *ApprovalCreate) SetApproverID(v uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetApproverID(v int64) *ApprovalCreate {
 	_c.mutation.SetApproverID(v)
 	return _c
 }
 
 // SetNillableApproverID sets the "approver_id" field if the given value is not nil.
-func (_c *ApprovalCreate) SetNillableApproverID(v *uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetNillableApproverID(v *int64) *ApprovalCreate {
 	if v != nil {
 		_c.SetApproverID(*v)
 	}
@@ -215,7 +215,7 @@ func (_c *ApprovalCreate) SetNillableResolvedAt(v *time.Time) *ApprovalCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *ApprovalCreate) SetID(v uint64) *ApprovalCreate {
+func (_c *ApprovalCreate) SetID(v int64) *ApprovalCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -339,7 +339,7 @@ func (_c *ApprovalCreate) sqlSave(ctx context.Context) (*Approval, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -349,7 +349,7 @@ func (_c *ApprovalCreate) sqlSave(ctx context.Context) (*Approval, error) {
 func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Approval{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(approval.Table, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(approval.Table, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -357,7 +357,7 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(approval.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(approval.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -377,7 +377,7 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 		_node.OperationType = value
 	}
 	if value, ok := _c.mutation.OperationRefID(); ok {
-		_spec.SetField(approval.FieldOperationRefID, field.TypeUint64, value)
+		_spec.SetField(approval.FieldOperationRefID, field.TypeInt64, value)
 		_node.OperationRefID = value
 	}
 	if value, ok := _c.mutation.AgentID(); ok {
@@ -393,11 +393,11 @@ func (_c *ApprovalCreate) createSpec() (*Approval, *sqlgraph.CreateSpec) {
 		_node.Payload = &value
 	}
 	if value, ok := _c.mutation.RequesterID(); ok {
-		_spec.SetField(approval.FieldRequesterID, field.TypeUint64, value)
+		_spec.SetField(approval.FieldRequesterID, field.TypeInt64, value)
 		_node.RequesterID = &value
 	}
 	if value, ok := _c.mutation.ApproverID(); ok {
-		_spec.SetField(approval.FieldApproverID, field.TypeUint64, value)
+		_spec.SetField(approval.FieldApproverID, field.TypeInt64, value)
 		_node.ApproverID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -521,7 +521,7 @@ func (u *ApprovalUpsert) UpdateOperationType() *ApprovalUpsert {
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (u *ApprovalUpsert) SetOperationRefID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) SetOperationRefID(v int64) *ApprovalUpsert {
 	u.Set(approval.FieldOperationRefID, v)
 	return u
 }
@@ -533,7 +533,7 @@ func (u *ApprovalUpsert) UpdateOperationRefID() *ApprovalUpsert {
 }
 
 // AddOperationRefID adds v to the "operation_ref_id" field.
-func (u *ApprovalUpsert) AddOperationRefID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) AddOperationRefID(v int64) *ApprovalUpsert {
 	u.Add(approval.FieldOperationRefID, v)
 	return u
 }
@@ -581,7 +581,7 @@ func (u *ApprovalUpsert) ClearPayload() *ApprovalUpsert {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (u *ApprovalUpsert) SetRequesterID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) SetRequesterID(v int64) *ApprovalUpsert {
 	u.Set(approval.FieldRequesterID, v)
 	return u
 }
@@ -593,7 +593,7 @@ func (u *ApprovalUpsert) UpdateRequesterID() *ApprovalUpsert {
 }
 
 // AddRequesterID adds v to the "requester_id" field.
-func (u *ApprovalUpsert) AddRequesterID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) AddRequesterID(v int64) *ApprovalUpsert {
 	u.Add(approval.FieldRequesterID, v)
 	return u
 }
@@ -605,7 +605,7 @@ func (u *ApprovalUpsert) ClearRequesterID() *ApprovalUpsert {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalUpsert) SetApproverID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) SetApproverID(v int64) *ApprovalUpsert {
 	u.Set(approval.FieldApproverID, v)
 	return u
 }
@@ -617,7 +617,7 @@ func (u *ApprovalUpsert) UpdateApproverID() *ApprovalUpsert {
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalUpsert) AddApproverID(v uint64) *ApprovalUpsert {
+func (u *ApprovalUpsert) AddApproverID(v int64) *ApprovalUpsert {
 	u.Add(approval.FieldApproverID, v)
 	return u
 }
@@ -823,14 +823,14 @@ func (u *ApprovalUpsertOne) UpdateOperationType() *ApprovalUpsertOne {
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (u *ApprovalUpsertOne) SetOperationRefID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) SetOperationRefID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetOperationRefID(v)
 	})
 }
 
 // AddOperationRefID adds v to the "operation_ref_id" field.
-func (u *ApprovalUpsertOne) AddOperationRefID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) AddOperationRefID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddOperationRefID(v)
 	})
@@ -893,14 +893,14 @@ func (u *ApprovalUpsertOne) ClearPayload() *ApprovalUpsertOne {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (u *ApprovalUpsertOne) SetRequesterID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) SetRequesterID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetRequesterID(v)
 	})
 }
 
 // AddRequesterID adds v to the "requester_id" field.
-func (u *ApprovalUpsertOne) AddRequesterID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) AddRequesterID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddRequesterID(v)
 	})
@@ -921,14 +921,14 @@ func (u *ApprovalUpsertOne) ClearRequesterID() *ApprovalUpsertOne {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalUpsertOne) SetApproverID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) SetApproverID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetApproverID(v)
 	})
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalUpsertOne) AddApproverID(v uint64) *ApprovalUpsertOne {
+func (u *ApprovalUpsertOne) AddApproverID(v int64) *ApprovalUpsertOne {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddApproverID(v)
 	})
@@ -1062,7 +1062,7 @@ func (u *ApprovalUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ApprovalUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ApprovalUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1071,7 +1071,7 @@ func (u *ApprovalUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ApprovalUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ApprovalUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1128,7 +1128,7 @@ func (_c *ApprovalCreateBulk) Save(ctx context.Context) ([]*Approval, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1323,14 +1323,14 @@ func (u *ApprovalUpsertBulk) UpdateOperationType() *ApprovalUpsertBulk {
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (u *ApprovalUpsertBulk) SetOperationRefID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) SetOperationRefID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetOperationRefID(v)
 	})
 }
 
 // AddOperationRefID adds v to the "operation_ref_id" field.
-func (u *ApprovalUpsertBulk) AddOperationRefID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) AddOperationRefID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddOperationRefID(v)
 	})
@@ -1393,14 +1393,14 @@ func (u *ApprovalUpsertBulk) ClearPayload() *ApprovalUpsertBulk {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (u *ApprovalUpsertBulk) SetRequesterID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) SetRequesterID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetRequesterID(v)
 	})
 }
 
 // AddRequesterID adds v to the "requester_id" field.
-func (u *ApprovalUpsertBulk) AddRequesterID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) AddRequesterID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddRequesterID(v)
 	})
@@ -1421,14 +1421,14 @@ func (u *ApprovalUpsertBulk) ClearRequesterID() *ApprovalUpsertBulk {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalUpsertBulk) SetApproverID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) SetApproverID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.SetApproverID(v)
 	})
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalUpsertBulk) AddApproverID(v uint64) *ApprovalUpsertBulk {
+func (u *ApprovalUpsertBulk) AddApproverID(v int64) *ApprovalUpsertBulk {
 	return u.Update(func(s *ApprovalUpsert) {
 		s.AddApproverID(v)
 	})

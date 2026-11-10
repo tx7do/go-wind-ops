@@ -82,11 +82,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	ProjectIDValidator func(uint64) error
+	ProjectIDValidator func(int64) error
 	// NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
-	NodeIDValidator func(uint64) error
+	NodeIDValidator func(int64) error
 	// ProjectNameValidator is a validator for the "project_name" field. It is called by the builders before save.
 	ProjectNameValidator func(string) error
 	// DefaultSizeBytes holds the default value on creation for the "size_bytes" field.
@@ -94,7 +94,7 @@ var (
 	// DefaultTrigger holds the default value on creation for the "trigger" field.
 	DefaultTrigger string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the LogSnapshot queries.

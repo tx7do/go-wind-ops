@@ -67,7 +67,6 @@ func NewDiscovery(ctx *bootstrap.Context) registry.Discovery {
 		return nil
 	}
 
-
 	return discovery
 }
 

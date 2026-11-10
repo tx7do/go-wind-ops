@@ -31,7 +31,7 @@ func (PipelineRun) Annotations() []schema.Annotation {
 // Fields of the PipelineRun.
 func (PipelineRun) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("pipeline_id").
+		field.Int64("pipeline_id").
 			Comment("流水线配置(ops_build_pipelines.id)").
 			Positive(),
 
@@ -81,7 +81,7 @@ func (PipelineRun) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("operator_id").
+		field.Int64("operator_id").
 			Comment("触发人").
 			Default(0).
 			Optional().
@@ -99,7 +99,7 @@ func (PipelineRun) Fields() []ent.Field {
 func (PipelineRun) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

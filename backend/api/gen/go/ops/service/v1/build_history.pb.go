@@ -85,17 +85,17 @@ func (BuildHistory_Status) EnumDescriptor() ([]byte, []int) {
 // 构建历史
 type BuildHistory struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 历史ID
-	BuildId           *uint64                `protobuf:"varint,2,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                // 构建配置ID
+	Id                *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 历史ID
+	BuildId           *int64                 `protobuf:"varint,2,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                // 构建配置ID
 	BuildNo           *uint32                `protobuf:"varint,3,opt,name=build_no,json=buildNo,proto3,oneof" json:"build_no,omitempty"`                                // 构建号
 	Status            *BuildHistory_Status   `protobuf:"varint,4,opt,name=status,proto3,enum=ops.service.v1.BuildHistory_Status,oneof" json:"status,omitempty"`         // 构建状态
 	Branch            *string                `protobuf:"bytes,5,opt,name=branch,proto3,oneof" json:"branch,omitempty"`                                                  // 实际构建分支
 	Log               *string                `protobuf:"bytes,6,opt,name=log,proto3,oneof" json:"log,omitempty"`                                                        // 构建日志(克隆+构建输出)
 	ArtifactBucket    *string                `protobuf:"bytes,7,opt,name=artifact_bucket,json=artifactBucket,proto3,oneof" json:"artifact_bucket,omitempty"`            // 产物桶
 	ArtifactObjectKey *string                `protobuf:"bytes,8,opt,name=artifact_object_key,json=artifactObjectKey,proto3,oneof" json:"artifact_object_key,omitempty"` // 产物对象键
-	ArtifactSize      *uint64                `protobuf:"varint,9,opt,name=artifact_size,json=artifactSize,proto3,oneof" json:"artifact_size,omitempty"`                 // 产物大小(字节)
+	ArtifactSize      *int64                 `protobuf:"varint,9,opt,name=artifact_size,json=artifactSize,proto3,oneof" json:"artifact_size,omitempty"`                 // 产物大小(字节)
 	Error             *string                `protobuf:"bytes,10,opt,name=error,proto3,oneof" json:"error,omitempty"`                                                   // 失败原因
-	OperatorId        *uint64                `protobuf:"varint,11,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`                      // 触发人
+	OperatorId        *int64                 `protobuf:"varint,11,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`                      // 触发人
 	StartedAt         *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`                          // 开始时间
 	FinishedAt        *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at,omitempty"`                       // 结束时间
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,32,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                          // 触发时间
@@ -133,14 +133,14 @@ func (*BuildHistory) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *BuildHistory) GetId() uint64 {
+func (x *BuildHistory) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *BuildHistory) GetBuildId() uint64 {
+func (x *BuildHistory) GetBuildId() int64 {
 	if x != nil && x.BuildId != nil {
 		return *x.BuildId
 	}
@@ -189,7 +189,7 @@ func (x *BuildHistory) GetArtifactObjectKey() string {
 	return ""
 }
 
-func (x *BuildHistory) GetArtifactSize() uint64 {
+func (x *BuildHistory) GetArtifactSize() int64 {
 	if x != nil && x.ArtifactSize != nil {
 		return *x.ArtifactSize
 	}
@@ -203,7 +203,7 @@ func (x *BuildHistory) GetError() string {
 	return ""
 }
 
-func (x *BuildHistory) GetOperatorId() uint64 {
+func (x *BuildHistory) GetOperatorId() int64 {
 	if x != nil && x.OperatorId != nil {
 		return *x.OperatorId
 	}
@@ -233,7 +233,7 @@ func (x *BuildHistory) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListBuildHistoryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*BuildHistory        `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 历史列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -269,7 +269,7 @@ func (*ListBuildHistoryResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListBuildHistoryResponse) GetTotal() uint64 {
+func (x *ListBuildHistoryResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -285,7 +285,7 @@ func (x *ListBuildHistoryResponse) GetItems() []*BuildHistory {
 
 type GetBuildHistoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 历史ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 历史ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -320,7 +320,7 @@ func (*GetBuildHistoryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetBuildHistoryRequest) GetId() uint64 {
+func (x *GetBuildHistoryRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -329,7 +329,7 @@ func (x *GetBuildHistoryRequest) GetId() uint64 {
 
 type GetArtifactDownloadUrlRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 历史ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 历史ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -364,7 +364,7 @@ func (*GetArtifactDownloadUrlRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetArtifactDownloadUrlRequest) GetId() uint64 {
+func (x *GetArtifactDownloadUrlRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -433,7 +433,7 @@ func (x *GetArtifactDownloadUrlResponse) GetSize() uint64 {
 
 type GetBuildHistoryLogRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`         // 历史ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`         // 历史ID
 	Offset        *int64                 `protobuf:"varint,2,opt,name=offset,proto3,oneof" json:"offset,omitempty"` // 已持有的字节数(0=全量)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -469,7 +469,7 @@ func (*GetBuildHistoryLogRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_build_history_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetBuildHistoryLogRequest) GetId() uint64 {
+func (x *GetBuildHistoryLogRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -565,18 +565,18 @@ const file_ops_service_v1_build_history_proto_rawDesc = "" +
 	"\n" +
 	"\"ops/service/v1/build_history.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xc2\a\n" +
 	"\fBuildHistory\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12#\n" +
-	"\bbuild_id\x18\x02 \x01(\x04B\x03\xe0A\x03H\x01R\abuildId\x88\x01\x01\x12#\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12#\n" +
+	"\bbuild_id\x18\x02 \x01(\x03B\x03\xe0A\x03H\x01R\abuildId\x88\x01\x01\x12#\n" +
 	"\bbuild_no\x18\x03 \x01(\rB\x03\xe0A\x03H\x02R\abuildNo\x88\x01\x01\x12E\n" +
 	"\x06status\x18\x04 \x01(\x0e2#.ops.service.v1.BuildHistory.StatusB\x03\xe0A\x03H\x03R\x06status\x88\x01\x01\x12 \n" +
 	"\x06branch\x18\x05 \x01(\tB\x03\xe0A\x03H\x04R\x06branch\x88\x01\x01\x12\x1a\n" +
 	"\x03log\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\x03log\x88\x01\x01\x121\n" +
 	"\x0fartifact_bucket\x18\a \x01(\tB\x03\xe0A\x03H\x06R\x0eartifactBucket\x88\x01\x01\x128\n" +
 	"\x13artifact_object_key\x18\b \x01(\tB\x03\xe0A\x03H\aR\x11artifactObjectKey\x88\x01\x01\x12-\n" +
-	"\rartifact_size\x18\t \x01(\x04B\x03\xe0A\x03H\bR\fartifactSize\x88\x01\x01\x12\x1e\n" +
+	"\rartifact_size\x18\t \x01(\x03B\x03\xe0A\x03H\bR\fartifactSize\x88\x01\x01\x12\x1e\n" +
 	"\x05error\x18\n" +
 	" \x01(\tB\x03\xe0A\x03H\tR\x05error\x88\x01\x01\x12)\n" +
-	"\voperator_id\x18\v \x01(\x04B\x03\xe0A\x03H\n" +
+	"\voperator_id\x18\v \x01(\x03B\x03\xe0A\x03H\n" +
 	"R\n" +
 	"operatorId\x88\x01\x01\x12C\n" +
 	"\n" +
@@ -607,13 +607,13 @@ const file_ops_service_v1_build_history_proto_rawDesc = "" +
 	"\f_finished_atB\r\n" +
 	"\v_created_at\"d\n" +
 	"\x18ListBuildHistoryResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x122\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x122\n" +
 	"\x05items\x18\x02 \x03(\v2\x1c.ops.service.v1.BuildHistoryR\x05items\"9\n" +
 	"\x16GetBuildHistoryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"@\n" +
 	"\x1dGetArtifactDownloadUrlRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"e\n" +
 	"\x1eGetArtifactDownloadUrlResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1d\n" +
@@ -621,7 +621,7 @@ const file_ops_service_v1_build_history_proto_rawDesc = "" +
 	"object_key\x18\x02 \x01(\tR\tobjectKey\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x04R\x04size\"d\n" +
 	"\x19GetBuildHistoryLogRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
 	"\x06offset\x18\x02 \x01(\x03H\x01R\x06offset\x88\x01\x01B\x05\n" +
 	"\x03_idB\t\n" +
 	"\a_offset\"\x88\x02\n" +

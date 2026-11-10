@@ -33,7 +33,7 @@ type CertService struct {
 	alertRepo        *data.AlertRepo
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
-	maintenanceRepo   *data.MaintenanceWindowRepo
+	maintenanceRepo  *data.MaintenanceWindowRepo
 }
 
 func NewCertService(ctx *bootstrap.Context, certRepo *data.CertRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *CertService {
@@ -43,7 +43,7 @@ func NewCertService(ctx *bootstrap.Context, certRepo *data.CertRepo, alertRepo *
 		alertRepo:        alertRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
-		maintenanceRepo:   maintenanceRepo,
+		maintenanceRepo:  maintenanceRepo,
 	}
 }
 

@@ -27,9 +27,9 @@ const (
 
 type NotificationDelivery struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	AlertId       *uint64                `protobuf:"varint,2,opt,name=alert_id,json=alertId,proto3,oneof" json:"alert_id,omitempty"`
-	ChannelId     *uint64                `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3,oneof" json:"channel_id,omitempty"`
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	AlertId       *int64                 `protobuf:"varint,2,opt,name=alert_id,json=alertId,proto3,oneof" json:"alert_id,omitempty"`
+	ChannelId     *int64                 `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3,oneof" json:"channel_id,omitempty"`
 	ChannelType   *string                `protobuf:"bytes,4,opt,name=channel_type,json=channelType,proto3,oneof" json:"channel_type,omitempty"`
 	Target        *string                `protobuf:"bytes,5,opt,name=target,proto3,oneof" json:"target,omitempty"`
 	Status        *string                `protobuf:"bytes,6,opt,name=status,proto3,oneof" json:"status,omitempty"`
@@ -70,21 +70,21 @@ func (*NotificationDelivery) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_delivery_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *NotificationDelivery) GetId() uint64 {
+func (x *NotificationDelivery) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *NotificationDelivery) GetAlertId() uint64 {
+func (x *NotificationDelivery) GetAlertId() int64 {
 	if x != nil && x.AlertId != nil {
 		return *x.AlertId
 	}
 	return 0
 }
 
-func (x *NotificationDelivery) GetChannelId() uint64 {
+func (x *NotificationDelivery) GetChannelId() int64 {
 	if x != nil && x.ChannelId != nil {
 		return *x.ChannelId
 	}
@@ -135,7 +135,7 @@ func (x *NotificationDelivery) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListNotificationDeliveryResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Total         uint64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                   `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Items         []*NotificationDelivery `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -171,7 +171,7 @@ func (*ListNotificationDeliveryResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_delivery_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListNotificationDeliveryResponse) GetTotal() uint64 {
+func (x *ListNotificationDeliveryResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -187,7 +187,7 @@ func (x *ListNotificationDeliveryResponse) GetItems() []*NotificationDelivery {
 
 type GetNotificationDeliveryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,7 +222,7 @@ func (*GetNotificationDeliveryRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_notification_delivery_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetNotificationDeliveryRequest) GetId() uint64 {
+func (x *GetNotificationDeliveryRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -235,10 +235,10 @@ const file_ops_service_v1_notification_delivery_proto_rawDesc = "" +
 	"\n" +
 	"*ops/service/v1/notification_delivery.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xef\x03\n" +
 	"\x14NotificationDelivery\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12#\n" +
-	"\balert_id\x18\x02 \x01(\x04B\x03\xe0A\x03H\x01R\aalertId\x88\x01\x01\x12'\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12#\n" +
+	"\balert_id\x18\x02 \x01(\x03B\x03\xe0A\x03H\x01R\aalertId\x88\x01\x01\x12'\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x04B\x03\xe0A\x03H\x02R\tchannelId\x88\x01\x01\x12+\n" +
+	"channel_id\x18\x03 \x01(\x03B\x03\xe0A\x03H\x02R\tchannelId\x88\x01\x01\x12+\n" +
 	"\fchannel_type\x18\x04 \x01(\tB\x03\xe0A\x03H\x03R\vchannelType\x88\x01\x01\x12 \n" +
 	"\x06target\x18\x05 \x01(\tB\x03\xe0A\x03H\x04R\x06target\x88\x01\x01\x12 \n" +
 	"\x06status\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\x06status\x88\x01\x01\x12'\n" +
@@ -257,10 +257,10 @@ const file_ops_service_v1_notification_delivery_proto_rawDesc = "" +
 	"\x06_titleB\r\n" +
 	"\v_created_at\"t\n" +
 	" ListNotificationDeliveryResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12:\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12:\n" +
 	"\x05items\x18\x02 \x03(\v2$.ops.service.v1.NotificationDeliveryR\x05items\"A\n" +
 	"\x1eGetNotificationDeliveryRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xe5\x01\n" +
 	"\x1bNotificationDeliveryService\x12_\n" +
 	"\x0eListDeliveries\x12\x19.pagination.PagingRequest\x1a0.ops.service.v1.ListNotificationDeliveryResponse\"\x00\x12e\n" +

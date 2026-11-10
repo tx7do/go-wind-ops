@@ -31,7 +31,7 @@ func (Alert) Annotations() []schema.Annotation {
 // Fields of the Alert.
 func (Alert) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("monitor_id").
+		field.Int64("monitor_id").
 			Comment("来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)").
 			Default(0).
 			Optional(),
@@ -40,12 +40,12 @@ func (Alert) Fields() []ent.Field {
 			Comment("告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期 / NODE_OFFLINE=节点失联").
 			Default("MONITOR"),
 
-		field.Uint64("project_id").
+		field.Int64("project_id").
 			Comment("关联项目(节点指标/预算/证书告警为 0)").
 			Default(0).
 			Optional(),
 
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)").
 			Default(0).
 			Optional(),
@@ -82,7 +82,7 @@ func (Alert) Fields() []ent.Field {
 func (Alert) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -134,8 +134,8 @@ func drainClose(body io.ReadCloser) {
 // (保持向后兼容),agent 启动时会打一次告警。
 
 var (
-	egressMu     sync.RWMutex
-	egressHosts  []string
+	egressMu    sync.RWMutex
+	egressHosts []string
 )
 
 // ConfigureAllowedHosts 限定预签名下载/上传的目标 host(空切分项忽略)。

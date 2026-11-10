@@ -28,17 +28,17 @@ const fileSyncTimeout = 15 * time.Second
 type FileService struct {
 	opsV1.UnimplementedFileServiceServer
 
-	log      *log.Helper
-	agentSvc *AgentService
-	nodeRepo *data.AgentNodeRepo
+	log       *log.Helper
+	agentSvc  *AgentService
+	nodeRepo  *data.AgentNodeRepo
 	ossClient *oss.MinIOClient
 }
 
 func NewFileService(ctx *bootstrap.Context, agentSvc *AgentService, nodeRepo *data.AgentNodeRepo, ossClient *oss.MinIOClient) *FileService {
 	return &FileService{
-		log:      ctx.NewLoggerHelper("file/service/core-service"),
-		agentSvc: agentSvc,
-		nodeRepo: nodeRepo,
+		log:       ctx.NewLoggerHelper("file/service/core-service"),
+		agentSvc:  agentSvc,
+		nodeRepo:  nodeRepo,
 		ossClient: ossClient,
 	}
 }

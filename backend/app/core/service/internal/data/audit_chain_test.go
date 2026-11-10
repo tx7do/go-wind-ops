@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/go-kratos/kratos/v2/log"
-
 )
 
 // errUnique 模拟唯一键冲突的哨兵错误(经桩 isUniqueViolation 识别)。

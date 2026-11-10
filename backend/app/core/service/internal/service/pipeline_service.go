@@ -13,8 +13,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-crud/viewer"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-ops/app/core/service/internal/data"
@@ -49,11 +49,11 @@ type PipelineService struct {
 	repo    *data.PipelineRepo
 	runRepo *data.PipelineRunRepo
 
-	buildHistoryRepo *data.BuildHistoryRepo
+	buildHistoryRepo  *data.BuildHistoryRepo
 	commandRecordRepo *data.CommandRecordRepo
 	distRecordRepo    *data.DistributionRecordRepo
 
-	buildSvc *BuildService
+	buildSvc  *BuildService
 	scriptSvc *ScriptService
 	distSvc   *DistributionService
 
@@ -219,17 +219,17 @@ func (s *PipelineService) TriggerPipeline(ctx context.Context, req *opsV1.Trigge
 // pipelineDetachedCtx 执行 goroutine 的上下文:脱离请求生命周期,保留操作人
 // 与租户。注意 metadata 只供 operatorIDOf 归因读取,viewer 必须显式注入——
 // 直连调用不经 ent.Server 中间件,没有 viewer 会兜底 SystemViewer(tenant 0)。
-func pipelineDetachedCtx(operatorID, tenantID uint64) context.Context {
+func pipelineDetachedCtx(operatorID, tenantID int64) context.Context {
 	c, _ := pkgMetadata.NewContext(context.Background(),
-		pkgMetadata.NewUserOperator(uint64(operatorID), uint64(tenantID), 0, identityV1.DataScope_ALL))
+		pkgMetadata.NewUserOperator(int64(operatorID), int64(tenantID), 0, identityV1.DataScope_ALL))
 	if tenantID > 0 {
-		c = viewer.WithContext(c, appViewer.NewUserViewer(uint64(operatorID), uint64(tenantID), 0, "", identityV1.DataScope_ALL))
+		c = viewer.WithContext(c, appViewer.NewUserViewer(int64(operatorID), int64(tenantID), 0, "", identityV1.DataScope_ALL))
 	}
 	return c
 }
 
 // executeRun 按序推进步骤,失败即中止;结果与日志增量落库。
-func (s *PipelineService) executeRun(runID uint64, steps []*opsV1.PipelineStep, operatorID, tenantID uint64) {
+func (s *PipelineService) executeRun(runID int64, steps []*opsV1.PipelineStep, operatorID, tenantID int64) {
 	ctx := pipelineDetachedCtx(operatorID, tenantID)
 
 	if err := s.runRepo.MarkRunning(ctx, runID); err != nil {
@@ -268,9 +268,9 @@ func (s *PipelineService) executeRun(runID uint64, steps []*opsV1.PipelineStep, 
 		durationMs := time.Since(start).Milliseconds()
 
 		result := &opsV1.PipelineStepResult{
-			Type:      &typeName,
-			RefId:     st.RefId,
-			Name:      &display,
+			Type:       &typeName,
+			RefId:      st.RefId,
+			Name:       &display,
 			DurationMs: &durationMs,
 		}
 		if stepErr != nil {
@@ -321,7 +321,7 @@ func stepDisplayName(st *opsV1.PipelineStep) string {
 }
 
 // runBuildStep 构建:触发后轮询构建历史终态。
-func (s *PipelineService) runBuildStep(ctx context.Context, runID uint64, st *opsV1.PipelineStep) error {
+func (s *PipelineService) runBuildStep(ctx context.Context, runID int64, st *opsV1.PipelineStep) error {
 	resp, err := s.buildSvc.TriggerBuild(ctx, &opsV1.TriggerBuildRequest{Id: st.GetRefId()})
 	if err != nil {
 		return fmt.Errorf("trigger build: %s", err.Error())
@@ -350,8 +350,8 @@ func (s *PipelineService) runBuildStep(ctx context.Context, runID uint64, st *op
 }
 
 // runScriptStep 脚本:同步下发后按指令台账轮询终态,输出进日志。
-func (s *PipelineService) runScriptStep(ctx context.Context, runID uint64, st *opsV1.PipelineStep) error {
-		// 自动化链路:脚本内容在流水线编排/脚本入库时已被作者审阅,此处显式确认通过危险命令门槛。
+func (s *PipelineService) runScriptStep(ctx context.Context, runID int64, st *opsV1.PipelineStep) error {
+	// 自动化链路:脚本内容在流水线编排/脚本入库时已被作者审阅,此处显式确认通过危险命令门槛。
 	resp, err := s.scriptSvc.ExecuteScript(ctx, &opsV1.ExecuteScriptRequest{Id: st.GetRefId(), AgentId: st.AgentId, ConfirmDangerous: trans.Ptr(true)})
 	if err != nil {
 		return fmt.Errorf("execute script: %s", err.Error())
@@ -390,14 +390,14 @@ func (s *PipelineService) runScriptStep(ctx context.Context, runID uint64, st *o
 }
 
 // runDistributionStep 分发:触发后轮询全部目标记录终态(任一 FAILED 即失败)。
-func (s *PipelineService) runDistributionStep(ctx context.Context, runID uint64, st *opsV1.PipelineStep) error {
+func (s *PipelineService) runDistributionStep(ctx context.Context, runID int64, st *opsV1.PipelineStep) error {
 	resp, err := s.distSvc.TriggerDistribution(ctx, &opsV1.TriggerDistributionRequest{Id: st.GetRefId()})
 	if err != nil {
 		return fmt.Errorf("trigger distribution: %s", err.Error())
 	}
 	ids := resp.GetRecordIds()
 	if len(ids) == 0 && resp.GetRecordId() != 0 {
-		ids = []uint64{resp.GetRecordId()}
+		ids = []int64{resp.GetRecordId()}
 	}
 	s.appendLogf(ctx, runID, "  distribution triggered (%d targets)\n", len(ids))
 
@@ -456,7 +456,7 @@ func (s *PipelineService) awaitCondition(ctx context.Context, timeout time.Durat
 }
 
 // appendScriptOutput 解析脚本回执结果,把输出(截断)写进运行日志。
-func (s *PipelineService) appendScriptOutput(ctx context.Context, runID uint64, resultJSON string) {
+func (s *PipelineService) appendScriptOutput(ctx context.Context, runID int64, resultJSON string) {
 	var out struct {
 		Output   string `json:"output"`
 		ExitCode int    `json:"exit_code"`
@@ -475,7 +475,7 @@ func (s *PipelineService) appendScriptOutput(ctx context.Context, runID uint64, 
 }
 
 // appendLogf 追加日志(执行 goroutine 单写者)。
-func (s *PipelineService) appendLogf(ctx context.Context, runID uint64, format string, args ...any) {
+func (s *PipelineService) appendLogf(ctx context.Context, runID int64, format string, args ...any) {
 	_ = s.runRepo.AppendLog(ctx, runID, fmt.Sprintf(format, args...))
 }
 

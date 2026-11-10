@@ -71,14 +71,14 @@ func (_u *ApiKeyUpdate) ClearDeletedAt() *ApiKeyUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ApiKeyUpdate) SetCreatedBy(v uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetCreatedBy(v int64) *ApiKeyUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ApiKeyUpdate) SetNillableCreatedBy(v *uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetNillableCreatedBy(v *int64) *ApiKeyUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *ApiKeyUpdate) ClearCreatedBy() *ApiKeyUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ApiKeyUpdate) SetUpdatedBy(v uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetUpdatedBy(v int64) *ApiKeyUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ApiKeyUpdate) SetNillableUpdatedBy(v *uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetNillableUpdatedBy(v *int64) *ApiKeyUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *ApiKeyUpdate) ClearUpdatedBy() *ApiKeyUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ApiKeyUpdate) SetDeletedBy(v uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetDeletedBy(v int64) *ApiKeyUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ApiKeyUpdate) SetNillableDeletedBy(v *uint64) *ApiKeyUpdate {
+func (_u *ApiKeyUpdate) SetNillableDeletedBy(v *int64) *ApiKeyUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -358,7 +358,7 @@ func (_u *ApiKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(apikey.Table, apikey.Columns, sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(apikey.Table, apikey.Columns, sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -367,7 +367,7 @@ func (_u *ApiKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(apikey.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(apikey.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(apikey.FieldCreatedAt, field.TypeTime)
@@ -385,31 +385,31 @@ func (_u *ApiKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(apikey.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(apikey.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(apikey.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(apikey.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(apikey.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(apikey.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(apikey.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(apikey.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(apikey.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(apikey.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)
@@ -518,14 +518,14 @@ func (_u *ApiKeyUpdateOne) ClearDeletedAt() *ApiKeyUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ApiKeyUpdateOne) SetCreatedBy(v uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetCreatedBy(v int64) *ApiKeyUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ApiKeyUpdateOne) SetNillableCreatedBy(v *uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetNillableCreatedBy(v *int64) *ApiKeyUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -545,14 +545,14 @@ func (_u *ApiKeyUpdateOne) ClearCreatedBy() *ApiKeyUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ApiKeyUpdateOne) SetUpdatedBy(v uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetUpdatedBy(v int64) *ApiKeyUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ApiKeyUpdateOne) SetNillableUpdatedBy(v *uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetNillableUpdatedBy(v *int64) *ApiKeyUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -572,14 +572,14 @@ func (_u *ApiKeyUpdateOne) ClearUpdatedBy() *ApiKeyUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ApiKeyUpdateOne) SetDeletedBy(v uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetDeletedBy(v int64) *ApiKeyUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ApiKeyUpdateOne) SetNillableDeletedBy(v *uint64) *ApiKeyUpdateOne {
+func (_u *ApiKeyUpdateOne) SetNillableDeletedBy(v *int64) *ApiKeyUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -818,7 +818,7 @@ func (_u *ApiKeyUpdateOne) sqlSave(ctx context.Context) (_node *ApiKey, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(apikey.Table, apikey.Columns, sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(apikey.Table, apikey.Columns, sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApiKey.id" for update`)}
@@ -844,7 +844,7 @@ func (_u *ApiKeyUpdateOne) sqlSave(ctx context.Context) (_node *ApiKey, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(apikey.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(apikey.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(apikey.FieldCreatedAt, field.TypeTime)
@@ -862,31 +862,31 @@ func (_u *ApiKeyUpdateOne) sqlSave(ctx context.Context) (_node *ApiKey, err erro
 		_spec.ClearField(apikey.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(apikey.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(apikey.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(apikey.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(apikey.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(apikey.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(apikey.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(apikey.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(apikey.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(apikey.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(apikey.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(apikey.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(apikey.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)

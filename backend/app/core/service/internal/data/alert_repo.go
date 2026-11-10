@@ -121,7 +121,7 @@ func (r *AlertRepo) Get(ctx context.Context, req *opsV1.GetAlertRequest) (*opsV1
 // HasUnresolvedAlert 同一来源对象是否存在未恢复告警(重复告警去重)。
 // monitor_id 是跨来源复用字段(MONITOR=规则ID/NODE_OFFLINE=节点ID/BUDGET=
 // 预算ID/CERT=证书ID),各业务表独立自增必然撞号,必须加 source 才能唯一定位。
-func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint64, source string) (bool, error) {
+func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID int64, source string) (bool, error) {
 	return r.entClient.Client().Alert.
 		Query().
 		Where(
@@ -133,7 +133,7 @@ func (r *AlertRepo) HasUnresolvedAlert(ctx context.Context, monitorID uint64, so
 }
 
 // Create 创建告警记录(source: MONITOR/BUDGET/CERT)。
-func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uint64, source, level, message string, notified bool) (*ent.Alert, error) {
+func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID int64, source, level, message string, notified bool) (*ent.Alert, error) {
 	builder := r.entClient.Client().Alert.
 		Create().
 		SetMonitorID(monitorID).
@@ -154,7 +154,7 @@ func (r *AlertRepo) Create(ctx context.Context, monitorID, projectID, nodeID uin
 }
 
 // CreateRecovery 创建已恢复的 RECOVERY 告警记录(条件消除通知用,直接终态)。
-func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, nodeID uint64, source, message string) (*ent.Alert, error) {
+func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, nodeID int64, source, message string) (*ent.Alert, error) {
 	now := time.Now()
 	builder := r.entClient.Client().Alert.
 		Create().
@@ -177,7 +177,7 @@ func (r *AlertRepo) CreateRecovery(ctx context.Context, monitorID, projectID, no
 }
 
 // LatestAlertByMonitor 取某来源对象最近一条告警(重复告警间隔判断用)。
-func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID uint64, source string) (*ent.Alert, error) {
+func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID int64, source string) (*ent.Alert, error) {
 	return r.entClient.Client().Alert.
 		Query().
 		Where(
@@ -189,7 +189,7 @@ func (r *AlertRepo) LatestAlertByMonitor(ctx context.Context, monitorID uint64, 
 }
 
 // Resolve 标记告警已恢复。
-func (r *AlertRepo) Resolve(ctx context.Context, id uint64) error {
+func (r *AlertRepo) Resolve(ctx context.Context, id int64) error {
 	now := time.Now()
 	_, err := r.entClient.Client().Alert.
 		UpdateOneID(id).
@@ -204,7 +204,7 @@ func (r *AlertRepo) Resolve(ctx context.Context, id uint64) error {
 
 // ResolveAllByMonitor 恢复某来源对象的全部未恢复告警(条件恢复运行时调用)。
 // 必须带 source,否则会误关撞号的其他来源告警(如节点 N 恢复时误关监控规则 N)。
-func (r *AlertRepo) ResolveAllByMonitor(ctx context.Context, monitorID uint64, source string) (int, error) {
+func (r *AlertRepo) ResolveAllByMonitor(ctx context.Context, monitorID int64, source string) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().Alert.
 		Update().
@@ -220,7 +220,7 @@ func (r *AlertRepo) ResolveAllByMonitor(ctx context.Context, monitorID uint64, s
 }
 
 // MarkNotified 标记告警已外呼 webhook。
-func (r *AlertRepo) MarkNotified(ctx context.Context, id uint64) error {
+func (r *AlertRepo) MarkNotified(ctx context.Context, id int64) error {
 	_, err := r.entClient.Client().Alert.
 		UpdateOneID(id).
 		SetNotified(true).

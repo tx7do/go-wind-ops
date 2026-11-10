@@ -17,9 +17,9 @@ type CommandRecord struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -29,7 +29,7 @@ type CommandRecord struct {
 	// 幂等键(UUID),与 CommandEnvelope/CommandResult 对应
 	RequestID string `json:"request_id,omitempty"`
 	// 目标节点(ops_agent_nodes.id);离线注入等无记录场景为 0
-	NodeID *uint64 `json:"node_id,omitempty"`
+	NodeID *int64 `json:"node_id,omitempty"`
 	// 目标机器唯一标识
 	AgentID string `json:"agent_id,omitempty"`
 	// 指令动作(ping/project_start/project_stop/project_status/...)
@@ -43,9 +43,9 @@ type CommandRecord struct {
 	// 失败原因
 	Error *string `json:"error,omitempty"`
 	// 触发指令的用户
-	OperatorID *uint64 `json:"operator_id,omitempty"`
+	OperatorID *int64 `json:"operator_id,omitempty"`
 	// 所属脚本批量执行批次(ops_script_batches.id;非批量指令为 0)
-	BatchID uint64 `json:"batch_id,omitempty"`
+	BatchID int64 `json:"batch_id,omitempty"`
 	// 结果回执时间
 	FinishedAt   *time.Time `json:"finished_at,omitempty"`
 	selectValues sql.SelectValues
@@ -82,13 +82,13 @@ func (_m *CommandRecord) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case commandrecord.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case commandrecord.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -121,8 +121,8 @@ func (_m *CommandRecord) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
-				_m.NodeID = new(uint64)
-				*_m.NodeID = uint64(value.Int64)
+				_m.NodeID = new(int64)
+				*_m.NodeID = value.Int64
 			}
 		case commandrecord.FieldAgentID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -168,14 +168,14 @@ func (_m *CommandRecord) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operator_id", values[i])
 			} else if value.Valid {
-				_m.OperatorID = new(uint64)
-				*_m.OperatorID = uint64(value.Int64)
+				_m.OperatorID = new(int64)
+				*_m.OperatorID = value.Int64
 			}
 		case commandrecord.FieldBatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field batch_id", values[i])
 			} else if value.Valid {
-				_m.BatchID = uint64(value.Int64)
+				_m.BatchID = value.Int64
 			}
 		case commandrecord.FieldFinishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

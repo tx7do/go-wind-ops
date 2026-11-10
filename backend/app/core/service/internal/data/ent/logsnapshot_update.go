@@ -70,14 +70,14 @@ func (_u *LogSnapshotUpdate) ClearDeletedAt() *LogSnapshotUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *LogSnapshotUpdate) SetCreatedBy(v uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetCreatedBy(v int64) *LogSnapshotUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdate) SetNillableCreatedBy(v *uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNillableCreatedBy(v *int64) *LogSnapshotUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *LogSnapshotUpdate) ClearCreatedBy() *LogSnapshotUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *LogSnapshotUpdate) SetUpdatedBy(v uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetUpdatedBy(v int64) *LogSnapshotUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdate) SetNillableUpdatedBy(v *uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNillableUpdatedBy(v *int64) *LogSnapshotUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *LogSnapshotUpdate) ClearUpdatedBy() *LogSnapshotUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *LogSnapshotUpdate) SetDeletedBy(v uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetDeletedBy(v int64) *LogSnapshotUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdate) SetNillableDeletedBy(v *uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNillableDeletedBy(v *int64) *LogSnapshotUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -151,14 +151,14 @@ func (_u *LogSnapshotUpdate) ClearDeletedBy() *LogSnapshotUpdate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *LogSnapshotUpdate) SetProjectID(v uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetProjectID(v int64) *LogSnapshotUpdate {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *LogSnapshotUpdate) SetNillableProjectID(v *uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNillableProjectID(v *int64) *LogSnapshotUpdate {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -172,14 +172,14 @@ func (_u *LogSnapshotUpdate) AddProjectID(v int64) *LogSnapshotUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *LogSnapshotUpdate) SetNodeID(v uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNodeID(v int64) *LogSnapshotUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *LogSnapshotUpdate) SetNillableNodeID(v *uint64) *LogSnapshotUpdate {
+func (_u *LogSnapshotUpdate) SetNillableNodeID(v *int64) *LogSnapshotUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -343,7 +343,7 @@ func (_u *LogSnapshotUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -352,7 +352,7 @@ func (_u *LogSnapshotUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(logsnapshot.FieldCreatedAt, field.TypeTime)
@@ -370,43 +370,43 @@ func (_u *LogSnapshotUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(logsnapshot.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(logsnapshot.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(logsnapshot.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(logsnapshot.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(logsnapshot.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(logsnapshot.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(logsnapshot.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(logsnapshot.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(logsnapshot.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(logsnapshot.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(logsnapshot.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.ProjectName(); ok {
 		_spec.SetField(logsnapshot.FieldProjectName, field.TypeString, value)
@@ -495,14 +495,14 @@ func (_u *LogSnapshotUpdateOne) ClearDeletedAt() *LogSnapshotUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *LogSnapshotUpdateOne) SetCreatedBy(v uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetCreatedBy(v int64) *LogSnapshotUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdateOne) SetNillableCreatedBy(v *uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNillableCreatedBy(v *int64) *LogSnapshotUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -522,14 +522,14 @@ func (_u *LogSnapshotUpdateOne) ClearCreatedBy() *LogSnapshotUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *LogSnapshotUpdateOne) SetUpdatedBy(v uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetUpdatedBy(v int64) *LogSnapshotUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdateOne) SetNillableUpdatedBy(v *uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNillableUpdatedBy(v *int64) *LogSnapshotUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -549,14 +549,14 @@ func (_u *LogSnapshotUpdateOne) ClearUpdatedBy() *LogSnapshotUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *LogSnapshotUpdateOne) SetDeletedBy(v uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetDeletedBy(v int64) *LogSnapshotUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *LogSnapshotUpdateOne) SetNillableDeletedBy(v *uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNillableDeletedBy(v *int64) *LogSnapshotUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -576,14 +576,14 @@ func (_u *LogSnapshotUpdateOne) ClearDeletedBy() *LogSnapshotUpdateOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *LogSnapshotUpdateOne) SetProjectID(v uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetProjectID(v int64) *LogSnapshotUpdateOne {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *LogSnapshotUpdateOne) SetNillableProjectID(v *uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNillableProjectID(v *int64) *LogSnapshotUpdateOne {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -597,14 +597,14 @@ func (_u *LogSnapshotUpdateOne) AddProjectID(v int64) *LogSnapshotUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *LogSnapshotUpdateOne) SetNodeID(v uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNodeID(v int64) *LogSnapshotUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *LogSnapshotUpdateOne) SetNillableNodeID(v *uint64) *LogSnapshotUpdateOne {
+func (_u *LogSnapshotUpdateOne) SetNillableNodeID(v *int64) *LogSnapshotUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -781,7 +781,7 @@ func (_u *LogSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *LogSnapshot
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(logsnapshot.Table, logsnapshot.Columns, sqlgraph.NewFieldSpec(logsnapshot.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "LogSnapshot.id" for update`)}
@@ -807,7 +807,7 @@ func (_u *LogSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *LogSnapshot
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(logsnapshot.FieldCreatedAt, field.TypeTime)
@@ -825,43 +825,43 @@ func (_u *LogSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *LogSnapshot
 		_spec.ClearField(logsnapshot.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(logsnapshot.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(logsnapshot.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(logsnapshot.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(logsnapshot.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(logsnapshot.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(logsnapshot.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(logsnapshot.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(logsnapshot.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(logsnapshot.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(logsnapshot.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(logsnapshot.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(logsnapshot.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(logsnapshot.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.ProjectName(); ok {
 		_spec.SetField(logsnapshot.FieldProjectName, field.TypeString, value)

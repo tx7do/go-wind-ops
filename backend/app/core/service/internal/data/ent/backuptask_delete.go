@@ -40,7 +40,7 @@ func (_d *BackupTaskDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *BackupTaskDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(backuptask.Table, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(backuptask.Table, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

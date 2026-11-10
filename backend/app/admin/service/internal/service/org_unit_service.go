@@ -12,8 +12,8 @@ import (
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	identityV1 "go-wind-ops/api/gen/go/identity/service/v1"
 
-	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/constants"
+	"go-wind-ops/pkg/middleware/auth"
 )
 
 type OrgUnitService struct {

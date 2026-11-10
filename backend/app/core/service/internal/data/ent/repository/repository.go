@@ -82,7 +82,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// GitURLValidator is a validator for the "git_url" field. It is called by the builders before save.
@@ -90,7 +90,7 @@ var (
 	// DefaultBranch holds the default value on creation for the "branch" field.
 	DefaultBranch string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the Repository queries.

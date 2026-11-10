@@ -58,26 +58,26 @@ func NewRestMiddleware(
 		adminV1.OperationMfaServiceVerifyMFAChallenge,
 	)
 
-		ms = append(ms, applogging.Server(
-			applogging.WithLogger(ctx.NewLoggerHelper("audit-logging/admin-service")),
-			applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
-				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
-				// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-				_, err := apiAuditLogServiceClient.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
-				return err
-			}),
-			applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
-				// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
-				_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
-				return err
-			}),
-			applogging.WithWriteOperationLogFunc(func(ctx context.Context, data *auditV1.OperationAuditLog) error {
-				ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
-				_, err := operationAuditLogServiceClient.Create(ctx, &auditV1.CreateOperationAuditLogRequest{Data: data})
-				return err
-			}),
-		))
+	ms = append(ms, applogging.Server(
+		applogging.WithLogger(ctx.NewLoggerHelper("audit-logging/admin-service")),
+		applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
+			ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+			_, err := apiAuditLogServiceClient.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
+			return err
+		}),
+		applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
+			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+			ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+			_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
+			return err
+		}),
+		applogging.WithWriteOperationLogFunc(func(ctx context.Context, data *auditV1.OperationAuditLog) error {
+			ctx, _ = metadata.NewContext(ctx, auditWriteOperator(ctx))
+			_, err := operationAuditLogServiceClient.Create(ctx, &auditV1.CreateOperationAuditLogRequest{Data: data})
+			return err
+		}),
+	))
 
 	// 鉴权必须在 ent.Server() 之前执行：auth.Server 对非白名单请求注入
 	// OperatorMetadata，随后 ent.Server() 才能据此构建带租户作用域的 UserViewer。

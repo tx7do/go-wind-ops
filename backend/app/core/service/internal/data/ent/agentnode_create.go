@@ -65,13 +65,13 @@ func (_c *AgentNodeCreate) SetNillableDeletedAt(v *time.Time) *AgentNodeCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *AgentNodeCreate) SetCreatedBy(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetCreatedBy(v int64) *AgentNodeCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableCreatedBy(v *uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableCreatedBy(v *int64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *AgentNodeCreate) SetNillableCreatedBy(v *uint64) *AgentNodeCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *AgentNodeCreate) SetUpdatedBy(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetUpdatedBy(v int64) *AgentNodeCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *int64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *uint64) *AgentNodeCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *AgentNodeCreate) SetDeletedBy(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetDeletedBy(v int64) *AgentNodeCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableDeletedBy(v *uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableDeletedBy(v *int64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -293,13 +293,13 @@ func (_c *AgentNodeCreate) SetNillableCPUCores(v *int) *AgentNodeCreate {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_c *AgentNodeCreate) SetMemTotalBytes(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetMemTotalBytes(v int64) *AgentNodeCreate {
 	_c.mutation.SetMemTotalBytes(v)
 	return _c
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableMemTotalBytes(v *uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableMemTotalBytes(v *int64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetMemTotalBytes(*v)
 	}
@@ -355,13 +355,13 @@ func (_c *AgentNodeCreate) SetNillableDiskUsedPercent(v *float64) *AgentNodeCrea
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_c *AgentNodeCreate) SetUptimeSeconds(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetUptimeSeconds(v int64) *AgentNodeCreate {
 	_c.mutation.SetUptimeSeconds(v)
 	return _c
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableUptimeSeconds(v *uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableUptimeSeconds(v *int64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetUptimeSeconds(*v)
 	}
@@ -383,7 +383,7 @@ func (_c *AgentNodeCreate) SetNillableLastHeartbeatAt(v *time.Time) *AgentNodeCr
 }
 
 // SetID sets the "id" field.
-func (_c *AgentNodeCreate) SetID(v uint64) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetID(v int64) *AgentNodeCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -484,7 +484,7 @@ func (_c *AgentNodeCreate) sqlSave(ctx context.Context) (*AgentNode, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -494,7 +494,7 @@ func (_c *AgentNodeCreate) sqlSave(ctx context.Context) (*AgentNode, error) {
 func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 	var (
 		_node = &AgentNode{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(agentnode.Table, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(agentnode.Table, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -514,15 +514,15 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(agentnode.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(agentnode.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.AgentID(); ok {
@@ -586,7 +586,7 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 		_node.CPUCores = &value
 	}
 	if value, ok := _c.mutation.MemTotalBytes(); ok {
-		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldMemTotalBytes, field.TypeInt64, value)
 		_node.MemTotalBytes = &value
 	}
 	if value, ok := _c.mutation.Labels(); ok {
@@ -606,7 +606,7 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 		_node.DiskUsedPercent = &value
 	}
 	if value, ok := _c.mutation.UptimeSeconds(); ok {
-		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(agentnode.FieldUptimeSeconds, field.TypeInt64, value)
 		_node.UptimeSeconds = &value
 	}
 	if value, ok := _c.mutation.LastHeartbeatAt(); ok {
@@ -702,7 +702,7 @@ func (u *AgentNodeUpsert) ClearDeletedAt() *AgentNodeUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsert) SetCreatedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetCreatedBy(v int64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldCreatedBy, v)
 	return u
 }
@@ -714,7 +714,7 @@ func (u *AgentNodeUpsert) UpdateCreatedBy() *AgentNodeUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsert) AddCreatedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddCreatedBy(v int64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldCreatedBy, v)
 	return u
 }
@@ -726,7 +726,7 @@ func (u *AgentNodeUpsert) ClearCreatedBy() *AgentNodeUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsert) SetUpdatedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetUpdatedBy(v int64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldUpdatedBy, v)
 	return u
 }
@@ -738,7 +738,7 @@ func (u *AgentNodeUpsert) UpdateUpdatedBy() *AgentNodeUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsert) AddUpdatedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddUpdatedBy(v int64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldUpdatedBy, v)
 	return u
 }
@@ -750,7 +750,7 @@ func (u *AgentNodeUpsert) ClearUpdatedBy() *AgentNodeUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsert) SetDeletedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetDeletedBy(v int64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldDeletedBy, v)
 	return u
 }
@@ -762,7 +762,7 @@ func (u *AgentNodeUpsert) UpdateDeletedBy() *AgentNodeUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsert) AddDeletedBy(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddDeletedBy(v int64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldDeletedBy, v)
 	return u
 }
@@ -1032,7 +1032,7 @@ func (u *AgentNodeUpsert) ClearCPUCores() *AgentNodeUpsert {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *AgentNodeUpsert) SetMemTotalBytes(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetMemTotalBytes(v int64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldMemTotalBytes, v)
 	return u
 }
@@ -1044,7 +1044,7 @@ func (u *AgentNodeUpsert) UpdateMemTotalBytes() *AgentNodeUpsert {
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *AgentNodeUpsert) AddMemTotalBytes(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddMemTotalBytes(v int64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldMemTotalBytes, v)
 	return u
 }
@@ -1146,7 +1146,7 @@ func (u *AgentNodeUpsert) ClearDiskUsedPercent() *AgentNodeUpsert {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *AgentNodeUpsert) SetUptimeSeconds(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetUptimeSeconds(v int64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldUptimeSeconds, v)
 	return u
 }
@@ -1158,7 +1158,7 @@ func (u *AgentNodeUpsert) UpdateUptimeSeconds() *AgentNodeUpsert {
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *AgentNodeUpsert) AddUptimeSeconds(v uint64) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddUptimeSeconds(v int64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldUptimeSeconds, v)
 	return u
 }
@@ -1281,14 +1281,14 @@ func (u *AgentNodeUpsertOne) ClearDeletedAt() *AgentNodeUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsertOne) SetCreatedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetCreatedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsertOne) AddCreatedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddCreatedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1309,14 +1309,14 @@ func (u *AgentNodeUpsertOne) ClearCreatedBy() *AgentNodeUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsertOne) SetUpdatedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetUpdatedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsertOne) AddUpdatedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddUpdatedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1337,14 +1337,14 @@ func (u *AgentNodeUpsertOne) ClearUpdatedBy() *AgentNodeUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsertOne) SetDeletedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetDeletedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsertOne) AddDeletedBy(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddDeletedBy(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1666,14 +1666,14 @@ func (u *AgentNodeUpsertOne) ClearCPUCores() *AgentNodeUpsertOne {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *AgentNodeUpsertOne) SetMemTotalBytes(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetMemTotalBytes(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetMemTotalBytes(v)
 	})
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *AgentNodeUpsertOne) AddMemTotalBytes(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddMemTotalBytes(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddMemTotalBytes(v)
 	})
@@ -1799,14 +1799,14 @@ func (u *AgentNodeUpsertOne) ClearDiskUsedPercent() *AgentNodeUpsertOne {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *AgentNodeUpsertOne) SetUptimeSeconds(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetUptimeSeconds(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUptimeSeconds(v)
 	})
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *AgentNodeUpsertOne) AddUptimeSeconds(v uint64) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddUptimeSeconds(v int64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUptimeSeconds(v)
 	})
@@ -1863,7 +1863,7 @@ func (u *AgentNodeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1872,7 +1872,7 @@ func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AgentNodeUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *AgentNodeUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1929,7 +1929,7 @@ func (_c *AgentNodeCreateBulk) Save(ctx context.Context) ([]*AgentNode, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -2107,14 +2107,14 @@ func (u *AgentNodeUpsertBulk) ClearDeletedAt() *AgentNodeUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsertBulk) SetCreatedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetCreatedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsertBulk) AddCreatedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddCreatedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -2135,14 +2135,14 @@ func (u *AgentNodeUpsertBulk) ClearCreatedBy() *AgentNodeUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsertBulk) SetUpdatedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetUpdatedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsertBulk) AddUpdatedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddUpdatedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -2163,14 +2163,14 @@ func (u *AgentNodeUpsertBulk) ClearUpdatedBy() *AgentNodeUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsertBulk) SetDeletedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetDeletedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsertBulk) AddDeletedBy(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddDeletedBy(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2492,14 +2492,14 @@ func (u *AgentNodeUpsertBulk) ClearCPUCores() *AgentNodeUpsertBulk {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (u *AgentNodeUpsertBulk) SetMemTotalBytes(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetMemTotalBytes(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetMemTotalBytes(v)
 	})
 }
 
 // AddMemTotalBytes adds v to the "mem_total_bytes" field.
-func (u *AgentNodeUpsertBulk) AddMemTotalBytes(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddMemTotalBytes(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddMemTotalBytes(v)
 	})
@@ -2625,14 +2625,14 @@ func (u *AgentNodeUpsertBulk) ClearDiskUsedPercent() *AgentNodeUpsertBulk {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (u *AgentNodeUpsertBulk) SetUptimeSeconds(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetUptimeSeconds(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUptimeSeconds(v)
 	})
 }
 
 // AddUptimeSeconds adds v to the "uptime_seconds" field.
-func (u *AgentNodeUpsertBulk) AddUptimeSeconds(v uint64) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddUptimeSeconds(v int64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUptimeSeconds(v)
 	})

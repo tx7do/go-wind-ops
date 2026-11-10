@@ -30,13 +30,13 @@ const (
 // 维护窗口
 type MaintenanceWindow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                 // 窗口ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                 // 窗口ID
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                              // 窗口名
 	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`      // 开始时间
 	EndsAt        *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=ends_at,json=endsAt,proto3,oneof" json:"ends_at,omitempty"`            // 结束时间
 	Enabled       *bool                  `protobuf:"varint,5,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                       // 是否启用
 	Description   *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`                // 描述
-	CreatedBy     *uint64                `protobuf:"varint,20,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建人
+	CreatedBy     *int64                 `protobuf:"varint,20,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建人
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -72,7 +72,7 @@ func (*MaintenanceWindow) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_maintenance_window_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *MaintenanceWindow) GetId() uint64 {
+func (x *MaintenanceWindow) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -114,7 +114,7 @@ func (x *MaintenanceWindow) GetDescription() string {
 	return ""
 }
 
-func (x *MaintenanceWindow) GetCreatedBy() uint64 {
+func (x *MaintenanceWindow) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
@@ -130,7 +130,7 @@ func (x *MaintenanceWindow) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListMaintenanceWindowResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*MaintenanceWindow   `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 窗口列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -166,7 +166,7 @@ func (*ListMaintenanceWindowResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_maintenance_window_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListMaintenanceWindowResponse) GetTotal() uint64 {
+func (x *ListMaintenanceWindowResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -182,7 +182,7 @@ func (x *ListMaintenanceWindowResponse) GetItems() []*MaintenanceWindow {
 
 type GetMaintenanceWindowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 窗口ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 窗口ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -217,7 +217,7 @@ func (*GetMaintenanceWindowRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_maintenance_window_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetMaintenanceWindowRequest) GetId() uint64 {
+func (x *GetMaintenanceWindowRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -270,7 +270,7 @@ func (x *CreateMaintenanceWindowRequest) GetData() *MaintenanceWindow {
 
 type UpdateMaintenanceWindowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 窗口ID(id 走 body:触发类 POST 不带 path 参数)
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 窗口ID(id 走 body:触发类 POST 不带 path 参数)
 	Data          *MaintenanceWindow     `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`                               // 更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3,oneof" json:"update_mask,omitempty"` // 更新掩码
 	unknownFields protoimpl.UnknownFields
@@ -307,7 +307,7 @@ func (*UpdateMaintenanceWindowRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_maintenance_window_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateMaintenanceWindowRequest) GetId() uint64 {
+func (x *UpdateMaintenanceWindowRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -330,7 +330,7 @@ func (x *UpdateMaintenanceWindowRequest) GetUpdateMask() *fieldmaskpb.FieldMask 
 
 type DeleteMaintenanceWindowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 窗口ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 窗口ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -365,7 +365,7 @@ func (*DeleteMaintenanceWindowRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_maintenance_window_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteMaintenanceWindowRequest) GetId() uint64 {
+func (x *DeleteMaintenanceWindowRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -378,14 +378,14 @@ const file_ops_service_v1_maintenance_window_proto_rawDesc = "" +
 	"\n" +
 	"'ops/service/v1/maintenance_window.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xe5\x03\n" +
 	"\x11MaintenanceWindow\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1c\n" +
 	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02H\x01R\x04name\x88\x01\x01\x12A\n" +
 	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02H\x02R\bstartsAt\x88\x01\x01\x12=\n" +
 	"\aends_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02H\x03R\x06endsAt\x88\x01\x01\x12\x1d\n" +
 	"\aenabled\x18\x05 \x01(\bH\x04R\aenabled\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x06 \x01(\tH\x05R\vdescription\x88\x01\x01\x12'\n" +
 	"\n" +
-	"created_by\x18\x14 \x01(\x04B\x03\xe0A\x03H\x06R\tcreatedBy\x88\x01\x01\x12C\n" +
+	"created_by\x18\x14 \x01(\x03B\x03\xe0A\x03H\x06R\tcreatedBy\x88\x01\x01\x12C\n" +
 	"\n" +
 	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\aR\tcreatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
@@ -400,23 +400,23 @@ const file_ops_service_v1_maintenance_window_proto_rawDesc = "" +
 	"\v_created_byB\r\n" +
 	"\v_created_at\"n\n" +
 	"\x1dListMaintenanceWindowResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x127\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x127\n" +
 	"\x05items\x18\x02 \x03(\v2!.ops.service.v1.MaintenanceWindowR\x05items\">\n" +
 	"\x1bGetMaintenanceWindowRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"j\n" +
 	"\x1eCreateMaintenanceWindowRequest\x12?\n" +
 	"\x04data\x18\x01 \x01(\v2!.ops.service.v1.MaintenanceWindowB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01B\a\n" +
 	"\x05_data\"\xd1\x01\n" +
 	"\x1eUpdateMaintenanceWindowRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12?\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12?\n" +
 	"\x04data\x18\x02 \x01(\v2!.ops.service.v1.MaintenanceWindowB\x03\xe0A\x02H\x00R\x04data\x88\x01\x01\x12@\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskH\x01R\n" +
 	"updateMask\x88\x01\x01B\a\n" +
 	"\x05_dataB\x0e\n" +
 	"\f_update_mask\"A\n" +
 	"\x1eDeleteMaintenanceWindowRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xa4\x04\n" +
 	"\x18MaintenanceWindowService\x12d\n" +
 	"\x16ListMaintenanceWindows\x12\x19.pagination.PagingRequest\x1a-.ops.service.v1.ListMaintenanceWindowResponse\"\x00\x12h\n" +

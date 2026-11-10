@@ -133,10 +133,10 @@ func (Distribution_DeployType) EnumDescriptor() ([]byte, []int) {
 // 分发配置
 type Distribution struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Id            *uint64                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 分发配置ID
+	Id            *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 分发配置ID
 	Name          *string                  `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                            // 分发名
-	BuildId       *uint64                  `protobuf:"varint,3,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                                      // 构建来源
-	ProjectIds    []uint64                 `protobuf:"varint,4,rep,packed,name=project_ids,json=projectIds,proto3" json:"project_ids,omitempty"`                                            // 目标项目列表
+	BuildId       *int64                   `protobuf:"varint,3,opt,name=build_id,json=buildId,proto3,oneof" json:"build_id,omitempty"`                                                      // 构建来源
+	ProjectIds    []int64                  `protobuf:"varint,4,rep,packed,name=project_ids,json=projectIds,proto3" json:"project_ids,omitempty"`                                            // 目标项目列表
 	ClearOld      *bool                    `protobuf:"varint,5,opt,name=clear_old,json=clearOld,proto3,oneof" json:"clear_old,omitempty"`                                                   // 清空旧内容
 	AfterOpt      *Distribution_AfterOpt   `protobuf:"varint,6,opt,name=after_opt,json=afterOpt,proto3,enum=ops.service.v1.Distribution_AfterOpt,oneof" json:"after_opt,omitempty"`         // 分发后动作
 	Description   *string                  `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                                                              // 描述
@@ -186,7 +186,7 @@ func (*Distribution) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Distribution) GetId() uint64 {
+func (x *Distribution) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -200,14 +200,14 @@ func (x *Distribution) GetName() string {
 	return ""
 }
 
-func (x *Distribution) GetBuildId() uint64 {
+func (x *Distribution) GetBuildId() int64 {
 	if x != nil && x.BuildId != nil {
 		return *x.BuildId
 	}
 	return 0
 }
 
-func (x *Distribution) GetProjectIds() []uint64 {
+func (x *Distribution) GetProjectIds() []int64 {
 	if x != nil {
 		return x.ProjectIds
 	}
@@ -321,7 +321,7 @@ func (x *Distribution) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListDistributionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*Distribution        `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 分发配置列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -357,7 +357,7 @@ func (*ListDistributionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListDistributionResponse) GetTotal() uint64 {
+func (x *ListDistributionResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -373,7 +373,7 @@ func (x *ListDistributionResponse) GetItems() []*Distribution {
 
 type GetDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 分发配置ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 分发配置ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,7 +408,7 @@ func (*GetDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetDistributionRequest) GetId() uint64 {
+func (x *GetDistributionRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -461,7 +461,7 @@ func (x *CreateDistributionRequest) GetData() *Distribution {
 
 type UpdateDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 分发配置ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 分发配置ID
 	Data          *Distribution          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -498,7 +498,7 @@ func (*UpdateDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateDistributionRequest) GetId() uint64 {
+func (x *UpdateDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -521,7 +521,7 @@ func (x *UpdateDistributionRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 分发配置ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 分发配置ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -556,7 +556,7 @@ func (*DeleteDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteDistributionRequest) GetId() uint64 {
+func (x *DeleteDistributionRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -565,8 +565,8 @@ func (x *DeleteDistributionRequest) GetId() uint64 {
 
 type TriggerDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                      // 分发配置ID
-	HistoryId     *uint64                `protobuf:"varint,2,opt,name=history_id,json=historyId,proto3,oneof" json:"history_id,omitempty"` // 指定构建历史ID(缺省取最新成功)
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                      // 分发配置ID
+	HistoryId     *int64                 `protobuf:"varint,2,opt,name=history_id,json=historyId,proto3,oneof" json:"history_id,omitempty"` // 指定构建历史ID(缺省取最新成功)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -601,14 +601,14 @@ func (*TriggerDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *TriggerDistributionRequest) GetId() uint64 {
+func (x *TriggerDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *TriggerDistributionRequest) GetHistoryId() uint64 {
+func (x *TriggerDistributionRequest) GetHistoryId() int64 {
 	if x != nil && x.HistoryId != nil {
 		return *x.HistoryId
 	}
@@ -617,9 +617,9 @@ func (x *TriggerDistributionRequest) GetHistoryId() uint64 {
 
 type TriggerDistributionResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	RecordId         uint64                 `protobuf:"varint,1,opt,name=record_id,json=recordId,proto3" json:"record_id,omitempty"`                          // 分发记录ID(首个)
+	RecordId         int64                  `protobuf:"varint,1,opt,name=record_id,json=recordId,proto3" json:"record_id,omitempty"`                          // 分发记录ID(首个)
 	CommandRequestId string                 `protobuf:"bytes,2,opt,name=command_request_id,json=commandRequestId,proto3" json:"command_request_id,omitempty"` // 关联指令幂等键(首个)
-	RecordIds        []uint64               `protobuf:"varint,3,rep,packed,name=record_ids,json=recordIds,proto3" json:"record_ids,omitempty"`                // 全部目标分发记录ID(流水线步骤轮询终态用)
+	RecordIds        []int64                `protobuf:"varint,3,rep,packed,name=record_ids,json=recordIds,proto3" json:"record_ids,omitempty"`                // 全部目标分发记录ID(流水线步骤轮询终态用)
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -654,7 +654,7 @@ func (*TriggerDistributionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *TriggerDistributionResponse) GetRecordId() uint64 {
+func (x *TriggerDistributionResponse) GetRecordId() int64 {
 	if x != nil {
 		return x.RecordId
 	}
@@ -668,7 +668,7 @@ func (x *TriggerDistributionResponse) GetCommandRequestId() string {
 	return ""
 }
 
-func (x *TriggerDistributionResponse) GetRecordIds() []uint64 {
+func (x *TriggerDistributionResponse) GetRecordIds() []int64 {
 	if x != nil {
 		return x.RecordIds
 	}
@@ -678,17 +678,17 @@ func (x *TriggerDistributionResponse) GetRecordIds() []uint64 {
 // 分发执行记录
 type DistributionRecord struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 记录ID
-	DistributionId   *uint64                `protobuf:"varint,2,opt,name=distribution_id,json=distributionId,proto3,oneof" json:"distribution_id,omitempty"`        // 分发配置ID
-	BuildHistoryId   *uint64                `protobuf:"varint,3,opt,name=build_history_id,json=buildHistoryId,proto3,oneof" json:"build_history_id,omitempty"`      // 构建历史ID
-	ProjectId        *uint64                `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                       // 目标项目ID(逐目标一条记录)
-	NodeId           *uint64                `protobuf:"varint,5,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                // 目标节点ID
+	Id               *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                      // 记录ID
+	DistributionId   *int64                 `protobuf:"varint,2,opt,name=distribution_id,json=distributionId,proto3,oneof" json:"distribution_id,omitempty"`        // 分发配置ID
+	BuildHistoryId   *int64                 `protobuf:"varint,3,opt,name=build_history_id,json=buildHistoryId,proto3,oneof" json:"build_history_id,omitempty"`      // 构建历史ID
+	ProjectId        *int64                 `protobuf:"varint,4,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`                       // 目标项目ID(逐目标一条记录)
+	NodeId           *int64                 `protobuf:"varint,5,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                                // 目标节点ID
 	CommandRequestId *string                `protobuf:"bytes,6,opt,name=command_request_id,json=commandRequestId,proto3,oneof" json:"command_request_id,omitempty"` // 关联指令幂等键
 	BatchNo          *uint32                `protobuf:"varint,11,opt,name=batch_no,json=batchNo,proto3,oneof" json:"batch_no,omitempty"`                            // 分批发布批次号(从 1 起;非分批发布恒为 1)
 	Status           *string                `protobuf:"bytes,7,opt,name=status,proto3,oneof" json:"status,omitempty"`                                               // 分发状态(PENDING/SUCCESS/FAILED/SKIPPED=前序批次失败未执行)
 	Error            *string                `protobuf:"bytes,8,opt,name=error,proto3,oneof" json:"error,omitempty"`                                                 // 失败原因
 	Result           *string                `protobuf:"bytes,9,opt,name=result,proto3,oneof" json:"result,omitempty"`                                               // 执行结果数据(JSON)
-	OperatorId       *uint64                `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`                   // 触发人
+	OperatorId       *int64                 `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`                   // 触发人
 	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                       // 触发时间
 	FinishedAt       *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at,omitempty"`                    // 结束时间
 	unknownFields    protoimpl.UnknownFields
@@ -725,35 +725,35 @@ func (*DistributionRecord) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DistributionRecord) GetId() uint64 {
+func (x *DistributionRecord) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *DistributionRecord) GetDistributionId() uint64 {
+func (x *DistributionRecord) GetDistributionId() int64 {
 	if x != nil && x.DistributionId != nil {
 		return *x.DistributionId
 	}
 	return 0
 }
 
-func (x *DistributionRecord) GetBuildHistoryId() uint64 {
+func (x *DistributionRecord) GetBuildHistoryId() int64 {
 	if x != nil && x.BuildHistoryId != nil {
 		return *x.BuildHistoryId
 	}
 	return 0
 }
 
-func (x *DistributionRecord) GetProjectId() uint64 {
+func (x *DistributionRecord) GetProjectId() int64 {
 	if x != nil && x.ProjectId != nil {
 		return *x.ProjectId
 	}
 	return 0
 }
 
-func (x *DistributionRecord) GetNodeId() uint64 {
+func (x *DistributionRecord) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -795,7 +795,7 @@ func (x *DistributionRecord) GetResult() string {
 	return ""
 }
 
-func (x *DistributionRecord) GetOperatorId() uint64 {
+func (x *DistributionRecord) GetOperatorId() int64 {
 	if x != nil && x.OperatorId != nil {
 		return *x.OperatorId
 	}
@@ -818,7 +818,7 @@ func (x *DistributionRecord) GetFinishedAt() *timestamppb.Timestamp {
 
 type ListDistributionRecordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*DistributionRecord  `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 记录列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -854,7 +854,7 @@ func (*ListDistributionRecordResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListDistributionRecordResponse) GetTotal() uint64 {
+func (x *ListDistributionRecordResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -870,7 +870,7 @@ func (x *ListDistributionRecordResponse) GetItems() []*DistributionRecord {
 
 type GetDistributionRecordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -905,7 +905,7 @@ func (*GetDistributionRecordRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_distribution_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetDistributionRecordRequest) GetId() uint64 {
+func (x *GetDistributionRecordRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -918,10 +918,10 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\n" +
 	"!ops/service/v1/distribution.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x9a\r\n" +
 	"\fDistribution\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17分发名(全局唯一)H\x01R\x04name\x88\x01\x01\x12W\n" +
-	"\bbuild_id\x18\x03 \x01(\x04B7\xe0A\x02\xbaG1\x92\x02.构建来源ID(触发时取最新成功产物)H\x02R\abuildId\x88\x01\x01\x12Q\n" +
-	"\vproject_ids\x18\x04 \x03(\x04B0\xe0A\x02\xbaG*\x92\x02'目标项目 ID 列表(支持多目标)R\n" +
+	"\bbuild_id\x18\x03 \x01(\x03B7\xe0A\x02\xbaG1\x92\x02.构建来源ID(触发时取最新成功产物)H\x02R\abuildId\x88\x01\x01\x12Q\n" +
+	"\vproject_ids\x18\x04 \x03(\x03B0\xe0A\x02\xbaG*\x92\x02'目标项目 ID 列表(支持多目标)R\n" +
 	"projectIds\x12Z\n" +
 	"\tclear_old\x18\x05 \x01(\bB8\xbaG5\x92\x022分发前清空项目目录旧内容(危险操作)H\x03R\bclearOld\x88\x01\x01\x12^\n" +
 	"\tafter_opt\x18\x06 \x01(\x0e2%.ops.service.v1.Distribution.AfterOptB\x15\xbaG\x12\x92\x02\x0f分发后动作H\x04R\bafterOpt\x88\x01\x01\x123\n" +
@@ -973,45 +973,45 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"d\n" +
 	"\x18ListDistributionResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x122\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x122\n" +
 	"\x05items\x18\x02 \x03(\v2\x1c.ops.service.v1.DistributionR\x05items\"9\n" +
 	"\x16GetDistributionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"R\n" +
 	"\x19CreateDistributionRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.ops.service.v1.DistributionB\x03\xe0A\x02R\x04data\"\xc4\x01\n" +
 	"\x19UpdateDistributionRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x125\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x125\n" +
 	"\x04data\x18\x02 \x01(\v2\x1c.ops.service.v1.DistributionB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\"<\n" +
 	"\x19DeleteDistributionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"i\n" +
 	"\x1aTriggerDistributionRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12'\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12'\n" +
 	"\n" +
-	"history_id\x18\x02 \x01(\x04B\x03\xe0A\x01H\x00R\thistoryId\x88\x01\x01B\r\n" +
+	"history_id\x18\x02 \x01(\x03B\x03\xe0A\x01H\x00R\thistoryId\x88\x01\x01B\r\n" +
 	"\v_history_id\"\x87\x01\n" +
 	"\x1bTriggerDistributionResponse\x12\x1b\n" +
-	"\trecord_id\x18\x01 \x01(\x04R\brecordId\x12,\n" +
+	"\trecord_id\x18\x01 \x01(\x03R\brecordId\x12,\n" +
 	"\x12command_request_id\x18\x02 \x01(\tR\x10commandRequestId\x12\x1d\n" +
 	"\n" +
-	"record_ids\x18\x03 \x03(\x04R\trecordIds\"\x97\x06\n" +
+	"record_ids\x18\x03 \x03(\x03R\trecordIds\"\x97\x06\n" +
 	"\x12DistributionRecord\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x121\n" +
-	"\x0fdistribution_id\x18\x02 \x01(\x04B\x03\xe0A\x03H\x01R\x0edistributionId\x88\x01\x01\x122\n" +
-	"\x10build_history_id\x18\x03 \x01(\x04B\x03\xe0A\x03H\x02R\x0ebuildHistoryId\x88\x01\x01\x12'\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x121\n" +
+	"\x0fdistribution_id\x18\x02 \x01(\x03B\x03\xe0A\x03H\x01R\x0edistributionId\x88\x01\x01\x122\n" +
+	"\x10build_history_id\x18\x03 \x01(\x03B\x03\xe0A\x03H\x02R\x0ebuildHistoryId\x88\x01\x01\x12'\n" +
 	"\n" +
-	"project_id\x18\x04 \x01(\x04B\x03\xe0A\x03H\x03R\tprojectId\x88\x01\x01\x12!\n" +
-	"\anode_id\x18\x05 \x01(\x04B\x03\xe0A\x03H\x04R\x06nodeId\x88\x01\x01\x126\n" +
+	"project_id\x18\x04 \x01(\x03B\x03\xe0A\x03H\x03R\tprojectId\x88\x01\x01\x12!\n" +
+	"\anode_id\x18\x05 \x01(\x03B\x03\xe0A\x03H\x04R\x06nodeId\x88\x01\x01\x126\n" +
 	"\x12command_request_id\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\x10commandRequestId\x88\x01\x01\x12#\n" +
 	"\bbatch_no\x18\v \x01(\rB\x03\xe0A\x03H\x06R\abatchNo\x88\x01\x01\x12 \n" +
 	"\x06status\x18\a \x01(\tB\x03\xe0A\x03H\aR\x06status\x88\x01\x01\x12\x1e\n" +
 	"\x05error\x18\b \x01(\tB\x03\xe0A\x03H\bR\x05error\x88\x01\x01\x12 \n" +
 	"\x06result\x18\t \x01(\tB\x03\xe0A\x03H\tR\x06result\x88\x01\x01\x12)\n" +
 	"\voperator_id\x18\n" +
-	" \x01(\x04B\x03\xe0A\x03H\n" +
+	" \x01(\x03B\x03\xe0A\x03H\n" +
 	"R\n" +
 	"operatorId\x88\x01\x01\x12C\n" +
 	"\n" +
@@ -1033,10 +1033,10 @@ const file_ops_service_v1_distribution_proto_rawDesc = "" +
 	"\v_created_atB\x0e\n" +
 	"\f_finished_at\"p\n" +
 	"\x1eListDistributionRecordResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x128\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x128\n" +
 	"\x05items\x18\x02 \x03(\v2\".ops.service.v1.DistributionRecordR\x05items\"?\n" +
 	"\x1cGetDistributionRecordRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id2\xaa\x06\n" +
 	"\x13DistributionService\x12Z\n" +
 	"\x11ListDistributions\x12\x19.pagination.PagingRequest\x1a(.ops.service.v1.ListDistributionResponse\"\x00\x12Y\n" +

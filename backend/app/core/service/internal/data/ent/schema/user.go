@@ -154,7 +154,7 @@ func (User) Mixin() []ent.Mixin {
 		mixin.OperatorID64{},
 		mixin.TimeAt{},
 		mixin.Remark{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

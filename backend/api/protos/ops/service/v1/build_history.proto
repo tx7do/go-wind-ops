@@ -39,12 +39,12 @@ message BuildHistory {
     FAILED = 4;  // 失败
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 历史ID
 
-  optional uint64 build_id = 2 [
+  optional int64 build_id = 2 [
     json_name = "buildId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 构建配置ID
@@ -79,7 +79,7 @@ message BuildHistory {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 产物对象键
 
-  optional uint64 artifact_size = 9 [
+  optional int64 artifact_size = 9 [
     json_name = "artifactSize",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 产物大小(字节)
@@ -89,7 +89,7 @@ message BuildHistory {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 失败原因
 
-  optional uint64 operator_id = 11 [
+  optional int64 operator_id = 11 [
     json_name = "operatorId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 触发人
@@ -111,19 +111,19 @@ message BuildHistory {
 }
 
 message ListBuildHistoryResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated BuildHistory items = 2 [json_name = "items"]; // 历史列表
 }
 
 message GetBuildHistoryRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 历史ID
 }
 
 message GetArtifactDownloadUrlRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 历史ID
@@ -136,7 +136,7 @@ message GetArtifactDownloadUrlResponse {
 }
 
 message GetBuildHistoryLogRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 历史ID

@@ -17,9 +17,9 @@ type CloudInstance struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,7 +27,7 @@ type CloudInstance struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 云账号ID
-	CloudAccountID uint64 `json:"cloud_account_id,omitempty"`
+	CloudAccountID int64 `json:"cloud_account_id,omitempty"`
 	// 云账号名(快照,账号改名不回溯)
 	CloudAccountName *string `json:"cloud_account_name,omitempty"`
 	// 云厂商(冗余自账号,便于过滤)
@@ -53,7 +53,7 @@ type CloudInstance struct {
 	// 是否匹配到 agent 节点
 	Matched bool `json:"matched,omitempty"`
 	// 匹配到的节点ID(快照,节点删除后不回填)
-	AgentNodeID *uint64 `json:"agent_node_id,omitempty"`
+	AgentNodeID *int64 `json:"agent_node_id,omitempty"`
 	// 匹配到的节点名(快照)
 	AgentNodeName *string `json:"agent_node_name,omitempty"`
 	// 同步批次时间
@@ -94,13 +94,13 @@ func (_m *CloudInstance) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case cloudinstance.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case cloudinstance.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -127,7 +127,7 @@ func (_m *CloudInstance) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field cloud_account_id", values[i])
 			} else if value.Valid {
-				_m.CloudAccountID = uint64(value.Int64)
+				_m.CloudAccountID = value.Int64
 			}
 		case cloudinstance.FieldCloudAccountName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -214,8 +214,8 @@ func (_m *CloudInstance) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field agent_node_id", values[i])
 			} else if value.Valid {
-				_m.AgentNodeID = new(uint64)
-				*_m.AgentNodeID = uint64(value.Int64)
+				_m.AgentNodeID = new(int64)
+				*_m.AgentNodeID = value.Int64
 			}
 		case cloudinstance.FieldAgentNodeName:
 			if value, ok := values[i].(*sql.NullString); !ok {

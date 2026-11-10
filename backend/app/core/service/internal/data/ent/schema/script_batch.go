@@ -31,14 +31,14 @@ func (ScriptBatch) Annotations() []schema.Annotation {
 // Fields of the ScriptBatch.
 func (ScriptBatch) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("script_id").
+		field.Int64("script_id").
 			Comment("脚本(ops_scripts.id);0=即席命令批量(无脚本档案)"),
 
 		field.String("script_name").
 			Comment("脚本名快照(脚本改名/删除不影响批次展示)").
 			NotEmpty(),
 
-		field.JSON("node_ids", []uint64{}).
+		field.JSON("node_ids", []int64{}).
 			Comment("目标节点 ID 列表").
 			Optional(),
 
@@ -68,7 +68,7 @@ func (ScriptBatch) Fields() []ent.Field {
 func (ScriptBatch) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

@@ -88,7 +88,7 @@ func (r *InspectionRepo) CountSince(ctx context.Context, t time.Time) (int, erro
 		Count(ctx)
 }
 
-func (r *InspectionRepo) GetEntity(ctx context.Context, id uint64) (*ent.Inspection, error) {
+func (r *InspectionRepo) GetEntity(ctx context.Context, id int64) (*ent.Inspection, error) {
 	return r.entClient.Client().Inspection.
 		Query().
 		Where(inspection.IDEQ(id)).
@@ -96,7 +96,7 @@ func (r *InspectionRepo) GetEntity(ctx context.Context, id uint64) (*ent.Inspect
 }
 
 // Create 建一行 RUNNING。
-func (r *InspectionRepo) Create(ctx context.Context, operatorID uint64) (*ent.Inspection, error) {
+func (r *InspectionRepo) Create(ctx context.Context, operatorID int64) (*ent.Inspection, error) {
 	builder := r.entClient.Client().Inspection.Create().SetStatus(inspection.StatusRunning)
 	if operatorID > 0 {
 		builder.SetCreatedBy(operatorID)
@@ -110,7 +110,7 @@ func (r *InspectionRepo) Create(ctx context.Context, operatorID uint64) (*ent.In
 }
 
 // Finish 终态化(幂等,仅 RUNNING 行生效)。
-func (r *InspectionRepo) Finish(ctx context.Context, id uint64, status, summaryJSON string, nodeTotal, nodeOnline, projectTotal, projectRunning, alertOpen, certExpiring int, failErr string) error {
+func (r *InspectionRepo) Finish(ctx context.Context, id int64, status, summaryJSON string, nodeTotal, nodeOnline, projectTotal, projectRunning, alertOpen, certExpiring int, failErr string) error {
 	now := time.Now()
 	update := r.entClient.Client().Inspection.
 		UpdateOneID(id).
@@ -189,7 +189,7 @@ func (r *LogSnapshotRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 	return &opsV1.ListLogSnapshotResponse{Total: ret.Total, Items: ret.Items}, nil
 }
 
-func (r *LogSnapshotRepo) GetEntity(ctx context.Context, id uint64) (*ent.LogSnapshot, error) {
+func (r *LogSnapshotRepo) GetEntity(ctx context.Context, id int64) (*ent.LogSnapshot, error) {
 	return r.entClient.Client().LogSnapshot.
 		Query().
 		Where(logsnapshot.IDEQ(id)).
@@ -197,7 +197,7 @@ func (r *LogSnapshotRepo) GetEntity(ctx context.Context, id uint64) (*ent.LogSna
 }
 
 // SearchByKeyword 内容模糊检索(ILIKE),按时间倒序取最新 limit 份。
-func (r *LogSnapshotRepo) SearchByKeyword(ctx context.Context, keyword string, projectID uint64, limit int) ([]*ent.LogSnapshot, error) {
+func (r *LogSnapshotRepo) SearchByKeyword(ctx context.Context, keyword string, projectID int64, limit int) ([]*ent.LogSnapshot, error) {
 	query := r.entClient.Client().LogSnapshot.
 		Query().
 		Where(logsnapshot.ContentContains(keyword))
@@ -212,7 +212,7 @@ func (r *LogSnapshotRepo) SearchByKeyword(ctx context.Context, keyword string, p
 
 // Create 落一条快照(content 为 UTF-8 归一文本供检索;contentB64 为原始
 // 字节 base64 供保真查看,空串不落)。
-func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID uint64, projectName, content, contentB64, trigger string, operatorID uint64) (*ent.LogSnapshot, error) {
+func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID int64, projectName, content, contentB64, trigger string, operatorID int64) (*ent.LogSnapshot, error) {
 	builder := r.entClient.Client().LogSnapshot.
 		Create().
 		SetProjectID(projectID).
@@ -235,7 +235,7 @@ func (r *LogSnapshotRepo) Create(ctx context.Context, projectID, nodeID uint64, 
 	return row, nil
 }
 
-func (r *LogSnapshotRepo) DeleteEntity(ctx context.Context, id uint64) error {
+func (r *LogSnapshotRepo) DeleteEntity(ctx context.Context, id int64) error {
 	return r.entClient.Client().LogSnapshot.
 		DeleteOneID(id).
 		Exec(ctx)
@@ -298,14 +298,14 @@ func (r *ConfigTemplateRepo) List(ctx context.Context, req *paginationV1.PagingR
 	return &opsV1.ListConfigTemplateResponse{Total: ret.Total, Items: ret.Items}, nil
 }
 
-func (r *ConfigTemplateRepo) GetEntity(ctx context.Context, id uint64) (*ent.ConfigTemplate, error) {
+func (r *ConfigTemplateRepo) GetEntity(ctx context.Context, id int64) (*ent.ConfigTemplate, error) {
 	return r.entClient.Client().ConfigTemplate.
 		Query().
 		Where(configtemplate.IDEQ(id)).
 		First(ctx)
 }
 
-func (r *ConfigTemplateRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
+func (r *ConfigTemplateRepo) IsNameTaken(ctx context.Context, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().ConfigTemplate.Query().Where(configtemplate.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(configtemplate.IDNEQ(excludeID))
@@ -318,7 +318,7 @@ func (r *ConfigTemplateRepo) IsNameTaken(ctx context.Context, name string, exclu
 	return exist, nil
 }
 
-func (r *ConfigTemplateRepo) Create(ctx context.Context, req *opsV1.CreateConfigTemplateRequest, operatorID uint64) (*opsV1.ConfigTemplate, error) {
+func (r *ConfigTemplateRepo) Create(ctx context.Context, req *opsV1.CreateConfigTemplateRequest, operatorID int64) (*opsV1.ConfigTemplate, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -419,7 +419,7 @@ func (r *ConfigDistributionRepo) init() {
 }
 
 // Create 建 PENDING 记录。
-func (r *ConfigDistributionRepo) Create(ctx context.Context, templateID uint64, templateName string, nodeID, projectID uint64, targetPath, requestID string, operatorID uint64) (*ent.ConfigDistribution, error) {
+func (r *ConfigDistributionRepo) Create(ctx context.Context, templateID int64, templateName string, nodeID, projectID int64, targetPath, requestID string, operatorID int64) (*ent.ConfigDistribution, error) {
 	builder := r.entClient.Client().ConfigDistribution.
 		Create().
 		SetTemplateID(templateID).
@@ -459,7 +459,7 @@ func (r *ConfigDistributionRepo) FinalizeByCommandRequestID(ctx context.Context,
 }
 
 // ListByTemplate 按模板取下发记录(时间倒序)。
-func (r *ConfigDistributionRepo) ListByTemplate(ctx context.Context, templateID uint64, page, pageSize int) ([]*ent.ConfigDistribution, int, error) {
+func (r *ConfigDistributionRepo) ListByTemplate(ctx context.Context, templateID int64, page, pageSize int) ([]*ent.ConfigDistribution, int, error) {
 	if pageSize <= 0 || pageSize > 100 {
 		pageSize = 20
 	}

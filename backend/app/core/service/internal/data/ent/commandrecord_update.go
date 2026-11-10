@@ -84,14 +84,14 @@ func (_u *CommandRecordUpdate) SetNillableRequestID(v *string) *CommandRecordUpd
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *CommandRecordUpdate) SetNodeID(v uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetNodeID(v int64) *CommandRecordUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *CommandRecordUpdate) SetNillableNodeID(v *uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetNillableNodeID(v *int64) *CommandRecordUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -219,14 +219,14 @@ func (_u *CommandRecordUpdate) ClearError() *CommandRecordUpdate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *CommandRecordUpdate) SetOperatorID(v uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetOperatorID(v int64) *CommandRecordUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *CommandRecordUpdate) SetNillableOperatorID(v *uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetNillableOperatorID(v *int64) *CommandRecordUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -246,14 +246,14 @@ func (_u *CommandRecordUpdate) ClearOperatorID() *CommandRecordUpdate {
 }
 
 // SetBatchID sets the "batch_id" field.
-func (_u *CommandRecordUpdate) SetBatchID(v uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetBatchID(v int64) *CommandRecordUpdate {
 	_u.mutation.ResetBatchID()
 	_u.mutation.SetBatchID(v)
 	return _u
 }
 
 // SetNillableBatchID sets the "batch_id" field if the given value is not nil.
-func (_u *CommandRecordUpdate) SetNillableBatchID(v *uint64) *CommandRecordUpdate {
+func (_u *CommandRecordUpdate) SetNillableBatchID(v *int64) *CommandRecordUpdate {
 	if v != nil {
 		_u.SetBatchID(*v)
 	}
@@ -359,7 +359,7 @@ func (_u *CommandRecordUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(commandrecord.Table, commandrecord.Columns, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(commandrecord.Table, commandrecord.Columns, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -368,7 +368,7 @@ func (_u *CommandRecordUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(commandrecord.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(commandrecord.FieldCreatedAt, field.TypeTime)
@@ -389,13 +389,13 @@ func (_u *CommandRecordUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.SetField(commandrecord.FieldRequestID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(commandrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(commandrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(commandrecord.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(commandrecord.FieldAgentID, field.TypeString, value)
@@ -428,22 +428,22 @@ func (_u *CommandRecordUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(commandrecord.FieldError, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(commandrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(commandrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BatchID(); ok {
-		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBatchID(); ok {
-		_spec.AddField(commandrecord.FieldBatchID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldBatchID, field.TypeInt64, value)
 	}
 	if _u.mutation.BatchIDCleared() {
-		_spec.ClearField(commandrecord.FieldBatchID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldBatchID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(commandrecord.FieldFinishedAt, field.TypeTime, value)
@@ -528,14 +528,14 @@ func (_u *CommandRecordUpdateOne) SetNillableRequestID(v *string) *CommandRecord
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *CommandRecordUpdateOne) SetNodeID(v uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetNodeID(v int64) *CommandRecordUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *CommandRecordUpdateOne) SetNillableNodeID(v *uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetNillableNodeID(v *int64) *CommandRecordUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -663,14 +663,14 @@ func (_u *CommandRecordUpdateOne) ClearError() *CommandRecordUpdateOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *CommandRecordUpdateOne) SetOperatorID(v uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetOperatorID(v int64) *CommandRecordUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *CommandRecordUpdateOne) SetNillableOperatorID(v *uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetNillableOperatorID(v *int64) *CommandRecordUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -690,14 +690,14 @@ func (_u *CommandRecordUpdateOne) ClearOperatorID() *CommandRecordUpdateOne {
 }
 
 // SetBatchID sets the "batch_id" field.
-func (_u *CommandRecordUpdateOne) SetBatchID(v uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetBatchID(v int64) *CommandRecordUpdateOne {
 	_u.mutation.ResetBatchID()
 	_u.mutation.SetBatchID(v)
 	return _u
 }
 
 // SetNillableBatchID sets the "batch_id" field if the given value is not nil.
-func (_u *CommandRecordUpdateOne) SetNillableBatchID(v *uint64) *CommandRecordUpdateOne {
+func (_u *CommandRecordUpdateOne) SetNillableBatchID(v *int64) *CommandRecordUpdateOne {
 	if v != nil {
 		_u.SetBatchID(*v)
 	}
@@ -816,7 +816,7 @@ func (_u *CommandRecordUpdateOne) sqlSave(ctx context.Context) (_node *CommandRe
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(commandrecord.Table, commandrecord.Columns, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(commandrecord.Table, commandrecord.Columns, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CommandRecord.id" for update`)}
@@ -842,7 +842,7 @@ func (_u *CommandRecordUpdateOne) sqlSave(ctx context.Context) (_node *CommandRe
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(commandrecord.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(commandrecord.FieldCreatedAt, field.TypeTime)
@@ -863,13 +863,13 @@ func (_u *CommandRecordUpdateOne) sqlSave(ctx context.Context) (_node *CommandRe
 		_spec.SetField(commandrecord.FieldRequestID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(commandrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(commandrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldNodeID, field.TypeInt64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(commandrecord.FieldNodeID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldNodeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(commandrecord.FieldAgentID, field.TypeString, value)
@@ -902,22 +902,22 @@ func (_u *CommandRecordUpdateOne) sqlSave(ctx context.Context) (_node *CommandRe
 		_spec.ClearField(commandrecord.FieldError, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(commandrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(commandrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BatchID(); ok {
-		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBatchID(); ok {
-		_spec.AddField(commandrecord.FieldBatchID, field.TypeUint64, value)
+		_spec.AddField(commandrecord.FieldBatchID, field.TypeInt64, value)
 	}
 	if _u.mutation.BatchIDCleared() {
-		_spec.ClearField(commandrecord.FieldBatchID, field.TypeUint64)
+		_spec.ClearField(commandrecord.FieldBatchID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(commandrecord.FieldFinishedAt, field.TypeTime, value)

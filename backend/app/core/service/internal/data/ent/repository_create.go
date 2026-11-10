@@ -23,13 +23,13 @@ type RepositoryCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *RepositoryCreate) SetTenantID(v uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetTenantID(v int64) *RepositoryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *RepositoryCreate) SetNillableTenantID(v *uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetNillableTenantID(v *int64) *RepositoryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *RepositoryCreate) SetNillableDeletedAt(v *time.Time) *RepositoryCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *RepositoryCreate) SetCreatedBy(v uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetCreatedBy(v int64) *RepositoryCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *RepositoryCreate) SetNillableCreatedBy(v *uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetNillableCreatedBy(v *int64) *RepositoryCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *RepositoryCreate) SetNillableCreatedBy(v *uint64) *RepositoryCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *RepositoryCreate) SetUpdatedBy(v uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetUpdatedBy(v int64) *RepositoryCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *RepositoryCreate) SetNillableUpdatedBy(v *uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetNillableUpdatedBy(v *int64) *RepositoryCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *RepositoryCreate) SetNillableUpdatedBy(v *uint64) *RepositoryCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *RepositoryCreate) SetDeletedBy(v uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetDeletedBy(v int64) *RepositoryCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *RepositoryCreate) SetNillableDeletedBy(v *uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetNillableDeletedBy(v *int64) *RepositoryCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -195,7 +195,7 @@ func (_c *RepositoryCreate) SetLabels(v []string) *RepositoryCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *RepositoryCreate) SetID(v uint64) *RepositoryCreate {
+func (_c *RepositoryCreate) SetID(v int64) *RepositoryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -287,7 +287,7 @@ func (_c *RepositoryCreate) sqlSave(ctx context.Context) (*Repository, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -297,7 +297,7 @@ func (_c *RepositoryCreate) sqlSave(ctx context.Context) (*Repository, error) {
 func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Repository{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(repository.Table, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(repository.Table, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -305,7 +305,7 @@ func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(repository.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(repository.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -321,15 +321,15 @@ func (_c *RepositoryCreate) createSpec() (*Repository, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(repository.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(repository.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(repository.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(repository.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(repository.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(repository.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -449,7 +449,7 @@ func (u *RepositoryUpsert) ClearDeletedAt() *RepositoryUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RepositoryUpsert) SetCreatedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) SetCreatedBy(v int64) *RepositoryUpsert {
 	u.Set(repository.FieldCreatedBy, v)
 	return u
 }
@@ -461,7 +461,7 @@ func (u *RepositoryUpsert) UpdateCreatedBy() *RepositoryUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RepositoryUpsert) AddCreatedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) AddCreatedBy(v int64) *RepositoryUpsert {
 	u.Add(repository.FieldCreatedBy, v)
 	return u
 }
@@ -473,7 +473,7 @@ func (u *RepositoryUpsert) ClearCreatedBy() *RepositoryUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RepositoryUpsert) SetUpdatedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) SetUpdatedBy(v int64) *RepositoryUpsert {
 	u.Set(repository.FieldUpdatedBy, v)
 	return u
 }
@@ -485,7 +485,7 @@ func (u *RepositoryUpsert) UpdateUpdatedBy() *RepositoryUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RepositoryUpsert) AddUpdatedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) AddUpdatedBy(v int64) *RepositoryUpsert {
 	u.Add(repository.FieldUpdatedBy, v)
 	return u
 }
@@ -497,7 +497,7 @@ func (u *RepositoryUpsert) ClearUpdatedBy() *RepositoryUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RepositoryUpsert) SetDeletedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) SetDeletedBy(v int64) *RepositoryUpsert {
 	u.Set(repository.FieldDeletedBy, v)
 	return u
 }
@@ -509,7 +509,7 @@ func (u *RepositoryUpsert) UpdateDeletedBy() *RepositoryUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RepositoryUpsert) AddDeletedBy(v uint64) *RepositoryUpsert {
+func (u *RepositoryUpsert) AddDeletedBy(v int64) *RepositoryUpsert {
 	u.Add(repository.FieldDeletedBy, v)
 	return u
 }
@@ -731,14 +731,14 @@ func (u *RepositoryUpsertOne) ClearDeletedAt() *RepositoryUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RepositoryUpsertOne) SetCreatedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) SetCreatedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RepositoryUpsertOne) AddCreatedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) AddCreatedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -759,14 +759,14 @@ func (u *RepositoryUpsertOne) ClearCreatedBy() *RepositoryUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RepositoryUpsertOne) SetUpdatedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) SetUpdatedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RepositoryUpsertOne) AddUpdatedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) AddUpdatedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -787,14 +787,14 @@ func (u *RepositoryUpsertOne) ClearUpdatedBy() *RepositoryUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RepositoryUpsertOne) SetDeletedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) SetDeletedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RepositoryUpsertOne) AddDeletedBy(v uint64) *RepositoryUpsertOne {
+func (u *RepositoryUpsertOne) AddDeletedBy(v int64) *RepositoryUpsertOne {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -963,7 +963,7 @@ func (u *RepositoryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *RepositoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *RepositoryUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -972,7 +972,7 @@ func (u *RepositoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *RepositoryUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *RepositoryUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1029,7 +1029,7 @@ func (_c *RepositoryCreateBulk) Save(ctx context.Context) ([]*Repository, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1210,14 +1210,14 @@ func (u *RepositoryUpsertBulk) ClearDeletedAt() *RepositoryUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RepositoryUpsertBulk) SetCreatedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) SetCreatedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RepositoryUpsertBulk) AddCreatedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) AddCreatedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1238,14 +1238,14 @@ func (u *RepositoryUpsertBulk) ClearCreatedBy() *RepositoryUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RepositoryUpsertBulk) SetUpdatedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) SetUpdatedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RepositoryUpsertBulk) AddUpdatedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) AddUpdatedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1266,14 +1266,14 @@ func (u *RepositoryUpsertBulk) ClearUpdatedBy() *RepositoryUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RepositoryUpsertBulk) SetDeletedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) SetDeletedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RepositoryUpsertBulk) AddDeletedBy(v uint64) *RepositoryUpsertBulk {
+func (u *RepositoryUpsertBulk) AddDeletedBy(v int64) *RepositoryUpsertBulk {
 	return u.Update(func(s *RepositoryUpsert) {
 		s.AddDeletedBy(v)
 	})

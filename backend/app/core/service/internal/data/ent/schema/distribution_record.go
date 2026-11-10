@@ -31,19 +31,19 @@ func (DistributionRecord) Annotations() []schema.Annotation {
 // Fields of the DistributionRecord.
 func (DistributionRecord) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("distribution_id").
+		field.Int64("distribution_id").
 			Comment("分发配置(ops_distributions.id)").
 			Positive(),
 
-		field.Uint64("build_history_id").
+		field.Int64("build_history_id").
 			Comment("构建历史(ops_build_histories.id)").
 			Positive(),
 
-		field.Uint64("project_id").
+		field.Int64("project_id").
 			Comment("目标项目(ops_projects.id)").
 			Positive(),
 
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("目标节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -77,7 +77,7 @@ func (DistributionRecord) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("operator_id").
+		field.Int64("operator_id").
 			Comment("触发人").
 			Default(0).
 			Optional().
@@ -94,7 +94,7 @@ func (DistributionRecord) Fields() []ent.Field {
 func (DistributionRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 	}
 }

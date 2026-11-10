@@ -95,7 +95,7 @@ func (s *TerminalService) Channel(stream opsV1.TerminalService_ChannelServer) er
 		s.log.Warnf("terminal channel without operator metadata (agent=%s)", agentId)
 	}
 
-	nodeID := uint64(0)
+	nodeID := int64(0)
 	if s.nodeRepo != nil {
 		node, nerr := s.nodeRepo.GetByAgentID(ctx, agentId)
 		if nerr != nil {

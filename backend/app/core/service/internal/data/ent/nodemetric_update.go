@@ -70,14 +70,14 @@ func (_u *NodeMetricUpdate) ClearDeletedAt() *NodeMetricUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *NodeMetricUpdate) SetNodeID(v uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNodeID(v int64) *NodeMetricUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *NodeMetricUpdate) SetNillableNodeID(v *uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNillableNodeID(v *int64) *NodeMetricUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -172,14 +172,14 @@ func (_u *NodeMetricUpdate) ClearDiskUsedPercent() *NodeMetricUpdate {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_u *NodeMetricUpdate) SetMemTotalBytes(v uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetMemTotalBytes(v int64) *NodeMetricUpdate {
 	_u.mutation.ResetMemTotalBytes()
 	_u.mutation.SetMemTotalBytes(v)
 	return _u
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_u *NodeMetricUpdate) SetNillableMemTotalBytes(v *uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNillableMemTotalBytes(v *int64) *NodeMetricUpdate {
 	if v != nil {
 		_u.SetMemTotalBytes(*v)
 	}
@@ -199,14 +199,14 @@ func (_u *NodeMetricUpdate) ClearMemTotalBytes() *NodeMetricUpdate {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_u *NodeMetricUpdate) SetUptimeSeconds(v uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetUptimeSeconds(v int64) *NodeMetricUpdate {
 	_u.mutation.ResetUptimeSeconds()
 	_u.mutation.SetUptimeSeconds(v)
 	return _u
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_u *NodeMetricUpdate) SetNillableUptimeSeconds(v *uint64) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNillableUptimeSeconds(v *int64) *NodeMetricUpdate {
 	if v != nil {
 		_u.SetUptimeSeconds(*v)
 	}
@@ -277,7 +277,7 @@ func (_u *NodeMetricUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -301,10 +301,10 @@ func (_u *NodeMetricUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(nodemetric.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.CPUPercent(); ok {
 		_spec.SetField(nodemetric.FieldCPUPercent, field.TypeFloat64, value)
@@ -334,22 +334,22 @@ func (_u *NodeMetricUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(nodemetric.FieldDiskUsedPercent, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.MemTotalBytes(); ok {
-		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMemTotalBytes(); ok {
-		_spec.AddField(nodemetric.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if _u.mutation.MemTotalBytesCleared() {
-		_spec.ClearField(nodemetric.FieldMemTotalBytes, field.TypeUint64)
+		_spec.ClearField(nodemetric.FieldMemTotalBytes, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UptimeSeconds(); ok {
-		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUptimeSeconds(); ok {
-		_spec.AddField(nodemetric.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if _u.mutation.UptimeSecondsCleared() {
-		_spec.ClearField(nodemetric.FieldUptimeSeconds, field.TypeUint64)
+		_spec.ClearField(nodemetric.FieldUptimeSeconds, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -414,14 +414,14 @@ func (_u *NodeMetricUpdateOne) ClearDeletedAt() *NodeMetricUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *NodeMetricUpdateOne) SetNodeID(v uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNodeID(v int64) *NodeMetricUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *NodeMetricUpdateOne) SetNillableNodeID(v *uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNillableNodeID(v *int64) *NodeMetricUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -516,14 +516,14 @@ func (_u *NodeMetricUpdateOne) ClearDiskUsedPercent() *NodeMetricUpdateOne {
 }
 
 // SetMemTotalBytes sets the "mem_total_bytes" field.
-func (_u *NodeMetricUpdateOne) SetMemTotalBytes(v uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetMemTotalBytes(v int64) *NodeMetricUpdateOne {
 	_u.mutation.ResetMemTotalBytes()
 	_u.mutation.SetMemTotalBytes(v)
 	return _u
 }
 
 // SetNillableMemTotalBytes sets the "mem_total_bytes" field if the given value is not nil.
-func (_u *NodeMetricUpdateOne) SetNillableMemTotalBytes(v *uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNillableMemTotalBytes(v *int64) *NodeMetricUpdateOne {
 	if v != nil {
 		_u.SetMemTotalBytes(*v)
 	}
@@ -543,14 +543,14 @@ func (_u *NodeMetricUpdateOne) ClearMemTotalBytes() *NodeMetricUpdateOne {
 }
 
 // SetUptimeSeconds sets the "uptime_seconds" field.
-func (_u *NodeMetricUpdateOne) SetUptimeSeconds(v uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetUptimeSeconds(v int64) *NodeMetricUpdateOne {
 	_u.mutation.ResetUptimeSeconds()
 	_u.mutation.SetUptimeSeconds(v)
 	return _u
 }
 
 // SetNillableUptimeSeconds sets the "uptime_seconds" field if the given value is not nil.
-func (_u *NodeMetricUpdateOne) SetNillableUptimeSeconds(v *uint64) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNillableUptimeSeconds(v *int64) *NodeMetricUpdateOne {
 	if v != nil {
 		_u.SetUptimeSeconds(*v)
 	}
@@ -634,7 +634,7 @@ func (_u *NodeMetricUpdateOne) sqlSave(ctx context.Context) (_node *NodeMetric, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "NodeMetric.id" for update`)}
@@ -675,10 +675,10 @@ func (_u *NodeMetricUpdateOne) sqlSave(ctx context.Context) (_node *NodeMetric, 
 		_spec.ClearField(nodemetric.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.CPUPercent(); ok {
 		_spec.SetField(nodemetric.FieldCPUPercent, field.TypeFloat64, value)
@@ -708,22 +708,22 @@ func (_u *NodeMetricUpdateOne) sqlSave(ctx context.Context) (_node *NodeMetric, 
 		_spec.ClearField(nodemetric.FieldDiskUsedPercent, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.MemTotalBytes(); ok {
-		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMemTotalBytes(); ok {
-		_spec.AddField(nodemetric.FieldMemTotalBytes, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldMemTotalBytes, field.TypeInt64, value)
 	}
 	if _u.mutation.MemTotalBytesCleared() {
-		_spec.ClearField(nodemetric.FieldMemTotalBytes, field.TypeUint64)
+		_spec.ClearField(nodemetric.FieldMemTotalBytes, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UptimeSeconds(); ok {
-		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.SetField(nodemetric.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUptimeSeconds(); ok {
-		_spec.AddField(nodemetric.FieldUptimeSeconds, field.TypeUint64, value)
+		_spec.AddField(nodemetric.FieldUptimeSeconds, field.TypeInt64, value)
 	}
 	if _u.mutation.UptimeSecondsCleared() {
-		_spec.ClearField(nodemetric.FieldUptimeSeconds, field.TypeUint64)
+		_spec.ClearField(nodemetric.FieldUptimeSeconds, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &NodeMetric{config: _u.config}

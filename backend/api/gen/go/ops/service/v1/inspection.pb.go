@@ -29,7 +29,7 @@ const (
 // 巡检报告
 type Inspection struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                               // 报告ID
+	Id             *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                               // 报告ID
 	Status         *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`                                        // 状态(RUNNING/FINISHED/FAILED)
 	Summary        *string                `protobuf:"bytes,3,opt,name=summary,proto3,oneof" json:"summary,omitempty"`                                      // 报告 JSON
 	NodeTotal      *int32                 `protobuf:"varint,4,opt,name=node_total,json=nodeTotal,proto3,oneof" json:"node_total,omitempty"`                // 节点总数
@@ -75,7 +75,7 @@ func (*Inspection) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_inspection_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Inspection) GetId() uint64 {
+func (x *Inspection) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -161,7 +161,7 @@ func (x *Inspection) GetCreatedAt() *timestamppb.Timestamp {
 
 type ListInspectionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*Inspection          `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 报告列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -197,7 +197,7 @@ func (*ListInspectionResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_inspection_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListInspectionResponse) GetTotal() uint64 {
+func (x *ListInspectionResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -213,7 +213,7 @@ func (x *ListInspectionResponse) GetItems() []*Inspection {
 
 type GetInspectionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 报告ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 报告ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -248,7 +248,7 @@ func (*GetInspectionRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_inspection_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetInspectionRequest) GetId() uint64 {
+func (x *GetInspectionRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -298,7 +298,7 @@ const file_ops_service_v1_inspection_proto_rawDesc = "" +
 	"\x1fops/service/v1/inspection.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xa6\x05\n" +
 	"\n" +
 	"Inspection\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\tH\x01R\x06status\x88\x01\x01\x12\x1d\n" +
 	"\asummary\x18\x03 \x01(\tH\x02R\asummary\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -331,10 +331,10 @@ const file_ops_service_v1_inspection_proto_rawDesc = "" +
 	"\f_finished_atB\r\n" +
 	"\v_created_at\"`\n" +
 	"\x16ListInspectionResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x120\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x120\n" +
 	"\x05items\x18\x02 \x03(\v2\x1a.ops.service.v1.InspectionR\x05items\"7\n" +
 	"\x14GetInspectionRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\x16\n" +
 	"\x14RunInspectionRequest2\x95\x02\n" +
 	"\x11InspectionService\x12V\n" +

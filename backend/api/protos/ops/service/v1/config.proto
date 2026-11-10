@@ -43,7 +43,7 @@ service ConfigService {
 
 // 配置模板
 message ConfigTemplate {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 模板ID
@@ -97,12 +97,12 @@ message ConfigTemplate {
 }
 
 message ListConfigTemplateResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated ConfigTemplate items = 2 [json_name = "items"]; // 模板列表
 }
 
 message GetConfigTemplateRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 模板ID
@@ -116,7 +116,7 @@ message CreateConfigTemplateRequest {
 }
 
 message UpdateConfigTemplateRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 模板ID
@@ -135,24 +135,24 @@ message UpdateConfigTemplateRequest {
 }
 
 message DeleteConfigTemplateRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 模板ID
 }
 
 message DistributeConfigRequest {
-  optional uint64 template_id = 1 [
+  optional int64 template_id = 1 [
     json_name = "templateId",
     (google.api.field_behavior) = REQUIRED
   ]; // 模板ID
 
-  optional uint64 node_id = 2 [
+  optional int64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED
   ]; // 目标节点ID
 
-  optional uint64 project_id = 3 [
+  optional int64 project_id = 3 [
     json_name = "projectId",
     (gnostic.openapi.v3.property) = {
       description: "关联项目(0=不关联,仅记录用)"
@@ -161,18 +161,18 @@ message DistributeConfigRequest {
 }
 
 message ConfigDistribution {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
-  optional uint64 template_id = 2 [json_name = "templateId"]; // 模板
+  optional int64 template_id = 2 [json_name = "templateId"]; // 模板
 
   optional string template_name = 3 [json_name = "templateName"]; // 模板名
 
-  optional uint64 node_id = 4 [json_name = "nodeId"]; // 目标节点
+  optional int64 node_id = 4 [json_name = "nodeId"]; // 目标节点
 
-  optional uint64 project_id = 5 [json_name = "projectId"]; // 关联项目
+  optional int64 project_id = 5 [json_name = "projectId"]; // 关联项目
 
   optional string target_path = 6 [json_name = "targetPath"]; // 目标路径
 
@@ -192,7 +192,7 @@ message ConfigDistribution {
 }
 
 message ListConfigDistributionsRequest {
-  optional uint64 template_id = 1 [
+  optional int64 template_id = 1 [
     json_name = "templateId",
     (google.api.field_behavior) = REQUIRED
   ]; // 按模板过滤
@@ -203,29 +203,29 @@ message ListConfigDistributionsRequest {
 }
 
 message ListConfigDistributionResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated ConfigDistribution items = 2 [json_name = "items"]; // 记录列表
 }
 
 // CheckConfigDriftRequest 漂移校验(同步指令,秒级返回)
 message CheckConfigDriftRequest {
-  uint64 template_id = 1 [
+  int64 template_id = 1 [
     json_name = "templateId",
     (google.api.field_behavior) = REQUIRED
   ]; // 模板ID(id 走 body:触发类 POST 不带 path 参数)
 
-  uint64 node_id = 2 [
+  int64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED
   ]; // 目标节点
 
-  optional uint64 project_id = 3 [json_name = "projectId"]; // 项目(占位符渲染用,可空)
+  optional int64 project_id = 3 [json_name = "projectId"]; // 项目(占位符渲染用,可空)
 }
 
 // ConfigDriftReport 漂移报告
 message ConfigDriftReport {
-  uint64 template_id = 1 [json_name = "templateId"]; // 模板
-  uint64 node_id = 2 [json_name = "nodeId"]; // 节点
+  int64 template_id = 1 [json_name = "templateId"]; // 模板
+  int64 node_id = 2 [json_name = "nodeId"]; // 节点
   string target_path = 3 [json_name = "targetPath"]; // 目标路径
   string expected_sha256 = 4 [json_name = "expectedSha256"]; // 期望哈希(渲染内容)
   optional string actual_sha256 = 5 [json_name = "actualSha256"]; // 实际哈希(文件不存在时空)

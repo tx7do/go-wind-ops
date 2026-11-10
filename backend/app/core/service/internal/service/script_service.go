@@ -28,21 +28,21 @@ type ScriptService struct {
 	repo     *data.ScriptRepo
 	nodeRepo *data.AgentNodeRepo
 
-	agentService *AgentService
+	agentService     *AgentService
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
 	maintenanceRepo  *data.MaintenanceWindowRepo
 	versionRepo      *data.ScriptVersionRepo
-	approvalRepo *data.ApprovalRepo
+	approvalRepo     *data.ApprovalRepo
 }
 
 func NewScriptService(ctx *bootstrap.Context, repo *data.ScriptRepo, nodeRepo *data.AgentNodeRepo, agentService *AgentService, approvalRepo *data.ApprovalRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo, versionRepo *data.ScriptVersionRepo) *ScriptService {
 	return &ScriptService{
-		log:          ctx.NewLoggerHelper("script/service/core-service"),
-		repo:         repo,
-		nodeRepo:     nodeRepo,
-		agentService: agentService,
-		approvalRepo: approvalRepo,
+		log:              ctx.NewLoggerHelper("script/service/core-service"),
+		repo:             repo,
+		nodeRepo:         nodeRepo,
+		agentService:     agentService,
+		approvalRepo:     approvalRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
 		maintenanceRepo:  maintenanceRepo,
@@ -123,7 +123,7 @@ func (s *ScriptService) ListScriptVersions(ctx context.Context, req *opsV1.ListS
 	if err != nil {
 		return nil, opsV1.ErrorInternalServerError("list versions failed")
 	}
-	resp := &opsV1.ListScriptVersionsResponse{Total: uint64(len(rows))}
+	resp := &opsV1.ListScriptVersionsResponse{Total: int64(len(rows))}
 	for _, e := range rows {
 		resp.Items = append(resp.Items, &opsV1.ScriptVersion{
 			Id:        &e.ID,
@@ -239,10 +239,10 @@ func validateContent(content string, timeoutSeconds uint32) error {
 	return nil
 }
 
-func (s *ScriptService) operatorID(ctx context.Context) uint64 {
+func (s *ScriptService) operatorID(ctx context.Context) int64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint64(operator.GetUserId())
+	return int64(operator.GetUserId())
 }

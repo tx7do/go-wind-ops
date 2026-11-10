@@ -70,14 +70,14 @@ func (_u *ConfigDistributionUpdate) ClearDeletedAt() *ConfigDistributionUpdate {
 }
 
 // SetTemplateID sets the "template_id" field.
-func (_u *ConfigDistributionUpdate) SetTemplateID(v uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetTemplateID(v int64) *ConfigDistributionUpdate {
 	_u.mutation.ResetTemplateID()
 	_u.mutation.SetTemplateID(v)
 	return _u
 }
 
 // SetNillableTemplateID sets the "template_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdate) SetNillableTemplateID(v *uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetNillableTemplateID(v *int64) *ConfigDistributionUpdate {
 	if v != nil {
 		_u.SetTemplateID(*v)
 	}
@@ -105,14 +105,14 @@ func (_u *ConfigDistributionUpdate) SetNillableTemplateName(v *string) *ConfigDi
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *ConfigDistributionUpdate) SetNodeID(v uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetNodeID(v int64) *ConfigDistributionUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdate) SetNillableNodeID(v *uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetNillableNodeID(v *int64) *ConfigDistributionUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -126,14 +126,14 @@ func (_u *ConfigDistributionUpdate) AddNodeID(v int64) *ConfigDistributionUpdate
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *ConfigDistributionUpdate) SetProjectID(v uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetProjectID(v int64) *ConfigDistributionUpdate {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdate) SetNillableProjectID(v *uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetNillableProjectID(v *int64) *ConfigDistributionUpdate {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -215,14 +215,14 @@ func (_u *ConfigDistributionUpdate) ClearError() *ConfigDistributionUpdate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *ConfigDistributionUpdate) SetOperatorID(v uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetOperatorID(v int64) *ConfigDistributionUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdate) SetNillableOperatorID(v *uint64) *ConfigDistributionUpdate {
+func (_u *ConfigDistributionUpdate) SetNillableOperatorID(v *int64) *ConfigDistributionUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -338,7 +338,7 @@ func (_u *ConfigDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(configdistribution.Table, configdistribution.Columns, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(configdistribution.Table, configdistribution.Columns, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -347,7 +347,7 @@ func (_u *ConfigDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(configdistribution.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configdistribution.FieldCreatedAt, field.TypeTime)
@@ -365,28 +365,28 @@ func (_u *ConfigDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(configdistribution.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TemplateID(); ok {
-		_spec.SetField(configdistribution.FieldTemplateID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTemplateID(); ok {
-		_spec.AddField(configdistribution.FieldTemplateID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TemplateName(); ok {
 		_spec.SetField(configdistribution.FieldTemplateName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(configdistribution.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(configdistribution.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(configdistribution.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(configdistribution.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(configdistribution.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TargetPath(); ok {
 		_spec.SetField(configdistribution.FieldTargetPath, field.TypeString, value)
@@ -404,13 +404,13 @@ func (_u *ConfigDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(configdistribution.FieldError, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(configdistribution.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(configdistribution.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(configdistribution.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(configdistribution.FieldFinishedAt, field.TypeTime, value)
@@ -481,14 +481,14 @@ func (_u *ConfigDistributionUpdateOne) ClearDeletedAt() *ConfigDistributionUpdat
 }
 
 // SetTemplateID sets the "template_id" field.
-func (_u *ConfigDistributionUpdateOne) SetTemplateID(v uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetTemplateID(v int64) *ConfigDistributionUpdateOne {
 	_u.mutation.ResetTemplateID()
 	_u.mutation.SetTemplateID(v)
 	return _u
 }
 
 // SetNillableTemplateID sets the "template_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdateOne) SetNillableTemplateID(v *uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetNillableTemplateID(v *int64) *ConfigDistributionUpdateOne {
 	if v != nil {
 		_u.SetTemplateID(*v)
 	}
@@ -516,14 +516,14 @@ func (_u *ConfigDistributionUpdateOne) SetNillableTemplateName(v *string) *Confi
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *ConfigDistributionUpdateOne) SetNodeID(v uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetNodeID(v int64) *ConfigDistributionUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdateOne) SetNillableNodeID(v *uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetNillableNodeID(v *int64) *ConfigDistributionUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -537,14 +537,14 @@ func (_u *ConfigDistributionUpdateOne) AddNodeID(v int64) *ConfigDistributionUpd
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *ConfigDistributionUpdateOne) SetProjectID(v uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetProjectID(v int64) *ConfigDistributionUpdateOne {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdateOne) SetNillableProjectID(v *uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetNillableProjectID(v *int64) *ConfigDistributionUpdateOne {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -626,14 +626,14 @@ func (_u *ConfigDistributionUpdateOne) ClearError() *ConfigDistributionUpdateOne
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *ConfigDistributionUpdateOne) SetOperatorID(v uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetOperatorID(v int64) *ConfigDistributionUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *ConfigDistributionUpdateOne) SetNillableOperatorID(v *uint64) *ConfigDistributionUpdateOne {
+func (_u *ConfigDistributionUpdateOne) SetNillableOperatorID(v *int64) *ConfigDistributionUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -762,7 +762,7 @@ func (_u *ConfigDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Conf
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(configdistribution.Table, configdistribution.Columns, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(configdistribution.Table, configdistribution.Columns, sqlgraph.NewFieldSpec(configdistribution.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ConfigDistribution.id" for update`)}
@@ -788,7 +788,7 @@ func (_u *ConfigDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Conf
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(configdistribution.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configdistribution.FieldCreatedAt, field.TypeTime)
@@ -806,28 +806,28 @@ func (_u *ConfigDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Conf
 		_spec.ClearField(configdistribution.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TemplateID(); ok {
-		_spec.SetField(configdistribution.FieldTemplateID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTemplateID(); ok {
-		_spec.AddField(configdistribution.FieldTemplateID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TemplateName(); ok {
 		_spec.SetField(configdistribution.FieldTemplateName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(configdistribution.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(configdistribution.FieldNodeID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldNodeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(configdistribution.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(configdistribution.FieldProjectID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldProjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProjectIDCleared() {
-		_spec.ClearField(configdistribution.FieldProjectID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldProjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TargetPath(); ok {
 		_spec.SetField(configdistribution.FieldTargetPath, field.TypeString, value)
@@ -845,13 +845,13 @@ func (_u *ConfigDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Conf
 		_spec.ClearField(configdistribution.FieldError, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(configdistribution.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(configdistribution.FieldOperatorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(configdistribution.FieldOperatorID, field.TypeUint64, value)
+		_spec.AddField(configdistribution.FieldOperatorID, field.TypeInt64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(configdistribution.FieldOperatorID, field.TypeUint64)
+		_spec.ClearField(configdistribution.FieldOperatorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(configdistribution.FieldFinishedAt, field.TypeTime, value)

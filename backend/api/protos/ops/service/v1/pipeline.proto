@@ -45,7 +45,7 @@ service PipelineService {
 
 // 流水线
 message Pipeline {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 流水线ID
@@ -91,7 +91,7 @@ message PipelineStep {
     (google.api.field_behavior) = REQUIRED
   ]; // 步骤类型
 
-  optional uint64 ref_id = 2 [
+  optional int64 ref_id = 2 [
     json_name = "refId",
     (google.api.field_behavior) = REQUIRED
   ]; // 引用对象 ID(构建/脚本/分发配置)
@@ -106,12 +106,12 @@ message PipelineStep {
 }
 
 message ListPipelineResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated Pipeline items = 2 [json_name = "items"]; // 流水线列表
 }
 
 message GetPipelineRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID
@@ -125,7 +125,7 @@ message CreatePipelineRequest {
 }
 
 message UpdatePipelineRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID
@@ -137,33 +137,33 @@ message UpdatePipelineRequest {
 }
 
 message DeletePipelineRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID
 }
 
 message TriggerPipelineRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 流水线ID
 }
 
 message TriggerPipelineResponse {
-  optional uint64 run_id = 1 [
+  optional int64 run_id = 1 [
     json_name = "runId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 运行记录ID
 }
 
 message ListPipelineRunResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated PipelineRun items = 2 [json_name = "items"]; // 运行记录列表
 }
 
 message GetPipelineRunRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 运行记录ID
@@ -181,12 +181,12 @@ message PipelineRun {
     FAILED = 4;   // 失败(某步骤失败即中止)
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 运行记录ID
 
-  optional uint64 pipeline_id = 2 [
+  optional int64 pipeline_id = 2 [
     json_name = "pipelineId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 流水线ID
@@ -226,7 +226,7 @@ message PipelineRun {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 结束时间
 
-  optional uint64 operator_id = 10 [
+  optional int64 operator_id = 10 [
     json_name = "operatorId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 触发人
@@ -236,7 +236,7 @@ message PipelineRun {
 message PipelineStepResult {
   optional string type = 1 [json_name = "type"]; // 步骤类型(BUILD/SCRIPT/DISTRIBUTION)
 
-  optional uint64 ref_id = 2 [json_name = "refId"]; // 引用对象 ID
+  optional int64 ref_id = 2 [json_name = "refId"]; // 引用对象 ID
 
   optional string name = 3 [json_name = "name"]; // 展示名
 
@@ -248,7 +248,7 @@ message PipelineStepResult {
 }
 
 message GetPipelineRunLogRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 运行记录ID

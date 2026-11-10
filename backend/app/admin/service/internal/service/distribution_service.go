@@ -59,7 +59,6 @@ func (s *DistributionService) Update(ctx context.Context, req *opsV1.UpdateDistr
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-
 	return s.distributionServiceClient.UpdateDistribution(ctx, req)
 }
 

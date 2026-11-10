@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-ops/app/core/service/internal/data/ent"
 	"go-wind-ops/app/core/service/internal/data/ent/promotionpipeline"
@@ -73,7 +73,7 @@ func (r *PromotionPipelineRepo) List(ctx context.Context, req *paginationV1.Pagi
 		return nil, err
 	}
 
-	resp := &opsV1.ListPromotionPipelineResponse{Total: uint64(total)}
+	resp := &opsV1.ListPromotionPipelineResponse{Total: int64(total)}
 	for _, e := range rows {
 		resp.Items = append(resp.Items, r.toDTO(e))
 	}
@@ -81,7 +81,7 @@ func (r *PromotionPipelineRepo) List(ctx context.Context, req *paginationV1.Pagi
 }
 
 // Get 详情。
-func (r *PromotionPipelineRepo) Get(ctx context.Context, id uint64) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Get(ctx context.Context, id int64) (*opsV1.PromotionPipeline, error) {
 	e, err := r.entClient.Client().PromotionPipeline.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (r *PromotionPipelineRepo) Get(ctx context.Context, id uint64) (*opsV1.Prom
 }
 
 // GetEntity 实体(Promote 校验阶段下标用)。
-func (r *PromotionPipelineRepo) GetEntity(ctx context.Context, id uint64) (*ent.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) GetEntity(ctx context.Context, id int64) (*ent.PromotionPipeline, error) {
 	return r.entClient.Client().PromotionPipeline.Get(ctx, id)
 }
 
@@ -111,7 +111,7 @@ func StagesOf(stages []*opsV1.PromotionStage) []schema.PromotionStage {
 }
 
 // Create 落库。
-func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages []schema.PromotionStage, description *string, operatorID uint64) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages []schema.PromotionStage, description *string, operatorID int64) (*opsV1.PromotionPipeline, error) {
 	builder := r.entClient.Client().PromotionPipeline.Create().
 		SetName(name).
 		SetStages(stages)
@@ -129,7 +129,7 @@ func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages 
 }
 
 // Update 名称/阶段/描述。
-func (r *PromotionPipelineRepo) Update(ctx context.Context, id uint64, name string, stages []schema.PromotionStage, description *string) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Update(ctx context.Context, id int64, name string, stages []schema.PromotionStage, description *string) (*opsV1.PromotionPipeline, error) {
 	builder := r.entClient.Client().PromotionPipeline.UpdateOneID(id).
 		SetName(name).
 		SetStages(stages)
@@ -144,6 +144,6 @@ func (r *PromotionPipelineRepo) Update(ctx context.Context, id uint64, name stri
 }
 
 // Delete 删除。
-func (r *PromotionPipelineRepo) Delete(ctx context.Context, id uint64) error {
+func (r *PromotionPipelineRepo) Delete(ctx context.Context, id int64) error {
 	return r.entClient.Client().PromotionPipeline.DeleteOneID(id).Exec(ctx)
 }

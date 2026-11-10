@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.ConfigDistribution {
+func ID(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.ConfigDistribution {
+func IDEQ(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.ConfigDistribution {
+func IDNEQ(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.ConfigDistribution {
+func IDIn(ids ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.ConfigDistribution {
+func IDNotIn(ids ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.ConfigDistribution {
+func IDGT(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.ConfigDistribution {
+func IDGTE(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.ConfigDistribution {
+func IDLT(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.ConfigDistribution {
+func IDLTE(id int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.ConfigDistribution {
+func TenantID(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.ConfigDistribution {
 }
 
 // TemplateID applies equality check predicate on the "template_id" field. It's identical to TemplateIDEQ.
-func TemplateID(v uint64) predicate.ConfigDistribution {
+func TemplateID(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldTemplateID, v))
 }
 
@@ -85,12 +85,12 @@ func TemplateName(v string) predicate.ConfigDistribution {
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.ConfigDistribution {
+func NodeID(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldNodeID, v))
 }
 
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v uint64) predicate.ConfigDistribution {
+func ProjectID(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldProjectID, v))
 }
 
@@ -110,7 +110,7 @@ func Error(v string) predicate.ConfigDistribution {
 }
 
 // OperatorID applies equality check predicate on the "operator_id" field. It's identical to OperatorIDEQ.
-func OperatorID(v uint64) predicate.ConfigDistribution {
+func OperatorID(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldOperatorID, v))
 }
 
@@ -120,42 +120,42 @@ func FinishedAt(v time.Time) predicate.ConfigDistribution {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.ConfigDistribution {
+func TenantIDEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.ConfigDistribution {
+func TenantIDNEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.ConfigDistribution {
+func TenantIDIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.ConfigDistribution {
+func TenantIDNotIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.ConfigDistribution {
+func TenantIDGT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.ConfigDistribution {
+func TenantIDGTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.ConfigDistribution {
+func TenantIDLT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.ConfigDistribution {
+func TenantIDLTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -320,42 +320,42 @@ func DeletedAtNotNil() predicate.ConfigDistribution {
 }
 
 // TemplateIDEQ applies the EQ predicate on the "template_id" field.
-func TemplateIDEQ(v uint64) predicate.ConfigDistribution {
+func TemplateIDEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldTemplateID, v))
 }
 
 // TemplateIDNEQ applies the NEQ predicate on the "template_id" field.
-func TemplateIDNEQ(v uint64) predicate.ConfigDistribution {
+func TemplateIDNEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldTemplateID, v))
 }
 
 // TemplateIDIn applies the In predicate on the "template_id" field.
-func TemplateIDIn(vs ...uint64) predicate.ConfigDistribution {
+func TemplateIDIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldTemplateID, vs...))
 }
 
 // TemplateIDNotIn applies the NotIn predicate on the "template_id" field.
-func TemplateIDNotIn(vs ...uint64) predicate.ConfigDistribution {
+func TemplateIDNotIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldTemplateID, vs...))
 }
 
 // TemplateIDGT applies the GT predicate on the "template_id" field.
-func TemplateIDGT(v uint64) predicate.ConfigDistribution {
+func TemplateIDGT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldTemplateID, v))
 }
 
 // TemplateIDGTE applies the GTE predicate on the "template_id" field.
-func TemplateIDGTE(v uint64) predicate.ConfigDistribution {
+func TemplateIDGTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldTemplateID, v))
 }
 
 // TemplateIDLT applies the LT predicate on the "template_id" field.
-func TemplateIDLT(v uint64) predicate.ConfigDistribution {
+func TemplateIDLT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldTemplateID, v))
 }
 
 // TemplateIDLTE applies the LTE predicate on the "template_id" field.
-func TemplateIDLTE(v uint64) predicate.ConfigDistribution {
+func TemplateIDLTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldTemplateID, v))
 }
 
@@ -425,82 +425,82 @@ func TemplateNameContainsFold(v string) predicate.ConfigDistribution {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.ConfigDistribution {
+func NodeIDEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.ConfigDistribution {
+func NodeIDNEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.ConfigDistribution {
+func NodeIDIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.ConfigDistribution {
+func NodeIDNotIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.ConfigDistribution {
+func NodeIDGT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.ConfigDistribution {
+func NodeIDGTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.ConfigDistribution {
+func NodeIDLT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.ConfigDistribution {
+func NodeIDLTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldNodeID, v))
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v uint64) predicate.ConfigDistribution {
+func ProjectIDEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldProjectID, v))
 }
 
 // ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v uint64) predicate.ConfigDistribution {
+func ProjectIDNEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldProjectID, v))
 }
 
 // ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...uint64) predicate.ConfigDistribution {
+func ProjectIDIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldProjectID, vs...))
 }
 
 // ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...uint64) predicate.ConfigDistribution {
+func ProjectIDNotIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldProjectID, vs...))
 }
 
 // ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v uint64) predicate.ConfigDistribution {
+func ProjectIDGT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldProjectID, v))
 }
 
 // ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v uint64) predicate.ConfigDistribution {
+func ProjectIDGTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldProjectID, v))
 }
 
 // ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v uint64) predicate.ConfigDistribution {
+func ProjectIDLT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldProjectID, v))
 }
 
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v uint64) predicate.ConfigDistribution {
+func ProjectIDLTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldProjectID, v))
 }
 
@@ -740,42 +740,42 @@ func ErrorContainsFold(v string) predicate.ConfigDistribution {
 }
 
 // OperatorIDEQ applies the EQ predicate on the "operator_id" field.
-func OperatorIDEQ(v uint64) predicate.ConfigDistribution {
+func OperatorIDEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // OperatorIDNEQ applies the NEQ predicate on the "operator_id" field.
-func OperatorIDNEQ(v uint64) predicate.ConfigDistribution {
+func OperatorIDNEQ(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNEQ(FieldOperatorID, v))
 }
 
 // OperatorIDIn applies the In predicate on the "operator_id" field.
-func OperatorIDIn(vs ...uint64) predicate.ConfigDistribution {
+func OperatorIDIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDNotIn applies the NotIn predicate on the "operator_id" field.
-func OperatorIDNotIn(vs ...uint64) predicate.ConfigDistribution {
+func OperatorIDNotIn(vs ...int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldNotIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDGT applies the GT predicate on the "operator_id" field.
-func OperatorIDGT(v uint64) predicate.ConfigDistribution {
+func OperatorIDGT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGT(FieldOperatorID, v))
 }
 
 // OperatorIDGTE applies the GTE predicate on the "operator_id" field.
-func OperatorIDGTE(v uint64) predicate.ConfigDistribution {
+func OperatorIDGTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldGTE(FieldOperatorID, v))
 }
 
 // OperatorIDLT applies the LT predicate on the "operator_id" field.
-func OperatorIDLT(v uint64) predicate.ConfigDistribution {
+func OperatorIDLT(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLT(FieldOperatorID, v))
 }
 
 // OperatorIDLTE applies the LTE predicate on the "operator_id" field.
-func OperatorIDLTE(v uint64) predicate.ConfigDistribution {
+func OperatorIDLTE(v int64) predicate.ConfigDistribution {
 	return predicate.ConfigDistribution(sql.FieldLTE(FieldOperatorID, v))
 }
 

@@ -22,14 +22,14 @@ import (
 type CloudBudgetService struct {
 	opsV1.UnimplementedCloudBudgetServiceServer
 
-	log        *log.Helper
-	budgetRepo *data.CloudBudgetRepo
-	costRepo   *data.CloudCostRepo
-	accountRepo *data.CloudAccountRepo
-	alertRepo  *data.AlertRepo
+	log              *log.Helper
+	budgetRepo       *data.CloudBudgetRepo
+	costRepo         *data.CloudCostRepo
+	accountRepo      *data.CloudAccountRepo
+	alertRepo        *data.AlertRepo
 	notifChannelRepo *data.NotificationChannelRepo
 	deliveryRepo     *data.NotificationDeliveryRepo
-	maintenanceRepo   *data.MaintenanceWindowRepo
+	maintenanceRepo  *data.MaintenanceWindowRepo
 }
 
 func NewCloudBudgetService(ctx *bootstrap.Context, budgetRepo *data.CloudBudgetRepo, costRepo *data.CloudCostRepo, accountRepo *data.CloudAccountRepo, alertRepo *data.AlertRepo, notifChannelRepo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, maintenanceRepo *data.MaintenanceWindowRepo) *CloudBudgetService {
@@ -41,7 +41,7 @@ func NewCloudBudgetService(ctx *bootstrap.Context, budgetRepo *data.CloudBudgetR
 		alertRepo:        alertRepo,
 		notifChannelRepo: notifChannelRepo,
 		deliveryRepo:     deliveryRepo,
-		maintenanceRepo:   maintenanceRepo,
+		maintenanceRepo:  maintenanceRepo,
 	}
 }
 
@@ -206,7 +206,7 @@ func (s *CloudBudgetService) fireBudgetAlert(ctx context.Context, b *ent.CloudBu
 }
 
 // budgetSubject 预算主体名(账号名或"全部账号")。
-func (s *CloudBudgetService) budgetSubject(ctx context.Context, accountID uint64) string {
+func (s *CloudBudgetService) budgetSubject(ctx context.Context, accountID int64) string {
 	if accountID == 0 {
 		return "全部账号"
 	}
@@ -230,7 +230,7 @@ func prevMonths(month string, n int) []string {
 	return out
 }
 
-func budgetScopeSuffix(accountID uint64) string {
+func budgetScopeSuffix(accountID int64) string {
 	if accountID == 0 {
 		return "(全部账号合计)"
 	}

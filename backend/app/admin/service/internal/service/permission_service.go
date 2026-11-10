@@ -19,11 +19,11 @@ import (
 	adminV1 "go-wind-ops/api/gen/go/admin/service/v1"
 	permissionV1 "go-wind-ops/api/gen/go/permission/service/v1"
 
+	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 	"go-wind-ops/pkg/constants"
 	appViewer "go-wind-ops/pkg/entgo/viewer"
 	"go-wind-ops/pkg/middleware/auth"
 	"go-wind-ops/pkg/utils/converter"
-	authenticationV1 "go-wind-ops/api/gen/go/authentication/service/v1"
 )
 
 type PermissionService struct {
@@ -72,7 +72,7 @@ func NewPermissionService(
 func (s *PermissionService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
 	resp, _ := s.permissionServiceClient.Count(ctx, nil)
-	if resp != nil && (resp.Count == 0 || resp.Count == (uint64)(len(constants.DefaultPermissions))) {
+	if resp != nil && (resp.Count == 0 || resp.Count == (int64)(len(constants.DefaultPermissions))) {
 		apiCount, _ := s.apiServiceClient.Count(ctx, nil)
 
 		menusCount, _ := s.menuServiceClient.Count(ctx, nil)
@@ -90,7 +90,7 @@ func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRe
 		return nil, err
 	}
 
-	var limitPermissionIDs []uint64
+	var limitPermissionIDs []int64
 	if operator.GetTenantId() > 0 {
 		var limitPermissionResp *permissionV1.ListPermissionIdsResponse
 		limitPermissionResp, err = s.roleServiceClient.ListPermissionIds(ctx, &permissionV1.ListPermissionIdsRequest{
@@ -124,8 +124,8 @@ func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRe
 		condition := &paginationV1.FilterCondition{
 			Field: "id",
 			Op:    paginationV1.Operator_IN,
-			Values: sliceutil.Map(limitPermissionIDs, func(value uint64, _ int, _ []uint64) string {
-				return strconv.FormatUint(uint64(value), 10)
+			Values: sliceutil.Map(limitPermissionIDs, func(value int64, _ int, _ []int64) string {
+				return strconv.FormatInt(int64(value), 10)
 			}),
 		}
 
@@ -323,7 +323,7 @@ func (s *PermissionService) syncPermissionsInternal(ctx context.Context) (*empty
 			Name:      trans.Ptr(title),
 			Code:      trans.Ptr(permissionCode),
 			Status:    trans.Ptr(permissionV1.Permission_ON),
-			MenuIds:   []uint64{menu.GetId()},
+			MenuIds:   []int64{menu.GetId()},
 			CreatedBy: trans.Ptr(operator.UserId),
 			UpdatedBy: trans.Ptr(operator.UserId),
 		}

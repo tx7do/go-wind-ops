@@ -81,16 +81,16 @@ func (CommandStatus) EnumDescriptor() ([]byte, []int) {
 // 指令台账记录
 type CommandRecord struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                           // 记录ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                           // 记录ID
 	RequestId     *string                `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3,oneof" json:"request_id,omitempty"`             // 幂等键(UUID)
-	NodeId        *uint64                `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                     // 目标节点ID
+	NodeId        *int64                 `protobuf:"varint,3,opt,name=node_id,json=nodeId,proto3,oneof" json:"node_id,omitempty"`                     // 目标节点ID
 	AgentId       *string                `protobuf:"bytes,4,opt,name=agent_id,json=agentId,proto3,oneof" json:"agent_id,omitempty"`                   // 目标机器唯一标识
 	Action        *string                `protobuf:"bytes,5,opt,name=action,proto3,oneof" json:"action,omitempty"`                                    // 指令动作
 	Payload       *string                `protobuf:"bytes,6,opt,name=payload,proto3,oneof" json:"payload,omitempty"`                                  // 指令载荷(JSON)
 	Status        *CommandStatus         `protobuf:"varint,7,opt,name=status,proto3,enum=ops.service.v1.CommandStatus,oneof" json:"status,omitempty"` // 执行状态
 	Result        *string                `protobuf:"bytes,8,opt,name=result,proto3,oneof" json:"result,omitempty"`                                    // 执行结果数据(JSON)
 	Error         *string                `protobuf:"bytes,9,opt,name=error,proto3,oneof" json:"error,omitempty"`                                      // 失败原因
-	OperatorId    *uint64                `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`        // 触发指令的用户
+	OperatorId    *int64                 `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`        // 触发指令的用户
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 下发时间
 	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at,omitempty"`         // 回执时间
 	unknownFields protoimpl.UnknownFields
@@ -127,7 +127,7 @@ func (*CommandRecord) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_command_record_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CommandRecord) GetId() uint64 {
+func (x *CommandRecord) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -141,7 +141,7 @@ func (x *CommandRecord) GetRequestId() string {
 	return ""
 }
 
-func (x *CommandRecord) GetNodeId() uint64 {
+func (x *CommandRecord) GetNodeId() int64 {
 	if x != nil && x.NodeId != nil {
 		return *x.NodeId
 	}
@@ -190,7 +190,7 @@ func (x *CommandRecord) GetError() string {
 	return ""
 }
 
-func (x *CommandRecord) GetOperatorId() uint64 {
+func (x *CommandRecord) GetOperatorId() int64 {
 	if x != nil && x.OperatorId != nil {
 		return *x.OperatorId
 	}
@@ -213,7 +213,7 @@ func (x *CommandRecord) GetFinishedAt() *timestamppb.Timestamp {
 
 type ListCommandRecordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*CommandRecord       `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 记录列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -249,7 +249,7 @@ func (*ListCommandRecordResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_command_record_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListCommandRecordResponse) GetTotal() uint64 {
+func (x *ListCommandRecordResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -265,7 +265,7 @@ func (x *ListCommandRecordResponse) GetItems() []*CommandRecord {
 
 type GetCommandRecordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 记录ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -300,7 +300,7 @@ func (*GetCommandRecordRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_command_record_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetCommandRecordRequest) GetId() uint64 {
+func (x *GetCommandRecordRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -313,10 +313,10 @@ const file_ops_service_v1_command_record_proto_rawDesc = "" +
 	"\n" +
 	"#ops/service/v1/command_record.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xaf\x05\n" +
 	"\rCommandRecord\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12'\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x12'\n" +
 	"\n" +
 	"request_id\x18\x02 \x01(\tB\x03\xe0A\x03H\x01R\trequestId\x88\x01\x01\x12!\n" +
-	"\anode_id\x18\x03 \x01(\x04B\x03\xe0A\x03H\x02R\x06nodeId\x88\x01\x01\x12#\n" +
+	"\anode_id\x18\x03 \x01(\x03B\x03\xe0A\x03H\x02R\x06nodeId\x88\x01\x01\x12#\n" +
 	"\bagent_id\x18\x04 \x01(\tB\x03\xe0A\x03H\x03R\aagentId\x88\x01\x01\x12 \n" +
 	"\x06action\x18\x05 \x01(\tB\x03\xe0A\x03H\x04R\x06action\x88\x01\x01\x12\"\n" +
 	"\apayload\x18\x06 \x01(\tB\x03\xe0A\x03H\x05R\apayload\x88\x01\x01\x12?\n" +
@@ -324,7 +324,7 @@ const file_ops_service_v1_command_record_proto_rawDesc = "" +
 	"\x06result\x18\b \x01(\tB\x03\xe0A\x03H\aR\x06result\x88\x01\x01\x12\x1e\n" +
 	"\x05error\x18\t \x01(\tB\x03\xe0A\x03H\bR\x05error\x88\x01\x01\x12)\n" +
 	"\voperator_id\x18\n" +
-	" \x01(\x04B\x03\xe0A\x03H\tR\n" +
+	" \x01(\x03B\x03\xe0A\x03H\tR\n" +
 	"operatorId\x88\x01\x01\x12C\n" +
 	"\n" +
 	"created_at\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\n" +
@@ -346,10 +346,10 @@ const file_ops_service_v1_command_record_proto_rawDesc = "" +
 	"\v_created_atB\x0e\n" +
 	"\f_finished_at\"f\n" +
 	"\x19ListCommandRecordResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x123\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x123\n" +
 	"\x05items\x18\x02 \x03(\v2\x1d.ops.service.v1.CommandRecordR\x05items\":\n" +
 	"\x17GetCommandRecordRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id*U\n" +
 	"\rCommandStatus\x12\x1e\n" +
 	"\x1aCOMMAND_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +

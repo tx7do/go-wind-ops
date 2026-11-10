@@ -72,14 +72,14 @@ func (_u *PromotionPipelineUpdate) ClearDeletedAt() *PromotionPipelineUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PromotionPipelineUpdate) SetCreatedBy(v uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetCreatedBy(v int64) *PromotionPipelineUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdate) SetNillableCreatedBy(v *uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetNillableCreatedBy(v *int64) *PromotionPipelineUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -99,14 +99,14 @@ func (_u *PromotionPipelineUpdate) ClearCreatedBy() *PromotionPipelineUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PromotionPipelineUpdate) SetUpdatedBy(v uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetUpdatedBy(v int64) *PromotionPipelineUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdate) SetNillableUpdatedBy(v *uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetNillableUpdatedBy(v *int64) *PromotionPipelineUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -126,14 +126,14 @@ func (_u *PromotionPipelineUpdate) ClearUpdatedBy() *PromotionPipelineUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PromotionPipelineUpdate) SetDeletedBy(v uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetDeletedBy(v int64) *PromotionPipelineUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdate) SetNillableDeletedBy(v *uint64) *PromotionPipelineUpdate {
+func (_u *PromotionPipelineUpdate) SetNillableDeletedBy(v *int64) *PromotionPipelineUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -250,7 +250,7 @@ func (_u *PromotionPipelineUpdate) sqlSave(ctx context.Context) (_node int, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(promotionpipeline.Table, promotionpipeline.Columns, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(promotionpipeline.Table, promotionpipeline.Columns, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -259,7 +259,7 @@ func (_u *PromotionPipelineUpdate) sqlSave(ctx context.Context) (_node int, err 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(promotionpipeline.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(promotionpipeline.FieldCreatedAt, field.TypeTime)
@@ -277,31 +277,31 @@ func (_u *PromotionPipelineUpdate) sqlSave(ctx context.Context) (_node int, err 
 		_spec.ClearField(promotionpipeline.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(promotionpipeline.FieldName, field.TypeString, value)
@@ -383,14 +383,14 @@ func (_u *PromotionPipelineUpdateOne) ClearDeletedAt() *PromotionPipelineUpdateO
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PromotionPipelineUpdateOne) SetCreatedBy(v uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetCreatedBy(v int64) *PromotionPipelineUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdateOne) SetNillableCreatedBy(v *uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetNillableCreatedBy(v *int64) *PromotionPipelineUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -410,14 +410,14 @@ func (_u *PromotionPipelineUpdateOne) ClearCreatedBy() *PromotionPipelineUpdateO
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PromotionPipelineUpdateOne) SetUpdatedBy(v uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetUpdatedBy(v int64) *PromotionPipelineUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdateOne) SetNillableUpdatedBy(v *uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetNillableUpdatedBy(v *int64) *PromotionPipelineUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -437,14 +437,14 @@ func (_u *PromotionPipelineUpdateOne) ClearUpdatedBy() *PromotionPipelineUpdateO
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PromotionPipelineUpdateOne) SetDeletedBy(v uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetDeletedBy(v int64) *PromotionPipelineUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PromotionPipelineUpdateOne) SetNillableDeletedBy(v *uint64) *PromotionPipelineUpdateOne {
+func (_u *PromotionPipelineUpdateOne) SetNillableDeletedBy(v *int64) *PromotionPipelineUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -574,7 +574,7 @@ func (_u *PromotionPipelineUpdateOne) sqlSave(ctx context.Context) (_node *Promo
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(promotionpipeline.Table, promotionpipeline.Columns, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(promotionpipeline.Table, promotionpipeline.Columns, sqlgraph.NewFieldSpec(promotionpipeline.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PromotionPipeline.id" for update`)}
@@ -600,7 +600,7 @@ func (_u *PromotionPipelineUpdateOne) sqlSave(ctx context.Context) (_node *Promo
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(promotionpipeline.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(promotionpipeline.FieldCreatedAt, field.TypeTime)
@@ -618,31 +618,31 @@ func (_u *PromotionPipelineUpdateOne) sqlSave(ctx context.Context) (_node *Promo
 		_spec.ClearField(promotionpipeline.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(promotionpipeline.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(promotionpipeline.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(promotionpipeline.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(promotionpipeline.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(promotionpipeline.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(promotionpipeline.FieldName, field.TypeString, value)

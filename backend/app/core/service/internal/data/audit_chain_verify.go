@@ -27,7 +27,7 @@ var auditChainTables = []string{
 type ChainIssue struct {
 	Table      string
 	Total      int
-	Legacy     int    // prev 为 NULL:链启用前历史
+	Legacy     int // prev 为 NULL:链启用前历史
 	BrokenIDs  []int64
 	BrokenHead string // 首个断点期望值(排查线索)
 }
@@ -54,7 +54,7 @@ func VerifyAuditChains(ctx context.Context, db *sql.DB) ([]ChainIssue, error) {
 func verifyAuditChainTable(ctx context.Context, db *sql.DB, table string) (ChainIssue, error) {
 	issue := ChainIssue{Table: table}
 
-	rows, err := db.QueryContext(ctx, `SELECT id, log_hash, prev_log_hash FROM ` + table + ` ORDER BY id`)
+	rows, err := db.QueryContext(ctx, `SELECT id, log_hash, prev_log_hash FROM `+table+` ORDER BY id`)
 	if err != nil {
 		return issue, err
 	}

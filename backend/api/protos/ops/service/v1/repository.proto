@@ -33,7 +33,7 @@ service RepositoryService {
 
 // 构建源仓库
 message Repository {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 仓库ID
@@ -97,12 +97,12 @@ message Repository {
 }
 
 message ListRepositoryResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated Repository items = 2 [json_name = "items"]; // 仓库列表
 }
 
 message GetRepositoryRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 仓库ID
@@ -116,7 +116,7 @@ message CreateRepositoryRequest {
 }
 
 message UpdateRepositoryRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 仓库ID
@@ -135,7 +135,7 @@ message UpdateRepositoryRequest {
 }
 
 message DeleteRepositoryRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 仓库ID

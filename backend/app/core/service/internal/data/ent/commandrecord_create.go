@@ -23,13 +23,13 @@ type CommandRecordCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CommandRecordCreate) SetTenantID(v uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetTenantID(v int64) *CommandRecordCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CommandRecordCreate) SetNillableTenantID(v *uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetNillableTenantID(v *int64) *CommandRecordCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -85,13 +85,13 @@ func (_c *CommandRecordCreate) SetRequestID(v string) *CommandRecordCreate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *CommandRecordCreate) SetNodeID(v uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetNodeID(v int64) *CommandRecordCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_c *CommandRecordCreate) SetNillableNodeID(v *uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetNillableNodeID(v *int64) *CommandRecordCreate {
 	if v != nil {
 		_c.SetNodeID(*v)
 	}
@@ -167,13 +167,13 @@ func (_c *CommandRecordCreate) SetNillableError(v *string) *CommandRecordCreate 
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_c *CommandRecordCreate) SetOperatorID(v uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetOperatorID(v int64) *CommandRecordCreate {
 	_c.mutation.SetOperatorID(v)
 	return _c
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_c *CommandRecordCreate) SetNillableOperatorID(v *uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetNillableOperatorID(v *int64) *CommandRecordCreate {
 	if v != nil {
 		_c.SetOperatorID(*v)
 	}
@@ -181,13 +181,13 @@ func (_c *CommandRecordCreate) SetNillableOperatorID(v *uint64) *CommandRecordCr
 }
 
 // SetBatchID sets the "batch_id" field.
-func (_c *CommandRecordCreate) SetBatchID(v uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetBatchID(v int64) *CommandRecordCreate {
 	_c.mutation.SetBatchID(v)
 	return _c
 }
 
 // SetNillableBatchID sets the "batch_id" field if the given value is not nil.
-func (_c *CommandRecordCreate) SetNillableBatchID(v *uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetNillableBatchID(v *int64) *CommandRecordCreate {
 	if v != nil {
 		_c.SetBatchID(*v)
 	}
@@ -209,7 +209,7 @@ func (_c *CommandRecordCreate) SetNillableFinishedAt(v *time.Time) *CommandRecor
 }
 
 // SetID sets the "id" field.
-func (_c *CommandRecordCreate) SetID(v uint64) *CommandRecordCreate {
+func (_c *CommandRecordCreate) SetID(v int64) *CommandRecordCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -326,7 +326,7 @@ func (_c *CommandRecordCreate) sqlSave(ctx context.Context) (*CommandRecord, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -336,7 +336,7 @@ func (_c *CommandRecordCreate) sqlSave(ctx context.Context) (*CommandRecord, err
 func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CommandRecord{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(commandrecord.Table, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(commandrecord.Table, sqlgraph.NewFieldSpec(commandrecord.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -344,7 +344,7 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(commandrecord.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -364,7 +364,7 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 		_node.RequestID = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(commandrecord.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = &value
 	}
 	if value, ok := _c.mutation.AgentID(); ok {
@@ -392,11 +392,11 @@ func (_c *CommandRecordCreate) createSpec() (*CommandRecord, *sqlgraph.CreateSpe
 		_node.Error = &value
 	}
 	if value, ok := _c.mutation.OperatorID(); ok {
-		_spec.SetField(commandrecord.FieldOperatorID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldOperatorID, field.TypeInt64, value)
 		_node.OperatorID = &value
 	}
 	if value, ok := _c.mutation.BatchID(); ok {
-		_spec.SetField(commandrecord.FieldBatchID, field.TypeUint64, value)
+		_spec.SetField(commandrecord.FieldBatchID, field.TypeInt64, value)
 		_node.BatchID = value
 	}
 	if value, ok := _c.mutation.FinishedAt(); ok {
@@ -504,7 +504,7 @@ func (u *CommandRecordUpsert) UpdateRequestID() *CommandRecordUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *CommandRecordUpsert) SetNodeID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) SetNodeID(v int64) *CommandRecordUpsert {
 	u.Set(commandrecord.FieldNodeID, v)
 	return u
 }
@@ -516,7 +516,7 @@ func (u *CommandRecordUpsert) UpdateNodeID() *CommandRecordUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *CommandRecordUpsert) AddNodeID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) AddNodeID(v int64) *CommandRecordUpsert {
 	u.Add(commandrecord.FieldNodeID, v)
 	return u
 }
@@ -624,7 +624,7 @@ func (u *CommandRecordUpsert) ClearError() *CommandRecordUpsert {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *CommandRecordUpsert) SetOperatorID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) SetOperatorID(v int64) *CommandRecordUpsert {
 	u.Set(commandrecord.FieldOperatorID, v)
 	return u
 }
@@ -636,7 +636,7 @@ func (u *CommandRecordUpsert) UpdateOperatorID() *CommandRecordUpsert {
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *CommandRecordUpsert) AddOperatorID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) AddOperatorID(v int64) *CommandRecordUpsert {
 	u.Add(commandrecord.FieldOperatorID, v)
 	return u
 }
@@ -648,7 +648,7 @@ func (u *CommandRecordUpsert) ClearOperatorID() *CommandRecordUpsert {
 }
 
 // SetBatchID sets the "batch_id" field.
-func (u *CommandRecordUpsert) SetBatchID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) SetBatchID(v int64) *CommandRecordUpsert {
 	u.Set(commandrecord.FieldBatchID, v)
 	return u
 }
@@ -660,7 +660,7 @@ func (u *CommandRecordUpsert) UpdateBatchID() *CommandRecordUpsert {
 }
 
 // AddBatchID adds v to the "batch_id" field.
-func (u *CommandRecordUpsert) AddBatchID(v uint64) *CommandRecordUpsert {
+func (u *CommandRecordUpsert) AddBatchID(v int64) *CommandRecordUpsert {
 	u.Add(commandrecord.FieldBatchID, v)
 	return u
 }
@@ -800,14 +800,14 @@ func (u *CommandRecordUpsertOne) UpdateRequestID() *CommandRecordUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *CommandRecordUpsertOne) SetNodeID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) SetNodeID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *CommandRecordUpsertOne) AddNodeID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) AddNodeID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddNodeID(v)
 	})
@@ -940,14 +940,14 @@ func (u *CommandRecordUpsertOne) ClearError() *CommandRecordUpsertOne {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *CommandRecordUpsertOne) SetOperatorID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) SetOperatorID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *CommandRecordUpsertOne) AddOperatorID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) AddOperatorID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -968,14 +968,14 @@ func (u *CommandRecordUpsertOne) ClearOperatorID() *CommandRecordUpsertOne {
 }
 
 // SetBatchID sets the "batch_id" field.
-func (u *CommandRecordUpsertOne) SetBatchID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) SetBatchID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetBatchID(v)
 	})
 }
 
 // AddBatchID adds v to the "batch_id" field.
-func (u *CommandRecordUpsertOne) AddBatchID(v uint64) *CommandRecordUpsertOne {
+func (u *CommandRecordUpsertOne) AddBatchID(v int64) *CommandRecordUpsertOne {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddBatchID(v)
 	})
@@ -1032,7 +1032,7 @@ func (u *CommandRecordUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CommandRecordUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CommandRecordUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1041,7 +1041,7 @@ func (u *CommandRecordUpsertOne) ID(ctx context.Context) (id uint64, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CommandRecordUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CommandRecordUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1098,7 +1098,7 @@ func (_c *CommandRecordCreateBulk) Save(ctx context.Context) ([]*CommandRecord, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1293,14 +1293,14 @@ func (u *CommandRecordUpsertBulk) UpdateRequestID() *CommandRecordUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *CommandRecordUpsertBulk) SetNodeID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) SetNodeID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *CommandRecordUpsertBulk) AddNodeID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) AddNodeID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1433,14 +1433,14 @@ func (u *CommandRecordUpsertBulk) ClearError() *CommandRecordUpsertBulk {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (u *CommandRecordUpsertBulk) SetOperatorID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) SetOperatorID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetOperatorID(v)
 	})
 }
 
 // AddOperatorID adds v to the "operator_id" field.
-func (u *CommandRecordUpsertBulk) AddOperatorID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) AddOperatorID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddOperatorID(v)
 	})
@@ -1461,14 +1461,14 @@ func (u *CommandRecordUpsertBulk) ClearOperatorID() *CommandRecordUpsertBulk {
 }
 
 // SetBatchID sets the "batch_id" field.
-func (u *CommandRecordUpsertBulk) SetBatchID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) SetBatchID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.SetBatchID(v)
 	})
 }
 
 // AddBatchID adds v to the "batch_id" field.
-func (u *CommandRecordUpsertBulk) AddBatchID(v uint64) *CommandRecordUpsertBulk {
+func (u *CommandRecordUpsertBulk) AddBatchID(v int64) *CommandRecordUpsertBulk {
 	return u.Update(func(s *CommandRecordUpsert) {
 		s.AddBatchID(v)
 	})

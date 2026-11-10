@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.PipelineRun {
+func ID(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.PipelineRun {
+func IDEQ(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.PipelineRun {
+func IDNEQ(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.PipelineRun {
+func IDIn(ids ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.PipelineRun {
+func IDNotIn(ids ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.PipelineRun {
+func IDGT(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.PipelineRun {
+func IDGTE(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.PipelineRun {
+func IDLT(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.PipelineRun {
+func IDLTE(id int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.PipelineRun {
+func TenantID(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.PipelineRun {
 }
 
 // PipelineID applies equality check predicate on the "pipeline_id" field. It's identical to PipelineIDEQ.
-func PipelineID(v uint64) predicate.PipelineRun {
+func PipelineID(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldPipelineID, v))
 }
 
@@ -115,7 +115,7 @@ func FinishedAt(v time.Time) predicate.PipelineRun {
 }
 
 // OperatorID applies equality check predicate on the "operator_id" field. It's identical to OperatorIDEQ.
-func OperatorID(v uint64) predicate.PipelineRun {
+func OperatorID(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldOperatorID, v))
 }
 
@@ -125,42 +125,42 @@ func RunnerID(v string) predicate.PipelineRun {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.PipelineRun {
+func TenantIDEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.PipelineRun {
+func TenantIDNEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.PipelineRun {
+func TenantIDIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.PipelineRun {
+func TenantIDNotIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.PipelineRun {
+func TenantIDGT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.PipelineRun {
+func TenantIDGTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.PipelineRun {
+func TenantIDLT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.PipelineRun {
+func TenantIDLTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -325,42 +325,42 @@ func DeletedAtNotNil() predicate.PipelineRun {
 }
 
 // PipelineIDEQ applies the EQ predicate on the "pipeline_id" field.
-func PipelineIDEQ(v uint64) predicate.PipelineRun {
+func PipelineIDEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldPipelineID, v))
 }
 
 // PipelineIDNEQ applies the NEQ predicate on the "pipeline_id" field.
-func PipelineIDNEQ(v uint64) predicate.PipelineRun {
+func PipelineIDNEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNEQ(FieldPipelineID, v))
 }
 
 // PipelineIDIn applies the In predicate on the "pipeline_id" field.
-func PipelineIDIn(vs ...uint64) predicate.PipelineRun {
+func PipelineIDIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldIn(FieldPipelineID, vs...))
 }
 
 // PipelineIDNotIn applies the NotIn predicate on the "pipeline_id" field.
-func PipelineIDNotIn(vs ...uint64) predicate.PipelineRun {
+func PipelineIDNotIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNotIn(FieldPipelineID, vs...))
 }
 
 // PipelineIDGT applies the GT predicate on the "pipeline_id" field.
-func PipelineIDGT(v uint64) predicate.PipelineRun {
+func PipelineIDGT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGT(FieldPipelineID, v))
 }
 
 // PipelineIDGTE applies the GTE predicate on the "pipeline_id" field.
-func PipelineIDGTE(v uint64) predicate.PipelineRun {
+func PipelineIDGTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGTE(FieldPipelineID, v))
 }
 
 // PipelineIDLT applies the LT predicate on the "pipeline_id" field.
-func PipelineIDLT(v uint64) predicate.PipelineRun {
+func PipelineIDLT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLT(FieldPipelineID, v))
 }
 
 // PipelineIDLTE applies the LTE predicate on the "pipeline_id" field.
-func PipelineIDLTE(v uint64) predicate.PipelineRun {
+func PipelineIDLTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLTE(FieldPipelineID, v))
 }
 
@@ -835,42 +835,42 @@ func FinishedAtNotNil() predicate.PipelineRun {
 }
 
 // OperatorIDEQ applies the EQ predicate on the "operator_id" field.
-func OperatorIDEQ(v uint64) predicate.PipelineRun {
+func OperatorIDEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // OperatorIDNEQ applies the NEQ predicate on the "operator_id" field.
-func OperatorIDNEQ(v uint64) predicate.PipelineRun {
+func OperatorIDNEQ(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNEQ(FieldOperatorID, v))
 }
 
 // OperatorIDIn applies the In predicate on the "operator_id" field.
-func OperatorIDIn(vs ...uint64) predicate.PipelineRun {
+func OperatorIDIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDNotIn applies the NotIn predicate on the "operator_id" field.
-func OperatorIDNotIn(vs ...uint64) predicate.PipelineRun {
+func OperatorIDNotIn(vs ...int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldNotIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDGT applies the GT predicate on the "operator_id" field.
-func OperatorIDGT(v uint64) predicate.PipelineRun {
+func OperatorIDGT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGT(FieldOperatorID, v))
 }
 
 // OperatorIDGTE applies the GTE predicate on the "operator_id" field.
-func OperatorIDGTE(v uint64) predicate.PipelineRun {
+func OperatorIDGTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldGTE(FieldOperatorID, v))
 }
 
 // OperatorIDLT applies the LT predicate on the "operator_id" field.
-func OperatorIDLT(v uint64) predicate.PipelineRun {
+func OperatorIDLT(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLT(FieldOperatorID, v))
 }
 
 // OperatorIDLTE applies the LTE predicate on the "operator_id" field.
-func OperatorIDLTE(v uint64) predicate.PipelineRun {
+func OperatorIDLTE(v int64) predicate.PipelineRun {
 	return predicate.PipelineRun(sql.FieldLTE(FieldOperatorID, v))
 }
 

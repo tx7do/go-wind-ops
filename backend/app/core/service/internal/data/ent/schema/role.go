@@ -68,7 +68,7 @@ func (Role) Mixin() []ent.Mixin {
 		mixin.Remark{},
 		mixin.Description{},
 		mixin.SortOrder{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.SwitchStatus{},
 	}
 }

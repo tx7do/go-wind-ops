@@ -111,11 +111,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// BuildIDValidator is a validator for the "build_id" field. It is called by the builders before save.
-	BuildIDValidator func(uint64) error
+	BuildIDValidator func(int64) error
 	// DefaultClearOld holds the default value on creation for the "clear_old" field.
 	DefaultClearOld bool
 	// DefaultDockerRestart holds the default value on creation for the "docker_restart" field.
@@ -123,7 +123,7 @@ var (
 	// DefaultBatchSize holds the default value on creation for the "batch_size" field.
 	DefaultBatchSize uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // DeployType defines the type for the "deploy_type" enum field.

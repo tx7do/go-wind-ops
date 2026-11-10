@@ -123,7 +123,7 @@ func (r *ProjectRepo) Get(ctx context.Context, req *opsV1.GetProjectRequest) (*o
 }
 
 // IsNameTaken 校验节点内项目名唯一性。
-func (r *ProjectRepo) IsNameTaken(ctx context.Context, nodeID uint64, name string, excludeID uint64) (bool, error) {
+func (r *ProjectRepo) IsNameTaken(ctx context.Context, nodeID int64, name string, excludeID int64) (bool, error) {
 	query := r.entClient.Client().Project.Query().
 		Where(
 			project.NodeIDEQ(nodeID),
@@ -140,7 +140,7 @@ func (r *ProjectRepo) IsNameTaken(ctx context.Context, nodeID uint64, name strin
 	return exist, nil
 }
 
-func (r *ProjectRepo) Create(ctx context.Context, req *opsV1.CreateProjectRequest, operatorID uint64) (*opsV1.Project, error) {
+func (r *ProjectRepo) Create(ctx context.Context, req *opsV1.CreateProjectRequest, operatorID int64) (*opsV1.Project, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}
@@ -223,7 +223,7 @@ func (r *ProjectRepo) Delete(ctx context.Context, req *opsV1.DeleteProjectReques
 
 // UpdateRuntime 回填 agent 上报的项目运行时状态(last_pid/last_status)。
 // 项目不存在时静默跳过(可能已被删除)。
-func (r *ProjectRepo) UpdateRuntime(ctx context.Context, projectID uint64, pid uint64, status string) error {
+func (r *ProjectRepo) UpdateRuntime(ctx context.Context, projectID int64, pid int64, status string) error {
 	now := time.Now()
 	builder := r.entClient.Client().Project.
 		UpdateOneID(projectID).

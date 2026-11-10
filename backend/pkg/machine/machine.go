@@ -48,13 +48,13 @@ func Fingerprint(agentVersion string) signal.AgentInfo {
 		info.Platform = hi.Platform
 		info.PlatformVersion = hi.PlatformVersion
 		info.KernelVersion = hi.KernelVersion
-		info.UptimeSeconds = hi.Uptime
+		info.UptimeSeconds = int64(hi.Uptime)
 	}
 	if cores, err := cpu.Counts(true); err == nil {
 		info.CPUCores = cores
 	}
 	if vm, err := mem.VirtualMemory(); err == nil && vm != nil {
-		info.MemTotalBytes = vm.Total
+		info.MemTotalBytes = int64(vm.Total)
 	}
 	return info
 }
@@ -68,14 +68,14 @@ func Snapshot() signal.AgentMetrics {
 	}
 	if vm, err := mem.VirtualMemory(); err == nil && vm != nil {
 		m.MemoryUsedPercent = vm.UsedPercent
-		m.MemTotalBytes = vm.Total
-		m.MemUsedBytes = vm.Used
+		m.MemTotalBytes = int64(vm.Total)
+		m.MemUsedBytes = int64(vm.Used)
 	}
 	if du, err := disk.Usage(HostPath()); err == nil && du != nil {
 		m.DiskUsedPercent = du.UsedPercent
 	}
 	if hi, err := host.Info(); err == nil && hi != nil {
-		m.UptimeSeconds = hi.Uptime
+		m.UptimeSeconds = int64(hi.Uptime)
 	}
 	return m
 }

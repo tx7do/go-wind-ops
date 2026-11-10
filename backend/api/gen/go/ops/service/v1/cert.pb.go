@@ -30,7 +30,7 @@ const (
 // 证书台账
 type Cert struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                       // 证书ID
+	Id               *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                       // 证书ID
 	Name             *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                    // 证书名
 	Host             *string                `protobuf:"bytes,3,opt,name=host,proto3,oneof" json:"host,omitempty"`                                                    // 目标主机
 	Port             *int32                 `protobuf:"varint,4,opt,name=port,proto3,oneof" json:"port,omitempty"`                                                   // TLS 端口
@@ -79,7 +79,7 @@ func (*Cert) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Cert) GetId() uint64 {
+func (x *Cert) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -186,7 +186,7 @@ func (x *Cert) GetUpdatedAt() *timestamppb.Timestamp {
 
 type ListCertResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"` // 总数
 	Items         []*Cert                `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`  // 证书列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -222,7 +222,7 @@ func (*ListCertResponse) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListCertResponse) GetTotal() uint64 {
+func (x *ListCertResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -238,7 +238,7 @@ func (x *ListCertResponse) GetItems() []*Cert {
 
 type GetCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 证书ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 证书ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -273,7 +273,7 @@ func (*GetCertRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetCertRequest) GetId() uint64 {
+func (x *GetCertRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -326,7 +326,7 @@ func (x *CreateCertRequest) GetData() *Cert {
 
 type UpdateCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 证书ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                  // 证书ID
 	Data          *Cert                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                               // 待更新数据
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"` // 要更新的字段列表
 	unknownFields protoimpl.UnknownFields
@@ -363,7 +363,7 @@ func (*UpdateCertRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateCertRequest) GetId() uint64 {
+func (x *UpdateCertRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -386,7 +386,7 @@ func (x *UpdateCertRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 证书ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"` // 证书ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -421,7 +421,7 @@ func (*DeleteCertRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteCertRequest) GetId() uint64 {
+func (x *DeleteCertRequest) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -430,7 +430,7 @@ func (x *DeleteCertRequest) GetId() uint64 {
 
 type ProbeCertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 证书ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 证书ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -465,7 +465,7 @@ func (*ProbeCertRequest) Descriptor() ([]byte, []int) {
 	return file_ops_service_v1_cert_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ProbeCertRequest) GetId() uint64 {
+func (x *ProbeCertRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -546,7 +546,7 @@ const file_ops_service_v1_cert_proto_rawDesc = "" +
 	"\n" +
 	"\x19ops/service/v1/cert.proto\x12\x0eops.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc1\b\n" +
 	"\x04Cert\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\x04name\x18\x02 \x01(\tB \xe0A\x02\xbaG\x1a\x92\x02\x17证书名(全局唯一)H\x01R\x04name\x88\x01\x01\x12?\n" +
 	"\x04host\x18\x03 \x01(\tB&\xe0A\x02\xbaG \x92\x02\x1d探测目标主机(域名/IP)H\x02R\x04host\x88\x01\x01\x125\n" +
 	"\x04port\x18\x04 \x01(\x05B\x1c\xbaG\x19\x92\x02\x16TLS 端口(默认 443)H\x03R\x04port\x88\x01\x01\x12 \n" +
@@ -586,23 +586,23 @@ const file_ops_service_v1_cert_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"T\n" +
 	"\x10ListCertResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12*\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12*\n" +
 	"\x05items\x18\x02 \x03(\v2\x14.ops.service.v1.CertR\x05items\"1\n" +
 	"\x0eGetCertRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"B\n" +
 	"\x11CreateCertRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x14.ops.service.v1.CertB\x03\xe0A\x02R\x04data\"\xb4\x01\n" +
 	"\x11UpdateCertRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\x12-\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x14.ops.service.v1.CertB\x03\xe0A\x02R\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\"4\n" +
 	"\x11DeleteCertRequest\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"'\n" +
 	"\x10ProbeCertRequest\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04B\x03\xe0A\x02R\x02id\"\xeb\x01\n" +
+	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\"\xeb\x01\n" +
 	"\x11ProbeCertResponse\x12\x1b\n" +
 	"\x06issuer\x18\x01 \x01(\tH\x00R\x06issuer\x88\x01\x01\x12<\n" +
 	"\tnot_after\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bnotAfter\x88\x01\x01\x12*\n" +

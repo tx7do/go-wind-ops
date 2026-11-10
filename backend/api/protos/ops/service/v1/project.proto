@@ -63,12 +63,12 @@ enum ProjectOperation {
 
 // 受管机器上的应用项目
 message Project {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 项目ID
 
-  optional uint64 node_id = 2 [
+  optional int64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -129,7 +129,7 @@ message Project {
     }
   ]; // 环境标签
 
-  optional uint64 last_pid = 10 [
+  optional int64 last_pid = 10 [
     json_name = "lastPid",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 最近一次启动的进程 pid
@@ -156,12 +156,12 @@ message Project {
 }
 
 message ListProjectResponse {
-  uint64 total = 1 [json_name = "total"]; // 总数
+  int64 total = 1 [json_name = "total"]; // 总数
   repeated Project items = 2 [json_name = "items"]; // 项目列表
 }
 
 message GetProjectRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -175,7 +175,7 @@ message CreateProjectRequest {
 }
 
 message UpdateProjectRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -194,14 +194,14 @@ message UpdateProjectRequest {
 }
 
 message DeleteProjectRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
 }
 
 message OperateProjectRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -217,7 +217,7 @@ message OperateProjectResponse {
 }
 
 message GetProjectLogRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -246,7 +246,7 @@ message GetProjectLogResponse {
 }
 
 message ClearProjectLogRequest {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID

@@ -23,13 +23,13 @@ type AlertCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *AlertCreate) SetTenantID(v uint64) *AlertCreate {
+func (_c *AlertCreate) SetTenantID(v int64) *AlertCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *AlertCreate) SetNillableTenantID(v *uint64) *AlertCreate {
+func (_c *AlertCreate) SetNillableTenantID(v *int64) *AlertCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *AlertCreate) SetNillableDeletedAt(v *time.Time) *AlertCreate {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (_c *AlertCreate) SetMonitorID(v uint64) *AlertCreate {
+func (_c *AlertCreate) SetMonitorID(v int64) *AlertCreate {
 	_c.mutation.SetMonitorID(v)
 	return _c
 }
 
 // SetNillableMonitorID sets the "monitor_id" field if the given value is not nil.
-func (_c *AlertCreate) SetNillableMonitorID(v *uint64) *AlertCreate {
+func (_c *AlertCreate) SetNillableMonitorID(v *int64) *AlertCreate {
 	if v != nil {
 		_c.SetMonitorID(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *AlertCreate) SetNillableSource(v *string) *AlertCreate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_c *AlertCreate) SetProjectID(v uint64) *AlertCreate {
+func (_c *AlertCreate) SetProjectID(v int64) *AlertCreate {
 	_c.mutation.SetProjectID(v)
 	return _c
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_c *AlertCreate) SetNillableProjectID(v *uint64) *AlertCreate {
+func (_c *AlertCreate) SetNillableProjectID(v *int64) *AlertCreate {
 	if v != nil {
 		_c.SetProjectID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *AlertCreate) SetNillableProjectID(v *uint64) *AlertCreate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *AlertCreate) SetNodeID(v uint64) *AlertCreate {
+func (_c *AlertCreate) SetNodeID(v int64) *AlertCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_c *AlertCreate) SetNillableNodeID(v *uint64) *AlertCreate {
+func (_c *AlertCreate) SetNillableNodeID(v *int64) *AlertCreate {
 	if v != nil {
 		_c.SetNodeID(*v)
 	}
@@ -197,7 +197,7 @@ func (_c *AlertCreate) SetNillableNotified(v *bool) *AlertCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *AlertCreate) SetID(v uint64) *AlertCreate {
+func (_c *AlertCreate) SetID(v int64) *AlertCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -322,7 +322,7 @@ func (_c *AlertCreate) sqlSave(ctx context.Context) (*Alert, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -332,7 +332,7 @@ func (_c *AlertCreate) sqlSave(ctx context.Context) (*Alert, error) {
 func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Alert{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(alert.Table, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(alert.Table, sqlgraph.NewFieldSpec(alert.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -340,7 +340,7 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(alert.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -356,7 +356,7 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.MonitorID(); ok {
-		_spec.SetField(alert.FieldMonitorID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldMonitorID, field.TypeInt64, value)
 		_node.MonitorID = value
 	}
 	if value, ok := _c.mutation.Source(); ok {
@@ -364,11 +364,11 @@ func (_c *AlertCreate) createSpec() (*Alert, *sqlgraph.CreateSpec) {
 		_node.Source = value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(alert.FieldProjectID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldProjectID, field.TypeInt64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(alert.FieldNodeID, field.TypeUint64, value)
+		_spec.SetField(alert.FieldNodeID, field.TypeInt64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.Level(); ok {
@@ -480,7 +480,7 @@ func (u *AlertUpsert) ClearDeletedAt() *AlertUpsert {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (u *AlertUpsert) SetMonitorID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) SetMonitorID(v int64) *AlertUpsert {
 	u.Set(alert.FieldMonitorID, v)
 	return u
 }
@@ -492,7 +492,7 @@ func (u *AlertUpsert) UpdateMonitorID() *AlertUpsert {
 }
 
 // AddMonitorID adds v to the "monitor_id" field.
-func (u *AlertUpsert) AddMonitorID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) AddMonitorID(v int64) *AlertUpsert {
 	u.Add(alert.FieldMonitorID, v)
 	return u
 }
@@ -516,7 +516,7 @@ func (u *AlertUpsert) UpdateSource() *AlertUpsert {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *AlertUpsert) SetProjectID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) SetProjectID(v int64) *AlertUpsert {
 	u.Set(alert.FieldProjectID, v)
 	return u
 }
@@ -528,7 +528,7 @@ func (u *AlertUpsert) UpdateProjectID() *AlertUpsert {
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *AlertUpsert) AddProjectID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) AddProjectID(v int64) *AlertUpsert {
 	u.Add(alert.FieldProjectID, v)
 	return u
 }
@@ -540,7 +540,7 @@ func (u *AlertUpsert) ClearProjectID() *AlertUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *AlertUpsert) SetNodeID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) SetNodeID(v int64) *AlertUpsert {
 	u.Set(alert.FieldNodeID, v)
 	return u
 }
@@ -552,7 +552,7 @@ func (u *AlertUpsert) UpdateNodeID() *AlertUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *AlertUpsert) AddNodeID(v uint64) *AlertUpsert {
+func (u *AlertUpsert) AddNodeID(v int64) *AlertUpsert {
 	u.Add(alert.FieldNodeID, v)
 	return u
 }
@@ -726,14 +726,14 @@ func (u *AlertUpsertOne) ClearDeletedAt() *AlertUpsertOne {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (u *AlertUpsertOne) SetMonitorID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) SetMonitorID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetMonitorID(v)
 	})
 }
 
 // AddMonitorID adds v to the "monitor_id" field.
-func (u *AlertUpsertOne) AddMonitorID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) AddMonitorID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddMonitorID(v)
 	})
@@ -768,14 +768,14 @@ func (u *AlertUpsertOne) UpdateSource() *AlertUpsertOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *AlertUpsertOne) SetProjectID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) SetProjectID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *AlertUpsertOne) AddProjectID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) AddProjectID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddProjectID(v)
 	})
@@ -796,14 +796,14 @@ func (u *AlertUpsertOne) ClearProjectID() *AlertUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *AlertUpsertOne) SetNodeID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) SetNodeID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *AlertUpsertOne) AddNodeID(v uint64) *AlertUpsertOne {
+func (u *AlertUpsertOne) AddNodeID(v int64) *AlertUpsertOne {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddNodeID(v)
 	})
@@ -916,7 +916,7 @@ func (u *AlertUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AlertUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *AlertUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -925,7 +925,7 @@ func (u *AlertUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AlertUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *AlertUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -982,7 +982,7 @@ func (_c *AlertCreateBulk) Save(ctx context.Context) ([]*Alert, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1163,14 +1163,14 @@ func (u *AlertUpsertBulk) ClearDeletedAt() *AlertUpsertBulk {
 }
 
 // SetMonitorID sets the "monitor_id" field.
-func (u *AlertUpsertBulk) SetMonitorID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) SetMonitorID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetMonitorID(v)
 	})
 }
 
 // AddMonitorID adds v to the "monitor_id" field.
-func (u *AlertUpsertBulk) AddMonitorID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) AddMonitorID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddMonitorID(v)
 	})
@@ -1205,14 +1205,14 @@ func (u *AlertUpsertBulk) UpdateSource() *AlertUpsertBulk {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *AlertUpsertBulk) SetProjectID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) SetProjectID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *AlertUpsertBulk) AddProjectID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) AddProjectID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1233,14 +1233,14 @@ func (u *AlertUpsertBulk) ClearProjectID() *AlertUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *AlertUpsertBulk) SetNodeID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) SetNodeID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *AlertUpsertBulk) AddNodeID(v uint64) *AlertUpsertBulk {
+func (u *AlertUpsertBulk) AddNodeID(v int64) *AlertUpsertBulk {
 	return u.Update(func(s *AlertUpsert) {
 		s.AddNodeID(v)
 	})

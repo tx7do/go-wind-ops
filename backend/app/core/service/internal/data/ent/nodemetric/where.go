@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.NodeMetric {
+func ID(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.NodeMetric {
+func IDEQ(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.NodeMetric {
+func IDNEQ(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.NodeMetric {
+func IDIn(ids ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.NodeMetric {
+func IDNotIn(ids ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.NodeMetric {
+func IDGT(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.NodeMetric {
+func IDGTE(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.NodeMetric {
+func IDLT(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.NodeMetric {
+func IDLTE(id int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.NodeMetric {
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint64) predicate.NodeMetric {
+func NodeID(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -90,12 +90,12 @@ func DiskUsedPercent(v float64) predicate.NodeMetric {
 }
 
 // MemTotalBytes applies equality check predicate on the "mem_total_bytes" field. It's identical to MemTotalBytesEQ.
-func MemTotalBytes(v uint64) predicate.NodeMetric {
+func MemTotalBytes(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldMemTotalBytes, v))
 }
 
 // UptimeSeconds applies equality check predicate on the "uptime_seconds" field. It's identical to UptimeSecondsEQ.
-func UptimeSeconds(v uint64) predicate.NodeMetric {
+func UptimeSeconds(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldUptimeSeconds, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.NodeMetric {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint64) predicate.NodeMetric {
+func NodeIDEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint64) predicate.NodeMetric {
+func NodeIDNEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint64) predicate.NodeMetric {
+func NodeIDIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint64) predicate.NodeMetric {
+func NodeIDNotIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint64) predicate.NodeMetric {
+func NodeIDGT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint64) predicate.NodeMetric {
+func NodeIDGTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint64) predicate.NodeMetric {
+func NodeIDLT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint64) predicate.NodeMetric {
+func NodeIDLTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldNodeID, v))
 }
 
@@ -440,42 +440,42 @@ func DiskUsedPercentNotNil() predicate.NodeMetric {
 }
 
 // MemTotalBytesEQ applies the EQ predicate on the "mem_total_bytes" field.
-func MemTotalBytesEQ(v uint64) predicate.NodeMetric {
+func MemTotalBytesEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesNEQ applies the NEQ predicate on the "mem_total_bytes" field.
-func MemTotalBytesNEQ(v uint64) predicate.NodeMetric {
+func MemTotalBytesNEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesIn applies the In predicate on the "mem_total_bytes" field.
-func MemTotalBytesIn(vs ...uint64) predicate.NodeMetric {
+func MemTotalBytesIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldMemTotalBytes, vs...))
 }
 
 // MemTotalBytesNotIn applies the NotIn predicate on the "mem_total_bytes" field.
-func MemTotalBytesNotIn(vs ...uint64) predicate.NodeMetric {
+func MemTotalBytesNotIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldMemTotalBytes, vs...))
 }
 
 // MemTotalBytesGT applies the GT predicate on the "mem_total_bytes" field.
-func MemTotalBytesGT(v uint64) predicate.NodeMetric {
+func MemTotalBytesGT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesGTE applies the GTE predicate on the "mem_total_bytes" field.
-func MemTotalBytesGTE(v uint64) predicate.NodeMetric {
+func MemTotalBytesGTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesLT applies the LT predicate on the "mem_total_bytes" field.
-func MemTotalBytesLT(v uint64) predicate.NodeMetric {
+func MemTotalBytesLT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldMemTotalBytes, v))
 }
 
 // MemTotalBytesLTE applies the LTE predicate on the "mem_total_bytes" field.
-func MemTotalBytesLTE(v uint64) predicate.NodeMetric {
+func MemTotalBytesLTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldMemTotalBytes, v))
 }
 
@@ -490,42 +490,42 @@ func MemTotalBytesNotNil() predicate.NodeMetric {
 }
 
 // UptimeSecondsEQ applies the EQ predicate on the "uptime_seconds" field.
-func UptimeSecondsEQ(v uint64) predicate.NodeMetric {
+func UptimeSecondsEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsNEQ applies the NEQ predicate on the "uptime_seconds" field.
-func UptimeSecondsNEQ(v uint64) predicate.NodeMetric {
+func UptimeSecondsNEQ(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsIn applies the In predicate on the "uptime_seconds" field.
-func UptimeSecondsIn(vs ...uint64) predicate.NodeMetric {
+func UptimeSecondsIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldUptimeSeconds, vs...))
 }
 
 // UptimeSecondsNotIn applies the NotIn predicate on the "uptime_seconds" field.
-func UptimeSecondsNotIn(vs ...uint64) predicate.NodeMetric {
+func UptimeSecondsNotIn(vs ...int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldUptimeSeconds, vs...))
 }
 
 // UptimeSecondsGT applies the GT predicate on the "uptime_seconds" field.
-func UptimeSecondsGT(v uint64) predicate.NodeMetric {
+func UptimeSecondsGT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsGTE applies the GTE predicate on the "uptime_seconds" field.
-func UptimeSecondsGTE(v uint64) predicate.NodeMetric {
+func UptimeSecondsGTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsLT applies the LT predicate on the "uptime_seconds" field.
-func UptimeSecondsLT(v uint64) predicate.NodeMetric {
+func UptimeSecondsLT(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldUptimeSeconds, v))
 }
 
 // UptimeSecondsLTE applies the LTE predicate on the "uptime_seconds" field.
-func UptimeSecondsLTE(v uint64) predicate.NodeMetric {
+func UptimeSecondsLTE(v int64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldUptimeSeconds, v))
 }
 

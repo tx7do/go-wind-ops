@@ -31,7 +31,7 @@ func (CloudBudget) Annotations() []schema.Annotation {
 // Fields of the CloudBudget.
 func (CloudBudget) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("cloud_account_id").
+		field.Int64("cloud_account_id").
 			Comment("云账号(ops_cloud_accounts.id;0=全部账号合计)").
 			Default(0).
 			Optional(),
@@ -79,7 +79,7 @@ func (CloudBudget) Fields() []ent.Field {
 func (CloudBudget) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 	}

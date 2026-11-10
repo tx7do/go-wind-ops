@@ -70,14 +70,14 @@ func (_u *InspectionUpdate) ClearDeletedAt() *InspectionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InspectionUpdate) SetCreatedBy(v uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetCreatedBy(v int64) *InspectionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InspectionUpdate) SetNillableCreatedBy(v *uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetNillableCreatedBy(v *int64) *InspectionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *InspectionUpdate) ClearCreatedBy() *InspectionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InspectionUpdate) SetUpdatedBy(v uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetUpdatedBy(v int64) *InspectionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InspectionUpdate) SetNillableUpdatedBy(v *uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetNillableUpdatedBy(v *int64) *InspectionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *InspectionUpdate) ClearUpdatedBy() *InspectionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InspectionUpdate) SetDeletedBy(v uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetDeletedBy(v int64) *InspectionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InspectionUpdate) SetNillableDeletedBy(v *uint64) *InspectionUpdate {
+func (_u *InspectionUpdate) SetNillableDeletedBy(v *int64) *InspectionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -402,7 +402,7 @@ func (_u *InspectionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(inspection.Table, inspection.Columns, sqlgraph.NewFieldSpec(inspection.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(inspection.Table, inspection.Columns, sqlgraph.NewFieldSpec(inspection.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -411,7 +411,7 @@ func (_u *InspectionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(inspection.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(inspection.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(inspection.FieldCreatedAt, field.TypeTime)
@@ -429,31 +429,31 @@ func (_u *InspectionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(inspection.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(inspection.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(inspection.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(inspection.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(inspection.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(inspection.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(inspection.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(inspection.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(inspection.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(inspection.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(inspection.FieldStatus, field.TypeEnum, value)
@@ -575,14 +575,14 @@ func (_u *InspectionUpdateOne) ClearDeletedAt() *InspectionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InspectionUpdateOne) SetCreatedBy(v uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetCreatedBy(v int64) *InspectionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InspectionUpdateOne) SetNillableCreatedBy(v *uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetNillableCreatedBy(v *int64) *InspectionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -602,14 +602,14 @@ func (_u *InspectionUpdateOne) ClearCreatedBy() *InspectionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InspectionUpdateOne) SetUpdatedBy(v uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetUpdatedBy(v int64) *InspectionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InspectionUpdateOne) SetNillableUpdatedBy(v *uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetNillableUpdatedBy(v *int64) *InspectionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -629,14 +629,14 @@ func (_u *InspectionUpdateOne) ClearUpdatedBy() *InspectionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InspectionUpdateOne) SetDeletedBy(v uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetDeletedBy(v int64) *InspectionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InspectionUpdateOne) SetNillableDeletedBy(v *uint64) *InspectionUpdateOne {
+func (_u *InspectionUpdateOne) SetNillableDeletedBy(v *int64) *InspectionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -920,7 +920,7 @@ func (_u *InspectionUpdateOne) sqlSave(ctx context.Context) (_node *Inspection, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(inspection.Table, inspection.Columns, sqlgraph.NewFieldSpec(inspection.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(inspection.Table, inspection.Columns, sqlgraph.NewFieldSpec(inspection.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Inspection.id" for update`)}
@@ -946,7 +946,7 @@ func (_u *InspectionUpdateOne) sqlSave(ctx context.Context) (_node *Inspection, 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(inspection.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(inspection.FieldTenantID, field.TypeInt64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(inspection.FieldCreatedAt, field.TypeTime)
@@ -964,31 +964,31 @@ func (_u *InspectionUpdateOne) sqlSave(ctx context.Context) (_node *Inspection, 
 		_spec.ClearField(inspection.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(inspection.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(inspection.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(inspection.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(inspection.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(inspection.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(inspection.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(inspection.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(inspection.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(inspection.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(inspection.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(inspection.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(inspection.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(inspection.FieldStatus, field.TypeEnum, value)

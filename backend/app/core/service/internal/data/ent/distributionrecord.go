@@ -17,9 +17,9 @@ type DistributionRecord struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,13 +27,13 @@ type DistributionRecord struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 分发配置(ops_distributions.id)
-	DistributionID uint64 `json:"distribution_id,omitempty"`
+	DistributionID int64 `json:"distribution_id,omitempty"`
 	// 构建历史(ops_build_histories.id)
-	BuildHistoryID uint64 `json:"build_history_id,omitempty"`
+	BuildHistoryID int64 `json:"build_history_id,omitempty"`
 	// 目标项目(ops_projects.id)
-	ProjectID uint64 `json:"project_id,omitempty"`
+	ProjectID int64 `json:"project_id,omitempty"`
 	// 目标节点(ops_agent_nodes.id)
-	NodeID uint64 `json:"node_id,omitempty"`
+	NodeID int64 `json:"node_id,omitempty"`
 	// 关联的 MQTT 指令幂等键(dist_apply;未投递批次为 pending: 占位)
 	CommandRequestID string `json:"command_request_id,omitempty"`
 	// 分批发布批次号(从 1 起;非分批发布恒为 1)
@@ -45,7 +45,7 @@ type DistributionRecord struct {
 	// 执行结果数据(JSON:部署文件数/输出等)
 	Result *string `json:"result,omitempty"`
 	// 触发人
-	OperatorID *uint64 `json:"operator_id,omitempty"`
+	OperatorID *int64 `json:"operator_id,omitempty"`
 	// 结束时间
 	FinishedAt   *time.Time `json:"finished_at,omitempty"`
 	selectValues sql.SelectValues
@@ -82,13 +82,13 @@ func (_m *DistributionRecord) assignValues(columns []string, values []any) error
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case distributionrecord.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case distributionrecord.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -115,25 +115,25 @@ func (_m *DistributionRecord) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field distribution_id", values[i])
 			} else if value.Valid {
-				_m.DistributionID = uint64(value.Int64)
+				_m.DistributionID = value.Int64
 			}
 		case distributionrecord.FieldBuildHistoryID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field build_history_id", values[i])
 			} else if value.Valid {
-				_m.BuildHistoryID = uint64(value.Int64)
+				_m.BuildHistoryID = value.Int64
 			}
 		case distributionrecord.FieldProjectID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
-				_m.ProjectID = uint64(value.Int64)
+				_m.ProjectID = value.Int64
 			}
 		case distributionrecord.FieldNodeID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
-				_m.NodeID = uint64(value.Int64)
+				_m.NodeID = value.Int64
 			}
 		case distributionrecord.FieldCommandRequestID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -172,8 +172,8 @@ func (_m *DistributionRecord) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operator_id", values[i])
 			} else if value.Valid {
-				_m.OperatorID = new(uint64)
-				*_m.OperatorID = uint64(value.Int64)
+				_m.OperatorID = new(int64)
+				*_m.OperatorID = value.Int64
 			}
 		case distributionrecord.FieldFinishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

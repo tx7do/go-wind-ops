@@ -23,13 +23,13 @@ type TerminalChunkCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *TerminalChunkCreate) SetTenantID(v uint64) *TerminalChunkCreate {
+func (_c *TerminalChunkCreate) SetTenantID(v int64) *TerminalChunkCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *TerminalChunkCreate) SetNillableTenantID(v *uint64) *TerminalChunkCreate {
+func (_c *TerminalChunkCreate) SetNillableTenantID(v *int64) *TerminalChunkCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,7 +79,7 @@ func (_c *TerminalChunkCreate) SetNillableDeletedAt(v *time.Time) *TerminalChunk
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (_c *TerminalChunkCreate) SetTerminalSessionID(v uint64) *TerminalChunkCreate {
+func (_c *TerminalChunkCreate) SetTerminalSessionID(v int64) *TerminalChunkCreate {
 	_c.mutation.SetTerminalSessionID(v)
 	return _c
 }
@@ -125,7 +125,7 @@ func (_c *TerminalChunkCreate) SetNillableByteLen(v *int) *TerminalChunkCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *TerminalChunkCreate) SetID(v uint64) *TerminalChunkCreate {
+func (_c *TerminalChunkCreate) SetID(v int64) *TerminalChunkCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -230,7 +230,7 @@ func (_c *TerminalChunkCreate) sqlSave(ctx context.Context) (*TerminalChunk, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -240,7 +240,7 @@ func (_c *TerminalChunkCreate) sqlSave(ctx context.Context) (*TerminalChunk, err
 func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TerminalChunk{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(terminalchunk.Table, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(terminalchunk.Table, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -248,7 +248,7 @@ func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpe
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(terminalchunk.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(terminalchunk.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -264,7 +264,7 @@ func (_c *TerminalChunkCreate) createSpec() (*TerminalChunk, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TerminalSessionID(); ok {
-		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeUint64, value)
+		_spec.SetField(terminalchunk.FieldTerminalSessionID, field.TypeInt64, value)
 		_node.TerminalSessionID = value
 	}
 	if value, ok := _c.mutation.Seq(); ok {
@@ -372,7 +372,7 @@ func (u *TerminalChunkUpsert) ClearDeletedAt() *TerminalChunkUpsert {
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (u *TerminalChunkUpsert) SetTerminalSessionID(v uint64) *TerminalChunkUpsert {
+func (u *TerminalChunkUpsert) SetTerminalSessionID(v int64) *TerminalChunkUpsert {
 	u.Set(terminalchunk.FieldTerminalSessionID, v)
 	return u
 }
@@ -384,7 +384,7 @@ func (u *TerminalChunkUpsert) UpdateTerminalSessionID() *TerminalChunkUpsert {
 }
 
 // AddTerminalSessionID adds v to the "terminal_session_id" field.
-func (u *TerminalChunkUpsert) AddTerminalSessionID(v uint64) *TerminalChunkUpsert {
+func (u *TerminalChunkUpsert) AddTerminalSessionID(v int64) *TerminalChunkUpsert {
 	u.Add(terminalchunk.FieldTerminalSessionID, v)
 	return u
 }
@@ -546,14 +546,14 @@ func (u *TerminalChunkUpsertOne) ClearDeletedAt() *TerminalChunkUpsertOne {
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (u *TerminalChunkUpsertOne) SetTerminalSessionID(v uint64) *TerminalChunkUpsertOne {
+func (u *TerminalChunkUpsertOne) SetTerminalSessionID(v int64) *TerminalChunkUpsertOne {
 	return u.Update(func(s *TerminalChunkUpsert) {
 		s.SetTerminalSessionID(v)
 	})
 }
 
 // AddTerminalSessionID adds v to the "terminal_session_id" field.
-func (u *TerminalChunkUpsertOne) AddTerminalSessionID(v uint64) *TerminalChunkUpsertOne {
+func (u *TerminalChunkUpsertOne) AddTerminalSessionID(v int64) *TerminalChunkUpsertOne {
 	return u.Update(func(s *TerminalChunkUpsert) {
 		s.AddTerminalSessionID(v)
 	})
@@ -652,7 +652,7 @@ func (u *TerminalChunkUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TerminalChunkUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *TerminalChunkUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -661,7 +661,7 @@ func (u *TerminalChunkUpsertOne) ID(ctx context.Context) (id uint64, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TerminalChunkUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *TerminalChunkUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -718,7 +718,7 @@ func (_c *TerminalChunkCreateBulk) Save(ctx context.Context) ([]*TerminalChunk, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -899,14 +899,14 @@ func (u *TerminalChunkUpsertBulk) ClearDeletedAt() *TerminalChunkUpsertBulk {
 }
 
 // SetTerminalSessionID sets the "terminal_session_id" field.
-func (u *TerminalChunkUpsertBulk) SetTerminalSessionID(v uint64) *TerminalChunkUpsertBulk {
+func (u *TerminalChunkUpsertBulk) SetTerminalSessionID(v int64) *TerminalChunkUpsertBulk {
 	return u.Update(func(s *TerminalChunkUpsert) {
 		s.SetTerminalSessionID(v)
 	})
 }
 
 // AddTerminalSessionID adds v to the "terminal_session_id" field.
-func (u *TerminalChunkUpsertBulk) AddTerminalSessionID(v uint64) *TerminalChunkUpsertBulk {
+func (u *TerminalChunkUpsertBulk) AddTerminalSessionID(v int64) *TerminalChunkUpsertBulk {
 	return u.Update(func(s *TerminalChunkUpsert) {
 		s.AddTerminalSessionID(v)
 	})

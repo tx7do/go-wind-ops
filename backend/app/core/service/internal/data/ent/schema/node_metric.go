@@ -31,7 +31,7 @@ func (NodeMetric) Annotations() []schema.Annotation {
 // Fields of the NodeMetric.
 func (NodeMetric) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("node_id").
+		field.Int64("node_id").
 			Comment("节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -50,13 +50,13 @@ func (NodeMetric) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("mem_total_bytes").
+		field.Int64("mem_total_bytes").
 			Comment("物理内存总量").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint64("uptime_seconds").
+		field.Int64("uptime_seconds").
 			Comment("系统运行时长(秒)").
 			Default(0).
 			Optional().
