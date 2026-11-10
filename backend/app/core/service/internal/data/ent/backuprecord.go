@@ -17,9 +17,9 @@ type BackupRecord struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,9 +27,9 @@ type BackupRecord struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 来源备份任务(ops_backup_tasks.id)
-	TaskID uint32 `json:"task_id,omitempty"`
+	TaskID uint64 `json:"task_id,omitempty"`
 	// 执行节点(ops_agent_nodes.id)
-	NodeID uint32 `json:"node_id,omitempty"`
+	NodeID uint64 `json:"node_id,omitempty"`
 	// 对象存储桶
 	Bucket string `json:"bucket,omitempty"`
 	// 对象键(backups/{taskId}/{uuid}.zip)
@@ -45,7 +45,7 @@ type BackupRecord struct {
 	// 指令幂等键(与 ops_command_records.request_id 对应)
 	CommandRequestID string `json:"command_request_id,omitempty"`
 	// 触发备份的用户(定时触发为 0)
-	OperatorID *uint32 `json:"operator_id,omitempty"`
+	OperatorID *uint64 `json:"operator_id,omitempty"`
 	// 终态时间
 	FinishedAt   *time.Time `json:"finished_at,omitempty"`
 	selectValues sql.SelectValues
@@ -82,13 +82,13 @@ func (_m *BackupRecord) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case backuprecord.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case backuprecord.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -115,13 +115,13 @@ func (_m *BackupRecord) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field task_id", values[i])
 			} else if value.Valid {
-				_m.TaskID = uint32(value.Int64)
+				_m.TaskID = uint64(value.Int64)
 			}
 		case backuprecord.FieldNodeID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
-				_m.NodeID = uint32(value.Int64)
+				_m.NodeID = uint64(value.Int64)
 			}
 		case backuprecord.FieldBucket:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -171,8 +171,8 @@ func (_m *BackupRecord) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operator_id", values[i])
 			} else if value.Valid {
-				_m.OperatorID = new(uint32)
-				*_m.OperatorID = uint32(value.Int64)
+				_m.OperatorID = new(uint64)
+				*_m.OperatorID = uint64(value.Int64)
 			}
 		case backuprecord.FieldFinishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

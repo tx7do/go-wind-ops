@@ -17,9 +17,9 @@ type Alert struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,13 +27,13 @@ type Alert struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 来源监控规则(ops_monitors.id;预算/证书等非监控来源为 0)
-	MonitorID uint32 `json:"monitor_id,omitempty"`
+	MonitorID uint64 `json:"monitor_id,omitempty"`
 	// 告警来源:MONITOR=监控规则 / BUDGET=云成本预算 / CERT=证书到期 / NODE_OFFLINE=节点失联
 	Source string `json:"source,omitempty"`
 	// 关联项目(节点指标/预算/证书告警为 0)
-	ProjectID uint32 `json:"project_id,omitempty"`
+	ProjectID uint64 `json:"project_id,omitempty"`
 	// 关联节点(ops_agent_nodes.id;项目状态/预算/证书告警为 0)
-	NodeID uint32 `json:"node_id,omitempty"`
+	NodeID uint64 `json:"node_id,omitempty"`
 	// 告警级别
 	Level alert.Level `json:"level,omitempty"`
 	// 告警内容
@@ -80,13 +80,13 @@ func (_m *Alert) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case alert.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case alert.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -113,7 +113,7 @@ func (_m *Alert) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field monitor_id", values[i])
 			} else if value.Valid {
-				_m.MonitorID = uint32(value.Int64)
+				_m.MonitorID = uint64(value.Int64)
 			}
 		case alert.FieldSource:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -125,13 +125,13 @@ func (_m *Alert) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
-				_m.ProjectID = uint32(value.Int64)
+				_m.ProjectID = uint64(value.Int64)
 			}
 		case alert.FieldNodeID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
-				_m.NodeID = uint32(value.Int64)
+				_m.NodeID = uint64(value.Int64)
 			}
 		case alert.FieldLevel:
 			if value, ok := values[i].(*sql.NullString); !ok {

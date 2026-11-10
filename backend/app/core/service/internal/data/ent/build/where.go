@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Build {
+func ID(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Build {
+func IDEQ(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Build {
+func IDNEQ(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Build {
+func IDIn(ids ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Build {
+func IDNotIn(ids ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Build {
+func IDGT(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Build {
+func IDGTE(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Build {
+func IDLT(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Build {
+func IDLTE(id uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Build {
+func TenantID(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,17 +75,17 @@ func DeletedAt(v time.Time) predicate.Build {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Build {
+func CreatedBy(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Build {
+func UpdatedBy(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Build {
+func DeletedBy(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -95,7 +95,7 @@ func Name(v string) predicate.Build {
 }
 
 // RepositoryID applies equality check predicate on the "repository_id" field. It's identical to RepositoryIDEQ.
-func RepositoryID(v uint32) predicate.Build {
+func RepositoryID(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldRepositoryID, v))
 }
 
@@ -145,42 +145,42 @@ func Description(v string) predicate.Build {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Build {
+func TenantIDEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Build {
+func TenantIDNEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Build {
+func TenantIDIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Build {
+func TenantIDNotIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Build {
+func TenantIDGT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Build {
+func TenantIDGTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Build {
+func TenantIDLT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Build {
+func TenantIDLTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -345,42 +345,42 @@ func DeletedAtNotNil() predicate.Build {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Build {
+func CreatedByEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Build {
+func CreatedByNEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Build {
+func CreatedByIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Build {
+func CreatedByNotIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Build {
+func CreatedByGT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Build {
+func CreatedByGTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Build {
+func CreatedByLT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Build {
+func CreatedByLTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -395,42 +395,42 @@ func CreatedByNotNil() predicate.Build {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Build {
+func UpdatedByEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Build {
+func UpdatedByNEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Build {
+func UpdatedByIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Build {
+func UpdatedByNotIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Build {
+func UpdatedByGT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Build {
+func UpdatedByGTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Build {
+func UpdatedByLT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Build {
+func UpdatedByLTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -445,42 +445,42 @@ func UpdatedByNotNil() predicate.Build {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Build {
+func DeletedByEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Build {
+func DeletedByNEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Build {
+func DeletedByIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Build {
+func DeletedByNotIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Build {
+func DeletedByGT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Build {
+func DeletedByGTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Build {
+func DeletedByLT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Build {
+func DeletedByLTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -560,42 +560,42 @@ func NameContainsFold(v string) predicate.Build {
 }
 
 // RepositoryIDEQ applies the EQ predicate on the "repository_id" field.
-func RepositoryIDEQ(v uint32) predicate.Build {
+func RepositoryIDEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldEQ(FieldRepositoryID, v))
 }
 
 // RepositoryIDNEQ applies the NEQ predicate on the "repository_id" field.
-func RepositoryIDNEQ(v uint32) predicate.Build {
+func RepositoryIDNEQ(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldNEQ(FieldRepositoryID, v))
 }
 
 // RepositoryIDIn applies the In predicate on the "repository_id" field.
-func RepositoryIDIn(vs ...uint32) predicate.Build {
+func RepositoryIDIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldIn(FieldRepositoryID, vs...))
 }
 
 // RepositoryIDNotIn applies the NotIn predicate on the "repository_id" field.
-func RepositoryIDNotIn(vs ...uint32) predicate.Build {
+func RepositoryIDNotIn(vs ...uint64) predicate.Build {
 	return predicate.Build(sql.FieldNotIn(FieldRepositoryID, vs...))
 }
 
 // RepositoryIDGT applies the GT predicate on the "repository_id" field.
-func RepositoryIDGT(v uint32) predicate.Build {
+func RepositoryIDGT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGT(FieldRepositoryID, v))
 }
 
 // RepositoryIDGTE applies the GTE predicate on the "repository_id" field.
-func RepositoryIDGTE(v uint32) predicate.Build {
+func RepositoryIDGTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldGTE(FieldRepositoryID, v))
 }
 
 // RepositoryIDLT applies the LT predicate on the "repository_id" field.
-func RepositoryIDLT(v uint32) predicate.Build {
+func RepositoryIDLT(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLT(FieldRepositoryID, v))
 }
 
 // RepositoryIDLTE applies the LTE predicate on the "repository_id" field.
-func RepositoryIDLTE(v uint32) predicate.Build {
+func RepositoryIDLTE(v uint64) predicate.Build {
 	return predicate.Build(sql.FieldLTE(FieldRepositoryID, v))
 }
 

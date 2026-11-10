@@ -68,7 +68,7 @@ func NewMfaService(ctx *bootstrap.Context, userRepo data.UserRepo, redisClient *
 // CreateMfaChallenge 生成一次性 MFA 挑战令牌(NX+TTL),载荷为用户/租户/客户端类型
 // (换证时回放校验,防跨端挪用)。供 AuthenticationService 密码授权路径调用
 // (同进程装配,不走 gRPC)。
-func (s *MfaService) CreateMfaChallenge(ctx context.Context, userID, tenantID uint32, clientType authenticationV1.ClientType) (string, error) {
+func (s *MfaService) CreateMfaChallenge(ctx context.Context, userID, tenantID uint64, clientType authenticationV1.ClientType) (string, error) {
 	raw := make([]byte, 16)
 	if _, err := rand.Read(raw); err != nil {
 		return "", fmt.Errorf("generate challenge: %w", err)
@@ -86,7 +86,7 @@ func (s *MfaService) CreateMfaChallenge(ctx context.Context, userID, tenantID ui
 }
 
 // consumeMfaChallenge 一次性消费挑战(GETDEL),返回绑定载荷。
-func (s *MfaService) consumeMfaChallenge(ctx context.Context, token string) (userID, tenantID uint32, clientType authenticationV1.ClientType, err error) {
+func (s *MfaService) consumeMfaChallenge(ctx context.Context, token string) (userID, tenantID uint64, clientType authenticationV1.ClientType, err error) {
 	val, err := s.redisClient.GetDel(ctx, mfaChallengeKeyPrefix+token).Result()
 	if err != nil {
 		return 0, 0, 0, fmt.Errorf("challenge invalid or expired")
@@ -98,7 +98,7 @@ func (s *MfaService) consumeMfaChallenge(ctx context.Context, token string) (use
 	uid, _ := strconv.ParseUint(parts[0], 10, 32)
 	tid, _ := strconv.ParseUint(parts[1], 10, 32)
 	ct, _ := strconv.ParseInt(parts[2], 10, 32)
-	return uint32(uid), uint32(tid), authenticationV1.ClientType(ct), nil
+	return uint64(uid), uint64(tid), authenticationV1.ClientType(ct), nil
 }
 
 // VerifyMFAChallenge MFA 二步验证:兑现挑战令牌 + TOTP 验证码,签发正式令牌对。
@@ -271,7 +271,7 @@ func (s *MfaService) MfaBackupCodesRegenerate(ctx context.Context, _ *authentica
 }
 
 // consumeBackupCode 备份码消费:哈希命中即从列表移除(一次性),返回是否命中。
-func (s *MfaService) consumeBackupCode(ctx context.Context, userID uint32, code string) bool {
+func (s *MfaService) consumeBackupCode(ctx context.Context, userID uint64, code string) bool {
 	hashes, err := s.userRepo.GetMfaBackupCodes(ctx, userID)
 	if err != nil || len(hashes) == 0 {
 		return false

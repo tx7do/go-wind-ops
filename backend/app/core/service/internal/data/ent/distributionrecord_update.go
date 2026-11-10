@@ -70,14 +70,14 @@ func (_u *DistributionRecordUpdate) ClearDeletedAt() *DistributionRecordUpdate {
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_u *DistributionRecordUpdate) SetDistributionID(v uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetDistributionID(v uint64) *DistributionRecordUpdate {
 	_u.mutation.ResetDistributionID()
 	_u.mutation.SetDistributionID(v)
 	return _u
 }
 
 // SetNillableDistributionID sets the "distribution_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdate) SetNillableDistributionID(v *uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNillableDistributionID(v *uint64) *DistributionRecordUpdate {
 	if v != nil {
 		_u.SetDistributionID(*v)
 	}
@@ -85,20 +85,20 @@ func (_u *DistributionRecordUpdate) SetNillableDistributionID(v *uint32) *Distri
 }
 
 // AddDistributionID adds value to the "distribution_id" field.
-func (_u *DistributionRecordUpdate) AddDistributionID(v int32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) AddDistributionID(v int64) *DistributionRecordUpdate {
 	_u.mutation.AddDistributionID(v)
 	return _u
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (_u *DistributionRecordUpdate) SetBuildHistoryID(v uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetBuildHistoryID(v uint64) *DistributionRecordUpdate {
 	_u.mutation.ResetBuildHistoryID()
 	_u.mutation.SetBuildHistoryID(v)
 	return _u
 }
 
 // SetNillableBuildHistoryID sets the "build_history_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdate) SetNillableBuildHistoryID(v *uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNillableBuildHistoryID(v *uint64) *DistributionRecordUpdate {
 	if v != nil {
 		_u.SetBuildHistoryID(*v)
 	}
@@ -106,20 +106,20 @@ func (_u *DistributionRecordUpdate) SetNillableBuildHistoryID(v *uint32) *Distri
 }
 
 // AddBuildHistoryID adds value to the "build_history_id" field.
-func (_u *DistributionRecordUpdate) AddBuildHistoryID(v int32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) AddBuildHistoryID(v int64) *DistributionRecordUpdate {
 	_u.mutation.AddBuildHistoryID(v)
 	return _u
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *DistributionRecordUpdate) SetProjectID(v uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetProjectID(v uint64) *DistributionRecordUpdate {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdate) SetNillableProjectID(v *uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNillableProjectID(v *uint64) *DistributionRecordUpdate {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -127,20 +127,20 @@ func (_u *DistributionRecordUpdate) SetNillableProjectID(v *uint32) *Distributio
 }
 
 // AddProjectID adds value to the "project_id" field.
-func (_u *DistributionRecordUpdate) AddProjectID(v int32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) AddProjectID(v int64) *DistributionRecordUpdate {
 	_u.mutation.AddProjectID(v)
 	return _u
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *DistributionRecordUpdate) SetNodeID(v uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNodeID(v uint64) *DistributionRecordUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdate) SetNillableNodeID(v *uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNillableNodeID(v *uint64) *DistributionRecordUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -148,7 +148,7 @@ func (_u *DistributionRecordUpdate) SetNillableNodeID(v *uint32) *DistributionRe
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *DistributionRecordUpdate) AddNodeID(v int32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) AddNodeID(v int64) *DistributionRecordUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -249,14 +249,14 @@ func (_u *DistributionRecordUpdate) ClearResult() *DistributionRecordUpdate {
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *DistributionRecordUpdate) SetOperatorID(v uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetOperatorID(v uint64) *DistributionRecordUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdate) SetNillableOperatorID(v *uint32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) SetNillableOperatorID(v *uint64) *DistributionRecordUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -264,7 +264,7 @@ func (_u *DistributionRecordUpdate) SetNillableOperatorID(v *uint32) *Distributi
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *DistributionRecordUpdate) AddOperatorID(v int32) *DistributionRecordUpdate {
+func (_u *DistributionRecordUpdate) AddOperatorID(v int64) *DistributionRecordUpdate {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -372,7 +372,7 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(distributionrecord.Table, distributionrecord.Columns, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(distributionrecord.Table, distributionrecord.Columns, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -381,7 +381,7 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(distributionrecord.FieldCreatedAt, field.TypeTime)
@@ -399,28 +399,28 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(distributionrecord.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DistributionID(); ok {
-		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDistributionID(); ok {
-		_spec.AddField(distributionrecord.FieldDistributionID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldDistributionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.BuildHistoryID(); ok {
-		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedBuildHistoryID(); ok {
-		_spec.AddField(distributionrecord.FieldBuildHistoryID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldBuildHistoryID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(distributionrecord.FieldProjectID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldProjectID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(distributionrecord.FieldProjectID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldProjectID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(distributionrecord.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(distributionrecord.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CommandRequestID(); ok {
 		_spec.SetField(distributionrecord.FieldCommandRequestID, field.TypeString, value)
@@ -450,13 +450,13 @@ func (_u *DistributionRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(distributionrecord.FieldResult, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(distributionrecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(distributionrecord.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(distributionrecord.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(distributionrecord.FieldFinishedAt, field.TypeTime, value)
@@ -527,14 +527,14 @@ func (_u *DistributionRecordUpdateOne) ClearDeletedAt() *DistributionRecordUpdat
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_u *DistributionRecordUpdateOne) SetDistributionID(v uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetDistributionID(v uint64) *DistributionRecordUpdateOne {
 	_u.mutation.ResetDistributionID()
 	_u.mutation.SetDistributionID(v)
 	return _u
 }
 
 // SetNillableDistributionID sets the "distribution_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdateOne) SetNillableDistributionID(v *uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNillableDistributionID(v *uint64) *DistributionRecordUpdateOne {
 	if v != nil {
 		_u.SetDistributionID(*v)
 	}
@@ -542,20 +542,20 @@ func (_u *DistributionRecordUpdateOne) SetNillableDistributionID(v *uint32) *Dis
 }
 
 // AddDistributionID adds value to the "distribution_id" field.
-func (_u *DistributionRecordUpdateOne) AddDistributionID(v int32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) AddDistributionID(v int64) *DistributionRecordUpdateOne {
 	_u.mutation.AddDistributionID(v)
 	return _u
 }
 
 // SetBuildHistoryID sets the "build_history_id" field.
-func (_u *DistributionRecordUpdateOne) SetBuildHistoryID(v uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetBuildHistoryID(v uint64) *DistributionRecordUpdateOne {
 	_u.mutation.ResetBuildHistoryID()
 	_u.mutation.SetBuildHistoryID(v)
 	return _u
 }
 
 // SetNillableBuildHistoryID sets the "build_history_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdateOne) SetNillableBuildHistoryID(v *uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNillableBuildHistoryID(v *uint64) *DistributionRecordUpdateOne {
 	if v != nil {
 		_u.SetBuildHistoryID(*v)
 	}
@@ -563,20 +563,20 @@ func (_u *DistributionRecordUpdateOne) SetNillableBuildHistoryID(v *uint32) *Dis
 }
 
 // AddBuildHistoryID adds value to the "build_history_id" field.
-func (_u *DistributionRecordUpdateOne) AddBuildHistoryID(v int32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) AddBuildHistoryID(v int64) *DistributionRecordUpdateOne {
 	_u.mutation.AddBuildHistoryID(v)
 	return _u
 }
 
 // SetProjectID sets the "project_id" field.
-func (_u *DistributionRecordUpdateOne) SetProjectID(v uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetProjectID(v uint64) *DistributionRecordUpdateOne {
 	_u.mutation.ResetProjectID()
 	_u.mutation.SetProjectID(v)
 	return _u
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdateOne) SetNillableProjectID(v *uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNillableProjectID(v *uint64) *DistributionRecordUpdateOne {
 	if v != nil {
 		_u.SetProjectID(*v)
 	}
@@ -584,20 +584,20 @@ func (_u *DistributionRecordUpdateOne) SetNillableProjectID(v *uint32) *Distribu
 }
 
 // AddProjectID adds value to the "project_id" field.
-func (_u *DistributionRecordUpdateOne) AddProjectID(v int32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) AddProjectID(v int64) *DistributionRecordUpdateOne {
 	_u.mutation.AddProjectID(v)
 	return _u
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *DistributionRecordUpdateOne) SetNodeID(v uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNodeID(v uint64) *DistributionRecordUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdateOne) SetNillableNodeID(v *uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNillableNodeID(v *uint64) *DistributionRecordUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -605,7 +605,7 @@ func (_u *DistributionRecordUpdateOne) SetNillableNodeID(v *uint32) *Distributio
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *DistributionRecordUpdateOne) AddNodeID(v int32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) AddNodeID(v int64) *DistributionRecordUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -706,14 +706,14 @@ func (_u *DistributionRecordUpdateOne) ClearResult() *DistributionRecordUpdateOn
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *DistributionRecordUpdateOne) SetOperatorID(v uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetOperatorID(v uint64) *DistributionRecordUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *DistributionRecordUpdateOne) SetNillableOperatorID(v *uint32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) SetNillableOperatorID(v *uint64) *DistributionRecordUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -721,7 +721,7 @@ func (_u *DistributionRecordUpdateOne) SetNillableOperatorID(v *uint32) *Distrib
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *DistributionRecordUpdateOne) AddOperatorID(v int32) *DistributionRecordUpdateOne {
+func (_u *DistributionRecordUpdateOne) AddOperatorID(v int64) *DistributionRecordUpdateOne {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -842,7 +842,7 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(distributionrecord.Table, distributionrecord.Columns, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(distributionrecord.Table, distributionrecord.Columns, sqlgraph.NewFieldSpec(distributionrecord.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "DistributionRecord.id" for update`)}
@@ -868,7 +868,7 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(distributionrecord.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(distributionrecord.FieldCreatedAt, field.TypeTime)
@@ -886,28 +886,28 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 		_spec.ClearField(distributionrecord.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DistributionID(); ok {
-		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldDistributionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDistributionID(); ok {
-		_spec.AddField(distributionrecord.FieldDistributionID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldDistributionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.BuildHistoryID(); ok {
-		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldBuildHistoryID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedBuildHistoryID(); ok {
-		_spec.AddField(distributionrecord.FieldBuildHistoryID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldBuildHistoryID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.ProjectID(); ok {
-		_spec.SetField(distributionrecord.FieldProjectID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldProjectID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedProjectID(); ok {
-		_spec.AddField(distributionrecord.FieldProjectID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldProjectID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(distributionrecord.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(distributionrecord.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CommandRequestID(); ok {
 		_spec.SetField(distributionrecord.FieldCommandRequestID, field.TypeString, value)
@@ -937,13 +937,13 @@ func (_u *DistributionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Dist
 		_spec.ClearField(distributionrecord.FieldResult, field.TypeString)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(distributionrecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(distributionrecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(distributionrecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(distributionrecord.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(distributionrecord.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(distributionrecord.FieldFinishedAt, field.TypeTime, value)

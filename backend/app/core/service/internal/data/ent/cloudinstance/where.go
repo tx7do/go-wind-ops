@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.CloudInstance {
+func ID(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.CloudInstance {
+func IDEQ(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.CloudInstance {
+func IDNEQ(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.CloudInstance {
+func IDIn(ids ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.CloudInstance {
+func IDNotIn(ids ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.CloudInstance {
+func IDGT(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.CloudInstance {
+func IDGTE(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.CloudInstance {
+func IDLT(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.CloudInstance {
+func IDLTE(id uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.CloudInstance {
+func TenantID(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,7 +75,7 @@ func DeletedAt(v time.Time) predicate.CloudInstance {
 }
 
 // CloudAccountID applies equality check predicate on the "cloud_account_id" field. It's identical to CloudAccountIDEQ.
-func CloudAccountID(v uint32) predicate.CloudInstance {
+func CloudAccountID(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldCloudAccountID, v))
 }
 
@@ -135,7 +135,7 @@ func Matched(v bool) predicate.CloudInstance {
 }
 
 // AgentNodeID applies equality check predicate on the "agent_node_id" field. It's identical to AgentNodeIDEQ.
-func AgentNodeID(v uint32) predicate.CloudInstance {
+func AgentNodeID(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldAgentNodeID, v))
 }
 
@@ -150,42 +150,42 @@ func SyncedAt(v time.Time) predicate.CloudInstance {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.CloudInstance {
+func TenantIDEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.CloudInstance {
+func TenantIDNEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.CloudInstance {
+func TenantIDIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.CloudInstance {
+func TenantIDNotIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.CloudInstance {
+func TenantIDGT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.CloudInstance {
+func TenantIDGTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.CloudInstance {
+func TenantIDLT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.CloudInstance {
+func TenantIDLTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -350,42 +350,42 @@ func DeletedAtNotNil() predicate.CloudInstance {
 }
 
 // CloudAccountIDEQ applies the EQ predicate on the "cloud_account_id" field.
-func CloudAccountIDEQ(v uint32) predicate.CloudInstance {
+func CloudAccountIDEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldCloudAccountID, v))
 }
 
 // CloudAccountIDNEQ applies the NEQ predicate on the "cloud_account_id" field.
-func CloudAccountIDNEQ(v uint32) predicate.CloudInstance {
+func CloudAccountIDNEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNEQ(FieldCloudAccountID, v))
 }
 
 // CloudAccountIDIn applies the In predicate on the "cloud_account_id" field.
-func CloudAccountIDIn(vs ...uint32) predicate.CloudInstance {
+func CloudAccountIDIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldIn(FieldCloudAccountID, vs...))
 }
 
 // CloudAccountIDNotIn applies the NotIn predicate on the "cloud_account_id" field.
-func CloudAccountIDNotIn(vs ...uint32) predicate.CloudInstance {
+func CloudAccountIDNotIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNotIn(FieldCloudAccountID, vs...))
 }
 
 // CloudAccountIDGT applies the GT predicate on the "cloud_account_id" field.
-func CloudAccountIDGT(v uint32) predicate.CloudInstance {
+func CloudAccountIDGT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGT(FieldCloudAccountID, v))
 }
 
 // CloudAccountIDGTE applies the GTE predicate on the "cloud_account_id" field.
-func CloudAccountIDGTE(v uint32) predicate.CloudInstance {
+func CloudAccountIDGTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGTE(FieldCloudAccountID, v))
 }
 
 // CloudAccountIDLT applies the LT predicate on the "cloud_account_id" field.
-func CloudAccountIDLT(v uint32) predicate.CloudInstance {
+func CloudAccountIDLT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLT(FieldCloudAccountID, v))
 }
 
 // CloudAccountIDLTE applies the LTE predicate on the "cloud_account_id" field.
-func CloudAccountIDLTE(v uint32) predicate.CloudInstance {
+func CloudAccountIDLTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLTE(FieldCloudAccountID, v))
 }
 
@@ -1135,42 +1135,42 @@ func MatchedNEQ(v bool) predicate.CloudInstance {
 }
 
 // AgentNodeIDEQ applies the EQ predicate on the "agent_node_id" field.
-func AgentNodeIDEQ(v uint32) predicate.CloudInstance {
+func AgentNodeIDEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldEQ(FieldAgentNodeID, v))
 }
 
 // AgentNodeIDNEQ applies the NEQ predicate on the "agent_node_id" field.
-func AgentNodeIDNEQ(v uint32) predicate.CloudInstance {
+func AgentNodeIDNEQ(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNEQ(FieldAgentNodeID, v))
 }
 
 // AgentNodeIDIn applies the In predicate on the "agent_node_id" field.
-func AgentNodeIDIn(vs ...uint32) predicate.CloudInstance {
+func AgentNodeIDIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldIn(FieldAgentNodeID, vs...))
 }
 
 // AgentNodeIDNotIn applies the NotIn predicate on the "agent_node_id" field.
-func AgentNodeIDNotIn(vs ...uint32) predicate.CloudInstance {
+func AgentNodeIDNotIn(vs ...uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldNotIn(FieldAgentNodeID, vs...))
 }
 
 // AgentNodeIDGT applies the GT predicate on the "agent_node_id" field.
-func AgentNodeIDGT(v uint32) predicate.CloudInstance {
+func AgentNodeIDGT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGT(FieldAgentNodeID, v))
 }
 
 // AgentNodeIDGTE applies the GTE predicate on the "agent_node_id" field.
-func AgentNodeIDGTE(v uint32) predicate.CloudInstance {
+func AgentNodeIDGTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldGTE(FieldAgentNodeID, v))
 }
 
 // AgentNodeIDLT applies the LT predicate on the "agent_node_id" field.
-func AgentNodeIDLT(v uint32) predicate.CloudInstance {
+func AgentNodeIDLT(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLT(FieldAgentNodeID, v))
 }
 
 // AgentNodeIDLTE applies the LTE predicate on the "agent_node_id" field.
-func AgentNodeIDLTE(v uint32) predicate.CloudInstance {
+func AgentNodeIDLTE(v uint64) predicate.CloudInstance {
 	return predicate.CloudInstance(sql.FieldLTE(FieldAgentNodeID, v))
 }
 

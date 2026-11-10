@@ -97,11 +97,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// RepositoryIDValidator is a validator for the "repository_id" field. It is called by the builders before save.
-	RepositoryIDValidator func(uint32) error
+	RepositoryIDValidator func(uint64) error
 	// BuildCommandValidator is a validator for the "build_command" field. It is called by the builders before save.
 	BuildCommandValidator func(string) error
 	// ArtifactPathValidator is a validator for the "artifact_path" field. It is called by the builders before save.
@@ -113,7 +113,7 @@ var (
 	// DefaultBuildNo holds the default value on creation for the "build_no" field.
 	DefaultBuildNo uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // OrderOption defines the ordering options for the Build queries.

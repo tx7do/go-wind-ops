@@ -31,11 +31,11 @@ func (LogSnapshot) Annotations() []schema.Annotation {
 // Fields of the LogSnapshot.
 func (LogSnapshot) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("project_id").
+		field.Uint64("project_id").
 			Comment("项目(ops_projects.id)").
 			Positive(),
 
-		field.Uint32("node_id").
+		field.Uint64("node_id").
 			Comment("执行节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -64,10 +64,10 @@ func (LogSnapshot) Fields() []ent.Field {
 // Mixin of the LogSnapshot.
 func (LogSnapshot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

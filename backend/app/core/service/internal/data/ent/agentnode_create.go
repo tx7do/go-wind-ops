@@ -65,13 +65,13 @@ func (_c *AgentNodeCreate) SetNillableDeletedAt(v *time.Time) *AgentNodeCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *AgentNodeCreate) SetCreatedBy(v uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetCreatedBy(v uint64) *AgentNodeCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableCreatedBy(v *uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableCreatedBy(v *uint64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *AgentNodeCreate) SetNillableCreatedBy(v *uint32) *AgentNodeCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *AgentNodeCreate) SetUpdatedBy(v uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetUpdatedBy(v uint64) *AgentNodeCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *uint64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *AgentNodeCreate) SetNillableUpdatedBy(v *uint32) *AgentNodeCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *AgentNodeCreate) SetDeletedBy(v uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetDeletedBy(v uint64) *AgentNodeCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *AgentNodeCreate) SetNillableDeletedBy(v *uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetNillableDeletedBy(v *uint64) *AgentNodeCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -383,7 +383,7 @@ func (_c *AgentNodeCreate) SetNillableLastHeartbeatAt(v *time.Time) *AgentNodeCr
 }
 
 // SetID sets the "id" field.
-func (_c *AgentNodeCreate) SetID(v uint32) *AgentNodeCreate {
+func (_c *AgentNodeCreate) SetID(v uint64) *AgentNodeCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -484,7 +484,7 @@ func (_c *AgentNodeCreate) sqlSave(ctx context.Context) (*AgentNode, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -494,7 +494,7 @@ func (_c *AgentNodeCreate) sqlSave(ctx context.Context) (*AgentNode, error) {
 func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 	var (
 		_node = &AgentNode{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(agentnode.Table, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(agentnode.Table, sqlgraph.NewFieldSpec(agentnode.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -514,15 +514,15 @@ func (_c *AgentNodeCreate) createSpec() (*AgentNode, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(agentnode.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(agentnode.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(agentnode.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(agentnode.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(agentnode.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.AgentID(); ok {
@@ -702,7 +702,7 @@ func (u *AgentNodeUpsert) ClearDeletedAt() *AgentNodeUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsert) SetCreatedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetCreatedBy(v uint64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldCreatedBy, v)
 	return u
 }
@@ -714,7 +714,7 @@ func (u *AgentNodeUpsert) UpdateCreatedBy() *AgentNodeUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsert) AddCreatedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddCreatedBy(v uint64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldCreatedBy, v)
 	return u
 }
@@ -726,7 +726,7 @@ func (u *AgentNodeUpsert) ClearCreatedBy() *AgentNodeUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsert) SetUpdatedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetUpdatedBy(v uint64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldUpdatedBy, v)
 	return u
 }
@@ -738,7 +738,7 @@ func (u *AgentNodeUpsert) UpdateUpdatedBy() *AgentNodeUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsert) AddUpdatedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddUpdatedBy(v uint64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldUpdatedBy, v)
 	return u
 }
@@ -750,7 +750,7 @@ func (u *AgentNodeUpsert) ClearUpdatedBy() *AgentNodeUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsert) SetDeletedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) SetDeletedBy(v uint64) *AgentNodeUpsert {
 	u.Set(agentnode.FieldDeletedBy, v)
 	return u
 }
@@ -762,7 +762,7 @@ func (u *AgentNodeUpsert) UpdateDeletedBy() *AgentNodeUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsert) AddDeletedBy(v uint32) *AgentNodeUpsert {
+func (u *AgentNodeUpsert) AddDeletedBy(v uint64) *AgentNodeUpsert {
 	u.Add(agentnode.FieldDeletedBy, v)
 	return u
 }
@@ -1281,14 +1281,14 @@ func (u *AgentNodeUpsertOne) ClearDeletedAt() *AgentNodeUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsertOne) SetCreatedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetCreatedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsertOne) AddCreatedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddCreatedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1309,14 +1309,14 @@ func (u *AgentNodeUpsertOne) ClearCreatedBy() *AgentNodeUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsertOne) SetUpdatedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetUpdatedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsertOne) AddUpdatedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddUpdatedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1337,14 +1337,14 @@ func (u *AgentNodeUpsertOne) ClearUpdatedBy() *AgentNodeUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsertOne) SetDeletedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) SetDeletedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsertOne) AddDeletedBy(v uint32) *AgentNodeUpsertOne {
+func (u *AgentNodeUpsertOne) AddDeletedBy(v uint64) *AgentNodeUpsertOne {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1863,7 +1863,7 @@ func (u *AgentNodeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1872,7 +1872,7 @@ func (u *AgentNodeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AgentNodeUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *AgentNodeUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1929,7 +1929,7 @@ func (_c *AgentNodeCreateBulk) Save(ctx context.Context) ([]*AgentNode, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -2107,14 +2107,14 @@ func (u *AgentNodeUpsertBulk) ClearDeletedAt() *AgentNodeUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AgentNodeUpsertBulk) SetCreatedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetCreatedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AgentNodeUpsertBulk) AddCreatedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddCreatedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -2135,14 +2135,14 @@ func (u *AgentNodeUpsertBulk) ClearCreatedBy() *AgentNodeUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AgentNodeUpsertBulk) SetUpdatedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetUpdatedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AgentNodeUpsertBulk) AddUpdatedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddUpdatedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -2163,14 +2163,14 @@ func (u *AgentNodeUpsertBulk) ClearUpdatedBy() *AgentNodeUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AgentNodeUpsertBulk) SetDeletedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) SetDeletedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AgentNodeUpsertBulk) AddDeletedBy(v uint32) *AgentNodeUpsertBulk {
+func (u *AgentNodeUpsertBulk) AddDeletedBy(v uint64) *AgentNodeUpsertBulk {
 	return u.Update(func(s *AgentNodeUpsert) {
 		s.AddDeletedBy(v)
 	})

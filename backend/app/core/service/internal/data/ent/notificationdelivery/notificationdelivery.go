@@ -78,15 +78,15 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// AlertIDValidator is a validator for the "alert_id" field. It is called by the builders before save.
-	AlertIDValidator func(uint32) error
+	AlertIDValidator func(uint64) error
 	// ChannelIDValidator is a validator for the "channel_id" field. It is called by the builders before save.
-	ChannelIDValidator func(uint32) error
+	ChannelIDValidator func(uint64) error
 	// ChannelTypeValidator is a validator for the "channel_type" field. It is called by the builders before save.
 	ChannelTypeValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // Status defines the type for the "status" enum field.

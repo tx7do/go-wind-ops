@@ -130,12 +130,12 @@ type distRolloutContext struct {
 	isDocker    bool
 	downloadUrl string
 	afterOpt    string
-	operatorID  uint32
+	operatorID  uint64
 }
 
 // buildRolloutContext 组装执行上下文:FILE 部署在此签发新的产物下载 URL
 // (批次推进时旧 URL 可能临近过期,必须重签)。
-func (s *DistributionService) buildRolloutContext(ctx context.Context, dist *opsV1.Distribution, history *opsV1.BuildHistory, operatorID uint32) (*distRolloutContext, error) {
+func (s *DistributionService) buildRolloutContext(ctx context.Context, dist *opsV1.Distribution, history *opsV1.BuildHistory, operatorID uint64) (*distRolloutContext, error) {
 	isDocker := dist.GetDeployType() == opsV1.Distribution_DOCKER
 	if isDocker {
 		if dist.GetImage() == "" || dist.GetContainerName() == "" {
@@ -315,8 +315,8 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 	}
 
 	// 全部目标先建记录(占位幂等键,后批批次号>1),首批记录随后立即领取投递
-	firstRecordID := uint32(0)
-	var recordIDs []uint32
+	firstRecordID := uint64(0)
+	var recordIDs []uint64
 	batch1 := make([]*ent.DistributionRecord, 0, batchSize)
 	for i, t := range targets {
 		batchNo := uint32(i/batchSize + 1)
@@ -354,7 +354,7 @@ func (s *DistributionService) TriggerDistribution(ctx context.Context, req *opsV
 // AdvanceBatches 分批推进引擎(事件驱动:分发记录回执终态/超时定案后调用):
 // 找到最早未完成批次——在投则等待;有失败则中止并把后续批次占位记录置
 // SKIPPED;全部成功则投下一批。多副本并发调用由记录领取幂等兜底。
-func (s *DistributionService) AdvanceBatches(ctx context.Context, distributionID uint32) {
+func (s *DistributionService) AdvanceBatches(ctx context.Context, distributionID uint64) {
 	dist, err := s.repo.Get(ctx, &opsV1.GetDistributionRequest{Id: &distributionID})
 	if err != nil {
 		return
@@ -457,14 +457,14 @@ func skipRemainingBatches(ctx context.Context, recordRepo *data.DistributionReco
 	}
 }
 // latestSuccessHistoryID 取构建配置最新的 SUCCESS 历史;无则报错。
-func (s *DistributionService) latestSuccessHistoryID(ctx context.Context, buildID uint32) (uint32, error) {
+func (s *DistributionService) latestSuccessHistoryID(ctx context.Context, buildID uint64) (uint64, error) {
 	resp, err := s.historyRepo.List(ctx, &paginationV1.PagingRequest{
 		NoPaging: boolPtr(true),
 	})
 	if err != nil {
 		return 0, err
 	}
-	var latestID uint32
+	var latestID uint64
 	for _, h := range resp.GetItems() {
 		if h.GetBuildId() != buildID || h.GetStatus() != opsV1.BuildHistory_SUCCESS {
 			continue

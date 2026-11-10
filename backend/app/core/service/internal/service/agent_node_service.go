@@ -108,7 +108,7 @@ func (s *AgentNodeService) SendCommand(ctx context.Context, req *opsV1.SendComma
 	}
 
 	agentId := req.GetAgentId()
-	nodeID := uint32(0)
+	nodeID := uint64(0)
 	if req.GetId() != 0 {
 		node, err := s.repo.Get(ctx, &opsV1.GetAgentNodeRequest{Id: &req.Id})
 		if err != nil {
@@ -171,12 +171,12 @@ func (s *AgentNodeService) GetNodeMetricsHistory(ctx context.Context, req *opsV1
 }
 
 // operatorID 从传输层元数据提取操作者(由 admin BFF 的 gRPC 客户端中间件注入)。
-func (s *AgentNodeService) operatorID(ctx context.Context) uint32 {
+func (s *AgentNodeService) operatorID(ctx context.Context) uint64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint32(operator.GetUserId())
+	return uint64(operator.GetUserId())
 }
 
 // GetAgentUpgradeUploadUrl 签发 agent 升级包上传预签名 URL(浏览器直传)。

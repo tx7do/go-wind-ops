@@ -178,7 +178,7 @@ func (r *CloudCostRepo) ListAll(ctx context.Context, req *opsV1.GetCloudCostSumm
 }
 
 // SumMonthByCurrency 按月+币种汇总成本,返回总额与按账号的细分(预算检查用)。
-func (r *CloudCostRepo) SumMonthByCurrency(ctx context.Context, month, currency string) (float64, map[uint32]float64, error) {
+func (r *CloudCostRepo) SumMonthByCurrency(ctx context.Context, month, currency string) (float64, map[uint64]float64, error) {
 	rows, err := r.entClient.Client().CloudCost.
 		Query().
 		Where(
@@ -190,7 +190,7 @@ func (r *CloudCostRepo) SumMonthByCurrency(ctx context.Context, month, currency 
 		return 0, nil, err
 	}
 	total := 0.0
-	perAccount := make(map[uint32]float64)
+	perAccount := make(map[uint64]float64)
 	for _, row := range rows {
 		total += row.Amount
 		perAccount[row.CloudAccountID] += row.Amount
@@ -218,7 +218,7 @@ func (r *CloudCostRepo) SumMonthsByCurrency(ctx context.Context, months []string
 }
 
 // UpsertByAccountMonth 按账号+月份 upsert(存在则更新金额/币种/备注/厂商快照)。
-func (r *CloudCostRepo) UpsertByAccountMonth(ctx context.Context, accountID uint32, accountName string, provider opsV1.CloudCost_Provider, month string, amount float64, currency string, remark *string, operatorID uint32) (*ent.CloudCost, error) {
+func (r *CloudCostRepo) UpsertByAccountMonth(ctx context.Context, accountID uint64, accountName string, provider opsV1.CloudCost_Provider, month string, amount float64, currency string, remark *string, operatorID uint64) (*ent.CloudCost, error) {
 	client := r.entClient.Client().CloudCost
 
 	existing, err := client.Query().
@@ -263,6 +263,6 @@ func (r *CloudCostRepo) UpsertByAccountMonth(ctx context.Context, accountID uint
 }
 
 // Delete 删除。
-func (r *CloudCostRepo) Delete(ctx context.Context, id uint32) error {
+func (r *CloudCostRepo) Delete(ctx context.Context, id uint64) error {
 	return r.entClient.Client().CloudCost.DeleteOneID(id).Exec(ctx)
 }

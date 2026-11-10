@@ -30,7 +30,7 @@ func (ScriptVersion) Annotations() []schema.Annotation {
 
 func (ScriptVersion) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("script_id").
+		field.Uint64("script_id").
 			Comment("所属脚本").
 			Positive(),
 
@@ -41,7 +41,7 @@ func (ScriptVersion) Fields() []ent.Field {
 			Comment("快照来源(auto=更新前自动快照/restore=恢复前快照)").
 			Default("auto"),
 
-		field.Uint32("created_by").
+		field.Uint64("created_by").
 			Comment("触发快照的操作者(0=系统)").
 			Optional().
 			Nillable(),
@@ -50,8 +50,8 @@ func (ScriptVersion) Fields() []ent.Field {
 
 func (ScriptVersion) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

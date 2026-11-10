@@ -71,9 +71,9 @@ func hotp(key []byte, counter uint64) string {
 	sum := mac.Sum(nil)
 
 	offset := sum[len(sum)-1] & 0x0f
-	value := (uint32(sum[offset])&0x7f)<<24 |
-		uint32(sum[offset+1])<<16 |
-		uint32(sum[offset+2])<<8 |
-		uint32(sum[offset+3])
+	value := (uint64(sum[offset])&0x7f)<<24 |
+		uint64(sum[offset+1])<<16 |
+		uint64(sum[offset+2])<<8 |
+		uint64(sum[offset+3])
 	return fmt.Sprintf("%06d", value%1_000_000)
 }

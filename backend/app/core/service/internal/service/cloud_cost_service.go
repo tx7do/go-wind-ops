@@ -56,7 +56,7 @@ func (s *CloudCostService) ListCloudCosts(ctx context.Context, req *opsV1.ListCl
 }
 
 // resolveAccount 按名称解析云账号(导入用);找不到返回错误。
-func (s *CloudCostService) resolveAccount(ctx context.Context, name string) (accountID uint32, accountName, providerName string, err error) {
+func (s *CloudCostService) resolveAccount(ctx context.Context, name string) (accountID uint64, accountName, providerName string, err error) {
 	if name == "" {
 		return 0, "", "", fmt.Errorf("缺少云账号名")
 	}
@@ -154,18 +154,18 @@ func (s *CloudCostService) ImportCloudCosts(ctx context.Context, req *opsV1.Impo
 
 	// 账号名 → 实体 缓存,免逐行查询
 	accountCache := map[string]struct {
-		id       uint32
+		id       uint64
 		name     string
 		provider string
 	}{}
-	resolve := func(name string) (id uint32, accName, provider string, err error) {
+	resolve := func(name string) (id uint64, accName, provider string, err error) {
 		if c, ok := accountCache[name]; ok {
 			return c.id, c.name, c.provider, nil
 		}
 		id, accName, provider, err = s.resolveAccount(ctx, name)
 		if err == nil {
 			accountCache[name] = struct {
-				id       uint32
+				id       uint64
 				name     string
 				provider string
 			}{id, accName, provider}

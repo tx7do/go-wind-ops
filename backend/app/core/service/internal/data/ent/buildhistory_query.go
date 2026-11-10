@@ -85,8 +85,8 @@ func (_q *BuildHistoryQuery) FirstX(ctx context.Context) *BuildHistory {
 
 // FirstID returns the first BuildHistory ID from the query.
 // Returns a *NotFoundError when no BuildHistory ID was found.
-func (_q *BuildHistoryQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *BuildHistoryQuery) FirstID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *BuildHistoryQuery) FirstID(ctx context.Context) (id uint32, err error)
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *BuildHistoryQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *BuildHistoryQuery) FirstIDX(ctx context.Context) uint64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *BuildHistoryQuery) OnlyX(ctx context.Context) *BuildHistory {
 // OnlyID is like Only, but returns the only BuildHistory ID in the query.
 // Returns a *NotSingularError when more than one BuildHistory ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *BuildHistoryQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *BuildHistoryQuery) OnlyID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *BuildHistoryQuery) OnlyID(ctx context.Context) (id uint32, err error) 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *BuildHistoryQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *BuildHistoryQuery) OnlyIDX(ctx context.Context) uint64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *BuildHistoryQuery) AllX(ctx context.Context) []*BuildHistory {
 }
 
 // IDs executes the query and returns a list of BuildHistory IDs.
-func (_q *BuildHistoryQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *BuildHistoryQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *BuildHistoryQuery) IDs(ctx context.Context) (ids []uint32, err error) 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *BuildHistoryQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *BuildHistoryQuery) IDsX(ctx context.Context) []uint64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *BuildHistoryQuery) Clone() *BuildHistoryQuery {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -289,7 +289,7 @@ func (_q *BuildHistoryQuery) GroupBy(field string, fields ...string) *BuildHisto
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.BuildHistory.Query().
@@ -381,7 +381,7 @@ func (_q *BuildHistoryQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *BuildHistoryQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(buildhistory.Table, buildhistory.Columns, sqlgraph.NewFieldSpec(buildhistory.FieldID, field.TypeUint64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

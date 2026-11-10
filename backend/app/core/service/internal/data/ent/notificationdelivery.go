@@ -17,9 +17,9 @@ type NotificationDelivery struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,9 +27,9 @@ type NotificationDelivery struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 关联告警(ops_alerts.id)
-	AlertID uint32 `json:"alert_id,omitempty"`
+	AlertID uint64 `json:"alert_id,omitempty"`
 	// 使用的渠道(ops_notification_channels.id)
-	ChannelID uint32 `json:"channel_id,omitempty"`
+	ChannelID uint64 `json:"channel_id,omitempty"`
 	// 渠道类型快照(WEBHOOK/EMAIL)
 	ChannelType string `json:"channel_type,omitempty"`
 	// 发送目标(URL/邮箱,脱敏存储)
@@ -76,13 +76,13 @@ func (_m *NotificationDelivery) assignValues(columns []string, values []any) err
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case notificationdelivery.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case notificationdelivery.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -109,13 +109,13 @@ func (_m *NotificationDelivery) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field alert_id", values[i])
 			} else if value.Valid {
-				_m.AlertID = uint32(value.Int64)
+				_m.AlertID = uint64(value.Int64)
 			}
 		case notificationdelivery.FieldChannelID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field channel_id", values[i])
 			} else if value.Valid {
-				_m.ChannelID = uint32(value.Int64)
+				_m.ChannelID = uint64(value.Int64)
 			}
 		case notificationdelivery.FieldChannelType:
 			if value, ok := values[i].(*sql.NullString); !ok {

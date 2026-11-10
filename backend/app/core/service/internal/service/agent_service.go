@@ -72,7 +72,7 @@ type AgentService struct {
 
 	// distAdvanceHook 分发批次推进钩子(回执/超时定案后触发;wiring 晚于
 	// 本服务构造,经 Setter 注入避免循环依赖)。
-	distAdvanceHook atomic.Value // func(context.Context, uint32)
+	distAdvanceHook atomic.Value // func(context.Context, uint64)
 
 	// waiters 同步指令的等待队列:request_id → 回执投递通道。
 	waiters sync.Map
@@ -119,12 +119,12 @@ func (s *AgentService) RegisterMqttBroker(b broker.Broker) {
 }
 
 // SetDistributionAdvanceHook 注入分批发布推进钩子(distributionID 维度)。
-func (s *AgentService) SetDistributionAdvanceHook(h func(context.Context, uint32)) {
+func (s *AgentService) SetDistributionAdvanceHook(h func(context.Context, uint64)) {
 	s.distAdvanceHook.Store(h)
 }
 
-func (s *AgentService) notifyDistAdvance(ctx context.Context, distributionID uint32) {
-	if h, ok := s.distAdvanceHook.Load().(func(context.Context, uint32)); ok && h != nil && distributionID > 0 {
+func (s *AgentService) notifyDistAdvance(ctx context.Context, distributionID uint64) {
+	if h, ok := s.distAdvanceHook.Load().(func(context.Context, uint64)); ok && h != nil && distributionID > 0 {
 		h(ctx, distributionID)
 	}
 }
@@ -323,9 +323,9 @@ func (s *AgentService) HandleHeartbeat(ctx context.Context, topicStr string, _ b
 // nodeIDFromHeartbeat 从缓存查节点 ID(避免每次心跳都查 DB)。
 var nodeIDCache sync.Map // agentId -> nodeID
 
-func nodeIDFromHeartbeat(s *AgentService, agentID string) uint32 {
+func nodeIDFromHeartbeat(s *AgentService, agentID string) uint64 {
 	if v, ok := nodeIDCache.Load(agentID); ok {
-		return v.(uint32)
+		return v.(uint64)
 	}
 	node, err := s.repo.GetByAgentID(context.Background(), agentID)
 	if err != nil || node == nil {
@@ -426,7 +426,7 @@ func (s *AgentService) applyBackupResult(ctx context.Context, res *signal.Comman
 }
 
 // trimBackupRetention 保留策略:删除保留份数之外的成功备份(MinIO 对象 + 记录)。
-func (s *AgentService) trimBackupRetention(ctx context.Context, taskID uint32) {
+func (s *AgentService) trimBackupRetention(ctx context.Context, taskID uint64) {
 	if s.backupTaskRepo == nil || s.ossClient == nil || s.ossClient.GetClient() == nil {
 		return
 	}
@@ -496,13 +496,13 @@ func (s *AgentService) applyProjectOperationResult(ctx context.Context, res *sig
 
 // PublishCommand 向指定 agent 下发指令:创建 PENDING 台账行 → MQTT 发布;
 // 发布失败即时定案 FAILED 并返回错误。返回幂等 request_id。
-func (s *AgentService) PublishCommand(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32) (string, error) {
+func (s *AgentService) PublishCommand(ctx context.Context, nodeID uint64, agentId string, action signal.CommandAction, payload any, operatorId uint64) (string, error) {
 	return s.publish(ctx, nodeID, agentId, action, payload, operatorId, nil)
 }
 
 // PublishCommandSync 下发指令并等待回执(查询类指令用)。超时未回执返回
 // 错误;迟到回执仍会由台账/分发对账链路消费。
-func (s *AgentService) PublishCommandSync(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32, timeout time.Duration) (*signal.CommandResult, error) {
+func (s *AgentService) PublishCommandSync(ctx context.Context, nodeID uint64, agentId string, action signal.CommandAction, payload any, operatorId uint64, timeout time.Duration) (*signal.CommandResult, error) {
 	waiter := make(chan *signal.CommandResult, 1)
 	if _, err := s.publish(ctx, nodeID, agentId, action, payload, operatorId, waiter); err != nil {
 		return nil, err
@@ -520,7 +520,7 @@ func (s *AgentService) PublishCommandSync(ctx context.Context, nodeID uint32, ag
 
 // publish 指令下发内部实现:创建 PENDING 台账行 → MQTT 发布;waiter 非空时
 // 注册同步等待。
-func (s *AgentService) publish(ctx context.Context, nodeID uint32, agentId string, action signal.CommandAction, payload any, operatorId uint32, waiter chan *signal.CommandResult) (string, error) {
+func (s *AgentService) publish(ctx context.Context, nodeID uint64, agentId string, action signal.CommandAction, payload any, operatorId uint64, waiter chan *signal.CommandResult) (string, error) {
 	b, ok := s.mqttBroker.Load().(broker.Broker)
 	if !ok || b == nil {
 		return "", fmt.Errorf("mqtt broker not ready")

@@ -71,14 +71,14 @@ func (_u *ProjectUpdate) ClearDeletedAt() *ProjectUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProjectUpdate) SetCreatedBy(v uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetCreatedBy(v uint64) *ProjectUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableCreatedBy(v *uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetNillableCreatedBy(v *uint64) *ProjectUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *ProjectUpdate) SetNillableCreatedBy(v *uint32) *ProjectUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProjectUpdate) AddCreatedBy(v int32) *ProjectUpdate {
+func (_u *ProjectUpdate) AddCreatedBy(v int64) *ProjectUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *ProjectUpdate) ClearCreatedBy() *ProjectUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProjectUpdate) SetUpdatedBy(v uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetUpdatedBy(v uint64) *ProjectUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableUpdatedBy(v *uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetNillableUpdatedBy(v *uint64) *ProjectUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *ProjectUpdate) SetNillableUpdatedBy(v *uint32) *ProjectUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProjectUpdate) AddUpdatedBy(v int32) *ProjectUpdate {
+func (_u *ProjectUpdate) AddUpdatedBy(v int64) *ProjectUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *ProjectUpdate) ClearUpdatedBy() *ProjectUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProjectUpdate) SetDeletedBy(v uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetDeletedBy(v uint64) *ProjectUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableDeletedBy(v *uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetNillableDeletedBy(v *uint64) *ProjectUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *ProjectUpdate) SetNillableDeletedBy(v *uint32) *ProjectUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProjectUpdate) AddDeletedBy(v int32) *ProjectUpdate {
+func (_u *ProjectUpdate) AddDeletedBy(v int64) *ProjectUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -152,14 +152,14 @@ func (_u *ProjectUpdate) ClearDeletedBy() *ProjectUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *ProjectUpdate) SetNodeID(v uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetNodeID(v uint64) *ProjectUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableNodeID(v *uint32) *ProjectUpdate {
+func (_u *ProjectUpdate) SetNillableNodeID(v *uint64) *ProjectUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -167,7 +167,7 @@ func (_u *ProjectUpdate) SetNillableNodeID(v *uint32) *ProjectUpdate {
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *ProjectUpdate) AddNodeID(v int32) *ProjectUpdate {
+func (_u *ProjectUpdate) AddNodeID(v int64) *ProjectUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -452,7 +452,7 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -461,7 +461,7 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(project.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(project.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(project.FieldCreatedAt, field.TypeTime)
@@ -479,37 +479,37 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(project.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(project.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(project.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(project.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(project.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(project.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(project.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(project.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(project.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(project.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(project.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(project.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(project.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
@@ -642,14 +642,14 @@ func (_u *ProjectUpdateOne) ClearDeletedAt() *ProjectUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProjectUpdateOne) SetCreatedBy(v uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetCreatedBy(v uint64) *ProjectUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableCreatedBy(v *uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetNillableCreatedBy(v *uint64) *ProjectUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -657,7 +657,7 @@ func (_u *ProjectUpdateOne) SetNillableCreatedBy(v *uint32) *ProjectUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProjectUpdateOne) AddCreatedBy(v int32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) AddCreatedBy(v int64) *ProjectUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -669,14 +669,14 @@ func (_u *ProjectUpdateOne) ClearCreatedBy() *ProjectUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProjectUpdateOne) SetUpdatedBy(v uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetUpdatedBy(v uint64) *ProjectUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableUpdatedBy(v *uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetNillableUpdatedBy(v *uint64) *ProjectUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -684,7 +684,7 @@ func (_u *ProjectUpdateOne) SetNillableUpdatedBy(v *uint32) *ProjectUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProjectUpdateOne) AddUpdatedBy(v int32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) AddUpdatedBy(v int64) *ProjectUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -696,14 +696,14 @@ func (_u *ProjectUpdateOne) ClearUpdatedBy() *ProjectUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProjectUpdateOne) SetDeletedBy(v uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetDeletedBy(v uint64) *ProjectUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableDeletedBy(v *uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetNillableDeletedBy(v *uint64) *ProjectUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -711,7 +711,7 @@ func (_u *ProjectUpdateOne) SetNillableDeletedBy(v *uint32) *ProjectUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProjectUpdateOne) AddDeletedBy(v int32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) AddDeletedBy(v int64) *ProjectUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -723,14 +723,14 @@ func (_u *ProjectUpdateOne) ClearDeletedBy() *ProjectUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *ProjectUpdateOne) SetNodeID(v uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetNodeID(v uint64) *ProjectUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableNodeID(v *uint32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) SetNillableNodeID(v *uint64) *ProjectUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -738,7 +738,7 @@ func (_u *ProjectUpdateOne) SetNillableNodeID(v *uint32) *ProjectUpdateOne {
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *ProjectUpdateOne) AddNodeID(v int32) *ProjectUpdateOne {
+func (_u *ProjectUpdateOne) AddNodeID(v int64) *ProjectUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -1036,7 +1036,7 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Project.id" for update`)}
@@ -1062,7 +1062,7 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(project.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(project.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(project.FieldCreatedAt, field.TypeTime)
@@ -1080,37 +1080,37 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(project.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(project.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(project.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(project.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(project.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(project.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(project.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(project.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(project.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(project.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(project.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(project.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(project.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(project.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(project.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(project.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)

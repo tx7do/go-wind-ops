@@ -37,7 +37,7 @@ service CertService {
 
 // 证书台账
 message Cert {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 证书ID
@@ -130,7 +130,7 @@ message ListCertResponse {
 }
 
 message GetCertRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 证书ID
@@ -144,7 +144,7 @@ message CreateCertRequest {
 }
 
 message UpdateCertRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 证书ID
@@ -163,14 +163,14 @@ message UpdateCertRequest {
 }
 
 message DeleteCertRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 证书ID
 }
 
 message ProbeCertRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 证书ID

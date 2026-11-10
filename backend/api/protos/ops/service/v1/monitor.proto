@@ -34,7 +34,7 @@ service MonitorService {
 
 // 监控规则
 message Monitor {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 规则ID
@@ -47,7 +47,7 @@ message Monitor {
     }
   ]; // 规则名
 
-  optional uint32 project_id = 3 [
+  optional uint64 project_id = 3 [
     json_name = "projectId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -93,7 +93,7 @@ message Monitor {
     }
   ]; // 规则目标类型(PROJECT/NODE_METRIC/PROCESS)
 
-  optional uint32 node_id = 10 [
+  optional uint64 node_id = 10 [
     json_name = "nodeId",
     (gnostic.openapi.v3.property) = {
       description: "被监控节点(节点指标/进程规则必填,项目状态规则为 0)"
@@ -159,7 +159,7 @@ message ListMonitorResponse {
 }
 
 message GetMonitorRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 规则ID
@@ -173,7 +173,7 @@ message CreateMonitorRequest {
 }
 
 message UpdateMonitorRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 规则ID
@@ -192,7 +192,7 @@ message UpdateMonitorRequest {
 }
 
 message DeleteMonitorRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 规则ID

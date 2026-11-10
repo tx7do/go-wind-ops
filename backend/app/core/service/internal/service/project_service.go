@@ -218,7 +218,7 @@ func (s *ProjectService) ClearProjectLog(ctx context.Context, req *opsV1.ClearPr
 }
 
 // resolveWithNode 取项目及其节点。
-func (s *ProjectService) resolveWithNode(ctx context.Context, projectID uint32) (*opsV1.Project, *opsV1.AgentNode, error) {
+func (s *ProjectService) resolveWithNode(ctx context.Context, projectID uint64) (*opsV1.Project, *opsV1.AgentNode, error) {
 	project, err := s.repo.Get(ctx, &opsV1.GetProjectRequest{Id: &projectID})
 	if err != nil {
 		return nil, nil, err
@@ -246,10 +246,10 @@ func operationName(op opsV1.ProjectOperation) string {
 	}
 }
 
-func (s *ProjectService) operatorID(ctx context.Context) uint32 {
+func (s *ProjectService) operatorID(ctx context.Context) uint64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint32(operator.GetUserId())
+	return uint64(operator.GetUserId())
 }

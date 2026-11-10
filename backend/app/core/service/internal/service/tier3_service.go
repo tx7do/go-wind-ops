@@ -88,7 +88,7 @@ func (s *InspectionService) RunInspection(ctx context.Context, req *opsV1.RunIns
 	return inspectionToDTO(mustInspection(s, ctx, row.ID)), nil
 }
 
-func mustInspection(s *InspectionService, ctx context.Context, id uint32) *ent.Inspection {
+func mustInspection(s *InspectionService, ctx context.Context, id uint64) *ent.Inspection {
 	row, _ := s.inspectionRepo.GetEntity(ctx, id)
 	return row
 }
@@ -117,12 +117,12 @@ type inspectionNode struct {
 
 type inspectionProject struct {
 	Name   string `json:"name"`
-	NodeID uint32 `json:"nodeId"`
+	NodeID uint64 `json:"nodeId"`
 	Status string `json:"status"`
 }
 
 // execute 聚合各域数据并终态化(失败置 FAILED)。
-func (s *InspectionService) execute(ctx context.Context, rowID uint32) {
+func (s *InspectionService) execute(ctx context.Context, rowID uint64) {
 	defer func() {
 		if r := recover(); r != nil {
 			_ = s.inspectionRepo.Finish(ctx, rowID, "FAILED", "", 0, 0, 0, 0, 0, 0, fmt.Sprintf("panic: %v", r))
@@ -376,7 +376,7 @@ func (s *LogSnapshotService) SearchLogSnapshots(ctx context.Context, req *opsV1.
 	for _, row := range rows {
 		hit := &opsV1.SearchLogSnapshotResponse_SearchHit{
 			SnapshotId:  &row.ID,
-			ProjectId:   uint32Ptr(row.ProjectID),
+			ProjectId:   uint64Ptr(row.ProjectID),
 			ProjectName: &row.ProjectName,
 			CapturedAt:  timestamppbOfPtr(row.CreatedAt),
 			Excerpt:     strPtr(logExcerpt(row.Content, keyword)),
@@ -434,8 +434,8 @@ func logSnapshotToDTO(row *ent.LogSnapshot) *opsV1.LogSnapshot {
 	}
 	dto := &opsV1.LogSnapshot{
 		Id:          &row.ID,
-		ProjectId:   uint32Ptr(row.ProjectID),
-		NodeId:      uint32Ptr(row.NodeID),
+		ProjectId:   uint64Ptr(row.ProjectID),
+		NodeId:      uint64Ptr(row.NodeID),
 		ProjectName: &row.ProjectName,
 		SizeBytes:   &row.SizeBytes,
 		Content:     &row.Content,
@@ -674,7 +674,7 @@ const configDriftTimeout = 10 * time.Second
 
 // renderTemplate 下发前占位符替换:{{env}}/{{node.*}}/{{project.*}}/{{date}}/{{datetime}};
 // 项目类占位符在未关联项目时替换为空串。
-func (s *ConfigService) renderTemplate(ctx context.Context, tpl *ent.ConfigTemplate, projectID uint32, node *opsV1.AgentNode) string {
+func (s *ConfigService) renderTemplate(ctx context.Context, tpl *ent.ConfigTemplate, projectID uint64, node *opsV1.AgentNode) string {
 	content := tpl.Content
 	nodeID := node.GetId()
 	repl := map[string]string{
@@ -727,7 +727,7 @@ func configDistributionToDTO(row *ent.ConfigDistribution) *opsV1.ConfigDistribut
 		TemplateId:  &row.TemplateID,
 		TemplateName: &row.TemplateName,
 		NodeId:      &row.NodeID,
-		ProjectId:   uint32Ptr(row.ProjectID),
+		ProjectId:   uint64Ptr(row.ProjectID),
 		TargetPath:  &row.TargetPath,
 		Status:      strPtr(string(row.Status)),
 		Error:       row.Error,

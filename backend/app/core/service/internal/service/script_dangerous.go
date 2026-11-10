@@ -75,7 +75,7 @@ func findDangerousPatterns(content string) []string {
 // guardDangerousContent 统一确认门槛:命中危险模式且未确认时返回带模式
 // 清单的 400 错误(文案前缀见 DangerousCommandMarker);已确认则打审计日志。
 // 返回 true 表示已放行(无命中或已确认)。
-func guardDangerousContent(log *log.Helper, content string, confirmed bool, operatorID uint32) (bool, []string) {
+func guardDangerousContent(log *log.Helper, content string, confirmed bool, operatorID uint64) (bool, []string) {
 	patterns := findDangerousPatterns(content)
 	if len(patterns) == 0 {
 		return true, nil

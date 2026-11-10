@@ -85,11 +85,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
-	NodeIDValidator func(uint32) error
+	NodeIDValidator func(uint64) error
 	// SourceDirValidator is a validator for the "source_dir" field. It is called by the builders before save.
 	SourceDirValidator func(string) error
 	// DefaultCron holds the default value on creation for the "cron" field.
@@ -99,7 +99,7 @@ var (
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // OrderOption defines the ordering options for the BackupTask queries.

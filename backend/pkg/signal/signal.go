@@ -108,7 +108,7 @@ type CommandEnvelope struct {
 	Action     CommandAction   `json:"action"`
 	Payload    json.RawMessage `json:"payload,omitempty"`
 	IssuedAt   time.Time       `json:"issued_at,omitempty"`
-	OperatorId uint32          `json:"operator_id,omitempty"` // 触发指令的用户(审计用)
+	OperatorId uint64          `json:"operator_id,omitempty"` // 触发指令的用户(审计用)
 	Signature  string          `json:"signature,omitempty"`   // HMAC-SHA256(未配置 COMMAND_SIGN_KEY 时为空)
 }
 
@@ -141,7 +141,7 @@ type PingResult struct {
 // ProjectOperationPayload 项目操作的载荷:core 从项目记录组装,agent 在
 // Dir 内执行对应命令。Dir 必须落在 agent 授权目录内,agent 执行前二次校验。
 type ProjectOperationPayload struct {
-	ProjectId     uint32 `json:"project_id"`
+	ProjectId     uint64 `json:"project_id"`
 	Name          string `json:"name"`
 	Dir           string `json:"dir"`
 	StartCommand  string `json:"start_command,omitempty"`
@@ -152,7 +152,7 @@ type ProjectOperationPayload struct {
 // ProjectOperationResult 项目操作的回执数据。Status 为 agent 判定的
 // RUNNING/STOPPED,core 直接回填项目表;Output 截断到 64KB。
 type ProjectOperationResult struct {
-	ProjectId uint32 `json:"project_id"`
+	ProjectId uint64 `json:"project_id"`
 	Operation string `json:"operation"`
 	Pid       uint64 `json:"pid,omitempty"`
 	Alive     bool   `json:"alive,omitempty"`
@@ -176,7 +176,7 @@ const (
 
 // ScriptExecPayload 脚本执行载荷:core 从脚本记录组装。
 type ScriptExecPayload struct {
-	ScriptId   uint32 `json:"script_id"`
+	ScriptId   uint64 `json:"script_id"`
 	Name       string `json:"name"`
 	Content    string `json:"content"`
 	TimeoutSec uint32 `json:"timeout_sec,omitempty"`
@@ -184,7 +184,7 @@ type ScriptExecPayload struct {
 
 // ScriptExecResult 脚本执行回执。
 type ScriptExecResult struct {
-	ScriptId uint32 `json:"script_id"`
+	ScriptId uint64 `json:"script_id"`
 	ExitCode int    `json:"exit_code"`
 	Output   string `json:"output"`
 	Duration string `json:"duration,omitempty"`
@@ -203,8 +203,8 @@ const (
 
 // DistributionPayload 分发载荷:core 组装(产物走预签名 URL,agent 直接下载)。
 type DistributionPayload struct {
-	DistributionId uint32 `json:"distribution_id"`
-	ProjectId      uint32 `json:"project_id"`
+	DistributionId uint64 `json:"distribution_id"`
+	ProjectId      uint64 `json:"project_id"`
 	ProjectName    string `json:"project_name"`
 	ProjectDir     string `json:"project_dir"`
 	ClearOld       bool   `json:"clear_old,omitempty"`
@@ -219,7 +219,7 @@ type DistributionPayload struct {
 
 // DistributionResult 分发回执。
 type DistributionResult struct {
-	DistributionId uint32 `json:"distribution_id"`
+	DistributionId uint64 `json:"distribution_id"`
 	DeployedFiles  int    `json:"deployed_files"`
 	Output         string `json:"output,omitempty"`
 }
@@ -230,7 +230,7 @@ type DistributionResult struct {
 
 // ProjectLogPayload 日志查询载荷(core 从项目记录组装)。
 type ProjectLogPayload struct {
-	ProjectId uint32 `json:"project_id"`
+	ProjectId uint64 `json:"project_id"`
 	Dir       string `json:"dir"`
 	MaxBytes  int64  `json:"max_bytes,omitempty"` // 读取尾部字节数,默认 64KB,上限 256KB
 	Offset    int64  `json:"offset,omitempty"`    // 增量拉取起始偏移(>0 时从该偏移读到文件尾)
@@ -240,7 +240,7 @@ type ProjectLogPayload struct {
 // ContentB64 为原始字节 base64(Windows GBK 输出保真,消费侧自行解码);
 // Offset 等于读后文件大小,作为下一轮增量拉取起点。
 type ProjectLogResult struct {
-	ProjectId  uint32 `json:"project_id"`
+	ProjectId  uint64 `json:"project_id"`
 	Size       int64  `json:"size"`      // 日志文件总大小
 	Truncated  bool   `json:"truncated"` // 尾部模式=只返回了尾部;增量模式=偏移落后过多已重置为尾部
 	Content    string `json:"content"`   // 尾部模式的内容(旧消费方兼容;GBK 场景有损)
@@ -374,16 +374,16 @@ type AgentUpgradeResult struct {
 // BackupRunPayload backup_run 指令载荷:agent 打包 SourceDir 为 zip 后
 // 流式上传到 UploadURL(预签名 PUT),回执带大小/校验和/文件数。
 type BackupRunPayload struct {
-	TaskID    uint32 `json:"task_id"`
-	RecordID  uint32 `json:"record_id,omitempty"`
+	TaskID    uint64 `json:"task_id"`
+	RecordID  uint64 `json:"record_id,omitempty"`
 	SourceDir string `json:"source_dir"`
 	UploadURL string `json:"upload_url"`
 }
 
 // BackupRunResult backup_run 回执。
 type BackupRunResult struct {
-	TaskID    uint32 `json:"task_id"`
-	RecordID  uint32 `json:"record_id,omitempty"`
+	TaskID    uint64 `json:"task_id"`
+	RecordID  uint64 `json:"record_id,omitempty"`
 	SizeBytes int64  `json:"size_bytes"`
 	SHA256    string `json:"sha256"`
 	FileCount int    `json:"file_count"`
@@ -397,8 +397,8 @@ type BackupRunResult struct {
 // DockerDeployPayload docker_deploy 指令载荷:镜像 tag + 容器参数。
 // Image 支持 {buildNo} 占位符,由 core 侧替换为实际构建号。
 type DockerDeployPayload struct {
-	DistributionId uint32   `json:"distribution_id"`
-	ProjectId      uint32   `json:"project_id,omitempty"`
+	DistributionId uint64   `json:"distribution_id"`
+	ProjectId      uint64   `json:"project_id,omitempty"`
 	Image          string   `json:"image"`
 	ContainerName  string   `json:"container_name"`
 	Ports          []string `json:"ports,omitempty"`   // host:container

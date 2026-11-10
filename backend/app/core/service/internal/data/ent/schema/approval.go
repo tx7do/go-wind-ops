@@ -35,7 +35,7 @@ func (Approval) Fields() []ent.Field {
 			Comment("操作类型(distribute/script_exec)").
 			NotEmpty(),
 
-		field.Uint32("operation_ref_id").
+		field.Uint64("operation_ref_id").
 			Comment("操作关联实体 ID(分发配置 ID 或脚本 ID)").
 			Positive(),
 
@@ -52,13 +52,13 @@ func (Approval) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("requester_id").
+		field.Uint64("requester_id").
 			Comment("发起人").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint32("approver_id").
+		field.Uint64("approver_id").
 			Comment("审批人").
 			Default(0).
 			Optional().
@@ -99,8 +99,8 @@ func (Approval) Fields() []ent.Field {
 // Mixin of the Approval.
 func (Approval) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

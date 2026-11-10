@@ -40,7 +40,7 @@ func (Monitor) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint32("project_id").
+		field.Uint64("project_id").
 			Comment("被监控项目(ops_projects.id;节点指标规则为 0)").
 			Default(0).
 			Optional(),
@@ -54,7 +54,7 @@ func (Monitor) Fields() []ent.Field {
 			).
 			Default("PROJECT"),
 
-		field.Uint32("node_id").
+		field.Uint64("node_id").
 			Comment("被监控节点(ops_agent_nodes.id;项目状态规则为 0)").
 			Default(0).
 			Optional(),
@@ -125,10 +125,10 @@ func (Monitor) Fields() []ent.Field {
 // Mixin of the Monitor.
 func (Monitor) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

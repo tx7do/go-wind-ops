@@ -23,13 +23,13 @@ type DistributionCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *DistributionCreate) SetTenantID(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetTenantID(v uint64) *DistributionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *DistributionCreate) SetNillableTenantID(v *uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetNillableTenantID(v *uint64) *DistributionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *DistributionCreate) SetNillableDeletedAt(v *time.Time) *DistributionCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *DistributionCreate) SetCreatedBy(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetCreatedBy(v uint64) *DistributionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *DistributionCreate) SetNillableCreatedBy(v *uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetNillableCreatedBy(v *uint64) *DistributionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *DistributionCreate) SetNillableCreatedBy(v *uint32) *DistributionCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *DistributionCreate) SetUpdatedBy(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetUpdatedBy(v uint64) *DistributionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *DistributionCreate) SetNillableUpdatedBy(v *uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetNillableUpdatedBy(v *uint64) *DistributionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *DistributionCreate) SetNillableUpdatedBy(v *uint32) *DistributionCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *DistributionCreate) SetDeletedBy(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetDeletedBy(v uint64) *DistributionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *DistributionCreate) SetNillableDeletedBy(v *uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetNillableDeletedBy(v *uint64) *DistributionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -127,13 +127,13 @@ func (_c *DistributionCreate) SetName(v string) *DistributionCreate {
 }
 
 // SetBuildID sets the "build_id" field.
-func (_c *DistributionCreate) SetBuildID(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetBuildID(v uint64) *DistributionCreate {
 	_c.mutation.SetBuildID(v)
 	return _c
 }
 
 // SetProjectIds sets the "project_ids" field.
-func (_c *DistributionCreate) SetProjectIds(v []uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetProjectIds(v []uint64) *DistributionCreate {
 	_c.mutation.SetProjectIds(v)
 	return _c
 }
@@ -289,7 +289,7 @@ func (_c *DistributionCreate) SetLabels(v []string) *DistributionCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *DistributionCreate) SetID(v uint32) *DistributionCreate {
+func (_c *DistributionCreate) SetID(v uint64) *DistributionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -413,7 +413,7 @@ func (_c *DistributionCreate) sqlSave(ctx context.Context) (*Distribution, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -423,7 +423,7 @@ func (_c *DistributionCreate) sqlSave(ctx context.Context) (*Distribution, error
 func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Distribution{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(distribution.Table, sqlgraph.NewFieldSpec(distribution.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(distribution.Table, sqlgraph.NewFieldSpec(distribution.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -431,7 +431,7 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(distribution.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(distribution.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -447,15 +447,15 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(distribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(distribution.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(distribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(distribution.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(distribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(distribution.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -463,7 +463,7 @@ func (_c *DistributionCreate) createSpec() (*Distribution, *sqlgraph.CreateSpec)
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.BuildID(); ok {
-		_spec.SetField(distribution.FieldBuildID, field.TypeUint32, value)
+		_spec.SetField(distribution.FieldBuildID, field.TypeUint64, value)
 		_node.BuildID = value
 	}
 	if value, ok := _c.mutation.ProjectIds(); ok {
@@ -611,7 +611,7 @@ func (u *DistributionUpsert) ClearDeletedAt() *DistributionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *DistributionUpsert) SetCreatedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) SetCreatedBy(v uint64) *DistributionUpsert {
 	u.Set(distribution.FieldCreatedBy, v)
 	return u
 }
@@ -623,7 +623,7 @@ func (u *DistributionUpsert) UpdateCreatedBy() *DistributionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *DistributionUpsert) AddCreatedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) AddCreatedBy(v uint64) *DistributionUpsert {
 	u.Add(distribution.FieldCreatedBy, v)
 	return u
 }
@@ -635,7 +635,7 @@ func (u *DistributionUpsert) ClearCreatedBy() *DistributionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *DistributionUpsert) SetUpdatedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) SetUpdatedBy(v uint64) *DistributionUpsert {
 	u.Set(distribution.FieldUpdatedBy, v)
 	return u
 }
@@ -647,7 +647,7 @@ func (u *DistributionUpsert) UpdateUpdatedBy() *DistributionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *DistributionUpsert) AddUpdatedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) AddUpdatedBy(v uint64) *DistributionUpsert {
 	u.Add(distribution.FieldUpdatedBy, v)
 	return u
 }
@@ -659,7 +659,7 @@ func (u *DistributionUpsert) ClearUpdatedBy() *DistributionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *DistributionUpsert) SetDeletedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) SetDeletedBy(v uint64) *DistributionUpsert {
 	u.Set(distribution.FieldDeletedBy, v)
 	return u
 }
@@ -671,7 +671,7 @@ func (u *DistributionUpsert) UpdateDeletedBy() *DistributionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *DistributionUpsert) AddDeletedBy(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) AddDeletedBy(v uint64) *DistributionUpsert {
 	u.Add(distribution.FieldDeletedBy, v)
 	return u
 }
@@ -695,7 +695,7 @@ func (u *DistributionUpsert) UpdateName() *DistributionUpsert {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *DistributionUpsert) SetBuildID(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) SetBuildID(v uint64) *DistributionUpsert {
 	u.Set(distribution.FieldBuildID, v)
 	return u
 }
@@ -707,13 +707,13 @@ func (u *DistributionUpsert) UpdateBuildID() *DistributionUpsert {
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *DistributionUpsert) AddBuildID(v uint32) *DistributionUpsert {
+func (u *DistributionUpsert) AddBuildID(v uint64) *DistributionUpsert {
 	u.Add(distribution.FieldBuildID, v)
 	return u
 }
 
 // SetProjectIds sets the "project_ids" field.
-func (u *DistributionUpsert) SetProjectIds(v []uint32) *DistributionUpsert {
+func (u *DistributionUpsert) SetProjectIds(v []uint64) *DistributionUpsert {
 	u.Set(distribution.FieldProjectIds, v)
 	return u
 }
@@ -1055,14 +1055,14 @@ func (u *DistributionUpsertOne) ClearDeletedAt() *DistributionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *DistributionUpsertOne) SetCreatedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) SetCreatedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *DistributionUpsertOne) AddCreatedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) AddCreatedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1083,14 +1083,14 @@ func (u *DistributionUpsertOne) ClearCreatedBy() *DistributionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *DistributionUpsertOne) SetUpdatedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) SetUpdatedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *DistributionUpsertOne) AddUpdatedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) AddUpdatedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1111,14 +1111,14 @@ func (u *DistributionUpsertOne) ClearUpdatedBy() *DistributionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *DistributionUpsertOne) SetDeletedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) SetDeletedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *DistributionUpsertOne) AddDeletedBy(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) AddDeletedBy(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1153,14 +1153,14 @@ func (u *DistributionUpsertOne) UpdateName() *DistributionUpsertOne {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *DistributionUpsertOne) SetBuildID(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) SetBuildID(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetBuildID(v)
 	})
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *DistributionUpsertOne) AddBuildID(v uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) AddBuildID(v uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddBuildID(v)
 	})
@@ -1174,7 +1174,7 @@ func (u *DistributionUpsertOne) UpdateBuildID() *DistributionUpsertOne {
 }
 
 // SetProjectIds sets the "project_ids" field.
-func (u *DistributionUpsertOne) SetProjectIds(v []uint32) *DistributionUpsertOne {
+func (u *DistributionUpsertOne) SetProjectIds(v []uint64) *DistributionUpsertOne {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetProjectIds(v)
 	})
@@ -1476,7 +1476,7 @@ func (u *DistributionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *DistributionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *DistributionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1485,7 +1485,7 @@ func (u *DistributionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *DistributionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *DistributionUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1542,7 +1542,7 @@ func (_c *DistributionCreateBulk) Save(ctx context.Context) ([]*Distribution, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1723,14 +1723,14 @@ func (u *DistributionUpsertBulk) ClearDeletedAt() *DistributionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *DistributionUpsertBulk) SetCreatedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) SetCreatedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *DistributionUpsertBulk) AddCreatedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) AddCreatedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1751,14 +1751,14 @@ func (u *DistributionUpsertBulk) ClearCreatedBy() *DistributionUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *DistributionUpsertBulk) SetUpdatedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) SetUpdatedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *DistributionUpsertBulk) AddUpdatedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) AddUpdatedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1779,14 +1779,14 @@ func (u *DistributionUpsertBulk) ClearUpdatedBy() *DistributionUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *DistributionUpsertBulk) SetDeletedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) SetDeletedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *DistributionUpsertBulk) AddDeletedBy(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) AddDeletedBy(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1821,14 +1821,14 @@ func (u *DistributionUpsertBulk) UpdateName() *DistributionUpsertBulk {
 }
 
 // SetBuildID sets the "build_id" field.
-func (u *DistributionUpsertBulk) SetBuildID(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) SetBuildID(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetBuildID(v)
 	})
 }
 
 // AddBuildID adds v to the "build_id" field.
-func (u *DistributionUpsertBulk) AddBuildID(v uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) AddBuildID(v uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.AddBuildID(v)
 	})
@@ -1842,7 +1842,7 @@ func (u *DistributionUpsertBulk) UpdateBuildID() *DistributionUpsertBulk {
 }
 
 // SetProjectIds sets the "project_ids" field.
-func (u *DistributionUpsertBulk) SetProjectIds(v []uint32) *DistributionUpsertBulk {
+func (u *DistributionUpsertBulk) SetProjectIds(v []uint64) *DistributionUpsertBulk {
 	return u.Update(func(s *DistributionUpsert) {
 		s.SetProjectIds(v)
 	})

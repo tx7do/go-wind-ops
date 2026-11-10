@@ -23,13 +23,13 @@ type ConfigTemplateCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ConfigTemplateCreate) SetTenantID(v uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetTenantID(v uint64) *ConfigTemplateCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ConfigTemplateCreate) SetNillableTenantID(v *uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetNillableTenantID(v *uint64) *ConfigTemplateCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ConfigTemplateCreate) SetNillableDeletedAt(v *time.Time) *ConfigTempla
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ConfigTemplateCreate) SetCreatedBy(v uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetCreatedBy(v uint64) *ConfigTemplateCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ConfigTemplateCreate) SetNillableCreatedBy(v *uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetNillableCreatedBy(v *uint64) *ConfigTemplateCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ConfigTemplateCreate) SetNillableCreatedBy(v *uint32) *ConfigTemplateC
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ConfigTemplateCreate) SetUpdatedBy(v uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetUpdatedBy(v uint64) *ConfigTemplateCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ConfigTemplateCreate) SetNillableUpdatedBy(v *uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetNillableUpdatedBy(v *uint64) *ConfigTemplateCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ConfigTemplateCreate) SetNillableUpdatedBy(v *uint32) *ConfigTemplateC
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ConfigTemplateCreate) SetDeletedBy(v uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetDeletedBy(v uint64) *ConfigTemplateCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ConfigTemplateCreate) SetNillableDeletedBy(v *uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetNillableDeletedBy(v *uint64) *ConfigTemplateCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -175,7 +175,7 @@ func (_c *ConfigTemplateCreate) SetNillableDescription(v *string) *ConfigTemplat
 }
 
 // SetID sets the "id" field.
-func (_c *ConfigTemplateCreate) SetID(v uint32) *ConfigTemplateCreate {
+func (_c *ConfigTemplateCreate) SetID(v uint64) *ConfigTemplateCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -270,7 +270,7 @@ func (_c *ConfigTemplateCreate) sqlSave(ctx context.Context) (*ConfigTemplate, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -280,7 +280,7 @@ func (_c *ConfigTemplateCreate) sqlSave(ctx context.Context) (*ConfigTemplate, e
 func (_c *ConfigTemplateCreate) createSpec() (*ConfigTemplate, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ConfigTemplate{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(configtemplate.Table, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(configtemplate.Table, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -288,7 +288,7 @@ func (_c *ConfigTemplateCreate) createSpec() (*ConfigTemplate, *sqlgraph.CreateS
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(configtemplate.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -304,15 +304,15 @@ func (_c *ConfigTemplateCreate) createSpec() (*ConfigTemplate, *sqlgraph.CreateS
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -424,7 +424,7 @@ func (u *ConfigTemplateUpsert) ClearDeletedAt() *ConfigTemplateUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ConfigTemplateUpsert) SetCreatedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) SetCreatedBy(v uint64) *ConfigTemplateUpsert {
 	u.Set(configtemplate.FieldCreatedBy, v)
 	return u
 }
@@ -436,7 +436,7 @@ func (u *ConfigTemplateUpsert) UpdateCreatedBy() *ConfigTemplateUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ConfigTemplateUpsert) AddCreatedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) AddCreatedBy(v uint64) *ConfigTemplateUpsert {
 	u.Add(configtemplate.FieldCreatedBy, v)
 	return u
 }
@@ -448,7 +448,7 @@ func (u *ConfigTemplateUpsert) ClearCreatedBy() *ConfigTemplateUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ConfigTemplateUpsert) SetUpdatedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) SetUpdatedBy(v uint64) *ConfigTemplateUpsert {
 	u.Set(configtemplate.FieldUpdatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *ConfigTemplateUpsert) UpdateUpdatedBy() *ConfigTemplateUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ConfigTemplateUpsert) AddUpdatedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) AddUpdatedBy(v uint64) *ConfigTemplateUpsert {
 	u.Add(configtemplate.FieldUpdatedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *ConfigTemplateUpsert) ClearUpdatedBy() *ConfigTemplateUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ConfigTemplateUpsert) SetDeletedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) SetDeletedBy(v uint64) *ConfigTemplateUpsert {
 	u.Set(configtemplate.FieldDeletedBy, v)
 	return u
 }
@@ -484,7 +484,7 @@ func (u *ConfigTemplateUpsert) UpdateDeletedBy() *ConfigTemplateUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ConfigTemplateUpsert) AddDeletedBy(v uint32) *ConfigTemplateUpsert {
+func (u *ConfigTemplateUpsert) AddDeletedBy(v uint64) *ConfigTemplateUpsert {
 	u.Add(configtemplate.FieldDeletedBy, v)
 	return u
 }
@@ -664,14 +664,14 @@ func (u *ConfigTemplateUpsertOne) ClearDeletedAt() *ConfigTemplateUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ConfigTemplateUpsertOne) SetCreatedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) SetCreatedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ConfigTemplateUpsertOne) AddCreatedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) AddCreatedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -692,14 +692,14 @@ func (u *ConfigTemplateUpsertOne) ClearCreatedBy() *ConfigTemplateUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ConfigTemplateUpsertOne) SetUpdatedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) SetUpdatedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ConfigTemplateUpsertOne) AddUpdatedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) AddUpdatedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -720,14 +720,14 @@ func (u *ConfigTemplateUpsertOne) ClearUpdatedBy() *ConfigTemplateUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ConfigTemplateUpsertOne) SetDeletedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) SetDeletedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ConfigTemplateUpsertOne) AddDeletedBy(v uint32) *ConfigTemplateUpsertOne {
+func (u *ConfigTemplateUpsertOne) AddDeletedBy(v uint64) *ConfigTemplateUpsertOne {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -847,7 +847,7 @@ func (u *ConfigTemplateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ConfigTemplateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ConfigTemplateUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -856,7 +856,7 @@ func (u *ConfigTemplateUpsertOne) ID(ctx context.Context) (id uint32, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ConfigTemplateUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ConfigTemplateUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -913,7 +913,7 @@ func (_c *ConfigTemplateCreateBulk) Save(ctx context.Context) ([]*ConfigTemplate
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1094,14 +1094,14 @@ func (u *ConfigTemplateUpsertBulk) ClearDeletedAt() *ConfigTemplateUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ConfigTemplateUpsertBulk) SetCreatedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) SetCreatedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ConfigTemplateUpsertBulk) AddCreatedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) AddCreatedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1122,14 +1122,14 @@ func (u *ConfigTemplateUpsertBulk) ClearCreatedBy() *ConfigTemplateUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ConfigTemplateUpsertBulk) SetUpdatedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) SetUpdatedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ConfigTemplateUpsertBulk) AddUpdatedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) AddUpdatedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1150,14 +1150,14 @@ func (u *ConfigTemplateUpsertBulk) ClearUpdatedBy() *ConfigTemplateUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ConfigTemplateUpsertBulk) SetDeletedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) SetDeletedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ConfigTemplateUpsertBulk) AddDeletedBy(v uint32) *ConfigTemplateUpsertBulk {
+func (u *ConfigTemplateUpsertBulk) AddDeletedBy(v uint64) *ConfigTemplateUpsertBulk {
 	return u.Update(func(s *ConfigTemplateUpsert) {
 		s.AddDeletedBy(v)
 	})

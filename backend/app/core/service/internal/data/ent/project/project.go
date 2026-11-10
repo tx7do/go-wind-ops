@@ -99,9 +99,9 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// NodeIDValidator is a validator for the "node_id" field. It is called by the builders before save.
-	NodeIDValidator func(uint32) error
+	NodeIDValidator func(uint64) error
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultEnv holds the default value on creation for the "env" field.
@@ -111,7 +111,7 @@ var (
 	// DefaultLastPid holds the default value on creation for the "last_pid" field.
 	DefaultLastPid uint64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // LastStatus defines the type for the "last_status" enum field.

@@ -228,7 +228,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	buildService := service.NewBuildService(ctx, buildRepo, repositoryRepo, buildHistoryRepo, minIOClient)
 	buildHistoryService := service.NewBuildHistoryService(ctx, buildHistoryRepo, buildRepo, repositoryRepo, minIOClient)
 	distributionService := service.NewDistributionService(ctx, distributionRepo, distributionRecordRepo, buildRepo, buildHistoryRepo, projectRepo, agentNodeRepo, minIOClient, agentService)
-	agentService.SetDistributionAdvanceHook(func(ctx context.Context, distID uint32) {
+	agentService.SetDistributionAdvanceHook(func(ctx context.Context, distID uint64) {
 		distributionService.AdvanceBatches(ctx, distID)
 		eventhook.Emit("distribution.advanced", map[string]any{"distributionId": distID})
 	})

@@ -103,7 +103,7 @@ func (r *BackupRecordRepo) Get(ctx context.Context, req *opsV1.GetBackupRecordDo
 }
 
 // Create 创建 PENDING 备份记录(指令下发成功后调用)。
-func (r *BackupRecordRepo) Create(ctx context.Context, taskID, nodeID uint32, bucket, objectKey, requestID string, operatorID uint32) (*ent.BackupRecord, error) {
+func (r *BackupRecordRepo) Create(ctx context.Context, taskID, nodeID uint64, bucket, objectKey, requestID string, operatorID uint64) (*ent.BackupRecord, error) {
 	builder := r.entClient.Client().BackupRecord.
 		Create().
 		SetTaskID(taskID).
@@ -166,7 +166,7 @@ func (r *BackupRecordRepo) FinalizeStalePending(ctx context.Context, before time
 
 // ListSuccessHoldersByTask 取某任务按时间倒序的第 keep 份之后的成功记录
 // (保留策略清扫用)。
-func (r *BackupRecordRepo) ListSuccessHoldersByTask(ctx context.Context, taskID uint32, keep int) ([]*ent.BackupRecord, error) {
+func (r *BackupRecordRepo) ListSuccessHoldersByTask(ctx context.Context, taskID uint64, keep int) ([]*ent.BackupRecord, error) {
 	query := r.entClient.Client().BackupRecord.
 		Query().
 		Where(
@@ -181,7 +181,7 @@ func (r *BackupRecordRepo) ListSuccessHoldersByTask(ctx context.Context, taskID 
 }
 
 // DeleteEntity 删除单条记录(保留策略清扫用)。
-func (r *BackupRecordRepo) DeleteEntity(ctx context.Context, id uint32) error {
+func (r *BackupRecordRepo) DeleteEntity(ctx context.Context, id uint64) error {
 	return r.entClient.Client().BackupRecord.
 		DeleteOneID(id).
 		Exec(ctx)

@@ -38,12 +38,12 @@ message CloudInstance {
     UNMATCHED = 2;  // 未匹配(账号里有机器但没装 agent)
   }
 
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
-  optional uint32 cloud_account_id = 2 [json_name = "cloudAccountId"]; // 云账号ID
+  optional uint64 cloud_account_id = 2 [json_name = "cloudAccountId"]; // 云账号ID
 
   optional string cloud_account_name = 3 [json_name = "cloudAccountName"]; // 云账号名(快照)
 
@@ -69,7 +69,7 @@ message CloudInstance {
 
   optional bool matched = 14 [json_name = "matched"]; // 是否匹配到节点
 
-  optional uint32 agent_node_id = 15 [json_name = "agentNodeId"]; // 匹配节点ID
+  optional uint64 agent_node_id = 15 [json_name = "agentNodeId"]; // 匹配节点ID
 
   optional string agent_node_name = 16 [json_name = "agentNodeName"]; // 匹配节点名(快照)
 
@@ -89,7 +89,7 @@ message ListCloudInstancesRequest {
   uint32 page = 1 [json_name = "page"]; // 页码(1 起)
   uint32 page_size = 2 [json_name = "pageSize"]; // 页大小
 
-  optional uint32 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
+  optional uint64 cloud_account_id = 10 [json_name = "cloudAccountId"]; // 按云账号
   optional string provider = 11 [json_name = "provider"]; // 按厂商(ALIYUN/...)
   optional string region = 12 [json_name = "region"]; // 按地域
   optional bool matched = 13 [json_name = "matched"]; // 按匹配状态(空=全部)
@@ -103,14 +103,14 @@ message ListCloudInstancesResponse {
 
 message SyncCloudAccountInstancesRequest {
   // 非 optional(无 oneof):路径变量与 body 双写时可被覆盖
-  uint32 cloud_account_id = 1 [
+  uint64 cloud_account_id = 1 [
     json_name = "cloudAccountId",
     (google.api.field_behavior) = REQUIRED
   ]; // 云账号ID
 }
 
 message SyncCloudAccountInstancesResponse {
-  uint32 cloud_account_id = 1 [json_name = "cloudAccountId"]; // 云账号ID
+  uint64 cloud_account_id = 1 [json_name = "cloudAccountId"]; // 云账号ID
 
   uint32 total = 2 [json_name = "total"]; // 同步实例数
 

@@ -32,7 +32,7 @@ func (BuildHistory) Annotations() []schema.Annotation {
 // Fields of the BuildHistory.
 func (BuildHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("build_id").
+		field.Uint64("build_id").
 			Comment("构建配置(ops_builds.id)").
 			Positive(),
 
@@ -93,7 +93,7 @@ func (BuildHistory) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("operator_id").
+		field.Uint64("operator_id").
 			Comment("触发人").
 			Default(0).
 			Optional().
@@ -110,8 +110,8 @@ func (BuildHistory) Fields() []ent.Field {
 // Mixin of the BuildHistory.
 func (BuildHistory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

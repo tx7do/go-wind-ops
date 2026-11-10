@@ -18,9 +18,9 @@ type ScriptBatch struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -28,17 +28,17 @@ type ScriptBatch struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *uint64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *uint64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *uint64 `json:"deleted_by,omitempty"`
 	// 脚本(ops_scripts.id);0=即席命令批量(无脚本档案)
-	ScriptID uint32 `json:"script_id,omitempty"`
+	ScriptID uint64 `json:"script_id,omitempty"`
 	// 脚本名快照(脚本改名/删除不影响批次展示)
 	ScriptName string `json:"script_name,omitempty"`
 	// 目标节点 ID 列表
-	NodeIds []uint32 `json:"node_ids,omitempty"`
+	NodeIds []uint64 `json:"node_ids,omitempty"`
 	// 目标节点总数
 	Total uint32 `json:"total,omitempty"`
 	// 已成功节点数(回执驱动累加)
@@ -83,13 +83,13 @@ func (_m *ScriptBatch) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case scriptbatch.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case scriptbatch.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -116,28 +116,28 @@ func (_m *ScriptBatch) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(uint64)
+				*_m.CreatedBy = uint64(value.Int64)
 			}
 		case scriptbatch.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(uint64)
+				*_m.UpdatedBy = uint64(value.Int64)
 			}
 		case scriptbatch.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(uint64)
+				*_m.DeletedBy = uint64(value.Int64)
 			}
 		case scriptbatch.FieldScriptID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field script_id", values[i])
 			} else if value.Valid {
-				_m.ScriptID = uint32(value.Int64)
+				_m.ScriptID = uint64(value.Int64)
 			}
 		case scriptbatch.FieldScriptName:
 			if value, ok := values[i].(*sql.NullString); !ok {

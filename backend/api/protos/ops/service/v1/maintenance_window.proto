@@ -34,7 +34,7 @@ service MaintenanceWindowService {
 
 // 维护窗口
 message MaintenanceWindow {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 窗口ID
@@ -58,7 +58,7 @@ message MaintenanceWindow {
 
   optional string description = 6 [json_name = "description"]; // 描述
 
-  optional uint32 created_by = 20 [
+  optional uint64 created_by = 20 [
     json_name = "createdBy",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 创建人
@@ -75,7 +75,7 @@ message ListMaintenanceWindowResponse {
 }
 
 message GetMaintenanceWindowRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 窗口ID
@@ -89,7 +89,7 @@ message CreateMaintenanceWindowRequest {
 }
 
 message UpdateMaintenanceWindowRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 窗口ID(id 走 body:触发类 POST 不带 path 参数)
@@ -103,7 +103,7 @@ message UpdateMaintenanceWindowRequest {
 }
 
 message DeleteMaintenanceWindowRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 窗口ID

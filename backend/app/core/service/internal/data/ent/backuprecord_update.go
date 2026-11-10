@@ -70,14 +70,14 @@ func (_u *BackupRecordUpdate) ClearDeletedAt() *BackupRecordUpdate {
 }
 
 // SetTaskID sets the "task_id" field.
-func (_u *BackupRecordUpdate) SetTaskID(v uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetTaskID(v uint64) *BackupRecordUpdate {
 	_u.mutation.ResetTaskID()
 	_u.mutation.SetTaskID(v)
 	return _u
 }
 
 // SetNillableTaskID sets the "task_id" field if the given value is not nil.
-func (_u *BackupRecordUpdate) SetNillableTaskID(v *uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetNillableTaskID(v *uint64) *BackupRecordUpdate {
 	if v != nil {
 		_u.SetTaskID(*v)
 	}
@@ -85,20 +85,20 @@ func (_u *BackupRecordUpdate) SetNillableTaskID(v *uint32) *BackupRecordUpdate {
 }
 
 // AddTaskID adds value to the "task_id" field.
-func (_u *BackupRecordUpdate) AddTaskID(v int32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) AddTaskID(v int64) *BackupRecordUpdate {
 	_u.mutation.AddTaskID(v)
 	return _u
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *BackupRecordUpdate) SetNodeID(v uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetNodeID(v uint64) *BackupRecordUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *BackupRecordUpdate) SetNillableNodeID(v *uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetNillableNodeID(v *uint64) *BackupRecordUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -106,7 +106,7 @@ func (_u *BackupRecordUpdate) SetNillableNodeID(v *uint32) *BackupRecordUpdate {
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *BackupRecordUpdate) AddNodeID(v int32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) AddNodeID(v int64) *BackupRecordUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -229,14 +229,14 @@ func (_u *BackupRecordUpdate) SetNillableCommandRequestID(v *string) *BackupReco
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *BackupRecordUpdate) SetOperatorID(v uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetOperatorID(v uint64) *BackupRecordUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *BackupRecordUpdate) SetNillableOperatorID(v *uint32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) SetNillableOperatorID(v *uint64) *BackupRecordUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -244,7 +244,7 @@ func (_u *BackupRecordUpdate) SetNillableOperatorID(v *uint32) *BackupRecordUpda
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *BackupRecordUpdate) AddOperatorID(v int32) *BackupRecordUpdate {
+func (_u *BackupRecordUpdate) AddOperatorID(v int64) *BackupRecordUpdate {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -352,7 +352,7 @@ func (_u *BackupRecordUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(backuprecord.Table, backuprecord.Columns, sqlgraph.NewFieldSpec(backuprecord.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(backuprecord.Table, backuprecord.Columns, sqlgraph.NewFieldSpec(backuprecord.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -361,7 +361,7 @@ func (_u *BackupRecordUpdate) sqlSave(ctx context.Context) (_node int, err error
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuprecord.FieldCreatedAt, field.TypeTime)
@@ -379,16 +379,16 @@ func (_u *BackupRecordUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(backuprecord.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TaskID(); ok {
-		_spec.SetField(backuprecord.FieldTaskID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldTaskID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedTaskID(); ok {
-		_spec.AddField(backuprecord.FieldTaskID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldTaskID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(backuprecord.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(backuprecord.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Bucket(); ok {
 		_spec.SetField(backuprecord.FieldBucket, field.TypeString, value)
@@ -421,13 +421,13 @@ func (_u *BackupRecordUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.SetField(backuprecord.FieldCommandRequestID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(backuprecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(backuprecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(backuprecord.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(backuprecord.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(backuprecord.FieldFinishedAt, field.TypeTime, value)
@@ -498,14 +498,14 @@ func (_u *BackupRecordUpdateOne) ClearDeletedAt() *BackupRecordUpdateOne {
 }
 
 // SetTaskID sets the "task_id" field.
-func (_u *BackupRecordUpdateOne) SetTaskID(v uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetTaskID(v uint64) *BackupRecordUpdateOne {
 	_u.mutation.ResetTaskID()
 	_u.mutation.SetTaskID(v)
 	return _u
 }
 
 // SetNillableTaskID sets the "task_id" field if the given value is not nil.
-func (_u *BackupRecordUpdateOne) SetNillableTaskID(v *uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetNillableTaskID(v *uint64) *BackupRecordUpdateOne {
 	if v != nil {
 		_u.SetTaskID(*v)
 	}
@@ -513,20 +513,20 @@ func (_u *BackupRecordUpdateOne) SetNillableTaskID(v *uint32) *BackupRecordUpdat
 }
 
 // AddTaskID adds value to the "task_id" field.
-func (_u *BackupRecordUpdateOne) AddTaskID(v int32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) AddTaskID(v int64) *BackupRecordUpdateOne {
 	_u.mutation.AddTaskID(v)
 	return _u
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *BackupRecordUpdateOne) SetNodeID(v uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetNodeID(v uint64) *BackupRecordUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *BackupRecordUpdateOne) SetNillableNodeID(v *uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetNillableNodeID(v *uint64) *BackupRecordUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -534,7 +534,7 @@ func (_u *BackupRecordUpdateOne) SetNillableNodeID(v *uint32) *BackupRecordUpdat
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *BackupRecordUpdateOne) AddNodeID(v int32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) AddNodeID(v int64) *BackupRecordUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -657,14 +657,14 @@ func (_u *BackupRecordUpdateOne) SetNillableCommandRequestID(v *string) *BackupR
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *BackupRecordUpdateOne) SetOperatorID(v uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetOperatorID(v uint64) *BackupRecordUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *BackupRecordUpdateOne) SetNillableOperatorID(v *uint32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) SetNillableOperatorID(v *uint64) *BackupRecordUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -672,7 +672,7 @@ func (_u *BackupRecordUpdateOne) SetNillableOperatorID(v *uint32) *BackupRecordU
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *BackupRecordUpdateOne) AddOperatorID(v int32) *BackupRecordUpdateOne {
+func (_u *BackupRecordUpdateOne) AddOperatorID(v int64) *BackupRecordUpdateOne {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -793,7 +793,7 @@ func (_u *BackupRecordUpdateOne) sqlSave(ctx context.Context) (_node *BackupReco
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(backuprecord.Table, backuprecord.Columns, sqlgraph.NewFieldSpec(backuprecord.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(backuprecord.Table, backuprecord.Columns, sqlgraph.NewFieldSpec(backuprecord.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BackupRecord.id" for update`)}
@@ -819,7 +819,7 @@ func (_u *BackupRecordUpdateOne) sqlSave(ctx context.Context) (_node *BackupReco
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(backuprecord.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuprecord.FieldCreatedAt, field.TypeTime)
@@ -837,16 +837,16 @@ func (_u *BackupRecordUpdateOne) sqlSave(ctx context.Context) (_node *BackupReco
 		_spec.ClearField(backuprecord.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.TaskID(); ok {
-		_spec.SetField(backuprecord.FieldTaskID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldTaskID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedTaskID(); ok {
-		_spec.AddField(backuprecord.FieldTaskID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldTaskID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(backuprecord.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(backuprecord.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Bucket(); ok {
 		_spec.SetField(backuprecord.FieldBucket, field.TypeString, value)
@@ -879,13 +879,13 @@ func (_u *BackupRecordUpdateOne) sqlSave(ctx context.Context) (_node *BackupReco
 		_spec.SetField(backuprecord.FieldCommandRequestID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(backuprecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(backuprecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(backuprecord.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(backuprecord.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(backuprecord.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(backuprecord.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.FinishedAt(); ok {
 		_spec.SetField(backuprecord.FieldFinishedAt, field.TypeTime, value)

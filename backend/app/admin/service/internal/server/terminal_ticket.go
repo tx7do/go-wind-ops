@@ -46,7 +46,7 @@ type terminalTicket struct {
 	Kind      string `json:"kind"`
 	Operator  string `json:"op"`
 	AgentId   string `json:"agentId,omitempty"`
-	ProjectId uint32 `json:"projectId,omitempty"`
+	ProjectId uint64 `json:"projectId,omitempty"`
 }
 
 // TerminalTicketHandler 终端握手票据签发。
@@ -132,7 +132,7 @@ func (h *TerminalTicketHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 			http.Error(w, "projectId required", http.StatusBadRequest)
 			return
 		}
-		tk.ProjectId = uint32(pid)
+		tk.ProjectId = uint64(pid)
 		requiredCode = constants.OpsProjectManagePermissionCode
 	default:
 		http.Error(w, "unknown ticket kind", http.StatusBadRequest)

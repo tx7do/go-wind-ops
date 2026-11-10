@@ -23,13 +23,13 @@ type NotificationDeliveryCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *NotificationDeliveryCreate) SetTenantID(v uint32) *NotificationDeliveryCreate {
+func (_c *NotificationDeliveryCreate) SetTenantID(v uint64) *NotificationDeliveryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *NotificationDeliveryCreate) SetNillableTenantID(v *uint32) *NotificationDeliveryCreate {
+func (_c *NotificationDeliveryCreate) SetNillableTenantID(v *uint64) *NotificationDeliveryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *NotificationDeliveryCreate) SetNillableDeletedAt(v *time.Time) *Notifi
 }
 
 // SetAlertID sets the "alert_id" field.
-func (_c *NotificationDeliveryCreate) SetAlertID(v uint32) *NotificationDeliveryCreate {
+func (_c *NotificationDeliveryCreate) SetAlertID(v uint64) *NotificationDeliveryCreate {
 	_c.mutation.SetAlertID(v)
 	return _c
 }
 
 // SetChannelID sets the "channel_id" field.
-func (_c *NotificationDeliveryCreate) SetChannelID(v uint32) *NotificationDeliveryCreate {
+func (_c *NotificationDeliveryCreate) SetChannelID(v uint64) *NotificationDeliveryCreate {
 	_c.mutation.SetChannelID(v)
 	return _c
 }
@@ -167,7 +167,7 @@ func (_c *NotificationDeliveryCreate) SetNillableContent(v *string) *Notificatio
 }
 
 // SetID sets the "id" field.
-func (_c *NotificationDeliveryCreate) SetID(v uint32) *NotificationDeliveryCreate {
+func (_c *NotificationDeliveryCreate) SetID(v uint64) *NotificationDeliveryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -275,7 +275,7 @@ func (_c *NotificationDeliveryCreate) sqlSave(ctx context.Context) (*Notificatio
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -285,7 +285,7 @@ func (_c *NotificationDeliveryCreate) sqlSave(ctx context.Context) (*Notificatio
 func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlgraph.CreateSpec) {
 	var (
 		_node = &NotificationDelivery{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(notificationdelivery.Table, sqlgraph.NewFieldSpec(notificationdelivery.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(notificationdelivery.Table, sqlgraph.NewFieldSpec(notificationdelivery.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -293,7 +293,7 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(notificationdelivery.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(notificationdelivery.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -309,11 +309,11 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.AlertID(); ok {
-		_spec.SetField(notificationdelivery.FieldAlertID, field.TypeUint32, value)
+		_spec.SetField(notificationdelivery.FieldAlertID, field.TypeUint64, value)
 		_node.AlertID = value
 	}
 	if value, ok := _c.mutation.ChannelID(); ok {
-		_spec.SetField(notificationdelivery.FieldChannelID, field.TypeUint32, value)
+		_spec.SetField(notificationdelivery.FieldChannelID, field.TypeUint64, value)
 		_node.ChannelID = value
 	}
 	if value, ok := _c.mutation.ChannelType(); ok {
@@ -429,7 +429,7 @@ func (u *NotificationDeliveryUpsert) ClearDeletedAt() *NotificationDeliveryUpser
 }
 
 // SetAlertID sets the "alert_id" field.
-func (u *NotificationDeliveryUpsert) SetAlertID(v uint32) *NotificationDeliveryUpsert {
+func (u *NotificationDeliveryUpsert) SetAlertID(v uint64) *NotificationDeliveryUpsert {
 	u.Set(notificationdelivery.FieldAlertID, v)
 	return u
 }
@@ -441,13 +441,13 @@ func (u *NotificationDeliveryUpsert) UpdateAlertID() *NotificationDeliveryUpsert
 }
 
 // AddAlertID adds v to the "alert_id" field.
-func (u *NotificationDeliveryUpsert) AddAlertID(v uint32) *NotificationDeliveryUpsert {
+func (u *NotificationDeliveryUpsert) AddAlertID(v uint64) *NotificationDeliveryUpsert {
 	u.Add(notificationdelivery.FieldAlertID, v)
 	return u
 }
 
 // SetChannelID sets the "channel_id" field.
-func (u *NotificationDeliveryUpsert) SetChannelID(v uint32) *NotificationDeliveryUpsert {
+func (u *NotificationDeliveryUpsert) SetChannelID(v uint64) *NotificationDeliveryUpsert {
 	u.Set(notificationdelivery.FieldChannelID, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *NotificationDeliveryUpsert) UpdateChannelID() *NotificationDeliveryUpse
 }
 
 // AddChannelID adds v to the "channel_id" field.
-func (u *NotificationDeliveryUpsert) AddChannelID(v uint32) *NotificationDeliveryUpsert {
+func (u *NotificationDeliveryUpsert) AddChannelID(v uint64) *NotificationDeliveryUpsert {
 	u.Add(notificationdelivery.FieldChannelID, v)
 	return u
 }
@@ -657,14 +657,14 @@ func (u *NotificationDeliveryUpsertOne) ClearDeletedAt() *NotificationDeliveryUp
 }
 
 // SetAlertID sets the "alert_id" field.
-func (u *NotificationDeliveryUpsertOne) SetAlertID(v uint32) *NotificationDeliveryUpsertOne {
+func (u *NotificationDeliveryUpsertOne) SetAlertID(v uint64) *NotificationDeliveryUpsertOne {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.SetAlertID(v)
 	})
 }
 
 // AddAlertID adds v to the "alert_id" field.
-func (u *NotificationDeliveryUpsertOne) AddAlertID(v uint32) *NotificationDeliveryUpsertOne {
+func (u *NotificationDeliveryUpsertOne) AddAlertID(v uint64) *NotificationDeliveryUpsertOne {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.AddAlertID(v)
 	})
@@ -678,14 +678,14 @@ func (u *NotificationDeliveryUpsertOne) UpdateAlertID() *NotificationDeliveryUps
 }
 
 // SetChannelID sets the "channel_id" field.
-func (u *NotificationDeliveryUpsertOne) SetChannelID(v uint32) *NotificationDeliveryUpsertOne {
+func (u *NotificationDeliveryUpsertOne) SetChannelID(v uint64) *NotificationDeliveryUpsertOne {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.SetChannelID(v)
 	})
 }
 
 // AddChannelID adds v to the "channel_id" field.
-func (u *NotificationDeliveryUpsertOne) AddChannelID(v uint32) *NotificationDeliveryUpsertOne {
+func (u *NotificationDeliveryUpsertOne) AddChannelID(v uint64) *NotificationDeliveryUpsertOne {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.AddChannelID(v)
 	})
@@ -826,7 +826,7 @@ func (u *NotificationDeliveryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NotificationDeliveryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *NotificationDeliveryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -835,7 +835,7 @@ func (u *NotificationDeliveryUpsertOne) ID(ctx context.Context) (id uint32, err 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NotificationDeliveryUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *NotificationDeliveryUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -892,7 +892,7 @@ func (_c *NotificationDeliveryCreateBulk) Save(ctx context.Context) ([]*Notifica
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1073,14 +1073,14 @@ func (u *NotificationDeliveryUpsertBulk) ClearDeletedAt() *NotificationDeliveryU
 }
 
 // SetAlertID sets the "alert_id" field.
-func (u *NotificationDeliveryUpsertBulk) SetAlertID(v uint32) *NotificationDeliveryUpsertBulk {
+func (u *NotificationDeliveryUpsertBulk) SetAlertID(v uint64) *NotificationDeliveryUpsertBulk {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.SetAlertID(v)
 	})
 }
 
 // AddAlertID adds v to the "alert_id" field.
-func (u *NotificationDeliveryUpsertBulk) AddAlertID(v uint32) *NotificationDeliveryUpsertBulk {
+func (u *NotificationDeliveryUpsertBulk) AddAlertID(v uint64) *NotificationDeliveryUpsertBulk {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.AddAlertID(v)
 	})
@@ -1094,14 +1094,14 @@ func (u *NotificationDeliveryUpsertBulk) UpdateAlertID() *NotificationDeliveryUp
 }
 
 // SetChannelID sets the "channel_id" field.
-func (u *NotificationDeliveryUpsertBulk) SetChannelID(v uint32) *NotificationDeliveryUpsertBulk {
+func (u *NotificationDeliveryUpsertBulk) SetChannelID(v uint64) *NotificationDeliveryUpsertBulk {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.SetChannelID(v)
 	})
 }
 
 // AddChannelID adds v to the "channel_id" field.
-func (u *NotificationDeliveryUpsertBulk) AddChannelID(v uint32) *NotificationDeliveryUpsertBulk {
+func (u *NotificationDeliveryUpsertBulk) AddChannelID(v uint64) *NotificationDeliveryUpsertBulk {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.AddChannelID(v)
 	})

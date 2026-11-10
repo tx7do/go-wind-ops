@@ -81,7 +81,7 @@ func (r *PromotionPipelineRepo) List(ctx context.Context, req *paginationV1.Pagi
 }
 
 // Get 详情。
-func (r *PromotionPipelineRepo) Get(ctx context.Context, id uint32) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Get(ctx context.Context, id uint64) (*opsV1.PromotionPipeline, error) {
 	e, err := r.entClient.Client().PromotionPipeline.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (r *PromotionPipelineRepo) Get(ctx context.Context, id uint32) (*opsV1.Prom
 }
 
 // GetEntity 实体(Promote 校验阶段下标用)。
-func (r *PromotionPipelineRepo) GetEntity(ctx context.Context, id uint32) (*ent.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) GetEntity(ctx context.Context, id uint64) (*ent.PromotionPipeline, error) {
 	return r.entClient.Client().PromotionPipeline.Get(ctx, id)
 }
 
@@ -111,7 +111,7 @@ func StagesOf(stages []*opsV1.PromotionStage) []schema.PromotionStage {
 }
 
 // Create 落库。
-func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages []schema.PromotionStage, description *string, operatorID uint32) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages []schema.PromotionStage, description *string, operatorID uint64) (*opsV1.PromotionPipeline, error) {
 	builder := r.entClient.Client().PromotionPipeline.Create().
 		SetName(name).
 		SetStages(stages)
@@ -129,7 +129,7 @@ func (r *PromotionPipelineRepo) Create(ctx context.Context, name string, stages 
 }
 
 // Update 名称/阶段/描述。
-func (r *PromotionPipelineRepo) Update(ctx context.Context, id uint32, name string, stages []schema.PromotionStage, description *string) (*opsV1.PromotionPipeline, error) {
+func (r *PromotionPipelineRepo) Update(ctx context.Context, id uint64, name string, stages []schema.PromotionStage, description *string) (*opsV1.PromotionPipeline, error) {
 	builder := r.entClient.Client().PromotionPipeline.UpdateOneID(id).
 		SetName(name).
 		SetStages(stages)
@@ -144,6 +144,6 @@ func (r *PromotionPipelineRepo) Update(ctx context.Context, id uint32, name stri
 }
 
 // Delete 删除。
-func (r *PromotionPipelineRepo) Delete(ctx context.Context, id uint32) error {
+func (r *PromotionPipelineRepo) Delete(ctx context.Context, id uint64) error {
 	return r.entClient.Client().PromotionPipeline.DeleteOneID(id).Exec(ctx)
 }

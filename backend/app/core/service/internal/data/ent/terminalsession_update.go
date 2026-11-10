@@ -84,14 +84,14 @@ func (_u *TerminalSessionUpdate) SetNillableSessionID(v *string) *TerminalSessio
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *TerminalSessionUpdate) SetNodeID(v uint32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) SetNodeID(v uint64) *TerminalSessionUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *TerminalSessionUpdate) SetNillableNodeID(v *uint32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) SetNillableNodeID(v *uint64) *TerminalSessionUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -99,7 +99,7 @@ func (_u *TerminalSessionUpdate) SetNillableNodeID(v *uint32) *TerminalSessionUp
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *TerminalSessionUpdate) AddNodeID(v int32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) AddNodeID(v int64) *TerminalSessionUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *TerminalSessionUpdate) SetNillableAgentID(v *string) *TerminalSessionU
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *TerminalSessionUpdate) SetOperatorID(v uint32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) SetOperatorID(v uint64) *TerminalSessionUpdate {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *TerminalSessionUpdate) SetNillableOperatorID(v *uint32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) SetNillableOperatorID(v *uint64) *TerminalSessionUpdate {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *TerminalSessionUpdate) SetNillableOperatorID(v *uint32) *TerminalSessi
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *TerminalSessionUpdate) AddOperatorID(v int32) *TerminalSessionUpdate {
+func (_u *TerminalSessionUpdate) AddOperatorID(v int64) *TerminalSessionUpdate {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -324,7 +324,7 @@ func (_u *TerminalSessionUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(terminalsession.Table, terminalsession.Columns, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(terminalsession.Table, terminalsession.Columns, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -333,7 +333,7 @@ func (_u *TerminalSessionUpdate) sqlSave(ctx context.Context) (_node int, err er
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalsession.FieldCreatedAt, field.TypeTime)
@@ -354,25 +354,25 @@ func (_u *TerminalSessionUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.SetField(terminalsession.FieldSessionID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(terminalsession.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(terminalsession.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(terminalsession.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(terminalsession.FieldNodeID, field.TypeUint64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(terminalsession.FieldNodeID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldNodeID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(terminalsession.FieldAgentID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(terminalsession.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(terminalsession.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(terminalsession.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(terminalsession.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(terminalsession.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(terminalsession.FieldStatus, field.TypeEnum, value)
@@ -481,14 +481,14 @@ func (_u *TerminalSessionUpdateOne) SetNillableSessionID(v *string) *TerminalSes
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *TerminalSessionUpdateOne) SetNodeID(v uint32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) SetNodeID(v uint64) *TerminalSessionUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *TerminalSessionUpdateOne) SetNillableNodeID(v *uint32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) SetNillableNodeID(v *uint64) *TerminalSessionUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -496,7 +496,7 @@ func (_u *TerminalSessionUpdateOne) SetNillableNodeID(v *uint32) *TerminalSessio
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *TerminalSessionUpdateOne) AddNodeID(v int32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) AddNodeID(v int64) *TerminalSessionUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -522,14 +522,14 @@ func (_u *TerminalSessionUpdateOne) SetNillableAgentID(v *string) *TerminalSessi
 }
 
 // SetOperatorID sets the "operator_id" field.
-func (_u *TerminalSessionUpdateOne) SetOperatorID(v uint32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) SetOperatorID(v uint64) *TerminalSessionUpdateOne {
 	_u.mutation.ResetOperatorID()
 	_u.mutation.SetOperatorID(v)
 	return _u
 }
 
 // SetNillableOperatorID sets the "operator_id" field if the given value is not nil.
-func (_u *TerminalSessionUpdateOne) SetNillableOperatorID(v *uint32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) SetNillableOperatorID(v *uint64) *TerminalSessionUpdateOne {
 	if v != nil {
 		_u.SetOperatorID(*v)
 	}
@@ -537,7 +537,7 @@ func (_u *TerminalSessionUpdateOne) SetNillableOperatorID(v *uint32) *TerminalSe
 }
 
 // AddOperatorID adds value to the "operator_id" field.
-func (_u *TerminalSessionUpdateOne) AddOperatorID(v int32) *TerminalSessionUpdateOne {
+func (_u *TerminalSessionUpdateOne) AddOperatorID(v int64) *TerminalSessionUpdateOne {
 	_u.mutation.AddOperatorID(v)
 	return _u
 }
@@ -734,7 +734,7 @@ func (_u *TerminalSessionUpdateOne) sqlSave(ctx context.Context) (_node *Termina
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(terminalsession.Table, terminalsession.Columns, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(terminalsession.Table, terminalsession.Columns, sqlgraph.NewFieldSpec(terminalsession.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TerminalSession.id" for update`)}
@@ -760,7 +760,7 @@ func (_u *TerminalSessionUpdateOne) sqlSave(ctx context.Context) (_node *Termina
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(terminalsession.FieldCreatedAt, field.TypeTime)
@@ -781,25 +781,25 @@ func (_u *TerminalSessionUpdateOne) sqlSave(ctx context.Context) (_node *Termina
 		_spec.SetField(terminalsession.FieldSessionID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(terminalsession.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(terminalsession.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(terminalsession.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(terminalsession.FieldNodeID, field.TypeUint64, value)
 	}
 	if _u.mutation.NodeIDCleared() {
-		_spec.ClearField(terminalsession.FieldNodeID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldNodeID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(terminalsession.FieldAgentID, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperatorID(); ok {
-		_spec.SetField(terminalsession.FieldOperatorID, field.TypeUint32, value)
+		_spec.SetField(terminalsession.FieldOperatorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperatorID(); ok {
-		_spec.AddField(terminalsession.FieldOperatorID, field.TypeUint32, value)
+		_spec.AddField(terminalsession.FieldOperatorID, field.TypeUint64, value)
 	}
 	if _u.mutation.OperatorIDCleared() {
-		_spec.ClearField(terminalsession.FieldOperatorID, field.TypeUint32)
+		_spec.ClearField(terminalsession.FieldOperatorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(terminalsession.FieldStatus, field.TypeEnum, value)

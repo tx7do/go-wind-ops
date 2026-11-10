@@ -192,7 +192,7 @@ func (s *BuildService) TriggerBuild(ctx context.Context, req *opsV1.TriggerBuild
 // 构建执行器(进程内 goroutine)
 // ============================================================================
 
-func (s *BuildService) runBuild(historyID uint32) {
+func (s *BuildService) runBuild(historyID uint64) {
 	// 构建历史/构建表已挂租户隐私:后台 goroutine 注入系统 viewer
 	// (历史行在触发请求上下文按用户租户落库,此处仅做终态推进)。
 	ctx := appViewer.NewSystemViewerContext(context.Background())

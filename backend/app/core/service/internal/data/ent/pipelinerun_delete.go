@@ -40,7 +40,7 @@ func (_d *PipelineRunDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *PipelineRunDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(pipelinerun.Table, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(pipelinerun.Table, sqlgraph.NewFieldSpec(pipelinerun.FieldID, field.TypeUint64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

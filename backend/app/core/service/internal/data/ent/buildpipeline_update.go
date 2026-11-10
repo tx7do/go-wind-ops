@@ -71,14 +71,14 @@ func (_u *BuildPipelineUpdate) ClearDeletedAt() *BuildPipelineUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BuildPipelineUpdate) SetCreatedBy(v uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetCreatedBy(v uint64) *BuildPipelineUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdate) SetNillableCreatedBy(v *uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetNillableCreatedBy(v *uint64) *BuildPipelineUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *BuildPipelineUpdate) SetNillableCreatedBy(v *uint32) *BuildPipelineUpd
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BuildPipelineUpdate) AddCreatedBy(v int32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) AddCreatedBy(v int64) *BuildPipelineUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *BuildPipelineUpdate) ClearCreatedBy() *BuildPipelineUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BuildPipelineUpdate) SetUpdatedBy(v uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetUpdatedBy(v uint64) *BuildPipelineUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdate) SetNillableUpdatedBy(v *uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetNillableUpdatedBy(v *uint64) *BuildPipelineUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *BuildPipelineUpdate) SetNillableUpdatedBy(v *uint32) *BuildPipelineUpd
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BuildPipelineUpdate) AddUpdatedBy(v int32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) AddUpdatedBy(v int64) *BuildPipelineUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *BuildPipelineUpdate) ClearUpdatedBy() *BuildPipelineUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BuildPipelineUpdate) SetDeletedBy(v uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetDeletedBy(v uint64) *BuildPipelineUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdate) SetNillableDeletedBy(v *uint32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) SetNillableDeletedBy(v *uint64) *BuildPipelineUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *BuildPipelineUpdate) SetNillableDeletedBy(v *uint32) *BuildPipelineUpd
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BuildPipelineUpdate) AddDeletedBy(v int32) *BuildPipelineUpdate {
+func (_u *BuildPipelineUpdate) AddDeletedBy(v int64) *BuildPipelineUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -269,7 +269,7 @@ func (_u *BuildPipelineUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(buildpipeline.Table, buildpipeline.Columns, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(buildpipeline.Table, buildpipeline.Columns, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -278,7 +278,7 @@ func (_u *BuildPipelineUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(buildpipeline.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildpipeline.FieldCreatedAt, field.TypeTime)
@@ -296,31 +296,31 @@ func (_u *BuildPipelineUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(buildpipeline.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(buildpipeline.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(buildpipeline.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(buildpipeline.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(buildpipeline.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(buildpipeline.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(buildpipeline.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(buildpipeline.FieldName, field.TypeString, value)
@@ -408,14 +408,14 @@ func (_u *BuildPipelineUpdateOne) ClearDeletedAt() *BuildPipelineUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BuildPipelineUpdateOne) SetCreatedBy(v uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetCreatedBy(v uint64) *BuildPipelineUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdateOne) SetNillableCreatedBy(v *uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetNillableCreatedBy(v *uint64) *BuildPipelineUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -423,7 +423,7 @@ func (_u *BuildPipelineUpdateOne) SetNillableCreatedBy(v *uint32) *BuildPipeline
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BuildPipelineUpdateOne) AddCreatedBy(v int32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) AddCreatedBy(v int64) *BuildPipelineUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -435,14 +435,14 @@ func (_u *BuildPipelineUpdateOne) ClearCreatedBy() *BuildPipelineUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BuildPipelineUpdateOne) SetUpdatedBy(v uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetUpdatedBy(v uint64) *BuildPipelineUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdateOne) SetNillableUpdatedBy(v *uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetNillableUpdatedBy(v *uint64) *BuildPipelineUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -450,7 +450,7 @@ func (_u *BuildPipelineUpdateOne) SetNillableUpdatedBy(v *uint32) *BuildPipeline
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BuildPipelineUpdateOne) AddUpdatedBy(v int32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) AddUpdatedBy(v int64) *BuildPipelineUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -462,14 +462,14 @@ func (_u *BuildPipelineUpdateOne) ClearUpdatedBy() *BuildPipelineUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BuildPipelineUpdateOne) SetDeletedBy(v uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetDeletedBy(v uint64) *BuildPipelineUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BuildPipelineUpdateOne) SetNillableDeletedBy(v *uint32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) SetNillableDeletedBy(v *uint64) *BuildPipelineUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -477,7 +477,7 @@ func (_u *BuildPipelineUpdateOne) SetNillableDeletedBy(v *uint32) *BuildPipeline
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BuildPipelineUpdateOne) AddDeletedBy(v int32) *BuildPipelineUpdateOne {
+func (_u *BuildPipelineUpdateOne) AddDeletedBy(v int64) *BuildPipelineUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -619,7 +619,7 @@ func (_u *BuildPipelineUpdateOne) sqlSave(ctx context.Context) (_node *BuildPipe
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(buildpipeline.Table, buildpipeline.Columns, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(buildpipeline.Table, buildpipeline.Columns, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BuildPipeline.id" for update`)}
@@ -645,7 +645,7 @@ func (_u *BuildPipelineUpdateOne) sqlSave(ctx context.Context) (_node *BuildPipe
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(buildpipeline.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(buildpipeline.FieldCreatedAt, field.TypeTime)
@@ -663,31 +663,31 @@ func (_u *BuildPipelineUpdateOne) sqlSave(ctx context.Context) (_node *BuildPipe
 		_spec.ClearField(buildpipeline.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(buildpipeline.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(buildpipeline.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(buildpipeline.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(buildpipeline.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(buildpipeline.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(buildpipeline.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(buildpipeline.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(buildpipeline.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(buildpipeline.FieldName, field.TypeString, value)

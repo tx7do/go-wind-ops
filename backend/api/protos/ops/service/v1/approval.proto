@@ -34,7 +34,7 @@ message op_approval_result {
 
 // 审批单
 message Approval {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 审批单ID
@@ -44,7 +44,7 @@ message Approval {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 操作类型(distribute/script_exec)
 
-  optional uint32 operation_ref_id = 3 [
+  optional uint64 operation_ref_id = 3 [
     json_name = "operationRefId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 关联实体ID
@@ -59,12 +59,12 @@ message Approval {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 操作载荷快照(JSON)
 
-  optional uint32 requester_id = 6 [
+  optional uint64 requester_id = 6 [
     json_name = "requesterId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 发起人
 
-  optional uint32 approver_id = 7 [
+  optional uint64 approver_id = 7 [
     json_name = "approverId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 审批人
@@ -106,21 +106,21 @@ message ListApprovalResponse {
 }
 
 message GetApprovalRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 审批单ID
 }
 
 message ApproveApprovalRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 审批单ID
 }
 
 message RejectApprovalRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 审批单ID

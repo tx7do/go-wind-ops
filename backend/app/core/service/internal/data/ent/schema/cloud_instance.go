@@ -32,7 +32,7 @@ func (CloudInstance) Annotations() []schema.Annotation {
 // Fields of the CloudInstance.
 func (CloudInstance) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("cloud_account_id").
+		field.Uint64("cloud_account_id").
 			Comment("云账号ID").
 			Positive(),
 
@@ -99,7 +99,7 @@ func (CloudInstance) Fields() []ent.Field {
 			Comment("是否匹配到 agent 节点").
 			Default(false),
 
-		field.Uint32("agent_node_id").
+		field.Uint64("agent_node_id").
 			Comment("匹配到的节点ID(快照,节点删除后不回填)").
 			Optional().
 			Nillable(),
@@ -118,8 +118,8 @@ func (CloudInstance) Fields() []ent.Field {
 // Mixin of the CloudInstance.
 func (CloudInstance) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

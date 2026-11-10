@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ApiKey {
+func ID(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ApiKey {
+func IDEQ(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ApiKey {
+func IDNEQ(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ApiKey {
+func IDIn(ids ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ApiKey {
+func IDNotIn(ids ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ApiKey {
+func IDGT(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ApiKey {
+func IDGTE(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ApiKey {
+func IDLT(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ApiKey {
+func IDLTE(id uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.ApiKey {
+func TenantID(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,17 +75,17 @@ func DeletedAt(v time.Time) predicate.ApiKey {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.ApiKey {
+func CreatedBy(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.ApiKey {
+func UpdatedBy(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.ApiKey {
+func DeletedBy(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -120,42 +120,42 @@ func Description(v string) predicate.ApiKey {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.ApiKey {
+func TenantIDEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.ApiKey {
+func TenantIDNEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.ApiKey {
+func TenantIDIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.ApiKey {
+func TenantIDNotIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.ApiKey {
+func TenantIDGT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.ApiKey {
+func TenantIDGTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.ApiKey {
+func TenantIDLT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.ApiKey {
+func TenantIDLTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -320,42 +320,42 @@ func DeletedAtNotNil() predicate.ApiKey {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.ApiKey {
+func CreatedByEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.ApiKey {
+func CreatedByNEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.ApiKey {
+func CreatedByIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.ApiKey {
+func CreatedByNotIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.ApiKey {
+func CreatedByGT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.ApiKey {
+func CreatedByGTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.ApiKey {
+func CreatedByLT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.ApiKey {
+func CreatedByLTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -370,42 +370,42 @@ func CreatedByNotNil() predicate.ApiKey {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.ApiKey {
+func UpdatedByEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.ApiKey {
+func UpdatedByNEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.ApiKey {
+func UpdatedByIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.ApiKey {
+func UpdatedByNotIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.ApiKey {
+func UpdatedByGT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.ApiKey {
+func UpdatedByGTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.ApiKey {
+func UpdatedByLT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.ApiKey {
+func UpdatedByLTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -420,42 +420,42 @@ func UpdatedByNotNil() predicate.ApiKey {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.ApiKey {
+func DeletedByEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.ApiKey {
+func DeletedByNEQ(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.ApiKey {
+func DeletedByIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.ApiKey {
+func DeletedByNotIn(vs ...uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.ApiKey {
+func DeletedByGT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.ApiKey {
+func DeletedByGTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.ApiKey {
+func DeletedByLT(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.ApiKey {
+func DeletedByLTE(v uint64) predicate.ApiKey {
 	return predicate.ApiKey(sql.FieldLTE(FieldDeletedBy, v))
 }
 

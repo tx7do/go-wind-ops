@@ -30,14 +30,14 @@ func (_u *ApiAuditLogUpdate) Where(ps ...predicate.ApiAuditLog) *ApiAuditLogUpda
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ApiAuditLogUpdate) SetUserID(v uint32) *ApiAuditLogUpdate {
+func (_u *ApiAuditLogUpdate) SetUserID(v uint64) *ApiAuditLogUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ApiAuditLogUpdate) SetNillableUserID(v *uint32) *ApiAuditLogUpdate {
+func (_u *ApiAuditLogUpdate) SetNillableUserID(v *uint64) *ApiAuditLogUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -45,7 +45,7 @@ func (_u *ApiAuditLogUpdate) SetNillableUserID(v *uint32) *ApiAuditLogUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *ApiAuditLogUpdate) AddUserID(v int32) *ApiAuditLogUpdate {
+func (_u *ApiAuditLogUpdate) AddUserID(v int64) *ApiAuditLogUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -585,7 +585,7 @@ func (_u *ApiAuditLogUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Ap
 }
 
 func (_u *ApiAuditLogUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apiauditlog.Table, apiauditlog.Columns, sqlgraph.NewFieldSpec(apiauditlog.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(apiauditlog.Table, apiauditlog.Columns, sqlgraph.NewFieldSpec(apiauditlog.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -597,16 +597,16 @@ func (_u *ApiAuditLogUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(apiauditlog.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(apiauditlog.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(apiauditlog.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(apiauditlog.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(apiauditlog.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(apiauditlog.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(apiauditlog.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(apiauditlog.FieldUserID, field.TypeUint32)
+		_spec.ClearField(apiauditlog.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Username(); ok {
 		_spec.SetField(apiauditlog.FieldUsername, field.TypeString, value)
@@ -787,14 +787,14 @@ type ApiAuditLogUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ApiAuditLogUpdateOne) SetUserID(v uint32) *ApiAuditLogUpdateOne {
+func (_u *ApiAuditLogUpdateOne) SetUserID(v uint64) *ApiAuditLogUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ApiAuditLogUpdateOne) SetNillableUserID(v *uint32) *ApiAuditLogUpdateOne {
+func (_u *ApiAuditLogUpdateOne) SetNillableUserID(v *uint64) *ApiAuditLogUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -802,7 +802,7 @@ func (_u *ApiAuditLogUpdateOne) SetNillableUserID(v *uint32) *ApiAuditLogUpdateO
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *ApiAuditLogUpdateOne) AddUserID(v int32) *ApiAuditLogUpdateOne {
+func (_u *ApiAuditLogUpdateOne) AddUserID(v int64) *ApiAuditLogUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -1355,7 +1355,7 @@ func (_u *ApiAuditLogUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *ApiAuditLogUpdateOne) sqlSave(ctx context.Context) (_node *ApiAuditLog, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apiauditlog.Table, apiauditlog.Columns, sqlgraph.NewFieldSpec(apiauditlog.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(apiauditlog.Table, apiauditlog.Columns, sqlgraph.NewFieldSpec(apiauditlog.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApiAuditLog.id" for update`)}
@@ -1384,16 +1384,16 @@ func (_u *ApiAuditLogUpdateOne) sqlSave(ctx context.Context) (_node *ApiAuditLog
 		_spec.ClearField(apiauditlog.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(apiauditlog.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(apiauditlog.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(apiauditlog.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(apiauditlog.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(apiauditlog.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(apiauditlog.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(apiauditlog.FieldUserID, field.TypeUint32)
+		_spec.ClearField(apiauditlog.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Username(); ok {
 		_spec.SetField(apiauditlog.FieldUsername, field.TypeString, value)

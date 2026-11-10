@@ -27,7 +27,7 @@ func NewNodeMetricRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent
 }
 
 // Create 每次心跳追加一条指标。
-func (r *NodeMetricRepo) Create(ctx context.Context, nodeID uint32, cpu, mem, disk float64, memTotal, uptime uint64) error {
+func (r *NodeMetricRepo) Create(ctx context.Context, nodeID uint64, cpu, mem, disk float64, memTotal, uptime uint64) error {
 	_, err := r.entClient.Client().NodeMetric.
 		Create().
 		SetNodeID(nodeID).
@@ -52,7 +52,7 @@ type MetricPoint struct {
 }
 
 // ListByNodeAndTimeRange 按节点和时间范围查指标(时间正序)。
-func (r *NodeMetricRepo) ListByNodeAndTimeRange(ctx context.Context, nodeID uint32, from, to time.Time) ([]MetricPoint, error) {
+func (r *NodeMetricRepo) ListByNodeAndTimeRange(ctx context.Context, nodeID uint64, from, to time.Time) ([]MetricPoint, error) {
 	rows, err := r.entClient.Client().NodeMetric.
 		Query().
 		Where(

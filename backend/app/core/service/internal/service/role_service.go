@@ -75,11 +75,11 @@ func (s *RoleService) ensureDefaultRolePermissions(ctx context.Context) error {
 	if len(constants.DefaultOpsPermissions) == 0 {
 		return nil
 	}
-	existing := make(map[uint32]struct{}, len(role.GetPermissions()))
+	existing := make(map[uint64]struct{}, len(role.GetPermissions()))
 	for _, id := range role.GetPermissions() {
 		existing[id] = struct{}{}
 	}
-	merged := append([]uint32{}, role.GetPermissions()...)
+	merged := append([]uint64{}, role.GetPermissions()...)
 	for _, p := range constants.DefaultOpsPermissions {
 		if id := p.GetId(); id > 0 {
 			if _, dup := existing[id]; !dup {
@@ -99,7 +99,7 @@ func (s *RoleService) ensureDefaultRolePermissions(ctx context.Context) error {
 
 func (s *RoleService) extractRelationIDs(
 	roles []*permissionV1.Role,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
+	tenantSet aggregator.ResourceMap[uint64, *identityV1.Tenant],
 ) {
 	for _, p := range roles {
 		if p.GetTenantId() > 0 {
@@ -110,10 +110,10 @@ func (s *RoleService) extractRelationIDs(
 
 func (s *RoleService) fetchRelationInfo(
 	ctx context.Context,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
+	tenantSet aggregator.ResourceMap[uint64, *identityV1.Tenant],
 ) error {
 	if len(tenantSet) > 0 {
-		tenantIds := make([]uint32, 0, len(tenantSet))
+		tenantIds := make([]uint64, 0, len(tenantSet))
 		for id := range tenantSet {
 			tenantIds = append(tenantIds, id)
 		}
@@ -134,12 +134,12 @@ func (s *RoleService) fetchRelationInfo(
 
 func (s *RoleService) bindRelations(
 	roles []*permissionV1.Role,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
+	tenantSet aggregator.ResourceMap[uint64, *identityV1.Tenant],
 ) {
 	aggregator.Populate(
 		roles,
 		tenantSet,
-		func(ou *permissionV1.Role) uint32 { return ou.GetTenantId() },
+		func(ou *permissionV1.Role) uint64 { return ou.GetTenantId() },
 		func(ou *permissionV1.Role, r *identityV1.Tenant) {
 			ou.TenantName = r.Name
 		},
@@ -147,7 +147,7 @@ func (s *RoleService) bindRelations(
 }
 
 func (s *RoleService) enrichRelations(ctx context.Context, roles []*permissionV1.Role) error {
-	var tenantSet = make(aggregator.ResourceMap[uint32, *identityV1.Tenant])
+	var tenantSet = make(aggregator.ResourceMap[uint64, *identityV1.Tenant])
 	s.extractRelationIDs(roles, tenantSet)
 	if err := s.fetchRelationInfo(ctx, tenantSet); err != nil {
 		return err
@@ -277,12 +277,12 @@ func (s *RoleService) ListPermissionIds(ctx context.Context, req *permissionV1.L
 	if req == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid request")
 	}
-	var permissionIDs []uint32
+	var permissionIDs []uint64
 	var err error
 
 	switch req.QueryBy.(type) {
 	case *permissionV1.ListPermissionIdsRequest_RoleId:
-		permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleIDs(ctx, []uint32{req.GetRoleId()})
+		permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleIDs(ctx, []uint64{req.GetRoleId()})
 		if err != nil {
 			return nil, err
 		}
@@ -351,10 +351,10 @@ func (s *RoleService) AssignRolesToUser(ctx context.Context, req *permissionV1.A
 	if !hasUser {
 		return nil, permissionV1.ErrorBadRequest("operator identity is required")
 	}
-	var callerTenantID uint32
+	var callerTenantID uint64
 	isPlatform := false
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		callerTenantID = uint32(vc.TenantID())
+		callerTenantID = uint64(vc.TenantID())
 		isPlatform = vc.IsPlatformContext() || vc.IsSystemContext()
 	}
 
@@ -447,11 +447,11 @@ func (s *RoleService) UnassignRolesFromUser(ctx context.Context, req *permission
 // 平台/系统上下文放行；租户用户仅可查询本租户用户的数据。
 // userRepo.Get 经 EvalQuery 注入 tenant 谓词，租户用户取不到他租户用户即自动拒绝。
 // 返回 nil 表示放行，非 nil 表示拒绝（调用方应直接返回该错误）。
-func (s *RoleService) validateTargetUserTenant(ctx context.Context, targetUserID uint32) error {
-	var callerTenantID uint32
+func (s *RoleService) validateTargetUserTenant(ctx context.Context, targetUserID uint64) error {
+	var callerTenantID uint64
 	isPlatform := false
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		callerTenantID = uint32(vc.TenantID())
+		callerTenantID = uint64(vc.TenantID())
 		isPlatform = vc.IsPlatformContext() || vc.IsSystemContext()
 	}
 	targetUser, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{

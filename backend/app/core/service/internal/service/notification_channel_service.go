@@ -88,7 +88,7 @@ func (s *NotificationChannelService) DeleteChannel(ctx context.Context, req *ops
 // 逐渠道落投递台账(deliveryRepo 非空时)。由监控/预算/证书/节点离线路径调用。
 // mwRepo 非空且 suppressible 时:维护窗口激活期间跳过外呼(告警行已落库留痕,
 // 不落投递行);恢复通知传 suppressible=false 不受窗口影响。
-func SendAlertToChannels(ctx context.Context, repo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, mwRepo *data.MaintenanceWindowRepo, alertID uint32, title, content string, suppressible bool) {
+func SendAlertToChannels(ctx context.Context, repo *data.NotificationChannelRepo, deliveryRepo *data.NotificationDeliveryRepo, mwRepo *data.MaintenanceWindowRepo, alertID uint64, title, content string, suppressible bool) {
 	if repo == nil {
 		return
 	}
@@ -154,7 +154,7 @@ func maskURL(u string) string {
 }
 
 // recordDelivery 落投递台账(失败仅记日志,不影响主流程)。
-func recordDelivery(ctx context.Context, deliveryRepo *data.NotificationDeliveryRepo, alertID, channelID uint32, channelType, target string, sendErr error, title, content string) {
+func recordDelivery(ctx context.Context, deliveryRepo *data.NotificationDeliveryRepo, alertID, channelID uint64, channelType, target string, sendErr error, title, content string) {
 	if deliveryRepo == nil || alertID == 0 {
 		return
 	}

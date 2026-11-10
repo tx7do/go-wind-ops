@@ -97,11 +97,11 @@ func (r *NotificationChannelRepo) Get(ctx context.Context, req *opsV1.GetNotific
 	return dto, nil
 }
 
-func (r *NotificationChannelRepo) GetEntity(ctx context.Context, id uint32) (*ent.NotificationChannel, error) {
+func (r *NotificationChannelRepo) GetEntity(ctx context.Context, id uint64) (*ent.NotificationChannel, error) {
 	return r.entClient.Client().NotificationChannel.Query().Where(notificationchannel.IDEQ(id)).First(ctx)
 }
 
-func (r *NotificationChannelRepo) Create(ctx context.Context, req *opsV1.CreateNotificationChannelRequest, operatorID uint32) (*opsV1.NotificationChannel, error) {
+func (r *NotificationChannelRepo) Create(ctx context.Context, req *opsV1.CreateNotificationChannelRequest, operatorID uint64) (*opsV1.NotificationChannel, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}

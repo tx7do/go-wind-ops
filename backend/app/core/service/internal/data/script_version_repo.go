@@ -25,7 +25,7 @@ func NewScriptVersionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*
 }
 
 // Snapshot 落一条内容快照。
-func (r *ScriptVersionRepo) Snapshot(ctx context.Context, scriptID uint32, content, remark string, operatorID uint32) error {
+func (r *ScriptVersionRepo) Snapshot(ctx context.Context, scriptID uint64, content, remark string, operatorID uint64) error {
 	builder := r.entClient.Client().ScriptVersion.Create().
 		SetScriptID(scriptID).
 		SetContent(content).
@@ -41,7 +41,7 @@ func (r *ScriptVersionRepo) Snapshot(ctx context.Context, scriptID uint32, conte
 }
 
 // ListByScript 版本列表(新→旧;内容全量返回,历史页直接查看)。
-func (r *ScriptVersionRepo) ListByScript(ctx context.Context, scriptID uint32) ([]*ent.ScriptVersion, error) {
+func (r *ScriptVersionRepo) ListByScript(ctx context.Context, scriptID uint64) ([]*ent.ScriptVersion, error) {
 	return r.entClient.Client().ScriptVersion.Query().
 		Where(scriptversion.ScriptIDEQ(scriptID)).
 		Order(ent.Desc(scriptversion.FieldID)).
@@ -49,6 +49,6 @@ func (r *ScriptVersionRepo) ListByScript(ctx context.Context, scriptID uint32) (
 }
 
 // Get 取单条快照(恢复时取目标内容)。
-func (r *ScriptVersionRepo) Get(ctx context.Context, id uint32) (*ent.ScriptVersion, error) {
+func (r *ScriptVersionRepo) Get(ctx context.Context, id uint64) (*ent.ScriptVersion, error) {
 	return r.entClient.Client().ScriptVersion.Get(ctx, id)
 }

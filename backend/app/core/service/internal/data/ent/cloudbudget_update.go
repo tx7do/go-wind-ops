@@ -70,14 +70,14 @@ func (_u *CloudBudgetUpdate) ClearDeletedAt() *CloudBudgetUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CloudBudgetUpdate) SetCreatedBy(v uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetCreatedBy(v uint64) *CloudBudgetUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdate) SetNillableCreatedBy(v *uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetNillableCreatedBy(v *uint64) *CloudBudgetUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CloudBudgetUpdate) SetNillableCreatedBy(v *uint32) *CloudBudgetUpdate 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CloudBudgetUpdate) AddCreatedBy(v int32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) AddCreatedBy(v int64) *CloudBudgetUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CloudBudgetUpdate) ClearCreatedBy() *CloudBudgetUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CloudBudgetUpdate) SetUpdatedBy(v uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetUpdatedBy(v uint64) *CloudBudgetUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdate) SetNillableUpdatedBy(v *uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetNillableUpdatedBy(v *uint64) *CloudBudgetUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CloudBudgetUpdate) SetNillableUpdatedBy(v *uint32) *CloudBudgetUpdate 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CloudBudgetUpdate) AddUpdatedBy(v int32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) AddUpdatedBy(v int64) *CloudBudgetUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *CloudBudgetUpdate) ClearUpdatedBy() *CloudBudgetUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CloudBudgetUpdate) SetDeletedBy(v uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetDeletedBy(v uint64) *CloudBudgetUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdate) SetNillableDeletedBy(v *uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetNillableDeletedBy(v *uint64) *CloudBudgetUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *CloudBudgetUpdate) SetNillableDeletedBy(v *uint32) *CloudBudgetUpdate 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CloudBudgetUpdate) AddDeletedBy(v int32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) AddDeletedBy(v int64) *CloudBudgetUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *CloudBudgetUpdate) ClearDeletedBy() *CloudBudgetUpdate {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_u *CloudBudgetUpdate) SetCloudAccountID(v uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetCloudAccountID(v uint64) *CloudBudgetUpdate {
 	_u.mutation.ResetCloudAccountID()
 	_u.mutation.SetCloudAccountID(v)
 	return _u
 }
 
 // SetNillableCloudAccountID sets the "cloud_account_id" field if the given value is not nil.
-func (_u *CloudBudgetUpdate) SetNillableCloudAccountID(v *uint32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) SetNillableCloudAccountID(v *uint64) *CloudBudgetUpdate {
 	if v != nil {
 		_u.SetCloudAccountID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *CloudBudgetUpdate) SetNillableCloudAccountID(v *uint32) *CloudBudgetUp
 }
 
 // AddCloudAccountID adds value to the "cloud_account_id" field.
-func (_u *CloudBudgetUpdate) AddCloudAccountID(v int32) *CloudBudgetUpdate {
+func (_u *CloudBudgetUpdate) AddCloudAccountID(v int64) *CloudBudgetUpdate {
 	_u.mutation.AddCloudAccountID(v)
 	return _u
 }
@@ -382,7 +382,7 @@ func (_u *CloudBudgetUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -391,7 +391,7 @@ func (_u *CloudBudgetUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudbudget.FieldCreatedAt, field.TypeTime)
@@ -409,40 +409,40 @@ func (_u *CloudBudgetUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(cloudbudget.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cloudbudget.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cloudbudget.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cloudbudget.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cloudbudget.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cloudbudget.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cloudbudget.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCloudAccountID(); ok {
-		_spec.AddField(cloudbudget.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.CloudAccountIDCleared() {
-		_spec.ClearField(cloudbudget.FieldCloudAccountID, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldCloudAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Month(); ok {
 		_spec.SetField(cloudbudget.FieldMonth, field.TypeString, value)
@@ -546,14 +546,14 @@ func (_u *CloudBudgetUpdateOne) ClearDeletedAt() *CloudBudgetUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CloudBudgetUpdateOne) SetCreatedBy(v uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetCreatedBy(v uint64) *CloudBudgetUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdateOne) SetNillableCreatedBy(v *uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetNillableCreatedBy(v *uint64) *CloudBudgetUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -561,7 +561,7 @@ func (_u *CloudBudgetUpdateOne) SetNillableCreatedBy(v *uint32) *CloudBudgetUpda
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CloudBudgetUpdateOne) AddCreatedBy(v int32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) AddCreatedBy(v int64) *CloudBudgetUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -573,14 +573,14 @@ func (_u *CloudBudgetUpdateOne) ClearCreatedBy() *CloudBudgetUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CloudBudgetUpdateOne) SetUpdatedBy(v uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetUpdatedBy(v uint64) *CloudBudgetUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdateOne) SetNillableUpdatedBy(v *uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetNillableUpdatedBy(v *uint64) *CloudBudgetUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -588,7 +588,7 @@ func (_u *CloudBudgetUpdateOne) SetNillableUpdatedBy(v *uint32) *CloudBudgetUpda
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CloudBudgetUpdateOne) AddUpdatedBy(v int32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) AddUpdatedBy(v int64) *CloudBudgetUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -600,14 +600,14 @@ func (_u *CloudBudgetUpdateOne) ClearUpdatedBy() *CloudBudgetUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CloudBudgetUpdateOne) SetDeletedBy(v uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetDeletedBy(v uint64) *CloudBudgetUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CloudBudgetUpdateOne) SetNillableDeletedBy(v *uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetNillableDeletedBy(v *uint64) *CloudBudgetUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -615,7 +615,7 @@ func (_u *CloudBudgetUpdateOne) SetNillableDeletedBy(v *uint32) *CloudBudgetUpda
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CloudBudgetUpdateOne) AddDeletedBy(v int32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) AddDeletedBy(v int64) *CloudBudgetUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -627,14 +627,14 @@ func (_u *CloudBudgetUpdateOne) ClearDeletedBy() *CloudBudgetUpdateOne {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_u *CloudBudgetUpdateOne) SetCloudAccountID(v uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetCloudAccountID(v uint64) *CloudBudgetUpdateOne {
 	_u.mutation.ResetCloudAccountID()
 	_u.mutation.SetCloudAccountID(v)
 	return _u
 }
 
 // SetNillableCloudAccountID sets the "cloud_account_id" field if the given value is not nil.
-func (_u *CloudBudgetUpdateOne) SetNillableCloudAccountID(v *uint32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) SetNillableCloudAccountID(v *uint64) *CloudBudgetUpdateOne {
 	if v != nil {
 		_u.SetCloudAccountID(*v)
 	}
@@ -642,7 +642,7 @@ func (_u *CloudBudgetUpdateOne) SetNillableCloudAccountID(v *uint32) *CloudBudge
 }
 
 // AddCloudAccountID adds value to the "cloud_account_id" field.
-func (_u *CloudBudgetUpdateOne) AddCloudAccountID(v int32) *CloudBudgetUpdateOne {
+func (_u *CloudBudgetUpdateOne) AddCloudAccountID(v int64) *CloudBudgetUpdateOne {
 	_u.mutation.AddCloudAccountID(v)
 	return _u
 }
@@ -871,7 +871,7 @@ func (_u *CloudBudgetUpdateOne) sqlSave(ctx context.Context) (_node *CloudBudget
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CloudBudget.id" for update`)}
@@ -897,7 +897,7 @@ func (_u *CloudBudgetUpdateOne) sqlSave(ctx context.Context) (_node *CloudBudget
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudbudget.FieldCreatedAt, field.TypeTime)
@@ -915,40 +915,40 @@ func (_u *CloudBudgetUpdateOne) sqlSave(ctx context.Context) (_node *CloudBudget
 		_spec.ClearField(cloudbudget.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cloudbudget.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cloudbudget.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cloudbudget.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cloudbudget.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cloudbudget.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cloudbudget.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.SetField(cloudbudget.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCloudAccountID(); ok {
-		_spec.AddField(cloudbudget.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.AddField(cloudbudget.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.CloudAccountIDCleared() {
-		_spec.ClearField(cloudbudget.FieldCloudAccountID, field.TypeUint32)
+		_spec.ClearField(cloudbudget.FieldCloudAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Month(); ok {
 		_spec.SetField(cloudbudget.FieldMonth, field.TypeString, value)

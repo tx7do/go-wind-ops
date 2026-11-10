@@ -149,7 +149,7 @@ func (r *PipelineRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	return resp, nil
 }
 
-func (r *PipelineRepo) Get(ctx context.Context, id uint32) (*opsV1.Pipeline, error) {
+func (r *PipelineRepo) Get(ctx context.Context, id uint64) (*opsV1.Pipeline, error) {
 	e, err := r.entClient.Client().BuildPipeline.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ func (r *PipelineRepo) Get(ctx context.Context, id uint32) (*opsV1.Pipeline, err
 }
 
 // IsNameTaken 校验流水线名唯一性。
-func (r *PipelineRepo) IsNameTaken(ctx context.Context, name string, excludeID uint32) (bool, error) {
+func (r *PipelineRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
 	query := r.entClient.Client().BuildPipeline.Query().Where(buildpipeline.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(buildpipeline.IDNEQ(excludeID))
@@ -167,7 +167,7 @@ func (r *PipelineRepo) IsNameTaken(ctx context.Context, name string, excludeID u
 }
 
 // Create 创建(name/steps 必填;steps 由服务层序列化)。
-func (r *PipelineRepo) Create(ctx context.Context, name, stepsJSON string, description *string, labels []string, operatorID uint32) (*opsV1.Pipeline, error) {
+func (r *PipelineRepo) Create(ctx context.Context, name, stepsJSON string, description *string, labels []string, operatorID uint64) (*opsV1.Pipeline, error) {
 	builder := r.entClient.Client().BuildPipeline.Create().
 		SetName(name).
 		SetSteps(stepsJSON).
@@ -186,7 +186,7 @@ func (r *PipelineRepo) Create(ctx context.Context, name, stepsJSON string, descr
 }
 
 // Update 更新(stepsJSON 为空串表示不改步骤)。
-func (r *PipelineRepo) Update(ctx context.Context, id uint32, name, stepsJSON string, description *string, labels []string) (*opsV1.Pipeline, error) {
+func (r *PipelineRepo) Update(ctx context.Context, id uint64, name, stepsJSON string, description *string, labels []string) (*opsV1.Pipeline, error) {
 	builder := r.entClient.Client().BuildPipeline.UpdateOneID(id)
 	if name != "" {
 		builder.SetName(name)
@@ -207,6 +207,6 @@ func (r *PipelineRepo) Update(ctx context.Context, id uint32, name, stepsJSON st
 	return r.toDTO(e)
 }
 
-func (r *PipelineRepo) Delete(ctx context.Context, id uint32) error {
+func (r *PipelineRepo) Delete(ctx context.Context, id uint64) error {
 	return r.entClient.Client().BuildPipeline.DeleteOneID(id).Exec(ctx)
 }

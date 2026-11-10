@@ -125,7 +125,7 @@ func (r *DistributionRecordRepo) Get(ctx context.Context, req *opsV1.GetDistribu
 const pendingRequestPrefix = "pending:"
 
 // MakePendingRequestID 生成未投递批次的占位幂等键(唯一索引保证逐记录唯一)。
-func MakePendingRequestID(distributionID, batchNo, projectID uint32) string {
+func MakePendingRequestID(distributionID uint64, batchNo uint32, projectID uint64) string {
 	return fmt.Sprintf("%s%d:%d:%d", pendingRequestPrefix, distributionID, batchNo, projectID)
 }
 
@@ -134,7 +134,7 @@ func IsPendingRequestID(requestID string) bool {
 	return strings.HasPrefix(requestID, pendingRequestPrefix)
 }
 
-func (r *DistributionRecordRepo) Create(ctx context.Context, distributionID, historyID, projectID, nodeID uint32, commandRequestID string, operatorID uint32, batchNo uint32) (*ent.DistributionRecord, error) {
+func (r *DistributionRecordRepo) Create(ctx context.Context, distributionID, historyID, projectID, nodeID uint64, commandRequestID string, operatorID uint64, batchNo uint32) (*ent.DistributionRecord, error) {
 	if batchNo == 0 {
 		batchNo = 1
 	}
@@ -161,7 +161,7 @@ func (r *DistributionRecordRepo) Create(ctx context.Context, distributionID, his
 }
 
 // ListByDistribution 列出某分发配置的全部执行记录(批次推进判断用)。
-func (r *DistributionRecordRepo) ListByDistribution(ctx context.Context, distributionID uint32) ([]*ent.DistributionRecord, error) {
+func (r *DistributionRecordRepo) ListByDistribution(ctx context.Context, distributionID uint64) ([]*ent.DistributionRecord, error) {
 	return r.entClient.Client().DistributionRecord.
 		Query().
 		Where(distributionrecord.DistributionIDEQ(distributionID)).
@@ -172,7 +172,7 @@ func (r *DistributionRecordRepo) ListByDistribution(ctx context.Context, distrib
 // ClaimForDispatch 把占位记录领取为真实投递:仅当记录仍是该占位键且
 // PENDING 时写入真实指令幂等键,返回是否由本次调用获得投递权(多副本
 // 并发推进时恰一方为 true,批次不会重复下发)。
-func (r *DistributionRecordRepo) ClaimForDispatch(ctx context.Context, recordID uint32, placeholder, requestID string) (bool, error) {
+func (r *DistributionRecordRepo) ClaimForDispatch(ctx context.Context, recordID uint64, placeholder, requestID string) (bool, error) {
 	n, err := r.entClient.Client().DistributionRecord.
 		Update().
 		Where(
@@ -191,7 +191,7 @@ func (r *DistributionRecordRepo) ClaimForDispatch(ctx context.Context, recordID 
 
 // SkipPending 把未投递的 PENDING 记录置为 SKIPPED(前序批次失败自动中止),
 // 幂等(仅 PENDING 可跳过);返回是否发生置位。
-func (r *DistributionRecordRepo) SkipPending(ctx context.Context, recordID uint32, reason string) (bool, error) {
+func (r *DistributionRecordRepo) SkipPending(ctx context.Context, recordID uint64, reason string) (bool, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().DistributionRecord.
 		Update().
@@ -213,7 +213,7 @@ func (r *DistributionRecordRepo) SkipPending(ctx context.Context, recordID uint3
 
 // SkipAllPendingByDistribution 把该分发配置下全部未投递占位记录置 SKIPPED
 // (重新触发即取代旧 rollout,防占位记录永久滞留 PENDING)。
-func (r *DistributionRecordRepo) SkipAllPendingByDistribution(ctx context.Context, distributionID uint32, reason string) (int, error) {
+func (r *DistributionRecordRepo) SkipAllPendingByDistribution(ctx context.Context, distributionID uint64, reason string) (int, error) {
 	now := time.Now()
 	n, err := r.entClient.Client().DistributionRecord.
 		Update().
@@ -230,7 +230,7 @@ func (r *DistributionRecordRepo) SkipAllPendingByDistribution(ctx context.Contex
 }
 
 // FailPending 把占位记录直接置为 FAILED(批次内投递失败,未发出指令)。
-func (r *DistributionRecordRepo) FailPending(ctx context.Context, recordID uint32, errMsg string) error {
+func (r *DistributionRecordRepo) FailPending(ctx context.Context, recordID uint64, errMsg string) error {
 	now := time.Now()
 	_, err := r.entClient.Client().DistributionRecord.
 		Update().
@@ -247,7 +247,7 @@ func (r *DistributionRecordRepo) FailPending(ctx context.Context, recordID uint3
 }
 
 // GetEntity 取原始实体。
-func (r *DistributionRecordRepo) GetEntity(ctx context.Context, id uint32) (*ent.DistributionRecord, error) {
+func (r *DistributionRecordRepo) GetEntity(ctx context.Context, id uint64) (*ent.DistributionRecord, error) {
 	entity, err := r.entClient.Client().DistributionRecord.
 		Query().
 		Where(distributionrecord.IDEQ(id)).
@@ -299,7 +299,7 @@ func (r *DistributionRecordRepo) FinalizeByCommandRequestID(ctx context.Context,
 
 // FinalizeStalePending 把超时未回执的分发记录定案 FAILED(指令超时驱动),
 // 返回受影响的分发配置 ID(供批次推进钩子复判)。
-func (r *DistributionRecordRepo) FinalizeStalePending(ctx context.Context, before time.Time) ([]uint32, error) {
+func (r *DistributionRecordRepo) FinalizeStalePending(ctx context.Context, before time.Time) ([]uint64, error) {
 	stale, err := r.entClient.Client().DistributionRecord.
 		Query().
 		Where(
@@ -315,7 +315,7 @@ func (r *DistributionRecordRepo) FinalizeStalePending(ctx context.Context, befor
 		return nil, nil
 	}
 	now := time.Now()
-	distIDs := make([]uint32, 0, len(stale))
+	distIDs := make([]uint64, 0, len(stale))
 	for _, rec := range stale {
 		n, err := r.entClient.Client().DistributionRecord.
 			Update().

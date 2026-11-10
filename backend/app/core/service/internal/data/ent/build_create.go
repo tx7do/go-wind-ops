@@ -23,13 +23,13 @@ type BuildCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *BuildCreate) SetTenantID(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetTenantID(v uint64) *BuildCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *BuildCreate) SetNillableTenantID(v *uint32) *BuildCreate {
+func (_c *BuildCreate) SetNillableTenantID(v *uint64) *BuildCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *BuildCreate) SetNillableDeletedAt(v *time.Time) *BuildCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *BuildCreate) SetCreatedBy(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetCreatedBy(v uint64) *BuildCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *BuildCreate) SetNillableCreatedBy(v *uint32) *BuildCreate {
+func (_c *BuildCreate) SetNillableCreatedBy(v *uint64) *BuildCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *BuildCreate) SetNillableCreatedBy(v *uint32) *BuildCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *BuildCreate) SetUpdatedBy(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetUpdatedBy(v uint64) *BuildCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *BuildCreate) SetNillableUpdatedBy(v *uint32) *BuildCreate {
+func (_c *BuildCreate) SetNillableUpdatedBy(v *uint64) *BuildCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *BuildCreate) SetNillableUpdatedBy(v *uint32) *BuildCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *BuildCreate) SetDeletedBy(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetDeletedBy(v uint64) *BuildCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *BuildCreate) SetNillableDeletedBy(v *uint32) *BuildCreate {
+func (_c *BuildCreate) SetNillableDeletedBy(v *uint64) *BuildCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -127,7 +127,7 @@ func (_c *BuildCreate) SetName(v string) *BuildCreate {
 }
 
 // SetRepositoryID sets the "repository_id" field.
-func (_c *BuildCreate) SetRepositoryID(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetRepositoryID(v uint64) *BuildCreate {
 	_c.mutation.SetRepositoryID(v)
 	return _c
 }
@@ -249,7 +249,7 @@ func (_c *BuildCreate) SetLabels(v []string) *BuildCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *BuildCreate) SetID(v uint32) *BuildCreate {
+func (_c *BuildCreate) SetID(v uint64) *BuildCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -368,7 +368,7 @@ func (_c *BuildCreate) sqlSave(ctx context.Context) (*Build, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -378,7 +378,7 @@ func (_c *BuildCreate) sqlSave(ctx context.Context) (*Build, error) {
 func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Build{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(build.Table, sqlgraph.NewFieldSpec(build.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(build.Table, sqlgraph.NewFieldSpec(build.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -386,7 +386,7 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(build.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(build.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -402,15 +402,15 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(build.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(build.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(build.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(build.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(build.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(build.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -418,7 +418,7 @@ func (_c *BuildCreate) createSpec() (*Build, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.RepositoryID(); ok {
-		_spec.SetField(build.FieldRepositoryID, field.TypeUint32, value)
+		_spec.SetField(build.FieldRepositoryID, field.TypeUint64, value)
 		_node.RepositoryID = value
 	}
 	if value, ok := _c.mutation.Branch(); ok {
@@ -550,7 +550,7 @@ func (u *BuildUpsert) ClearDeletedAt() *BuildUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildUpsert) SetCreatedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) SetCreatedBy(v uint64) *BuildUpsert {
 	u.Set(build.FieldCreatedBy, v)
 	return u
 }
@@ -562,7 +562,7 @@ func (u *BuildUpsert) UpdateCreatedBy() *BuildUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildUpsert) AddCreatedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) AddCreatedBy(v uint64) *BuildUpsert {
 	u.Add(build.FieldCreatedBy, v)
 	return u
 }
@@ -574,7 +574,7 @@ func (u *BuildUpsert) ClearCreatedBy() *BuildUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildUpsert) SetUpdatedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) SetUpdatedBy(v uint64) *BuildUpsert {
 	u.Set(build.FieldUpdatedBy, v)
 	return u
 }
@@ -586,7 +586,7 @@ func (u *BuildUpsert) UpdateUpdatedBy() *BuildUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildUpsert) AddUpdatedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) AddUpdatedBy(v uint64) *BuildUpsert {
 	u.Add(build.FieldUpdatedBy, v)
 	return u
 }
@@ -598,7 +598,7 @@ func (u *BuildUpsert) ClearUpdatedBy() *BuildUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildUpsert) SetDeletedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) SetDeletedBy(v uint64) *BuildUpsert {
 	u.Set(build.FieldDeletedBy, v)
 	return u
 }
@@ -610,7 +610,7 @@ func (u *BuildUpsert) UpdateDeletedBy() *BuildUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildUpsert) AddDeletedBy(v uint32) *BuildUpsert {
+func (u *BuildUpsert) AddDeletedBy(v uint64) *BuildUpsert {
 	u.Add(build.FieldDeletedBy, v)
 	return u
 }
@@ -634,7 +634,7 @@ func (u *BuildUpsert) UpdateName() *BuildUpsert {
 }
 
 // SetRepositoryID sets the "repository_id" field.
-func (u *BuildUpsert) SetRepositoryID(v uint32) *BuildUpsert {
+func (u *BuildUpsert) SetRepositoryID(v uint64) *BuildUpsert {
 	u.Set(build.FieldRepositoryID, v)
 	return u
 }
@@ -646,7 +646,7 @@ func (u *BuildUpsert) UpdateRepositoryID() *BuildUpsert {
 }
 
 // AddRepositoryID adds v to the "repository_id" field.
-func (u *BuildUpsert) AddRepositoryID(v uint32) *BuildUpsert {
+func (u *BuildUpsert) AddRepositoryID(v uint64) *BuildUpsert {
 	u.Add(build.FieldRepositoryID, v)
 	return u
 }
@@ -928,14 +928,14 @@ func (u *BuildUpsertOne) ClearDeletedAt() *BuildUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildUpsertOne) SetCreatedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) SetCreatedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildUpsertOne) AddCreatedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) AddCreatedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -956,14 +956,14 @@ func (u *BuildUpsertOne) ClearCreatedBy() *BuildUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildUpsertOne) SetUpdatedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) SetUpdatedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildUpsertOne) AddUpdatedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) AddUpdatedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -984,14 +984,14 @@ func (u *BuildUpsertOne) ClearUpdatedBy() *BuildUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildUpsertOne) SetDeletedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) SetDeletedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildUpsertOne) AddDeletedBy(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) AddDeletedBy(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1026,14 +1026,14 @@ func (u *BuildUpsertOne) UpdateName() *BuildUpsertOne {
 }
 
 // SetRepositoryID sets the "repository_id" field.
-func (u *BuildUpsertOne) SetRepositoryID(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) SetRepositoryID(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetRepositoryID(v)
 	})
 }
 
 // AddRepositoryID adds v to the "repository_id" field.
-func (u *BuildUpsertOne) AddRepositoryID(v uint32) *BuildUpsertOne {
+func (u *BuildUpsertOne) AddRepositoryID(v uint64) *BuildUpsertOne {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddRepositoryID(v)
 	})
@@ -1272,7 +1272,7 @@ func (u *BuildUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BuildUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *BuildUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1281,7 +1281,7 @@ func (u *BuildUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BuildUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *BuildUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1338,7 +1338,7 @@ func (_c *BuildCreateBulk) Save(ctx context.Context) ([]*Build, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1519,14 +1519,14 @@ func (u *BuildUpsertBulk) ClearDeletedAt() *BuildUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildUpsertBulk) SetCreatedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) SetCreatedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildUpsertBulk) AddCreatedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) AddCreatedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1547,14 +1547,14 @@ func (u *BuildUpsertBulk) ClearCreatedBy() *BuildUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildUpsertBulk) SetUpdatedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) SetUpdatedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildUpsertBulk) AddUpdatedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) AddUpdatedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1575,14 +1575,14 @@ func (u *BuildUpsertBulk) ClearUpdatedBy() *BuildUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildUpsertBulk) SetDeletedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) SetDeletedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildUpsertBulk) AddDeletedBy(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) AddDeletedBy(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1617,14 +1617,14 @@ func (u *BuildUpsertBulk) UpdateName() *BuildUpsertBulk {
 }
 
 // SetRepositoryID sets the "repository_id" field.
-func (u *BuildUpsertBulk) SetRepositoryID(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) SetRepositoryID(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.SetRepositoryID(v)
 	})
 }
 
 // AddRepositoryID adds v to the "repository_id" field.
-func (u *BuildUpsertBulk) AddRepositoryID(v uint32) *BuildUpsertBulk {
+func (u *BuildUpsertBulk) AddRepositoryID(v uint64) *BuildUpsertBulk {
 	return u.Update(func(s *BuildUpsert) {
 		s.AddRepositoryID(v)
 	})

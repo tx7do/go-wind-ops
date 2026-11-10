@@ -76,7 +76,7 @@ func (r *MaintenanceWindowRepo) List(ctx context.Context, req *paginationV1.Pagi
 }
 
 // Get 详情。
-func (r *MaintenanceWindowRepo) Get(ctx context.Context, id uint32) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Get(ctx context.Context, id uint64) (*opsV1.MaintenanceWindow, error) {
 	e, err := r.entClient.Client().MaintenanceWindow.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (r *MaintenanceWindowRepo) Get(ctx context.Context, id uint32) (*opsV1.Main
 }
 
 // Create 落库。
-func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsAt, endsAt time.Time, enabled bool, description *string, operatorID uint32) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsAt, endsAt time.Time, enabled bool, description *string, operatorID uint64) (*opsV1.MaintenanceWindow, error) {
 	builder := r.entClient.Client().MaintenanceWindow.Create().
 		SetName(name).
 		SetStartsAt(startsAt).
@@ -105,7 +105,7 @@ func (r *MaintenanceWindowRepo) Create(ctx context.Context, name string, startsA
 }
 
 // Update 名称/时间/启用/描述。
-func (r *MaintenanceWindowRepo) Update(ctx context.Context, id uint32, name string, startsAt, endsAt time.Time, enabled bool, description *string) (*opsV1.MaintenanceWindow, error) {
+func (r *MaintenanceWindowRepo) Update(ctx context.Context, id uint64, name string, startsAt, endsAt time.Time, enabled bool, description *string) (*opsV1.MaintenanceWindow, error) {
 	builder := r.entClient.Client().MaintenanceWindow.UpdateOneID(id).
 		SetName(name).
 		SetStartsAt(startsAt).
@@ -122,7 +122,7 @@ func (r *MaintenanceWindowRepo) Update(ctx context.Context, id uint32, name stri
 }
 
 // Delete 删除。
-func (r *MaintenanceWindowRepo) Delete(ctx context.Context, id uint32) error {
+func (r *MaintenanceWindowRepo) Delete(ctx context.Context, id uint64) error {
 	return r.entClient.Client().MaintenanceWindow.DeleteOneID(id).Exec(ctx)
 }
 

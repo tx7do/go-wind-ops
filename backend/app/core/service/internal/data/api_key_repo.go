@@ -44,7 +44,7 @@ func (r *ApiKeyRepo) toDTO(e *ent.ApiKey) *opsV1.ApiKey {
 	// 归属信息:OpenAPI 网关据此注入操作者/租户归因(触发的构建/分发/流水线
 	// 落到密钥创建者的租户,而非平台)。
 	if e.CreatedBy != nil {
-		dto.OwnerUserId = trans.Ptr(uint32(*e.CreatedBy))
+		dto.OwnerUserId = trans.Ptr(uint64(*e.CreatedBy))
 	}
 	if e.TenantID != nil {
 		dto.TenantId = e.TenantID
@@ -102,7 +102,7 @@ func (r *ApiKeyRepo) List(ctx context.Context, req *paginationV1.PagingRequest) 
 }
 
 // Get 详情。
-func (r *ApiKeyRepo) Get(ctx context.Context, id uint32) (*opsV1.ApiKey, error) {
+func (r *ApiKeyRepo) Get(ctx context.Context, id uint64) (*opsV1.ApiKey, error) {
 	e, err := r.entClient.Client().ApiKey.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (r *ApiKeyRepo) Get(ctx context.Context, id uint32) (*opsV1.ApiKey, error) 
 }
 
 // IsNameTaken 名字唯一性校验。
-func (r *ApiKeyRepo) IsNameTaken(ctx context.Context, name string, excludeID uint32) (bool, error) {
+func (r *ApiKeyRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
 	query := r.entClient.Client().ApiKey.Query().Where(apikey.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(apikey.IDNEQ(excludeID))
@@ -120,7 +120,7 @@ func (r *ApiKeyRepo) IsNameTaken(ctx context.Context, name string, excludeID uin
 }
 
 // Create 落库(明文由服务层生成,这里只收哈希与前缀;scopes 为 nil 存空=全部)。
-func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, status opsV1.ApiKey_Status, description *string, expiresAt *time.Time, scopes []string, operatorID uint32) (*opsV1.ApiKey, error) {
+func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, status opsV1.ApiKey_Status, description *string, expiresAt *time.Time, scopes []string, operatorID uint64) (*opsV1.ApiKey, error) {
 	st := apikey.StatusEnabled
 	if status == opsV1.ApiKey_DISABLED {
 		st = apikey.StatusDisabled
@@ -150,7 +150,7 @@ func (r *ApiKeyRepo) Create(ctx context.Context, name, keyHash, prefix string, s
 }
 
 // Update 状态/描述/过期时间/作用域(scopes 非 nil 时覆盖,可传空切片清空=全部)。
-func (r *ApiKeyRepo) Update(ctx context.Context, id uint32, status *opsV1.ApiKey_Status, description *string, expiresAt **time.Time, scopes *[]string) (*opsV1.ApiKey, error) {
+func (r *ApiKeyRepo) Update(ctx context.Context, id uint64, status *opsV1.ApiKey_Status, description *string, expiresAt **time.Time, scopes *[]string) (*opsV1.ApiKey, error) {
 	builder := r.entClient.Client().ApiKey.UpdateOneID(id)
 	if status != nil {
 		st := apikey.StatusEnabled
@@ -180,7 +180,7 @@ func (r *ApiKeyRepo) Update(ctx context.Context, id uint32, status *opsV1.ApiKey
 }
 
 // Delete 删除。
-func (r *ApiKeyRepo) Delete(ctx context.Context, id uint32) error {
+func (r *ApiKeyRepo) Delete(ctx context.Context, id uint64) error {
 	return r.entClient.Client().ApiKey.DeleteOneID(id).Exec(ctx)
 }
 
@@ -194,7 +194,7 @@ func (r *ApiKeyRepo) GetByHash(ctx context.Context, keyHash string) (*ent.ApiKey
 // TouchLastUsed 异步回写最近使用时间。
 // 调用方是 OpenAPI 网关(无操作者上下文);api_key 已挂租户隐私,注入系统
 // viewer 避免无 viewer 上下文被 EvalMutation 拒绝。
-func (r *ApiKeyRepo) TouchLastUsed(ctx context.Context, id uint32) {
+func (r *ApiKeyRepo) TouchLastUsed(ctx context.Context, id uint64) {
 	ctx = appViewer.NewSystemViewerContext(ctx)
 	_, _ = r.entClient.Client().ApiKey.UpdateOneID(id).
 		SetLastUsedAt(time.Now()).

@@ -84,14 +84,14 @@ func (_u *ApprovalUpdate) SetNillableOperationType(v *string) *ApprovalUpdate {
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (_u *ApprovalUpdate) SetOperationRefID(v uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetOperationRefID(v uint64) *ApprovalUpdate {
 	_u.mutation.ResetOperationRefID()
 	_u.mutation.SetOperationRefID(v)
 	return _u
 }
 
 // SetNillableOperationRefID sets the "operation_ref_id" field if the given value is not nil.
-func (_u *ApprovalUpdate) SetNillableOperationRefID(v *uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetNillableOperationRefID(v *uint64) *ApprovalUpdate {
 	if v != nil {
 		_u.SetOperationRefID(*v)
 	}
@@ -99,7 +99,7 @@ func (_u *ApprovalUpdate) SetNillableOperationRefID(v *uint32) *ApprovalUpdate {
 }
 
 // AddOperationRefID adds value to the "operation_ref_id" field.
-func (_u *ApprovalUpdate) AddOperationRefID(v int32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) AddOperationRefID(v int64) *ApprovalUpdate {
 	_u.mutation.AddOperationRefID(v)
 	return _u
 }
@@ -153,14 +153,14 @@ func (_u *ApprovalUpdate) ClearPayload() *ApprovalUpdate {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (_u *ApprovalUpdate) SetRequesterID(v uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetRequesterID(v uint64) *ApprovalUpdate {
 	_u.mutation.ResetRequesterID()
 	_u.mutation.SetRequesterID(v)
 	return _u
 }
 
 // SetNillableRequesterID sets the "requester_id" field if the given value is not nil.
-func (_u *ApprovalUpdate) SetNillableRequesterID(v *uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetNillableRequesterID(v *uint64) *ApprovalUpdate {
 	if v != nil {
 		_u.SetRequesterID(*v)
 	}
@@ -168,7 +168,7 @@ func (_u *ApprovalUpdate) SetNillableRequesterID(v *uint32) *ApprovalUpdate {
 }
 
 // AddRequesterID adds value to the "requester_id" field.
-func (_u *ApprovalUpdate) AddRequesterID(v int32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) AddRequesterID(v int64) *ApprovalUpdate {
 	_u.mutation.AddRequesterID(v)
 	return _u
 }
@@ -180,14 +180,14 @@ func (_u *ApprovalUpdate) ClearRequesterID() *ApprovalUpdate {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (_u *ApprovalUpdate) SetApproverID(v uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetApproverID(v uint64) *ApprovalUpdate {
 	_u.mutation.ResetApproverID()
 	_u.mutation.SetApproverID(v)
 	return _u
 }
 
 // SetNillableApproverID sets the "approver_id" field if the given value is not nil.
-func (_u *ApprovalUpdate) SetNillableApproverID(v *uint32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) SetNillableApproverID(v *uint64) *ApprovalUpdate {
 	if v != nil {
 		_u.SetApproverID(*v)
 	}
@@ -195,7 +195,7 @@ func (_u *ApprovalUpdate) SetNillableApproverID(v *uint32) *ApprovalUpdate {
 }
 
 // AddApproverID adds value to the "approver_id" field.
-func (_u *ApprovalUpdate) AddApproverID(v int32) *ApprovalUpdate {
+func (_u *ApprovalUpdate) AddApproverID(v int64) *ApprovalUpdate {
 	_u.mutation.AddApproverID(v)
 	return _u
 }
@@ -372,7 +372,7 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approval.Table, approval.Columns, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approval.Table, approval.Columns, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -381,7 +381,7 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approval.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approval.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(approval.FieldCreatedAt, field.TypeTime)
@@ -402,10 +402,10 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.SetField(approval.FieldOperationType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperationRefID(); ok {
-		_spec.SetField(approval.FieldOperationRefID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldOperationRefID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperationRefID(); ok {
-		_spec.AddField(approval.FieldOperationRefID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldOperationRefID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(approval.FieldAgentID, field.TypeString, value)
@@ -420,22 +420,22 @@ func (_u *ApprovalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(approval.FieldPayload, field.TypeString)
 	}
 	if value, ok := _u.mutation.RequesterID(); ok {
-		_spec.SetField(approval.FieldRequesterID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldRequesterID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedRequesterID(); ok {
-		_spec.AddField(approval.FieldRequesterID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldRequesterID, field.TypeUint64, value)
 	}
 	if _u.mutation.RequesterIDCleared() {
-		_spec.ClearField(approval.FieldRequesterID, field.TypeUint32)
+		_spec.ClearField(approval.FieldRequesterID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.ApproverID(); ok {
-		_spec.SetField(approval.FieldApproverID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldApproverID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedApproverID(); ok {
-		_spec.AddField(approval.FieldApproverID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldApproverID, field.TypeUint64, value)
 	}
 	if _u.mutation.ApproverIDCleared() {
-		_spec.ClearField(approval.FieldApproverID, field.TypeUint32)
+		_spec.ClearField(approval.FieldApproverID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(approval.FieldStatus, field.TypeEnum, value)
@@ -541,14 +541,14 @@ func (_u *ApprovalUpdateOne) SetNillableOperationType(v *string) *ApprovalUpdate
 }
 
 // SetOperationRefID sets the "operation_ref_id" field.
-func (_u *ApprovalUpdateOne) SetOperationRefID(v uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetOperationRefID(v uint64) *ApprovalUpdateOne {
 	_u.mutation.ResetOperationRefID()
 	_u.mutation.SetOperationRefID(v)
 	return _u
 }
 
 // SetNillableOperationRefID sets the "operation_ref_id" field if the given value is not nil.
-func (_u *ApprovalUpdateOne) SetNillableOperationRefID(v *uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetNillableOperationRefID(v *uint64) *ApprovalUpdateOne {
 	if v != nil {
 		_u.SetOperationRefID(*v)
 	}
@@ -556,7 +556,7 @@ func (_u *ApprovalUpdateOne) SetNillableOperationRefID(v *uint32) *ApprovalUpdat
 }
 
 // AddOperationRefID adds value to the "operation_ref_id" field.
-func (_u *ApprovalUpdateOne) AddOperationRefID(v int32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) AddOperationRefID(v int64) *ApprovalUpdateOne {
 	_u.mutation.AddOperationRefID(v)
 	return _u
 }
@@ -610,14 +610,14 @@ func (_u *ApprovalUpdateOne) ClearPayload() *ApprovalUpdateOne {
 }
 
 // SetRequesterID sets the "requester_id" field.
-func (_u *ApprovalUpdateOne) SetRequesterID(v uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetRequesterID(v uint64) *ApprovalUpdateOne {
 	_u.mutation.ResetRequesterID()
 	_u.mutation.SetRequesterID(v)
 	return _u
 }
 
 // SetNillableRequesterID sets the "requester_id" field if the given value is not nil.
-func (_u *ApprovalUpdateOne) SetNillableRequesterID(v *uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetNillableRequesterID(v *uint64) *ApprovalUpdateOne {
 	if v != nil {
 		_u.SetRequesterID(*v)
 	}
@@ -625,7 +625,7 @@ func (_u *ApprovalUpdateOne) SetNillableRequesterID(v *uint32) *ApprovalUpdateOn
 }
 
 // AddRequesterID adds value to the "requester_id" field.
-func (_u *ApprovalUpdateOne) AddRequesterID(v int32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) AddRequesterID(v int64) *ApprovalUpdateOne {
 	_u.mutation.AddRequesterID(v)
 	return _u
 }
@@ -637,14 +637,14 @@ func (_u *ApprovalUpdateOne) ClearRequesterID() *ApprovalUpdateOne {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (_u *ApprovalUpdateOne) SetApproverID(v uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetApproverID(v uint64) *ApprovalUpdateOne {
 	_u.mutation.ResetApproverID()
 	_u.mutation.SetApproverID(v)
 	return _u
 }
 
 // SetNillableApproverID sets the "approver_id" field if the given value is not nil.
-func (_u *ApprovalUpdateOne) SetNillableApproverID(v *uint32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) SetNillableApproverID(v *uint64) *ApprovalUpdateOne {
 	if v != nil {
 		_u.SetApproverID(*v)
 	}
@@ -652,7 +652,7 @@ func (_u *ApprovalUpdateOne) SetNillableApproverID(v *uint32) *ApprovalUpdateOne
 }
 
 // AddApproverID adds value to the "approver_id" field.
-func (_u *ApprovalUpdateOne) AddApproverID(v int32) *ApprovalUpdateOne {
+func (_u *ApprovalUpdateOne) AddApproverID(v int64) *ApprovalUpdateOne {
 	_u.mutation.AddApproverID(v)
 	return _u
 }
@@ -842,7 +842,7 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approval.Table, approval.Columns, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approval.Table, approval.Columns, sqlgraph.NewFieldSpec(approval.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Approval.id" for update`)}
@@ -868,7 +868,7 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approval.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approval.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(approval.FieldCreatedAt, field.TypeTime)
@@ -889,10 +889,10 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 		_spec.SetField(approval.FieldOperationType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OperationRefID(); ok {
-		_spec.SetField(approval.FieldOperationRefID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldOperationRefID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedOperationRefID(); ok {
-		_spec.AddField(approval.FieldOperationRefID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldOperationRefID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AgentID(); ok {
 		_spec.SetField(approval.FieldAgentID, field.TypeString, value)
@@ -907,22 +907,22 @@ func (_u *ApprovalUpdateOne) sqlSave(ctx context.Context) (_node *Approval, err 
 		_spec.ClearField(approval.FieldPayload, field.TypeString)
 	}
 	if value, ok := _u.mutation.RequesterID(); ok {
-		_spec.SetField(approval.FieldRequesterID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldRequesterID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedRequesterID(); ok {
-		_spec.AddField(approval.FieldRequesterID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldRequesterID, field.TypeUint64, value)
 	}
 	if _u.mutation.RequesterIDCleared() {
-		_spec.ClearField(approval.FieldRequesterID, field.TypeUint32)
+		_spec.ClearField(approval.FieldRequesterID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.ApproverID(); ok {
-		_spec.SetField(approval.FieldApproverID, field.TypeUint32, value)
+		_spec.SetField(approval.FieldApproverID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedApproverID(); ok {
-		_spec.AddField(approval.FieldApproverID, field.TypeUint32, value)
+		_spec.AddField(approval.FieldApproverID, field.TypeUint64, value)
 	}
 	if _u.mutation.ApproverIDCleared() {
-		_spec.ClearField(approval.FieldApproverID, field.TypeUint32)
+		_spec.ClearField(approval.FieldApproverID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(approval.FieldStatus, field.TypeEnum, value)

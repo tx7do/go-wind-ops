@@ -57,7 +57,7 @@ service ScriptBatchService {
 
 // 运维脚本
 message Script {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 脚本ID
@@ -102,7 +102,7 @@ message Script {
     }
   ]; // 定时执行
 
-  optional uint32 cron_node_id = 9 [
+  optional uint64 cron_node_id = 9 [
     json_name = "cronNodeId",
     (gnostic.openapi.v3.property) = {
       description: "定时执行的目标节点(0 为未配置)"
@@ -131,7 +131,7 @@ message ListScriptResponse {
 }
 
 message GetScriptRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID
@@ -145,7 +145,7 @@ message CreateScriptRequest {
 }
 
 message UpdateScriptRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID
@@ -164,20 +164,20 @@ message UpdateScriptRequest {
 }
 
 message DeleteScriptRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID
 }
 
 message ExecuteScriptRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID
 
   // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-  optional uint32 node_id = 2 [
+  optional uint64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = OPTIONAL
   ]; // 目标节点ID
@@ -200,11 +200,11 @@ message ExecuteScriptResponse {
 }
 
 message ExecuteScriptBatchRequest {
-  optional uint32 script_id = 1 [
+  optional uint64 script_id = 1 [
     json_name = "scriptId"
   ]; // 脚本ID(与 command 二选一)
 
-  repeated uint32 node_ids = 2 [json_name = "nodeIds"]; // 目标节点ID列表(与 agent_ids 二选一)
+  repeated uint64 node_ids = 2 [json_name = "nodeIds"]; // 目标节点ID列表(与 agent_ids 二选一)
 
   optional string command = 3 [
     json_name = "command"
@@ -219,7 +219,7 @@ message ExecuteScriptBatchRequest {
 }
 
 message ExecuteScriptBatchResponse {
-  optional uint32 batch_id = 1 [json_name = "batchId"]; // 批次ID
+  optional uint64 batch_id = 1 [json_name = "batchId"]; // 批次ID
 
   repeated string request_ids = 2 [json_name = "requestIds"]; // 已下发节点的幂等键
 
@@ -230,12 +230,12 @@ message ExecuteScriptBatchResponse {
 
 // 脚本批量执行批次
 message ScriptBatch {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 批次ID
 
-  optional uint32 script_id = 2 [
+  optional uint64 script_id = 2 [
     json_name = "scriptId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 脚本ID
@@ -245,7 +245,7 @@ message ScriptBatch {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 脚本名快照
 
-  repeated uint32 node_ids = 4 [json_name = "nodeIds"]; // 目标节点ID列表
+  repeated uint64 node_ids = 4 [json_name = "nodeIds"]; // 目标节点ID列表
 
   optional uint32 total = 5 [json_name = "total"]; // 目标节点总数
 
@@ -267,7 +267,7 @@ message ListScriptBatchResponse {
 }
 
 message GetScriptBatchRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 批次ID
@@ -277,7 +277,7 @@ message GetScriptBatchRequest {
 message ScriptBatchItem {
   optional string request_id = 1 [json_name = "requestId"]; // 指令幂等键
 
-  optional uint32 node_id = 2 [json_name = "nodeId"]; // 节点ID
+  optional uint64 node_id = 2 [json_name = "nodeId"]; // 节点ID
 
   optional string agent_id = 3 [json_name = "agentId"]; // 机器标识
 
@@ -305,7 +305,7 @@ message ScriptBatchDetail {
 
 // ListScriptVersionsRequest 版本历史查询
 message ListScriptVersionsRequest {
-  optional uint32 script_id = 1 [
+  optional uint64 script_id = 1 [
     json_name = "scriptId",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID
@@ -313,11 +313,11 @@ message ListScriptVersionsRequest {
 
 // ScriptVersion 版本快照
 message ScriptVersion {
-  optional uint32 id = 1 [json_name = "id"]; // 版本ID
-  optional uint32 script_id = 2 [json_name = "scriptId"]; // 脚本ID
+  optional uint64 id = 1 [json_name = "id"]; // 版本ID
+  optional uint64 script_id = 2 [json_name = "scriptId"]; // 脚本ID
   optional string content = 3 [json_name = "content"]; // 内容快照
   optional string remark = 4 [json_name = "remark"]; // 来源(auto=更新前自动快照/restore=恢复前快照)
-  optional uint32 created_by = 5 [json_name = "createdBy"]; // 操作者
+  optional uint64 created_by = 5 [json_name = "createdBy"]; // 操作者
   optional google.protobuf.Timestamp created_at = 30 [json_name = "createdAt"]; // 快照时间
 }
 
@@ -328,12 +328,12 @@ message ListScriptVersionsResponse {
 
 // RestoreScriptVersionRequest 恢复到指定版本
 message RestoreScriptVersionRequest {
-  uint32 script_id = 1 [
+  uint64 script_id = 1 [
     json_name = "scriptId",
     (google.api.field_behavior) = REQUIRED
   ]; // 脚本ID(id 走 body:触发类 POST 不带 path 参数)
 
-  uint32 version_id = 2 [
+  uint64 version_id = 2 [
     json_name = "versionId",
     (google.api.field_behavior) = REQUIRED
   ]; // 目标版本ID

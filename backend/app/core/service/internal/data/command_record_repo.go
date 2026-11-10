@@ -123,7 +123,7 @@ func (r *CommandRecordRepo) Get(ctx context.Context, req *opsV1.GetCommandRecord
 }
 
 // Create 指令下发时创建 PENDING 台账行。
-func (r *CommandRecordRepo) Create(ctx context.Context, requestID string, nodeID uint32, agentID, action, payload string, operatorID uint32) (*ent.CommandRecord, error) {
+func (r *CommandRecordRepo) Create(ctx context.Context, requestID string, nodeID uint64, agentID, action, payload string, operatorID uint64) (*ent.CommandRecord, error) {
 	builder := r.entClient.Client().CommandRecord.
 		Create().
 		SetRequestID(requestID).
@@ -195,7 +195,7 @@ func ptrOrNil(s string) *string {
 // 回执可能抢在本调用之前到达(极快脚本):回执路径读记录时 batch_id 仍为 0
 // 会放弃计数,因此回填时记录已终态的,调用方必须按返回状态补一次批次计数,
 // 否则该 item 永不计入、批次永远停在 RUNNING。
-func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, batchID uint32) (string, error) {
+func (r *CommandRecordRepo) AttachBatch(ctx context.Context, requestID string, batchID uint64) (string, error) {
 	n, err := r.entClient.Client().CommandRecord.
 		Update().
 		Where(
@@ -238,7 +238,7 @@ func (r *CommandRecordRepo) ListStalePendingBatchItems(ctx context.Context, befo
 }
 
 // ListByBatch 取批次内全部指令台账(按下发顺序)。
-func (r *CommandRecordRepo) ListByBatch(ctx context.Context, batchID uint32) ([]*ent.CommandRecord, error) {
+func (r *CommandRecordRepo) ListByBatch(ctx context.Context, batchID uint64) ([]*ent.CommandRecord, error) {
 	return r.entClient.Client().CommandRecord.
 		Query().
 		Where(commandrecord.BatchIDEQ(batchID)).

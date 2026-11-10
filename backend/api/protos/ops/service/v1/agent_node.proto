@@ -58,7 +58,7 @@ enum AgentNodeStatus {
 
 // 受管机器上的 agent 节点
 message AgentNode {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY,
     (gnostic.openapi.v3.property) = {
@@ -205,7 +205,7 @@ message ListAgentNodeResponse {
 }
 
 message GetAgentNodeRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -214,7 +214,7 @@ message GetAgentNodeRequest {
 // RevokeAgentNodeRequest 吊销/恢复节点准入(id 走 body:触发类 POST
 // 不带 path 参数,见 AGENTS 铁律)。
 message RevokeAgentNodeRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -223,7 +223,7 @@ message RevokeAgentNodeRequest {
 }
 
 message UpdateAgentNodeRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -242,7 +242,7 @@ message UpdateAgentNodeRequest {
 }
 
 message DeleteAgentNodeRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -250,7 +250,7 @@ message DeleteAgentNodeRequest {
 
 message SendCommandRequest {
   // 节点ID 与 agentId 二选一;同时提供时以 id 为准。
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL
   ]; // 节点ID
@@ -281,7 +281,7 @@ message SendCommandResponse {
 }
 
 message GetNodeMetricsHistoryRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 节点ID
@@ -320,7 +320,7 @@ message GetAgentUpgradeUploadUrlResponse {
 }
 
 message UpgradeAgentRequest {
-  optional uint32 node_id = 1 [
+  optional uint64 node_id = 1 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED
   ]; // 目标节点ID

@@ -121,9 +121,9 @@ func (s *RepositoryService) DeleteRepository(ctx context.Context, req *opsV1.Del
 	return &emptypb.Empty{}, nil
 }
 
-func operatorIDOf(ctx context.Context) uint32 {
+func operatorIDOf(ctx context.Context) uint64 {
 	if operator, err := metadata.FromServerContext(ctx); err == nil && operator != nil {
-		return uint32(operator.GetUserId())
+		return uint64(operator.GetUserId())
 	}
 	return 0
 }

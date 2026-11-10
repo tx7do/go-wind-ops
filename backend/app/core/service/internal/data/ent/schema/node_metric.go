@@ -31,7 +31,7 @@ func (NodeMetric) Annotations() []schema.Annotation {
 // Fields of the NodeMetric.
 func (NodeMetric) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("node_id").
+		field.Uint64("node_id").
 			Comment("节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -67,7 +67,7 @@ func (NodeMetric) Fields() []ent.Field {
 // Mixin of the NodeMetric.
 func (NodeMetric) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 	}
 }

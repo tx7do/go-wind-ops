@@ -15,9 +15,9 @@ service NotificationDeliveryService {
 }
 
 message NotificationDelivery {
-  optional uint32 id = 1 [json_name = "id", (google.api.field_behavior) = OUTPUT_ONLY];
-  optional uint32 alert_id = 2 [json_name = "alertId", (google.api.field_behavior) = OUTPUT_ONLY];
-  optional uint32 channel_id = 3 [json_name = "channelId", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional uint64 id = 1 [json_name = "id", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional uint64 alert_id = 2 [json_name = "alertId", (google.api.field_behavior) = OUTPUT_ONLY];
+  optional uint64 channel_id = 3 [json_name = "channelId", (google.api.field_behavior) = OUTPUT_ONLY];
   optional string channel_type = 4 [json_name = "channelType", (google.api.field_behavior) = OUTPUT_ONLY];
   optional string target = 5 [json_name = "target", (google.api.field_behavior) = OUTPUT_ONLY];
   optional string status = 6 [json_name = "status", (google.api.field_behavior) = OUTPUT_ONLY];
@@ -32,5 +32,5 @@ message ListNotificationDeliveryResponse {
 }
 
 message GetNotificationDeliveryRequest {
-  optional uint32 id = 1 [json_name = "id", (google.api.field_behavior) = REQUIRED];
+  optional uint64 id = 1 [json_name = "id", (google.api.field_behavior) = REQUIRED];
 }

@@ -29,11 +29,11 @@ func (NotificationDelivery) Annotations() []schema.Annotation {
 
 func (NotificationDelivery) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("alert_id").
+		field.Uint64("alert_id").
 			Comment("关联告警(ops_alerts.id)").
 			Positive(),
 
-		field.Uint32("channel_id").
+		field.Uint64("channel_id").
 			Comment("使用的渠道(ops_notification_channels.id)").
 			Positive(),
 
@@ -74,8 +74,8 @@ func (NotificationDelivery) Fields() []ent.Field {
 
 func (NotificationDelivery) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

@@ -32,11 +32,11 @@ func (BackupRecord) Annotations() []schema.Annotation {
 // Fields of the BackupRecord.
 func (BackupRecord) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("task_id").
+		field.Uint64("task_id").
 			Comment("来源备份任务(ops_backup_tasks.id)").
 			Positive(),
 
-		field.Uint32("node_id").
+		field.Uint64("node_id").
 			Comment("执行节点(ops_agent_nodes.id)").
 			Positive(),
 
@@ -75,7 +75,7 @@ func (BackupRecord) Fields() []ent.Field {
 			Comment("指令幂等键(与 ops_command_records.request_id 对应)").
 			NotEmpty(),
 
-		field.Uint32("operator_id").
+		field.Uint64("operator_id").
 			Comment("触发备份的用户(定时触发为 0)").
 			Default(0).
 			Optional().
@@ -91,8 +91,8 @@ func (BackupRecord) Fields() []ent.Field {
 // Mixin of the BackupRecord.
 func (BackupRecord) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

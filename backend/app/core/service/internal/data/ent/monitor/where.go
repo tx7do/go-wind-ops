@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Monitor {
+func ID(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Monitor {
+func IDEQ(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Monitor {
+func IDNEQ(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Monitor {
+func IDIn(ids ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Monitor {
+func IDNotIn(ids ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Monitor {
+func IDGT(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Monitor {
+func IDGTE(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Monitor {
+func IDLT(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Monitor {
+func IDLTE(id uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Monitor {
+func TenantID(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,17 +75,17 @@ func DeletedAt(v time.Time) predicate.Monitor {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Monitor {
+func CreatedBy(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Monitor {
+func UpdatedBy(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Monitor {
+func DeletedBy(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -95,12 +95,12 @@ func Name(v string) predicate.Monitor {
 }
 
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v uint32) predicate.Monitor {
+func ProjectID(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldProjectID, v))
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint32) predicate.Monitor {
+func NodeID(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -165,42 +165,42 @@ func Description(v string) predicate.Monitor {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Monitor {
+func TenantIDEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Monitor {
+func TenantIDNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Monitor {
+func TenantIDIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Monitor {
+func TenantIDNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Monitor {
+func TenantIDGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Monitor {
+func TenantIDGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Monitor {
+func TenantIDLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Monitor {
+func TenantIDLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -365,42 +365,42 @@ func DeletedAtNotNil() predicate.Monitor {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Monitor {
+func CreatedByEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Monitor {
+func CreatedByNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Monitor {
+func CreatedByIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Monitor {
+func CreatedByNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Monitor {
+func CreatedByGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Monitor {
+func CreatedByGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Monitor {
+func CreatedByLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Monitor {
+func CreatedByLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -415,42 +415,42 @@ func CreatedByNotNil() predicate.Monitor {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Monitor {
+func UpdatedByEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Monitor {
+func UpdatedByNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Monitor {
+func UpdatedByIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Monitor {
+func UpdatedByNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Monitor {
+func UpdatedByGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Monitor {
+func UpdatedByGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Monitor {
+func UpdatedByLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Monitor {
+func UpdatedByLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -465,42 +465,42 @@ func UpdatedByNotNil() predicate.Monitor {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Monitor {
+func DeletedByEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Monitor {
+func DeletedByNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Monitor {
+func DeletedByIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Monitor {
+func DeletedByNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Monitor {
+func DeletedByGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Monitor {
+func DeletedByGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Monitor {
+func DeletedByLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Monitor {
+func DeletedByLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -580,42 +580,42 @@ func NameContainsFold(v string) predicate.Monitor {
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v uint32) predicate.Monitor {
+func ProjectIDEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldProjectID, v))
 }
 
 // ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v uint32) predicate.Monitor {
+func ProjectIDNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldProjectID, v))
 }
 
 // ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...uint32) predicate.Monitor {
+func ProjectIDIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldProjectID, vs...))
 }
 
 // ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...uint32) predicate.Monitor {
+func ProjectIDNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldProjectID, vs...))
 }
 
 // ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v uint32) predicate.Monitor {
+func ProjectIDGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldProjectID, v))
 }
 
 // ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v uint32) predicate.Monitor {
+func ProjectIDGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldProjectID, v))
 }
 
 // ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v uint32) predicate.Monitor {
+func ProjectIDLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldProjectID, v))
 }
 
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v uint32) predicate.Monitor {
+func ProjectIDLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldProjectID, v))
 }
 
@@ -650,42 +650,42 @@ func TargetTypeNotIn(vs ...TargetType) predicate.Monitor {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint32) predicate.Monitor {
+func NodeIDEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint32) predicate.Monitor {
+func NodeIDNEQ(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint32) predicate.Monitor {
+func NodeIDIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint32) predicate.Monitor {
+func NodeIDNotIn(vs ...uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint32) predicate.Monitor {
+func NodeIDGT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint32) predicate.Monitor {
+func NodeIDGTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint32) predicate.Monitor {
+func NodeIDLT(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint32) predicate.Monitor {
+func NodeIDLTE(v uint64) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldNodeID, v))
 }
 

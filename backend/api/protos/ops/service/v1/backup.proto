@@ -47,7 +47,7 @@ service BackupService {
 
 // 备份任务
 message BackupTask {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 任务ID
@@ -60,7 +60,7 @@ message BackupTask {
     }
   ]; // 任务名
 
-  optional uint32 node_id = 3 [
+  optional uint64 node_id = 3 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -121,7 +121,7 @@ message ListBackupTaskResponse {
 }
 
 message GetBackupTaskRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 任务ID
@@ -135,7 +135,7 @@ message CreateBackupTaskRequest {
 }
 
 message UpdateBackupTaskRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 任务ID
@@ -154,38 +154,38 @@ message UpdateBackupTaskRequest {
 }
 
 message DeleteBackupTaskRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 任务ID
 }
 
 message TriggerBackupRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 任务ID
 }
 
 message TriggerBackupResponse {
-  optional uint32 record_id = 1 [json_name = "recordId"]; // 备份记录ID
+  optional uint64 record_id = 1 [json_name = "recordId"]; // 备份记录ID
 
   optional string command_request_id = 2 [json_name = "commandRequestId"]; // 指令幂等键
 }
 
 // 备份执行记录
 message BackupRecord {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
-  optional uint32 task_id = 2 [
+  optional uint64 task_id = 2 [
     json_name = "taskId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 来源任务
 
-  optional uint32 node_id = 3 [
+  optional uint64 node_id = 3 [
     json_name = "nodeId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 执行节点
@@ -225,7 +225,7 @@ message ListBackupRecordResponse {
 }
 
 message GetBackupRecordDownloadUrlRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 记录ID
@@ -241,12 +241,12 @@ message GetBackupRecordDownloadUrlResponse {
 
 // RestoreBackupRecordRequest 恢复备份到节点
 message RestoreBackupRecordRequest {
-  uint32 record_id = 1 [
+  uint64 record_id = 1 [
     json_name = "recordId",
     (google.api.field_behavior) = REQUIRED
   ]; // 备份记录ID(id 走 body:触发类 POST 不带 path 参数)
 
-  uint32 node_id = 2 [
+  uint64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED
   ]; // 目标节点

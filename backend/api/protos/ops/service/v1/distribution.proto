@@ -53,7 +53,7 @@ message Distribution {
     START = 3;   // 启动项目
   }
 
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 分发配置ID
@@ -66,7 +66,7 @@ message Distribution {
     }
   ]; // 分发名
 
-  optional uint32 build_id = 3 [
+  optional uint64 build_id = 3 [
     json_name = "buildId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -74,7 +74,7 @@ message Distribution {
     }
   ]; // 构建来源
 
-  repeated uint32 project_ids = 4 [
+  repeated uint64 project_ids = 4 [
     json_name = "projectIds",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -168,7 +168,7 @@ message ListDistributionResponse {
 }
 
 message GetDistributionRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID
@@ -182,7 +182,7 @@ message CreateDistributionRequest {
 }
 
 message UpdateDistributionRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID
@@ -201,53 +201,53 @@ message UpdateDistributionRequest {
 }
 
 message DeleteDistributionRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID
 }
 
 message TriggerDistributionRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 分发配置ID
 
-  optional uint32 history_id = 2 [
+  optional uint64 history_id = 2 [
     json_name = "historyId",
     (google.api.field_behavior) = OPTIONAL
   ]; // 指定构建历史ID(缺省取最新成功)
 }
 
 message TriggerDistributionResponse {
-  uint32 record_id = 1 [json_name = "recordId"]; // 分发记录ID(首个)
+  uint64 record_id = 1 [json_name = "recordId"]; // 分发记录ID(首个)
   string command_request_id = 2 [json_name = "commandRequestId"]; // 关联指令幂等键(首个)
-  repeated uint32 record_ids = 3 [json_name = "recordIds"]; // 全部目标分发记录ID(流水线步骤轮询终态用)
+  repeated uint64 record_ids = 3 [json_name = "recordIds"]; // 全部目标分发记录ID(流水线步骤轮询终态用)
 }
 
 // 分发执行记录
 message DistributionRecord {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
-  optional uint32 distribution_id = 2 [
+  optional uint64 distribution_id = 2 [
     json_name = "distributionId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 分发配置ID
 
-  optional uint32 build_history_id = 3 [
+  optional uint64 build_history_id = 3 [
     json_name = "buildHistoryId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 构建历史ID
 
-  optional uint32 project_id = 4 [
+  optional uint64 project_id = 4 [
     json_name = "projectId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 目标项目ID(逐目标一条记录)
 
-  optional uint32 node_id = 5 [
+  optional uint64 node_id = 5 [
     json_name = "nodeId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 目标节点ID
@@ -277,7 +277,7 @@ message DistributionRecord {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 执行结果数据(JSON)
 
-  optional uint32 operator_id = 10 [
+  optional uint64 operator_id = 10 [
     json_name = "operatorId",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 触发人
@@ -299,7 +299,7 @@ message ListDistributionRecordResponse {
 }
 
 message GetDistributionRecordRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 记录ID

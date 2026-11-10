@@ -267,7 +267,7 @@ func CheckNodeMetricMonitor(ctx context.Context, log *log.Helper, alertRepo *dat
 		metricName := metricDisplayName(string(monitor.MetricType))
 		msg := fmt.Sprintf("节点 [%s] %s使用率 %.1f%%,连续 %d 次超过阈值 %.1f%%",
 			nodeName, metricName, *value, hits, monitor.ThresholdPercent)
-		alertID := uint32(0)
+		alertID := uint64(0)
 		if a, err := alertRepo.Create(ctx, monitor.ID, 0, nodeID, "MONITOR", "WARNING", msg, false); err != nil {
 			log.Errorf("create node metric alert failed: %s", err.Error())
 		} else {
@@ -380,7 +380,7 @@ func CheckProcessMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 		}
 
 		msg := fmt.Sprintf("节点 [%s] 未发现进程 [%s](匹配 0 个,可能已退出)", nodeName, monitor.ProcessName)
-		alertID := uint32(0)
+		alertID := uint64(0)
 		if a, err := alertRepo.Create(ctx, monitor.ID, 0, nodeID, "MONITOR", "ERROR", msg, false); err != nil {
 			log.Errorf("create process alert failed: %s", err.Error())
 		} else {
@@ -506,7 +506,7 @@ func checkProjectMonitor(ctx context.Context, log *log.Helper, alertRepo *data.A
 		return // 距上次告警不足重复间隔,保持既有未恢复告警即可
 	}
 	msg := fmt.Sprintf("项目 [%s] 状态异常: %s", project.GetName(), status.Status)
-	alertID := uint32(0)
+	alertID := uint64(0)
 	if a, err := alertRepo.Create(ctx, monitor.ID, projectID, 0, "MONITOR", "ERROR", msg, false); err != nil {
 		log.Errorf("create alert failed: %s", err.Error())
 	} else {

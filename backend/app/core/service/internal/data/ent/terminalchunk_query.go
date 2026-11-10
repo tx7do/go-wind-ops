@@ -85,8 +85,8 @@ func (_q *TerminalChunkQuery) FirstX(ctx context.Context) *TerminalChunk {
 
 // FirstID returns the first TerminalChunk ID from the query.
 // Returns a *NotFoundError when no TerminalChunk ID was found.
-func (_q *TerminalChunkQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *TerminalChunkQuery) FirstID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *TerminalChunkQuery) FirstID(ctx context.Context) (id uint32, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *TerminalChunkQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *TerminalChunkQuery) FirstIDX(ctx context.Context) uint64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *TerminalChunkQuery) OnlyX(ctx context.Context) *TerminalChunk {
 // OnlyID is like Only, but returns the only TerminalChunk ID in the query.
 // Returns a *NotSingularError when more than one TerminalChunk ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *TerminalChunkQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *TerminalChunkQuery) OnlyID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *TerminalChunkQuery) OnlyID(ctx context.Context) (id uint32, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *TerminalChunkQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *TerminalChunkQuery) OnlyIDX(ctx context.Context) uint64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *TerminalChunkQuery) AllX(ctx context.Context) []*TerminalChunk {
 }
 
 // IDs executes the query and returns a list of TerminalChunk IDs.
-func (_q *TerminalChunkQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *TerminalChunkQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *TerminalChunkQuery) IDs(ctx context.Context) (ids []uint32, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *TerminalChunkQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *TerminalChunkQuery) IDsX(ctx context.Context) []uint64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *TerminalChunkQuery) Clone() *TerminalChunkQuery {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -289,7 +289,7 @@ func (_q *TerminalChunkQuery) GroupBy(field string, fields ...string) *TerminalC
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.TerminalChunk.Query().
@@ -381,7 +381,7 @@ func (_q *TerminalChunkQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *TerminalChunkQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(terminalchunk.Table, terminalchunk.Columns, sqlgraph.NewFieldSpec(terminalchunk.FieldID, field.TypeUint64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

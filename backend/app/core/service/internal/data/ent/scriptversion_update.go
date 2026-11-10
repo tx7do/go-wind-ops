@@ -70,14 +70,14 @@ func (_u *ScriptVersionUpdate) ClearDeletedAt() *ScriptVersionUpdate {
 }
 
 // SetScriptID sets the "script_id" field.
-func (_u *ScriptVersionUpdate) SetScriptID(v uint32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) SetScriptID(v uint64) *ScriptVersionUpdate {
 	_u.mutation.ResetScriptID()
 	_u.mutation.SetScriptID(v)
 	return _u
 }
 
 // SetNillableScriptID sets the "script_id" field if the given value is not nil.
-func (_u *ScriptVersionUpdate) SetNillableScriptID(v *uint32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) SetNillableScriptID(v *uint64) *ScriptVersionUpdate {
 	if v != nil {
 		_u.SetScriptID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ScriptVersionUpdate) SetNillableScriptID(v *uint32) *ScriptVersionUpda
 }
 
 // AddScriptID adds value to the "script_id" field.
-func (_u *ScriptVersionUpdate) AddScriptID(v int32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) AddScriptID(v int64) *ScriptVersionUpdate {
 	_u.mutation.AddScriptID(v)
 	return _u
 }
@@ -119,14 +119,14 @@ func (_u *ScriptVersionUpdate) SetNillableRemark(v *string) *ScriptVersionUpdate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ScriptVersionUpdate) SetCreatedBy(v uint32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) SetCreatedBy(v uint64) *ScriptVersionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ScriptVersionUpdate) SetNillableCreatedBy(v *uint32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) SetNillableCreatedBy(v *uint64) *ScriptVersionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -134,7 +134,7 @@ func (_u *ScriptVersionUpdate) SetNillableCreatedBy(v *uint32) *ScriptVersionUpd
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ScriptVersionUpdate) AddCreatedBy(v int32) *ScriptVersionUpdate {
+func (_u *ScriptVersionUpdate) AddCreatedBy(v int64) *ScriptVersionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -197,7 +197,7 @@ func (_u *ScriptVersionUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(scriptversion.Table, scriptversion.Columns, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(scriptversion.Table, scriptversion.Columns, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -206,7 +206,7 @@ func (_u *ScriptVersionUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(scriptversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(scriptversion.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(scriptversion.FieldCreatedAt, field.TypeTime)
@@ -224,10 +224,10 @@ func (_u *ScriptVersionUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(scriptversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.ScriptID(); ok {
-		_spec.SetField(scriptversion.FieldScriptID, field.TypeUint32, value)
+		_spec.SetField(scriptversion.FieldScriptID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedScriptID(); ok {
-		_spec.AddField(scriptversion.FieldScriptID, field.TypeUint32, value)
+		_spec.AddField(scriptversion.FieldScriptID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(scriptversion.FieldContent, field.TypeString, value)
@@ -236,13 +236,13 @@ func (_u *ScriptVersionUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.SetField(scriptversion.FieldRemark, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(scriptversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(scriptversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(scriptversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(scriptversion.FieldCreatedBy, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -307,14 +307,14 @@ func (_u *ScriptVersionUpdateOne) ClearDeletedAt() *ScriptVersionUpdateOne {
 }
 
 // SetScriptID sets the "script_id" field.
-func (_u *ScriptVersionUpdateOne) SetScriptID(v uint32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) SetScriptID(v uint64) *ScriptVersionUpdateOne {
 	_u.mutation.ResetScriptID()
 	_u.mutation.SetScriptID(v)
 	return _u
 }
 
 // SetNillableScriptID sets the "script_id" field if the given value is not nil.
-func (_u *ScriptVersionUpdateOne) SetNillableScriptID(v *uint32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) SetNillableScriptID(v *uint64) *ScriptVersionUpdateOne {
 	if v != nil {
 		_u.SetScriptID(*v)
 	}
@@ -322,7 +322,7 @@ func (_u *ScriptVersionUpdateOne) SetNillableScriptID(v *uint32) *ScriptVersionU
 }
 
 // AddScriptID adds value to the "script_id" field.
-func (_u *ScriptVersionUpdateOne) AddScriptID(v int32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) AddScriptID(v int64) *ScriptVersionUpdateOne {
 	_u.mutation.AddScriptID(v)
 	return _u
 }
@@ -356,14 +356,14 @@ func (_u *ScriptVersionUpdateOne) SetNillableRemark(v *string) *ScriptVersionUpd
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ScriptVersionUpdateOne) SetCreatedBy(v uint32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) SetCreatedBy(v uint64) *ScriptVersionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ScriptVersionUpdateOne) SetNillableCreatedBy(v *uint32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) SetNillableCreatedBy(v *uint64) *ScriptVersionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -371,7 +371,7 @@ func (_u *ScriptVersionUpdateOne) SetNillableCreatedBy(v *uint32) *ScriptVersion
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ScriptVersionUpdateOne) AddCreatedBy(v int32) *ScriptVersionUpdateOne {
+func (_u *ScriptVersionUpdateOne) AddCreatedBy(v int64) *ScriptVersionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -447,7 +447,7 @@ func (_u *ScriptVersionUpdateOne) sqlSave(ctx context.Context) (_node *ScriptVer
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(scriptversion.Table, scriptversion.Columns, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(scriptversion.Table, scriptversion.Columns, sqlgraph.NewFieldSpec(scriptversion.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ScriptVersion.id" for update`)}
@@ -473,7 +473,7 @@ func (_u *ScriptVersionUpdateOne) sqlSave(ctx context.Context) (_node *ScriptVer
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(scriptversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(scriptversion.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(scriptversion.FieldCreatedAt, field.TypeTime)
@@ -491,10 +491,10 @@ func (_u *ScriptVersionUpdateOne) sqlSave(ctx context.Context) (_node *ScriptVer
 		_spec.ClearField(scriptversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.ScriptID(); ok {
-		_spec.SetField(scriptversion.FieldScriptID, field.TypeUint32, value)
+		_spec.SetField(scriptversion.FieldScriptID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedScriptID(); ok {
-		_spec.AddField(scriptversion.FieldScriptID, field.TypeUint32, value)
+		_spec.AddField(scriptversion.FieldScriptID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(scriptversion.FieldContent, field.TypeString, value)
@@ -503,13 +503,13 @@ func (_u *ScriptVersionUpdateOne) sqlSave(ctx context.Context) (_node *ScriptVer
 		_spec.SetField(scriptversion.FieldRemark, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(scriptversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(scriptversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(scriptversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(scriptversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(scriptversion.FieldCreatedBy, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &ScriptVersion{config: _u.config}

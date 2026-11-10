@@ -128,8 +128,8 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 	var (
 		payload  *signal.ScriptExecPayload
 		targets  []batchTarget
-		nodeIDs  []uint32
-		batchSid uint32
+		nodeIDs  []uint64
+		batchSid uint64
 		batchNm  string
 	)
 	switch {
@@ -262,14 +262,14 @@ func (s *ScriptBatchService) ExecuteScriptBatch(ctx context.Context, req *opsV1.
 
 // batchTarget 批量下发的单台目标(agent_ids 模式 nodeID 为 0,免 node 换算)。
 type batchTarget struct {
-	nodeID  uint32
+	nodeID  uint64
 	agentID string
 }
 
-func (s *ScriptBatchService) operatorID(ctx context.Context) uint32 {
+func (s *ScriptBatchService) operatorID(ctx context.Context) uint64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint32(operator.GetUserId())
+	return uint64(operator.GetUserId())
 }

@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ConfigTemplate {
+func ID(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ConfigTemplate {
+func IDEQ(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ConfigTemplate {
+func IDNEQ(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ConfigTemplate {
+func IDIn(ids ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ConfigTemplate {
+func IDNotIn(ids ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ConfigTemplate {
+func IDGT(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ConfigTemplate {
+func IDGTE(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ConfigTemplate {
+func IDLT(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ConfigTemplate {
+func IDLTE(id uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.ConfigTemplate {
+func TenantID(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,17 +75,17 @@ func DeletedAt(v time.Time) predicate.ConfigTemplate {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.ConfigTemplate {
+func CreatedBy(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.ConfigTemplate {
+func UpdatedBy(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.ConfigTemplate {
+func DeletedBy(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -115,42 +115,42 @@ func Description(v string) predicate.ConfigTemplate {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.ConfigTemplate {
+func TenantIDEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.ConfigTemplate {
+func TenantIDNEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.ConfigTemplate {
+func TenantIDIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.ConfigTemplate {
+func TenantIDNotIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.ConfigTemplate {
+func TenantIDGT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.ConfigTemplate {
+func TenantIDGTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.ConfigTemplate {
+func TenantIDLT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.ConfigTemplate {
+func TenantIDLTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -315,42 +315,42 @@ func DeletedAtNotNil() predicate.ConfigTemplate {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.ConfigTemplate {
+func CreatedByEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.ConfigTemplate {
+func CreatedByNEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.ConfigTemplate {
+func CreatedByIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.ConfigTemplate {
+func CreatedByNotIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.ConfigTemplate {
+func CreatedByGT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.ConfigTemplate {
+func CreatedByGTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.ConfigTemplate {
+func CreatedByLT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.ConfigTemplate {
+func CreatedByLTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -365,42 +365,42 @@ func CreatedByNotNil() predicate.ConfigTemplate {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.ConfigTemplate {
+func UpdatedByEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.ConfigTemplate {
+func UpdatedByNEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.ConfigTemplate {
+func UpdatedByIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.ConfigTemplate {
+func UpdatedByNotIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.ConfigTemplate {
+func UpdatedByGT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.ConfigTemplate {
+func UpdatedByGTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.ConfigTemplate {
+func UpdatedByLT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.ConfigTemplate {
+func UpdatedByLTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -415,42 +415,42 @@ func UpdatedByNotNil() predicate.ConfigTemplate {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.ConfigTemplate {
+func DeletedByEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.ConfigTemplate {
+func DeletedByNEQ(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.ConfigTemplate {
+func DeletedByIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.ConfigTemplate {
+func DeletedByNotIn(vs ...uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.ConfigTemplate {
+func DeletedByGT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.ConfigTemplate {
+func DeletedByGTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.ConfigTemplate {
+func DeletedByLT(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.ConfigTemplate {
+func DeletedByLTE(v uint64) predicate.ConfigTemplate {
 	return predicate.ConfigTemplate(sql.FieldLTE(FieldDeletedBy, v))
 }
 

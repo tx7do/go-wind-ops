@@ -90,21 +90,21 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// OperationTypeValidator is a validator for the "operation_type" field. It is called by the builders before save.
 	OperationTypeValidator func(string) error
 	// OperationRefIDValidator is a validator for the "operation_ref_id" field. It is called by the builders before save.
-	OperationRefIDValidator func(uint32) error
+	OperationRefIDValidator func(uint64) error
 	// AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
 	AgentIDValidator func(string) error
 	// OperationNameValidator is a validator for the "operation_name" field. It is called by the builders before save.
 	OperationNameValidator func(string) error
 	// DefaultRequesterID holds the default value on creation for the "requester_id" field.
-	DefaultRequesterID uint32
+	DefaultRequesterID uint64
 	// DefaultApproverID holds the default value on creation for the "approver_id" field.
-	DefaultApproverID uint32
+	DefaultApproverID uint64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // Status defines the type for the "status" enum field.

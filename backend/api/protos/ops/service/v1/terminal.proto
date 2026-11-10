@@ -60,18 +60,18 @@ message TerminalChunk {
 
 // 终端会话审计记录
 message TerminalSession {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 记录ID
 
   optional string session_id = 2 [json_name = "sessionId"]; // 会话 ID
 
-  optional uint32 node_id = 3 [json_name = "nodeId"]; // 节点
+  optional uint64 node_id = 3 [json_name = "nodeId"]; // 节点
 
   optional string agent_id = 4 [json_name = "agentId"]; // 机器标识
 
-  optional uint32 operator_id = 5 [json_name = "operatorId"]; // 打开人
+  optional uint64 operator_id = 5 [json_name = "operatorId"]; // 打开人
 
   optional string status = 6 [json_name = "status"]; // 状态(OPEN/CLOSED)
 
@@ -100,14 +100,14 @@ message ListTerminalSessionResponse {
 }
 
 message GetTerminalSessionRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 记录ID
 }
 
 message ListTerminalChunksRequest {
-  optional uint32 session_id = 1 [
+  optional uint64 session_id = 1 [
     json_name = "sessionId",
     (google.api.field_behavior) = REQUIRED
   ]; // 会话记录ID(ops_terminal_sessions.id)

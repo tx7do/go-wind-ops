@@ -17,9 +17,9 @@ type ScriptVersion struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,13 +27,13 @@ type ScriptVersion struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 所属脚本
-	ScriptID uint32 `json:"script_id,omitempty"`
+	ScriptID uint64 `json:"script_id,omitempty"`
 	// 该版本的内容快照
 	Content string `json:"content,omitempty"`
 	// 快照来源(auto=更新前自动快照/restore=恢复前快照)
 	Remark string `json:"remark,omitempty"`
 	// 触发快照的操作者(0=系统)
-	CreatedBy    *uint32 `json:"created_by,omitempty"`
+	CreatedBy    *uint64 `json:"created_by,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -68,13 +68,13 @@ func (_m *ScriptVersion) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case scriptversion.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case scriptversion.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -101,7 +101,7 @@ func (_m *ScriptVersion) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field script_id", values[i])
 			} else if value.Valid {
-				_m.ScriptID = uint32(value.Int64)
+				_m.ScriptID = uint64(value.Int64)
 			}
 		case scriptversion.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -119,8 +119,8 @@ func (_m *ScriptVersion) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(uint64)
+				*_m.CreatedBy = uint64(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

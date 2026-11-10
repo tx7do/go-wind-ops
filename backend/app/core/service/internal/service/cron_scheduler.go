@@ -486,7 +486,7 @@ func (s *CronScheduler) tickAuditChain(ctx context.Context) {
 	}
 
 	const source = "AUDIT_CHAIN"
-	const monitorID = uint32(0)
+	const monitorID = uint64(0)
 	unresolved, _ := s.alertRepo.HasUnresolvedAlert(actx, monitorID, source)
 
 	if len(broken) == 0 {

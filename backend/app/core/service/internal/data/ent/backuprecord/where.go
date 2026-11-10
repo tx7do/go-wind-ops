@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.BackupRecord {
+func ID(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.BackupRecord {
+func IDEQ(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.BackupRecord {
+func IDNEQ(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.BackupRecord {
+func IDIn(ids ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.BackupRecord {
+func IDNotIn(ids ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.BackupRecord {
+func IDGT(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.BackupRecord {
+func IDGTE(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.BackupRecord {
+func IDLT(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.BackupRecord {
+func IDLTE(id uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.BackupRecord {
+func TenantID(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -75,12 +75,12 @@ func DeletedAt(v time.Time) predicate.BackupRecord {
 }
 
 // TaskID applies equality check predicate on the "task_id" field. It's identical to TaskIDEQ.
-func TaskID(v uint32) predicate.BackupRecord {
+func TaskID(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldTaskID, v))
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint32) predicate.BackupRecord {
+func NodeID(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -115,7 +115,7 @@ func CommandRequestID(v string) predicate.BackupRecord {
 }
 
 // OperatorID applies equality check predicate on the "operator_id" field. It's identical to OperatorIDEQ.
-func OperatorID(v uint32) predicate.BackupRecord {
+func OperatorID(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
@@ -125,42 +125,42 @@ func FinishedAt(v time.Time) predicate.BackupRecord {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.BackupRecord {
+func TenantIDEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.BackupRecord {
+func TenantIDNEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.BackupRecord {
+func TenantIDIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.BackupRecord {
+func TenantIDNotIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.BackupRecord {
+func TenantIDGT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.BackupRecord {
+func TenantIDGTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.BackupRecord {
+func TenantIDLT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.BackupRecord {
+func TenantIDLTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -325,82 +325,82 @@ func DeletedAtNotNil() predicate.BackupRecord {
 }
 
 // TaskIDEQ applies the EQ predicate on the "task_id" field.
-func TaskIDEQ(v uint32) predicate.BackupRecord {
+func TaskIDEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldTaskID, v))
 }
 
 // TaskIDNEQ applies the NEQ predicate on the "task_id" field.
-func TaskIDNEQ(v uint32) predicate.BackupRecord {
+func TaskIDNEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNEQ(FieldTaskID, v))
 }
 
 // TaskIDIn applies the In predicate on the "task_id" field.
-func TaskIDIn(vs ...uint32) predicate.BackupRecord {
+func TaskIDIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldIn(FieldTaskID, vs...))
 }
 
 // TaskIDNotIn applies the NotIn predicate on the "task_id" field.
-func TaskIDNotIn(vs ...uint32) predicate.BackupRecord {
+func TaskIDNotIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNotIn(FieldTaskID, vs...))
 }
 
 // TaskIDGT applies the GT predicate on the "task_id" field.
-func TaskIDGT(v uint32) predicate.BackupRecord {
+func TaskIDGT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGT(FieldTaskID, v))
 }
 
 // TaskIDGTE applies the GTE predicate on the "task_id" field.
-func TaskIDGTE(v uint32) predicate.BackupRecord {
+func TaskIDGTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGTE(FieldTaskID, v))
 }
 
 // TaskIDLT applies the LT predicate on the "task_id" field.
-func TaskIDLT(v uint32) predicate.BackupRecord {
+func TaskIDLT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLT(FieldTaskID, v))
 }
 
 // TaskIDLTE applies the LTE predicate on the "task_id" field.
-func TaskIDLTE(v uint32) predicate.BackupRecord {
+func TaskIDLTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLTE(FieldTaskID, v))
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint32) predicate.BackupRecord {
+func NodeIDEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint32) predicate.BackupRecord {
+func NodeIDNEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint32) predicate.BackupRecord {
+func NodeIDIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint32) predicate.BackupRecord {
+func NodeIDNotIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint32) predicate.BackupRecord {
+func NodeIDGT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint32) predicate.BackupRecord {
+func NodeIDGTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint32) predicate.BackupRecord {
+func NodeIDLT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint32) predicate.BackupRecord {
+func NodeIDLTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLTE(FieldNodeID, v))
 }
 
@@ -810,42 +810,42 @@ func CommandRequestIDContainsFold(v string) predicate.BackupRecord {
 }
 
 // OperatorIDEQ applies the EQ predicate on the "operator_id" field.
-func OperatorIDEQ(v uint32) predicate.BackupRecord {
+func OperatorIDEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldEQ(FieldOperatorID, v))
 }
 
 // OperatorIDNEQ applies the NEQ predicate on the "operator_id" field.
-func OperatorIDNEQ(v uint32) predicate.BackupRecord {
+func OperatorIDNEQ(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNEQ(FieldOperatorID, v))
 }
 
 // OperatorIDIn applies the In predicate on the "operator_id" field.
-func OperatorIDIn(vs ...uint32) predicate.BackupRecord {
+func OperatorIDIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDNotIn applies the NotIn predicate on the "operator_id" field.
-func OperatorIDNotIn(vs ...uint32) predicate.BackupRecord {
+func OperatorIDNotIn(vs ...uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldNotIn(FieldOperatorID, vs...))
 }
 
 // OperatorIDGT applies the GT predicate on the "operator_id" field.
-func OperatorIDGT(v uint32) predicate.BackupRecord {
+func OperatorIDGT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGT(FieldOperatorID, v))
 }
 
 // OperatorIDGTE applies the GTE predicate on the "operator_id" field.
-func OperatorIDGTE(v uint32) predicate.BackupRecord {
+func OperatorIDGTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldGTE(FieldOperatorID, v))
 }
 
 // OperatorIDLT applies the LT predicate on the "operator_id" field.
-func OperatorIDLT(v uint32) predicate.BackupRecord {
+func OperatorIDLT(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLT(FieldOperatorID, v))
 }
 
 // OperatorIDLTE applies the LTE predicate on the "operator_id" field.
-func OperatorIDLTE(v uint32) predicate.BackupRecord {
+func OperatorIDLTE(v uint64) predicate.BackupRecord {
 	return predicate.BackupRecord(sql.FieldLTE(FieldOperatorID, v))
 }
 

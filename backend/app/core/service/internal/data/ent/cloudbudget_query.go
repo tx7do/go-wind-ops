@@ -85,8 +85,8 @@ func (_q *CloudBudgetQuery) FirstX(ctx context.Context) *CloudBudget {
 
 // FirstID returns the first CloudBudget ID from the query.
 // Returns a *NotFoundError when no CloudBudget ID was found.
-func (_q *CloudBudgetQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *CloudBudgetQuery) FirstID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *CloudBudgetQuery) FirstID(ctx context.Context) (id uint32, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *CloudBudgetQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *CloudBudgetQuery) FirstIDX(ctx context.Context) uint64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *CloudBudgetQuery) OnlyX(ctx context.Context) *CloudBudget {
 // OnlyID is like Only, but returns the only CloudBudget ID in the query.
 // Returns a *NotSingularError when more than one CloudBudget ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *CloudBudgetQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *CloudBudgetQuery) OnlyID(ctx context.Context) (id uint64, err error) {
+	var ids []uint64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *CloudBudgetQuery) OnlyID(ctx context.Context) (id uint32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *CloudBudgetQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *CloudBudgetQuery) OnlyIDX(ctx context.Context) uint64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *CloudBudgetQuery) AllX(ctx context.Context) []*CloudBudget {
 }
 
 // IDs executes the query and returns a list of CloudBudget IDs.
-func (_q *CloudBudgetQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *CloudBudgetQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *CloudBudgetQuery) IDs(ctx context.Context) (ids []uint32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *CloudBudgetQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *CloudBudgetQuery) IDsX(ctx context.Context) []uint64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *CloudBudgetQuery) Clone() *CloudBudgetQuery {
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -289,7 +289,7 @@ func (_q *CloudBudgetQuery) GroupBy(field string, fields ...string) *CloudBudget
 // Example:
 //
 //	var v []struct {
-//		TenantID uint32 `json:"tenant_id,omitempty"`
+//		TenantID uint64 `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.CloudBudget.Query().
@@ -381,7 +381,7 @@ func (_q *CloudBudgetQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *CloudBudgetQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(cloudbudget.Table, cloudbudget.Columns, sqlgraph.NewFieldSpec(cloudbudget.FieldID, field.TypeUint64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

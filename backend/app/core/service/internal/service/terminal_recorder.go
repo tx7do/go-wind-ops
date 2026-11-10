@@ -75,10 +75,10 @@ func envBool(key string, def bool) bool {
 // TerminalRecorder 单个活跃终端会话的录制器实例。
 // 由 TerminalService.Channel 在会话建立时构造,流结束时 Close。
 type TerminalRecorder struct {
-	sessionRowID uint32
+	sessionRowID uint64
 	// tenantID 会话归属租户:分块由后台 goroutine 异步落库,显式带上,
 	// 否则落 tenant 0 租户用户看不到回放。
-	tenantID    uint32
+	tenantID    uint64
 	sessionRepo *data.TerminalSessionRepo
 	chunkRepo   *data.TerminalChunkRepo
 	log         *log.Helper
@@ -101,7 +101,7 @@ type TerminalRecorder struct {
 
 // NewTerminalRecorder 建会话行并启动异步刷盘 goroutine;整体录制关闭或
 // 建行失败返回 nil(调用方判空跳过录制)。
-func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionRepo, chunkRepo *data.TerminalChunkRepo, log *log.Helper, sessionId, agentId string, nodeID, operatorID uint32) *TerminalRecorder {
+func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionRepo, chunkRepo *data.TerminalChunkRepo, log *log.Helper, sessionId, agentId string, nodeID, operatorID uint64) *TerminalRecorder {
 	if sessionRepo == nil || chunkRepo == nil {
 		return nil
 	}
@@ -115,7 +115,7 @@ func NewTerminalRecorder(ctx context.Context, sessionRepo *data.TerminalSessionR
 	}
 	rec := &TerminalRecorder{
 		sessionRowID: row.ID,
-		tenantID:     uint32Val(row.TenantID),
+		tenantID:     uint64Val(row.TenantID),
 		sessionRepo:  sessionRepo,
 		chunkRepo:    chunkRepo,
 		log:          log,

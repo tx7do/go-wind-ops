@@ -79,9 +79,9 @@ func approvalGate(
 	deliveryRepo *data.NotificationDeliveryRepo,
 	maintenanceRepo *data.MaintenanceWindowRepo,
 	action string,
-	refID uint32,
+	refID uint64,
 	agentID, opName, payloadJSON string,
-	operatorID uint32,
+	operatorID uint64,
 ) error {
 	if _, ok := approvalRequiredActions()[action]; !ok {
 		return nil

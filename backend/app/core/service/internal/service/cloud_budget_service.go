@@ -206,7 +206,7 @@ func (s *CloudBudgetService) fireBudgetAlert(ctx context.Context, b *ent.CloudBu
 }
 
 // budgetSubject 预算主体名(账号名或"全部账号")。
-func (s *CloudBudgetService) budgetSubject(ctx context.Context, accountID uint32) string {
+func (s *CloudBudgetService) budgetSubject(ctx context.Context, accountID uint64) string {
 	if accountID == 0 {
 		return "全部账号"
 	}
@@ -230,7 +230,7 @@ func prevMonths(month string, n int) []string {
 	return out
 }
 
-func budgetScopeSuffix(accountID uint32) string {
+func budgetScopeSuffix(accountID uint64) string {
 	if accountID == 0 {
 		return "(全部账号合计)"
 	}

@@ -63,12 +63,12 @@ enum ProjectOperation {
 
 // 受管机器上的应用项目
 message Project {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 项目ID
 
-  optional uint32 node_id = 2 [
+  optional uint64 node_id = 2 [
     json_name = "nodeId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -161,7 +161,7 @@ message ListProjectResponse {
 }
 
 message GetProjectRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -175,7 +175,7 @@ message CreateProjectRequest {
 }
 
 message UpdateProjectRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -194,14 +194,14 @@ message UpdateProjectRequest {
 }
 
 message DeleteProjectRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
 }
 
 message OperateProjectRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -217,7 +217,7 @@ message OperateProjectResponse {
 }
 
 message GetProjectLogRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -246,7 +246,7 @@ message GetProjectLogResponse {
 }
 
 message ClearProjectLogRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID

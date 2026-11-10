@@ -125,7 +125,7 @@ func (r *BuildHistoryRepo) Get(ctx context.Context, req *opsV1.GetBuildHistoryRe
 
 // ListArtifactHoldersByBuild 返回某构建配置下,保留数量之外仍持有产物
 // 对象键的成功历史(按构建号倒序,跳过最新 keep 条)。保留策略清扫用。
-func (r *BuildHistoryRepo) ListArtifactHoldersByBuild(ctx context.Context, buildID uint32, keep uint32) ([]*ent.BuildHistory, error) {
+func (r *BuildHistoryRepo) ListArtifactHoldersByBuild(ctx context.Context, buildID uint64, keep uint32) ([]*ent.BuildHistory, error) {
 	rows, err := r.entClient.Client().BuildHistory.Query().
 		Where(
 			buildhistory.BuildIDEQ(buildID),
@@ -145,7 +145,7 @@ func (r *BuildHistoryRepo) ListArtifactHoldersByBuild(ctx context.Context, build
 }
 
 // ClearArtifact 清空历史记录的产物指针(对象已从对象存储删除)。
-func (r *BuildHistoryRepo) ClearArtifact(ctx context.Context, id uint32) error {
+func (r *BuildHistoryRepo) ClearArtifact(ctx context.Context, id uint64) error {
 	_, err := r.entClient.Client().BuildHistory.UpdateOneID(id).
 		ClearArtifactObjectKey().
 		ClearArtifactSize().
@@ -154,7 +154,7 @@ func (r *BuildHistoryRepo) ClearArtifact(ctx context.Context, id uint32) error {
 }
 
 // GetEntity 取原始实体(构建执行器用)。
-func (r *BuildHistoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.BuildHistory, error) {
+func (r *BuildHistoryRepo) GetEntity(ctx context.Context, id uint64) (*ent.BuildHistory, error) {
 	entity, err := r.entClient.Client().BuildHistory.
 		Query().
 		Where(buildhistory.IDEQ(id)).
@@ -169,7 +169,7 @@ func (r *BuildHistoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.Build
 	return entity, nil
 }
 
-func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, branch string, operatorID uint32, runnerID string) (*ent.BuildHistory, error) {
+func (r *BuildHistoryRepo) Create(ctx context.Context, buildID uint64, buildNo uint32, branch string, operatorID uint64, runnerID string) (*ent.BuildHistory, error) {
 	builder := r.entClient.Client().BuildHistory.
 		Create().
 		SetBuildID(buildID).
@@ -202,7 +202,7 @@ func (r *BuildHistoryRepo) Create(ctx context.Context, buildID, buildNo uint32, 
 // 重试)可双双通过检查各跑一条构建。构建配置行是全部触发路径的公共锚,
 // 行锁把临界区串行化,等价于"每配置仅允许一条活跃"的互斥,无需引入分布式锁。
 // 返回 conflict=true 表示存在未终态历史,调用方回 409。
-func (r *BuildHistoryRepo) CreateExclusive(ctx context.Context, buildID uint32, branch string, operatorID uint32, runnerID string) (history *ent.BuildHistory, conflict bool, err error) {
+func (r *BuildHistoryRepo) CreateExclusive(ctx context.Context, buildID uint64, branch string, operatorID uint64, runnerID string) (history *ent.BuildHistory, conflict bool, err error) {
 	tx, err := r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("begin tx for build history [%d]: %s", buildID, err.Error())
@@ -275,7 +275,7 @@ func (r *BuildHistoryRepo) CreateExclusive(ctx context.Context, buildID uint32, 
 }
 
 // UpdateRunning 置 RUNNING 并记开始时间。
-func (r *BuildHistoryRepo) UpdateRunning(ctx context.Context, id uint32) error {
+func (r *BuildHistoryRepo) UpdateRunning(ctx context.Context, id uint64) error {
 	now := time.Now()
 	_, err := r.entClient.Client().BuildHistory.
 		UpdateOneID(id).
@@ -287,7 +287,7 @@ func (r *BuildHistoryRepo) UpdateRunning(ctx context.Context, id uint32) error {
 }
 
 // UpdateFinished 终态回写(状态/日志/产物/失败原因/结束时间)。
-func (r *BuildHistoryRepo) UpdateFinished(ctx context.Context, id uint32, status string, logText, errMsg string, bucket, objectKey string, size uint64) error {
+func (r *BuildHistoryRepo) UpdateFinished(ctx context.Context, id uint64, status string, logText, errMsg string, bucket, objectKey string, size uint64) error {
 	now := time.Now()
 	builder := r.entClient.Client().BuildHistory.
 		UpdateOneID(id).
@@ -317,7 +317,7 @@ func (r *BuildHistoryRepo) UpdateFinished(ctx context.Context, id uint32, status
 
 // UpdateLogText 增量刷新日志(RUNNING 期间执行器每 5s flush 一次,同时
 // 充当孤儿清扫的 runner 心跳)。
-func (r *BuildHistoryRepo) UpdateLogText(ctx context.Context, id uint32, logText string) error {
+func (r *BuildHistoryRepo) UpdateLogText(ctx context.Context, id uint64, logText string) error {
 	_, err := r.entClient.Client().BuildHistory.
 		UpdateOneID(id).
 		SetLog(logText).

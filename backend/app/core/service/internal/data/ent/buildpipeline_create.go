@@ -23,13 +23,13 @@ type BuildPipelineCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *BuildPipelineCreate) SetTenantID(v uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetTenantID(v uint64) *BuildPipelineCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *BuildPipelineCreate) SetNillableTenantID(v *uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetNillableTenantID(v *uint64) *BuildPipelineCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *BuildPipelineCreate) SetNillableDeletedAt(v *time.Time) *BuildPipeline
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *BuildPipelineCreate) SetCreatedBy(v uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetCreatedBy(v uint64) *BuildPipelineCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *BuildPipelineCreate) SetNillableCreatedBy(v *uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetNillableCreatedBy(v *uint64) *BuildPipelineCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *BuildPipelineCreate) SetNillableCreatedBy(v *uint32) *BuildPipelineCre
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *BuildPipelineCreate) SetUpdatedBy(v uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetUpdatedBy(v uint64) *BuildPipelineCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *BuildPipelineCreate) SetNillableUpdatedBy(v *uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetNillableUpdatedBy(v *uint64) *BuildPipelineCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *BuildPipelineCreate) SetNillableUpdatedBy(v *uint32) *BuildPipelineCre
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *BuildPipelineCreate) SetDeletedBy(v uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetDeletedBy(v uint64) *BuildPipelineCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *BuildPipelineCreate) SetNillableDeletedBy(v *uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetNillableDeletedBy(v *uint64) *BuildPipelineCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -153,7 +153,7 @@ func (_c *BuildPipelineCreate) SetLabels(v []string) *BuildPipelineCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *BuildPipelineCreate) SetID(v uint32) *BuildPipelineCreate {
+func (_c *BuildPipelineCreate) SetID(v uint64) *BuildPipelineCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -236,7 +236,7 @@ func (_c *BuildPipelineCreate) sqlSave(ctx context.Context) (*BuildPipeline, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -246,7 +246,7 @@ func (_c *BuildPipelineCreate) sqlSave(ctx context.Context) (*BuildPipeline, err
 func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpec) {
 	var (
 		_node = &BuildPipeline{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(buildpipeline.Table, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(buildpipeline.Table, sqlgraph.NewFieldSpec(buildpipeline.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -254,7 +254,7 @@ func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpe
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(buildpipeline.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -270,15 +270,15 @@ func (_c *BuildPipelineCreate) createSpec() (*BuildPipeline, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(buildpipeline.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -386,7 +386,7 @@ func (u *BuildPipelineUpsert) ClearDeletedAt() *BuildPipelineUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildPipelineUpsert) SetCreatedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) SetCreatedBy(v uint64) *BuildPipelineUpsert {
 	u.Set(buildpipeline.FieldCreatedBy, v)
 	return u
 }
@@ -398,7 +398,7 @@ func (u *BuildPipelineUpsert) UpdateCreatedBy() *BuildPipelineUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildPipelineUpsert) AddCreatedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) AddCreatedBy(v uint64) *BuildPipelineUpsert {
 	u.Add(buildpipeline.FieldCreatedBy, v)
 	return u
 }
@@ -410,7 +410,7 @@ func (u *BuildPipelineUpsert) ClearCreatedBy() *BuildPipelineUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildPipelineUpsert) SetUpdatedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) SetUpdatedBy(v uint64) *BuildPipelineUpsert {
 	u.Set(buildpipeline.FieldUpdatedBy, v)
 	return u
 }
@@ -422,7 +422,7 @@ func (u *BuildPipelineUpsert) UpdateUpdatedBy() *BuildPipelineUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildPipelineUpsert) AddUpdatedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) AddUpdatedBy(v uint64) *BuildPipelineUpsert {
 	u.Add(buildpipeline.FieldUpdatedBy, v)
 	return u
 }
@@ -434,7 +434,7 @@ func (u *BuildPipelineUpsert) ClearUpdatedBy() *BuildPipelineUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildPipelineUpsert) SetDeletedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) SetDeletedBy(v uint64) *BuildPipelineUpsert {
 	u.Set(buildpipeline.FieldDeletedBy, v)
 	return u
 }
@@ -446,7 +446,7 @@ func (u *BuildPipelineUpsert) UpdateDeletedBy() *BuildPipelineUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildPipelineUpsert) AddDeletedBy(v uint32) *BuildPipelineUpsert {
+func (u *BuildPipelineUpsert) AddDeletedBy(v uint64) *BuildPipelineUpsert {
 	u.Add(buildpipeline.FieldDeletedBy, v)
 	return u
 }
@@ -614,14 +614,14 @@ func (u *BuildPipelineUpsertOne) ClearDeletedAt() *BuildPipelineUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildPipelineUpsertOne) SetCreatedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) SetCreatedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildPipelineUpsertOne) AddCreatedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) AddCreatedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -642,14 +642,14 @@ func (u *BuildPipelineUpsertOne) ClearCreatedBy() *BuildPipelineUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildPipelineUpsertOne) SetUpdatedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) SetUpdatedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildPipelineUpsertOne) AddUpdatedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) AddUpdatedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -670,14 +670,14 @@ func (u *BuildPipelineUpsertOne) ClearUpdatedBy() *BuildPipelineUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildPipelineUpsertOne) SetDeletedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) SetDeletedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildPipelineUpsertOne) AddDeletedBy(v uint32) *BuildPipelineUpsertOne {
+func (u *BuildPipelineUpsertOne) AddDeletedBy(v uint64) *BuildPipelineUpsertOne {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -783,7 +783,7 @@ func (u *BuildPipelineUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BuildPipelineUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *BuildPipelineUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -792,7 +792,7 @@ func (u *BuildPipelineUpsertOne) ID(ctx context.Context) (id uint32, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BuildPipelineUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *BuildPipelineUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -849,7 +849,7 @@ func (_c *BuildPipelineCreateBulk) Save(ctx context.Context) ([]*BuildPipeline, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1030,14 +1030,14 @@ func (u *BuildPipelineUpsertBulk) ClearDeletedAt() *BuildPipelineUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BuildPipelineUpsertBulk) SetCreatedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) SetCreatedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BuildPipelineUpsertBulk) AddCreatedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) AddCreatedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1058,14 +1058,14 @@ func (u *BuildPipelineUpsertBulk) ClearCreatedBy() *BuildPipelineUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BuildPipelineUpsertBulk) SetUpdatedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) SetUpdatedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BuildPipelineUpsertBulk) AddUpdatedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) AddUpdatedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1086,14 +1086,14 @@ func (u *BuildPipelineUpsertBulk) ClearUpdatedBy() *BuildPipelineUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BuildPipelineUpsertBulk) SetDeletedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) SetDeletedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BuildPipelineUpsertBulk) AddDeletedBy(v uint32) *BuildPipelineUpsertBulk {
+func (u *BuildPipelineUpsertBulk) AddDeletedBy(v uint64) *BuildPipelineUpsertBulk {
 	return u.Update(func(s *BuildPipelineUpsert) {
 		s.AddDeletedBy(v)
 	})

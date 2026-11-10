@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Approval {
+func ID(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Approval {
+func IDEQ(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Approval {
+func IDNEQ(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Approval {
+func IDIn(ids ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Approval {
+func IDNotIn(ids ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Approval {
+func IDGT(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Approval {
+func IDGTE(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Approval {
+func IDLT(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Approval {
+func IDLTE(id uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldID, id))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Approval {
+func TenantID(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -80,7 +80,7 @@ func OperationType(v string) predicate.Approval {
 }
 
 // OperationRefID applies equality check predicate on the "operation_ref_id" field. It's identical to OperationRefIDEQ.
-func OperationRefID(v uint32) predicate.Approval {
+func OperationRefID(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldOperationRefID, v))
 }
 
@@ -100,12 +100,12 @@ func Payload(v string) predicate.Approval {
 }
 
 // RequesterID applies equality check predicate on the "requester_id" field. It's identical to RequesterIDEQ.
-func RequesterID(v uint32) predicate.Approval {
+func RequesterID(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldRequesterID, v))
 }
 
 // ApproverID applies equality check predicate on the "approver_id" field. It's identical to ApproverIDEQ.
-func ApproverID(v uint32) predicate.Approval {
+func ApproverID(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldApproverID, v))
 }
 
@@ -130,42 +130,42 @@ func ResolvedAt(v time.Time) predicate.Approval {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Approval {
+func TenantIDEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Approval {
+func TenantIDNEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Approval {
+func TenantIDIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Approval {
+func TenantIDNotIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Approval {
+func TenantIDGT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Approval {
+func TenantIDGTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Approval {
+func TenantIDLT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Approval {
+func TenantIDLTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -395,42 +395,42 @@ func OperationTypeContainsFold(v string) predicate.Approval {
 }
 
 // OperationRefIDEQ applies the EQ predicate on the "operation_ref_id" field.
-func OperationRefIDEQ(v uint32) predicate.Approval {
+func OperationRefIDEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldOperationRefID, v))
 }
 
 // OperationRefIDNEQ applies the NEQ predicate on the "operation_ref_id" field.
-func OperationRefIDNEQ(v uint32) predicate.Approval {
+func OperationRefIDNEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNEQ(FieldOperationRefID, v))
 }
 
 // OperationRefIDIn applies the In predicate on the "operation_ref_id" field.
-func OperationRefIDIn(vs ...uint32) predicate.Approval {
+func OperationRefIDIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldIn(FieldOperationRefID, vs...))
 }
 
 // OperationRefIDNotIn applies the NotIn predicate on the "operation_ref_id" field.
-func OperationRefIDNotIn(vs ...uint32) predicate.Approval {
+func OperationRefIDNotIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNotIn(FieldOperationRefID, vs...))
 }
 
 // OperationRefIDGT applies the GT predicate on the "operation_ref_id" field.
-func OperationRefIDGT(v uint32) predicate.Approval {
+func OperationRefIDGT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGT(FieldOperationRefID, v))
 }
 
 // OperationRefIDGTE applies the GTE predicate on the "operation_ref_id" field.
-func OperationRefIDGTE(v uint32) predicate.Approval {
+func OperationRefIDGTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGTE(FieldOperationRefID, v))
 }
 
 // OperationRefIDLT applies the LT predicate on the "operation_ref_id" field.
-func OperationRefIDLT(v uint32) predicate.Approval {
+func OperationRefIDLT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLT(FieldOperationRefID, v))
 }
 
 // OperationRefIDLTE applies the LTE predicate on the "operation_ref_id" field.
-func OperationRefIDLTE(v uint32) predicate.Approval {
+func OperationRefIDLTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldOperationRefID, v))
 }
 
@@ -640,42 +640,42 @@ func PayloadContainsFold(v string) predicate.Approval {
 }
 
 // RequesterIDEQ applies the EQ predicate on the "requester_id" field.
-func RequesterIDEQ(v uint32) predicate.Approval {
+func RequesterIDEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldRequesterID, v))
 }
 
 // RequesterIDNEQ applies the NEQ predicate on the "requester_id" field.
-func RequesterIDNEQ(v uint32) predicate.Approval {
+func RequesterIDNEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNEQ(FieldRequesterID, v))
 }
 
 // RequesterIDIn applies the In predicate on the "requester_id" field.
-func RequesterIDIn(vs ...uint32) predicate.Approval {
+func RequesterIDIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldIn(FieldRequesterID, vs...))
 }
 
 // RequesterIDNotIn applies the NotIn predicate on the "requester_id" field.
-func RequesterIDNotIn(vs ...uint32) predicate.Approval {
+func RequesterIDNotIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNotIn(FieldRequesterID, vs...))
 }
 
 // RequesterIDGT applies the GT predicate on the "requester_id" field.
-func RequesterIDGT(v uint32) predicate.Approval {
+func RequesterIDGT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGT(FieldRequesterID, v))
 }
 
 // RequesterIDGTE applies the GTE predicate on the "requester_id" field.
-func RequesterIDGTE(v uint32) predicate.Approval {
+func RequesterIDGTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGTE(FieldRequesterID, v))
 }
 
 // RequesterIDLT applies the LT predicate on the "requester_id" field.
-func RequesterIDLT(v uint32) predicate.Approval {
+func RequesterIDLT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLT(FieldRequesterID, v))
 }
 
 // RequesterIDLTE applies the LTE predicate on the "requester_id" field.
-func RequesterIDLTE(v uint32) predicate.Approval {
+func RequesterIDLTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldRequesterID, v))
 }
 
@@ -690,42 +690,42 @@ func RequesterIDNotNil() predicate.Approval {
 }
 
 // ApproverIDEQ applies the EQ predicate on the "approver_id" field.
-func ApproverIDEQ(v uint32) predicate.Approval {
+func ApproverIDEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldEQ(FieldApproverID, v))
 }
 
 // ApproverIDNEQ applies the NEQ predicate on the "approver_id" field.
-func ApproverIDNEQ(v uint32) predicate.Approval {
+func ApproverIDNEQ(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNEQ(FieldApproverID, v))
 }
 
 // ApproverIDIn applies the In predicate on the "approver_id" field.
-func ApproverIDIn(vs ...uint32) predicate.Approval {
+func ApproverIDIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldIn(FieldApproverID, vs...))
 }
 
 // ApproverIDNotIn applies the NotIn predicate on the "approver_id" field.
-func ApproverIDNotIn(vs ...uint32) predicate.Approval {
+func ApproverIDNotIn(vs ...uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldNotIn(FieldApproverID, vs...))
 }
 
 // ApproverIDGT applies the GT predicate on the "approver_id" field.
-func ApproverIDGT(v uint32) predicate.Approval {
+func ApproverIDGT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGT(FieldApproverID, v))
 }
 
 // ApproverIDGTE applies the GTE predicate on the "approver_id" field.
-func ApproverIDGTE(v uint32) predicate.Approval {
+func ApproverIDGTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldGTE(FieldApproverID, v))
 }
 
 // ApproverIDLT applies the LT predicate on the "approver_id" field.
-func ApproverIDLT(v uint32) predicate.Approval {
+func ApproverIDLT(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLT(FieldApproverID, v))
 }
 
 // ApproverIDLTE applies the LTE predicate on the "approver_id" field.
-func ApproverIDLTE(v uint32) predicate.Approval {
+func ApproverIDLTE(v uint64) predicate.Approval {
 	return predicate.Approval(sql.FieldLTE(FieldApproverID, v))
 }
 

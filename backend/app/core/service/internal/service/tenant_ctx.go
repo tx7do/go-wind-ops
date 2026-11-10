@@ -18,7 +18,7 @@ import (
 
 // tenantScopedCtx 返回带指定租户 viewer 的上下文;tid 为空/0(平台级父实体,
 // 如 agent_node)时原样返回,行为与现状一致。
-func tenantScopedCtx(ctx context.Context, tid *uint32) context.Context {
+func tenantScopedCtx(ctx context.Context, tid *uint64) context.Context {
 	if tid == nil || *tid == 0 {
 		return ctx
 	}
@@ -26,15 +26,15 @@ func tenantScopedCtx(ctx context.Context, tid *uint32) context.Context {
 }
 
 // viewerTenantOf 读取请求上下文里的租户(无 viewer 或平台视图返回 0)。
-func viewerTenantOf(ctx context.Context) uint32 {
+func viewerTenantOf(ctx context.Context) uint64 {
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		return uint32(vc.TenantID())
+		return uint64(vc.TenantID())
 	}
 	return 0
 }
 
-// uint32Val 可空租户字段取值(nil→0)。
-func uint32Val(p *uint32) uint32 {
+// uint64Val 可空租户字段取值(nil→0)。
+func uint64Val(p *uint64) uint64 {
 	if p == nil {
 		return 0
 	}

@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.NodeMetric {
+func ID(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.NodeMetric {
+func IDEQ(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.NodeMetric {
+func IDNEQ(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.NodeMetric {
+func IDIn(ids ...uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.NodeMetric {
+func IDNotIn(ids ...uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.NodeMetric {
+func IDGT(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.NodeMetric {
+func IDGTE(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.NodeMetric {
+func IDLT(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.NodeMetric {
+func IDLTE(id uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.NodeMetric {
 }
 
 // NodeID applies equality check predicate on the "node_id" field. It's identical to NodeIDEQ.
-func NodeID(v uint32) predicate.NodeMetric {
+func NodeID(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldNodeID, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.NodeMetric {
 }
 
 // NodeIDEQ applies the EQ predicate on the "node_id" field.
-func NodeIDEQ(v uint32) predicate.NodeMetric {
+func NodeIDEQ(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldEQ(FieldNodeID, v))
 }
 
 // NodeIDNEQ applies the NEQ predicate on the "node_id" field.
-func NodeIDNEQ(v uint32) predicate.NodeMetric {
+func NodeIDNEQ(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNEQ(FieldNodeID, v))
 }
 
 // NodeIDIn applies the In predicate on the "node_id" field.
-func NodeIDIn(vs ...uint32) predicate.NodeMetric {
+func NodeIDIn(vs ...uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldIn(FieldNodeID, vs...))
 }
 
 // NodeIDNotIn applies the NotIn predicate on the "node_id" field.
-func NodeIDNotIn(vs ...uint32) predicate.NodeMetric {
+func NodeIDNotIn(vs ...uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldNotIn(FieldNodeID, vs...))
 }
 
 // NodeIDGT applies the GT predicate on the "node_id" field.
-func NodeIDGT(v uint32) predicate.NodeMetric {
+func NodeIDGT(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGT(FieldNodeID, v))
 }
 
 // NodeIDGTE applies the GTE predicate on the "node_id" field.
-func NodeIDGTE(v uint32) predicate.NodeMetric {
+func NodeIDGTE(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldGTE(FieldNodeID, v))
 }
 
 // NodeIDLT applies the LT predicate on the "node_id" field.
-func NodeIDLT(v uint32) predicate.NodeMetric {
+func NodeIDLT(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLT(FieldNodeID, v))
 }
 
 // NodeIDLTE applies the LTE predicate on the "node_id" field.
-func NodeIDLTE(v uint32) predicate.NodeMetric {
+func NodeIDLTE(v uint64) predicate.NodeMetric {
 	return predicate.NodeMetric(sql.FieldLTE(FieldNodeID, v))
 }
 

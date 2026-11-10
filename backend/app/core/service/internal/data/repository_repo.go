@@ -121,7 +121,7 @@ func (r *RepositoryRepo) Get(ctx context.Context, req *opsV1.GetRepositoryReques
 }
 
 // GetEntity 取原始实体(含密文密码,供构建执行器解密使用)。
-func (r *RepositoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.Repository, error) {
+func (r *RepositoryRepo) GetEntity(ctx context.Context, id uint64) (*ent.Repository, error) {
 	entity, err := r.entClient.Client().Repository.
 		Query().
 		Where(repository.IDEQ(id)).
@@ -137,7 +137,7 @@ func (r *RepositoryRepo) GetEntity(ctx context.Context, id uint32) (*ent.Reposit
 }
 
 // IsNameTaken 校验仓库名唯一性。
-func (r *RepositoryRepo) IsNameTaken(ctx context.Context, name string, excludeID uint32) (bool, error) {
+func (r *RepositoryRepo) IsNameTaken(ctx context.Context, name string, excludeID uint64) (bool, error) {
 	query := r.entClient.Client().Repository.Query().Where(repository.NameEQ(name))
 	if excludeID > 0 {
 		query = query.Where(repository.IDNEQ(excludeID))
@@ -150,7 +150,7 @@ func (r *RepositoryRepo) IsNameTaken(ctx context.Context, name string, excludeID
 	return exist, nil
 }
 
-func (r *RepositoryRepo) Create(ctx context.Context, req *opsV1.CreateRepositoryRequest, operatorID uint32) (*opsV1.Repository, error) {
+func (r *RepositoryRepo) Create(ctx context.Context, req *opsV1.CreateRepositoryRequest, operatorID uint64) (*opsV1.Repository, error) {
 	if req == nil || req.Data == nil {
 		return nil, opsV1.ErrorBadRequest("invalid parameter")
 	}

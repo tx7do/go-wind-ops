@@ -37,7 +37,7 @@ func (Build) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint32("repository_id").
+		field.Uint64("repository_id").
 			Comment("源仓库(ops_repositories.id)").
 			Positive(),
 
@@ -94,10 +94,10 @@ func (Build) Fields() []ent.Field {
 // Mixin of the Build.
 func (Build) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

@@ -33,14 +33,14 @@ service LogSnapshotService {
 
 // 日志快照
 message LogSnapshot {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 快照ID
 
-  optional uint32 project_id = 2 [json_name = "projectId"]; // 项目
+  optional uint64 project_id = 2 [json_name = "projectId"]; // 项目
 
-  optional uint32 node_id = 3 [json_name = "nodeId"]; // 节点
+  optional uint64 node_id = 3 [json_name = "nodeId"]; // 节点
 
   optional string project_name = 4 [json_name = "projectName"]; // 项目名
 
@@ -66,14 +66,14 @@ message ListLogSnapshotResponse {
 }
 
 message GetLogSnapshotRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 快照ID
 }
 
 message CaptureLogSnapshotRequest {
-  optional uint32 project_id = 1 [
+  optional uint64 project_id = 1 [
     json_name = "projectId",
     (google.api.field_behavior) = REQUIRED
   ]; // 项目ID
@@ -88,7 +88,7 @@ message SearchLogSnapshotsRequest {
     }
   ]; // 关键字
 
-  optional uint32 project_id = 2 [
+  optional uint64 project_id = 2 [
     json_name = "projectId",
     (gnostic.openapi.v3.property) = {
       description: "限定项目(0=全部)"
@@ -98,9 +98,9 @@ message SearchLogSnapshotsRequest {
 
 message SearchLogSnapshotResponse {
   message SearchHit {
-    optional uint32 snapshot_id = 1 [json_name = "snapshotId"]; // 快照ID
+    optional uint64 snapshot_id = 1 [json_name = "snapshotId"]; // 快照ID
 
-    optional uint32 project_id = 2 [json_name = "projectId"]; // 项目
+    optional uint64 project_id = 2 [json_name = "projectId"]; // 项目
 
     optional string project_name = 3 [json_name = "projectName"]; // 项目名
 
@@ -116,7 +116,7 @@ message SearchLogSnapshotResponse {
 }
 
 message DeleteLogSnapshotRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 快照ID

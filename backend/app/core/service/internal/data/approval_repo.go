@@ -119,7 +119,7 @@ func (r *ApprovalRepo) Get(ctx context.Context, req *opsV1.GetApprovalRequest) (
 }
 
 // GetEntity 取原始实体(审批通过后执行操作用)。
-func (r *ApprovalRepo) GetEntity(ctx context.Context, id uint32) (*ent.Approval, error) {
+func (r *ApprovalRepo) GetEntity(ctx context.Context, id uint64) (*ent.Approval, error) {
 	return r.entClient.Client().Approval.
 		Query().
 		Where(approval.IDEQ(id)).
@@ -127,7 +127,7 @@ func (r *ApprovalRepo) GetEntity(ctx context.Context, id uint32) (*ent.Approval,
 }
 
 // Create 创建审批单(PENDING)。operationType 为字符串(distribute/script_exec)。
-func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint32, agentID, opName, payload string, requesterID uint32, expiresAt *time.Time) (*ent.Approval, error) {
+func (r *ApprovalRepo) Create(ctx context.Context, operationType string, operationRefID uint64, agentID, opName, payload string, requesterID uint64, expiresAt *time.Time) (*ent.Approval, error) {
 	builder := r.entClient.Client().Approval.
 		Create().
 		SetOperationType(operationType).
@@ -174,7 +174,7 @@ func (r *ApprovalRepo) ExpireStale(ctx context.Context, now time.Time) (int, err
 }
 
 // Resolve 审批(通过/驳回)。仅 PENDING 可审批(CAS 去重)。
-func (r *ApprovalRepo) Resolve(ctx context.Context, id uint32, approve bool, approverID uint32, rejectReason string) error {
+func (r *ApprovalRepo) Resolve(ctx context.Context, id uint64, approve bool, approverID uint64, rejectReason string) error {
 	now := time.Now()
 	status := approval.StatusRejected
 	if approve {
@@ -202,7 +202,7 @@ func (r *ApprovalRepo) Resolve(ctx context.Context, id uint32, approve bool, app
 }
 
 // MarkExecuted 审批通过的操作执行完毕后回写结果。
-func (r *ApprovalRepo) MarkExecuted(ctx context.Context, id uint32, result string) error {
+func (r *ApprovalRepo) MarkExecuted(ctx context.Context, id uint64, result string) error {
 	_, err := r.entClient.Client().Approval.
 		UpdateOneID(id).
 		SetResult(result).

@@ -70,14 +70,14 @@ func (_u *CloudInstanceUpdate) ClearDeletedAt() *CloudInstanceUpdate {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_u *CloudInstanceUpdate) SetCloudAccountID(v uint32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) SetCloudAccountID(v uint64) *CloudInstanceUpdate {
 	_u.mutation.ResetCloudAccountID()
 	_u.mutation.SetCloudAccountID(v)
 	return _u
 }
 
 // SetNillableCloudAccountID sets the "cloud_account_id" field if the given value is not nil.
-func (_u *CloudInstanceUpdate) SetNillableCloudAccountID(v *uint32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) SetNillableCloudAccountID(v *uint64) *CloudInstanceUpdate {
 	if v != nil {
 		_u.SetCloudAccountID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CloudInstanceUpdate) SetNillableCloudAccountID(v *uint32) *CloudInstan
 }
 
 // AddCloudAccountID adds value to the "cloud_account_id" field.
-func (_u *CloudInstanceUpdate) AddCloudAccountID(v int32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) AddCloudAccountID(v int64) *CloudInstanceUpdate {
 	_u.mutation.AddCloudAccountID(v)
 	return _u
 }
@@ -313,14 +313,14 @@ func (_u *CloudInstanceUpdate) SetNillableMatched(v *bool) *CloudInstanceUpdate 
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (_u *CloudInstanceUpdate) SetAgentNodeID(v uint32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) SetAgentNodeID(v uint64) *CloudInstanceUpdate {
 	_u.mutation.ResetAgentNodeID()
 	_u.mutation.SetAgentNodeID(v)
 	return _u
 }
 
 // SetNillableAgentNodeID sets the "agent_node_id" field if the given value is not nil.
-func (_u *CloudInstanceUpdate) SetNillableAgentNodeID(v *uint32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) SetNillableAgentNodeID(v *uint64) *CloudInstanceUpdate {
 	if v != nil {
 		_u.SetAgentNodeID(*v)
 	}
@@ -328,7 +328,7 @@ func (_u *CloudInstanceUpdate) SetNillableAgentNodeID(v *uint32) *CloudInstanceU
 }
 
 // AddAgentNodeID adds value to the "agent_node_id" field.
-func (_u *CloudInstanceUpdate) AddAgentNodeID(v int32) *CloudInstanceUpdate {
+func (_u *CloudInstanceUpdate) AddAgentNodeID(v int64) *CloudInstanceUpdate {
 	_u.mutation.AddAgentNodeID(v)
 	return _u
 }
@@ -440,7 +440,7 @@ func (_u *CloudInstanceUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cloudinstance.Table, cloudinstance.Columns, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cloudinstance.Table, cloudinstance.Columns, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -449,7 +449,7 @@ func (_u *CloudInstanceUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudinstance.FieldCreatedAt, field.TypeTime)
@@ -467,10 +467,10 @@ func (_u *CloudInstanceUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(cloudinstance.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCloudAccountID(); ok {
-		_spec.AddField(cloudinstance.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.AddField(cloudinstance.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CloudAccountName(); ok {
 		_spec.SetField(cloudinstance.FieldCloudAccountName, field.TypeString, value)
@@ -536,13 +536,13 @@ func (_u *CloudInstanceUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.SetField(cloudinstance.FieldMatched, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.AgentNodeID(); ok {
-		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeUint32, value)
+		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAgentNodeID(); ok {
-		_spec.AddField(cloudinstance.FieldAgentNodeID, field.TypeUint32, value)
+		_spec.AddField(cloudinstance.FieldAgentNodeID, field.TypeUint64, value)
 	}
 	if _u.mutation.AgentNodeIDCleared() {
-		_spec.ClearField(cloudinstance.FieldAgentNodeID, field.TypeUint32)
+		_spec.ClearField(cloudinstance.FieldAgentNodeID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AgentNodeName(); ok {
 		_spec.SetField(cloudinstance.FieldAgentNodeName, field.TypeString, value)
@@ -616,14 +616,14 @@ func (_u *CloudInstanceUpdateOne) ClearDeletedAt() *CloudInstanceUpdateOne {
 }
 
 // SetCloudAccountID sets the "cloud_account_id" field.
-func (_u *CloudInstanceUpdateOne) SetCloudAccountID(v uint32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) SetCloudAccountID(v uint64) *CloudInstanceUpdateOne {
 	_u.mutation.ResetCloudAccountID()
 	_u.mutation.SetCloudAccountID(v)
 	return _u
 }
 
 // SetNillableCloudAccountID sets the "cloud_account_id" field if the given value is not nil.
-func (_u *CloudInstanceUpdateOne) SetNillableCloudAccountID(v *uint32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) SetNillableCloudAccountID(v *uint64) *CloudInstanceUpdateOne {
 	if v != nil {
 		_u.SetCloudAccountID(*v)
 	}
@@ -631,7 +631,7 @@ func (_u *CloudInstanceUpdateOne) SetNillableCloudAccountID(v *uint32) *CloudIns
 }
 
 // AddCloudAccountID adds value to the "cloud_account_id" field.
-func (_u *CloudInstanceUpdateOne) AddCloudAccountID(v int32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) AddCloudAccountID(v int64) *CloudInstanceUpdateOne {
 	_u.mutation.AddCloudAccountID(v)
 	return _u
 }
@@ -859,14 +859,14 @@ func (_u *CloudInstanceUpdateOne) SetNillableMatched(v *bool) *CloudInstanceUpda
 }
 
 // SetAgentNodeID sets the "agent_node_id" field.
-func (_u *CloudInstanceUpdateOne) SetAgentNodeID(v uint32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) SetAgentNodeID(v uint64) *CloudInstanceUpdateOne {
 	_u.mutation.ResetAgentNodeID()
 	_u.mutation.SetAgentNodeID(v)
 	return _u
 }
 
 // SetNillableAgentNodeID sets the "agent_node_id" field if the given value is not nil.
-func (_u *CloudInstanceUpdateOne) SetNillableAgentNodeID(v *uint32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) SetNillableAgentNodeID(v *uint64) *CloudInstanceUpdateOne {
 	if v != nil {
 		_u.SetAgentNodeID(*v)
 	}
@@ -874,7 +874,7 @@ func (_u *CloudInstanceUpdateOne) SetNillableAgentNodeID(v *uint32) *CloudInstan
 }
 
 // AddAgentNodeID adds value to the "agent_node_id" field.
-func (_u *CloudInstanceUpdateOne) AddAgentNodeID(v int32) *CloudInstanceUpdateOne {
+func (_u *CloudInstanceUpdateOne) AddAgentNodeID(v int64) *CloudInstanceUpdateOne {
 	_u.mutation.AddAgentNodeID(v)
 	return _u
 }
@@ -999,7 +999,7 @@ func (_u *CloudInstanceUpdateOne) sqlSave(ctx context.Context) (_node *CloudInst
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(cloudinstance.Table, cloudinstance.Columns, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cloudinstance.Table, cloudinstance.Columns, sqlgraph.NewFieldSpec(cloudinstance.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CloudInstance.id" for update`)}
@@ -1025,7 +1025,7 @@ func (_u *CloudInstanceUpdateOne) sqlSave(ctx context.Context) (_node *CloudInst
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cloudinstance.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(cloudinstance.FieldCreatedAt, field.TypeTime)
@@ -1043,10 +1043,10 @@ func (_u *CloudInstanceUpdateOne) sqlSave(ctx context.Context) (_node *CloudInst
 		_spec.ClearField(cloudinstance.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CloudAccountID(); ok {
-		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.SetField(cloudinstance.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCloudAccountID(); ok {
-		_spec.AddField(cloudinstance.FieldCloudAccountID, field.TypeUint32, value)
+		_spec.AddField(cloudinstance.FieldCloudAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CloudAccountName(); ok {
 		_spec.SetField(cloudinstance.FieldCloudAccountName, field.TypeString, value)
@@ -1112,13 +1112,13 @@ func (_u *CloudInstanceUpdateOne) sqlSave(ctx context.Context) (_node *CloudInst
 		_spec.SetField(cloudinstance.FieldMatched, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.AgentNodeID(); ok {
-		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeUint32, value)
+		_spec.SetField(cloudinstance.FieldAgentNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAgentNodeID(); ok {
-		_spec.AddField(cloudinstance.FieldAgentNodeID, field.TypeUint32, value)
+		_spec.AddField(cloudinstance.FieldAgentNodeID, field.TypeUint64, value)
 	}
 	if _u.mutation.AgentNodeIDCleared() {
-		_spec.ClearField(cloudinstance.FieldAgentNodeID, field.TypeUint32)
+		_spec.ClearField(cloudinstance.FieldAgentNodeID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AgentNodeName(); ok {
 		_spec.SetField(cloudinstance.FieldAgentNodeName, field.TypeString, value)

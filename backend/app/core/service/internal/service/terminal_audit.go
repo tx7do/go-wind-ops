@@ -85,8 +85,8 @@ func terminalSessionToDTO(row *ent.TerminalSession) *opsV1.TerminalSession {
 		Id:          &row.ID,
 		SessionId:   &row.SessionID,
 		AgentId:     &row.AgentID,
-		NodeId:      uint32Ptr(row.NodeID),
-		OperatorId:  uint32Ptr(row.OperatorID),
+		NodeId:      uint64Ptr(row.NodeID),
+		OperatorId:  uint64Ptr(row.OperatorID),
 		Status:      &status,
 		InputBytes:  &row.InputBytes,
 		OutputBytes: &row.OutputBytes,
@@ -105,4 +105,4 @@ func timestamppbOfPtr(t *time.Time) *timestamppb.Timestamp {
 	return timestamppb.New(*t)
 }
 
-func uint32Ptr(v uint32) *uint32 { return &v }
+func uint64Ptr(v uint64) *uint64 { return &v }

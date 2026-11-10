@@ -71,14 +71,14 @@ func (_u *RepositoryUpdate) ClearDeletedAt() *RepositoryUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *RepositoryUpdate) SetCreatedBy(v uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetCreatedBy(v uint64) *RepositoryUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *RepositoryUpdate) SetNillableCreatedBy(v *uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetNillableCreatedBy(v *uint64) *RepositoryUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *RepositoryUpdate) SetNillableCreatedBy(v *uint32) *RepositoryUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *RepositoryUpdate) AddCreatedBy(v int32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) AddCreatedBy(v int64) *RepositoryUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *RepositoryUpdate) ClearCreatedBy() *RepositoryUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *RepositoryUpdate) SetUpdatedBy(v uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetUpdatedBy(v uint64) *RepositoryUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *RepositoryUpdate) SetNillableUpdatedBy(v *uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetNillableUpdatedBy(v *uint64) *RepositoryUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *RepositoryUpdate) SetNillableUpdatedBy(v *uint32) *RepositoryUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *RepositoryUpdate) AddUpdatedBy(v int32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) AddUpdatedBy(v int64) *RepositoryUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *RepositoryUpdate) ClearUpdatedBy() *RepositoryUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *RepositoryUpdate) SetDeletedBy(v uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetDeletedBy(v uint64) *RepositoryUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *RepositoryUpdate) SetNillableDeletedBy(v *uint32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) SetNillableDeletedBy(v *uint64) *RepositoryUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *RepositoryUpdate) SetNillableDeletedBy(v *uint32) *RepositoryUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *RepositoryUpdate) AddDeletedBy(v int32) *RepositoryUpdate {
+func (_u *RepositoryUpdate) AddDeletedBy(v int64) *RepositoryUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -334,7 +334,7 @@ func (_u *RepositoryUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(repository.Table, repository.Columns, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(repository.Table, repository.Columns, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -343,7 +343,7 @@ func (_u *RepositoryUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(repository.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(repository.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(repository.FieldCreatedAt, field.TypeTime)
@@ -361,31 +361,31 @@ func (_u *RepositoryUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(repository.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(repository.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(repository.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(repository.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(repository.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(repository.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(repository.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(repository.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(repository.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(repository.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(repository.FieldName, field.TypeString, value)
@@ -491,14 +491,14 @@ func (_u *RepositoryUpdateOne) ClearDeletedAt() *RepositoryUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *RepositoryUpdateOne) SetCreatedBy(v uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetCreatedBy(v uint64) *RepositoryUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *RepositoryUpdateOne) SetNillableCreatedBy(v *uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetNillableCreatedBy(v *uint64) *RepositoryUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -506,7 +506,7 @@ func (_u *RepositoryUpdateOne) SetNillableCreatedBy(v *uint32) *RepositoryUpdate
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *RepositoryUpdateOne) AddCreatedBy(v int32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) AddCreatedBy(v int64) *RepositoryUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -518,14 +518,14 @@ func (_u *RepositoryUpdateOne) ClearCreatedBy() *RepositoryUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *RepositoryUpdateOne) SetUpdatedBy(v uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetUpdatedBy(v uint64) *RepositoryUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *RepositoryUpdateOne) SetNillableUpdatedBy(v *uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetNillableUpdatedBy(v *uint64) *RepositoryUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -533,7 +533,7 @@ func (_u *RepositoryUpdateOne) SetNillableUpdatedBy(v *uint32) *RepositoryUpdate
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *RepositoryUpdateOne) AddUpdatedBy(v int32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) AddUpdatedBy(v int64) *RepositoryUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -545,14 +545,14 @@ func (_u *RepositoryUpdateOne) ClearUpdatedBy() *RepositoryUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *RepositoryUpdateOne) SetDeletedBy(v uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetDeletedBy(v uint64) *RepositoryUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *RepositoryUpdateOne) SetNillableDeletedBy(v *uint32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) SetNillableDeletedBy(v *uint64) *RepositoryUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -560,7 +560,7 @@ func (_u *RepositoryUpdateOne) SetNillableDeletedBy(v *uint32) *RepositoryUpdate
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *RepositoryUpdateOne) AddDeletedBy(v int32) *RepositoryUpdateOne {
+func (_u *RepositoryUpdateOne) AddDeletedBy(v int64) *RepositoryUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -767,7 +767,7 @@ func (_u *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(repository.Table, repository.Columns, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(repository.Table, repository.Columns, sqlgraph.NewFieldSpec(repository.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Repository.id" for update`)}
@@ -793,7 +793,7 @@ func (_u *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository, 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(repository.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(repository.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(repository.FieldCreatedAt, field.TypeTime)
@@ -811,31 +811,31 @@ func (_u *RepositoryUpdateOne) sqlSave(ctx context.Context) (_node *Repository, 
 		_spec.ClearField(repository.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(repository.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(repository.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(repository.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(repository.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(repository.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(repository.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(repository.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(repository.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(repository.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(repository.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(repository.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(repository.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(repository.FieldName, field.TypeString, value)

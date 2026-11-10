@@ -23,13 +23,13 @@ type MonitorCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *MonitorCreate) SetTenantID(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetTenantID(v uint64) *MonitorCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableTenantID(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableTenantID(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *MonitorCreate) SetNillableDeletedAt(v *time.Time) *MonitorCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *MonitorCreate) SetCreatedBy(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetCreatedBy(v uint64) *MonitorCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableCreatedBy(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableCreatedBy(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *MonitorCreate) SetNillableCreatedBy(v *uint32) *MonitorCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *MonitorCreate) SetUpdatedBy(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetUpdatedBy(v uint64) *MonitorCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableUpdatedBy(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableUpdatedBy(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *MonitorCreate) SetNillableUpdatedBy(v *uint32) *MonitorCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *MonitorCreate) SetDeletedBy(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetDeletedBy(v uint64) *MonitorCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableDeletedBy(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableDeletedBy(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -127,13 +127,13 @@ func (_c *MonitorCreate) SetName(v string) *MonitorCreate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (_c *MonitorCreate) SetProjectID(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetProjectID(v uint64) *MonitorCreate {
 	_c.mutation.SetProjectID(v)
 	return _c
 }
 
 // SetNillableProjectID sets the "project_id" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableProjectID(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableProjectID(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetProjectID(*v)
 	}
@@ -155,13 +155,13 @@ func (_c *MonitorCreate) SetNillableTargetType(v *monitor.TargetType) *MonitorCr
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *MonitorCreate) SetNodeID(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNodeID(v uint64) *MonitorCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableNodeID(v *uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetNillableNodeID(v *uint64) *MonitorCreate {
 	if v != nil {
 		_c.SetNodeID(*v)
 	}
@@ -343,7 +343,7 @@ func (_c *MonitorCreate) SetNillableDescription(v *string) *MonitorCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *MonitorCreate) SetID(v uint32) *MonitorCreate {
+func (_c *MonitorCreate) SetID(v uint64) *MonitorCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -516,7 +516,7 @@ func (_c *MonitorCreate) sqlSave(ctx context.Context) (*Monitor, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -526,7 +526,7 @@ func (_c *MonitorCreate) sqlSave(ctx context.Context) (*Monitor, error) {
 func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Monitor{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(monitor.Table, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(monitor.Table, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -534,7 +534,7 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(monitor.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
@@ -550,15 +550,15 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(monitor.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(monitor.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(monitor.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -566,7 +566,7 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.ProjectID(); ok {
-		_spec.SetField(monitor.FieldProjectID, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldProjectID, field.TypeUint64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := _c.mutation.TargetType(); ok {
@@ -574,7 +574,7 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_node.TargetType = value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(monitor.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(monitor.FieldNodeID, field.TypeUint64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.ProcessName(); ok {
@@ -718,7 +718,7 @@ func (u *MonitorUpsert) ClearDeletedAt() *MonitorUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MonitorUpsert) SetCreatedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) SetCreatedBy(v uint64) *MonitorUpsert {
 	u.Set(monitor.FieldCreatedBy, v)
 	return u
 }
@@ -730,7 +730,7 @@ func (u *MonitorUpsert) UpdateCreatedBy() *MonitorUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MonitorUpsert) AddCreatedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) AddCreatedBy(v uint64) *MonitorUpsert {
 	u.Add(monitor.FieldCreatedBy, v)
 	return u
 }
@@ -742,7 +742,7 @@ func (u *MonitorUpsert) ClearCreatedBy() *MonitorUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MonitorUpsert) SetUpdatedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) SetUpdatedBy(v uint64) *MonitorUpsert {
 	u.Set(monitor.FieldUpdatedBy, v)
 	return u
 }
@@ -754,7 +754,7 @@ func (u *MonitorUpsert) UpdateUpdatedBy() *MonitorUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MonitorUpsert) AddUpdatedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) AddUpdatedBy(v uint64) *MonitorUpsert {
 	u.Add(monitor.FieldUpdatedBy, v)
 	return u
 }
@@ -766,7 +766,7 @@ func (u *MonitorUpsert) ClearUpdatedBy() *MonitorUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MonitorUpsert) SetDeletedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) SetDeletedBy(v uint64) *MonitorUpsert {
 	u.Set(monitor.FieldDeletedBy, v)
 	return u
 }
@@ -778,7 +778,7 @@ func (u *MonitorUpsert) UpdateDeletedBy() *MonitorUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MonitorUpsert) AddDeletedBy(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) AddDeletedBy(v uint64) *MonitorUpsert {
 	u.Add(monitor.FieldDeletedBy, v)
 	return u
 }
@@ -802,7 +802,7 @@ func (u *MonitorUpsert) UpdateName() *MonitorUpsert {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *MonitorUpsert) SetProjectID(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) SetProjectID(v uint64) *MonitorUpsert {
 	u.Set(monitor.FieldProjectID, v)
 	return u
 }
@@ -814,7 +814,7 @@ func (u *MonitorUpsert) UpdateProjectID() *MonitorUpsert {
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *MonitorUpsert) AddProjectID(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) AddProjectID(v uint64) *MonitorUpsert {
 	u.Add(monitor.FieldProjectID, v)
 	return u
 }
@@ -838,7 +838,7 @@ func (u *MonitorUpsert) UpdateTargetType() *MonitorUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *MonitorUpsert) SetNodeID(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) SetNodeID(v uint64) *MonitorUpsert {
 	u.Set(monitor.FieldNodeID, v)
 	return u
 }
@@ -850,7 +850,7 @@ func (u *MonitorUpsert) UpdateNodeID() *MonitorUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *MonitorUpsert) AddNodeID(v uint32) *MonitorUpsert {
+func (u *MonitorUpsert) AddNodeID(v uint64) *MonitorUpsert {
 	u.Add(monitor.FieldNodeID, v)
 	return u
 }
@@ -1162,14 +1162,14 @@ func (u *MonitorUpsertOne) ClearDeletedAt() *MonitorUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MonitorUpsertOne) SetCreatedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) SetCreatedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MonitorUpsertOne) AddCreatedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) AddCreatedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1190,14 +1190,14 @@ func (u *MonitorUpsertOne) ClearCreatedBy() *MonitorUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MonitorUpsertOne) SetUpdatedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) SetUpdatedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MonitorUpsertOne) AddUpdatedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) AddUpdatedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1218,14 +1218,14 @@ func (u *MonitorUpsertOne) ClearUpdatedBy() *MonitorUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MonitorUpsertOne) SetDeletedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) SetDeletedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MonitorUpsertOne) AddDeletedBy(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) AddDeletedBy(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1260,14 +1260,14 @@ func (u *MonitorUpsertOne) UpdateName() *MonitorUpsertOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *MonitorUpsertOne) SetProjectID(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) SetProjectID(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *MonitorUpsertOne) AddProjectID(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) AddProjectID(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1302,14 +1302,14 @@ func (u *MonitorUpsertOne) UpdateTargetType() *MonitorUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *MonitorUpsertOne) SetNodeID(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) SetNodeID(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *MonitorUpsertOne) AddNodeID(v uint32) *MonitorUpsertOne {
+func (u *MonitorUpsertOne) AddNodeID(v uint64) *MonitorUpsertOne {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddNodeID(v)
 	})
@@ -1583,7 +1583,7 @@ func (u *MonitorUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MonitorUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *MonitorUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1592,7 +1592,7 @@ func (u *MonitorUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MonitorUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *MonitorUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1649,7 +1649,7 @@ func (_c *MonitorCreateBulk) Save(ctx context.Context) ([]*Monitor, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1830,14 +1830,14 @@ func (u *MonitorUpsertBulk) ClearDeletedAt() *MonitorUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MonitorUpsertBulk) SetCreatedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) SetCreatedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MonitorUpsertBulk) AddCreatedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) AddCreatedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1858,14 +1858,14 @@ func (u *MonitorUpsertBulk) ClearCreatedBy() *MonitorUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MonitorUpsertBulk) SetUpdatedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) SetUpdatedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MonitorUpsertBulk) AddUpdatedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) AddUpdatedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1886,14 +1886,14 @@ func (u *MonitorUpsertBulk) ClearUpdatedBy() *MonitorUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MonitorUpsertBulk) SetDeletedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) SetDeletedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MonitorUpsertBulk) AddDeletedBy(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) AddDeletedBy(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1928,14 +1928,14 @@ func (u *MonitorUpsertBulk) UpdateName() *MonitorUpsertBulk {
 }
 
 // SetProjectID sets the "project_id" field.
-func (u *MonitorUpsertBulk) SetProjectID(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) SetProjectID(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetProjectID(v)
 	})
 }
 
 // AddProjectID adds v to the "project_id" field.
-func (u *MonitorUpsertBulk) AddProjectID(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) AddProjectID(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddProjectID(v)
 	})
@@ -1970,14 +1970,14 @@ func (u *MonitorUpsertBulk) UpdateTargetType() *MonitorUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *MonitorUpsertBulk) SetNodeID(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) SetNodeID(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *MonitorUpsertBulk) AddNodeID(v uint32) *MonitorUpsertBulk {
+func (u *MonitorUpsertBulk) AddNodeID(v uint64) *MonitorUpsertBulk {
 	return u.Update(func(s *MonitorUpsert) {
 		s.AddNodeID(v)
 	})

@@ -17,9 +17,9 @@ type Monitor struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -27,19 +27,19 @@ type Monitor struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *uint64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *uint64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *uint64 `json:"deleted_by,omitempty"`
 	// 规则名(全局唯一)
 	Name string `json:"name,omitempty"`
 	// 被监控项目(ops_projects.id;节点指标规则为 0)
-	ProjectID uint32 `json:"project_id,omitempty"`
+	ProjectID uint64 `json:"project_id,omitempty"`
 	// 规则目标类型:PROJECT=项目状态 / NODE_METRIC=节点资源指标 / PROCESS=进程存在性
 	TargetType monitor.TargetType `json:"target_type,omitempty"`
 	// 被监控节点(ops_agent_nodes.id;项目状态规则为 0)
-	NodeID uint32 `json:"node_id,omitempty"`
+	NodeID uint64 `json:"node_id,omitempty"`
 	// 被监控进程名/关键字(进程规则用;大小写不敏感包含匹配)
 	ProcessName string `json:"process_name,omitempty"`
 	// 指标类型(节点指标规则用):CPU/MEMORY/DISK
@@ -104,13 +104,13 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case monitor.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case monitor.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -137,22 +137,22 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(uint64)
+				*_m.CreatedBy = uint64(value.Int64)
 			}
 		case monitor.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(uint64)
+				*_m.UpdatedBy = uint64(value.Int64)
 			}
 		case monitor.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(uint64)
+				*_m.DeletedBy = uint64(value.Int64)
 			}
 		case monitor.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -164,7 +164,7 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
-				_m.ProjectID = uint32(value.Int64)
+				_m.ProjectID = uint64(value.Int64)
 			}
 		case monitor.FieldTargetType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -176,7 +176,7 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
-				_m.NodeID = uint32(value.Int64)
+				_m.NodeID = uint64(value.Int64)
 			}
 		case monitor.FieldProcessName:
 			if value, ok := values[i].(*sql.NullString); !ok {

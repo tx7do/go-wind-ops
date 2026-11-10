@@ -90,7 +90,7 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "projectId required", http.StatusBadRequest)
 		return
 	}
-	if tk.ProjectId != uint32(projectID) {
+	if tk.ProjectId != uint64(projectID) {
 		http.Error(w, "ticket/project mismatch", http.StatusForbidden)
 		return
 	}
@@ -147,7 +147,7 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 
 		resp, err := h.client.GetProjectLog(callCtx, &opsV1.GetProjectLogRequest{
-			Id:     uint32Ptr(uint32(projectID)),
+			Id:     uint64Ptr(uint64(projectID)),
 			Offset: int64Ptr(offset),
 		})
 		if err != nil {
@@ -170,5 +170,5 @@ func (h *ProjectLogWsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func uint32Ptr(v uint32) *uint32 { return &v }
+func uint64Ptr(v uint64) *uint64 { return &v }
 func int64Ptr(v int64) *int64 { return &v }

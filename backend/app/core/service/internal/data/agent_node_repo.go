@@ -130,7 +130,7 @@ func (r *AgentNodeRepo) Get(ctx context.Context, req *opsV1.GetAgentNodeRequest)
 	return dto, nil
 }
 
-func (r *AgentNodeRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *AgentNodeRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().AgentNode.Query().
 		Where(agentnode.IDEQ(id)).
 		Exist(ctx)
@@ -234,7 +234,7 @@ func (r *AgentNodeRepo) Enrol(ctx context.Context, agentID, tokenHash string, in
 
 // SetRevoked 吊销/恢复节点准入:吊销后 broker 级(webhook)与信令级两层
 // 准入均拒绝;同时置离线,避免运维面仍显示在线。
-func (r *AgentNodeRepo) SetRevoked(ctx context.Context, id uint32, revoked bool) error {
+func (r *AgentNodeRepo) SetRevoked(ctx context.Context, id uint64, revoked bool) error {
 	builder := r.entClient.Client().AgentNode.UpdateOneID(id).SetRevoked(revoked)
 	if revoked {
 		builder = builder.SetStatus(agentnode.StatusOffline)
@@ -247,7 +247,7 @@ func (r *AgentNodeRepo) SetRevoked(ctx context.Context, id uint32, revoked bool)
 }
 
 // UpdateAuthSuccess 准入通过:刷新指纹并置在线。
-func (r *AgentNodeRepo) UpdateAuthSuccess(ctx context.Context, nodeID uint32, info *signal.AgentInfo) error {
+func (r *AgentNodeRepo) UpdateAuthSuccess(ctx context.Context, nodeID uint64, info *signal.AgentInfo) error {
 	builder := r.entClient.Client().AgentNode.
 		UpdateOneID(nodeID).
 		SetStatus(agentnode.StatusOnline).
@@ -300,7 +300,7 @@ func (r *AgentNodeRepo) ListStaleOnline(ctx context.Context, before time.Time) (
 // MarkOfflineIfStale 单节点抢占式离线翻转:仅当该节点仍在线且心跳仍过期时
 // 置离线,返回是否由本次调用完成翻转(多副本并发扫描恰一方为 true,
 // 失联告警据此不重复落)。
-func (r *AgentNodeRepo) MarkOfflineIfStale(ctx context.Context, nodeID uint32, before time.Time) (bool, error) {
+func (r *AgentNodeRepo) MarkOfflineIfStale(ctx context.Context, nodeID uint64, before time.Time) (bool, error) {
 	n, err := r.entClient.Client().AgentNode.
 		Update().
 		Where(

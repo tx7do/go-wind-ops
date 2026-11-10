@@ -56,9 +56,9 @@ func (MaintenanceWindow) Fields() []ent.Field {
 
 func (MaintenanceWindow) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

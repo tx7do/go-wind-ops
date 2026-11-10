@@ -36,7 +36,7 @@ func (TerminalSession) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 
-		field.Uint32("node_id").
+		field.Uint64("node_id").
 			Comment("节点(ops_agent_nodes.id)").
 			Default(0).
 			Optional(),
@@ -45,7 +45,7 @@ func (TerminalSession) Fields() []ent.Field {
 			Comment("机器唯一标识").
 			NotEmpty(),
 
-		field.Uint32("operator_id").
+		field.Uint64("operator_id").
 			Comment("打开终端的用户").
 			Default(0).
 			Optional(),
@@ -84,8 +84,8 @@ func (TerminalSession) Fields() []ent.Field {
 // Mixin of the TerminalSession.
 func (TerminalSession) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 		mixin.TimeAt{},
 	}
 }

@@ -70,14 +70,14 @@ func (_u *BackupTaskUpdate) ClearDeletedAt() *BackupTaskUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BackupTaskUpdate) SetCreatedBy(v uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetCreatedBy(v uint64) *BackupTaskUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BackupTaskUpdate) SetNillableCreatedBy(v *uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetNillableCreatedBy(v *uint64) *BackupTaskUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *BackupTaskUpdate) SetNillableCreatedBy(v *uint32) *BackupTaskUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BackupTaskUpdate) AddCreatedBy(v int32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) AddCreatedBy(v int64) *BackupTaskUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *BackupTaskUpdate) ClearCreatedBy() *BackupTaskUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BackupTaskUpdate) SetUpdatedBy(v uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetUpdatedBy(v uint64) *BackupTaskUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BackupTaskUpdate) SetNillableUpdatedBy(v *uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetNillableUpdatedBy(v *uint64) *BackupTaskUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *BackupTaskUpdate) SetNillableUpdatedBy(v *uint32) *BackupTaskUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BackupTaskUpdate) AddUpdatedBy(v int32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) AddUpdatedBy(v int64) *BackupTaskUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *BackupTaskUpdate) ClearUpdatedBy() *BackupTaskUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BackupTaskUpdate) SetDeletedBy(v uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetDeletedBy(v uint64) *BackupTaskUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BackupTaskUpdate) SetNillableDeletedBy(v *uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetNillableDeletedBy(v *uint64) *BackupTaskUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *BackupTaskUpdate) SetNillableDeletedBy(v *uint32) *BackupTaskUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BackupTaskUpdate) AddDeletedBy(v int32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) AddDeletedBy(v int64) *BackupTaskUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -165,14 +165,14 @@ func (_u *BackupTaskUpdate) SetNillableName(v *string) *BackupTaskUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *BackupTaskUpdate) SetNodeID(v uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetNodeID(v uint64) *BackupTaskUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *BackupTaskUpdate) SetNillableNodeID(v *uint32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) SetNillableNodeID(v *uint64) *BackupTaskUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -180,7 +180,7 @@ func (_u *BackupTaskUpdate) SetNillableNodeID(v *uint32) *BackupTaskUpdate {
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *BackupTaskUpdate) AddNodeID(v int32) *BackupTaskUpdate {
+func (_u *BackupTaskUpdate) AddNodeID(v int64) *BackupTaskUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -356,7 +356,7 @@ func (_u *BackupTaskUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(backuptask.Table, backuptask.Columns, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(backuptask.Table, backuptask.Columns, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -365,7 +365,7 @@ func (_u *BackupTaskUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(backuptask.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuptask.FieldCreatedAt, field.TypeTime)
@@ -383,40 +383,40 @@ func (_u *BackupTaskUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(backuptask.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(backuptask.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(backuptask.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(backuptask.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(backuptask.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(backuptask.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(backuptask.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(backuptask.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(backuptask.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(backuptask.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(backuptask.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(backuptask.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.SourceDir(); ok {
 		_spec.SetField(backuptask.FieldSourceDir, field.TypeString, value)
@@ -511,14 +511,14 @@ func (_u *BackupTaskUpdateOne) ClearDeletedAt() *BackupTaskUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BackupTaskUpdateOne) SetCreatedBy(v uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetCreatedBy(v uint64) *BackupTaskUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BackupTaskUpdateOne) SetNillableCreatedBy(v *uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetNillableCreatedBy(v *uint64) *BackupTaskUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -526,7 +526,7 @@ func (_u *BackupTaskUpdateOne) SetNillableCreatedBy(v *uint32) *BackupTaskUpdate
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BackupTaskUpdateOne) AddCreatedBy(v int32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) AddCreatedBy(v int64) *BackupTaskUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -538,14 +538,14 @@ func (_u *BackupTaskUpdateOne) ClearCreatedBy() *BackupTaskUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BackupTaskUpdateOne) SetUpdatedBy(v uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetUpdatedBy(v uint64) *BackupTaskUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BackupTaskUpdateOne) SetNillableUpdatedBy(v *uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetNillableUpdatedBy(v *uint64) *BackupTaskUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -553,7 +553,7 @@ func (_u *BackupTaskUpdateOne) SetNillableUpdatedBy(v *uint32) *BackupTaskUpdate
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BackupTaskUpdateOne) AddUpdatedBy(v int32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) AddUpdatedBy(v int64) *BackupTaskUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -565,14 +565,14 @@ func (_u *BackupTaskUpdateOne) ClearUpdatedBy() *BackupTaskUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BackupTaskUpdateOne) SetDeletedBy(v uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetDeletedBy(v uint64) *BackupTaskUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BackupTaskUpdateOne) SetNillableDeletedBy(v *uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetNillableDeletedBy(v *uint64) *BackupTaskUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -580,7 +580,7 @@ func (_u *BackupTaskUpdateOne) SetNillableDeletedBy(v *uint32) *BackupTaskUpdate
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BackupTaskUpdateOne) AddDeletedBy(v int32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) AddDeletedBy(v int64) *BackupTaskUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -606,14 +606,14 @@ func (_u *BackupTaskUpdateOne) SetNillableName(v *string) *BackupTaskUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *BackupTaskUpdateOne) SetNodeID(v uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetNodeID(v uint64) *BackupTaskUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *BackupTaskUpdateOne) SetNillableNodeID(v *uint32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) SetNillableNodeID(v *uint64) *BackupTaskUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -621,7 +621,7 @@ func (_u *BackupTaskUpdateOne) SetNillableNodeID(v *uint32) *BackupTaskUpdateOne
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *BackupTaskUpdateOne) AddNodeID(v int32) *BackupTaskUpdateOne {
+func (_u *BackupTaskUpdateOne) AddNodeID(v int64) *BackupTaskUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -810,7 +810,7 @@ func (_u *BackupTaskUpdateOne) sqlSave(ctx context.Context) (_node *BackupTask, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(backuptask.Table, backuptask.Columns, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(backuptask.Table, backuptask.Columns, sqlgraph.NewFieldSpec(backuptask.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BackupTask.id" for update`)}
@@ -836,7 +836,7 @@ func (_u *BackupTaskUpdateOne) sqlSave(ctx context.Context) (_node *BackupTask, 
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(backuptask.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(backuptask.FieldCreatedAt, field.TypeTime)
@@ -854,40 +854,40 @@ func (_u *BackupTaskUpdateOne) sqlSave(ctx context.Context) (_node *BackupTask, 
 		_spec.ClearField(backuptask.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(backuptask.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(backuptask.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(backuptask.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(backuptask.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(backuptask.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(backuptask.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(backuptask.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(backuptask.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(backuptask.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(backuptask.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(backuptask.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(backuptask.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(backuptask.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(backuptask.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.SourceDir(); ok {
 		_spec.SetField(backuptask.FieldSourceDir, field.TypeString, value)

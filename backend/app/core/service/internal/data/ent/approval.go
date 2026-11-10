@@ -17,9 +17,9 @@ type Approval struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -29,7 +29,7 @@ type Approval struct {
 	// 操作类型(distribute/script_exec)
 	OperationType string `json:"operation_type,omitempty"`
 	// 操作关联实体 ID(分发配置 ID 或脚本 ID)
-	OperationRefID uint32 `json:"operation_ref_id,omitempty"`
+	OperationRefID uint64 `json:"operation_ref_id,omitempty"`
 	// 目标节点 agentId(审批通过后据此重新下发指令)
 	AgentID string `json:"agent_id,omitempty"`
 	// 操作名称(快照,便于审批人识别)
@@ -37,9 +37,9 @@ type Approval struct {
 	// 操作载荷快照(JSON,审批通过后按此执行)
 	Payload *string `json:"payload,omitempty"`
 	// 发起人
-	RequesterID *uint32 `json:"requester_id,omitempty"`
+	RequesterID *uint64 `json:"requester_id,omitempty"`
 	// 审批人
-	ApproverID *uint32 `json:"approver_id,omitempty"`
+	ApproverID *uint64 `json:"approver_id,omitempty"`
 	// 审批状态
 	Status approval.Status `json:"status,omitempty"`
 	// 驳回原因
@@ -84,13 +84,13 @@ func (_m *Approval) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case approval.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case approval.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -123,7 +123,7 @@ func (_m *Approval) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field operation_ref_id", values[i])
 			} else if value.Valid {
-				_m.OperationRefID = uint32(value.Int64)
+				_m.OperationRefID = uint64(value.Int64)
 			}
 		case approval.FieldAgentID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -148,15 +148,15 @@ func (_m *Approval) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field requester_id", values[i])
 			} else if value.Valid {
-				_m.RequesterID = new(uint32)
-				*_m.RequesterID = uint32(value.Int64)
+				_m.RequesterID = new(uint64)
+				*_m.RequesterID = uint64(value.Int64)
 			}
 		case approval.FieldApproverID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field approver_id", values[i])
 			} else if value.Valid {
-				_m.ApproverID = new(uint32)
-				*_m.ApproverID = uint32(value.Int64)
+				_m.ApproverID = new(uint64)
+				*_m.ApproverID = uint64(value.Int64)
 			}
 		case approval.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {

@@ -239,10 +239,10 @@ func validateContent(content string, timeoutSeconds uint32) error {
 	return nil
 }
 
-func (s *ScriptService) operatorID(ctx context.Context) uint32 {
+func (s *ScriptService) operatorID(ctx context.Context) uint64 {
 	operator, err := metadata.FromServerContext(ctx)
 	if err != nil || operator == nil {
 		return 0
 	}
-	return uint32(operator.GetUserId())
+	return uint64(operator.GetUserId())
 }

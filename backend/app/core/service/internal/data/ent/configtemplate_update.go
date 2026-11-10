@@ -70,14 +70,14 @@ func (_u *ConfigTemplateUpdate) ClearDeletedAt() *ConfigTemplateUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ConfigTemplateUpdate) SetCreatedBy(v uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetCreatedBy(v uint64) *ConfigTemplateUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdate) SetNillableCreatedBy(v *uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetNillableCreatedBy(v *uint64) *ConfigTemplateUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ConfigTemplateUpdate) SetNillableCreatedBy(v *uint32) *ConfigTemplateU
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ConfigTemplateUpdate) AddCreatedBy(v int32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) AddCreatedBy(v int64) *ConfigTemplateUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ConfigTemplateUpdate) ClearCreatedBy() *ConfigTemplateUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ConfigTemplateUpdate) SetUpdatedBy(v uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetUpdatedBy(v uint64) *ConfigTemplateUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdate) SetNillableUpdatedBy(v *uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetNillableUpdatedBy(v *uint64) *ConfigTemplateUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ConfigTemplateUpdate) SetNillableUpdatedBy(v *uint32) *ConfigTemplateU
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ConfigTemplateUpdate) AddUpdatedBy(v int32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) AddUpdatedBy(v int64) *ConfigTemplateUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ConfigTemplateUpdate) ClearUpdatedBy() *ConfigTemplateUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ConfigTemplateUpdate) SetDeletedBy(v uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetDeletedBy(v uint64) *ConfigTemplateUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdate) SetNillableDeletedBy(v *uint32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) SetNillableDeletedBy(v *uint64) *ConfigTemplateUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ConfigTemplateUpdate) SetNillableDeletedBy(v *uint32) *ConfigTemplateU
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ConfigTemplateUpdate) AddDeletedBy(v int32) *ConfigTemplateUpdate {
+func (_u *ConfigTemplateUpdate) AddDeletedBy(v int64) *ConfigTemplateUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -289,7 +289,7 @@ func (_u *ConfigTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(configtemplate.Table, configtemplate.Columns, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(configtemplate.Table, configtemplate.Columns, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -298,7 +298,7 @@ func (_u *ConfigTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configtemplate.FieldCreatedAt, field.TypeTime)
@@ -316,31 +316,31 @@ func (_u *ConfigTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(configtemplate.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(configtemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(configtemplate.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(configtemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(configtemplate.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(configtemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(configtemplate.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(configtemplate.FieldName, field.TypeString, value)
@@ -426,14 +426,14 @@ func (_u *ConfigTemplateUpdateOne) ClearDeletedAt() *ConfigTemplateUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ConfigTemplateUpdateOne) SetCreatedBy(v uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetCreatedBy(v uint64) *ConfigTemplateUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdateOne) SetNillableCreatedBy(v *uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetNillableCreatedBy(v *uint64) *ConfigTemplateUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -441,7 +441,7 @@ func (_u *ConfigTemplateUpdateOne) SetNillableCreatedBy(v *uint32) *ConfigTempla
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ConfigTemplateUpdateOne) AddCreatedBy(v int32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) AddCreatedBy(v int64) *ConfigTemplateUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -453,14 +453,14 @@ func (_u *ConfigTemplateUpdateOne) ClearCreatedBy() *ConfigTemplateUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ConfigTemplateUpdateOne) SetUpdatedBy(v uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetUpdatedBy(v uint64) *ConfigTemplateUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdateOne) SetNillableUpdatedBy(v *uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetNillableUpdatedBy(v *uint64) *ConfigTemplateUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -468,7 +468,7 @@ func (_u *ConfigTemplateUpdateOne) SetNillableUpdatedBy(v *uint32) *ConfigTempla
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ConfigTemplateUpdateOne) AddUpdatedBy(v int32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) AddUpdatedBy(v int64) *ConfigTemplateUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -480,14 +480,14 @@ func (_u *ConfigTemplateUpdateOne) ClearUpdatedBy() *ConfigTemplateUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ConfigTemplateUpdateOne) SetDeletedBy(v uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetDeletedBy(v uint64) *ConfigTemplateUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ConfigTemplateUpdateOne) SetNillableDeletedBy(v *uint32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) SetNillableDeletedBy(v *uint64) *ConfigTemplateUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -495,7 +495,7 @@ func (_u *ConfigTemplateUpdateOne) SetNillableDeletedBy(v *uint32) *ConfigTempla
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ConfigTemplateUpdateOne) AddDeletedBy(v int32) *ConfigTemplateUpdateOne {
+func (_u *ConfigTemplateUpdateOne) AddDeletedBy(v int64) *ConfigTemplateUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -658,7 +658,7 @@ func (_u *ConfigTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ConfigTe
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(configtemplate.Table, configtemplate.Columns, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(configtemplate.Table, configtemplate.Columns, sqlgraph.NewFieldSpec(configtemplate.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ConfigTemplate.id" for update`)}
@@ -684,7 +684,7 @@ func (_u *ConfigTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ConfigTe
 		}
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldTenantID, field.TypeUint64)
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(configtemplate.FieldCreatedAt, field.TypeTime)
@@ -702,31 +702,31 @@ func (_u *ConfigTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ConfigTe
 		_spec.ClearField(configtemplate.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(configtemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(configtemplate.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(configtemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(configtemplate.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(configtemplate.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(configtemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(configtemplate.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(configtemplate.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(configtemplate.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(configtemplate.FieldName, field.TypeString, value)

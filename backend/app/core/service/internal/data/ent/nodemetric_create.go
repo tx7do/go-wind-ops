@@ -65,7 +65,7 @@ func (_c *NodeMetricCreate) SetNillableDeletedAt(v *time.Time) *NodeMetricCreate
 }
 
 // SetNodeID sets the "node_id" field.
-func (_c *NodeMetricCreate) SetNodeID(v uint32) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetNodeID(v uint64) *NodeMetricCreate {
 	_c.mutation.SetNodeID(v)
 	return _c
 }
@@ -141,7 +141,7 @@ func (_c *NodeMetricCreate) SetNillableUptimeSeconds(v *uint64) *NodeMetricCreat
 }
 
 // SetID sets the "id" field.
-func (_c *NodeMetricCreate) SetID(v uint32) *NodeMetricCreate {
+func (_c *NodeMetricCreate) SetID(v uint64) *NodeMetricCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -222,7 +222,7 @@ func (_c *NodeMetricCreate) sqlSave(ctx context.Context) (*NodeMetric, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -232,7 +232,7 @@ func (_c *NodeMetricCreate) sqlSave(ctx context.Context) (*NodeMetric, error) {
 func (_c *NodeMetricCreate) createSpec() (*NodeMetric, *sqlgraph.CreateSpec) {
 	var (
 		_node = &NodeMetric{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(nodemetric.Table, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(nodemetric.Table, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -252,7 +252,7 @@ func (_c *NodeMetricCreate) createSpec() (*NodeMetric, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
 		_node.NodeID = value
 	}
 	if value, ok := _c.mutation.CPUPercent(); ok {
@@ -364,7 +364,7 @@ func (u *NodeMetricUpsert) ClearDeletedAt() *NodeMetricUpsert {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsert) SetNodeID(v uint32) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) SetNodeID(v uint64) *NodeMetricUpsert {
 	u.Set(nodemetric.FieldNodeID, v)
 	return u
 }
@@ -376,7 +376,7 @@ func (u *NodeMetricUpsert) UpdateNodeID() *NodeMetricUpsert {
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsert) AddNodeID(v uint32) *NodeMetricUpsert {
+func (u *NodeMetricUpsert) AddNodeID(v uint64) *NodeMetricUpsert {
 	u.Add(nodemetric.FieldNodeID, v)
 	return u
 }
@@ -595,14 +595,14 @@ func (u *NodeMetricUpsertOne) ClearDeletedAt() *NodeMetricUpsertOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsertOne) SetNodeID(v uint32) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) SetNodeID(v uint64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsertOne) AddNodeID(v uint32) *NodeMetricUpsertOne {
+func (u *NodeMetricUpsertOne) AddNodeID(v uint64) *NodeMetricUpsertOne {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddNodeID(v)
 	})
@@ -771,7 +771,7 @@ func (u *NodeMetricUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -780,7 +780,7 @@ func (u *NodeMetricUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NodeMetricUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *NodeMetricUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -837,7 +837,7 @@ func (_c *NodeMetricCreateBulk) Save(ctx context.Context) ([]*NodeMetric, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1015,14 +1015,14 @@ func (u *NodeMetricUpsertBulk) ClearDeletedAt() *NodeMetricUpsertBulk {
 }
 
 // SetNodeID sets the "node_id" field.
-func (u *NodeMetricUpsertBulk) SetNodeID(v uint32) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) SetNodeID(v uint64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.SetNodeID(v)
 	})
 }
 
 // AddNodeID adds v to the "node_id" field.
-func (u *NodeMetricUpsertBulk) AddNodeID(v uint32) *NodeMetricUpsertBulk {
+func (u *NodeMetricUpsertBulk) AddNodeID(v uint64) *NodeMetricUpsertBulk {
 	return u.Update(func(s *NodeMetricUpsert) {
 		s.AddNodeID(v)
 	})

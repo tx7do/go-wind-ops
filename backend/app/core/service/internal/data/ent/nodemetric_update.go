@@ -70,14 +70,14 @@ func (_u *NodeMetricUpdate) ClearDeletedAt() *NodeMetricUpdate {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *NodeMetricUpdate) SetNodeID(v uint32) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNodeID(v uint64) *NodeMetricUpdate {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *NodeMetricUpdate) SetNillableNodeID(v *uint32) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) SetNillableNodeID(v *uint64) *NodeMetricUpdate {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *NodeMetricUpdate) SetNillableNodeID(v *uint32) *NodeMetricUpdate {
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *NodeMetricUpdate) AddNodeID(v int32) *NodeMetricUpdate {
+func (_u *NodeMetricUpdate) AddNodeID(v int64) *NodeMetricUpdate {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -277,7 +277,7 @@ func (_u *NodeMetricUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -301,10 +301,10 @@ func (_u *NodeMetricUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(nodemetric.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CPUPercent(); ok {
 		_spec.SetField(nodemetric.FieldCPUPercent, field.TypeFloat64, value)
@@ -414,14 +414,14 @@ func (_u *NodeMetricUpdateOne) ClearDeletedAt() *NodeMetricUpdateOne {
 }
 
 // SetNodeID sets the "node_id" field.
-func (_u *NodeMetricUpdateOne) SetNodeID(v uint32) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNodeID(v uint64) *NodeMetricUpdateOne {
 	_u.mutation.ResetNodeID()
 	_u.mutation.SetNodeID(v)
 	return _u
 }
 
 // SetNillableNodeID sets the "node_id" field if the given value is not nil.
-func (_u *NodeMetricUpdateOne) SetNillableNodeID(v *uint32) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) SetNillableNodeID(v *uint64) *NodeMetricUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
 	}
@@ -429,7 +429,7 @@ func (_u *NodeMetricUpdateOne) SetNillableNodeID(v *uint32) *NodeMetricUpdateOne
 }
 
 // AddNodeID adds value to the "node_id" field.
-func (_u *NodeMetricUpdateOne) AddNodeID(v int32) *NodeMetricUpdateOne {
+func (_u *NodeMetricUpdateOne) AddNodeID(v int64) *NodeMetricUpdateOne {
 	_u.mutation.AddNodeID(v)
 	return _u
 }
@@ -634,7 +634,7 @@ func (_u *NodeMetricUpdateOne) sqlSave(ctx context.Context) (_node *NodeMetric, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(nodemetric.Table, nodemetric.Columns, sqlgraph.NewFieldSpec(nodemetric.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "NodeMetric.id" for update`)}
@@ -675,10 +675,10 @@ func (_u *NodeMetricUpdateOne) sqlSave(ctx context.Context) (_node *NodeMetric, 
 		_spec.ClearField(nodemetric.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
-		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint32, value)
+		_spec.SetField(nodemetric.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedNodeID(); ok {
-		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint32, value)
+		_spec.AddField(nodemetric.FieldNodeID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.CPUPercent(); ok {
 		_spec.SetField(nodemetric.FieldCPUPercent, field.TypeFloat64, value)

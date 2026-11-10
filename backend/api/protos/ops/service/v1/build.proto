@@ -37,7 +37,7 @@ service BuildService {
 
 // 构建配置
 message Build {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 构建配置ID
@@ -50,7 +50,7 @@ message Build {
     }
   ]; // 构建名
 
-  optional uint32 repository_id = 3 [
+  optional uint64 repository_id = 3 [
     json_name = "repositoryId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {
@@ -139,7 +139,7 @@ message ListBuildResponse {
 }
 
 message GetBuildRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 构建配置ID
@@ -153,7 +153,7 @@ message CreateBuildRequest {
 }
 
 message UpdateBuildRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 构建配置ID
@@ -172,20 +172,20 @@ message UpdateBuildRequest {
 }
 
 message DeleteBuildRequest {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 构建配置ID
 }
 
 message TriggerBuildRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED
   ]; // 构建配置ID
 }
 
 message TriggerBuildResponse {
-  uint32 history_id = 1 [json_name = "historyId"]; // 构建历史ID
+  uint64 history_id = 1 [json_name = "historyId"]; // 构建历史ID
   uint32 build_no = 2 [json_name = "buildNo"]; // 本次构建号
 }
